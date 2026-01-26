@@ -1,0 +1,633 @@
+{{ 'section-contact-form.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  /* --- AVANT-GARDE VARIABLES --- */
+  :root {
+    --ag-glass: rgba(255, 255, 255, 0.65);
+    --ag-glass-border: rgba(255, 255, 255, 0.8);
+    --ag-blur: 20px;
+    --ag-shadow: 0 25px 50px -12px rgba(0,0,0,0.1);
+    --ag-accent: {{ section.settings.accent_color | default: '#3B82F6' }};
+    --ag-text: {{ section.settings.text_color | default: '#171717' }};
+    --ag-radius: 24px;
+    --ag-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --ag-error: #ef4444; /* Red for required asterisk */
+  }
+
+  .section-{{ section.id }}-padding {
+    position: relative;
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+    background-color: {{ section.settings.bg_color }};
+    overflow: hidden;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  /* --- AMBIENT BACKGROUND MESH --- */
+  .ag-ambient-mesh {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: 
+      radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.08), transparent 25%), 
+      radial-gradient(circle at 10% 10%, rgba(168, 85, 247, 0.08), transparent 25%);
+    z-index: 0;
+    pointer-events: none;
+    animation: ag-pulse 15s ease-in-out infinite alternate;
+  }
+
+  @keyframes ag-pulse {
+    0% { transform: translate(0,0) scale(1); }
+    100% { transform: translate(-5%, -5%) scale(1.1); }
+  }
+
+  /* --- GLASS CONTAINER --- */
+  .icorrect-form-container {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+    z-index: 1;
+  }
+
+  .icorrect-header {
+    text-align: center;
+    margin-bottom: 50px;
+    position: relative;
+  }
+
+  .icorrect-header h2 {
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin: 0 0 16px 0;
+    color: {{ section.settings.heading_color }};
+    background: linear-gradient(135deg, {{ section.settings.heading_color }} 0%, #666 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .icorrect-header p {
+    font-size: 18px;
+    line-height: 1.6;
+    color: {{ section.settings.text_muted }};
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .icorrect-card {
+    background: var(--ag-glass);
+    backdrop-filter: blur(var(--ag-blur));
+    -webkit-backdrop-filter: blur(var(--ag-blur));
+    border: 1px solid var(--ag-glass-border);
+    border-radius: var(--ag-radius);
+    box-shadow: var(--ag-shadow);
+    padding: 40px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .icorrect-card { padding: 60px; }
+  }
+
+  /* --- FORM GRID & INPUTS --- */
+  .icorrect-form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .icorrect-form-grid--2-col { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* Floating Label Input Group */
+  .icorrect-field-group {
+    position: relative;
+    margin-bottom: 5px;
+  }
+
+  .icorrect-label-floating {
+    position: absolute;
+    top: 18px;
+    left: 16px;
+    font-size: 14px;
+    color: #999;
+    pointer-events: none;
+    transition: var(--ag-transition);
+    transform-origin: left top;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 11px;
+    z-index: 2;
+  }
+
+  .icorrect-input,
+  .icorrect-select,
+  .icorrect-textarea {
+    width: 100%;
+    background-color: rgba(255,255,255,0.5);
+    border: 1px solid {{ section.settings.input_border }};
+    border-radius: 12px;
+    /* PADDING: 36px top to ensure label does not overlap placeholder */
+    padding: 36px 16px 12px 16px; 
+    font-size: 16px;
+    line-height: 1.5;
+    color: {{ section.settings.text_color }};
+    transition: var(--ag-transition);
+    font-family: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .icorrect-input:focus,
+  .icorrect-select:focus,
+  .icorrect-textarea:focus {
+    outline: none;
+    background-color: #ffffff;
+    border-color: {{ section.settings.accent_color }};
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  }
+
+  /* Floating Label Logic */
+  .icorrect-input:focus + .icorrect-label-floating,
+  .icorrect-input:not(:placeholder-shown) + .icorrect-label-floating,
+  .icorrect-select:focus + .icorrect-label-floating,
+  .icorrect-select:valid + .icorrect-label-floating,
+  .icorrect-textarea:focus + .icorrect-label-floating,
+  .icorrect-textarea:not(:placeholder-shown) + .icorrect-label-floating {
+    transform: translateY(-8px);
+    color: {{ section.settings.accent_color }};
+  }
+
+  .icorrect-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+  }
+
+  .icorrect-textarea {
+    min-height: 140px;
+    resize: vertical;
+  }
+
+  /* --- VISUAL DEVICE SELECTOR (AVANT-GARDE) --- */
+  .ag-device-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  @media(min-width: 768px) {
+    .ag-device-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  .ag-radio-input { display: none; }
+
+  .ag-device-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.4);
+    border: 1px solid transparent;
+    border-radius: 16px;
+    padding: 20px 10px;
+    cursor: pointer;
+    transition: var(--ag-transition);
+    text-align: center;
+  }
+
+  .ag-device-card:hover {
+    background: rgba(255,255,255,0.8);
+    transform: translateY(-2px);
+  }
+
+  .ag-radio-input:checked + .ag-device-card {
+    background: #ffffff;
+    border-color: {{ section.settings.accent_color }};
+    box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1);
+  }
+
+  .ag-device-icon {
+    width: 42px;
+    height: 42px;
+    margin-bottom: 12px;
+    object-fit: contain;
+    transition: var(--ag-transition);
+    filter: grayscale(100%);
+    opacity: 0.7;
+  }
+  
+  .ag-radio-input:checked + .ag-device-card .ag-device-icon {
+    filter: grayscale(0%);
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  .ag-device-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: {{ section.settings.text_color }};
+  }
+
+  /* --- SUBMIT BUTTON --- */
+  .icorrect-submit {
+    width: 100%;
+    background: {{ section.settings.accent_color }};
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 20px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--ag-transition);
+    margin-top: 24px;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+
+  .icorrect-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+  }
+
+  /* Divider */
+  .ag-divider-text {
+    font-size: 12px; 
+    text-transform: uppercase; 
+    letter-spacing: 0.1em; 
+    color: {{ section.settings.text_muted }}; 
+    display: block; 
+    margin: 30px 0 15px 0;
+    font-weight: 700;
+  }
+
+  /* Success/Error */
+  .form-status { margin-bottom: 20px; padding: 15px; border-radius: 12px; text-align: center; }
+  .form-status--success { background-color: #ecfdf5; color: #047857; }
+  .form-status--error { background-color: #fef2f2; color: #b91c1c; }
+  .form-status-list { list-style: none; padding: 0; }
+
+  /* Mandatory Asterisk */
+  .ag-required { color: var(--ag-error); margin-left: 2px; }
+{%- endstyle -%}
+
+<div class="section-{{ section.id }}-padding">
+  <div class="ag-ambient-mesh"></div>
+
+  <div class="icorrect-form-container">
+    
+    <div class="icorrect-header">
+      <h2>{{ section.settings.heading }}</h2>
+      <p>{{ section.settings.description }}</p>
+    </div>
+
+    <div class="icorrect-card">
+      {%- form 'contact', id: 'RepairForm', class: 'icorrect-form' -%}
+        
+        {%- if form.posted_successfully? -%}
+          <div class="form-status form-status--success" tabindex="-1" autofocus>
+            <h3 style="font-weight:700; margin-bottom:5px;">Request Sent Successfully</h3>
+            <p>Our technicians will review your details and send a quote shortly.</p>
+          </div>
+        {%- elsif form.errors -%}
+          <div class="form-status form-status--error" tabindex="-1" autofocus>
+            <h3 style="font-weight:700;">Please adjust the following:</h3>
+            <ul class="form-status-list">
+              {%- for field in form.errors -%}
+                <li>
+                  {{ form.errors.translated_fields[field] }} {{ form.errors.messages[field] }}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+
+        <div class="icorrect-form-grid">
+          
+          <div>
+            <span class="ag-divider-text" style="margin-top:0;">Contact Information</span>
+            <div class="icorrect-form-grid icorrect-form-grid--2-col">
+              <div class="icorrect-field-group">
+                <input class="icorrect-input" autocomplete="name" type="text" id="ContactForm-name" name="contact[name]" value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}" placeholder=" " required>
+                <label class="icorrect-label-floating" for="ContactForm-name">Full Name<span class="ag-required">*</span></label>
+              </div>
+              <div class="icorrect-field-group">
+                <input class="icorrect-input" autocomplete="email" type="email" id="ContactForm-email" name="contact[email]" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}" placeholder=" " required>
+                <label class="icorrect-label-floating" for="ContactForm-email">Email Address<span class="ag-required">*</span></label>
+              </div>
+            </div>
+            <div class="icorrect-field-group" style="margin-top: 24px;">
+              <input class="icorrect-input" autocomplete="tel" type="tel" id="ContactForm-phone" name="contact[phone]" value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}" placeholder=" " required>
+              <label class="icorrect-label-floating" for="ContactForm-phone">Phone Number<span class="ag-required">*</span></label>
+            </div>
+          </div>
+
+          <div>
+            <span class="ag-divider-text">Select Device <span class="ag-required">*</span></span>
+            
+            <div class="ag-device-grid">
+              
+              <label>
+                <input type="radio" name="contact[device_type]" value="macbook" class="ag-radio-input" onchange="updateModels(this.value)" required>
+                <div class="ag-device-card">
+                  <img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/computer_1.png?v=1766439002" alt="MacBook" class="ag-device-icon">
+                  <span class="ag-device-name">MacBook</span>
+                </div>
+              </label>
+
+              <label>
+                <input type="radio" name="contact[device_type]" value="iphone" class="ag-radio-input" onchange="updateModels(this.value)">
+                <div class="ag-device-card">
+                  <img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/smartphone.png?v=1766439001" alt="iPhone" class="ag-device-icon">
+                  <span class="ag-device-name">iPhone</span>
+                </div>
+              </label>
+
+              <label>
+                <input type="radio" name="contact[device_type]" value="ipad" class="ag-radio-input" onchange="updateModels(this.value)">
+                <div class="ag-device-card">
+                  <img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/ipad.png?v=1766439002" alt="iPad" class="ag-device-icon">
+                  <span class="ag-device-name">iPad</span>
+                </div>
+              </label>
+
+              <label>
+                <input type="radio" name="contact[device_type]" value="watch" class="ag-radio-input" onchange="updateModels(this.value)">
+                <div class="ag-device-card">
+                  <img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/apple.png?v=1766439001" alt="Apple Watch" class="ag-device-icon">
+                  <span class="ag-device-name">Watch</span>
+                </div>
+              </label>
+
+            </div>
+          </div>
+
+          <div>
+            <div class="icorrect-form-grid icorrect-form-grid--2-col">
+              <div class="icorrect-field-group">
+                <select class="icorrect-select" id="ContactForm-model" name="contact[device_model]" required disabled>
+                  <option value="" disabled selected>Select Model...</option>
+                </select>
+                <label class="icorrect-label-floating" for="ContactForm-model">Model<span class="ag-required">*</span></label>
+              </div>
+
+              <div class="icorrect-field-group">
+                <select class="icorrect-select" id="ContactForm-fault" name="contact[fault_area]" required>
+                  <option value="" disabled selected>Select the main issue...</option>
+                  <option value="Screen / Display">Screen / Display</option>
+                  <option value="Power / Battery / Charging">Power / Battery / Charging</option>
+                  <option value="Audio / Mic / Speaker">Audio / Microphone / Speaker</option>
+                  <option value="Connectivity">Connectivity (WiFi / Bluetooth / Signal)</option>
+                  <option value="Water Damage">Water Damage</option>
+                  <option value="Data Recovery">Data Recovery</option>
+                  <option value="Other">Other</option>
+                </select>
+                <label class="icorrect-label-floating" for="ContactForm-fault">Fault Category<span class="ag-required">*</span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="icorrect-field-group">
+            <textarea class="icorrect-textarea" id="ContactForm-body" name="contact[body]" placeholder=" " required>{{ form.body }}</textarea>
+            <label class="icorrect-label-floating" for="ContactForm-body">Description of Issue<span class="ag-required">*</span></label>
+          </div>
+
+          <button type="submit" class="icorrect-submit">
+            {{ section.settings.button_label }}
+          </button>
+
+        </div>
+      {%- endform -%}
+    </div>
+  </div>
+</div>
+
+<script>
+  /* * DATA MODELS */
+  const repairData = {
+    // ---------------- MACBOOKS (Grouped) ----------------
+    macbook: {
+      "MacBook Pro": [
+        "MacBook Pro 16-inch 'M4 Pro/Max' A3186/A3403 (2024)",
+        "MacBook Pro 16-inch 'M3 Pro/Max' A2991 (2023)",
+        "MacBook Pro 16-inch 'M2 Pro/Max' A2780 (2023)",
+        "MacBook Pro 16-inch 'M1 Pro/Max' A2485 (2021)",
+        "MacBook Pro 16-inch A2141 (2019)",
+        "MacBook Pro 15-inch A1990 (2018-2019)",
+        "MacBook Pro 15-inch A1707 (2016-2017)",
+        "MacBook Pro 14-inch 'M4 Pro/Max' A3112/A3185/A3401 (2024)",
+        "MacBook Pro 14-inch 'M3 Pro/Max' A2918/A2992 (2023)",
+        "MacBook Pro 14-inch 'M2 Pro/Max' A2779 (2023)",
+        "MacBook Pro 14-inch 'M1 Pro/Max' A2442 (2021)",
+        "MacBook Pro 13-inch 'M2' A2338 (2022)",
+        "MacBook Pro 13-inch 'M1' A2338 (2020)",
+        "MacBook Pro 13-inch A2251 (2020)",
+        "MacBook Pro 13-inch A2289 (2020)",
+        "MacBook Pro 13-inch A2159 (2019)",
+        "MacBook Pro 13-inch A1989 (2018-2019)"
+      ],
+      "MacBook Air": [
+        "MacBook Air 15-inch 'M4' A3241 (2025)",
+        "MacBook Air 15-inch 'M3' A3114 (2024)",
+        "MacBook Air 15-inch 'M2' A2941 (2023)",
+        "MacBook Air 13-inch 'M4' A3240 (2025)",
+        "MacBook Air 13-inch 'M3' A3113 (2024)",
+        "MacBook Air 13-inch 'M2' A2681 (2022)",
+        "MacBook Air 13-inch 'M1' A2337 (2020)",
+        "MacBook Air 13-inch A2179 (2020)",
+        "MacBook Air 13-inch A1932 (2018-2019)"
+      ]
+    },
+
+    // ---------------- IPHONES (Flat List) ----------------
+    iphone: [
+      "iPhone 16 Pro Max", "iPhone 16 Pro", "iPhone 16 Plus", "iPhone 16", "iPhone 16e",
+      "iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15 Plus", "iPhone 15",
+      "iPhone 14 Pro Max", "iPhone 14 Pro", "iPhone 14 Plus", "iPhone 14",
+      "iPhone SE 3rd Gen (2022)",
+      "iPhone 13 Pro Max", "iPhone 13 Pro", "iPhone 13", "iPhone 13 Mini",
+      "iPhone 12 Pro Max", "iPhone 12 Pro", "iPhone 12", "iPhone 12 Mini",
+      "iPhone SE 2nd Gen (2020)",
+      "iPhone 11 Pro Max", "iPhone 11 Pro", "iPhone 11"
+    ],
+
+    // ---------------- IPADS (Grouped) ----------------
+    ipad: {
+      "iPad Pro": [
+        "iPad Pro 13 M4 (2024)", "iPad Pro 12.9 6th Gen M2 (2022)", "iPad Pro 12.9 5th Gen M1 (2021)",
+        "iPad Pro 12.9 4th Gen (2020)", "iPad Pro 12.9 3rd Gen (2018)",
+        "iPad Pro 11 M4 (2024)", "iPad Pro 11 4th Gen M2 (2022)", "iPad Pro 11 3rd Gen M1 (2021)",
+        "iPad Pro 11 2nd Gen (2020)", "iPad Pro 11 1st Gen (2018)"
+      ],
+      "iPad Air": [
+        "iPad Air 13 7th Gen 'M3' (2025)", "iPad Air 11 7th Gen 'M3' (2025)",
+        "iPad Air 13 M2 (2024)", "iPad Air 11 M2 (2024)",
+        "iPad Air 5th Gen (2022)", "iPad Air 4th Gen (2020)"
+      ],
+      "iPad": [
+        "iPad 11th Gen (2025)", "iPad 10th Gen (2022)", "iPad 9th Gen (2021)",
+        "iPad 8th Gen (2020)", "iPad 7th Gen (2019)"
+      ],
+      "iPad Mini": [
+        "iPad Mini 7 (2024)", "iPad Mini 6 (2021)", "iPad Mini 5 (2019)"
+      ]
+    },
+
+    // ---------------- WATCHES (Flat List) ----------------
+    watch: [
+      "Apple Watch Ultra 2", "Apple Watch Ultra",
+      "Apple Watch Series 10 46MM", "Apple Watch Series 10 42MM",
+      "Apple Watch Series 9 45MM", "Apple Watch Series 9 41MM",
+      "Apple Watch Series 8 45MM", "Apple Watch Series 8 41MM",
+      "Apple Watch SE 2nd Gen 44MM", "Apple Watch SE 2nd Gen 40MM",
+      "Apple Watch Series 7 45MM", "Apple Watch Series 7 41MM",
+      "Apple Watch Series 6 44MM", "Apple Watch Series 6 40MM",
+      "Apple Watch Series 5 44MM", "Apple Watch Series 5 40MM",
+      "Apple Watch SE 1st Gen 44MM", "Apple Watch SE 1st Gen 40MM"
+    ]
+  };
+
+  function updateModels(selectedDevice) {
+    const modelSelect = document.getElementById('ContactForm-model');
+
+    // Reset Model Dropdown
+    modelSelect.innerHTML = '<option value="" disabled selected>Select Model...</option>';
+    modelSelect.disabled = true;
+
+    if (selectedDevice && repairData[selectedDevice]) {
+      modelSelect.disabled = false;
+      const data = repairData[selectedDevice];
+
+      if (Array.isArray(data)) {
+        // Flat List
+        data.forEach(model => {
+          const option = document.createElement('option');
+          option.value = model;
+          option.textContent = model;
+          modelSelect.appendChild(option);
+        });
+      } else {
+        // Grouped List
+        for (const [groupName, models] of Object.entries(data)) {
+          const optgroup = document.createElement('optgroup');
+          optgroup.label = groupName;
+          models.forEach(model => {
+            const option = document.createElement('option');
+            option.value = model;
+            option.textContent = model;
+            optgroup.appendChild(option);
+          });
+          modelSelect.appendChild(optgroup);
+        }
+      }
+    }
+  }
+</script>
+
+{% schema %}
+{
+  "name": "iCorrect Repair Form",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Get a Repair Quote"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Enter your device details below. We offer component-level repair to save your data and reduce costs."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "Request Free Quote"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section Background",
+      "default": "#FAFAFA"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#171717"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#171717"
+    },
+    {
+      "type": "color",
+      "id": "text_muted",
+      "label": "Muted Text Color",
+      "default": "#737373"
+    },
+    {
+      "type": "color",
+      "id": "input_border",
+      "label": "Input Border",
+      "default": "#E5E5E5"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent Color (Buttons/Focus)",
+      "default": "#3B82F6"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top Padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom Padding",
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "iCorrect Repair Form"
+    }
+  ]
+}
+{% endschema %}

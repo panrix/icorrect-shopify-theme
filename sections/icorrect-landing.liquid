@@ -1,0 +1,1886 @@
+{% comment %}
+  iCorrect Corporate Landing Page - Shopify Section
+  v21.0 - Added Success Confirmation Message
+{% endcomment %}
+
+<div class="icorrect-landing" id="icorrect-landing-{{ section.id }}" data-testid="page-landing">
+  
+  {% comment %} ===== HERO SECTION (UNCHANGED) ===== {% endcomment %}
+  <section class="ic-hero" data-testid="section-hero">
+    <div class="ic-container ic-container--hero-split">
+      <div class="ic-hero__content ic-animate">
+        <span class="ic-badge" data-testid="badge-specialist">
+          {{ section.settings.hero_badge | default: 'Corporate Repair Services' }}
+        </span>
+        <h1 class="ic-hero__title" data-testid="text-hero-heading">
+          {{ section.settings.hero_title | default: 'Fleet repairs delivered with <span class="ic-text-primary">corporate accountability</span>' }}
+        </h1>
+        <p class="ic-hero__subtitle" data-testid="text-hero-subheading">
+          Board-level diagnostics and repairs for MacBooks, iPhones, iPads, and Apple Watches. Modular repairs with original parts sustainabily sourced. Documented SLAs, chain of custody, and invoicing structured for procurement. Express VIP services available. 
+        </p>
+        <div class="ic-hero__cta">
+          <a href="#contact-{{ section.id }}" class="ic-btn ic-btn--primary ic-btn--lg" data-testid="button-hero-primary">
+            Open Corporate Account
+          </a>
+          <a href="#process-{{ section.id }}" class="ic-btn ic-btn--outline ic-btn--lg" data-testid="button-hero-secondary">
+            View Service Process
+          </a>
+        </div>
+      </div>
+      <div class="ic-hero__trust ic-animate">
+        <div class="ic-hero__logo-grid">
+            <div class="ic-logo-item"><img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/inditex.png?v=1732538696" alt="Inditex"></div>
+            <div class="ic-logo-item"><img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/panasonic-1.png?v=1732538921" alt="Panasonic"></div>
+            <div class="ic-logo-item"><img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/Jones_Lang_Lasalle.png?v=1732538773" alt="JLL"></div>
+            <div class="ic-logo-item"><img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/prada.png?v=1732539004" alt="Prada"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% comment %} ===== PROCESS SECTION (UNCHANGED) ===== {% endcomment %}
+  <section id="process-{{ section.id }}" class="ic-section ic-section--muted" data-testid="section-process">
+    <div class="ic-container">
+      <div class="ic-animate">
+        <p class="ic-section__eyebrow">Service Workflow</p>
+        <h2 class="ic-section__title" data-testid="text-process-heading">Fleet Repair Process</h2>
+      </div>
+      <div class="ic-process__grid">
+        <div class="ic-process__step ic-animate" data-testid="process-step-01">
+          <span class="ic-process__num">01</span>
+          <h3 class="ic-process__title">Intake</h3>
+          <p class="ic-process__desc">Devices are booked in via email, phone, or bulk submission. We record device details and reported faults.</p>
+        </div>
+        <div class="ic-process__step ic-animate" data-testid="process-step-02">
+          <span class="ic-process__num">02</span>
+          <h3 class="ic-process__title">Collection</h3>
+          <p class="ic-process__desc">Nationwide courier, London express, or in-person drop-off. All shipments are fully tracked.</p>
+        </div>
+        <div class="ic-process__step ic-animate" data-testid="process-step-03">
+          <span class="ic-process__num">03</span>
+          <h3 class="ic-process__title">Diagnostic</h3>
+          <p class="ic-process__desc">Full diagnostic on arrival to identify the fault. A quote is issued before any work proceeds.</p>
+        </div>
+        <div class="ic-process__step ic-animate" data-testid="process-step-04">
+          <span class="ic-process__num">04</span>
+          <h3 class="ic-process__title">Repair</h3>
+          <p class="ic-process__desc">In-house repairs, including component-level work. Devices are cleaned and stress-tested.</p>
+        </div>
+        <div class="ic-process__step ic-animate" data-testid="process-step-05">
+          <span class="ic-process__num">05</span>
+          <h3 class="ic-process__title">Return</h3>
+          <p class="ic-process__desc">Devices returned via courier with a clear repair summary and invoice for your records.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% comment %} ===== WHY SECTION (UNCHANGED) ===== {% endcomment %}
+  <section class="icorrect-clean-section" id="why-{{ section.id }}">
+    <div class="ic-container">
+      <div class="ic-top-row">
+        <div class="ic-text-col ic-animate">
+          <h2 class="ic-heading">{{ section.settings.why_heading }}</h2>
+          <div class="ic-description">{{ section.settings.why_details }}</div>
+        </div>
+        <div class="ic-stats-col ic-animate">
+          <div class="ic-stat-card">
+            <div class="stat-value" data-target="{{ section.settings.stat_1_num }}" data-type="integer">{{ section.settings.stat_1_num | append: '+' }}</div>
+            <div class="stat-label">Devices Repaired</div>
+          </div>
+          <div class="ic-stat-card">
+            <div class="stat-value" data-target="{{ section.settings.stat_2_num }}" data-type="float">{{ section.settings.stat_2_num }}</div>
+            <div class="star-wrapper">
+              <div class="stars-bg">★★★★★</div>
+              <div class="stars-fill" data-rating="{{ section.settings.stat_2_num }}">★★★★★</div>
+            </div>
+            <div class="stat-label">Average Rating</div>
+          </div>
+          <div class="ic-stat-card">
+            <div class="stat-value" data-target="{{ section.settings.stat_3_num }}" data-type="experience">{{ section.settings.stat_3_num }}+</div>
+            <div class="stat-label">Years Experience</div>
+          </div>
+        </div>
+      </div>
+      <div class="ic-features-row">
+        {% for block in section.blocks %}
+        {% assign icon_src = '' %}
+        {% case forloop.index %}
+          {% when 1 %}{% assign icon_src = 'https://cdn.shopify.com/s/files/1/0728/7111/7053/files/original_1.png?v=1766156630' %}
+          {% when 2 %}{% assign icon_src = 'https://cdn.shopify.com/s/files/1/0728/7111/7053/files/processor.png?v=1766156630' %}
+          {% when 3 %}{% assign icon_src = 'https://cdn.shopify.com/s/files/1/0728/7111/7053/files/support.png?v=1766156630' %}
+          {% when 4 %}{% assign icon_src = 'https://cdn.shopify.com/s/files/1/0728/7111/7053/files/recycle.png?v=1766156630' %}
+          {% when 5 %}{% assign icon_src = 'https://cdn.shopify.com/s/files/1/0728/7111/7053/files/pioneer.png?v=1766156630' %}
+          {% when 6 %}{% assign icon_src = 'https://cdn.shopify.com/s/files/1/0728/7111/7053/files/review_1.png?v=1766156630' %}
+        {% endcase %}
+        {% if block.settings.icon != blank %}
+          {% assign icon_src = block.settings.icon | image_url: width: 120 %}
+        {% endif %}
+        <div class="ic-feature-item ic-animate">
+          <div class="ic-icon-wrapper">
+            {% if icon_src != blank %}
+              <img src="{{ icon_src }}" alt="{{ block.settings.info }}" loading="lazy">
+            {% else %}
+               <div class="ic-placeholder-icon"></div>
+            {% endif %}
+          </div>
+          <span class="ic-feature-text">{{ block.settings.info }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  {% comment %} ===== DIFFERENCE SECTION (UNCHANGED) ===== {% endcomment %}
+  <section id="difference-{{ section.id }}" class="ic-section ic-section--muted">
+    <div class="ic-container">
+      <div class="ic-animate" style="text-align: center; margin-bottom: 60px;">
+        <h2 class="ic-section__title">The iCorrect Difference</h2>
+        <p class="ic-section__desc" style="margin: 0 auto;">
+          Manufacturer services often prioritise replacement over repair. We focus on circuit-level restoration, saving you money and preserving critical data.
+        </p>
+      </div>
+
+      <div class="ic-diff-grid">
+        {% comment %} Left: Comparison Table {% endcomment %}
+        <div class="ic-diff-col ic-animate">
+          <div class="ic-mobile-compare-toggle" role="group" aria-label="Comparison toggle">
+  <button type="button" class="ic-toggle-btn is-active" data-compare="manufacturer" aria-pressed="true">
+    Manufacturer
+  </button>
+  <button type="button" class="ic-toggle-btn" data-compare="icorrect" aria-pressed="false">
+    iCorrect
+  </button>
+</div>
+          <div class="ic-table-wrapper">
+            <table class="ic-table">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Standard Manufacturer</th>
+                  <th class="ic-highlight">iCorrect Managed</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Warranty</strong></td>
+                  <td>Limited or short warranty</td>
+                  <td><strong>2-year warranty on repairs</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Turnaround</strong></td>
+                  <td>5-7 days or longer</td>
+                  <td><strong>1-3 working days</strong></td>
+                </tr>
+                 <tr>
+                  <td><strong>Strategy</strong></td>
+                  <td>Assembly / Unit Swap</td>
+                  <td><strong>Component-level Repair</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Data</strong></td>
+                  <td>Wipe & Replace</td>
+                  <td><strong>Safe Retention</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Cost</strong></td>
+                  <td>High (Unit Swap)</td>
+                  <td><strong>Low (Targeted Repair)</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {% comment %} Right: Cost Graph (STATIC SOLID COLORS) {% endcomment %}
+        <div class="ic-diff-col ic-animate">
+           <div class="ic-graph-box">
+              <h3 class="ic-graph-title">Repair vs. Replace Cost</h3>
+              
+              <div class="ic-bar-group">
+                <div class="ic-bar-label">
+                  <span>New Device / Out-of-Warranty</span>
+                  <span>£1,200+</span>
+                </div>
+                <div class="ic-bar-track">
+                  {% comment %} Red bar {% endcomment %}
+                  <div class="ic-bar-fill ic-bar-fill--replace" style="--barW: 100%;"></div>
+                </div>
+              </div>
+
+              <div class="ic-bar-group">
+                <div class="ic-bar-label">
+                  <span>iCorrect Advanced Repair</span>
+                  <span>£400-£550</span>
+                </div>
+                <div class="ic-bar-track">
+                  {% comment %} Green bar {% endcomment %}
+                  <div class="ic-bar-fill ic-bar-fill--repair" style="--barW: 32%;"></div>
+                </div>
+              </div>
+              
+              <p class="ic-graph-note">*Estimates based on typical MacBook Pro Logic Board failure scenarios.</p>
+           </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  {% comment %} ===== DEVICE GRID SECTION (UNCHANGED) ===== {% endcomment %}
+  <section class="ic-section" data-testid="section-devices">
+    <div class="ic-container">
+      <div class="ic-animate">
+        <p class="ic-section__eyebrow">Supported Devices</p>
+        <h2 class="ic-section__title" data-testid="text-devices-heading">Fleet Device Coverage</h2>
+        <p class="ic-section__desc ic-section__desc--md">
+          We provide repair services across Apple MacBooks, iPhones, iPads, and Apple Watches used in business environments. Services range from common part replacements to component-level logic board repair.
+        </p>
+      </div>
+      <div class="ic-devices__grid">
+        <div class="ic-card ic-device ic-animate" data-testid="device-card-macbook">
+          <div class="ic-device__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M2 20h20"/></svg>
+          </div>
+          <h3 class="ic-device__title">MacBook Repairs</h3>
+          <p class="ic-device__desc">MacBook Pro and Air models, including Intel and Apple Silicon. Screen, battery, keyboard, and logic board repairs.</p>
+          <a href="#contact-{{ section.id }}" class="ic-btn ic-btn--outline ic-btn--sm" data-testid="button-enquire-macbook">Enquire</a>
+        </div>
+        <div class="ic-card ic-device ic-animate" data-testid="device-card-iphone">
+          <div class="ic-device__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="2" width="14" height="20" rx="2.5" ry="2.5"></rect>
+              <path d="M9 2h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-1z" fill="currentColor" stroke="none" /> 
+            </svg>
+          </div>
+          <h3 class="ic-device__title">iPhone Repairs</h3>
+          <p class="ic-device__desc">All recent iPhone models supported. Screen, battery, charging port, rear camera, and logic board-level repairs.</p>
+          <a href="#contact-{{ section.id }}" class="ic-btn ic-btn--outline ic-btn--sm" data-testid="button-enquire-iphone">Enquire</a>
+        </div>
+        <div class="ic-card ic-device ic-animate" data-testid="device-card-ipad">
+          <div class="ic-device__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          </div>
+          <h3 class="ic-device__title">iPad Repairs</h3>
+          <p class="ic-device__desc">iPad Pro, Air, and standard models. Screen, battery, charging port, and logic board-related repairs.</p>
+          <a href="#contact-{{ section.id }}" class="ic-btn ic-btn--outline ic-btn--sm" data-testid="button-enquire-ipad">Enquire</a>
+        </div>
+        <div class="ic-card ic-device ic-animate" data-testid="device-card-watch">
+          <div class="ic-device__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="6"/><polyline points="12 10 12 12 13 13"/><path d="m16.13 7.66-.81-4.05a2 2 0 0 0-2-1.61h-2.68a2 2 0 0 0-2 1.61l-.78 4.05"/><path d="m7.88 16.36.8 4a2 2 0 0 0 2 1.61h2.72a2 2 0 0 0 2-1.61l.81-4.05"/></svg>
+          </div>
+          <h3 class="ic-device__title">Apple Watch Repairs</h3>
+          <p class="ic-device__desc">Selected Apple Watch models. Screen, battery, and liquid damage assessment. Availability depends on model.</p>
+          <a href="#contact-{{ section.id }}" class="ic-btn ic-btn--outline ic-btn--sm" data-testid="button-enquire-watch">Enquire</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% comment %} ===== SLA SECTION (UNCHANGED) ===== {% endcomment %}
+  <section id="sla-{{ section.id }}" class="ic-section" data-testid="section-sla">
+    <div class="ic-container">
+      <div class="ic-animate">
+        <p class="ic-section__eyebrow">Service Commitments</p>
+        <h2 class="ic-section__title" data-testid="text-sla-heading">SLA & Logistics</h2>
+        <p class="ic-section__desc ic-section__desc--md">
+          All turnaround times are estimates measured from device receipt to dispatch. Final timelines are confirmed after diagnostic and depend on parts availability and repair complexity.
+        </p>
+      </div>
+
+      <div class="ic-sla__tiers ic-sla__tiers--three">
+        {% comment %} Tier 1: Standard {% endcomment %}
+        <div class="ic-card ic-sla ic-animate" data-testid="sla-tier-standard">
+          <div class="ic-sla__header">
+            <h3 class="ic-sla__title">Standard</h3>
+            <p class="ic-sla__subtitle">Non-urgent repairs and planned maintenance.</p>
+          </div>
+          <div class="ic-sla__rows">
+            <div class="ic-sla__row">
+              <span class="ic-sla__label">Target Turnaround</span>
+              <span class="ic-sla__value">3-5 business days</span>
+            </div>
+             <div class="ic-sla__row ic-sla__row--last">
+              <span class="ic-sla__label">Includes</span>
+              <span class="ic-sla__value">Diagnostic & Queue</span>
+            </div>
+          </div>
+        </div>
+
+        {% comment %} Tier 2: Priority (Highlighted) {% endcomment %}
+        <div class="ic-card ic-sla ic-sla--priority ic-animate" data-testid="sla-tier-priority">
+          <span class="ic-sla__badge ic-sla__badge--priority">Popular</span>
+          <div class="ic-sla__header">
+            <h3 class="ic-sla__title">Priority</h3>
+            <p class="ic-sla__subtitle">Time-sensitive and business-critical devices.</p>
+          </div>
+          <div class="ic-sla__rows">
+            <div class="ic-sla__row">
+              <span class="ic-sla__label">Target Turnaround</span>
+              <span class="ic-sla__value">1-2 business days</span>
+            </div>
+             <div class="ic-sla__row ic-sla__row--last">
+              <span class="ic-sla__label">Includes</span>
+              <span class="ic-sla__value">Priority Queue</span>
+            </div>
+          </div>
+        </div>
+
+        {% comment %} Tier 3: Express VIP (Most Prominent) {% endcomment %}
+        <div class="ic-card ic-sla ic-sla--vip ic-animate" data-testid="sla-tier-express">
+           <span class="ic-sla__badge ic-sla__badge--vip">Recommended</span>
+           <div class="ic-sla__header">
+            <h3 class="ic-sla__title" style="color: white;">Express VIP</h3>
+            <p class="ic-sla__subtitle" style="color: rgba(255,255,255,0.8);">Urgent, downtime must be minimised.</p>
+          </div>
+          <div class="ic-sla__rows">
+            <div class="ic-sla__row" style="border-color: rgba(255,255,255,0.2);">
+              <span class="ic-sla__label" style="color: rgba(255,255,255,0.8);">Target Turnaround</span>
+              <span class="ic-sla__value" style="color: white;">Same day</span>
+            </div>
+             <div class="ic-sla__row ic-sla__row--last">
+              <span class="ic-sla__label" style="color: rgba(255,255,255,0.8);">Notes</span>
+              <span class="ic-sla__value" style="color: white;">Subject to confirmation</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ic-logistics__grid">
+        <div class="ic-card ic-logistics ic-animate" data-testid="logistics-collection">
+          <h4 class="ic-logistics__title">Collection</h4>
+          <ul class="ic-logistics__list">
+            <li><svg class="ic-logistics__check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Nationwide courier collection available</li>
+            <li><svg class="ic-logistics__check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> London express courier option available</li>
+            <li><svg class="ic-logistics__check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> In-person drop-off at our London location</li>
+            <li><svg class="ic-logistics__check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Tracked and insured shipping via courier</li>
+          </ul>
+        </div>
+        <div class="ic-card ic-logistics ic-animate" data-testid="logistics-handling">
+          <h4 class="ic-logistics__title">Device Handling & Tracking</h4>
+          <ul class="ic-logistics__list">
+            <li><svg class="ic-logistics__check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Serial number recorded on intake</li>
+            <li><svg class="ic-logistics__check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Device condition checked on receipt</li>
+            <li><svg class="ic-logistics__check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Secure handling throughout repair process</li>
+            <li><svg class="ic-logistics__check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Updates provided via email and direct contact</li>
+          </ul>
+        </div>
+        <div class="ic-card ic-logistics ic-animate" data-testid="logistics-warranty-terms">
+          <h4 class="ic-logistics__title">Warranty Terms</h4>
+          <ul class="ic-logistics__list">
+            <li><svg class="ic-logistics__check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> 2-year warranty on all repairs</li>
+            <li><svg class="ic-logistics__check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Covers the work carried out and labour</li>
+            <li><svg class="ic-logistics__check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> No cover for accidental damage</li>
+            <li><svg class="ic-logistics__check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Terms confirmed at time of repair</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% comment %} ===== COMMERCIAL & SECURITY SECTIONS (UNCHANGED) ===== {% endcomment %}
+  <section id="commercial-{{ section.id }}" class="ic-section ic-section--muted" data-testid="section-commercial">
+    <div class="ic-container">
+      <div class="ic-animate">
+        <p class="ic-section__eyebrow">Enterprise Administration</p>
+        <h2 class="ic-section__title" data-testid="text-commercial-heading">Billing & Admin</h2>
+        <p class="ic-section__desc ic-section__desc--md">
+          Clear invoicing and payment handling for corporate clients. All pricing is confirmed after diagnostic and approval.
+        </p>
+      </div>
+      <div class="ic-commercial__grid">
+        <div class="ic-card ic-commercial ic-animate" data-testid="commercial-feature-0">
+          <svg class="ic-commercial__icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <h4 class="ic-commercial__title">PO Acceptance</h4>
+          <p class="ic-commercial__desc">Purchase orders accepted for approved corporate clients. PO details can be provided at booking or prior to invoicing.</p>
+        </div>
+        <div class="ic-card ic-commercial ic-animate" data-testid="commercial-feature-1">
+          <svg class="ic-commercial__icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg>
+          <h4 class="ic-commercial__title">VAT Invoices</h4>
+          <p class="ic-commercial__desc">VAT invoices issued for every repair. Invoices include device serial number, repair description, and cost breakdown.</p>
+        </div>
+        <div class="ic-card ic-commercial ic-animate" data-testid="commercial-feature-2">
+          <svg class="ic-commercial__icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+          <h4 class="ic-commercial__title">Payment Terms</h4>
+          <p class="ic-commercial__desc">Payment terms available for approved corporate clients only. Terms are agreed in advance.</p>
+        </div>
+        <div class="ic-card ic-commercial ic-animate" data-testid="commercial-feature-3">
+          <svg class="ic-commercial__icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>
+          <h4 class="ic-commercial__title">Consolidated Billing</h4>
+          <p class="ic-commercial__desc">Consolidated invoicing available by agreement. Typically used for multiple devices returned together or repeat work.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="security-{{ section.id }}" class="ic-section" data-testid="section-security">
+    <div class="ic-container">
+      <div class="ic-animate">
+        <p class="ic-section__eyebrow">Trust & Controls</p>
+        <h2 class="ic-section__title" data-testid="text-security-heading">Security & Compliance</h2>
+        <p class="ic-section__desc ic-section__desc--md">
+          Our processes are designed to align with corporate IT and security expectations, with a practical, repair-first approach that prioritises device safety and data protection.
+        </p>
+      </div>
+      <div class="ic-security__grid">
+        <div class="ic-card ic-security ic-animate" data-testid="security-feature-0">
+          <svg class="ic-security__icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+          <h4 class="ic-security__title">Chain of Custody</h4>
+          <p class="ic-security__desc">Devices are tracked by serial number from receipt to return. Condition is checked at intake and before dispatch.</p>
+        </div>
+        <div class="ic-card ic-security ic-animate" data-testid="security-feature-1">
+          <svg class="ic-security__icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <h4 class="ic-security__title">Data Handling</h4>
+          <p class="ic-security__desc">Devices remain locked during repair. Passcodes are not required for most repairs. Data is not accessed unless unavoidable.</p>
+        </div>
+        <div class="ic-card ic-security ic-animate" data-testid="security-feature-2">
+          <svg class="ic-security__icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
+          <h4 class="ic-security__title">Passcode Handling</h4>
+          <p class="ic-security__desc">When required, passcodes are used temporarily for testing, not retained, and shared only via secure methods.</p>
+        </div>
+        <div class="ic-card ic-security ic-animate" data-testid="security-feature-3">
+          <svg class="ic-security__icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg>
+          <h4 class="ic-security__title">NDA Available</h4>
+          <p class="ic-security__desc">Non-disclosure agreements available for corporate clients on request. We can work with our standard NDA or a client-provided agreement.</p>
+        </div>
+        <div class="ic-card ic-security ic-animate" data-testid="security-feature-4">
+          <svg class="ic-security__icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          <h4 class="ic-security__title">Approval Workflow</h4>
+          <p class="ic-security__desc">No repair work is carried out without prior approval. Quotes must be confirmed in writing before work proceeds.</p>
+        </div>
+        <div class="ic-card ic-security ic-animate" data-testid="security-feature-5">
+          <svg class="ic-security__icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <h4 class="ic-security__title">Access Control</h4>
+          <p class="ic-security__desc">Repairs are carried out on-site by trained technicians only. Customer devices are handled within our workshop environment.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% comment %} ===== LEAD FORM SECTION (WITH SUCCESS STATE) ===== {% endcomment %}
+  <section id="contact-{{ section.id }}" class="ic-section ic-section--dark" data-testid="section-contact">
+    <div class="ic-container">
+      <div class="ic-form__layout ic-animate">
+        <div class="ic-form__intro">
+          <p class="ic-section__eyebrow ic-section__eyebrow--light">Corporate Portal</p>
+          <h2 class="ic-section__title ic-section__title--light" data-testid="text-contact-heading">Start Your Corporate Repair Account</h2>
+          <p class="ic-form__intro-text">
+            Streamline your fleet management. Tell us about your needs, and we will tailor a solution for you within one business day.
+          </p>
+          <div class="ic-form__contact-details">
+            <p>Direct support: <a href="mailto:{{ section.settings.contact_email }}" style="color: #fff; text-decoration: underline;">{{ section.settings.contact_email }}</a></p>
+          </div>
+        </div>
+        <div class="ic-card ic-form" data-testid="form-lead">
+          {% form 'contact', id: 'corporate-lead-form' %}
+            {% if form.posted_successfully? %}
+               {% comment %} === SUCCESS MESSAGE === {% endcomment %}
+               <div class="ic-form-success">
+                  <div class="ic-form-success__icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  </div>
+                  <h3 class="ic-form-success__title">Request Received</h3>
+                  <p class="ic-form-success__text">
+                    Thank you for submitting your details. Our team will review your request and get back to you as soon as possible.
+                  </p>
+                  <a href="{{ routes.root_url }}" class="ic-btn ic-btn--primary ic-btn--sm" style="margin-top: 24px;">Back to Home</a>
+               </div>
+            {% else %}
+               {% comment %} === FORM FIELDS === {% endcomment %}
+               {{ form.errors | default_errors }}
+
+               <input type="hidden" name="contact[tags]" value="corporate-lead">
+               <input type="hidden" name="contact[interested_devices]" id="contact_devices_input">
+
+               <div class="ic-form__section">
+                <p class="ic-form__section-title">Contact Information</p>
+                <div class="ic-form__row">
+                  <div class="ic-form__field">
+                    <label for="contact_name" class="ic-form__label">Full Name *</label>
+                    <input type="text" name="contact[name]" id="contact_name" placeholder="Jane Smith" required class="ic-input" data-testid="input-contact-name">
+                  </div>
+                  <div class="ic-form__field">
+                    <label for="contact_email" class="ic-form__label">Work Email *</label>
+                    <input type="email" name="contact[email]" id="contact_email" placeholder="jane@company.com" required class="ic-input" data-testid="input-email">
+                  </div>
+                </div>
+                <div class="ic-form__row">
+                  <div class="ic-form__field">
+                    <label for="contact_phone" class="ic-form__label">Phone *</label>
+                    <input type="tel" name="contact[phone]" id="contact_phone" placeholder="+44 20 1234 5678" required class="ic-input" data-testid="input-phone">
+                  </div>
+                  <div class="ic-form__field">
+                    <label for="contact_job_title" class="ic-form__label">Job Title *</label>
+                    <input type="text" name="contact[job_title]" id="contact_job_title" placeholder="IT Manager" required class="ic-input" data-testid="input-job-title">
+                  </div>
+                </div>
+                <div class="ic-form__field">
+                  <label for="contact_company" class="ic-form__label">Company Name *</label>
+                  <input type="text" name="contact[company]" id="contact_company" placeholder="Acme Corporation Ltd" required class="ic-input" data-testid="input-company-name">
+                </div>
+              </div>
+
+              {% comment %} === DEVICE SELECTOR === {% endcomment %}
+              <div class="ic-form__section">
+                  <p class="ic-form__section-title">What devices do you need help with?</p>
+                  <div class="ic-device-selector-grid">
+                      <button type="button" class="ic-device-option" data-value="MacBook">
+                          <div class="ic-device-opt-icon">
+                             <img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/computer_1.png?v=1766439002" alt="MacBook">
+                          </div>
+                          <span class="ic-device-opt-label">MacBook</span>
+                      </button>
+
+                      <button type="button" class="ic-device-option" data-value="iPhone">
+                          <div class="ic-device-opt-icon">
+                             <img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/smartphone.png?v=1766439001" alt="iPhone">
+                          </div>
+                          <span class="ic-device-opt-label">iPhone</span>
+                      </button>
+
+                      <button type="button" class="ic-device-option" data-value="iPad">
+                          <div class="ic-device-opt-icon">
+                             <img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/ipad.png?v=1766439002" alt="iPad">
+                          </div>
+                          <span class="ic-device-opt-label">iPad</span>
+                      </button>
+
+                      <button type="button" class="ic-device-option" data-value="Watch">
+                          <div class="ic-device-opt-icon">
+                              <img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/apple.png?v=1766439001" alt="Watch">
+                          </div>
+                          <span class="ic-device-opt-label">Watch</span>
+                      </button>
+                  </div>
+              </div>
+
+              <div class="ic-form__section">
+                <p class="ic-form__section-title">Account Needs</p>
+                <div class="ic-form__row">
+                  <div class="ic-form__field">
+                     <label for="contact_fleet_size" class="ic-form__label">Device Fleet Size *</label>
+                     <select name="contact[fleet_size]" id="contact_fleet_size" required class="ic-select" data-testid="select-fleet-size">
+                      <option value="">Select fleet size</option>
+                      <option value="1-20">1-20 devices</option>
+                      <option value="21-50">21-50 devices</option>
+                      <option value="51-100">51-100 devices</option>
+                      <option value="101-500">101-500 devices</option>
+                      <option value="500+">500+ devices</option>
+                    </select>
+                  </div>
+                  <div class="ic-form__field">
+                    <label for="contact_sla" class="ic-form__label">SLA Requirement *</label>
+                    <select name="contact[sla]" id="contact_sla" required class="ic-select" data-testid="select-sla">
+                      <option value="">Select SLA</option>
+                      <option value="standard">Standard (3-5 days)</option>
+                      <option value="priority">Priority (1-2 days)</option>
+                      <option value="express">Express VIP (Same day)</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="ic-form__field">
+                  <label for="contact_notes" class="ic-form__label">Additional Notes</label>
+                  <textarea name="contact[body]" id="contact_notes" placeholder="Any specific requirements..." class="ic-textarea" rows="4" data-testid="textarea-notes"></textarea>
+                </div>
+              </div>
+              <button type="submit" class="ic-btn ic-btn--primary ic-btn--lg ic-btn--full" data-testid="button-submit-lead">
+                Request Corporate Account
+              </button>
+            {% endif %}
+          {% endform %}
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+/**
+ * iCorrect Corporate Landing Page - Shopify Theme Styles
+ * UPDATED V21.0 - Success Message Added
+ */
+
+/* ===== CSS CUSTOM PROPERTIES ===== */
+.icorrect-landing {
+  --ic-background: #ffffff;
+  --ic-foreground: #1c1c1c;
+  --ic-muted: #f5f5f5;
+  --ic-muted-foreground: #595959;
+  --ic-border: #e3e3e3;
+  --ic-card: #fafafa;
+  --ic-card-border: #f0f0f0;
+  --ic-primary: #0066cc;
+  --ic-primary-foreground: #ffffff;
+  --ic-primary-hover: #0052a3;
+  /* Graph Colors */
+  --ic-graph-replace: #e74c3c; /* Red for expensive/bad */
+  --ic-graph-repair: #2ecc71;  /* Green for affordable/good */
+  --ic-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --ic-radius: 12px;
+  --ic-transition: 0.2s ease;
+
+  font-family: var(--ic-font-sans);
+  color: var(--ic-foreground);
+  background: var(--ic-background);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  font-size: 18px; 
+}
+
+.icorrect-landing *, .icorrect-landing *::before, .icorrect-landing *::after { box-sizing: border-box; }
+
+/* ===== 1. CONTAINER FIXED WIDTH ===== */
+.ic-container {
+  width: 100%;
+  max-width: 1280px; /* Standard wide width */
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+@media (max-width: 768px) {
+  .ic-container {
+    padding: 0 20px;
+  }
+}
+
+/* ===== 2. HERO SPLIT LAYOUT ===== */
+.ic-hero {
+  padding: 120px 0;
+  border-bottom: 1px solid var(--ic-border);
+  width: 100%;
+  background: var(--ic-background);
+}
+
+.ic-container--hero-split {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.ic-hero__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ic-hero__title {
+  font-size: 56px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin: 0 0 24px 0;
+  color: var(--ic-foreground);
+}
+
+.ic-text-primary { color: var(--ic-primary); }
+
+.ic-hero__subtitle {
+  font-size: 20px;
+  color: var(--ic-muted-foreground);
+  margin: 0 0 40px 0;
+  line-height: 1.5;
+  max-width: 90%;
+}
+
+.ic-hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+/* Right Column: Logo Grid */
+.ic-hero__trust {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%; 
+}
+
+.ic-hero__trust-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888;
+  margin: 0 0 40px 0;
+}
+
+/* 2x2 Grid for Logos */
+.ic-hero__logo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 40px;
+  row-gap: 50px;
+  align-items: center;
+}
+
+.ic-logo-item img {
+  width: 100%;
+  max-width: 160px;
+  height: auto;
+  object-fit: contain;
+  filter: grayscale(100%) brightness(0); 
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.ic-logo-item img:hover {
+  opacity: 1;
+}
+
+/* Mobile Responsiveness for Hero */
+@media (max-width: 1024px) {
+  .ic-container--hero-split {
+    grid-template-columns: 1fr;
+    gap: 60px;
+    text-align: left;
+  }
+  .ic-hero__subtitle { max-width: 100%; }
+}
+
+@media (max-width: 600px) {
+  .ic-hero { padding: 80px 0; }
+  .ic-hero__title { font-size: 40px; }
+  .ic-hero__logo-grid {
+    column-gap: 20px;
+    row-gap: 30px;
+  }
+  .ic-logo-item img { max-width: 120px; }
+  .ic-hero__cta { flex-direction: column; width: 100%; }
+  .ic-btn { width: 100%; }
+}
+
+/* ===== GENERIC COMPONENTS ===== */
+.ic-badge {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 16px;
+  background: var(--ic-muted);
+  color: var(--ic-foreground);
+  border-radius: 999px;
+  margin-bottom: 24px;
+  align-self: flex-start;
+}
+
+.ic-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 16px 32px;
+  min-height: 3.5rem;
+  transition: all var(--ic-transition);
+  cursor: pointer;
+  border: 2px solid transparent;
+  font-size: 16px;
+}
+
+.ic-bar-fill { will-change: width; }
+
+.ic-btn--primary { background: var(--ic-primary); color: var(--ic-primary-foreground); border-color: var(--ic-primary); }
+.ic-btn--primary:hover { background: var(--ic-primary-hover); transform: translateY(-2px); }
+.ic-btn--outline { background: transparent; color: var(--ic-foreground); border-color: var(--ic-border); }
+.ic-btn--outline:hover { background: var(--ic-muted); }
+.ic-btn--sm { padding: 10px 20px; font-size: 14px; min-height: auto; }
+.ic-btn--full { width: 100%; }
+
+.ic-section { padding: 80px 0; border-bottom: 1px solid var(--ic-border); }
+.ic-section--muted { background: var(--ic-muted); }
+.ic-section--dark { background: var(--ic-foreground); color: var(--ic-background); }
+
+.ic-section__eyebrow { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--ic-muted-foreground); margin-bottom: 16px; }
+.ic-section__eyebrow--light { color: rgba(255, 255, 255, 0.7); }
+.ic-section__title { font-size: 42px; font-weight: 700; margin: 0 0 24px 0; color: var(--ic-foreground); line-height: 1.1; }
+.ic-section__title--light { color: var(--ic-background); }
+.ic-section__desc { font-size: 18px; color: var(--ic-muted-foreground); margin: 0 0 40px 0; max-width: 700px; }
+
+/* ===== PROCESS GRID ===== */
+.ic-process__grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 30px; }
+.ic-process__step { padding-top: 24px; border-top: 3px solid var(--ic-border); }
+.ic-process__num { display: block; font-size: 32px; font-weight: 800; color: var(--ic-border); margin-bottom: 12px; }
+.ic-process__title { font-size: 20px; font-weight: 600; margin: 0 0 8px 0; }
+.ic-process__desc { font-size: 15px; color: var(--ic-muted-foreground); line-height: 1.5; }
+@media (max-width: 1024px) { .ic-process__grid { grid-template-columns: 1fr; gap: 40px; } }
+
+/* ===== WHY SECTION ===== */
+.icorrect-clean-section { padding: 80px 0; background-color: #FFFFFF; border-bottom: 1px solid var(--ic-border); }
+.ic-top-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 60px; margin-bottom: 60px; flex-wrap: wrap; }
+.ic-text-col { flex: 1; min-width: 300px; }
+.ic-heading { font-size: 42px; font-weight: 700; line-height: 1.1; margin-bottom: 24px; }
+.ic-stats-col { flex: 1.2; display: flex; gap: 20px; min-width: 300px; }
+.ic-stat-card { flex: 1; background: #F5F5F7; padding: 30px 20px; border-radius: 16px; text-align: center; }
+.stat-value { font-size: 36px; font-weight: 700; margin-bottom: 5px; }
+.stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase; color: #86868B; }
+.star-wrapper { position: relative; display: inline-block; font-size: 20px; }
+.stars-bg { color: #D1D1D6; }
+.stars-fill { position: absolute; top: 0; left: 0; white-space: nowrap; overflow: hidden; color: #F5A623; width: 0%; }
+.ic-features-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; padding-top: 40px; border-top: 1px solid #E5E5E5; }
+.ic-feature-item { display: flex; align-items: center; gap: 16px; }
+.ic-icon-wrapper { width: 48px; height: 48px; }
+.ic-icon-wrapper img { width: 100%; height: 100%; object-fit: contain; }
+.ic-feature-text { font-size: 18px; font-weight: 600; }
+@media(max-width: 900px) { .ic-stats-col { flex-wrap: wrap; } .ic-stat-card { min-width: 140px; } .ic-features-row { grid-template-columns: 1fr; } }
+
+/* ===== GRAPH & TABLE (Overhauled) ===== */
+.ic-diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; } /* Aligned to top */
+.ic-table-wrapper { background: #fff; border: 1px solid var(--ic-border); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.ic-table { width: 100%; border-collapse: collapse; }
+.ic-table th { text-align: left; padding: 20px; border-bottom: 2px solid #eee; font-size: 16px; background: #fafafa; color: var(--ic-muted-foreground); }
+.ic-table td { padding: 20px; border-bottom: 1px solid #eee; font-size: 16px; vertical-align: top; }
+.ic-highlight { color: var(--ic-primary); }
+
+/* Graph Container Styling */
+.ic-graph-box { 
+  background: #fff; 
+  padding: 40px; 
+  border-radius: 16px; 
+  border: 1px solid var(--ic-border); 
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06); 
+}
+
+.ic-graph-title { 
+  font-size: 24px; 
+  font-weight: 700; 
+  margin-bottom: 30px; 
+  letter-spacing: -0.5px;
+}
+
+.ic-bar-group { margin-bottom: 24px; }
+
+.ic-bar-label { 
+  display: flex; 
+  justify-content: space-between; 
+  margin-bottom: 10px; 
+  font-weight: 600; 
+  font-size: 16px; 
+  color: var(--ic-foreground);
+}
+
+.ic-bar-track { 
+  width: 100%; 
+  height: 42px; 
+  background: #f1f2f4; 
+  border-radius: 8px; 
+  overflow: hidden; 
+  position: relative; 
+}
+
+/* Base Bar Styling */
+.ic-bar-fill { 
+  height: 100%; 
+  display: block; 
+  border-radius: 8px; 
+  position: relative;
+}
+
+/* EXPENSIVE OPTION (RED) - Static Color */
+.ic-bar-fill--replace {
+  background-color: #e74c3c; 
+}
+
+/* AFFORDABLE OPTION (iCORRECT GREEN) - Static Color */
+.ic-bar-fill--repair {
+  background-color: #2ecc71;
+}
+
+.ic-graph-note { 
+  font-size: 13px; 
+  color: var(--ic-muted-foreground); 
+  margin-top: 24px; 
+  line-height: 1.4;
+}
+@media (max-width: 900px) { .ic-diff-grid { grid-template-columns: 1fr; } }
+
+/* ===== DEVICE GRID ===== */
+.ic-devices__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.ic-device { text-align: center; padding: 32px 20px; background: var(--ic-card); border: 1px solid var(--ic-card-border); border-radius: 12px; }
+.ic-device__icon { width: 64px; height: 64px; margin: 0 auto 20px; background: var(--ic-muted); border-radius: 16px; display: flex; align-items: center; justify-content: center; }
+.ic-device__icon svg { width: 32px; height: 32px; }
+.ic-device__title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+.ic-device__desc { font-size: 15px; color: var(--ic-muted-foreground); margin-bottom: 20px; }
+@media (max-width: 1024px) { .ic-devices__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .ic-devices__grid { grid-template-columns: 1fr; } }
+
+/* ===== SLA TIERS (Overhauled Highlighting) ===== */
+.ic-sla__tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 60px; align-items: stretch; }
+.ic-sla { padding: 32px; position: relative; background: var(--ic-card); border-radius: 16px; border: 1px solid var(--ic-card-border); display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.ic-sla:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+/* VIP rows: prevent label/value wrapping */
+.ic-sla--vip .ic-sla__row {
+  flex-wrap: nowrap;
+  gap: 16px;
+  align-items: center;
+}
+
+.ic-sla--vip .ic-sla__label,
+.ic-sla--vip .ic-sla__value {
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+.ic-sla--vip .ic-sla__value {
+  text-align: right;
+}
+
+/* Priority Card Highlight */
+.ic-sla--priority { border: 2px solid var(--ic-primary); background: #fff; }
+.ic-sla__badge--priority { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--ic-primary); color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; letter-spacing: 0.5px; box-shadow: 0 4px 8px rgba(0, 102, 204, 0.2); }
+
+/* VIP Card MOST Prominent Highlight */
+.ic-sla--vip { background: var(--ic-primary); border: none; color: white; transform: scale(1.05); z-index: 2; box-shadow: 0 15px 30px rgba(0, 102, 204, 0.3); }
+.ic-sla--vip:hover { transform: scale(1.05) translateY(-5px); box-shadow: 0 20px 40px rgba(0, 102, 204, 0.4); }
+.ic-sla__badge--vip { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #FFD700; color: var(--ic-foreground); padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4); }
+.ic-sla--vip .ic-sla__subtitle { color: rgba(255, 255, 255, 0.9); }
+.ic-sla--vip .ic-sla__row { border-bottom-color: rgba(255, 255, 255, 0.2); }
+.ic-sla--vip .ic-sla__label { color: rgba(255, 255, 255, 0.9); }
+.ic-sla--vip .ic-sla__value { color: #ffffff; }
+
+.ic-sla__title { font-size: 24px; font-weight: 700; margin-bottom: 12px; }
+.ic-sla__subtitle { font-size: 15px; color: var(--ic-muted-foreground); margin-bottom: 30px; flex-grow: 1; }
+.ic-sla__rows { margin-top: auto; }
+.ic-sla__row { display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid var(--ic-border); font-size: 15px; }
+.ic-sla__row--last { border-bottom: none; }
+.ic-sla__label { color: var(--ic-muted-foreground); font-weight: 500; }
+.ic-sla__value { font-weight: 700; }
+
+@media (max-width: 900px) { 
+  .ic-sla__tiers { grid-template-columns: 1fr; gap: 40px; } 
+  .ic-sla--vip { transform: none; }
+  .ic-sla--vip:hover { transform: translateY(-5px); }
+}
+
+/* ===== LOGISTICS & SECURITY GRID ===== */
+.ic-logistics__grid, .ic-commercial__grid, .ic-security__grid { display: grid; gap: 24px; margin-bottom: 40px; }
+.ic-logistics__grid { grid-template-columns: repeat(3, 1fr); }
+.ic-commercial__grid, .ic-security__grid { grid-template-columns: repeat(4, 1fr); }
+.ic-card { background: var(--ic-card); padding: 24px; border-radius: 12px; border: 1px solid var(--ic-card-border); }
+.ic-logistics__title, .ic-commercial__title, .ic-security__title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+.ic-logistics__list { list-style: none; padding: 0; margin: 0; }
+.ic-logistics__list li { display: flex; gap: 10px; font-size: 14px; color: var(--ic-muted-foreground); margin-bottom: 8px; }
+.ic-logistics__check { color: var(--ic-primary); flex-shrink: 0; }
+.ic-commercial__icon, .ic-security__icon { color: var(--ic-primary); width: 32px; height: 32px; margin-bottom: 16px; }
+.ic-commercial__desc, .ic-security__desc { font-size: 14px; color: var(--ic-muted-foreground); line-height: 1.5; }
+@media (max-width: 1024px) { .ic-logistics__grid, .ic-commercial__grid, .ic-security__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .ic-logistics__grid, .ic-commercial__grid, .ic-security__grid { grid-template-columns: 1fr; } }
+
+/* ===== FORM (UPDATED) ===== */
+.ic-form__layout { display: flex; flex-direction: column; align-items: center; gap: 50px; }
+.ic-form { width: 100%; max-width: 800px; padding: 48px; background: #fff; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+.ic-form__section { margin-bottom: 40px; }
+.ic-form__section:last-of-type { margin-bottom: 30px; }
+.ic-form__section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ic-muted-foreground); margin-bottom: 24px; border-bottom: 1px solid #eee; padding-bottom: 12px; }
+.ic-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+.ic-form__field { margin-bottom: 24px; }
+.ic-form__label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--ic-foreground); }
+.ic-input, .ic-select, .ic-textarea { width: 100%; padding: 14px; border: 1px solid var(--ic-border); border-radius: 8px; font-family: inherit; font-size: 16px; transition: border-color 0.2s; }
+.ic-input:focus, .ic-select:focus, .ic-textarea:focus { outline: none; border-color: var(--ic-primary); box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1); }
+
+/* SUCCESS MESSAGE STYLES */
+.ic-form-success {
+    text-align: center;
+    padding: 20px 0;
+}
+.ic-form-success__icon {
+    width: 64px;
+    height: 64px;
+    background: #e6fcf5;
+    color: #0ca678;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+}
+.ic-form-success__icon svg {
+    width: 32px;
+    height: 32px;
+}
+.ic-form-success__title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--ic-foreground);
+}
+.ic-form-success__text {
+    font-size: 18px;
+    color: var(--ic-muted-foreground);
+    line-height: 1.6;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* DEVICE SELECTOR STYLES */
+.ic-device-selector-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+.ic-device-option {
+    background: #fff;
+    border: 1px solid var(--ic-border);
+    border-radius: 12px;
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    height: 110px;
+    width: 100%;
+}
+.ic-device-option:hover {
+    border-color: #ccc;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.ic-device-opt-icon {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 12px;
+    color: #999;
+    transition: color 0.2s;
+}
+.ic-device-opt-icon svg, .ic-device-opt-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.ic-device-opt-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+    transition: color 0.2s;
+}
+
+/* Selected State */
+.ic-device-option.is-selected {
+    border: 2px solid var(--ic-primary);
+    background: #f0f7ff; /* Very light blue tint */
+    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.15);
+}
+.ic-device-option.is-selected .ic-device-opt-icon {
+    color: var(--ic-primary);
+}
+.ic-device-option.is-selected .ic-device-opt-label {
+    color: var(--ic-primary);
+    font-weight: 600;
+}
+
+@media (max-width: 600px) { 
+  .ic-form__row { grid-template-columns: 1fr; gap: 0; } 
+  .ic-form { padding: 24px; }
+  .ic-device-selector-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ===== ANIMATION UTILS ===== */
+.icorrect-landing .ic-animate { opacity: 1; transform: none; transition: none; }
+.icorrect-landing.ic-js-ready .ic-animate { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+.icorrect-landing.ic-js-ready .ic-animate.ic-animate--visible { opacity: 1; transform: translateY(0); }
+
+/* Force VIP and Priority visuals to override .ic-card defaults */
+.ic-card.ic-sla--vip {
+  background: var(--ic-primary);
+  border: none;
+  color: #fff;
+}
+
+.ic-card.ic-sla--vip .ic-sla__subtitle,
+.ic-card.ic-sla--vip .ic-sla__label { color: rgba(255,255,255,0.9); }
+
+.ic-card.ic-sla--vip .ic-sla__row { border-bottom-color: rgba(255,255,255,0.2); }
+.ic-card.ic-sla--vip .ic-sla__value { color: #fff; }
+
+.ic-card.ic-sla--priority {
+  background: #fff;
+  border: 2px solid var(--ic-primary);
+}
+
+/* Table personality */
+.ic-table-wrapper {
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.06);
+}
+
+.ic-table thead th {
+  background: #f6f7f9;
+  border-bottom: 1px solid #e7e7ea;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.ic-table tbody tr:nth-child(even) td { background: #fcfcfd; }
+
+.ic-table tbody tr:hover td { background: #f2f7ff; }
+
+.ic-table td:first-child strong {
+  display: inline-flex;
+  padding: 6px 10px;
+  background: #eef0f3;
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+.ic-table th:nth-child(3),
+.ic-table td:nth-child(3) {
+  background: rgba(0,102,204,0.06);
+}
+
+.ic-table th:nth-child(3) {
+  color: var(--ic-primary);
+}
+
+.ic-table td:nth-child(3) strong {
+  color: var(--ic-foreground);
+}
+
+.ic-table td, .ic-table th {
+  border-bottom: 1px solid #ececf0;
+}
+
+.ic-table tbody tr:last-child td { border-bottom: none; }
+
+/* Give the table more space vs the graph on desktop */
+@media (min-width: 1024px) {
+  .ic-diff-grid {
+    grid-template-columns: 1.25fr 0.75fr;
+    gap: 48px;
+  }
+}
+
+/* Highlight ONLY titles (Feature values) + iCorrect column */
+.ic-table th:nth-child(3) {
+  background: #f3f7ff;
+  color: var(--ic-primary);
+}
+
+.ic-table td:nth-child(3) {
+  background: #f7faff;
+  font-weight: 700;
+}
+
+.ic-table td:first-child strong {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: #f1f2f5;
+  font-weight: 700;
+}
+
+/* Reduce wrapping on desktop */
+@media (min-width: 1024px) {
+  .ic-table td:nth-child(2),
+  .ic-table td:nth-child(3) {
+    white-space: nowrap;
+  }
+}
+
+/* Slightly roomier cells so lines stay single */
+.ic-table th,
+.ic-table td {
+  padding: 22px 26px;
+}
+/* ===== HARD OVERRIDE: Repair vs Replace bars (must be LAST in the style tag) ===== */
+#icorrect-landing-{{ section.id }} .ic-bar-track { background: #f1f2f4; }
+
+#icorrect-landing-{{ section.id }} .ic-bar-track .ic-bar-fill {
+  width: var(--barW, 0%) !important;
+  height: 100% !important;
+  display: block !important;
+  border-radius: 8px !important;
+  background-image: none !important;
+  animation: none !important;
+}
+
+#icorrect-landing-{{ section.id }} .ic-bar-track .ic-bar-fill--replace {
+  background: #c0392b !important;
+}
+
+#icorrect-landing-{{ section.id }} .ic-bar-track .ic-bar-fill--repair {
+  background: #4caf50 !important;
+}
+
+/* ===== TABLE: highlight ONLY iCorrect column (col 3) ===== */
+#icorrect-landing-{{ section.id }} .ic-table thead th,
+#icorrect-landing-{{ section.id }} .ic-table tbody td {
+  background: transparent;
+}
+
+#icorrect-landing-{{ section.id }} .ic-table tbody tr:nth-child(even) td,
+#icorrect-landing-{{ section.id }} .ic-table tbody tr:hover td {
+  background: transparent;
+}
+
+/* Strong, consistent light-blue fill for ALL iCorrect column rows */
+#icorrect-landing-{{ section.id }} .ic-table th:nth-child(3),
+#icorrect-landing-{{ section.id }} .ic-table td:nth-child(3) {
+  background: #dbeafe; /* stronger light blue */
+}
+
+#icorrect-landing-{{ section.id }} .ic-table th:nth-child(3) {
+  color: var(--ic-primary);
+}
+
+/* Make the separation lines a bit clearer inside the blue column */
+#icorrect-landing-{{ section.id }} .ic-table td:nth-child(3),
+#icorrect-landing-{{ section.id }} .ic-table th:nth-child(3) {
+  border-left: 1px solid rgba(0,102,204,0.18);
+}
+
+/* 1) Make the ENTIRE iCorrect column blue, always (including even rows + hover) */
+#icorrect-landing-{{ section.id }} .ic-table th:nth-child(3),
+#icorrect-landing-{{ section.id }} .ic-table td:nth-child(3),
+#icorrect-landing-{{ section.id }} .ic-table tbody tr:nth-child(even) td:nth-child(3),
+#icorrect-landing-{{ section.id }} .ic-table tbody tr:hover td:nth-child(3) {
+  background: #dbeafe !important; /* stronger blue */
+}
+
+/* Optional: make the column divider a bit clearer */
+#icorrect-landing-{{ section.id }} .ic-table th:nth-child(3),
+#icorrect-landing-{{ section.id }} .ic-table td:nth-child(3) {
+  border-left: 1px solid rgba(0, 102, 204, 0.22) !important;
+}
+
+/* 2) Remove the pills from the left column */
+#icorrect-landing-{{ section.id }} .ic-table td:first-child strong {
+  display: inline !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  font-size: inherit !important;
+  font-weight: 700;
+}
+
+/* =========================
+   MOBILE OVERFLOW FIXES
+   Paste this LAST
+   ========================= */
+
+/* Prevent grid items from forcing overflow */
+#icorrect-landing-{{ section.id }} .ic-diff-col,
+#icorrect-landing-{{ section.id }} .ic-graph-box,
+#icorrect-landing-{{ section.id }} .ic-sla,
+#icorrect-landing-{{ section.id }} .ic-table-wrapper {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* ---------- TABLE (mobile) ---------- */
+@media (max-width: 768px) {
+  #icorrect-landing-{{ section.id }} .ic-table-wrapper {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-table {
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-table th,
+  #icorrect-landing-{{ section.id }} .ic-table td {
+    padding: 14px 14px;
+    font-size: 14px;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-table th:nth-child(1),
+  #icorrect-landing-{{ section.id }} .ic-table td:nth-child(1) { width: 30%; }
+
+  #icorrect-landing-{{ section.id }} .ic-table th:nth-child(2),
+  #icorrect-landing-{{ section.id }} .ic-table td:nth-child(2) { width: 35%; }
+
+  #icorrect-landing-{{ section.id }} .ic-table th:nth-child(3),
+  #icorrect-landing-{{ section.id }} .ic-table td:nth-child(3) { width: 35%; }
+}
+
+/* ---------- GRAPH (mobile) ---------- */
+@media (max-width: 600px) {
+  #icorrect-landing-{{ section.id }} .ic-graph-box {
+    padding: 20px;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-bar-label {
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    align-items: flex-start;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-bar-label span {
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-bar-track {
+    height: 36px;
+  }
+}
+
+/* ---------- SLA (mobile) ---------- */
+@media (max-width: 600px) {
+  #icorrect-landing-{{ section.id }} .ic-sla {
+    padding: 22px;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-sla__row {
+    flex-wrap: wrap;
+    gap: 6px 12px;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-sla__label,
+  #icorrect-landing-{{ section.id }} .ic-sla__value {
+    white-space: normal;
+    max-width: 100%;
+  }
+
+  /* Override your VIP nowrap rules on mobile */
+  #icorrect-landing-{{ section.id }} .ic-sla--vip .ic-sla__row {
+    flex-wrap: wrap !important;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-sla--vip .ic-sla__label,
+  #icorrect-landing-{{ section.id }} .ic-sla--vip .ic-sla__value {
+    white-space: normal !important;
+    flex: 1 1 auto !important;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-sla--vip .ic-sla__value {
+    text-align: left !important;
+  }
+
+  /* Badges: keep inside card width */
+  #icorrect-landing-{{ section.id }} .ic-sla__badge--priority,
+  #icorrect-landing-{{ section.id }} .ic-sla__badge--vip {
+    max-width: calc(100% - 24px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* ===== MOBILE FIXES: Why stats stack, table, graph, SLA no horizontal cut ===== */
+@media (max-width: 600px) {
+  /* General: stop horizontal clipping */
+  #icorrect-landing-{{ section.id }} .ic-card,
+  #icorrect-landing-{{ section.id }} .ic-graph-box,
+  #icorrect-landing-{{ section.id }} .ic-table-wrapper {
+    max-width: 100%;
+  }
+
+  /* WHY SECTION: stack stats 1 per row */
+  #icorrect-landing-{{ section.id }} .ic-top-row {
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-text-col,
+  #icorrect-landing-{{ section.id }} .ic-stats-col {
+    min-width: 0;
+    width: 100%;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-stats-col {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-stat-card {
+    width: 100%;
+    min-width: 0;
+    padding: 22px 18px;
+    border-radius: 16px;
+  }
+
+  #icorrect-landing-{{ section.id }} .stat-value { font-size: 34px; }
+
+  /* DIFFERENCE: tighten spacing on mobile */
+  #icorrect-landing-{{ section.id }} .ic-diff-grid {
+    gap: 28px;
+  }
+
+  /* TABLE: prevent cramped columns, allow scroll if needed, reduce padding */
+  #icorrect-landing-{{ section.id }} .ic-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-table {
+    width: 100%;
+    min-width: 520px;
+    border-collapse: collapse;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-table th,
+  #icorrect-landing-{{ section.id }} .ic-table td {
+    padding: 14px 12px;
+    font-size: 14px;
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: anywhere;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-table thead th {
+    font-size: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  /* GRAPH: stop label row forcing overflow */
+  #icorrect-landing-{{ section.id }} .ic-graph-box {
+    padding: 20px;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-bar-label {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-bar-track {
+    height: 34px;
+    border-radius: 10px;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-bar-track .ic-bar-fill {
+    border-radius: 10px !important;
+  }
+
+  /* SLA: remove nowrap forcing horizontal cut, tighten padding */
+  #icorrect-landing-{{ section.id }} .ic-sla {
+    padding: 22px;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-sla__tiers {
+    gap: 24px;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-sla__row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-sla--vip .ic-sla__row,
+  #icorrect-landing-{{ section.id }} .ic-sla--vip .ic-sla__label,
+  #icorrect-landing-{{ section.id }} .ic-sla--vip .ic-sla__value {
+    white-space: normal;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-sla--vip .ic-sla__value {
+    text-align: left;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-sla__badge--priority,
+  #icorrect-landing-{{ section.id }} .ic-sla__badge--vip {
+    max-width: 92%;
+    white-space: nowrap;
+  }
+}
+
+/* =========================
+   MOBILE ONLY, comparison toggle
+   Paste LAST
+   ========================= */
+
+#icorrect-landing-{{ section.id }} .ic-mobile-compare-toggle { display: none; }
+
+@media (max-width: 768px) {
+  #icorrect-landing-{{ section.id }} .ic-mobile-compare-toggle {
+    display: flex;
+    gap: 8px;
+    padding: 10px;
+    margin: 0 0 12px 0;
+    background: #fff;
+    border: 1px solid var(--ic-border);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-toggle-btn {
+    flex: 1 1 0;
+    appearance: none;
+    border: 1px solid var(--ic-border);
+    background: #f6f7f9;
+    color: var(--ic-foreground);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-toggle-btn.is-active {
+    background: var(--ic-primary);
+    border-color: var(--ic-primary);
+    color: #fff;
+  }
+
+  /* Keep the card size, remove horizontal scroll behavior for the table */
+  #icorrect-landing-{{ section.id }} .ic-table-wrapper {
+    overflow-x: hidden !important;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-table {
+    min-width: 0 !important;
+    width: 100% !important;
+    table-layout: fixed;
+  }
+
+  /* Feature column width */
+  #icorrect-landing-{{ section.id }} .ic-table th:nth-child(1),
+  #icorrect-landing-{{ section.id }} .ic-table td:nth-child(1) {
+    width: 44% !important;
+  }
+
+  /* Compare column width (either col 2 or 3) */
+  #icorrect-landing-{{ section.id }} .ic-table th:nth-child(2),
+  #icorrect-landing-{{ section.id }} .ic-table td:nth-child(2),
+  #icorrect-landing-{{ section.id }} .ic-table th:nth-child(3),
+  #icorrect-landing-{{ section.id }} .ic-table td:nth-child(3) {
+    width: 56% !important;
+  }
+
+  /* Default state if JS is blocked */
+  #icorrect-landing-{{ section.id }}.ic-compare--manufacturer .ic-table th:nth-child(3),
+  #icorrect-landing-{{ section.id }}.ic-compare--manufacturer .ic-table td:nth-child(3) {
+    display: none;
+  }
+
+  #icorrect-landing-{{ section.id }}.ic-compare--icorrect .ic-table th:nth-child(2),
+  #icorrect-landing-{{ section.id }}.ic-compare--icorrect .ic-table td:nth-child(2) {
+    display: none;
+  }
+}
+
+/* ===== FORM SPACING TIGHTEN (paste near end) ===== */
+
+/* less space between big groups */
+#icorrect-landing-{{ section.id }} .ic-form__section { margin-bottom: 24px; }
+#icorrect-landing-{{ section.id }} .ic-form__section:last-of-type { margin-bottom: 18px; }
+
+/* section headings take less room */
+#icorrect-landing-{{ section.id }} .ic-form__section-title {
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+}
+
+/* rows closer together */
+#icorrect-landing-{{ section.id }} .ic-form__row {
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* individual fields closer */
+#icorrect-landing-{{ section.id }} .ic-form__field { margin-bottom: 14px; }
+
+/* label closer to input */
+#icorrect-landing-{{ section.id }} .ic-form__label { margin-bottom: 6px; }
+
+/* inputs slightly shorter */
+#icorrect-landing-{{ section.id }} .ic-input,
+#icorrect-landing-{{ section.id }} .ic-select {
+  padding: 12px 14px;
+}
+
+/* textarea tighter */
+#icorrect-landing-{{ section.id }} .ic-textarea {
+  padding: 12px 14px;
+}
+
+/* ===== MOBILE: center partner logos ===== */
+@media (max-width: 768px) {
+  #icorrect-landing-{{ section.id }} .ic-hero__trust {
+    width: 100%;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-hero__logo-grid {
+    justify-items: center;
+    justify-content: center;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-logo-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-logo-item img {
+    margin: 0 auto;
+  }
+}
+
+/* ===== MOBILE: equal top/bottom spacing around partner logos ===== */
+@media (max-width: 768px) {
+  #icorrect-landing-{{ section.id }} .ic-hero__trust {
+    height: auto;
+    padding-top: 18px;
+    padding-bottom: 0px;
+  }
+
+  #icorrect-landing-{{ section.id }} .ic-hero__logo-grid {
+    margin: 0;
+  }
+}
+</style>
+
+<script>
+(function () {
+  function initLanding(root) {
+    if (!root || root.dataset.icInit === '1') return;
+    root.dataset.icInit = '1';
+
+    root.classList.add('ic-js-ready');
+        root.classList.add('ic-compare--manufacturer');
+
+    // ----------------------------------------------------
+    // 1. DEVICE SELECTOR LOGIC
+    // ----------------------------------------------------
+    (function initDeviceSelector() {
+       const grid = root.querySelector('.ic-device-selector-grid');
+       if (!grid) return;
+       
+       const buttons = grid.querySelectorAll('.ic-device-option');
+       const input = root.querySelector('#contact_devices_input');
+       
+       if(!buttons.length || !input) return;
+
+       buttons.forEach(btn => {
+         btn.addEventListener('click', function() {
+           // Toggle visual state
+           this.classList.toggle('is-selected');
+           
+           // Update hidden input
+           updateDeviceInput();
+         });
+       });
+
+       function updateDeviceInput() {
+         const selectedValues = [];
+         buttons.forEach(btn => {
+           if(btn.classList.contains('is-selected')) {
+             selectedValues.push(btn.getAttribute('data-value'));
+           }
+         });
+         input.value = selectedValues.join(', ');
+       }
+    })();
+
+    // ----------------------------------------------------
+    // 2. MOBILE COMPARISON TOGGLE (Previous functionality)
+    // ----------------------------------------------------
+    (function initMobileCompareToggle() {
+      const toggle = root.querySelector('.ic-mobile-compare-toggle');
+      if (!toggle || toggle.dataset.icInit === '1') return;
+      toggle.dataset.icInit = '1';
+
+      const btns = toggle.querySelectorAll('button[data-compare]');
+      function setMode(mode) {
+        root.classList.toggle('ic-compare--manufacturer', mode === 'manufacturer');
+        root.classList.toggle('ic-compare--icorrect', mode === 'icorrect');
+
+        btns.forEach((b) => {
+          const active = b.dataset.compare === mode;
+          b.classList.toggle('is-active', active);
+          b.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+      }
+
+      // Default view on mobile
+      setMode('manufacturer');
+
+      btns.forEach((b) => {
+        b.addEventListener('click', () => setMode(b.dataset.compare));
+      });
+    })();
+
+    const animateEls = root.querySelectorAll('.ic-animate');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+
+        entry.target.classList.add('ic-animate--visible');
+
+        const bars = entry.target.querySelectorAll('.ic-bar-fill');
+        if (bars.length) {
+          bars.forEach((bar) => {
+            const w = bar.getAttribute('data-width');
+            if (!w) return;
+            bar.classList.add('is-animated');
+            requestAnimationFrame(() => { bar.style.width = w; });
+          });
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -80px 0px' });
+
+    animateEls.forEach((el) => observer.observe(el));
+
+    const statsContainer = root.querySelector('.ic-stats-col');
+    if (statsContainer && statsContainer.dataset.icStats !== '1') {
+      statsContainer.dataset.icStats = '1';
+
+      const statsObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          runStatsAnimations(entry.target);
+          statsObserver.disconnect();
+        });
+      }, { threshold: 0.2 });
+
+      statsObserver.observe(statsContainer);
+    }
+
+    function runStatsAnimations(container) {
+      const stats = container.querySelectorAll('.stat-value');
+      stats.forEach((stat) => {
+        const type = stat.getAttribute('data-type');
+        const target = parseFloat(stat.getAttribute('data-target'));
+        const duration = 2000;
+        const start = 0;
+        const startTime = performance.now();
+
+        function update(currentTime) {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const ease = 1 - Math.pow(1 - progress, 4);
+          const currentVal = start + (target - start) * ease;
+
+          if (type === 'integer') {
+            stat.textContent = Math.floor(currentVal).toLocaleString() + "+";
+          } else if (type === 'float') {
+            stat.textContent = currentVal.toFixed(1) + "/5";
+            const next = stat.nextElementSibling;
+            const starFill = next ? next.querySelector('.stars-fill') : null;
+            if (starFill) starFill.style.width = ((currentVal / 5) * 100) + "%";
+          } else if (type === 'experience') {
+            stat.textContent = Math.floor(currentVal) + (progress >= 1 ? "+" : "");
+          }
+
+          if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+      });
+    }
+  }
+
+  function initAll(ctx) {
+    (ctx || document).querySelectorAll('.icorrect-landing').forEach(initLanding);
+
+        
+  }
+
+  document.addEventListener('DOMContentLoaded', () => initAll(document));
+  document.addEventListener('shopify:section:load', (e) => initAll(e.target));
+  document.addEventListener('shopify:section:reorder', () => initAll(document));
+})();
+</script>
+
+{% schema %}
+{
+  "name": "iCorrect Corporate",
+  "tag": "section",
+  "class": "icorrect-landing-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Hero Section"
+    },
+    {
+      "type": "text",
+      "id": "hero_badge",
+      "label": "Hero Badge Text",
+      "default": "Corporate Repair Services"
+    },
+    {
+      "type": "html",
+      "id": "hero_title",
+      "label": "Hero Title (HTML allowed)",
+      "default": "Fleet repairs delivered with <span class=\"ic-text-primary\">enterprise accountability</span>"
+    },
+    {
+      "type": "header",
+      "content": "Why iCorrect Settings"
+    },
+    {
+      "type": "text",
+      "id": "why_heading",
+      "label": "Why Heading",
+      "default": "Why iCorrect?"
+    },
+    {
+      "type": "richtext",
+      "id": "why_details",
+      "label": "Why Details",
+      "default": "<p>At iCorrect, our repairs are completed using original parts which are sustainably sourced. We are a team of Apple microelectronic specialists.</p>"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_num",
+      "label": "Devices Repaired (Number)",
+      "default": "250000"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_num",
+      "label": "Average Rating (Out of 5)",
+      "default": "4.8"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_num",
+      "label": "Years Experience (Number)",
+      "default": "10+"
+    },
+    {
+      "type": "header",
+      "content": "Contact Information"
+    },
+    {
+      "type": "text",
+      "id": "contact_email",
+      "label": "Contact Email",
+      "default": "support@icorrect.co.uk"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "info",
+      "name": "Feature Icon",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Select Icon (Optional)"
+        },
+        {
+          "type": "text",
+          "id": "info",
+          "label": "Feature Text",
+          "default": "Feature Name"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "iCorrect Corporate",
+      "blocks": [
+        { "type": "info", "settings": { "info": "Original Parts Used" } },
+        { "type": "info", "settings": { "info": "Microelectronic Specialists" } },
+        { "type": "info", "settings": { "info": "Expert Fault Finders" } },
+        { "type": "info", "settings": { "info": "Sustainable Repairs" } },
+        { "type": "info", "settings": { "info": "Pioneering Repair Solutions" } },
+        { "type": "info", "settings": { "info": "Near 0 Return Rate" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

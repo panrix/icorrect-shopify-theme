@@ -1,0 +1,347 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "show_collection_description": true,
+        "show_collection_image": false,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "disabled": true,
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "enable_filtering": true,
+        "filter_type": "horizontal",
+        "enable_sorting": true,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "main_banner_and_video_HjbmW9": {
+      "type": "main-banner-and-video",
+      "disabled": true,
+      "settings": {
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "mob_padding_top": 0,
+        "mob_padding_bottom": 0,
+        "bg": "#ffffff",
+        "video_url": "",
+        "img": "shopify://shop_images/Website-Banner.jpg"
+      }
+    },
+    "about_info_RWbQxj": {
+      "type": "about-info",
+      "name": "About Info",
+      "settings": {
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 40,
+        "mob_padding_bottom": 40,
+        "bg": "#fafafa",
+        "heading": "MacBook Keyboard Repair Prices",
+        "details": "<p>MacBook keyboard faults can start with just one sticky key or a missed press. Sometimes keys feel crunchy or misfire. Other times, they register multiple times or do nothing at all. </p><p><br/>At iCorrect, we test every keyboard under load before we begin. If we spot liquid under the backlight or key matrix, we will recommend a diagnostic to make sure the logic board and internal components are still safe. We only proceed once we are confident the issue is isolated.</p><p><br/>We replace the keyboard itself, not the entire top case. That allows us to retain the original battery and trackpad, avoid unnecessary waste, and keep your costs down. Once fitted, every keyboard is type-tested and approved by a senior technician before it goes out the door. Your MacBook will feel like new again.</p>",
+        "btn": "",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 38,
+        "heading_size_mobile": 24,
+        "heading_line_height_desktop": 46,
+        "heading_line_height_mobile": 36
+      }
+    },
+    "model_number_search_amJLmF": {
+      "type": "model-number-search",
+      "blocks": {
+        "heading_GbCGeL": {
+          "type": "heading",
+          "settings": {
+            "heading": "Need help identifying your MacBook?",
+            "heading_size": "h1"
+          }
+        },
+        "text_9zjYLL": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Check the model number printed on the underside of your MacBook. It starts with the letter “A” followed by four digits. Use this number to quickly identify your exact model and ensure you select the correct repair or service.</p>",
+            "text_style": "body"
+          }
+        }
+      },
+      "block_order": [
+        "heading_GbCGeL",
+        "text_9zjYLL"
+      ],
+      "name": "Model Number Search",
+      "settings": {
+        "enable_model_search": true,
+        "model_search_placeholder": "Enter model number, e.g. A3403",
+        "model_search_button_label": "Search",
+        "model_search_mode": "scroll",
+        "model_search_scope_selector": "#shopify-section-featured-collection, .featured-collection, .collection",
+        "height": "adapt",
+        "desktop_image_width": "small_medium",
+        "layout": "image_first",
+        "desktop_content_position": "top",
+        "desktop_content_alignment": "left",
+        "content_layout": "no-overlap",
+        "section_color_scheme": "",
+        "color_scheme": "",
+        "image_behavior": "none",
+        "mobile_content_alignment": "left",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "featured_collection_AfhUDd": {
+      "type": "featured-collection",
+      "name": "t:sections.featured-collection.presets.name",
+      "settings": {
+        "title": "",
+        "heading_size": "h1",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "collection": "macbook-keyboard-repair-prices",
+        "columns_desktop": 3,
+        "full_width": false,
+        "show_view_all": false,
+        "view_all_style": "solid",
+        "enable_desktop_slider": false,
+        "color_scheme": "scheme-1",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "about_info_XAqnaH": {
+      "type": "about-info",
+      "name": "About Info",
+      "settings": {
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 40,
+        "mob_padding_bottom": 40,
+        "bg": "#fafafa",
+        "heading": "Our Process",
+        "details": "<p>Not every charging issue requires a new logic board. In fact, most MacBook charging problems come down to one of three causes: a worn charging port, damaged pins, or a fault within the power delivery circuit.</p><p><br/>At iCorrect, we test all three as standard. This includes a full inspection of the port to check for signs of looseness, obstruction, corrosion, or shorting. If the fault runs deeper, we carry out diagnostic testing on the charging IC and surrounding components on the logic board itself. This is all done under a microscope by trained technicians.</p><p><br/>Once the fault has been confirmed, we only replace what is necessary using original parts. We always verify the charging current and thermal profile following the repair. It is this level of precision that helps us resolve issues others miss, and why our charging port repairs last.</p>",
+        "btn": "",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 38,
+        "heading_size_mobile": 24,
+        "heading_line_height_desktop": 46,
+        "heading_line_height_mobile": 36
+      }
+    },
+    "macbook_videos_wkwRwC": {
+      "type": "macbook-videos",
+      "name": "MacBook Videos",
+      "settings": {
+        "heading": "See How We Repair Your MacBook",
+        "subtitle": "Watch our videos to see how we repair MacBooks, what to expect, and how we work.",
+        "video_1_title": "Repair is better than replace.",
+        "video_2_title": "Our repair approach is sustainable.",
+        "video_3_title": "Do not overpay for your repairs.",
+        "color_scheme": "scheme-4",
+        "padding_top": 44,
+        "padding_bottom": 80
+      }
+    },
+    "repair_services_nQkwFT": {
+      "type": "repair-services",
+      "blocks": {
+        "service_PEi9BF": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Walk-in.png",
+            "heading": "Walk-In Service",
+            "details": "For clients based in Central London who wish to visit us, we operate a  walk-in drop-off service by appointment. Simply book your repair via our  website booking page to confirm your appointment time before heading to us.",
+            "btn": "Learn more",
+            "link": "shopify://pages/our-services"
+          }
+        },
+        "service_enBGWD": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Delivery.png",
+            "heading": "National Courier",
+            "details": "We collect from anywhere in the UK. Book online and we send secure packaging to your door. Your device is returned fully repaired and tested.",
+            "btn": "Learn more",
+            "link": "shopify://pages/our-services"
+          }
+        }
+      },
+      "block_order": [
+        "service_PEi9BF",
+        "service_enBGWD"
+      ],
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 50,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#ffffff",
+        "heading": "Our services",
+        "details": "Choose the most convenient service for you"
+      }
+    },
+    "icorrect_faqs_RVk3VL": {
+      "type": "icorrect-faqs",
+      "blocks": {
+        "accordion_mCCjdt": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Why is my MacBook typing double letters or missing keystrokes?",
+            "sub_head": "<p>This is usually caused by minor liquid damage. The keyboard is essentially one large circuit board, and even a small amount of moisture can disrupt part of that circuit.</p><p>Think of it like a map. Each key has a specific place, and if one area is affected, the signal may misfire, repeat, or not register at all. The correct repair is to replace the entire keyboard. This restores full function across the board and prevents the problem from spreading further.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_dgGrWD": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can you fix a single key that does not work properly?",
+            "sub_head": "<p>We do not offer single key replacements. That type of repair is what we call a patch fix. There is always a reason why that key has failed, and it is usually linked to internal damage to the keyboard circuitry.</p><p>Replacing the whole keyboard guarantees the issue is fully resolved. It also prevents repeat problems, which is why we back every repair with a two-year warranty.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_jNEQxe": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How much does it cost to fix a MacBook keyboard?",
+            "sub_head": "<p>MacBook keyboard repairs at iCorrect start from £159, depending on the model. Once we inspect the device and confirm the fault, we will provide you with a clear quote.</p><p>Every repair includes the new keyboard, full testing, labour, and a two-year warranty.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_wzPFwd": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Apple quoted me for a whole top case. Can you just replace the keyboard?",
+            "sub_head": "<p>Yes. We replace just the keyboard, not the full top case. Apple’s approach is to replace the entire assembly, which includes your trackpad and battery.</p><p>Our repair is more sustainable and more cost-effective. It uses fewer parts and still restores the keyboard to original factory quality. You will get the same feel, performance, and finish without paying for a battery or trackpad you did not need.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_rt4BjQ": {
+          "type": "accordion",
+          "settings": {
+            "heading": "My MacBook keys feel crunchy or sticky. Can that be repaired?",
+            "sub_head": "<p>Yes, but we always recommend starting with a diagnostic. Sticky or crunchy keys usually indicate that liquid has entered the keyboard or settled beneath the backlight.</p><p>If we find residue or corrosion, we will upgrade the repair to a diagnostic to check the rest of the system. These issues often worsen over time. Catching the fault early gives you the best outcome.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_PLgEhN": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can you repair a MacBook after liquid was spilt on the keyboard?",
+            "sub_head": "<p>Yes, we deal with this regularly. When liquid enters through the keyboard, it can stop keys from working and sometimes damage components beneath it.</p><p>On newer models, liquid that enters around the arrow keys can seep into the logic board. This often damages the audio circuit and causes long-term issues if left untreated. We recommend booking a full diagnostic so we can confirm the damage and repair the machine safely.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_wMHNen": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How long does a MacBook keyboard repair take?",
+            "sub_head": "<p>Most MacBook keyboard repairs are completed within two to three working days. That includes testing, keyboard replacement, post-repair checks, and full sign off.</p><p>If you need the device returned faster, we offer an express service that can complete the repair within one working day when booked in advance.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_heFyRm": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will the repaired keyboard feel like the original?",
+            "sub_head": "<p>Yes. We use original Apple parts or parts matched to the original keyboard layout and travel. This makes sure the pressure, click, and feedback all feel exactly like they should.</p><p>This matters especially for people who type quickly, use shortcuts, or rely on the keyboard every day. We test every keyboard before it goes out. If it does not feel right to us, it does not leave.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_7WpxcT": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you repair butterfly keyboard issues?",
+            "sub_head": "<p>Yes. We have repaired hundreds of butterfly keyboards across the 2016 to 2019 MacBook models.</p><p>We always recommend checking with Apple first. They offer a free repair programme for eligible devices, but the process can take up to ten working days. If you need the keyboard fixed quickly, we can complete the repair within one to three working days.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_7BMWPU": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can a damaged keyboard cause other problems with my MacBook?",
+            "sub_head": "<p>Yes. The keyboard, trackpad, and power button are often connected through the same internal circuit. If one is damaged, it can affect the others.</p><p>Liquid damage in particular can travel through that circuit and reach the logic board or battery. In these cases, we recommend running a diagnostic to check the full extent of the issue and confirm the repair needed.</p>",
+            "alignment": "left"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_mCCjdt",
+        "accordion_dgGrWD",
+        "accordion_jNEQxe",
+        "accordion_wzPFwd",
+        "accordion_rt4BjQ",
+        "accordion_PLgEhN",
+        "accordion_wMHNen",
+        "accordion_heFyRm",
+        "accordion_7WpxcT",
+        "accordion_7BMWPU"
+      ],
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 75,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#1d1d1f",
+        "heading": "FAQs",
+        "details": "Learn more about iCorrect, the essential repair services that we offer and the warranties that come with each repair.",
+        "txt-clr": "#ffffff"
+      }
+    },
+    "contact_with_map_dXbbDU": {
+      "type": "contact-with-map",
+      "settings": {
+        "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>"
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "product-grid",
+    "main_banner_and_video_HjbmW9",
+    "about_info_RWbQxj",
+    "model_number_search_amJLmF",
+    "featured_collection_AfhUDd",
+    "about_info_XAqnaH",
+    "macbook_videos_wkwRwC",
+    "repair_services_nQkwFT",
+    "icorrect_faqs_RVk3VL",
+    "contact_with_map_dXbbDU"
+  ]
+}

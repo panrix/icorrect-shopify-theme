@@ -1,0 +1,969 @@
+{% comment %}
+  Hero Banner Section - Apple Repair Experts
+  Enhanced with carousel, flexible media modes, and granular text styling
+{% endcomment %}
+
+<style>
+  .hero-banner-{{ section.id }} {
+    position: relative;
+    min-height: {{ section.settings.section_height_desktop }}px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .hero-banner-{{ section.id }} .hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+
+  .hero-banner-{{ section.id }} .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: {{ section.settings.overlay_color }};
+    opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    z-index: 2;
+  }
+
+  .hero-banner-{{ section.id }} .hero-container {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+
+  .hero-banner-{{ section.id }} .hero-content {
+    max-width: 600px;
+    text-align: left;
+  }
+
+  .hero-banner-{{ section.id }} .hero-eyebrow {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: {{ section.settings.eyebrow_color }};
+    margin-bottom: 20px;
+    display: inline-block;
+    padding: 10px 20px;
+    background: {{ section.settings.eyebrow_bg_color }};
+    border-radius: 6px;
+  }
+
+  .hero-banner-{{ section.id }} .hero-heading {
+    font-size: {{ section.settings.heading_size_desktop }}px;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 24px;
+  }
+
+  .hero-banner-{{ section.id }} .hero-subheading {
+    font-size: {{ section.settings.subheading_size_desktop }}px;
+    line-height: 1.6;
+    color: {{ section.settings.subheading_color }};
+    margin-bottom: 40px;
+  }
+
+  .hero-banner-{{ section.id }} .hero-buttons {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  /* Trust section wrapper - ensures divider and logos match trust badges width */
+  .hero-banner-{{ section.id }} .hero-trust-section {
+    display: inline-flex;
+    flex-direction: column;
+    margin-top: 28px;
+  }
+
+  .hero-banner-{{ section.id }} .hero-trust-indicators {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .hero-banner-{{ section.id }} .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #1d1d1f;
+  }
+
+  .hero-banner-{{ section.id }} .trust-item .stars {
+    color: #FFB800;
+    font-size: 16px;
+    letter-spacing: 1px;
+  }
+
+  .hero-banner-{{ section.id }} .trust-item .google-icon {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+  }
+
+  .hero-banner-{{ section.id }} .trust-item strong {
+    color: #1d1d1f;
+    font-weight: 600;
+  }
+
+  .hero-banner-{{ section.id }} .trust-divider {
+    width: 1px;
+    height: 20px;
+    background: #d1d1d6;
+  }
+
+  .hero-banner-{{ section.id }} .hero-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    border: 2px solid transparent;
+  }
+
+  .hero-banner-{{ section.id }} .hero-btn-primary {
+    background: {{ section.settings.primary_btn_bg }};
+    color: {{ section.settings.primary_btn_color }};
+    border-color: {{ section.settings.primary_btn_border }};
+  }
+
+  .hero-banner-{{ section.id }} .hero-btn-primary:hover {
+    background: {{ section.settings.primary_btn_hover_bg }};
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  .hero-banner-{{ section.id }} .hero-btn-secondary {
+    background: {{ section.settings.secondary_btn_bg }};
+    color: {{ section.settings.secondary_btn_color }};
+    border-color: {{ section.settings.secondary_btn_border }};
+  }
+
+  .hero-banner-{{ section.id }} .hero-btn-secondary:hover {
+    background: {{ section.settings.secondary_btn_hover_bg }};
+    color: {{ section.settings.secondary_btn_hover_color }};
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .hero-banner-{{ section.id }} .hero-clients {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    width: 100%;
+  }
+
+  .hero-banner-{{ section.id }} .hero-clients-logos {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .hero-banner-{{ section.id }} .hero-clients-logos img {
+    height: 16px;
+    width: auto;
+    opacity: 0.6;
+    filter: grayscale(100%);
+    transition: all 0.3s ease;
+  }
+
+  .hero-banner-{{ section.id }} .hero-clients-logos img:hover {
+    opacity: 1;
+    filter: grayscale(0%);
+  }
+
+  .hero-banner-{{ section.id }} .media-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  }
+
+  .hero-banner-{{ section.id }} .carousel-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero-banner-{{ section.id }} .carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+  }
+
+  .hero-banner-{{ section.id }} .carousel-slide.active {
+    opacity: 1;
+    z-index: 1;
+  }
+
+  .hero-banner-{{ section.id }} .carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hero-banner-{{ section.id }} .carousel-indicators {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+  }
+
+  .hero-banner-{{ section.id }} .carousel-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    padding: 0;
+  }
+
+  .hero-banner-{{ section.id }} .carousel-indicator.active {
+    background: rgba(255, 255, 255, 1);
+    width: 30px;
+    border-radius: 5px;
+  }
+
+  .hero-banner-{{ section.id }} .media-container img,
+  .hero-banner-{{ section.id }} .media-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Z-INDEX FIX */
+  header,
+  .section-header,
+  .header-wrapper,
+  .shopify-section-group-header-group {
+    position: relative !important;
+    z-index: 999 !important;
+  }
+
+  .hero-banner-{{ section.id }} {
+    position: relative;
+    z-index: 1 !important;
+  }
+
+  /* MOBILE STYLES */
+  @media (max-width: 768px) {
+    .hero-banner-{{ section.id }} {
+      min-height: {{ section.settings.section_height_mobile }}px;
+    }
+
+    .hero-banner-{{ section.id }} .hero-container {
+      grid-template-columns: 1fr;
+      gap: 30px;
+      padding: 24px 20px;
+    }
+
+    .hero-banner-{{ section.id }} .hero-content {
+      text-align: center;
+      max-width: 100%;
+    }
+
+    .hero-banner-{{ section.id }} .hero-heading {
+      font-size: {{ section.settings.heading_size_mobile }}px;
+    }
+
+    .hero-banner-{{ section.id }} .hero-subheading {
+      font-size: {{ section.settings.subheading_size_mobile }}px;
+    }
+
+    .hero-banner-{{ section.id }} .hero-buttons {
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .hero-banner-{{ section.id }} .hero-btn {
+      width: 100%;
+      text-align: center;
+    }
+
+    .hero-banner-{{ section.id }} .hero-trust-section {
+      width: 100%;
+    }
+
+    .hero-banner-{{ section.id }} .hero-trust-indicators {
+      justify-content: center;
+      gap: 12px;
+      flex-direction: column;
+    }
+
+    .hero-banner-{{ section.id }} .trust-item {
+      font-size: 14px;
+    }
+
+    .hero-banner-{{ section.id }} .trust-divider {
+      display: none;
+    }
+
+    .hero-banner-{{ section.id }} .hero-clients {
+      margin-top: 28px;
+      padding-top: 28px;
+    }
+
+    .hero-banner-{{ section.id }} .hero-clients-logos {
+      justify-content: space-between;
+      padding: 0 10px;
+    }
+
+    .hero-banner-{{ section.id }} .hero-clients-logos img {
+      height: 14px;
+    }
+
+    .hero-banner-{{ section.id }} .media-container {
+      aspect-ratio: 1 / 1;
+    }
+  }
+
+  @media (max-width: 500px) {
+    .hero-banner-{{ section.id }} .hero-btn {
+      max-width: 230px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 14px 20px;
+      font-size: 16px;
+    }
+  }
+</style>
+
+<section class="hero-banner-{{ section.id }}" data-section-id="{{ section.id }}">
+  {% if section.settings.background_image %}
+    <img 
+      class="hero-background" 
+      src="{{ section.settings.background_image | img_url: '2000x' }}" 
+      alt="Background"
+      loading="eager"
+    >
+  {% endif %}
+  
+  <div class="hero-overlay"></div>
+  
+  <div class="hero-container">
+    <div class="hero-content">
+      {% if section.settings.eyebrow_text != blank %}
+        <span class="hero-eyebrow">{{ section.settings.eyebrow_text }}</span>
+      {% endif %}
+      
+      <h1 class="hero-heading">
+        {% if section.blocks.size > 0 %}
+          {% for block in section.blocks %}
+            {% if block.type == 'heading_segment' %}
+              <span style="color: {{ block.settings.text_color }};">{{ block.settings.text }}</span>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          {{ section.settings.heading }}
+        {% endif %}
+      </h1>
+      
+      {% if section.settings.subheading != blank %}
+        <p class="hero-subheading">{{ section.settings.subheading }}</p>
+      {% endif %}
+      
+      <div class="hero-buttons">
+        {% if section.settings.secondary_btn_text != blank %}
+          <a href="{{ section.settings.secondary_btn_link }}" class="hero-btn hero-btn-primary">
+            {{ section.settings.secondary_btn_text }}
+          </a>
+        {% endif %}
+      </div>
+
+      <!-- Trust section wrapper ensures divider and logos match trust badges width exactly -->
+      <div class="hero-trust-section">
+        <div class="hero-trust-indicators">
+          <div class="trust-item">
+            <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            <span><strong>700+</strong> Reviews</span>
+            <span class="stars">★★★★★</span>
+          </div>
+          <span class="trust-divider"></span>
+          <div class="trust-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#34A853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span><strong>250,000+</strong> devices repaired</span>
+          </div>
+        </div>
+
+        <div class="hero-clients">
+          <div class="hero-clients-logos">
+            <img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/panasonic-1.png?v=1732538921" alt="Panasonic">
+            <img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/prada.png?v=1732539004" alt="Prada">
+            <img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/Jones_Lang_Lasalle.png?v=1732538773" alt="JLL">
+            <img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/inditex.png?v=1732538696" alt="Inditex">
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="media-container">
+      {% if section.settings.media_mode == 'carousel' %}
+        {% assign carousel_blocks = section.blocks | where: "type", "carousel_slide" %}
+        {% if carousel_blocks.size > 0 %}
+          <div class="carousel-wrapper">
+            {% for block in carousel_blocks %}
+              <div class="carousel-slide{% if forloop.first %} active{% endif %}" data-slide-index="{{ forloop.index0 }}">
+                <img 
+                  src="{{ block.settings.image | img_url: '1000x' }}" 
+                  alt="{{ block.settings.alt_text | default: 'Carousel slide' }}"
+                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                >
+              </div>
+            {% endfor %}
+            
+            {% if carousel_blocks.size > 1 %}
+              <div class="carousel-indicators">
+                {% for block in carousel_blocks %}
+                  <button 
+                    class="carousel-indicator{% if forloop.first %} active{% endif %}" 
+                    data-slide="{{ forloop.index0 }}"
+                    aria-label="Go to slide {{ forloop.index }}"
+                  ></button>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+        
+      {% elsif section.settings.media_mode == 'image' and section.settings.single_image %}
+        <img 
+          src="{{ section.settings.single_image | img_url: '1000x' }}" 
+          alt="{{ section.settings.single_image_alt | default: 'Hero image' }}"
+          loading="eager"
+        >
+        
+      {% elsif section.settings.media_mode == 'video' and section.settings.video_url != blank %}
+        <video 
+          autoplay 
+          muted 
+          loop 
+          playsinline
+          {% if section.settings.video_poster %}poster="{{ section.settings.video_poster | img_url: '1000x' }}"{% endif %}
+        >
+          <source src="{{ section.settings.video_url }}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        
+      {% elsif section.settings.media_mode == 'gif' and section.settings.gif_image %}
+        <img 
+          src="{{ section.settings.gif_image | img_url: '1000x' }}" 
+          alt="{{ section.settings.gif_alt | default: 'Animated GIF' }}"
+          loading="eager"
+        >
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% if section.settings.media_mode == 'carousel' %}
+<script>
+(function() {
+  const sectionId = '{{ section.id }}';
+  const section = document.querySelector(`[data-section-id="${sectionId}"]`);
+  if (!section) return;
+  
+  const slides = section.querySelectorAll('.carousel-slide');
+  const indicators = section.querySelectorAll('.carousel-indicator');
+  
+  if (slides.length <= 1) return;
+  
+  let currentSlide = 0;
+  let autoplayInterval;
+  const autoplayDelay = {{ section.settings.carousel_delay | default: 3000 }};
+  
+  function goToSlide(index) {
+    slides[currentSlide].classList.remove('active');
+    indicators[currentSlide].classList.remove('active');
+    
+    currentSlide = index;
+    
+    slides[currentSlide].classList.add('active');
+    indicators[currentSlide].classList.add('active');
+  }
+  
+  function nextSlide() {
+    const next = (currentSlide + 1) % slides.length;
+    goToSlide(next);
+  }
+  
+  function startAutoplay() {
+    stopAutoplay();
+    autoplayInterval = setInterval(nextSlide, autoplayDelay);
+  }
+  
+  function stopAutoplay() {
+    if (autoplayInterval) {
+      clearInterval(autoplayInterval);
+      autoplayInterval = null;
+    }
+  }
+  
+  indicators.forEach((indicator, index) => {
+    indicator.addEventListener('click', () => {
+      goToSlide(index);
+      stopAutoplay();
+      setTimeout(startAutoplay, 5000);
+    });
+  });
+  
+  const carousel = section.querySelector('.carousel-wrapper');
+  carousel.addEventListener('mouseenter', stopAutoplay);
+  carousel.addEventListener('mouseleave', startAutoplay);
+  carousel.addEventListener('focusin', stopAutoplay);
+  carousel.addEventListener('focusout', startAutoplay);
+  
+  startAutoplay();
+})();
+</script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Hero Banner Pro",
+  "settings": [
+    {
+      "type": "header",
+      "content": "⚙️ Layout Settings"
+    },
+    {
+      "type": "range",
+      "id": "section_height_desktop",
+      "min": 400,
+      "max": 900,
+      "step": 50,
+      "unit": "px",
+      "label": "Section Height (Desktop)",
+      "default": 700
+    },
+    {
+      "type": "range",
+      "id": "section_height_mobile",
+      "min": 400,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "label": "Section Height (Mobile)",
+      "default": 600
+    },
+    {
+      "type": "header",
+      "content": "🎨 Background Settings"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background Image (Optional)"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay Color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay Opacity",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "📝 Content Settings"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_bg_color",
+      "label": "Eyebrow Background Color",
+      "default": "#333333"
+    },
+    {
+      "type": "paragraph",
+      "content": "💡 TIP: Use 'Heading Segment' blocks below to create multi-colored headings with precise control over each word or phrase."
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading (Fallback)",
+      "default": "We Are Apple Repair Experts",
+      "info": "Only used if no heading segment blocks are added"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "min": 32,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading Size (Desktop)",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "min": 24,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading Size (Mobile)",
+      "default": 32
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Professional micro-component repairs for all Apple devices. Fast turnaround, lifetime warranty."
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_desktop",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Subheading Size (Desktop)",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_mobile",
+      "min": 14,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Subheading Size (Mobile)",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading Color",
+      "default": "#cccccc"
+    },
+    {
+      "type": "header",
+      "content": "🖼️ Media Settings"
+    },
+    {
+      "type": "select",
+      "id": "media_mode",
+      "label": "Media Type",
+      "options": [
+        {
+          "value": "carousel",
+          "label": "🎠 Carousel (Multiple Images)"
+        },
+        {
+          "value": "image",
+          "label": "🖼️ Single Image"
+        },
+        {
+          "value": "video",
+          "label": "🎥 Video"
+        },
+        {
+          "value": "gif",
+          "label": "✨ Animated GIF"
+        }
+      ],
+      "default": "carousel",
+      "info": "Choose how to display media on the right side"
+    },
+    {
+      "type": "range",
+      "id": "carousel_delay",
+      "min": 2000,
+      "max": 8000,
+      "step": 500,
+      "unit": "ms",
+      "label": "Carousel Auto-Rotate Speed",
+      "default": 3000,
+      "info": "Only applies to carousel mode"
+    },
+    {
+      "type": "image_picker",
+      "id": "single_image",
+      "label": "Single Image",
+      "info": "Used when 'Single Image' mode is selected"
+    },
+    {
+      "type": "text",
+      "id": "single_image_alt",
+      "label": "Single Image Alt Text",
+      "default": "Hero image"
+    },
+    {
+      "type": "url",
+      "id": "video_url",
+      "label": "Video URL (.mp4)",
+      "info": "Used when 'Video' mode is selected. Must be .mp4 format"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_poster",
+      "label": "Video Poster Image (Optional)",
+      "info": "Thumbnail shown before video loads"
+    },
+    {
+      "type": "image_picker",
+      "id": "gif_image",
+      "label": "GIF Image",
+      "info": "Used when 'Animated GIF' mode is selected"
+    },
+    {
+      "type": "text",
+      "id": "gif_alt",
+      "label": "GIF Alt Text",
+      "default": "Animated demonstration"
+    },
+    {
+      "type": "header",
+      "content": "🔘 Primary Button"
+    },
+    {
+      "type": "text",
+      "id": "primary_btn_text",
+      "label": "Button Text",
+      "default": "Book Repair Now"
+    },
+    {
+      "type": "url",
+      "id": "primary_btn_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "color",
+      "id": "primary_btn_bg",
+      "label": "Button Background",
+      "default": "#ffffff"
+    },
+
+{
+  "type": "color",
+  "id": "primary_btn_border",
+  "label": "Primary Button Border Color",
+  "default": "#0071e3"
+},
+    
+    {
+      "type": "color",
+      "id": "primary_btn_color",
+      "label": "Button Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "primary_btn_hover_bg",
+      "label": "Button Hover Background",
+      "default": "#f0f0f0"
+    },
+    {
+      "type": "header",
+      "content": "🔘 Secondary Button"
+    },
+    {
+      "type": "text",
+      "id": "secondary_btn_text",
+      "label": "Button Text",
+      "default": "Get Free Device Quote"
+    },
+    {
+      "type": "url",
+      "id": "secondary_btn_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "color",
+      "id": "secondary_btn_bg",
+      "label": "Button Background",
+      "default": "transparent"
+    },
+    {
+      "type": "color",
+      "id": "secondary_btn_color",
+      "label": "Button Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "secondary_btn_border",
+      "label": "Button Border Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "secondary_btn_hover_bg",
+      "label": "Button Hover Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "secondary_btn_hover_color",
+      "label": "Button Hover Text Color",
+      "default": "#000000"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading_segment",
+      "name": "Heading Segment",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Your Text Here",
+          "info": "Each block creates one part of the heading with its own color"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text Color",
+          "default": "#ffffff"
+        }
+      ]
+    },
+    {
+      "type": "carousel_slide",
+      "name": "Carousel Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Slide Image"
+        },
+        {
+          "type": "text",
+          "id": "alt_text",
+          "label": "Image Alt Text",
+          "default": "Repair work example"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Banner Pro",
+      "blocks": [
+        {
+          "type": "heading_segment",
+          "settings": {
+            "text": "We Are Apple Repair Experts Who Specialise In ",
+            "text_color": "#ffffff"
+          }
+        },
+        {
+          "type": "heading_segment",
+          "settings": {
+            "text": "Micro-Component",
+            "text_color": "#00d4ff"
+          }
+        },
+        {
+          "type": "heading_segment",
+          "settings": {
+            "text": " Repairs.",
+            "text_color": "#ffffff"
+          }
+        },
+        {
+          "type": "carousel_slide"
+        },
+        {
+          "type": "carousel_slide"
+        },
+        {
+          "type": "carousel_slide"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+<script>
+(function(){
+  function getHeaderOffset(){
+    const v = getComputedStyle(document.documentElement).getPropertyValue('--header-height').trim();
+    const n = parseFloat(v);
+    return Number.isFinite(n) ? n : 90;
+  }
+
+  document.addEventListener('click', function(e){
+    const a = e.target.closest('a[data-scroll-to]');
+    if(!a) return;
+
+    const sel = a.getAttribute('data-scroll-to');
+    const target = document.querySelector(sel);
+    if(!target) return;
+
+    // If not on homepage, allow normal navigation to /#find-your-repair
+    if(location.pathname !== '/' && !location.pathname.includes('/index')) return;
+
+    e.preventDefault();
+
+    const y = target.getBoundingClientRect().top + window.pageYOffset - (getHeaderOffset() + 20);
+    window.scrollTo({ top: y, behavior: 'smooth' });
+    history.replaceState(null, '', sel);
+  });
+})();
+</script>

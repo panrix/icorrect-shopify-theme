@@ -1,0 +1,242 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "show_collection_description": false,
+        "show_collection_image": false,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "disabled": true,
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "enable_filtering": false,
+        "filter_type": "horizontal",
+        "enable_sorting": false,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "icorrect_product_grid_AAVQCj": {
+      "type": "icorrect-product-grid",
+      "name": "New Product Grid",
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 70,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#ffffff"
+      }
+    },
+    "ipad_videos_fjY9ew": {
+      "type": "ipad-videos",
+      "name": "iPad Videos",
+      "settings": {
+        "heading": "Behind the scenes",
+        "subtitle": "Watch our videos to understand common repair issues, what to expect, and how we fix your device with care.",
+        "video_1_title": "Your Pencil will work after the repair.",
+        "video_2_title": "We repair what Apple can't.",
+        "video_3_title": "We can bring your iPad back to life.",
+        "color_scheme": "scheme-4",
+        "padding_top": 44,
+        "padding_bottom": 80
+      }
+    },
+    "repair_services_nQkwFT": {
+      "type": "repair-services",
+      "blocks": {
+        "service_PEi9BF": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Walk-in.png",
+            "heading": "Walk-In Service",
+            "details": "For clients based in Central London who wish to visit us, we operate a  walk-in drop-off service by appointment. Simply book your repair via our  website booking page to confirm your appointment time before heading to us.",
+            "btn": "Learn more",
+            "link": ""
+          }
+        },
+        "service_RaggTi": {
+          "type": "service",
+          "disabled": true,
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Courier.png",
+            "heading": "London Courier",
+            "details": "We operate a convenient collection, repair & delivery service for  clients based within Zones 1 & 2 in London. Our couriers are fully  tracked and insured throughout the journey. Book your iPhone repair  before 1pm for a same day return.",
+            "btn": "Learn more",
+            "link": ""
+          }
+        },
+        "service_enBGWD": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Delivery.png",
+            "heading": "National Courier",
+            "details": "We collect from anywhere in the UK. Book online and we send secure packaging to your door. Your device is returned fully repaired and tested.",
+            "btn": "Learn more",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "service_PEi9BF",
+        "service_RaggTi",
+        "service_enBGWD"
+      ],
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 50,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#ffffff",
+        "heading": "Our services",
+        "details": "Choose the most convenient service for you"
+      }
+    },
+    "ipad_faqs_cLJJjE": {
+      "type": "ipad-faqs",
+      "blocks": {
+        "accordion_UT8DqT": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How long do iPad repairs take?",
+            "sub_head": "<p>Most iPad repairs are completed within three working days. This includes screen repairs, battery replacements, and internal faults.</p><p>If you need your iPad repaired faster, we offer an express service for selected models. When booked in advance, express repairs can often be completed within one working day, depending on the fault and part availability.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_CfWm4a": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What warranty do you offer on iPad repairs?",
+            "sub_head": "<p>All of our iPad repairs come with a two-year warranty that covers any fault related to the repair. Whether it’s a screen replacement, battery issue, or logic board repair, we stand by the quality of our work.</p><p>The warranty does not cover accidental damage or natural wear and tear, but if anything goes wrong because of the original fault, we’ll sort it.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_6z9ryy": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do iPad repairs void my Apple warranty?",
+            "sub_head": "<p>Technically, yes. As soon as the screen is broken or the housing is damaged, your iPad is already considered out of warranty by Apple.</p><p>Apple does not offer repairs for iPads. Instead, they replace the entire device with a reconditioned unit and charge you for it. That’s why many clients choose to repair with us. We restore your original iPad using original parts, often for less than half the cost of Apple’s replacement quote.</p><p>Because we use original parts, Apple may still choose to service the device later at their discretion. But to be clear, once it’s damaged, the warranty is no longer valid either way.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_7qNjyd": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How much does it cost to repair an iPad compared to Apple?",
+            "sub_head": "<p>Apple doesn't actually repair iPads. Instead, they offer a full-device replacement with a reconditioned unit, which often costs in the region of £500 (or more), even for older models.</p><p>At iCorrect, we repair your original iPad using genuine parts wherever possible. That means if you’ve only damaged the screen or battery, we can fix just that part, without replacing the whole device.</p><p>Our average iPad screen repair is around half the cost of Apple’s replacement service. It’s better for your device, better for the environment, and better for your wallet.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_qVK3Wn": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can you repair just the glass on an iPad screen?",
+            "sub_head": "<p>Yes, in many cases we can repair just the glass on your iPad, but it depends on the model.</p><p>Standard iPads have a separate glass and LCD, which makes glass-only repairs more straightforward. For iPad Pro and Air models, the glass and display are fused together, which makes the process more complex but still possible. We offer both options depending on the damage and the model.</p><p>If you’re unsure which type of screen your iPad has, we’ll confirm once we assess the device and talk you through the repair options.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_WBUWDr": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you use original parts for iPad repairs?",
+            "sub_head": "<p>Yes, we use original Apple parts for all current iPad models wherever they are available. Most of our parts are reclaimed from genuine Apple devices and tested in-house before being used in any repair.</p><p>For older models where original parts are no longer available, we use the highest quality OEM replacements. These are carefully sourced, fully tested, and chosen to match Apple’s performance standards as closely as possible.</p><p>We’ll always tell you what part is being used, and why. No surprises, no cutting corners.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_pp8CzY": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can you fix Touch ID or Face ID on an iPad?",
+            "sub_head": "<p>Unfortunately, we do not offer repairs for Touch ID or Face ID on iPads. Apple have not released replacement parts for these components, and both features are serialised to the original logic board for security reasons.</p><p>If either has stopped working, we can run diagnostics to confirm the cause, but if the sensor itself is damaged, it cannot be replaced or restored without Apple’s internal tools.</p><p>We’ll always be honest about what’s possible and help you explore your options if these features are no longer functioning.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_kQgeMJ": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will my Apple Pencil still work after a repair?",
+            "sub_head": "<p>Yes, your Apple Pencil will continue to work exactly as it should after the repair.</p><p>Because we use original parts and complete the repair to factory standards, features like Pencil pairing and pressure sensitivity remain fully functional. We also test Apple Pencil functionality before completing the repair.</p><p>In fact, we were one of the first companies to solve serialisation issues with Apple Pencil pairing, so you’re in safe hands.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_GfrUAC": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How do you open iPads if they don’t have screws?",
+            "sub_head": "<p>iPads are sealed using a strong adhesive around the edge of the screen, which is why there are no visible screws.</p><p>To open the device, we use a controlled heating process to soften the adhesive, followed by precision tools to lift the screen without damaging internal components. Once the repair is complete, we reseal the screen using an adhesive that matches the strength of the original, maintaining the structure, fit, and finish Apple intended.</p><p>It’s a delicate process, but we’ve perfected it over years of working with every iPad model.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_tcM33V": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can you repair logic board issues or water damage on an iPad?",
+            "sub_head": "<p>Yes, we can. Our team specialises in microchip-level iPad repairs, including complex logic board faults and water damage, the kind of issues that Apple and most shops will simply write off.</p><p>We carry out a full diagnostic to assess the extent of the damage. From there, we’ll either repair the affected circuits directly or rebuild sections of the board if needed. These are delicate repairs done under a microscope, but they’re often the difference between saving your iPad and replacing it entirely.</p>",
+            "alignment": "left"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_UT8DqT",
+        "accordion_CfWm4a",
+        "accordion_6z9ryy",
+        "accordion_7qNjyd",
+        "accordion_qVK3Wn",
+        "accordion_WBUWDr",
+        "accordion_pp8CzY",
+        "accordion_kQgeMJ",
+        "accordion_GfrUAC",
+        "accordion_tcM33V"
+      ],
+      "name": "iPad FAQs",
+      "settings": {
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 40,
+        "mob_padding_bottom": 40,
+        "bg": "#1D1D1F",
+        "heading": "FAQs",
+        "details": "Learn more about our iPad repair service, parts, diagnostics, turnaround times, and warranty.",
+        "txt_clr": "#FFFFFF",
+        "color_scheme": ""
+      }
+    },
+    "contact_with_map_dXbbDU": {
+      "type": "contact-with-map",
+      "settings": {
+        "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>"
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "product-grid",
+    "icorrect_product_grid_AAVQCj",
+    "ipad_videos_fjY9ew",
+    "repair_services_nQkwFT",
+    "ipad_faqs_cLJJjE",
+    "contact_with_map_dXbbDU"
+  ]
+}

@@ -1,0 +1,236 @@
+<section class="trust-static-section" id="trust-{{ section.id }}">
+  <div class="page-width">
+    
+    <div class="trust-header">
+      <h2 class="trust-heading">{{ section.settings.heading }}</h2>
+      <div class="trust-desc">{{ section.settings.details }}</div>
+
+      {% if section.settings.link != blank %}
+        <div class="trust-cta-wrapper">
+          <a href="{{ section.settings.link }}" class="trust-btn">
+            <span>{{ section.settings.btn }}</span>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7H13M13 7L7 1M13 7L7 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="trust-logos-grid">
+      {% for block in section.blocks %}
+        <div class="trust-logo-item">
+          {% if block.settings.icon != blank %}
+            <img src="{{ block.settings.icon | img_url: '400x' }}" alt="Partner Logo" loading="lazy">
+          {% else %}
+            <span class="trust-placeholder">PARTNER</span>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+<style>
+  /* --- CORE VARIABLES --- */
+  #trust-{{ section.id }} {
+    background-color: {{ section.settings.bg }};
+    padding-top: {{ section.settings.padding-top }}px;
+    padding-bottom: {{ section.settings.padding-bottom }}px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  .page-width { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+  /* --- HEADER STYLES --- */
+  .trust-header {
+    text-align: left;
+    max-width: 800px;
+    /* CHANGED: Increased spacing between text/button and logos */
+    margin-bottom: 100px; 
+  }
+
+  .trust-heading {
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #1D1D1F;
+    margin: 0 0 20px 0;
+    letter-spacing: -0.02em;
+  }
+
+  .trust-desc p {
+    font-size: 18px;
+    line-height: 1.5;
+    color: #424245;
+    margin: 0;
+  }
+
+  /* BUTTON STYLES */
+  .trust-cta-wrapper { margin-top: 30px; }
+  
+  .trust-btn {
+    display: inline-flex; 
+    align-items: center; 
+    gap: 12px;
+    font-size: 16px; 
+    font-weight: 600; 
+    color: #fff; 
+    background-color: #1D1D1F; /* Black Button */
+    padding: 14px 28px;
+    border-radius: 100px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  
+  .trust-btn:hover { 
+    background-color: #0071E3; /* Apple Blue */
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+  
+  .trust-btn svg { transition: transform 0.3s ease; }
+  .trust-btn:hover svg { transform: translateX(4px); }
+
+  /* --- STATIC GRID LAYOUT --- */
+  .trust-logos-grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center; /* Centered horizontally on Desktop */
+    gap: 60px; /* Consistent spacing */
+    padding-bottom: 20px;
+  }
+
+  .trust-logo-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px; /* Fixed container height for alignment */
+    transition: opacity 0.3s ease;
+  }
+
+  /* HARMONIOUS ICON SIZING */
+  .trust-logo-item img {
+    height: 35px; /* Fixed height makes them all look uniform */
+    width: auto;  /* Width adjusts automatically */
+    object-fit: contain;
+    
+    /* Aesthetic Filters */
+    filter: grayscale(100%); 
+    opacity: 0.6; 
+    transition: all 0.3s ease;
+  }
+
+  /* Hover Effects */
+  .trust-logo-item:hover img {
+    filter: grayscale(0%);
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  .trust-placeholder {
+    font-size: 14px; font-weight: 700; color: #E5E5E5;
+  }
+
+  /* --- RESPONSIVE --- */
+  @media(max-width: 768px) {
+    .trust-header { 
+      margin-bottom: 60px; /* Slightly less space on mobile, but still distinct */
+    }
+    .trust-heading { font-size: 36px; }
+    .trust-desc p { font-size: 16px; }
+    
+    /* CHANGED: Mobile Stack */
+    .trust-logos-grid {
+      flex-direction: column; /* Stacks items vertically */
+      gap: 50px; /* Vertical space between stacked logos */
+    }
+    
+    /* Slightly smaller icons on mobile */
+    .trust-logo-item img {
+      height: 30px; 
+    }
+  }
+</style>
+
+{% schema %}
+  {
+    "name": "Static Partners Grid",
+    "settings": [
+       {
+         "type": "color",
+         "id": "bg",
+         "label": "Background Color",
+         "default": "#fff"
+       },
+       {
+         "type": "range",
+         "id": "padding-top",
+         "label": "Top Padding",
+         "default": 100,
+         "min": 0,
+         "max": 150,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "range",
+         "id": "padding-bottom",
+         "label": "Bottom Padding",
+         "default": 100,
+         "min": 0,
+         "max": 150,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "text",
+         "id": "heading",
+         "label": "Heading",
+         "default": "We are proud to work with"
+       },
+       {
+         "type": "richtext",
+         "id": "details",
+         "label": "Description",
+         "default": "<p>We specialise in crafting custom-tailored repair solutions for both SMEs and large corporations.</p>"
+       },
+       {
+         "type": "text",
+         "id": "btn",
+         "label": "Button Label",
+         "default": "Interested in joining? Click here"
+       },
+       {
+         "type": "url",
+         "id": "link",
+         "label": "Link URL"
+       }
+    ],
+  "blocks":[
+      {
+        "type":"logo",
+        "name":"Partner Logo",
+        "settings":[
+            {
+               "type":"image_picker",
+               "id":"icon",
+               "label":"Logo Image (Use PNG)"
+            }
+         ]
+      }
+  ],
+  "presets": [
+    {
+      "name": "Static Partners Grid", 
+      "category": "section",
+      "blocks": [
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" }
+      ]
+    }
+  ]
+}
+{% endschema %}

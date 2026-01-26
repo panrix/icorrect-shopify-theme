@@ -1,0 +1,303 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "show_collection_description": true,
+        "show_collection_image": false,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "disabled": true,
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "enable_filtering": true,
+        "filter_type": "horizontal",
+        "enable_sorting": true,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "main_banner_and_video_HjbmW9": {
+      "type": "main-banner-and-video",
+      "disabled": true,
+      "settings": {
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "mob_padding_top": 0,
+        "mob_padding_bottom": 0,
+        "bg": "#ffffff",
+        "video_url": "",
+        "img": "shopify://shop_images/Website-Banner.jpg"
+      }
+    },
+    "parent_categories_nWCAYw": {
+      "type": "parent-categories",
+      "blocks": {
+        "category_74pW43": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/Pro_16_general_1b954e05-186c-4ba7-b682-94aca10b1f0b.png",
+            "title": "MacBook",
+            "price": "",
+            "link": "shopify://collections/macbook-repair-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_Fp8mqG": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/Untitled_design_6701aa15-4052-44ff-be35-315e4ba1f327.png",
+            "title": "iPhone",
+            "price": "",
+            "link": "shopify://collections/iphone-repair-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_WqzRyG": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/Untitled_design_fe3acc87-bf24-4167-b966-2b217e1a9924.png",
+            "title": "iPad",
+            "price": "",
+            "link": "shopify://collections/ipad-repair-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_NyLyX9": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/Untitled_design_45b8d9c0-e1f3-419a-a413-1640fb89f3eb.png",
+            "title": "Apple Watch",
+            "price": "",
+            "link": "shopify://collections/apple-watch-repair-prices",
+            "btn": "View repairs"
+          }
+        }
+      },
+      "block_order": [
+        "category_74pW43",
+        "category_Fp8mqG",
+        "category_WqzRyG",
+        "category_NyLyX9"
+      ],
+      "settings": {
+        "column_per_row": 4,
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 40,
+        "mob_padding_bottom": 40,
+        "bg": "#fafafa",
+        "heading": "Book your repair",
+        "heading_size": 28,
+        "details": "",
+        "btn_link": "",
+        "btn_text": ""
+      }
+    },
+    "repair_services_nQkwFT": {
+      "type": "repair-services",
+      "blocks": {
+        "service_PEi9BF": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Walk-in.png",
+            "heading": "Walk-In Service",
+            "details": "For clients based in Central London who wish to visit us, we operate a  walk-in drop-off service by appointment. Simply book your repair via our  website booking page to confirm your appointment time before heading to us.",
+            "btn": "Learn more",
+            "link": "shopify://pages/our-services"
+          }
+        },
+        "service_RaggTi": {
+          "type": "service",
+          "disabled": true,
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Courier.png",
+            "heading": "London Courier",
+            "details": "We operate a convenient collection, repair & delivery service for  clients based within Zones 1 & 2 in London. Our couriers are fully  tracked and insured throughout the journey. Book your iPhone repair  before 1pm for a same day return.",
+            "btn": "Learn more",
+            "link": ""
+          }
+        },
+        "service_enBGWD": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Delivery.png",
+            "heading": "National Courier",
+            "details": "We collect from anywhere in the UK. Book online and we send secure packaging to your door. Your device is returned fully repaired and tested.",
+            "btn": "Learn more",
+            "link": "shopify://pages/our-services"
+          }
+        }
+      },
+      "block_order": [
+        "service_PEi9BF",
+        "service_RaggTi",
+        "service_enBGWD"
+      ],
+      "disabled": true,
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 50,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#ffffff",
+        "heading": "Our repair services",
+        "details": "Choose the most convenient service for you"
+      }
+    },
+    "homepage_faqs_bCnbtj": {
+      "type": "homepage-faqs",
+      "blocks": {
+        "accordion_HH6Q8e": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do I need an appointment?",
+            "sub_head": "<p>You do not need an appointment to contact us, get a quote, or book in for a repair. For walk ins, we can normally accept devices during opening hours, but availability can vary depending on workload and the type of repair.</p><p>If you want the quickest turnaround, booking in advance is best. It allows us to reserve bench time, confirm parts availability, and prioritise your repair. This is especially important for same day repairs and for any express service requests.</p><p>If you are sending your device in, you can place an order online and follow the shipping instructions. We will confirm receipt, run intake checks, and then proceed according to the booked service or agreed quote.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_wc9AMN": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do I need to back up my data before my repair?",
+            "sub_head": "<p>Yes, you should back up your data whenever possible. Most repairs do not affect data, but storage can never be guaranteed if a device has underlying faults, liquid damage, or an unstable power issue.</p><p>If your device is still usable, back up before bringing it in. For phones and tablets, an iCloud backup is usually the fastest option. For computers, use Time Machine or another full backup method.</p><p>If the device is not turning on or is too unstable to back up, we can advise on the safest next step after inspection. In many cases we can repair the device enough to allow a backup, but that depends on the fault and the condition of the hardware.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_XXYApt": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How long does it take to diagnose an unknown fault?",
+            "sub_head": "<p>Most diagnostics are completed within two to three working days. During that time we test for common issues such as battery failure, charging faults, liquid damage, and internal short circuits, and we also check for signs of previous repairs or missing parts.</p><p>If the issue is not obvious, we go deeper. That can include detailed functional testing, internal inspection, and where relevant, board level investigation to isolate the area causing the fault. The goal is to provide a clear answer, not guesswork.</p><p>Once diagnostics are complete, we send you a report explaining what we found and what the recommended repair path is. You stay in control, nothing proceeds beyond diagnostics without your approval.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_jbLQxb": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can you repair a damaged logic board?",
+            "sub_head": "<p>Yes. Logic board repair is one of the main reasons clients choose us. Many repair centres and manufacturers will write off a faulty board and quote a full replacement. We take a repair first approach where it makes technical and financial sense.</p><p>Board faults can present as no power, charging issues, random shutdowns, boot loops, or missing functions like audio, cameras, or connectivity. In many cases the board can be restored by repairing the affected circuit area rather than replacing the entire device.</p><p>These repairs require proper diagnostics and specialist equipment. If we find that a board repair would not be reliable or would not represent good value, we will explain the situation clearly and recommend the most practical alternative.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_AQ4XNP": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do your prices include parts and labour?",
+            "sub_head": "<p>Yes. Pricing is quoted as a complete service, including parts, labour, and the testing required to return the device in stable working condition.</p><p>For jobs where the fault is not confirmed upfront, diagnostics may be required first. In that case, we will confirm the diagnostic fee and timeline, then provide a full quote once the fault is identified.</p><p>We do not add hidden charges at the end. If anything changes during testing, for example we find additional damage that affects the repair outcome, we stop and contact you before doing anything further.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_QMKhG8": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What warranty do you offer?",
+            "sub_head": "<p>We provide a two year warranty on repairs, covering faults related to the work completed and the parts supplied. This applies across our repair categories, from common repairs to more advanced work where appropriate.</p><p>The warranty does not cover accidental damage, liquid exposure after repair, or new faults unrelated to the original repair. It also does not cover general wear and tear, for example normal battery ageing over time.</p><p>If you ever have an issue after a repair, we will inspect the device and explain exactly what is going on. If it is related to the original repair, we will resolve it under warranty.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_AyJBww": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you use original parts?",
+            "sub_head": "<p>Wherever possible, yes. Most of the parts we use are genuine parts reclaimed from original devices, then tested and, where required, refurbished back to a high standard before being fitted.</p><p>This approach helps preserve key features and overall device performance. It also reduces compatibility issues that can happen with low quality aftermarket parts, and it is a more sustainable way to repair electronics.</p><p>For older models where original parts are no longer realistically available in good condition, we use high quality OEM alternatives. We will always be transparent about what part option is being used and why.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_4XeG4T": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you need my passcode for testing?",
+            "sub_head": "<p>Yes, we ask for your passcode so we can complete proper pre repair and post repair testing. This allows us to verify functions like cameras, microphones, speakers, sensors, charging behaviour, display and touch performance, and general stability before returning the device.</p><p>We do not access personal content, banking apps, or private data. The passcode is used only to reach the testing screens needed to confirm the device is working correctly.</p><p>If you prefer not to share a passcode, we can still complete many repairs. In that case we cannot fully validate every function, and warranty coverage may be limited because full testing was not possible.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_pChNxQ": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you offer payment plans?",
+            "sub_head": "<p>Yes. We offer payment options that allow you to spread the cost, including Klarna and PayPal Pay in 3, subject to eligibility and availability at checkout.</p><p>For straightforward repairs booked online, you can choose a payment option during checkout. For diagnostic led repairs, we will provide a quote after inspection, and you can then proceed using the available payment methods once the repair plan is confirmed.</p><p>If you are not sure which route to take, start with diagnostics or contact us with the device model and symptoms. We will point you to the correct booking path.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_bTbUbX": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will my Apple Pencil still work after an iPad repair?",
+            "sub_head": "<p>Yes. After the repair your Apple Pencil will still work as normal.</p><p>We complete the repair in a way that preserves pairing and day to day functionality, including writing accuracy and responsiveness. We also check compatibility and basic Pencil behaviour during testing where possible.</p><p>If your device has additional faults that affect touch input, display performance, or charging, we will flag that during diagnostics and explain what would need to be addressed to restore full functionality.</p>",
+            "alignment": "left"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_HH6Q8e",
+        "accordion_wc9AMN",
+        "accordion_XXYApt",
+        "accordion_jbLQxb",
+        "accordion_AQ4XNP",
+        "accordion_QMKhG8",
+        "accordion_AyJBww",
+        "accordion_4XeG4T",
+        "accordion_pChNxQ",
+        "accordion_bTbUbX"
+      ],
+      "name": "Homepage FAQs",
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 50,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#1d1d1f",
+        "heading": "FAQs",
+        "details": "Learn more about iCorrect, the essential repair services that we offer and the warranties that come with each repair.",
+        "txt-clr": "#ffffff"
+      }
+    },
+    "contact_with_map_dXbbDU": {
+      "type": "contact-with-map",
+      "settings": {
+        "map_html": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.7925117760165!2d-0.1422392230845079!3d51.51702250999988!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2c5aabf83b%3A0x2abbd489a9d66382!2siCorrect!5e0!3m2!1sen!2sit!4v1766495755523!5m2!1sen!2sit\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
+        "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>",
+        "form_heading": "Get in Touch",
+        "form_subtitle": "Have a question about your device repair? We're here to help.",
+        "section_bg": "#f4f4f4",
+        "accent_color": "#3b82f6",
+        "text_color": "#171717",
+        "muted_text_color": "#6b7280",
+        "input_bg": "#ffffff",
+        "input_border": "#e5e7eb"
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "product-grid",
+    "main_banner_and_video_HjbmW9",
+    "parent_categories_nWCAYw",
+    "repair_services_nQkwFT",
+    "homepage_faqs_bCnbtj",
+    "contact_with_map_dXbbDU"
+  ]
+}

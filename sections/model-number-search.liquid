@@ -1,0 +1,931 @@
+{{ 'component-image-with-text.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  /* Search UI */
+  .ic-model-search{ margin-top:18px; max-width:620px; width:100%; }
+  .ic-model-search__row{ display:flex; gap:10px; align-items:stretch; width:100%; }
+  .ic-model-search__input{
+    flex:1 1 auto; width:100%; min-width:260px;
+    padding:12px 14px; border:1px solid rgba(0,0,0,.18);
+    border-radius:8px; font-size:14px; line-height:18px;
+  }
+  .ic-model-search__btn{
+    flex:0 0 auto; padding:12px 18px; border-radius:8px;
+    border:2px solid #1d1d1f; background:transparent; color:#1d1d1f;
+    font-size:14px; line-height:18px; cursor:pointer; white-space:nowrap;
+  }
+  .ic-model-search__btn:hover{ background:rgba(0,0,0,.04); }
+  .ic-model-search__error{ margin-top:8px; font-weight:700; color:#c40000; display:none; }
+  .ic-model-search__error.is-visible{ display:block; }
+
+  .ic-model-filter-hidden{ display:none !important; }
+
+  @media (max-width: 749px){
+    .ic-model-search{ max-width:100%; }
+    .ic-model-search__row{ flex-direction:column; align-items:stretch; gap:12px; }
+    .ic-model-search__input{ min-width:0; width:100%; }
+    .ic-model-search__btn{ width:100%; }
+  }
+
+  /* Highlight */
+  .ic-model-match-highlight{ outline:none !important; }
+  .ic-model-match-highlight > *{
+    /* Red outline removed here */
+    outline: none !important;
+    border-radius:8px;
+  }
+
+  /*
+    Spotlight layout
+    IMPORTANT: we only style the real product grid element that JS tags with .ic-model-grid-spotlight
+  */
+  .ic-model-grid-spotlight{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    justify-content:center !important;
+    align-items:flex-start !important;
+
+    width:100% !important;
+    max-width:100% !important;
+
+    margin-left:0 !important;
+    margin-right:0 !important;
+
+    column-gap:28px !important;
+    row-gap:28px !important;
+
+    overflow-x:clip !important;
+  }
+
+  @media (max-width: 749px){
+    .ic-model-grid-spotlight{ column-gap:18px !important; row-gap:18px !important; }
+  }
+
+  /* Reset Dawn grid negative offsets on UL.product-grid specifically */
+  .ic-model-grid-spotlight.grid,
+  .ic-model-grid-spotlight.product-grid{
+    margin-left:0 !important;
+    margin-right:0 !important;
+  }
+
+  .ic-model-grid-spotlight > *{
+    padding-left:0 !important;
+    padding-right:0 !important;
+    max-width:100% !important;
+  }
+
+  /* Item sizing */
+  .ic-model-spotlight-item{
+    width:100% !important;
+    max-width:520px !important;
+    flex:0 1 520px !important;
+    margin:0 !important;
+  }
+
+  /* SINGLE: force the one item to sit centered */
+@media (max-width: 749px){
+  .ic-model-grid-spotlight.ic-model-grid--single .ic-model-spotlight-item,
+  .ic-model-grid-spotlight.ic-model-grid--multi .ic-model-spotlight-item{
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    max-width: calc(100vw - 32px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+  @media (max-width: 749px){
+    .ic-model-spotlight-item{
+      flex-basis:100% !important;
+      max-width:520px !important;
+    }
+    .ic-model-grid-spotlight.ic-model-grid--single .ic-model-spotlight-item{
+      flex:0 0 100% !important;
+      max-width:520px !important;
+    }
+  }
+
+  /* Contain inner wrappers */
+  .ic-model-spotlight-item > *{ width:100% !important; max-width:520px !important; }
+
+  /* Radius and clipping */
+  .ic-model-spotlight-item,
+  .ic-model-spotlight-item > *{ border-radius:8px !important; }
+
+  .ic-model-spotlight-item .card,
+  .ic-model-spotlight-item .card__inner,
+  .ic-model-spotlight-item .card__media,
+  .ic-model-spotlight-item .card__content,
+  .ic-model-spotlight-item .card__information{ border-radius:8px !important; }
+
+  .ic-model-spotlight-item > *,
+  .ic-model-spotlight-item .card,
+  .ic-model-spotlight-item .card__inner{ overflow:hidden !important; }
+
+  /* --- FIX: mobile card overflow only (does not affect desktop) --- */
+@media (max-width: 749px){
+  /* keep the spotlight grid inside the viewport */
+  .ic-model-grid-spotlight{
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* force each spotlight tile to respect the padded container */
+  .ic-model-grid-spotlight .ic-model-spotlight-item{
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* outlines can create horizontal overflow on small screens */
+  .ic-model-match-highlight > *{
+    outline-offset: 0 !important;
+  }
+  .ic-model-match-highlight > * > .card,
+  .ic-model-match-highlight > * > .card-wrapper,
+  .ic-model-match-highlight > * > .card__inner{
+    outline-offset: 0 !important;
+  }
+}
+/* --- END FIX --- */
+{%- endstyle -%}
+
+{%- liquid
+  assign fetch_priority = 'auto'
+  if section.index == 1
+    assign fetch_priority = 'high'
+  endif
+  if section.settings.color_scheme == section.settings.section_color_scheme and section.settings.content_layout == 'no-overlap'
+    assign remove_color_classes = true
+  endif
+-%}
+
+<div class="section-{{ section.id }}-padding gradient color-{{ section.settings.section_color_scheme }}">
+  <div class="page-width">
+    <div class="image-with-text image-with-text--{{ section.settings.content_layout }} isolate{% if settings.text_boxes_border_thickness > 0 and settings.text_boxes_border_opacity > 0 and settings.media_border_thickness > 0 and settings.media_border_opacity > 0 %} collapse-borders{% endif %}{% unless section.settings.color_scheme == section.settings.section_color_scheme and settings.media_border_thickness > 0 and settings.text_boxes_shadow_opacity == 0 and settings.text_boxes_border_thickness == 0 or settings.text_boxes_border_opacity == 0 %} collapse-corners{% endunless %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+      <div class="image-with-text__grid grid grid--gapless grid--1-col grid--{% if section.settings.desktop_image_width == 'medium' or section.settings.desktop_image_width == 'small_medium' %}2-col-tablet{% else %}3-col-tablet{% endif %}{% if section.settings.layout == 'text_first' %} image-with-text__grid--reverse{% endif %} image-with-text__grid--{{ section.settings.desktop_image_width }}">
+        <div class="image-with-text__media-item image-with-text__media-item--{{ section.settings.desktop_image_width }} image-with-text__media-item--{{ section.settings.desktop_content_position }} grid__item">
+          <div
+            class="image-with-text__media image-with-text__media--{{ section.settings.height }} global-media-settings{% unless remove_color_classes %} gradient color-{{ section.settings.color_scheme }}{% else %} background-transparent{% endunless %}{% if section.settings.image != blank %} media{% else %} image-with-text__media--placeholder placeholder{% endif %}{% if section.settings.image_behavior != 'none' %} animate--{{ section.settings.image_behavior }}{% endif %}"
+            {% if section.settings.height == 'adapt' and section.settings.image != blank %}
+              style="padding-bottom: {{ 1 | divided_by: section.settings.image.aspect_ratio | times: 100 }}%;"
+            {% endif %}
+          >
+            {%- if section.settings.image != blank -%}
+              {%- if section.settings.image_behavior == 'ambient' or section.settings.image_behavior == 'zoom-in' -%}
+                {%- assign widths = '198, 432, 642, 900, 1284, 1800' -%}
+                {%- capture sizes -%}
+              (min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 100 | divided_by: 1.6667 }}px,
+              (min-width: 750px) calc((100vw - 130px) / 1.667), calc((100vw - 50px) / 1.667)
+            {%- endcapture -%}
+              {%- else -%}
+                {%- assign widths = '165, 360, 535, 750, 1070, 1500' -%}
+                {%- capture sizes -%}
+              (min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 100 | divided_by: 2 }}px,
+              (min-width: 750px) calc((100vw - 130px) / 2), calc((100vw - 50px) / 2)
+            {%- endcapture -%}
+              {%- endif -%}
+              {{
+                section.settings.image
+                | image_url: width: 1500
+                | image_tag: sizes: sizes, widths: widths, fetchpriority: fetch_priority
+              }}
+            {%- else -%}
+              <img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/MacBook_Model_Number.png?v=1765884112" 
+                   loading="lazy" 
+                   alt="MacBook Model Number" 
+                   width="1500" 
+                   height="auto" 
+                   style="width:100%; height:auto; object-fit:cover;">
+            {%- endif -%}
+          </div>
+        </div>
+        <div class="image-with-text__text-item grid__item">
+          <div
+            id="ImageWithText--{{ section.id }}"
+            class="image-with-text__content image-with-text__content--{{ section.settings.desktop_content_position }} image-with-text__content--desktop-{{ section.settings.desktop_content_alignment }} image-with-text__content--mobile-{{ section.settings.mobile_content_alignment }} image-with-text__content--{{ section.settings.height }} content-container{% unless remove_color_classes %} gradient color-{{ section.settings.color_scheme }}{% else %} background-transparent{% endunless %}"
+          >
+            {%- for block in section.blocks -%}
+              {% case block.type %}
+                {%- when 'heading' -%}
+                  <h2
+                    class="image-with-text__heading inline-richtext {{ block.settings.heading_size }}"
+                    {{ block.shopify_attributes }}
+                  >
+                    {{ block.settings.heading }}
+                  </h2>
+                {%- when 'caption' -%}
+                  <p
+                    class="image-with-text__text image-with-text__text--caption {{ block.settings.text_style }} {{ block.settings.text_style }}--{{ block.settings.text_size }} {{ block.settings.text_style }}"
+                    {{ block.shopify_attributes }}
+                  >
+                    {{ block.settings.caption | escape }}
+                  </p>
+                {%- when 'text' -%}
+                  <div class="image-with-text__text rte {{ block.settings.text_style }}" {{ block.shopify_attributes }}>
+                    {{ block.settings.text }}
+                  </div>
+                {%- when 'button' -%}
+                  {%- if block.settings.button_label != blank -%}
+                    <a
+                      {% if block.settings.button_link == blank %}
+                        role="link" aria-disabled="true"
+                      {% else %}
+                        href="{{ block.settings.button_link }}"
+                      {% endif %}
+                      class="button{% if block.settings.button_style_secondary %} button--secondary{% else %} button--primary{% endif %}"
+                      {{ block.shopify_attributes }}
+                    >
+                      {{ block.settings.button_label | escape }}
+                    </a>
+                  {%- endif -%}
+              {%- endcase -%}
+            {%- endfor -%}
+            {%- if section.settings.enable_model_search -%}
+  <div class="ic-model-search" data-scope-selector="{{ section.settings.model_search_scope_selector | escape }}" data-mode="{{ section.settings.model_search_mode | escape }}">
+    <div class="ic-model-search__row">
+      <input
+        class="ic-model-search__input"
+        type="text"
+        inputmode="text"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="{{ section.settings.model_search_placeholder | escape }}"
+        aria-label="{{ section.settings.model_search_placeholder | escape }}"
+      >
+      <button type="button" class="ic-model-search__btn">
+        {{ section.settings.model_search_button_label | escape }}
+      </button>
+    </div>
+    <div class="ic-model-search__error" role="alert" aria-live="polite"></div>
+  </div>
+{%- endif -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- if section.settings.enable_model_search -%}
+<script>
+(function(){
+  function norm(v){
+    return (v || "").toString().trim().toUpperCase().replace(/\s+/g, "");
+  }
+
+  function getScopeEl(scopeSelector){
+    if (!scopeSelector) return document;
+    const candidates = scopeSelector.split(",").map(s => s.trim()).filter(Boolean);
+    for (const sel of candidates){
+      const el = document.querySelector(sel);
+      if (el) return el;
+    }
+    return document;
+  }
+
+  function getCardCandidates(scopeEl){
+    const preferred = scopeEl.querySelectorAll("[data-model],[data-device-model],[data-model-number]");
+    if (preferred.length) return Array.from(preferred);
+
+    const productLinks = scopeEl.querySelectorAll('a[href*="/products/"]');
+    if (productLinks.length){
+      return Array.from(productLinks).map(a => a.closest("li.grid__item, .grid__item") || a);
+    }
+
+    return Array.from(scopeEl.querySelectorAll("li.grid__item, .grid__item"));
+  }
+
+  function getCardWrapper(node){
+    return node.closest("li.grid__item") || node.closest(".grid__item") || node;
+  }
+
+  /* STRICT: only real product grid containers */
+  function getGridWrap(el){
+    if (!el) return null;
+    const sel = [
+      "ul#product-grid",
+      "ul.product-grid",
+      "div#product-grid",
+      ".product-grid",
+      "[id^='product-grid']"
+    ].join(",");
+    return el.closest(sel);
+  }
+
+  function findMatches(scopeEl, query){
+    const q = norm(query);
+    if (!q) return [];
+    const cards = getCardCandidates(scopeEl);
+    const matches = [];
+
+    for (const el of cards){
+      const attr =
+        el.getAttribute("data-model") ||
+        el.getAttribute("data-device-model") ||
+        el.getAttribute("data-model-number") ||
+        "";
+
+      const hayAttr = norm(attr);
+      const hayText = norm(el.textContent || "");
+
+      if ((hayAttr && hayAttr.includes(q)) || hayText.includes(q)){
+        matches.push(el);
+      }
+    }
+    return matches;
+  }
+
+  function init(){
+    const root = document.getElementById("ImageWithText--{{ section.id }}");
+    if (!root) return;
+
+    const wrapper = root.querySelector(".ic-model-search");
+    if (!wrapper) return;
+
+    const input = wrapper.querySelector(".ic-model-search__input");
+    const btn = wrapper.querySelector(".ic-model-search__btn");
+    const err = wrapper.querySelector(".ic-model-search__error");
+
+    const scopeSelector = wrapper.getAttribute("data-scope-selector") || "";
+    const scopeEl = getScopeEl(scopeSelector);
+
+    let activeCards = [];
+    let activeGrid = null;
+    let lastAppliedQuery = "";
+
+    function showError(msg){
+      err.textContent = msg;
+      err.classList.add("is-visible");
+    }
+    function clearError(){
+      err.textContent = "";
+      err.classList.remove("is-visible");
+    }
+
+    function clearFilters(){
+      scopeEl.querySelectorAll(".ic-model-filter-hidden").forEach(el => el.classList.remove("ic-model-filter-hidden"));
+    }
+
+    function applyFilter(query){
+      const q = norm(query);
+      const cards = getCardCandidates(scopeEl);
+
+      cards.forEach(el => {
+        const attr =
+          el.getAttribute("data-model") ||
+          el.getAttribute("data-device-model") ||
+          el.getAttribute("data-model-number") ||
+          "";
+        const hay = norm(attr || "") + " " + norm(el.textContent || "");
+
+        if (!q){
+          el.classList.remove("ic-model-filter-hidden");
+          return;
+        }
+
+        if (hay.includes(q)){
+          el.classList.remove("ic-model-filter-hidden");
+        } else {
+          el.classList.add("ic-model-filter-hidden");
+        }
+      });
+    }
+
+    function clearActive(){
+      if (activeCards.length){
+        activeCards.forEach(card => {
+          card.classList.remove("ic-model-spotlight-item");
+          card.classList.remove("ic-model-match-highlight");
+        });
+        activeCards = [];
+      }
+
+      if (activeGrid){
+        activeGrid.classList.remove("ic-model-grid-spotlight", "ic-model-grid--single", "ic-model-grid--multi");
+        activeGrid = null;
+      }
+
+      lastAppliedQuery = "";
+    }
+
+    function run(){
+      const raw = input.value || "";
+      const q = norm(raw);
+
+      clearError();
+
+      if (!q){
+        clearFilters();
+        clearActive();
+        return;
+      }
+
+      applyFilter(raw);
+
+      const matches = findMatches(scopeEl, raw);
+      if (!matches.length){
+        clearActive();
+        showError("We could not find that model on this page. Check the model number and try again. If the model number is correct, it means that we unfortunately do not service your device.");
+        return;
+      }
+
+      clearActive();
+
+      const wrappers = matches.map(getCardWrapper);
+
+      /* Tag ONLY the real product grid */
+      const gridWrap = getGridWrap(wrappers[0]);
+
+      if (gridWrap){
+        gridWrap.classList.add("ic-model-grid-spotlight");
+        gridWrap.classList.remove("ic-model-grid--single", "ic-model-grid--multi");
+        gridWrap.classList.add(wrappers.length > 1 ? "ic-model-grid--multi" : "ic-model-grid--single");
+        activeGrid = gridWrap;
+      }
+
+      wrappers.forEach(card => {
+        card.classList.add("ic-model-spotlight-item");
+        card.classList.add("ic-model-match-highlight");
+      });
+
+      activeCards = wrappers;
+      lastAppliedQuery = q;
+
+      wrappers[0].scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    btn.addEventListener("click", function(e){
+      e.preventDefault();
+      run();
+    });
+
+    input.addEventListener("keydown", function(e){
+      if (e.key === "Enter"){
+        e.preventDefault();
+        run();
+      }
+    });
+
+    input.addEventListener("input", function(){
+      const q = norm(input.value);
+
+      if (!q){
+        clearError();
+        clearFilters();
+        clearActive();
+        return;
+      }
+
+      if (lastAppliedQuery && q !== lastAppliedQuery){
+        clearActive();
+        clearError();
+        clearFilters();
+      }
+    });
+  }
+
+  if (document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.image-with-text.name",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+  "type": "header",
+  "content": "Model search"
+},
+{
+  "type": "checkbox",
+  "id": "enable_model_search",
+  "label": "Enable model search",
+  "default": true
+},
+{
+  "type": "text",
+  "id": "model_search_placeholder",
+  "label": "Input placeholder",
+  "default": "Enter model number, e.g. A3403"
+},
+{
+  "type": "text",
+  "id": "model_search_button_label",
+  "label": "Button label",
+  "default": "Search"
+},
+{
+  "type": "select",
+  "id": "model_search_mode",
+  "label": "Search behaviour",
+  "default": "scroll",
+  "options": [
+    { "value": "scroll", "label": "Scroll to match" },
+    { "value": "filter", "label": "Show only match" }
+  ]
+},
+{
+  "type": "text",
+  "id": "model_search_scope_selector",
+  "label": "Search scope CSS selectors",
+  "info": "Comma-separated selectors for the Featured Collection area. Example: #shopify-section-featured-collection, .featured-collection",
+  "default": "#shopify-section-featured-collection, .featured-collection, .collection"
+},
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.image-with-text.settings.image.label"
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:sections.image-with-text.settings.height.options__1.label"
+        },
+        {
+          "value": "small",
+          "label": "t:sections.image-with-text.settings.height.options__2.label"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.image-with-text.settings.height.options__3.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.image-with-text.settings.height.options__4.label"
+        }
+      ],
+      "default": "adapt",
+      "label": "t:sections.image-with-text.settings.height.label"
+    },
+    {
+      "type": "select",
+      "id": "desktop_image_width",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:sections.image-with-text.settings.desktop_image_width.options__1.label"
+        },
+        {
+          "value": "small_medium",
+          "label": "Small-Medium"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.image-with-text.settings.desktop_image_width.options__2.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.image-with-text.settings.desktop_image_width.options__3.label"
+        }
+      ],
+      "default": "small_medium",
+      "label": "t:sections.image-with-text.settings.desktop_image_width.label",
+      "info": "t:sections.image-with-text.settings.desktop_image_width.info"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "options": [
+        {
+          "value": "image_first",
+          "label": "t:sections.image-with-text.settings.layout.options__1.label"
+        },
+        {
+          "value": "text_first",
+          "label": "t:sections.image-with-text.settings.layout.options__2.label"
+        }
+      ],
+      "default": "image_first",
+      "label": "t:sections.image-with-text.settings.layout.label",
+      "info": "t:sections.image-with-text.settings.layout.info"
+    },
+    {
+      "type": "select",
+      "id": "desktop_content_position",
+      "options": [
+        {
+          "value": "top",
+          "label": "t:sections.image-with-text.settings.desktop_content_position.options__1.label"
+        },
+        {
+          "value": "middle",
+          "label": "t:sections.image-with-text.settings.desktop_content_position.options__2.label"
+        },
+        {
+          "value": "bottom",
+          "label": "t:sections.image-with-text.settings.desktop_content_position.options__3.label"
+        }
+      ],
+      "default": "top",
+      "label": "t:sections.image-with-text.settings.desktop_content_position.label"
+    },
+    {
+      "type": "select",
+      "id": "desktop_content_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.image-with-text.settings.desktop_content_alignment.options__1.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.image-with-text.settings.desktop_content_alignment.options__2.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.image-with-text.settings.desktop_content_alignment.options__3.label"
+        }
+      ],
+      "default": "left",
+      "label": "t:sections.image-with-text.settings.desktop_content_alignment.label"
+    },
+    {
+      "type": "select",
+      "id": "content_layout",
+      "options": [
+        {
+          "value": "no-overlap",
+          "label": "t:sections.image-with-text.settings.content_layout.options__1.label"
+        },
+        {
+          "value": "overlap",
+          "label": "t:sections.image-with-text.settings.content_layout.options__2.label"
+        }
+      ],
+      "default": "no-overlap",
+      "label": "t:sections.image-with-text.settings.content_layout.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "section_color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.multirow.settings.container_color_scheme.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.animation.content"
+    },
+    {
+      "type": "select",
+      "id": "image_behavior",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:sections.all.animation.image_behavior.options__1.label"
+        },
+        {
+          "value": "ambient",
+          "label": "t:sections.all.animation.image_behavior.options__2.label"
+        },
+        {
+          "value": "zoom-in",
+          "label": "t:sections.all.animation.image_behavior.options__4.label"
+        }
+      ],
+      "default": "none",
+      "label": "t:sections.all.animation.image_behavior.label"
+    },
+    {
+      "type": "header",
+      "content": "Mobile layout"
+    },
+    {
+      "type": "select",
+      "id": "mobile_content_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.image-with-text.settings.mobile_content_alignment.options__1.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.image-with-text.settings.mobile_content_alignment.options__2.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.image-with-text.settings.mobile_content_alignment.options__3.label"
+        }
+      ],
+      "default": "left",
+      "label": "t:sections.image-with-text.settings.mobile_content_alignment.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "t:sections.image-with-text.blocks.heading.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "default": "Need help identifying your MacBook?",
+          "label": "t:sections.image-with-text.blocks.heading.settings.heading.label"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "options": [
+            {
+              "value": "h2",
+              "label": "t:sections.all.heading_size.options__1.label"
+            },
+            {
+              "value": "h1",
+              "label": "t:sections.all.heading_size.options__2.label"
+            },
+            {
+              "value": "h0",
+              "label": "t:sections.all.heading_size.options__3.label"
+            },
+            {
+              "value": "hxl",
+              "label": "t:sections.all.heading_size.options__4.label"
+            },
+            {
+              "value": "hxxl",
+              "label": "t:sections.all.heading_size.options__5.label"
+            }
+          ],
+          "default": "h1",
+          "label": "t:sections.all.heading_size.label"
+        }
+      ]
+    },
+    {
+      "type": "caption",
+      "name": "t:sections.image-with-text.blocks.caption.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "caption",
+          "default": "t:sections.image-with-text.blocks.caption.settings.text.default",
+          "label": "t:sections.image-with-text.blocks.caption.settings.text.label"
+        },
+        {
+          "type": "select",
+          "id": "text_style",
+          "options": [
+            {
+              "value": "subtitle",
+              "label": "t:sections.image-with-text.blocks.caption.settings.text_style.options__1.label"
+            },
+            {
+              "value": "caption-with-letter-spacing",
+              "label": "t:sections.image-with-text.blocks.caption.settings.text_style.options__2.label"
+            }
+          ],
+          "default": "caption-with-letter-spacing",
+          "label": "t:sections.image-with-text.blocks.caption.settings.text_style.label"
+        },
+        {
+          "type": "select",
+          "id": "text_size",
+          "options": [
+            {
+              "value": "small",
+              "label": "t:sections.image-with-text.blocks.caption.settings.caption_size.options__1.label"
+            },
+            {
+              "value": "medium",
+              "label": "t:sections.image-with-text.blocks.caption.settings.caption_size.options__2.label"
+            },
+            {
+              "value": "large",
+              "label": "t:sections.image-with-text.blocks.caption.settings.caption_size.options__3.label"
+            }
+          ],
+          "default": "medium",
+          "label": "t:sections.image-with-text.blocks.caption.settings.caption_size.label"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "t:sections.image-with-text.blocks.text.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "default": "<p>Check the model number printed on the underside of your MacBook. It starts with the letter “A” followed by four digits. Use this number to quickly identify your exact model and ensure you select the correct repair or service.</p>",
+          "label": "t:sections.image-with-text.blocks.text.settings.text.label"
+        },
+        {
+          "type": "select",
+          "id": "text_style",
+          "options": [
+            {
+              "value": "body",
+              "label": "t:sections.image-with-text.blocks.text.settings.text_style.options__1.label"
+            },
+            {
+              "value": "subtitle",
+              "label": "t:sections.image-with-text.blocks.text.settings.text_style.options__2.label"
+            }
+          ],
+          "default": "body",
+          "label": "t:sections.image-with-text.blocks.text.settings.text_style.label"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "t:sections.image-with-text.blocks.button.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_label",
+          "default": "t:sections.image-with-text.blocks.button.settings.button_label.default",
+          "label": "t:sections.image-with-text.blocks.button.settings.button_label.label",
+          "info": "t:sections.image-with-text.blocks.button.settings.button_label.info"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "t:sections.image-with-text.blocks.button.settings.button_link.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "button_style_secondary",
+          "default": false,
+          "label": "t:sections.image-with-text.blocks.button.settings.outline_button.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Model Number Search",
+      "blocks": [
+        {
+          "type": "heading"
+        },
+        {
+          "type": "text"
+        },
+        {
+          "type": "button"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

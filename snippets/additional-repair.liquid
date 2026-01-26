@@ -1,0 +1,1371 @@
+{% assign repair_products = product.metafields.custom.additional_repair.value %}
+{% assign walk_in = all_products['walk-in-service'] %}
+{% assign mail_in = all_products['mail-in-service'] %}
+{% assign main_variant = product.selected_or_first_available_variant %}
+
+<style>
+  /* --- GLOBAL HELPERS --- */
+  .line-row-wrap .del-price{ font-weight: 700 !important; }
+  .price, .product-form{ display:none !important; }
+  .bg-white { display: contents; } 
+
+  /* --- ADD ONS (Checkboxes) --- */
+  .additionl-repair-product label, .additional-walk-in-product label {
+    position: relative;
+    padding: 12px 0 12px 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.4;
+    text-align: left;
+    color: #1d1d1f;
+    cursor: pointer;
+    border-bottom: 1px solid #f5f5f5;
+    font-family: 'Axiforma-M' !important;
+  }
+  .additionl-repair-product:last-child label { border-bottom: none; }
+  
+  .additionl-repair-product input, .additional-walk-in-product input {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    width: 20px;
+    height: 20px;
+    accent-color: #1d1d1f;
+    margin: 0;
+  }
+  .repair-price {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1d1d1f;
+  }
+
+  /* --- SELECTION GRIDS --- */
+  .choice-btn-row, 
+  .trt_choice-btn-row, 
+  .battery_choice-btn-row, 
+  .color_choice-btn-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); 
+    gap: 12px; 
+    width: 100%;
+    margin-bottom: 30px;
+    background: transparent;
+  }
+
+  /* Base Card Style */
+  .trt-btn, 
+  .color-btn, 
+  .collect-device-btn, 
+  .visit-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    
+    background-color: #FFFFFF;
+    border: 1px solid #d2d2d7; 
+    border-radius: 12px !important; 
+    
+    padding: 10px; 
+    min-height: 60px; 
+    height: auto; 
+    
+    color: #1d1d1f;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    /* overflow: hidden;  <-- REMOVED to allow badge to float out */
+    overflow: visible !important; 
+  }
+
+  /* --- NEW POPULAR BADGE STYLE --- */
+  .popular-badge {
+    position: absolute;
+    background-color: #0071e3; /* Brand Blue */
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 4px; 
+    text-transform: uppercase;
+    line-height: 1;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    z-index: 5;
+    
+    /* MOBILE DEFAULT: Inside the box */
+    top: 6px;
+    right: 6px;
+  }
+
+  /* DESKTOP OVERRIDE: Outside the box */
+  @media(min-width: 750px) {
+    .popular-badge {
+      top: -15px;      /* Pull it up outside the border */
+      right: 15px;     /* Position from right */
+      font-size: 11px; /* Slightly larger on desktop */
+      padding: 5px 10px;
+    }
+  }
+
+  /* Typography inside Cards */
+  .trt-btn p, 
+  .collect-device-btn p, 
+  .visit-btn p {
+    font-family: 'Axiforma-M';
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0 0 4px 0;
+    padding: 0;
+    z-index: 2; 
+  }
+  
+  /* Subtext / Price / Description */
+  .trt-btn small, 
+  .collect-device-btn small,
+  .visit-btn small {
+    font-family: 'Axiforma-R';
+    font-size: 12px;
+    color: #86868b;
+    line-height: 1.2;
+    display: block;
+  }
+  
+  /* Price bolding inside description */
+  .trt-btn small span, 
+  .collect-device-btn small span, 
+  .visit-btn small span {
+    font-weight: 600;
+    color: #1d1d1f;
+  }
+
+  /* Hover State (Desktop) */
+  @media(hover: hover) {
+    .trt-btn:not(.active):hover, 
+    .color-btn:not(.active):hover, 
+    .collect-device-btn:not(.active):hover, 
+    .visit-btn:not(.active):hover {
+      border-color: #86868b;
+      background-color: #fbfbfb;
+    }
+  }
+
+  /* ACTIVE STATE (Selected) */
+  .color-btn.active, 
+  .trt-btn.active, 
+  .collect-device-btn.active, 
+  .visit-btn.active {
+    background-color: #1d1d1f;
+    color: #ffffff;
+    border-color: #1d1d1f;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    z-index: 2;
+  }
+
+  /* Text colors when active */
+  .active p, .active small, .active small span, .active span {
+    color: #ffffff !important;
+  }
+  .active small {
+    opacity: 0.8;
+  }
+
+  /* --- COLOR SWATCHES SPECIFIC --- */
+  #color-chips.color_choice-btn-row {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); 
+    gap: 10px;
+  }
+  .color-btn {
+    padding: 8px;
+    min-height: 70px;
+    font-size: 14px; 
+    font-weight: 500;
+  }
+  /* Force stacking of two words using word-spacing trick */
+  .color-btn span.color-name-text {
+    display: block;
+    word-spacing: 100vw; 
+    white-space: normal;
+    text-align: center;
+    line-height: 1.25;
+  }
+
+  .swatch-circle {
+    display: block !important;
+    flex-shrink: 0 !important;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-bottom: 6px;
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+  }
+  .active .swatch-circle {
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+
+  /* --- SECTION HEADINGS --- */
+  .trt-heading, .pickup-method-heading, .device-color-selection-wrapper h3 { 
+    font-family: 'Axiforma-M' !important;
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 1.3;
+    color: #1d1d1f;
+    margin-bottom: 12px;
+    margin-top: 0;
+  }
+  
+  .additional-repairs-heading {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px 0;
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 10px;
+  }
+  .additional-repairs-heading h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .additional-repairs-heading img {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.25s ease;
+  }
+  .expanded .additional-repairs-heading img{ transform: rotate(180deg); }
+
+  /* --- WALK IN / DATE UI --- */
+  .stuart-integration-wrapper { text-align: left; padding-top: 15px; }
+  
+  .walk-in-schedule-heading h3 {
+    margin: 0 0 10px 0;
+    font-size: 15px;
+    font-weight: 500;
+    color: #1d1d1f;
+    font-family: 'Axiforma-M' !important;
+  }
+
+  .walk-in-schedule {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding-top: 10px;
+  }
+
+  .walk-in-date-col, .walk-in-time-col { flex: 1; }
+  
+  .walk-in-date-col label, .walk-in-time-col label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-family: 'Axiforma-M';
+  }
+  
+  .walk-in-date-col input, .walk-in-time-col select {
+    box-sizing: border-box !important; /* Fixes overlapping caused by padding */
+    width: 100%;
+    height: 52px; 
+    padding: 0 12px;
+    border: 1px solid #d2d2d7;
+    border-radius: 12px; 
+    font-family: 'Axiforma-R';
+    font-size: 14px;
+    color: #1d1d1f;
+    background-color: #fff;
+  }
+  .walk-in-time-col select {
+     appearance: none;
+    -webkit-appearance: none;
+    background-image: url('https://cdn.shopify.com/s/files/1/0754/5903/5403/files/chevron-left_190d2ce0-5628-473b-8e6a-6b53624e68e7.svg?v=1726433326');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+  }
+
+  .walk-in-prod-info {
+    margin-top: 10px;
+    padding: 15px;
+    background: #fbfbfb;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #666;
+  }
+  .walk-in-prod-info ul { padding-left: 20px; margin: 0; }
+  .walk-in-prod-info li { margin-bottom: 4px; }
+
+  .walkin-error {
+    display:none;
+    margin-top:10px;
+    font-size: 13px;
+    font-weight: 600;
+    color:#c81d2e;
+    background: #fff2f2;
+    padding: 8px;
+    border-radius: 6px;
+  }
+  .walkin-error.is-visible{ display:block; }
+
+  /* --- BOTTOM TOTAL & ADD TO CART --- */
+  .walk-in-book-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 30px;
+    margin-top: 20px;
+    border-top: 1px solid #e5e5e5;
+  }
+  
+  .repair-total-price p {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1d1d1f;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .repair-total-price .total-price {
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .custom-add-to-cart { width: 100%; max-width: 200px; }
+  
+  .custom-add-to-cart button {
+    font-size: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: 'Axiforma-M' !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 50px;
+    background-color: #005BBE;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px !important; 
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  /* Kill theme focus ring */
+.custom-add-to-cart button:focus,
+.custom-add-to-cart button:focus-visible,
+.custom-add-to-cart button.button:focus,
+.custom-add-to-cart button.button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.custom-add-to-cart button::after {
+  box-shadow: none !important;
+  outline: none !important;
+}
+  
+  .custom-add-to-cart button:hover:not(:disabled) {
+      background-color: #1A6FD1;
+      transform: scale(1.02);
+  }
+
+  .custom-add-to-cart button.disabled-state,
+  .custom-add-to-cart button:disabled {
+    background-color: #e5e5e5 !important;
+    color: #999 !important;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  
+  .custom-add-to-cart button.loading .loading__spinner.hidden{
+    display: flex !important;
+  }
+
+  /* --- MOBILE SPECIFICS (Keeping Functional) --- */
+  @media(min-width: 750px){
+    .additional-repair-container {
+      height: 0;
+      overflow: hidden;
+      transition: height 0.3s ease;
+    }
+    .expanded .additional-repair-container { height: auto; }
+  }
+
+  @media (max-width: 749px) {
+    .additional-repairs-heading img { display: none; }
+    .additional-repairs-heading { pointer-events: none; }
+    
+    .choice-btn-row, .trt_choice-btn-row, .battery_choice-btn-row {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    
+    /* FIX: Ensure Date/Time share space without overlapping */
+    .walk-in-schedule {
+        display: flex;
+        flex-direction: row; 
+        gap: 10px;
+    }
+    .walk-in-date-col, .walk-in-time-col {
+        flex: 1; /* Allow equal width sharing */
+        min-width: 0; /* Prevent flex overflow */
+        width: auto; /* Remove hardcoded 50% */
+    }
+
+    .walk-in-book-row { 
+        flex-direction: column-reverse; 
+        gap: 20px;
+        align-items: stretch;
+    }
+    .repair-total-price p { align-items: center; }
+    .custom-add-to-cart { max-width: 100%; }
+    
+    #color-chips.color_choice-btn-row {
+        grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  /* ==============================
+   FIX: Mobile Date/Time overlap
+   Equal width, equal height, aligned text
+   ============================== */
+
+/* Use grid, not flex. Removes iOS flex sizing glitches. */
+.walk-in-schedule{
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 10px !important;
+  width: 100% !important;
+  align-items: start !important;
+}
+
+/* Ensure columns can shrink without overflow */
+.walk-in-date-col,
+.walk-in-time-col{
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+/* Controls: same box model, same height, same baseline feel */
+.walk-in-date-col input,
+.walk-in-time-col select{
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+
+  height: 52px !important;
+  box-sizing: border-box !important;
+
+  font-size: 14px !important;
+  line-height: 52px !important;     /* aligns text level */
+  padding: 0 12px !important;
+
+  border-radius: 12px !important;
+  border: 1px solid #d2d2d7 !important;
+  background-color: #fff !important;
+  color: #1d1d1f !important;
+
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+/* Keep the iOS date control from adding its own inner padding that shifts text */
+.walk-in-date-col input[type="date"]{
+  padding-right: 12px !important;
+}
+
+/* Select chevron room, never changes field width */
+.walk-in-time-col select{
+  padding-right: 42px !important;
+  background-position: right 14px center !important;
+  background-size: 12px !important;
+}
+
+/* If the viewport is too narrow, stack cleanly with identical sizing */
+@media (max-width: 380px){
+  .walk-in-schedule{
+    grid-template-columns: 1fr !important;
+  }
+}
+</style>
+
+{% if repair_products != blank %}
+  <div class="additional-repairs-heading" id="toggle-repair-section">
+    <h3>Add additional services</h3>
+    <img src="https://cdn.shopify.com/s/files/1/0754/5903/5403/files/chevron-left_190d2ce0-5628-473b-8e6a-6b53624e68e7.svg?v=1726433326" alt="Toggle Icon" id="toggle-icon">
+  </div>
+{% endif %}
+
+<div class="additional-repair-container">
+  {% for repair_product in repair_products %}
+    <div class="additionl-repair-product">
+      <label>
+        {{ repair_product.title | split: '|' | last }}
+        <span class="repair-price">{{ repair_product.price | money }}</span>
+        <input
+          type="checkbox"
+          class="repair-checkbox"
+          data-title="{{ repair_product.title | escape }}"
+          value="{{ repair_product.selected_or_first_available_variant.id }}"
+          data-price="{{ repair_product.price | money_without_trailing_zeros | remove:cart.currency.symbol }}"
+        >
+      </label>
+    </div>
+  {% endfor %}
+</div>
+
+<div id="device-color-selection" class="device-color-selection-wrapper">
+  <h3>What colour is your device?</h3>
+  <div id="color-chips" class="color_choice-btn-row"></div>
+</div>
+
+{% assign turn_arround = product.metafields.custom.additonal_turn_arround_product_1.value %}
+{% assign turn_arround_two = product.metafields.custom.additonal_turn_arround_product_2.value %}
+{% assign device_collection_setting = product.metafields.custom.device_collection_setting.value %}
+
+{% if turn_arround or turn_arround_two %}
+  <div class="turn_arround_time-wrapper">
+    <h3 class="trt-heading">Repair turnaround</h3>
+    <div class="trt_choice-btn-row">
+      
+        <label for="three_day-btn" class="trt-btn active">
+          <p>Standard</p>
+          <small>2-3 Working Days</small>
+          <input class="hidden" id="three_day-btn" type="radio" name="turnArroundTime" value="200000" data-price="0" checked>
+        </label>
+        
+        {% if turn_arround %}
+          <label for="one_day-btn" class="trt-btn">
+            <p>Fast</p>
+            <small>1 Working Day <span>+{{ turn_arround.price | money }}</span></small>
+            <input class="hidden" id="one_day-btn" type="radio" name="turnArroundTime" value="{{ turn_arround.selected_or_first_available_variant.id }}" data-price="{{ turn_arround.price | money_without_trailing_zeros | remove:cart.currency.symbol }}">
+          </label>
+        {% endif %}
+      
+      {% if turn_arround_two %}
+        <label class="trt-btn">
+          <p>Fastest</p>
+          <small>4 hours <span>+{{ turn_arround_two.price | money }}</span></small>
+          <input class="hidden" id="four_hrs-btn" type="radio" name="turnArroundTime" value="{{ turn_arround_two.selected_or_first_available_variant.id }}" data-price="{{ turn_arround_two.price | money_without_trailing_zeros | remove:cart.currency.symbol }}">
+        </label>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+
+{% assign battery_replacement = product.metafields.custom.battery_replacement.value %}
+{% if battery_replacement %}
+  <div class="battery_life">
+    <h3 class="trt-heading">How is your battery life?</h3>
+    <div class="battery_choice-btn-row">
+      <label for="batteryOkay" class="trt-btn active">
+        <p>It's good</p>
+        <small>No replacement needed</small>
+        <input class="hidden" id="batteryOkay" type="radio" name="batteryStatus" value="ok" checked>
+      </label>
+      <label for="batteryReplace" class="trt-btn">
+        <p>Not good</p>
+        <small>Replace it <span>+{{ battery_replacement.price | money }}</span></small>
+        <input
+          class="hidden"
+          id="batteryReplace"
+          type="radio"
+          name="batteryStatus"
+          value="replace"
+          data-variant-id="{{ battery_replacement.selected_or_first_available_variant.id }}"
+          data-price="{{ battery_replacement.price | money_without_trailing_zeros | remove: cart.currency.symbol }}"
+        >
+      </label>
+    </div>
+  </div>
+{% endif %}
+
+<div class="stuart-integration-wrapper">
+  <h3 class="pickup-method-heading">How {{ device_collection_setting }} do you want to get the device to us?</h3>
+
+  <div class="choice-btn-row">
+    {% if device_collection_setting %}
+      <div class="visit-btn">
+          <p>I will visit you</p>
+          <small>Drop off in store</small> </div>
+      <div class="collect-device-btn active">
+          <span class="popular-badge">Popular</span>
+          <p>Please collect and deliver</p>
+          <small>+{{ mail_in.price | money }}</small> </div>
+    {% else %}
+      <div class="visit-btn active">
+          <p>I will visit you</p>
+          <small>Drop off in store</small> </div>
+      <div class="collect-device-btn">
+          <span class="popular-badge">Popular</span>
+          <p>Please collect and deliver</p>
+          <small>+{{ mail_in.price | money }}</small> </div>
+    {% endif %}
+  </div>
+
+  <div class="walk-in-service-content">
+    <div class="additional-walk-in-product" style="display:none;"> <label>
+        <input
+          type="checkbox"
+          id="walk-in-checkbox"
+          value="{{ walk_in.selected_or_first_available_variant.id }}"
+          data-price="0"
+          checked
+        >
+      </label>
+    </div>
+    
+    <div class="walk-in-prod-info">
+      <strong>{{ walk_in.title }}</strong><br>
+      {{ walk_in.description }}
+    </div>
+
+    <div class="walk-in-schedule-heading" style="margin-top:20px;">
+      <h3>When would you like to come and visit us?</h3>
+    </div>
+
+    <div class="walk-in-schedule">
+      <div class="walk-in-date-col">
+        <label for="walk-in-date">Date:</label>
+        <input type="date" id="walk-in-date" name="walk_in_date">
+      </div>
+      <div class="walk-in-time-col">
+        <label for="walk-in-time">Time:</label>
+        <select id="walk-in-time" name="walk_in_time"></select>
+      </div>
+    </div>
+
+    <div id="walkin-inline-error" class="walkin-error"></div>
+  </div>
+
+  <div class="collect-device-content">
+    <div class="additional-walk-in-product" style="display:none;"> <label>
+        <input
+          type="checkbox"
+          id="mail-in-checkbox"
+          value="{{ mail_in.selected_or_first_available_variant.id }}"
+          data-price="{{ mail_in.price | money_without_trailing_zeros | remove:cart.currency.symbol }}"
+        >
+      </label>
+    </div>
+    
+    <div class="walk-in-prod-info">
+      <strong>MAIL-IN SERVICE</strong>
+      <ul>
+        <li>We will ship you our packaging</li>
+        <li>Pack up the device and attach the return label</li>
+        <li>Either drop off to a post office or request a collection</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div id="cart-inline-error" class="walkin-error"></div>
+
+<div class="walk-in-book-row">
+  <div class="custom-add-to-cart">
+    <button
+      type="button"
+      class="button button--full-width button--primary disabled-state"
+      data-main-variant="{{ main_variant.id }}"
+      data-main-available="{{ main_variant.available }}"
+      disabled
+    >
+      BOOK NOW {%- render 'loading-spinner' -%}
+    </button>
+  </div>
+
+  <div class="repair-total-price" data-productprice="{{ product.price | money_without_trailing_zeros | remove:cart.currency.symbol }}">
+    <p>
+        <small style="font-size:12px; font-weight:400; color:#666;">Total</small>
+        <span class="total-price">{{ product.price | money }}</span>
+    </p>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const currency_symbol = "{{ cart.currency.symbol }}";
+  let selectedTurnaroundPrice = 0;
+  let selectedDeviceColor = "";
+
+  const addToCartButton = document.querySelector('.custom-add-to-cart button');
+  const cartErrorEl = document.getElementById('cart-inline-error');
+  const walkinErrorEl = document.getElementById('walkin-inline-error');
+
+  const walkInCheckbox = document.getElementById('walk-in-checkbox');
+  const mailInCheckbox = document.getElementById('mail-in-checkbox');
+  const walkInDate = document.getElementById('walk-in-date');
+  const walkInTime = document.getElementById('walk-in-time');
+  const pointOfCollec = document.getElementById('point-of-collec');
+  const visitBtn = document.querySelector('.visit-btn');
+
+  const collectDeviceBtn = document.querySelector('.collect-device-btn');
+  const walkInContent = document.querySelector('.walk-in-service-content');
+  const collectDeviceContent = document.querySelector('.collect-device-content');
+
+  // --- HELPER TO NORMALIZE COLOR NAMES ---
+  function normalizeColorName(name) {
+    return String(name || '')
+      .replace(/\(PRODUCT\)RED/i, 'Red')
+      .trim();
+  }
+
+  // --- SWATCH COLOR CONFIG ---
+  const colorHexMap = {
+    "Midnight": "#2c3e50", "Starlight": "#f5f5dc", "Red": "#e74c3c", "Blue": "#3498db", 
+    "Purple": "#9b59b6", "Yellow": "#f1c40f", "Black": "#1c1c1c", "White": "#f9f9f9",
+    "Pink": "#ffc0cb", "Teal": "#008080", "Ultramarine": "#120a8f", "Natural Titanium": "#bebebe",
+    "Black Titanium": "#212121", "White Titanium": "#f2f2f2", "Desert Titanium": "#d2b48c",
+    "Space Black": "#1a1a1a", "Deep Purple": "#3c2a4d", "Sierra Blue": "#9fb1bd", "Alpine Green": "#505e4d",
+    "Graphite": "#4b4e53", "Gold": "#e3d0b1", "Silver": "#e2e4e1", "Midnight Green": "#4e5851",
+    "Space Gray": "#535150", "Cosmic Orange": "#e67e22", "Mist Blue": "#a0d1e5", "Sage": "#9db4a1", 
+    "Lavender": "#e6e6fa", "Blue Titanium": "#4b6f86", "Sky Blue": "#87CEEB"
+  };
+
+  // --- IPHONE REAR GLASS COLOR CONFIG ---
+  const colorMap = {
+    "iPhone 17 Pro Max": ["Silver", "Cosmic Orange", "Deep Blue"],
+    "iPhone 17 Pro": ["Silver", "Cosmic Orange", "Deep Blue"],
+    "iPhone 17": ["Black", "White", "Mist Blue", "Sage", "Lavender"],
+    "iPhone 16e": ["Black", "White"],
+    "iPhone 16 Pro Max": ["Black Titanium", "White Titanium", "Natural Titanium", "Desert Titanium"],
+    "iPhone 16 Pro": ["Black Titanium", "White Titanium", "Natural Titanium", "Desert Titanium"],
+    "iPhone 16 Plus": ["Black", "White", "Pink", "Teal", "Ultramarine"],
+    "iPhone 16": ["Black", "White", "Pink", "Teal", "Ultramarine"],
+    "iPhone 15 Pro Max": ["Black Titanium", "White Titanium", "Blue Titanium", "Natural Titanium"],
+    "iPhone 15 Pro": ["Black Titanium", "White Titanium", "Blue Titanium", "Natural Titanium"],
+    "iPhone 15 Plus": ["Black", "Blue", "Green", "Yellow", "Pink"],
+    "iPhone 15": ["Black", "Blue", "Green", "Yellow", "Pink"],
+    "iPhone 14 Pro Max": ["Silver", "Gold", "Space Black", "Deep Purple"],
+    "iPhone 14 Pro": ["Silver", "Gold", "Space Black", "Deep Purple"],
+    "iPhone 14 Plus": ["Midnight", "Starlight", "Red", "Blue", "Purple", "Yellow"],
+    "iPhone 14": ["Midnight", "Starlight", "Red", "Blue", "Purple", "Yellow"],
+    "iPhone 13 Pro Max": ["Graphite", "Gold", "Silver", "Sierra Blue", "Alpine Green"],
+    "iPhone 13 Pro": ["Graphite", "Gold", "Silver", "Sierra Blue", "Alpine Green"],
+    "iPhone 13": ["Red", "Starlight", "Midnight", "Blue", "Pink", "Green"],
+    "iPhone 13 mini": ["Red", "Starlight", "Midnight", "Blue", "Pink", "Green"],
+    "iPhone 12 Pro Max": ["Silver", "Graphite", "Gold", "Pacific Blue"],
+    "iPhone 12 Pro": ["Silver", "Graphite", "Gold", "Pacific Blue"],
+    "iPhone 12": ["Black", "White", "Red", "Green", "Blue", "Purple"],
+    "iPhone 12 mini": ["Black", "White", "Red", "Green", "Blue", "Purple"],
+    "iPhone 11 Pro Max": ["Silver", "Space Gray", "Gold", "Midnight Green"],
+    "iPhone 11 Pro": ["Silver", "Space Gray", "Gold", "Midnight Green"],
+    "iPhone 11": ["Purple", "Green", "Yellow", "Black", "White", "Red"]
+  };
+
+  // --- MACBOOK TRACKPAD COLOR CONFIG ---
+  const macbookColorMap = {
+    // Airs
+    "A1932": ["Space Gray", "Gold", "Silver"],
+    "A2179": ["Space Gray", "Gold", "Silver"],
+    "A2337": ["Space Gray", "Gold", "Silver"],
+    "A2681": ["Silver", "Starlight", "Space Gray", "Midnight"],
+    "A2941": ["Silver", "Starlight", "Space Gray", "Midnight"],
+    "A3113": ["Silver", "Starlight", "Space Gray", "Midnight"],
+    "A3114": ["Silver", "Starlight", "Space Gray", "Midnight"],
+    "A3240": ["Silver", "Starlight", "Sky Blue", "Midnight"],
+    "A3241": ["Silver", "Starlight", "Sky Blue", "Midnight"],
+
+    // Pros - Silver / Space Gray
+    "A2141": ["Silver", "Space Gray"],
+    "A2485": ["Silver", "Space Gray"],
+    "A2780": ["Silver", "Space Gray"],
+    "A1707": ["Silver", "Space Gray"],
+    "A1990": ["Silver", "Space Gray"],
+    "A1989": ["Silver", "Space Gray"],
+    "A1706": ["Silver", "Space Gray"],
+    "A1708": ["Silver", "Space Gray"],
+    "A2251": ["Silver", "Space Gray"],
+    "A2289": ["Silver", "Space Gray"],
+    "A2159": ["Silver", "Space Gray"],
+    "A2338": ["Silver", "Space Gray"],
+    "A2779": ["Silver", "Space Gray"],
+    "A2918": ["Silver", "Space Gray"],
+    "A2992": ["Silver", "Space Gray"],
+    "A2442": ["Silver", "Space Gray"],
+    
+    // Pros - Silver / Space Black
+    "A2991": ["Silver", "Space Black"],
+    "A2996": ["Silver", "Space Black"],
+    "A2998": ["Silver", "Space Black"],
+    "A3401": ["Silver", "Space Black"],
+    "A3185": ["Silver", "Space Black"],
+    "A3403": ["Silver", "Space Black"],
+    "A3186": ["Silver", "Space Black"],
+    "A3112": ["Silver", "Space Black"]
+  };
+
+  function updateColorSelector() {
+    const box = document.getElementById('device-color-selection');
+    const container = document.getElementById('color-chips');
+    const pageTitle = "{{ product.title | escape }}";
+    
+    const isIphone = pageTitle.toLowerCase().includes('iphone');
+    const isTargetRepair = pageTitle.toLowerCase().includes('rear glass') || pageTitle.toLowerCase().includes('rear housing');
+    const isMacBookTrackpad = pageTitle.toLowerCase().includes('macbook') && pageTitle.toLowerCase().includes('trackpad');
+    
+    // Check additional repairs checkboxes
+    const checkedAddons = document.querySelectorAll('.repair-checkbox:checked');
+    let addonNeedsColor = false;
+    checkedAddons.forEach(cb => {
+      const title = cb.getAttribute('data-title').toLowerCase();
+      if (title.includes('rear glass') || title.includes('rear housing')) addonNeedsColor = true;
+    });
+
+    let colorsToShow = null;
+
+    // 1. iPhone Logic
+    if (isIphone && (isTargetRepair || addonNeedsColor)) {
+      const modelKey = Object.keys(colorMap).find(key => pageTitle.includes(key));
+      if (modelKey) {
+        colorsToShow = colorMap[modelKey];
+      }
+    }
+    // 2. MacBook Logic
+    else if (isMacBookTrackpad) {
+      // Find matching key in macbookColorMap based on A-number or unique substring
+      const modelKey = Object.keys(macbookColorMap).find(key => pageTitle.includes(key));
+      if (modelKey) {
+        colorsToShow = macbookColorMap[modelKey];
+      }
+    }
+
+    // Render if we have colors
+    if (colorsToShow) {
+        box.style.display = 'block';
+        if (container.children.length === 0) {
+          colorsToShow.forEach(color => {
+            const btn = document.createElement('div');
+            btn.className = 'color-btn';
+            
+            // NORMALIZE THE COLOR NAME
+            const normalized = normalizeColorName(color);
+
+            // GENERATE SWATCH
+            const swatch = document.createElement('div');
+            swatch.className = 'swatch-circle';
+            // Use normalized name for lookup
+            swatch.style.backgroundColor = colorHexMap[normalized] || '#ddd';
+            btn.appendChild(swatch);
+            
+            // Wrap text in a span for styling control (wrapping)
+            const textSpan = document.createElement('span');
+            textSpan.className = 'color-name-text';
+            // Use normalized name for display text
+            textSpan.textContent = normalized;
+            btn.appendChild(textSpan);
+            
+            btn.onclick = () => {
+              document.querySelectorAll('.color-btn').forEach(c => c.classList.remove('active'));
+              btn.classList.add('active');
+              // Use normalized name for selection logic
+              selectedDeviceColor = normalized;
+              calculateTotalPrice();
+            };
+            container.appendChild(btn);
+          });
+        }
+        return true; 
+    }
+
+    // If no match, hide
+    box.style.display = 'none';
+    selectedDeviceColor = "";
+    return false;
+  }
+
+  // ---------- DATE + TIME RULES (LOCAL TIME) ----------
+  function parseYMDToLocalDate(ymd) {
+    const [y, m, d] = ymd.split('-').map(n => parseInt(n, 10));
+    return new Date(y, m - 1, d, 0, 0, 0, 0);
+  }
+
+  function localTodayMidnight() {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+  }
+
+  function formatLocalYMD(dateObj) {
+    const y = dateObj.getFullYear();
+    const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const d = String(dateObj.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  function isClosedHolidayPeriod(localDate) {
+    const month = localDate.getMonth() + 1; // 1-12
+    const day = localDate.getDate();        // 1-31
+    return (month === 12 && day >= 24) || (month === 1 && day <= 4);
+  }
+
+  function getWeekdayFromYMD(ymd) {
+    const [y, m, d] = ymd.split('-').map(n => parseInt(n, 10));
+    return new Date(y, m - 1, d).getDay(); // local, 0 Sun .. 6 Sat
+  }
+
+  function hhmmToMinutes(hhmm) {
+    const [h, m] = hhmm.split(':').map(n => parseInt(n, 10));
+    return (h * 60) + m;
+  }
+
+  function minutesTo12Hour(mins) {
+    let h24 = Math.floor(mins / 60);
+    const m = mins % 60;
+    let suffix = 'AM';
+    if (h24 >= 12) suffix = 'PM';
+    let h12 = h24 % 12;
+    if (h12 === 0) h12 = 12;
+    return `${h12}:${String(m).padStart(2, '0')} ${suffix}`;
+  }
+
+  function ceilNowToNextHalfHourMinutes() {
+    const now = new Date();
+    const mins = now.getHours() * 60 + now.getMinutes();
+    const remainder = mins % 30;
+    return remainder === 0 ? mins : (mins + (30 - remainder));
+  }
+
+  function parse12HourToMinutes(str) {
+    const s = String(str || '').trim();
+    const match = s.match(/^(\d{1,2})\:(\d{2})\s*(AM|PM)$/i);
+    if (!match) return null;
+    let h = parseInt(match[1], 10);
+    const m = parseInt(match[2], 10);
+    const ap = match[3].toUpperCase();
+    if (ap === 'AM') {
+      if (h === 12) h = 0;
+    } else {
+      if (h !== 12) h += 12;
+    }
+    return (h * 60) + m;
+  }
+
+  function clearAndDisableTimeSelect() {
+    if (!walkInTime) return;
+    walkInTime.innerHTML = '';
+    walkInTime.value = '';
+    walkInTime.disabled = true;
+  }
+
+  function validateDateRulesOrShowError() {
+    if (!walkInDate || !walkInDate.value) return false;
+
+    const selected = parseYMDToLocalDate(walkInDate.value);
+    const today = localTodayMidnight();
+
+    if (selected < today) {
+      showWalkinError('Please select a date in the future.');
+      walkInDate.value = '';
+      clearAndDisableTimeSelect();
+      return false;
+    }
+
+    if (isClosedHolidayPeriod(selected)) {
+      showWalkinError('We are closed from 24 December to 4 January. Please select another date.');
+      walkInDate.value = '';
+      clearAndDisableTimeSelect();
+      return false;
+    }
+
+    const dow = getWeekdayFromYMD(walkInDate.value);
+    if (dow === 0 || dow === 6) {
+      showWalkinError('Walk-in appointments are available Monday to Friday only. Please select a weekday.');
+      walkInDate.value = '';
+      clearAndDisableTimeSelect();
+      return false;
+    }
+
+    return true;
+  }
+
+  function populateSlotsForSelectedDate() {
+    if (!walkInDate || !walkInTime) return;
+
+    clearWalkinError();
+    clearAndDisableTimeSelect();
+
+    if (!walkInDate.value) return;
+    if (!validateDateRulesOrShowError()) return;
+
+    const dow = getWeekdayFromYMD(walkInDate.value);
+
+    // Hours
+    let dayStartHHMM = '09:30';
+    let dayEndHHMM = '17:30';
+    if (dow === 5) { // Friday
+      dayStartHHMM = '10:00';
+      dayEndHHMM = '17:30';
+    }
+
+    let startMin = hhmmToMinutes(dayStartHHMM);
+    const endMin = hhmmToMinutes(dayEndHHMM);
+
+    // Same-day filtering
+    const selected = parseYMDToLocalDate(walkInDate.value);
+    const today = localTodayMidnight();
+    const isToday = selected.getTime() === today.getTime();
+    if (isToday) {
+      const nextSlotMin = ceilNowToNextHalfHourMinutes();
+      if (nextSlotMin > startMin) startMin = nextSlotMin;
+    }
+
+    // No slots left
+    if (startMin > endMin) {
+      showWalkinError('No appointments are available for the selected date. Please choose another date.');
+      return;
+    }
+
+    // Build options
+    for (let t = startMin; t <= endMin; t += 30) {
+      const label = minutesTo12Hour(t);
+      walkInTime.appendChild(new Option(label, label));
+    }
+
+    walkInTime.disabled = false;
+  }
+
+  // Validation-only function for the click handler (does NOT rebuild the dropdown)
+  function validateWalkInTimeSelection() {
+    if (!walkInDate || !walkInDate.value) {
+      return false;
+    }
+
+    // Validate date rules
+    const selected = parseYMDToLocalDate(walkInDate.value);
+    const today = localTodayMidnight();
+
+    if (selected < today) {
+      showWalkinError('Please select a date in the future.');
+      return false;
+    }
+
+    if (isClosedHolidayPeriod(selected)) {
+      showWalkinError('We are closed from 24 December to 4 January. Please select another date.');
+      return false;
+    }
+
+    const dow = getWeekdayFromYMD(walkInDate.value);
+    if (dow === 0 || dow === 6) {
+      showWalkinError('Walk-in appointments are available Monday to Friday only. Please select a weekday.');
+      return false;
+    }
+
+    // Check if time is selected
+    if (!walkInTime || !walkInTime.value) {
+      showWalkinError('Please select a time for your visit.');
+      return false;
+    }
+
+    // Same-day time validation
+    if (selected.getTime() === today.getTime()) {
+      const chosenMin = parse12HourToMinutes(walkInTime.value);
+      const nextSlotMin = ceilNowToNextHalfHourMinutes();
+      if (chosenMin === null || chosenMin < nextSlotMin) {
+        showWalkinError('The selected time is no longer available. Please choose a later time or another date.');
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  // Block past dates in the picker UI
+  if (walkInDate) walkInDate.min = formatLocalYMD(localTodayMidnight());
+
+  // Date change
+  if (walkInDate && walkInTime) {
+    walkInDate.addEventListener('change', populateSlotsForSelectedDate);
+  }
+
+  function showCartError(message){
+    if (!cartErrorEl) return;
+    cartErrorEl.textContent = message;
+    cartErrorEl.classList.add('is-visible');
+  }
+  function clearCartError(){
+    if (!cartErrorEl) return;
+    cartErrorEl.textContent = '';
+    cartErrorEl.classList.remove('is-visible');
+  }
+
+  function showWalkinError(message){
+    if (!walkinErrorEl) return;
+    walkinErrorEl.textContent = message;
+    walkinErrorEl.classList.add('is-visible');
+  }
+  function clearWalkinError(){
+    if (!walkinErrorEl) return;
+    walkinErrorEl.textContent = '';
+    walkinErrorEl.classList.remove('is-visible');
+  }
+
+  function resetButton(){
+    addToCartButton.classList.remove('loading');
+    addToCartButton.disabled = false;
+  }
+
+  function calculateTotalPrice() {
+    const checkedCheckboxes = document.querySelectorAll('.additional-repair-container input[type="checkbox"]:checked');
+    const walkInChecked = walkInCheckbox ? walkInCheckbox.checked : false;
+    const mailInChecked = mailInCheckbox ? mailInCheckbox.checked : false;
+
+    // --- LOGIC TO GREY OUT BUTTON (WITH COLOR CHECK) ---
+    const needsColor = updateColorSelector();
+    const colorPicked = !needsColor || (needsColor && selectedDeviceColor !== "");
+
+    // Logic: Requires one of Walk-in or Mail-in to be active AND color (if needed)
+    // Note: The script below ensures one of them is always checked when toggling UI
+    const isServiceSelected = (walkInChecked || mailInChecked);
+
+    if(isServiceSelected && colorPicked){
+      addToCartButton.disabled = false;
+      addToCartButton.classList.remove('disabled-state');
+    } else {
+      addToCartButton.disabled = true;
+      addToCartButton.classList.add('disabled-state');
+    }
+    // --------------------------------
+
+    let checkboxTotal = 0;
+    checkedCheckboxes.forEach(checkbox => {
+      const price = parseFloat(checkbox.getAttribute('data-price'));
+      if (!isNaN(price)) checkboxTotal += price;
+    });
+
+    let batteryPrice = 0;
+    const batteryReplaceRadioChecked = document.querySelector('input[name="batteryStatus"][value="replace"]:checked');
+    if (batteryReplaceRadioChecked) {
+      const bPrice = parseFloat(batteryReplaceRadioChecked.getAttribute('data-price'));
+      if (!isNaN(bPrice)) batteryPrice = bPrice;
+    }
+
+    let serviceFee = 0;
+    if (mailInChecked) {
+      const mPrice = parseFloat(mailInCheckbox.getAttribute('data-price'));
+      if (!isNaN(mPrice)) serviceFee += mPrice;
+    }
+    if (walkInChecked) {
+      const wPrice = parseFloat(walkInCheckbox.getAttribute('data-price'));
+      if (!isNaN(wPrice)) serviceFee += wPrice;
+    }
+
+    const productPriceElement = document.querySelector('.walk-in-book-row .repair-total-price');
+    const productPrice = parseFloat(productPriceElement.getAttribute('data-productprice')) || 0;
+
+    const finalTotal = checkboxTotal + productPrice + selectedTurnaroundPrice + batteryPrice + serviceFee;
+
+    const repairPriceElement = document.querySelector('.walk-in-book-row .total-price');
+    productPriceElement.dataset.productpricefinal = String(finalTotal.toFixed(2));
+    repairPriceElement.textContent = `${currency_symbol}${finalTotal.toFixed(2)}`;
+  }
+
+  // Turnaround listeners
+  document.querySelectorAll('.trt_choice-btn-row .trt-btn input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      if (!radio.checked) return;
+      document.querySelectorAll('.trt_choice-btn-row .trt-btn').forEach(el => el.classList.remove('active'));
+      const parent = radio.closest('.trt-btn');
+      if (parent) parent.classList.add('active');
+      selectedTurnaroundPrice = parseFloat(radio.getAttribute('data-price')) || 0;
+      calculateTotalPrice();
+    });
+  });
+
+  // Battery listeners
+  document.querySelectorAll('.battery_choice-btn-row .trt-btn input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      if (!radio.checked) return;
+      document.querySelectorAll('.battery_choice-btn-row .trt-btn').forEach(el => el.classList.remove('active'));
+      const parent = radio.closest('.trt-btn');
+      if (parent) parent.classList.add('active');
+      calculateTotalPrice();
+    });
+  });
+
+  // Add-on checkbox listeners
+  document.querySelectorAll('.additional-repair-container input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', calculateTotalPrice);
+  });
+
+  // Service UI toggle logic
+  // Triggered when user clicks the VISIBLE cards (.visit-btn or .collect-device-btn)
+  function toggleServiceType(type) {
+    if (type === 'visit') {
+        visitBtn.classList.add('active');
+        collectDeviceBtn.classList.remove('active');
+        
+        // Handle logic checkboxes
+        if(walkInCheckbox) walkInCheckbox.checked = true;
+        if(mailInCheckbox) mailInCheckbox.checked = false;
+        
+        // Show/Hide Content
+        if(walkInContent) walkInContent.style.display = 'block';
+        if(collectDeviceContent) collectDeviceContent.style.display = 'none';
+    } else {
+        visitBtn.classList.remove('active');
+        collectDeviceBtn.classList.add('active');
+        
+        // Handle logic checkboxes
+        if(walkInCheckbox) walkInCheckbox.checked = false;
+        if(mailInCheckbox) mailInCheckbox.checked = true;
+        
+        // Show/Hide Content
+        if(walkInContent) walkInContent.style.display = 'none';
+        if(collectDeviceContent) collectDeviceContent.style.display = 'block';
+    }
+    calculateTotalPrice();
+  }
+
+  if (collectDeviceBtn) collectDeviceBtn.addEventListener('click', () => toggleServiceType('collect'));
+  if (visitBtn) visitBtn.addEventListener('click', () => toggleServiceType('visit'));
+
+  // Ensure initial state matches
+  if (visitBtn && visitBtn.classList.contains('active')) {
+      toggleServiceType('visit');
+  } else if (collectDeviceBtn && collectDeviceBtn.classList.contains('active')) {
+      toggleServiceType('collect');
+  }
+
+  // Add to cart
+  addToCartButton.addEventListener('click', async (event) => {
+    event.preventDefault();
+    clearCartError();
+    clearWalkinError();
+
+    const mainAvailable = (addToCartButton.dataset.mainAvailable === 'true');
+    const mainVariantId = parseInt(addToCartButton.dataset.mainVariant, 10);
+
+    if (!mainVariantId || Number.isNaN(mainVariantId)) {
+      showCartError('Error adding to cart: Main variant ID missing.');
+      return;
+    }
+
+    if (!mainAvailable) {
+      showCartError("Error adding to cart: This repair is currently unavailable. Fix the variant availability in Shopify Admin.");
+      return;
+    }
+
+    // If walk-in is checked, validate date/time WITHOUT rebuilding the dropdown
+    if (visitBtn && visitBtn.classList.contains('active') && walkInCheckbox && walkInCheckbox.checked) {
+      if (!validateWalkInTimeSelection()) {
+        return;
+      }
+    }
+
+    addToCartButton.classList.add('loading');
+    addToCartButton.disabled = true;
+
+    try {
+      const items = [];
+
+      // MAIN PRODUCT
+      const mainProps = {};
+      if (selectedDeviceColor) mainProps['Device Color'] = selectedDeviceColor;
+      items.push({ id: mainVariantId, quantity: 1, properties: mainProps });
+
+      // ADDITIONAL REPAIRS
+      document.querySelectorAll('.additional-repair-container input[type="checkbox"]:checked').forEach(cb => {
+        const id = parseInt(cb.value, 10);
+        if (id && !Number.isNaN(id)) items.push({ id, quantity: 1 });
+      });
+
+      // WALK-IN
+      if (walkInCheckbox && walkInCheckbox.checked) {
+        const id = parseInt(walkInCheckbox.value, 10);
+        if (id && !Number.isNaN(id)) {
+          items.push({
+            id,
+            quantity: 1,
+            properties: {
+              'Service Type': 'Walk-in',
+              'Preferred Date': walkInDate ? walkInDate.value : '',
+              'Preferred Time': walkInTime ? walkInTime.value : '',
+              'Point of Collection': pointOfCollec ? pointOfCollec.value : ''
+            }
+          });
+        }
+      }
+
+      // MAIL-IN
+      if (mailInCheckbox && mailInCheckbox.checked) {
+        const id = parseInt(mailInCheckbox.value, 10);
+        if (id && !Number.isNaN(id)) {
+          items.push({
+            id,
+            quantity: 1,
+            properties: { 'Service Type': 'Mail-in Service' }
+          });
+        }
+      }
+
+      // TURNAROUND
+      const trt = document.querySelector('.turn_arround_time-wrapper input[type="radio"]:checked');
+      if (trt && trt.value && trt.value !== '200000') {
+        const id = parseInt(trt.value, 10);
+        if (id && !Number.isNaN(id)) items.push({ id, quantity: 1 });
+      }
+
+      // BATTERY
+      const batteryReplace = document.querySelector('#batteryReplace');
+      if (batteryReplace && batteryReplace.checked) {
+        const id = parseInt(batteryReplace.dataset.variantId, 10);
+        if (id && !Number.isNaN(id)) items.push({ id, quantity: 1 });
+      }
+
+      const res = await fetch(window.Shopify.routes.root + 'cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items })
+      });
+
+      const json = await res.json();
+
+      if (!res.ok) {
+        showCartError('Error adding to cart: ' + (json.description || json.message || 'Unknown error'));
+        resetButton();
+        return;
+      }
+
+      window.location.href = '/checkout';
+    } catch (e) {
+      showCartError('Error adding to cart: Network or theme script error.');
+      resetButton();
+    }
+  });
+
+  // Accordion for additional repairs
+  const toggle = document.getElementById('toggle-repair-section');
+  const container = document.querySelector('.additional-repair-container');
+  if (toggle && container) {
+    const wrapper = toggle.parentElement;
+    wrapper.classList.add('expanded');
+    container.style.height = 'auto';
+
+    toggle.addEventListener('click', () => {
+      const isOpen = wrapper.classList.contains('expanded');
+      if (isOpen) {
+        container.style.height = '0px';
+        wrapper.classList.remove('expanded');
+      } else {
+        container.style.height = 'auto';
+        wrapper.classList.add('expanded');
+      }
+    });
+  }
+
+  // Initial calculation to set the disabled state on page load
+  calculateTotalPrice();
+});
+</script>

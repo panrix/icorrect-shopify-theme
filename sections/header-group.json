@@ -1,0 +1,116 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.header.name",
+  "type": "header",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "announcement-bar-0": {
+          "type": "announcement",
+          "settings": {
+            "text": "Welcome to our store",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "announcement-bar-0"
+      ],
+      "disabled": true,
+      "settings": {
+        "color_scheme": "scheme-1",
+        "show_line_separator": true,
+        "show_social": false,
+        "auto_rotate": false,
+        "change_slides_speed": 5,
+        "enable_country_selector": false,
+        "enable_language_selector": false
+      }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "logo_position": "middle-left",
+        "menu": "main-menu-1",
+        "menu_type_desktop": "mega",
+        "sticky_header_type": "always",
+        "show_line_separator": true,
+        "color_scheme": "scheme-1",
+        "mobile_logo_position": "center",
+        "enable_country_selector": false,
+        "enable_language_selector": false,
+        "margin_bottom": 0,
+        "padding_top": 20,
+        "padding_bottom": 20,
+        "cust-style": true,
+        "hide-account": true,
+        "hide-search": false,
+        "hide-cart": true,
+        "number": "",
+        "enable_customer_avatar": true
+      }
+    },
+    "custom_font_fKAgjx": {
+      "type": "custom-font",
+      "blocks": {
+        "image_aVfTXz": {
+          "type": "image",
+          "settings": {
+            "name": "Axiforma-M",
+            "custom_font_weight": "none",
+            "custom_font_style": "none",
+            "custom_font_url": "https://cdn.shopify.com/s/files/1/0754/5903/5403/files/Axiforma-Regular.ttf?v=1723313691",
+            "apply_h1": true,
+            "apply_h2": true,
+            "apply_h3": true,
+            "apply_h4": true,
+            "apply_h5": true,
+            "apply_h6": true,
+            "apply_span": false,
+            "apply_p": false,
+            "apply_custom": ""
+          }
+        },
+        "image_nRadgX": {
+          "type": "image",
+          "settings": {
+            "name": "Axiforma-R",
+            "custom_font_weight": "none",
+            "custom_font_style": "none",
+            "custom_font_url": "https://cdn.shopify.com/s/files/1/0754/5903/5403/files/Axiforma-Regular.ttf?v=1723313691",
+            "apply_h1": false,
+            "apply_h2": false,
+            "apply_h3": false,
+            "apply_h4": false,
+            "apply_h5": false,
+            "apply_h6": false,
+            "apply_span": true,
+            "apply_p": true,
+            "apply_custom": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_aVfTXz",
+        "image_nRadgX"
+      ],
+      "settings": {
+        "enable": true
+      }
+    }
+  },
+  "order": [
+    "announcement-bar",
+    "header",
+    "custom_font_fKAgjx"
+  ]
+}

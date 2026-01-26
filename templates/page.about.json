@@ -1,0 +1,69 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "custom_liquid_QeRPHw": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "<div style=\"background-color: #fafafa; padding: 20px 20px; font-family: 'Segoe UI', Arial, sans-serif; color: #111;\">\n  <div style=\"max-width: 1000px; margin: 0 auto;\">\n    <h1 style=\"font-size: 2.4em; font-weight: 700; text-align: center; margin-bottom: 40px;\">About iCorrect - London Apple Repair Specialists</h1>\n\n    <p style=\"font-size: 1.15em; color: #333; line-height: 1.8; max-width: 850px; margin: 0 auto 40px; text-align: center;\">\n      iCorrect is a specialist repair company built around one simple belief: repair should be done properly or not at all.\n    </p>\n\n    <div style=\"max-width: 850px; margin: 0 auto 60px; text-align: left;\">\n      <p style=\"font-size: 1.05em; color: #555; line-height: 1.7;\">\n        We’re not your average repair company. We don’t fit knockoff parts or rush jobs out the door. We go deeper, using original Apple components, precision diagnostics, and a level of repair skill that even Apple stores will not offer.\n      </p>\n      <p style=\"font-size: 1.05em; color: #555; line-height: 1.7;\">\n        Founded in Leeds and relocated to Central London in 2012, iCorrect was built by real Apple specialists. We are trusted by individual clients, corporate tech teams, and even other repair companies who send us devices they cannot fix.\n      </p>\n    </div>\n\n    <h3 style=\"font-size: 1.8em; font-weight: 600; text-align: center; margin-bottom: 25px;\">Led by Technicians. Not Salespeople.</h3>\n\n    <p style=\"font-size: 1.05em; color: #555; line-height: 1.8; max-width: 850px; margin: 0 auto 20px; text-align: center;\">\n      Our company was founded by Ricky Panesar, a microelectronics specialist who has spent over a decade repairing what others called \"unrepairable.\" Ricky does not just know how Apple devices work, he understands how they fail and how to fix them properly.\n    </p>\n\n    <p style=\"font-size: 1.05em; color: #555; line-height: 1.8; max-width: 850px; margin: 0 auto; text-align: center;\">\n      From restoring logic boards to rebuilding liquid damaged MacBooks under a microscope, Ricky helped shape what iCorrect stands for: honest diagnostics, real repair, and no corner cutting. That same mindset runs through our entire team.\n    </p>\n  </div>\n</div>",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "custom_liquid_fKr9Vr": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "<style>\n  .timeline-outer {\n    position: relative;\n    border-left: 4px solid #000;\n    padding-left: 30px;\n  }\n\n  .timeline-step {\n    background: #ffffff;\n    border-radius: 12px;\n    padding: 15px 20px;\n    box-shadow: 0 2px 12px rgba(0,0,0,0.06);\n    transition: all 0.3s ease;\n    margin-bottom: 60px;\n    position: relative;\n  }\n\n  .timeline-step:hover {\n    background: #f3f3f3;\n    box-shadow: 0 8px 24px rgba(0,0,0,0.12);\n    transform: translateY(-6px);\n  }\n\n  .step-number {\n    position: absolute;\n    top: -25px;\n    left: 0;\n    font-size: 1.2em;\n    font-weight: bold;\n    color: #ccc;\n  }\n\n  .timeline-arrow {\n    position: absolute;\n    bottom: -20px;\n    left: -12px;\n    width: 0;\n    height: 0;\n    border-left: 10px solid transparent;\n    border-right: 10px solid transparent;\n    border-top: 14px solid #000;\n  }\n</style>\n\n<div style=\"background-color: #ffffff; padding: 20px 20px; font-family: Arial, sans-serif; color: #111;\">\n  <div style=\"max-width: 900px; margin: 0 auto;\">\n    <h2 style=\"text-align: center; font-size: 2.2em; font-weight: bold; margin-bottom: 10px;\">Our Team</h2>\n    <p style=\"text-align: center; max-width: 700px; margin: 0 auto 60px; font-size: 1.1em; color: #444;\">\n      Behind every repair is a team of expert technicians, testing engineers, and operations staff who care about one thing: getting your device back to full health without compromise.\n    </p>\n\n    <div class=\"timeline-outer\">\n\n      <!-- Step 1 -->\n      <div class=\"timeline-step\">\n        <div class=\"step-number\">01</div>\n        <h3 style=\"font-weight: bold; margin-bottom: 10px;\">Our diagnostic team maps faults</h3>\n        <p style=\"color: #555;\">We trace faults down to individual circuits, not just components. Precision repair begins with understanding the problem at its root.</p>\n      </div>\n\n      <!-- Step 2 -->\n      <div class=\"timeline-step\">\n        <div class=\"step-number\">02</div>\n        <h3 style=\"font-weight: bold; margin-bottom: 10px;\">Our hardware techs go deeper</h3>\n        <p style=\"color: #555;\">Only original or factory-matched parts are used. We do not patch, we restore. This ensures performance matches a brand-new device.</p>\n      </div>\n\n      <!-- Step 3 -->\n      <div class=\"timeline-step\" style=\"margin-bottom: 80px;\">\n        <div class=\"step-number\">03</div>\n        <h3 style=\"font-weight: bold; margin-bottom: 10px;\">Our testing team sets the bar</h3>\n        <p style=\"color: #555;\">Nothing leaves our lab without passing post-repair validation and QC. We do not just fix the fault. We look for the why, and fix that too.</p>\n      </div>\n\n      <!-- Arrow at the end of the timeline -->\n      <div class=\"timeline-arrow\"></div>\n\n    </div>\n\n    <p style=\"text-align: center; margin-top: 50px; font-weight: 500; font-size: 1.1em;\">We do not just fix the fault. We look for the <strong>why</strong>, and fix that too.</p>\n  </div>\n</div>",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "custom_liquid_inGdQk": {
+      "type": "custom-liquid",
+      "disabled": true,
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "<style>\n  .green-split {\n    display: flex;\n    flex-wrap: wrap;\n    align-items: stretch;\n    justify-content: space-between;\n    background-color: #586F6B;\n    padding: 20px 20px; /* Reduced from 40px */\n    font-family: Arial, sans-serif;\n    color: #fff;\n  }\n\n  .green-split-text {\n    flex: 1 1 500px;\n    padding: 20px;\n    z-index: 2;\n  }\n\n  .green-split-text h2 {\n    font-size: 2.4em;\n    font-weight: bold;\n    margin-bottom: 20px;\n    line-height: 1.3;\n    color: #ffffff;\n  }\n\n  .green-split-text p {\n    font-size: 1.05em;\n    color: #e6e6e6;\n    margin-bottom: 20px;\n    line-height: 1.7;\n  }\n\n  .green-split-media {\n    flex: 1 1 500px;\n    position: relative;\n    padding-top: 56.25%;\n    border-radius: 12px;\n    overflow: hidden;\n    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);\n    background-color: #000;\n    margin-top: 20px;\n  }\n\n  .green-split-media iframe {\n    position: absolute;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100%;\n    border: 0;\n  }\n\n  @media (max-width: 900px) {\n    .green-split {\n      flex-direction: column;\n      padding: 20px 20px;\n    }\n\n    .green-split-text,\n    .green-split-media {\n      flex: 1 1 100%;\n    }\n\n    .green-split-media {\n      margin-top: 30px;\n      padding-top: 56.25%;\n      min-height: 200px;\n    }\n  }\n</style>\n\n<div class=\"green-split\">\n  <div class=\"green-split-text\">\n    <h2>Sustainability by Design</h2>\n    <p>Every part we reuse, every repair we complete instead of replacing, and every time we fix what Apple will not, we keep another device from landfill.</p>\n    <p>Sustainability is not just a buzzword. It is how we work. We restore the original performance of your device with less waste, fewer new materials, and more care.</p>\n    <p>Other companies in the industry think we are crazy for going to this level. It is cheaper and faster for them to use non original parts. But we believe in restoring devices the right way, using the same methods and materials Apple do at the factory. If Apple use original parts, why would we use anything less?</p>\n    <p>Sometimes, parts that fail in the factory are repaired and reused at Apple’s own production lines. We have studied how those facilities work and now replicate that same process in house. That is how we know it can be done. And we believe this is how all repair will be completed in the future. We are just doing it now.</p>\n  </div>\n\n  <div class=\"green-split-media\">\n    <iframe src=\"https://www.youtube.com/embed/u0bQrPHieWA\" title=\"Sustainability video\" allowfullscreen></iframe>\n  </div>\n</div>",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "custom_liquid_9fNiVf": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "<style>\n  .visit-us-section {\n    background-color: #ffffff;\n    padding: 80px 20px;\n    font-family: Arial, sans-serif;\n    color: #111;\n    text-align: center;\n  }\n\n  .visit-us-section h2 {\n    font-size: 2.4em;\n    font-weight: bold;\n    margin-bottom: 20px;\n  }\n\n  .visit-us-section p {\n    max-width: 750px;\n    margin: 0 auto 20px auto;\n    font-size: 1.1em;\n    color: #444;\n    line-height: 1.7;\n  }\n\n  .visit-button {\n    display: inline-block;\n    margin-top: 30px;\n    padding: 12px 28px;\n    background-color: #111;\n    color: #fff;\n    text-decoration: none;\n    font-weight: bold;\n    border-radius: 6px;\n    transition: background-color 0.3s ease;\n  }\n\n  .visit-button:hover {\n    background-color: #333;\n  }\n\n  .visit-map-box {\n    margin: 50px auto 0 auto;\n    max-width: 900px;\n    border-radius: 12px;\n    overflow: hidden;\n    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);\n  }\n\n  .visit-map-box iframe {\n    width: 100%;\n    height: 400px;\n    border: 0;\n  }\n\n  @media (max-width: 800px) {\n    .visit-us-section {\n      padding: 60px 15px;\n    }\n\n    .visit-map-box iframe {\n      height: 300px;\n    }\n  }\n</style>\n\n<div class=\"visit-us-section\">\n  <h2>Come Visit Us</h2>\n  <p>We are based in Fitzrovia, Central London. Whether you want to walk in, book a collection, or speak to a technician, we are here to help.</p>\n  <p>If another shop told you your device could not be repaired, or Apple quoted you £500 for a small part, start here instead.</p>\n\n  Contact Us\n\n  <div class=\"visit-map-box\">\n    <iframe \n      src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1981.7543830634736!2d-0.1435672!3d51.5168254!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2c5aabf83b%3A0x2abbd489a9d66382!2s12%20Margaret%20St%2C%20London%20W1W%208JQ%2C%20UK!5e0!3m2!1sen!2sit!4v1717323643765!5m2!1sen!2sit\" \n      allowfullscreen=\"\" \n      loading=\"lazy\" \n      referrerpolicy=\"no-referrer-when-downgrade\"\n      title=\"iCorrect Fitzrovia Map\">\n    </iframe>\n  </div>\n</div>",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    }
+  },
+  "order": [
+    "main",
+    "custom_liquid_QeRPHw",
+    "custom_liquid_fKr9Vr",
+    "custom_liquid_inGdQk",
+    "custom_liquid_9fNiVf"
+  ]
+}

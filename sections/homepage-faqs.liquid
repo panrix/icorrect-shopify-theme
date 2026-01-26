@@ -1,0 +1,415 @@
+{% comment %}
+  Section: Homepage FAQs
+  File name suggestion: sections/homepage-faqs.liquid
+{% endcomment %}
+
+<section class="lp-faqs-{{ section.id }}">
+  <div class="lp-faqs-wrapper page-width">
+    <div class="lp-faqs-header">
+      <h2>{{ section.settings.heading }}</h2>
+      <p>{{ section.settings.details }}</p>
+    </div>
+
+    <div class="accordions-row-wrapper">
+      {% for block in section.blocks %}
+        <div
+          style="text-align:{{ block.settings.alignment }};"
+          class="faq-col-icorrect"
+          {{ block.shopify_attributes }}
+        >
+          <h3 class="accordion-{{ section.id }}">{{ block.settings.heading }}</h3>
+          <div class="panel-accordion">
+            <div class="rte">{{ block.settings.sub_head }}</div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .lp-faqs-{{ section.id }}{
+    padding-top: {{ section.settings.padding-top }}px;
+    padding-bottom: {{ section.settings.padding-bottom }}px;
+    width: 100%;
+    background-color: {{ section.settings.bg }};
+  }
+
+  .lp-faqs-wrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .lp-faqs-header{
+    width: 100%;
+    padding-bottom: 20px;
+    max-width: 760px;
+    text-align: left;
+  }
+
+  .lp-faqs-header h2{
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 45.67px;
+    color: {{ section.settings.txt-clr }};
+    margin: 0;
+    padding: 0 0 10px 0;
+  }
+
+  .lp-faqs-header p{
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 30px;
+    letter-spacing: 0.05em;
+    color: {{ section.settings.txt-clr }};
+    margin: 0;
+    padding: 0;
+  }
+
+  .accordions-row-wrapper{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+    gap: 10px 24px;
+  }
+
+  .faq-col-icorrect{
+    flex: 48%;
+    max-width: 48%;
+  }
+
+  .accordion-{{ section.id }}{
+    cursor: pointer;
+    padding: 10px 2px 10px 2px;
+    width: 100%;
+    border: none;
+    outline: none;
+    transition: 0.25s;
+    color: {{ section.settings.txt-clr }};
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 19px;
+    letter-spacing: 0.05em;
+    text-align: left;
+    margin: 15px 0px 15px 0px;
+    background: transparent;
+  }
+
+  .accordion-{{ section.id }}:after{
+    content: "";
+    float: right;
+    font-weight: 500;
+    font-size: 16px;
+    margin-left: 10px;
+    background-image: url('https://cdn.shopify.com/s/files/1/0754/5903/5403/files/Group.png?v=1723514804');
+    {% if section.settings.txt-clr == '#1d1d1f' %}
+      filter: invert(1);
+    {% endif %}
+    background-repeat: no-repeat;
+    background-size: contain;
+    min-height: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .active-accordion:after{
+    content: "";
+    background-image: url('https://cdn.shopify.com/s/files/1/0754/5903/5403/files/Vector.png?v=1723514794');
+    background-repeat: no-repeat;
+    min-height: 16px;
+  }
+
+  .panel-accordion{
+    padding: 0 5px;
+    background-color: transparent;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.8s ease-out;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: left;
+    color: {{ section.settings.txt-clr }};
+    border-bottom: 1px solid {{ section.settings.txt-clr }};
+  }
+
+  .panel-accordion .rte{
+    margin-top: 0px;
+    margin-bottom: 30px;
+  }
+
+  .panel-accordion .rte p{
+    margin: 0 0 18px 0;
+  }
+
+  @media(max-width: 767px){
+    .lp-faqs-{{ section.id }}{
+      padding-top: {{ section.settings.mob-padding-top }}px;
+      padding-bottom: {{ section.settings.mob-padding-bottom }}px;
+    }
+
+    .faq-col-icorrect{
+      flex: 100%;
+      max-width: 100%;
+    }
+
+    .lp-faqs-header h2{
+      font-size: 24px;
+      font-weight: 600;
+      line-height: 36px;
+    }
+
+    .lp-faqs-header p{
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 20px;
+      letter-spacing: 0.05em;
+      text-align: left;
+    }
+  }
+
+  @media(max-width: 500px){
+    .accordion-{{ section.id }}{
+      padding: 10px 20px 10px 2px;
+      position: relative;
+    }
+
+    .accordion-{{ section.id }}:after{
+      position: absolute;
+      right: 0rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+</style>
+
+<script>
+  (function(){
+    function init(){
+      var root = document.querySelector('.lp-faqs-{{ section.id }}');
+      if (!root) return;
+
+      var acc = root.getElementsByClassName('accordion-{{ section.id }}');
+      for (var i = 0; i < acc.length; i++) {
+        acc[i].addEventListener('click', function() {
+          this.classList.toggle('active-accordion');
+          var panel = this.nextElementSibling;
+          if (!panel) return;
+
+          if (panel.style.maxHeight){
+            panel.style.maxHeight = null;
+          } else {
+            panel.style.maxHeight = panel.scrollHeight + 'px';
+          }
+        });
+      }
+    }
+
+    if (document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Homepage FAQs",
+  "class": "section",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "padding-top",
+      "label": "Section Top Padding",
+      "default": 50,
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding-bottom",
+      "label": "Section Bottom Padding",
+      "default": 50,
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mob-padding-top",
+      "label": "Mobile Top Padding",
+      "default": 40,
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mob-padding-bottom",
+      "label": "Mobile Bottom Padding",
+      "default": 40,
+      "min": 0,
+      "max": 140,
+      "step": 5,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "bg",
+      "label": "Section BG Color",
+      "default": "#1D1D1F"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "FAQs"
+    },
+    {
+      "type": "text",
+      "id": "details",
+      "label": "Details",
+      "default": "Learn more about iCorrect, the essential repair services that we offer and the warranties that come with each repair."
+    },
+    {
+      "type": "color",
+      "id": "txt-clr",
+      "label": "Text Color",
+      "default": "#FFFFFF"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "accordion",
+      "name": "FAQ",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Question"
+        },
+        {
+          "type": "richtext",
+          "id": "sub_head",
+          "label": "Answer"
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Centered" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "left",
+          "label": "Text Alignment"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Homepage FAQs",
+      "blocks": [
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do I need an appointment?",
+            "sub_head": "<p>You do not need an appointment to contact us, get a quote, or book in for a repair. For walk ins, we can normally accept devices during opening hours, but availability can vary depending on workload and the type of repair.</p><p>If you want the quickest turnaround, booking in advance is best. It allows us to reserve bench time, confirm parts availability, and prioritise your repair. This is especially important for same day repairs and for any express service requests.</p><p>If you are sending your device in, you can place an order online and follow the shipping instructions. We will confirm receipt, run intake checks, and then proceed according to the booked service or agreed quote.</p>",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do I need to back up my data before my repair?",
+            "sub_head": "<p>Yes, you should back up your data whenever possible. Most repairs do not affect data, but storage can never be guaranteed if a device has underlying faults, liquid damage, or an unstable power issue.</p><p>If your device is still usable, back up before bringing it in. For phones and tablets, an iCloud backup is usually the fastest option. For computers, use Time Machine or another full backup method.</p><p>If the device is not turning on or is too unstable to back up, we can advise on the safest next step after inspection. In many cases we can repair the device enough to allow a backup, but that depends on the fault and the condition of the hardware.</p>",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "How long does it take to diagnose an unknown fault?",
+            "sub_head": "<p>Most diagnostics are completed within two to three working days. During that time we test for common issues such as battery failure, charging faults, liquid damage, and internal short circuits, and we also check for signs of previous repairs or missing parts.</p><p>If the issue is not obvious, we go deeper. That can include detailed functional testing, internal inspection, and where relevant, board level investigation to isolate the area causing the fault. The goal is to provide a clear answer, not guesswork.</p><p>Once diagnostics are complete, we send you a report explaining what we found and what the recommended repair path is. You stay in control, nothing proceeds beyond diagnostics without your approval.</p>",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will I be charged if you are unable to complete a repair?",
+            "sub_head": "<p>If we cannot complete a standard repair because the fault cannot be resolved, we will not charge you for the repair itself. If a diagnostic service was required to identify the issue, the diagnostic fee still applies because it covers the inspection, testing, and reporting work.</p><p>For advanced faults, especially where a device has multiple issues or severe liquid damage, we will always explain the risks and likely outcomes before proceeding. If a repair attempt is not viable, we stop and report back rather than pushing forward and wasting your time and money.</p><p>Either way, you get a clear result and a practical recommendation, whether that is a different repair approach, a partial recovery path, or advising against repair.</p>",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can you repair a damaged logic board?",
+            "sub_head": "<p>Yes. Logic board repair is one of the main reasons clients choose us. Many repair centres and manufacturers will write off a faulty board and quote a full replacement. We take a repair first approach where it makes technical and financial sense.</p><p>Board faults can present as no power, charging issues, random shutdowns, boot loops, or missing functions like audio, cameras, or connectivity. In many cases the board can be restored by repairing the affected circuit area rather than replacing the entire device.</p><p>These repairs require proper diagnostics and specialist equipment. If we find that a board repair would not be reliable or would not represent good value, we will explain the situation clearly and recommend the most practical alternative.</p>",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do your prices include parts and labour?",
+            "sub_head": "<p>Yes. Pricing is quoted as a complete service, including parts, labour, and the testing required to return the device in stable working condition.</p><p>For jobs where the fault is not confirmed upfront, diagnostics may be required first. In that case, we will confirm the diagnostic fee and timeline, then provide a full quote once the fault is identified.</p><p>We do not add hidden charges at the end. If anything changes during testing, for example we find additional damage that affects the repair outcome, we stop and contact you before doing anything further.</p>",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "What warranty do you offer?",
+            "sub_head": "<p>We provide a two year warranty on repairs, covering faults related to the work completed and the parts supplied. This applies across our repair categories, from common repairs to more advanced work where appropriate.</p><p>The warranty does not cover accidental damage, liquid exposure after repair, or new faults unrelated to the original repair. It also does not cover general wear and tear, for example normal battery ageing over time.</p><p>If you ever have an issue after a repair, we will inspect the device and explain exactly what is going on. If it is related to the original repair, we will resolve it under warranty.</p>",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you use original parts?",
+            "sub_head": "<p>Wherever possible, yes. Most of the parts we use are genuine parts reclaimed from original devices, then tested and, where required, refurbished back to a high standard before being fitted.</p><p>This approach helps preserve key features and overall device performance. It also reduces compatibility issues that can happen with low quality aftermarket parts, and it is a more sustainable way to repair electronics.</p><p>For older models where original parts are no longer realistically available in good condition, we use high quality OEM alternatives. We will always be transparent about what part option is being used and why.</p>",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you need my passcode for testing?",
+            "sub_head": "<p>Yes, we ask for your passcode so we can complete proper pre repair and post repair testing. This allows us to verify functions like cameras, microphones, speakers, sensors, charging behaviour, display and touch performance, and general stability before returning the device.</p><p>We do not access personal content, banking apps, or private data. The passcode is used only to reach the testing screens needed to confirm the device is working correctly.</p><p>If you prefer not to share a passcode, we can still complete many repairs. In that case we cannot fully validate every function, and warranty coverage may be limited because full testing was not possible.</p>",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you offer payment plans?",
+            "sub_head": "<p>Yes. We offer payment options that allow you to spread the cost, such as Klarna, subject to eligibility and availability at checkout.</p><p>For straightforward repairs booked online, you can choose a payment option during checkout. For diagnostic led repairs, we will provide a quote after inspection, and you can then proceed using the available payment methods once the repair plan is confirmed.</p><p>If you are not sure which route to take, start with diagnostics or contact us with the device model and symptoms. We will point you to the correct booking path.</p>",
+            "alignment": "left"
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will my Apple Pencil still work after an iPad repair?",
+            "sub_head": "<p>Yes. After the repair your Apple Pencil will still work as normal.</p><p>We complete the repair in a way that preserves pairing and day to day functionality, including writing accuracy and responsiveness. We also check compatibility and basic Pencil behaviour during testing where possible.</p><p>If your device has additional faults that affect touch input, display performance, or charging, we will flag that during diagnostics and explain what would need to be addressed to restore full functionality.</p>",
+            "alignment": "left"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

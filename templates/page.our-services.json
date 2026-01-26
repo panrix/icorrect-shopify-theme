@@ -1,0 +1,159 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "name": "Page",
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "rich_text_yKUVGV": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_nAfaLQ": {
+          "type": "heading",
+          "settings": {
+            "heading": "<strong>How to Get Your Device Repaired</strong>",
+            "heading_size": "h0"
+          }
+        },
+        "text_mkyXTf": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Two ways to get your Apple device repaired: we collect it from anywhere in the UK, or you visit us in Central London. Same expertise, same process, same warranty.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "heading_nAfaLQ",
+        "text_mkyXTf"
+      ],
+      "name": "t:sections.rich-text.presets.name",
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "",
+        "full_width": true,
+        "padding_top": 40,
+        "padding_bottom": 0
+      }
+    },
+    "our_services_bTkACU": {
+      "type": "our-services",
+      "name": "Repair Method Cards",
+      "settings": {
+        "padding_top": 48,
+        "padding_bottom": 40,
+        "button_link": "shopify://collections/all-devices-repair-prices",
+        "button_label": "Book Now"
+      }
+    },
+    "icorrect_faqs_7eqxnF": {
+      "type": "icorrect-faqs",
+      "blocks": {
+        "accordion_svc_1": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How do I book a repair?",
+            "sub_head": "<p>Select your device, choose your repair, and pick a time. Courier or walk-in. Takes two minutes.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_svc_2": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What's the difference between courier and walk-in?",
+            "sub_head": "<p>Courier means we collect from your door anywhere in the UK. Walk-in means you drop off at our London office. Same repair quality, same warranty, same turnaround.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_svc_3": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How long does a repair take?",
+            "sub_head": "<p>Most repairs take 1 to 3 working days. Simple fixes like screen or battery can be same day if pre-booked. Complex work like liquid damage or logic board repair takes 2 to 5 days depending on what we find.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_svc_4": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do I need to back up my device first?",
+            "sub_head": "<p>We recommend it, but it's not required. We never wipe devices and always prioritise keeping your data intact. If backup isn't possible due to the fault, we'll discuss options.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_svc_5": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What happens if you find additional problems?",
+            "sub_head": "<p>We stop and contact you before doing anything extra. You'll get a clear explanation and updated quote. Nothing proceeds without your approval.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_svc_6": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can I track my courier repair?",
+            "sub_head": "<p>Yes. You'll get tracking for collection and return delivery, plus updates from us when it arrives, when diagnostics are done, and when repair is complete.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_svc_7": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Is there an express option?",
+            "sub_head": "<p>Yes. Express repairs are available for most issues if booked in advance. Subject to availability. Contact us to check.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_svc_8": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What areas do you cover for courier collection?",
+            "sub_head": "<p>All of mainland UK. Collection is typically same day or next day depending on your location and booking time.</p>",
+            "alignment": "left"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_svc_1",
+        "accordion_svc_2",
+        "accordion_svc_3",
+        "accordion_svc_4",
+        "accordion_svc_5",
+        "accordion_svc_6",
+        "accordion_svc_7",
+        "accordion_svc_8"
+      ],
+      "name": "iCorrect FAQs",
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 50,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#1d1d1f",
+        "heading": "FAQs",
+        "details": "Learn more about iCorrect, the essential repair services that we offer and the warranties that come with each repair.",
+        "txt-clr": "#ffffff"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "rich_text_yKUVGV",
+    "our_services_bTkACU",
+    "icorrect_faqs_7eqxnF"
+  ]
+}

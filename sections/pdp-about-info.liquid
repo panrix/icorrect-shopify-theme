@@ -1,0 +1,185 @@
+{% liquid 
+  # Check if the product has a metaobject reference
+  assign about_metaobject = product.metafields.custom.about_info.value
+%}
+{% if about_metaobject != blank %}
+  <section class="about-info-{{ section.id }}">
+    <div class="about-info-wrapper page-width">
+      <div class="about-info-row">
+        {% if about_metaobject.heading != blank %}
+          <h2>{{ about_metaobject.heading | escape }}</h2>
+        {% endif %}
+        {% if about_metaobject.description != blank %}
+          <div class="about-details"><p>{{ about_metaobject.description | escape }}</p></div>
+        {% endif %}
+        {% if about_metaobject.link_to_more_info != blank %}
+          <div class="read-more-btn">
+            <a href="{{ about_metaobject.link_to_more_info }}">Read more</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+{% endif %}
+<style>
+  .about-info-{{ section.id }}{ 
+    padding-top: {{ section.settings.padding-top }}px;
+    padding-bottom: {{ section.settings.padding-bottom }}px;
+    width: 100%;
+    background-color: {{ section.settings.bg }};
+  }
+
+  .about-info-row h2{
+   color: #1D1D1F;
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.3;
+    text-align: center;
+    margin: 0;
+    padding: 0px;
+    padding-bottom: 20px;
+  }
+
+  .about-info-{{ section.id }} .about-details{
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+ .about-info-row p{
+   color: #333;
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.7;
+    letter-spacing: 0;
+    text-align: left;
+    max-width: 100%;
+    margin: 0 0 1.25rem;
+  }
+
+  .about-info-row p:last-child{
+    margin-bottom: 0;
+  }
+
+  .read-more-btn{
+    padding-top: 20px;
+    text-align: center;
+  }
+
+  .read-more-btn a{
+    display: inline-block;
+    text-decoration: none;
+    color: #1d1d1f;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 25.34px;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    letter-spacing: 0.05px;
+  }
+
+  @media(min-width: 768px){
+    .show-more-btn{
+      display: none;
+    }
+  }
+  @media(max-width: 767px){
+    .about-info-{{ section.id }}{
+      padding-top: {{ section.settings.mob-padding-top }}px;
+      padding-bottom: {{ section.settings.mob-padding-bottom }}px;
+    }
+    .about-info-row h2{
+      font-size: 24px;
+      font-weight: 600;
+      line-height: 1.3;
+      padding-bottom: 16px;
+    }
+    .about-info-row p{
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.65;
+      letter-spacing: 0;
+      text-align: left;
+    }
+    .show-more-btn{
+      text-align: center;
+      padding-top: 40px;
+      max-width: 120px;
+      margin: 0 auto;
+    }
+    .show-more-btn a{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 120px;
+      height: 43px;
+      border-radius: 3px;
+      border: 1px solid #1d1d1f;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 25.34px;
+      text-align: center;
+      text-decoration: none;
+      color: #1d1d1f;
+    }
+  }
+</style>
+
+{% schema %}
+  {
+    "name": "Product About Info",
+    "settings": [
+      {
+         "type": "range",
+         "id": "padding-top",
+         "label": "Section Top Padding",
+         "default": 50,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "range",
+         "id": "padding-bottom",
+         "label": "Section Bottom Padding",
+         "default": 50,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "range",
+         "id": "mob-padding-top",
+         "label": "Section Top Padding",
+         "default": 40,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "range",
+         "id": "mob-padding-bottom",
+         "label": "Section Bottom Padding",
+         "default": 40,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "color",
+         "id": "bg",
+         "label": "Section BG Color",
+         "default": "#fff"
+       }
+    ],
+  "presets": [
+    {
+      "name": "Product About Info"
+    }
+  ]
+}
+{% endschema %}

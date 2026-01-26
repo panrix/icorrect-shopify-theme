@@ -1,0 +1,430 @@
+{% comment %}
+  iPhone Repair Landing Page
+  iCorrect.co.uk - SEO-Optimized Template
+{% endcomment %}
+{% comment %}
+  
+  CUSTOMIZATION INSTRUCTIONS:
+  1. Update banner title and subtitle in the Hero Banner section
+  2. Replace placeholder collection URLs with your actual Shopify collection URLs
+     (Look for /collections/... links throughout the page)
+  3. Replace video IDs: Change "dQw4w9WgXcQ" to your YouTube video IDs
+     (Only use the ID part, not the full URL. E.g., if your video is 
+      https://www.youtube.com/watch?v=ABC123, use just "ABC123")
+  4. Modify any text content as needed to match your brand voice
+  
+{% endcomment %}
+
+
+
+<style>
+  .repair-page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* Hero Banner */
+  .hero-banner {
+    position: relative;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 80px 20px;
+    text-align: center;
+    margin-bottom: 60px;
+    border-radius: 8px;
+  }
+
+  .hero-banner h1 {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+
+  .hero-banner p {
+    font-size: 20px;
+    margin-bottom: 30px;
+    opacity: 0.95;
+  }
+
+  .hero-cta {
+    display: inline-block;
+    background: white;
+    color: #667eea;
+    padding: 15px 40px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 18px;
+    transition: transform 0.3s ease;
+  }
+
+  .hero-cta:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Introduction Section */
+  .intro-section {
+    margin-bottom: 60px;
+    text-align: center;
+  }
+
+  .intro-section h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  .intro-section p {
+    font-size: 18px;
+    line-height: 1.8;
+    color: #666;
+    max-width: 900px;
+    margin: 0 auto 15px;
+  }
+
+  /* Repair Categories */
+  .repair-categories {
+    margin-bottom: 80px;
+  }
+
+  .repair-category {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 40px;
+    margin-bottom: 30px;
+    border-left: 5px solid #667eea;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .repair-category:hover {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+
+  .repair-category h3 {
+    font-size: 28px;
+    margin-bottom: 15px;
+    color: #333;
+  }
+
+  .repair-category p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 20px;
+  }
+
+  .repair-category ul {
+    margin: 15px 0 20px 20px;
+    color: #555;
+  }
+
+  .repair-category li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+
+  .repair-link {
+    display: inline-block;
+    background: #667eea;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.3s ease;
+  }
+
+  .repair-link:hover {
+    background: #5568d3;
+  }
+
+  /* Video Section */
+  .video-section {
+    margin-bottom: 80px;
+  }
+
+  .video-section h2 {
+    font-size: 36px;
+    text-align: center;
+    margin-bottom: 40px;
+    color: #333;
+  }
+
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 20px;
+  }
+
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+
+  .video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  /* FAQ Section */
+  .faq-section {
+    background: #f8f9fa;
+    padding: 60px 40px;
+    border-radius: 12px;
+    margin-bottom: 60px;
+  }
+
+  .faq-section h2 {
+    font-size: 36px;
+    text-align: center;
+    margin-bottom: 40px;
+    color: #333;
+  }
+
+  .faq-item {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 20px;
+    border-left: 4px solid #667eea;
+  }
+
+  .faq-item h3 {
+    font-size: 20px;
+    margin-bottom: 12px;
+    color: #333;
+  }
+
+  .faq-item p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #555;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero-banner h1 {
+      font-size: 32px;
+    }
+
+    .hero-banner p {
+      font-size: 16px;
+    }
+
+    .repair-category {
+      padding: 25px;
+    }
+
+    .video-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="repair-page-container">
+  
+  <!-- Hero Banner -->
+  <section class="hero-banner">
+    <h1>Expert iPhone Repair Services</h1>
+    <p>Fast, Professional iPhone Repairs by Certified Technicians - Same Day Service Available</p>
+    <a href="{{ section.settings.banner_cta_url | default: '#repair-categories' }}" class="hero-cta">View Our Services</a>
+  </section>
+
+  <!-- Introduction -->
+  <section class="intro-section">
+    <h2>Professional iPhone Repair Services in the UK</h2>
+    <p>At iCorrect, we specialise in comprehensive iPhone repair services for all models. Whether you have cracked your screen, need a battery replacement, or are experiencing charging issues, our certified technicians provide fast, reliable repairs using high-quality parts. We understand how essential your iPhone is to your daily life, which is why we offer same-day and while-you-wait repair options for most common issues.</p>
+    <p>With over a decade of experience repairing thousands of iPhones, we have built our reputation on quality workmanship, transparent pricing, and exceptional customer service. All our iPhone repairs come with a comprehensive warranty, giving you complete peace of mind. From the latest iPhone 15 Pro Max to older models like the iPhone 7, we have the expertise and parts inventory to handle any repair quickly and professionally.</p>
+  </section>
+
+  <!-- Repair Categories -->
+  <section class="repair-categories" id="repair-categories">
+    
+    <!-- iPhone Screen Repair -->
+    <div class="repair-category">
+      <h3>iPhone Screen Repair & Replacement</h3>
+      <p>A cracked or shattered iPhone screen is one of the most common issues we repair. Our screen replacement service restores your iPhone to perfect working condition using premium-quality LCD and OLED displays that match original specifications.</p>
+      <p><strong>Common screen issues we fix:</strong></p>
+      <ul>
+        <li>Cracked or shattered glass from drops and impacts</li>
+        <li>Non-responsive or malfunctioning touchscreen (ghost touches, dead zones)</li>
+        <li>LCD damage causing display lines, black spots, or discolouration</li>
+        <li>Broken Face ID or front camera assembly</li>
+        <li>Screen separation or lifting from the frame</li>
+      </ul>
+      <p>We stock genuine-quality replacement screens for all iPhone models and can typically complete screen repairs in under an hour. All screen replacements include thorough testing of touch responsiveness, Face ID functionality, and True Tone display calibration where applicable.</p>
+      <a href="{{ section.settings.screen_repair_url | default: '/collections/iphone-screen-repair' }}" class="repair-link">View Screen Repair Pricing →</a>
+    </div>
+
+    <!-- iPhone Battery Replacement -->
+    <div class="repair-category">
+      <h3>iPhone Battery Replacement</h3>
+      <p>Is your iPhone battery draining quickly, shutting down unexpectedly, or not holding a charge? We offer professional battery replacement services using high-capacity batteries that meet or exceed original specifications.</p>
+      <p><strong>Signs you need a battery replacement:</strong></p>
+      <ul>
+        <li>Battery drains faster than 20% per hour with normal use</li>
+        <li>iPhone shuts down unexpectedly, especially below 30% charge</li>
+        <li>Battery Health showing below 80% capacity in Settings</li>
+        <li>Phone only works when connected to charger</li>
+        <li>Swollen or expanded battery causing screen lifting</li>
+        <li>Overheating during charging or regular use</li>
+      </ul>
+      <p>Our battery replacement service includes proper disposal of your old battery, installation of a certified replacement, and full diagnostics to ensure optimal performance. Most battery replacements are completed within 30-45 minutes.</p>
+      <a href="{{ section.settings.battery_repair_url | default: '/collections/iphone-battery-replacement' }}" class="repair-link">View Battery Replacement Pricing →</a>
+    </div>
+
+    <!-- iPhone Charging Port Repair -->
+    <div class="repair-category">
+      <h3>iPhone Charging Port Repair</h3>
+      <p>Charging port issues can prevent your iPhone from charging properly or connecting to accessories. We repair or replace faulty charging ports, restoring full functionality to your device.</p>
+      <p><strong>Charging port problems we resolve:</strong></p>
+      <ul>
+        <li>iPhone not charging or only charging at certain angles</li>
+        <li>Loose or wobbly charging cable connection</li>
+        <li>Lint, debris, or corrosion inside the charging port</li>
+        <li>Bent or broken charging port pins</li>
+        <li>Water damage affecting charging functionality</li>
+        <li>CarPlay or data transfer not working via cable</li>
+      </ul>
+      <p>We start with a thorough cleaning and inspection of your charging port. If replacement is necessary, we use high-quality charging port assemblies and test all functions including charging speed, data transfer, and audio output to ensure everything works perfectly.</p>
+      <a href="{{ section.settings.charging_port_url | default: '/collections/iphone-charging-port-repair' }}" class="repair-link">View Charging Port Repair Pricing →</a>
+    </div>
+
+    <!-- iPhone Housing/Rear Glass Repair -->
+    <div class="repair-category">
+      <h3>iPhone Housing & Rear Glass Repair</h3>
+      <p>Damaged housing or rear glass does not just affect your iPhone's appearance-it can compromise structural integrity and water resistance. We offer professional housing and back glass replacement services.</p>
+      <p><strong>Housing and rear glass repairs include:</strong></p>
+      <ul>
+        <li>Cracked or shattered rear glass panel replacement</li>
+        <li>Bent or damaged chassis straightening or replacement</li>
+        <li>Camera lens glass replacement</li>
+        <li>Dented or scratched housing restoration</li>
+        <li>Complete housing transplant for severely damaged devices</li>
+        <li>Restoration of water resistance seals where possible</li>
+      </ul>
+      <p>For iPhone models with glass backs (iPhone 8 and newer), rear glass replacement requires specialised equipment and expertise. Our technicians carefully transfer all components to a pristine housing, ensuring your iPhone looks and functions like new.</p>
+      <a href="{{ section.settings.housing_repair_url | default: '/collections/iphone-housing-repair' }}" class="repair-link">View Housing Repair Pricing →</a>
+    </div>
+
+    <!-- iPhone Diagnostic Service -->
+    <div class="repair-category">
+      <h3>iPhone Diagnostic Service</h3>
+      <p>Not sure what's wrong with your iPhone? Our comprehensive diagnostic service identifies all hardware and software issues, providing you with a detailed report and repair recommendations.</p>
+      <p><strong>Our diagnostic service covers:</strong></p>
+      <ul>
+        <li>Complete hardware component testing (screen, battery, cameras, sensors)</li>
+        <li>Software and iOS troubleshooting</li>
+        <li>Water damage assessment and corrosion inspection</li>
+        <li>Performance testing and benchmarking</li>
+        <li>Connectivity testing (Wi-Fi, Bluetooth, cellular signal)</li>
+        <li>Audio system evaluation (speakers, microphones, earpiece)</li>
+        <li>Detailed written report with repair cost estimates</li>
+      </ul>
+      <p>Our diagnostic fee is often waived if you proceed with the recommended repairs. We'll explain every issue in plain English and provide transparent pricing before any work begins, so you can make an informed decision about your iPhone repair.</p>
+      <a href="{{ section.settings.diagnostic_url | default: '/collections/iphone-diagnostic' }}" class="repair-link">Book Diagnostic Service →</a>
+    </div>
+
+  </section>
+
+  <!-- Video Section -->
+  <section class="video-section">
+    <h2>See How We Repair Your iPhone</h2>
+    <div class="video-grid">
+      <div class="video-container">
+        <iframe 
+          src="https://www.youtube.com/embed/{{ section.settings.video_id_1 | default: 'dQw4w9WgXcQ' }}" 
+          title="iPhone Repair Process Video 1"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+        </iframe>
+      </div>
+      <div class="video-container">
+        <iframe 
+          src="https://www.youtube.com/embed/{{ section.settings.video_id_2 | default: 'dQw4w9WgXcQ' }}" 
+          title="iPhone Repair Process Video 2"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+        </iframe>
+      </div>
+      <div class="video-container">
+        <iframe 
+          src="https://www.youtube.com/embed/{{ section.settings.video_id_3 | default: 'dQw4w9WgXcQ' }}" 
+          title="iPhone Repair Process Video 3"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <h2>Frequently Asked Questions - iPhone Repair</h2>
+    
+    <div class="faq-item">
+      <h3>How long does an iPhone repair take?</h3>
+      <p>Most common iPhone repairs, such as screen replacements and battery changes, are completed within 30 minutes to 1 hour while you wait. More complex repairs like charging port replacements or water damage restoration may take 2-4 hours. We always provide an estimated completion time when you book your repair, and we will notify you immediately if we discover any additional issues that might extend the repair time.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Do you offer same-day iPhone repair services?</h3>
+      <p>Yes! We offer same-day repair services for most iPhone issues at our repair centres. For screen repairs, battery replacements, and charging port fixes, we typically complete repairs the same day you bring your device in-often within an hour. For more complex repairs or mail-in services, we aim to complete and return your iPhone within 24 to 48 hours. Contact us to check availability for your specific repair and location.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Will my iPhone repair come with a warranty?</h3>
+      <p>Absolutely. All our iPhone repairs include a comprehensive warranty covering both parts and labour. Screen repairs and battery replacements come with a 12-month warranty, while other component repairs typically include a 6-month warranty. If you experience any issues with your repair during the warranty period, we will fix it free of charge. Our warranty demonstrates our confidence in the quality of our workmanship and the premium parts we use.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Do you use genuine Apple parts for iPhone repairs?</h3>
+      <p>We use high-quality aftermarket parts that meet or exceed original specifications. While we're not an Apple Authorised Service Provider, our parts are carefully sourced from trusted suppliers and tested to ensure they match OEM quality standards. For newer iPhone models, we stock premium-grade screens with features like True Tone compatibility and original-quality OLED displays. All parts come with warranties and are thoroughly tested before installation.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Can you repair water-damaged iPhones?</h3>
+      <p>Yes, we specialise in water damage restoration for iPhones. Our process includes ultrasonic cleaning of the logic board, corrosion removal, component-level diagnostics, and replacement of any damaged parts. Success rates vary depending on how quickly you bring in your device and the severity of the damage. We recommend not attempting to charge or power on a water-damaged iPhone-bring it to us as soon as possible for the best chance of recovery. We offer free diagnostics to assess water damage and provide honest recommendations.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>What iPhone models do you repair?</h3>
+      <p>We repair all iPhone models, from the original iPhone and iPhone 3G through to the latest iPhone 15 Pro Max and iPhone 15 Plus. Our technicians are trained on all generations of iPhones and we maintain a comprehensive parts inventory for both current and legacy models. Whether you have an iPhone SE, iPhone 11, iPhone 13 Pro, or any other model, we have the expertise and parts to complete your repair professionally.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>How much does iPhone screen repair cost?</h3>
+      <p>iPhone screen repair costs vary depending on your specific model. Older models like the iPhone 7 or iPhone 8 typically cost less to repair (£50-£80), while newer models with OLED displays like the iPhone 14 Pro or iPhone 15 Pro Max cost more (£150-£280). We provide transparent, upfront pricing with no hidden fees. Visit our screen repair pricing page or contact us with your iPhone model for an exact quote. All screen repairs include a warranty and are completed by certified technicians.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Will I lose my data during the iPhone repair?</h3>
+      <p>In most cases, no. Repairs like screen replacements, battery changes, and charging port fixes do not affect your data at all. However, we always recommend backing up your iPhone before any repair as a precautionary measure. For logic board repairs or more complex issues, there's a possibility of data loss, which we will discuss with you upfront. We never intentionally erase or access your data-your privacy and security are our top priorities.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Can you fix my iPhone if the screen is completely black?</h3>
+      <p>Yes, in many cases. A black screen can be caused by several issues: a damaged display, a faulty battery, a loose connection, or software problems. Our diagnostic service will identify the root cause. If it's a screen issue, we can replace the display. If it's battery-related or a connection problem, we will address that accordingly. Bring your iPhone in for a free diagnostic assessment, and we will determine the best solution to get your device working again.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Do I need to book an appointment for iPhone repair?</h3>
+      <p>While walk-ins are welcome at all our locations, we recommend booking an appointment to ensure minimal waiting time and guaranteed same-day service. Booking ahead allows us to allocate a technician and reserve the necessary parts for your specific iPhone model. You can book online through our website, call us directly, or use our live chat. For urgent repairs, contact us and we will do our best to accommodate you as quickly as possible, even without an appointment.</p>
+    </div>
+
+  </section>
+
+</div>
+
+

@@ -1,0 +1,210 @@
+{% assign section_id = 'cards-' | append: section.id %}
+
+<style>
+  /* Dynamic Section Padding */
+  #{{ section_id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+
+  #{{ section_id }} .cards-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    /* Removed fixed margin-top so the slider controls spacing */
+    margin-top: 0; 
+    flex-wrap: wrap;
+  }
+
+  #{{ section_id }} .card {
+    transition: all 0.3s ease;
+    background: #f9f9f9;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    width: 400px;
+    text-align: left;
+  }
+
+  #{{ section_id }} .card-subtitle {
+    color: #666;
+    font-size: 14px;
+    margin-top: 4px;
+    margin-bottom: 20px;
+  }
+
+  #{{ section_id }} .card.expanded {
+    min-height: 500px;
+  }
+
+  #{{ section_id }} .card h3 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+
+  #{{ section_id }} .card h3.card-title {
+    font-size: 28px;
+  }
+
+  #{{ section_id }} .card p {
+    color: #555;
+  }
+
+  #{{ section_id }} .card-content {
+    margin-top: 16px;
+    text-align: left;
+    font-size: 15px;
+  }
+
+  #{{ section_id }} .book-now-btn {
+    margin-top: 50px;
+    padding: 12px 28px;
+    font-size: 16px;
+    border: none;
+    border-radius: 9999px;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  #{{ section_id }} .book-now-btn:hover {
+    background-color: #333;
+  }
+
+  #{{ section_id }} .card-icon img {
+    width: 45px;
+    height: 45px;
+    margin-bottom: 10px;
+  }
+
+  #{{ section_id }} .card-content h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 16px 0 8px 0;
+    color: #1d1d1f;
+  }
+
+  #{{ section_id }} .card-content h4:first-child {
+    margin-top: 0;
+  }
+
+  #{{ section_id }} .card-content p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #555;
+    margin: 0;
+  }
+
+  @media (max-width: 900px) {
+    #{{ section_id }} .cards-container {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    #{{ section_id }} .card {
+      width: 100%;
+      max-width: 400px;
+    }
+  }
+</style>
+
+<div id="{{ section_id }}">
+  <div class="cards-container">
+    <div class="card expanded">
+      <div class="card-icon">
+        <img src="https://cdn-icons-png.flaticon.com/512/535/535188.png" alt="Walk-in icon">
+      </div>
+      <h3 class="card-title">Walk-In Repairs</h3>
+      <p class="card-subtitle">Fitzrovia, Central London</p>
+      <div class="card-content" style="display: block;">
+        <h4>1. Book online</h4>
+        <p>Select your repair and pick a time that works. Takes two minutes.</p>
+        <h4>2. Drop off and diagnostics</h4>
+        <p>Bring it in, we run initial tests to confirm the fault. Straightforward repairs start the same day. For full diagnostics (liquid damage, no power, unknown fault) allow 24 to 48 hours.</p>
+        <h4>3. Repair</h4>
+        <p>We fix it properly. Original parts, component-level work where needed, full post-repair testing before we call it done.</p>
+        <h4>4. Collect</h4>
+        <p>We text and email when it is ready. When you pick up, we test it with you so you leave confident.</p>
+      </div>
+    </div>
+
+    <div class="card expanded">
+      <div class="card-icon">
+        <img src="https://cdn-icons-png.flaticon.com/512/4398/4398972.png" alt="Courier icon">
+      </div>
+      <h3 class="card-title">Courier Repairs</h3>
+      <p class="card-subtitle">Anywhere in the UK</p>
+      <div class="card-content" style="display: block;">
+        <h4>1. Book online</h4>
+        <p>Select your repair and choose the courier option. We arrange collection for the same or next day.</p>
+        <h4>2. We collect</h4>
+        <p>Courier picks up from your door. You get tracking, and we confirm when it lands on our bench.</p>
+        <h4>3. Diagnostics and repair</h4>
+        <p>Same process as walk-in. Full testing, proper repair, no shortcuts. Complex jobs take 24 to 48 hours and we keep you updated.</p>
+        <h4>4. Returned to you</h4>
+        <p>Tracked delivery back to your address. It will work like it should.</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center; margin-top: 30px;">
+    <a href="{{ section.settings.button_link | default: '/collections/all-devices' }}" style="text-decoration:none">
+      <button class="book-now-btn">{{ section.settings.button_label }}</button>
+    </a>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Repair Method Cards",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Layout"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Button Settings"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Book Now"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Repair Method Cards"
+    }
+  ]
+}
+{% endschema %}

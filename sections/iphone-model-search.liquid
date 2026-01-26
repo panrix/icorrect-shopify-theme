@@ -1,0 +1,766 @@
+{{ 'component-image-with-text.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  /* --- BASE STYLES --- */
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  /* WRAPPER */
+  .ic-wrapper {
+    display: flex; flex-direction: column; 
+    align-items: center; justify-content: center;
+    width: 100%; max-width: 580px; 
+    margin: 0 auto;
+    transition: max-width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    position: relative; overflow: hidden; 
+  }
+
+  .ic-wrapper.is-open {
+    flex-direction: row; max-width: 1400px; 
+    align-items: flex-start; justify-content: space-between;
+    gap: 40px; overflow: visible;
+  }
+
+  /* LEFT COL */
+  .ic-left-col {
+    width: 100%; transition: all 0.5s ease;
+    display: flex; flex-direction: column;
+    align-items: center; text-align: center; padding: 20px 0;
+  }
+
+  .ic-wrapper.is-open .ic-left-col {
+    width: 45%; align-items: flex-start; text-align: left; padding-top: 40px;
+  }
+
+  /* SEARCH UI */
+  .ic-search-box { width: 100%; margin-top: 24px; }
+  .ic-wrapper.is-open .ic-search-box { max-width: 100%; }
+
+  .ic-search-row { display: flex; gap: 10px; margin-bottom: 12px; justify-content: center; }
+  .ic-wrapper.is-open .ic-search-row { justify-content: flex-start; }
+
+  .ic-input { flex: 1; padding: 14px 16px; border: 1px solid #d2d2d7; border-radius: 12px; font-size: 16px; }
+  .ic-input:focus { border-color: #0071e3; outline: none; box-shadow: 0 0 0 4px rgba(0,113,227,0.15); }
+
+  .ic-btn {
+    padding: 0 24px; background: #0071e3; color: white; font-weight: 600;
+    border: none; border-radius: 12px; cursor: pointer; white-space: nowrap;
+  }
+  .ic-btn:hover { background: #005bb5; }
+
+  .ic-msg { padding: 12px 16px; border-radius: 8px; font-size: 14px; display: none; margin-bottom: 12px; text-align: left; }
+  .ic-msg.error { background: #fff2f2; color: #d70015; border: 1px solid #ffcfcf; }
+  .ic-msg.info { background: #f2f7ff; color: #0071e3; border: 1px solid #cce4ff; }
+  .ic-msg.visible { display: block; animation: icFadeIn 0.3s; }
+
+  .ic-wizard-trigger {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: #0071e3; font-size: 15px; font-weight: 500; cursor: pointer;
+    background: none; border: none; padding: 0; margin-top: 8px;
+  }
+  .ic-wizard-trigger:hover { text-decoration: underline; }
+  .ic-wrapper.is-open .ic-wizard-trigger { display: none; }
+
+  /* RIGHT COL (Wizard) */
+  .ic-right-col {
+    flex: 1; width: 100%;
+    max-height: 0; opacity: 0; visibility: hidden; 
+    transform: translateY(20px); transition: all 0.5s ease;
+  }
+
+  .ic-wrapper.is-open .ic-right-col {
+    max-height: 900px; opacity: 1; visibility: visible; transform: translateY(0);
+  }
+
+  .ic-wizard-card {
+    background: #fbfbfd; border: 1px solid #d2d2d7; border-radius: 24px;
+    padding: 32px; min-height: 460px;
+    position: relative; display: flex; flex-direction: column; justify-content: center;
+  }
+
+  /* DESKTOP TOP NAV BUTTONS (Hidden on Mobile) */
+  .ic-close-wizard, .ic-back-btn {
+    position: absolute; top: 8px; width: 32px; height: 32px;
+    border-radius: 50%; border: none; background: #f2f2f7; color: #86868b;
+    font-size: 18px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5;
+  }
+  .ic-close-wizard { right: 8px; font-size: 22px; }
+  .ic-back-btn { left: 8px; display: none; }
+  .ic-back-btn.visible { display: flex; }
+  .ic-close-wizard:hover, .ic-back-btn:hover { background: #e5e5ea; color: #1d1d1f; }
+
+  /* STEPS */
+  .ic-step { display: none; animation: icFadeIn 0.4s ease-out; width: 100%; }
+  .ic-step.active { display: block; }
+  @keyframes icFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .ic-step-header { text-align: center; margin-bottom: 24px; }
+  .ic-step-title { font-size: 20px; font-weight: 600; color: #1d1d1f; margin: 0 0 6px 0; }
+  .ic-step-sub { font-size: 14px; color: #86868b; }
+
+  /* GRIDS & OPTIONS */
+  .ic-ripple-grid {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 16px; width: 100%; margin: 0 auto;
+  }
+
+  .ic-opt {
+    background: #fff; border: 2px solid #edeff2; border-radius: 18px;
+    padding: 20px 12px;
+    cursor: pointer; text-align: center;
+    transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    gap: 14px; width: 160px; flex: 0 0 auto;
+    min-height: 160px;
+  }
+  .ic-opt:hover { border-color: #0071e3; transform: scale(1.03); box-shadow: 0 8px 16px rgba(0,0,0,0.06); }
+  
+  /* Filtered State */
+  .ic-opt.filtered-out { display: none !important; }
+
+  .ic-img-wrap { width: 100%; height: 100px; display: flex; align-items: center; justify-content: center; }
+  .ic-opt-img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+
+  .ic-opt-label { font-size: 13px; font-weight: 600; color: #1d1d1f; line-height: 1.35; margin-top: auto; }
+  .ic-size-detail { display: block; font-weight: 400; color: #86868b; font-size: 12px; margin-top: 4px; }
+
+  /* RESULTS */
+  .ic-result-view { text-align: center; }
+  
+  .ic-multi-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-bottom: 20px; }
+  
+  /* DEFAULT SMALL CARD */
+  .ic-result-card {
+    background: #fff; border: 2px solid #edeff2; border-radius: 18px;
+    padding: 16px; width: 200px; cursor: pointer; text-align: center;
+    transition: all 0.2s;
+  }
+  .ic-result-card:hover { border-color: #0071e3; transform: scale(1.02); }
+  
+  /* Single View - Image sizing critical for mobile containment */
+  .ic-single-view .ic-result-img { 
+    max-width: 350px; 
+    width: auto; 
+    height: auto; 
+    margin-bottom: 20px; 
+    object-fit: contain;
+  } 
+  .ic-single-view .ic-result-name { font-size: 24px; margin-bottom: 20px; }
+
+  /* Multi-Result Image Wrapper */
+  .ic-result-img-wrap {
+    width: 100%;
+    height: 180px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .ic-result-img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+  
+  .ic-result-name { font-size: 16px; font-weight: 700; color: #1d1d1f; }
+
+  /* --- STYLE FOR 2 RESULTS (SIDE-BY-SIDE DESKTOP) --- */
+  .ic-multi-grid.ic-grid-two {
+    display: flex; flex-direction: row; flex-wrap: nowrap;
+    justify-content: center; gap: 30px; width: 100%;
+  }
+  .ic-multi-grid.ic-grid-two .ic-result-card {
+    width: 320px; padding: 24px; flex: 0 0 auto;
+  }
+  .ic-multi-grid.ic-grid-two .ic-result-img-wrap { height: 220px; }
+  .ic-multi-grid.ic-grid-two .ic-result-name { font-size: 20px; }
+
+  /* --- STYLE FOR 3 RESULTS (SIDE-BY-SIDE DESKTOP) --- */
+  .ic-multi-grid.ic-grid-three {
+    display: flex; flex-direction: row; flex-wrap: wrap;
+    justify-content: center; gap: 24px; width: 100%;
+  }
+  .ic-multi-grid.ic-grid-three .ic-result-card {
+    width: 280px; padding: 24px; flex: 0 0 auto;
+  }
+  .ic-multi-grid.ic-grid-three .ic-result-img-wrap { height: 220px; }
+  .ic-multi-grid.ic-grid-three .ic-result-name { font-size: 18px; }
+
+  /* --- ACTION BUTTONS --- */
+  .ic-action-btn { padding: 12px 24px; border-radius: 20px; font-weight: 600; cursor: pointer; border: none; font-size: 14px; margin: 0 6px; }
+  .ic-btn-primary { background: #0071e3; color: white; }
+  .ic-btn-secondary { background: #e5e5ea; color: #1d1d1f; }
+  .ic-action-btn.disabled { opacity: 0.4; pointer-events: none; }
+
+  /* Desktop Restart Button in Grid */
+  .ic-desktop-restart-container { display: flex; justify-content: center; margin-top: 20px; }
+
+  /* MOBILE PERSISTENT FOOTER (Hidden on Desktop) */
+  .ic-mobile-actions { display: none; }
+
+  /* UTILS */
+  .ic-hidden { display: none !important; }
+  .ic-highlight > * { outline: none !important; border-radius: 8px; }
+  .ic-center-grid { display: flex !important; flex-wrap: wrap !important; justify-content: center !important; width: 100% !important; }
+  .ic-center-grid .grid__item { max-width: 400px !important; flex: 0 0 auto !important; width: 100% !important; }
+
+  /* --- MOBILE SPECIFIC FIXES --- */
+  @media (max-width: 900px) {
+    .ic-wrapper.is-open { flex-direction: column; align-items: center; gap: 20px; }
+    .ic-wrapper.is-open .ic-right-col { max-height: none !important; }
+    
+    .ic-left-col, .ic-wrapper.is-open .ic-left-col { width: 100%; text-align: center; align-items: center; padding-top: 20px; }
+    .ic-search-row, .ic-wrapper.is-open .ic-search-row { justify-content: center; }
+    
+    .ic-opt { width: 140px; padding: 16px 8px; min-height: 150px; }
+    .ic-opt-label { font-size: 12px; }
+
+    /* Fix Single Image on Mobile - CONTAIN IT */
+    .ic-single-view .ic-result-img { 
+        max-width: 100% !important; 
+        max-height: 250px !important; /* Forces it to not blow up */
+        margin: 0 auto 20px auto;
+        display: block;
+    }
+
+    /* Wrap results on mobile */
+    .ic-multi-grid.ic-grid-two, .ic-multi-grid.ic-grid-three { flex-direction: column; flex-wrap: wrap; }
+    .ic-multi-grid.ic-grid-two .ic-result-card, 
+    .ic-multi-grid.ic-grid-three .ic-result-card { width: 100%; max-width: 320px; }
+
+    /* HIDE Desktop Navigation Elements */
+    .ic-close-wizard, .ic-back-btn { display: none !important; }
+    .ic-desktop-restart-container { display: none !important; }
+    .ic-internal-restart { display: none !important; } /* Hide the Restart button inside card to avoid duplicates */
+
+    /* SHOW Mobile Footer */
+    .ic-mobile-actions {
+      display: flex; justify-content: center; gap: 10px; 
+      margin-top: 24px; width: 100%; padding: 0 8px;
+    }
+    .ic-mobile-actions .ic-action-btn { flex: 1; text-align: center; margin: 0; }
+  }
+{%- endstyle -%}
+
+<div class="section-{{ section.id }}-padding gradient color-{{ section.settings.section_color_scheme }}">
+  <div class="page-width">
+    
+    <div class="ic-wrapper" id="ic-wrapper-{{ section.id }}" data-scope="{{ section.settings.model_search_scope_selector | escape }}">
+      
+      <div class="ic-left-col">
+        {%- for block in section.blocks -%}
+          {% case block.type %}
+            {%- when 'heading' -%}
+              <h2 class="image-with-text__heading h1">{{ block.settings.heading }}</h2>
+            {%- when 'text' -%}
+              <div class="image-with-text__text rte">{{ block.settings.text }}</div>
+          {%- endcase -%}
+        {%- endfor -%}
+
+        {%- if section.settings.enable_model_search -%}
+          <div class="ic-search-box">
+            <div class="ic-search-row">
+              <input id="ic-input-{{ section.id }}" type="text" class="ic-input" placeholder="Enter model (e.g. iPhone 13)" aria-label="Search Model">
+              <button id="ic-find-btn-{{ section.id }}" class="ic-btn">Find Parts</button>
+            </div>
+            <div class="ic-msg error"></div>
+            <div class="ic-msg info"></div>
+            <button class="ic-wizard-trigger" id="ic-trigger-btn-{{ section.id }}">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              Not sure? Use the Visual Guide
+            </button>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="ic-right-col">
+        <div class="ic-wizard-card">
+          <button class="ic-back-btn" title="Go Back">←</button>
+          <button class="ic-close-wizard" title="Close Guide">×</button>
+
+          <div class="ic-step active" data-step="1">
+            <div class="ic-step-header">
+              <div class="ic-step-title">Rear Cameras</div>
+              <div class="ic-step-sub">Select the layout on the back</div>
+            </div>
+            <div class="ic-ripple-grid">
+              
+              <div class="ic-opt" data-val="tri_plat">
+                <div class="ic-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/17pm.png?v=1766083751" class="ic-opt-img"></div>
+                <div class="ic-opt-label">3 Cameras<br>(With Plateau)</div>
+              </div>
+
+              <div class="ic-opt" data-val="tri_std">
+                <div class="ic-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16pm.png?v=1766083961" class="ic-opt-img"></div>
+                <div class="ic-opt-label">3 Cameras<br>(No Plateau)</div>
+              </div>
+
+              <div class="ic-opt" data-val="diag">
+                <div class="ic-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/15.png?v=1766083751" class="ic-opt-img"></div>
+                <div class="ic-opt-label">2 Cameras<br>(Oblique)</div>
+              </div>
+
+              <div class="ic-opt" data-val="vert">
+                <div class="ic-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16.png?v=1766083751" class="ic-opt-img"></div>
+                <div class="ic-opt-label">2 Cameras<br>(Vertical)</div>
+              </div>
+
+              <div class="ic-opt" data-val="single_plat">
+                <div class="ic-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/air.png?v=1766083751" class="ic-opt-img"></div>
+                <div class="ic-opt-label">1 Camera<br>(With Plateau)</div>
+              </div>
+
+              <div class="ic-opt" data-val="single_std">
+                <div class="ic-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16e.png?v=1766083751" class="ic-opt-img"></div>
+                <div class="ic-opt-label">1 Camera<br>(Normal)</div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="ic-step" data-step="2">
+            <div class="ic-step-header">
+              <div class="ic-step-title">Frame Shape</div>
+              <div class="ic-step-sub">Check the metal band around the phone</div>
+            </div>
+            <div class="ic-ripple-grid">
+              <div class="ic-opt" data-val="flat">
+                <div class="ic-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/squared.png?v=1766085750" class="ic-opt-img"></div>
+                <div class="ic-opt-label">Flat<br>(Square)</div>
+              </div>
+              <div class="ic-opt" data-val="curved">
+                <div class="ic-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/round.png?v=1766085749" class="ic-opt-img"></div>
+                <div class="ic-opt-label">Curved<br>(Round)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ic-step" data-step="3">
+            <div class="ic-step-header">
+              <div class="ic-step-title">Screen Type</div>
+              <div class="ic-step-sub">Look at the top of the display</div>
+            </div>
+            <div class="ic-ripple-grid">
+              <div class="ic-opt" data-val="island">
+                <div class="ic-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/dynamic_island.png?v=1766085749" class="ic-opt-img"></div>
+                <div class="ic-opt-label">Dynamic Island</div>
+              </div>
+              <div class="ic-opt" data-val="notch">
+                <div class="ic-img-wrap"><img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/notch.png?v=1766085750" class="ic-opt-img"></div>
+                <div class="ic-opt-label">Notch</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ic-step" data-step="4">
+            <div class="ic-step-header">
+              <div class="ic-step-title">Device Size</div>
+              <div class="ic-step-sub">Select the size</div>
+            </div>
+            <div class="ic-ripple-grid">
+              
+              <div class="ic-opt" data-val="max">
+                <div class="ic-img-wrap" style="font-size:24px; font-weight:700;">Max</div>
+                <div class="ic-opt-label">Pro Max / Plus<span class="ic-size-detail">6.5″ - 6.9″</span></div>
+              </div>
+
+              <div class="ic-opt" data-val="pro">
+                <div class="ic-img-wrap" style="font-size:24px; font-weight:700;">Pro</div>
+                <div class="ic-opt-label">Pro<span class="ic-size-detail">5.8″ - 6.3″</span></div>
+              </div>
+
+              <div class="ic-opt" data-val="std">
+                <div class="ic-img-wrap" style="font-size:24px; font-weight:700;">Med</div>
+                <div class="ic-opt-label">Medium<span class="ic-size-detail">4.7″ - 6.1″</span></div>
+              </div>
+
+              <div class="ic-opt" data-val="mini">
+                <div class="ic-img-wrap" style="font-size:24px; font-weight:700;">Mini</div>
+                <div class="ic-opt-label">Mini<span class="ic-size-detail">5.4″</span></div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="ic-step" data-step="result">
+            <div class="ic-result-view" id="ic-result-container-{{ section.id }}"></div>
+          </div>
+
+          <div class="ic-mobile-actions">
+            <button class="ic-action-btn ic-btn-secondary ic-m-back disabled">Back</button>
+            <button class="ic-action-btn ic-btn-primary ic-m-restart">Restart</button>
+            <button class="ic-action-btn ic-btn-secondary ic-m-close">Close</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{%- if section.settings.enable_model_search -%}
+<script>
+(function(){
+  
+  /* DATABASE */
+  const DB = [
+    // 17 Series
+    { name: "iPhone 17 Pro Max", img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/17_pro_max_colours.png?v=1766237419", cams:"tri_plat", edges:"curved", screen:"island", size:"max" },
+    { name: "iPhone 17 Pro",     img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/17_pro_max_colours.png?v=1766237419", cams:"tri_plat", edges:"curved", screen:"island", size:"pro" },
+    { name: "iPhone 17",         img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/17_colours.png?v=1766237419",         cams:"vert",     edges:"flat",   screen:"island", size:"std" }, 
+    { name: "iPhone Air",        img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/air_colours.png?v=1766237418",        cams:"single_plat", edges:"flat", screen:"island", size:"max" },
+
+    // 16 Series
+    { name: "iPhone 16 Pro Max", img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16_pro_max_colours.png?v=1766237419", cams:"tri_std", edges:"flat", screen:"island", size:"max" },
+    { name: "iPhone 16 Pro",     img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16_pro_max_colours.png?v=1766237419", cams:"tri_std", edges:"flat", screen:"island", size:"pro" },
+    { name: "iPhone 16 Plus",    img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16_colours.png?v=1766237419",    cams:"vert",    edges:"flat", screen:"island", size:"max" },
+    { name: "iPhone 16",         img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16_colours.png?v=1766237419",         cams:"vert",    edges:"flat", screen:"island", size:"std" },
+    { name: "iPhone 16e",        img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16e_colours.png?v=1766237418", cams:"single_std", edges:"flat", screen:"notch", size:"std" },
+
+    // 15 Series
+    { name: "iPhone 15 Pro Max", img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/15_pro_max_colours.png?v=1766237419", cams:"tri_std", edges:"flat", screen:"island", size:"max" },
+    { name: "iPhone 15 Pro",     img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/15_pro_max_colours.png?v=1766237419", cams:"tri_std", edges:"flat", screen:"island", size:"pro" }, 
+    { name: "iPhone 15 Plus",    img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/15_colours.png?v=1766237419",    cams:"diag",    edges:"flat", screen:"island", size:"max" },
+    { name: "iPhone 15",         img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/15_colours.png?v=1766237419",         cams:"diag",    edges:"flat", screen:"island", size:"std" },
+
+    // 14 Series
+    { name: "iPhone 14 Pro Max", img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/14_pro_max_colours.png?v=1766237418", cams:"tri_std", edges:"flat", screen:"island", size:"max" },
+    { name: "iPhone 14 Pro",     img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/14_pro_max_colours.png?v=1766237418", cams:"tri_std", edges:"flat", screen:"island", size:"pro" }, 
+    { name: "iPhone 14 Plus",    img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/14_colours.png?v=1766237419", cams:"diag", edges:"flat", screen:"notch", size:"max" },
+    { name: "iPhone 14",         img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/14_colours.png?v=1766237419",     cams:"diag", edges:"flat", screen:"notch", size:"std" },
+
+    // 13 Series
+    { name: "iPhone 13 Pro Max", img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/13_pro_max_colours.png?v=1766237419", cams:"tri_std", edges:"flat", screen:"notch", size:"max" },
+    { name: "iPhone 13 Pro",     img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/13_pro_max_colours.png?v=1766237419", cams:"tri_std", edges:"flat", screen:"notch", size:"pro" }, 
+    { name: "iPhone 13 Mini",    img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/13_colours.png?v=1766237419",          cams:"diag",    edges:"flat", screen:"notch", size:"mini" },
+    { name: "iPhone 13",         img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/13_colours.png?v=1766237419",         cams:"diag",    edges:"flat", screen:"notch", size:"std" },
+
+    // 12 Series
+    { name: "iPhone 12 Pro Max", img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/12_pro_max_colours.png?v=1766237419", cams:"tri_std", edges:"flat", screen:"notch", size:"max" },
+    { name: "iPhone 12 Pro",     img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/12_pro_max_colours.png?v=1766237419", cams:"tri_std", edges:"flat", screen:"notch", size:"pro" }, 
+    { name: "iPhone 12 Mini",    img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/12_colours.png?v=1766237419",                cams:"vert",    edges:"flat", screen:"notch", size:"mini" },
+    { name: "iPhone 12",         img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/12_colours.png?v=1766237419",                     cams:"vert",    edges:"flat", screen:"notch", size:"std" },
+
+    // 11 Series
+    { name: "iPhone 11 Pro Max", img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/11_pro_max.png?v=1766237419", cams:"tri_std", edges:"curved", screen:"notch", size:"max" },
+    { name: "iPhone 11 Pro",     img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/11_pro_max.png?v=1766237419",     cams:"tri_std", edges:"curved", screen:"notch", size:"pro" }, 
+    { name: "iPhone 11",         img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/11_colours.png?v=1766237419", cams:"vert",    edges:"curved", screen:"notch", size:"std" },
+
+    // SE Generations
+    { name: "iPhone SE (3rd Gen)", img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/se3_colours.png?v=1766237418",  cams:"single_std", edges:"curved", screen:"home", size:"std" },
+    { name: "iPhone SE (2nd Gen)", img: "https://cdn.shopify.com/s/files/1/0728/7111/7053/files/se2_colours.png?v=1766237418",  cams:"single_std", edges:"curved", screen:"home", size:"std" }
+  ];
+
+  function escapeRegExp(str) {
+    return (str || "").replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function runSearch(query) {
+    const qTokens = (query||"").trim().toUpperCase().replace(/\s+/g," ").split(" ");
+    const errEl = document.querySelector('#ic-wrapper-{{ section.id }} .ic-msg.error');
+    const infoEl = document.querySelector('#ic-wrapper-{{ section.id }} .ic-msg.info');
+    
+    errEl.classList.remove('visible');
+    infoEl.classList.remove('visible');
+    
+    document.querySelectorAll('.ic-highlight').forEach(el => el.classList.remove('ic-highlight'));
+    document.querySelectorAll('.ic-hidden').forEach(el => el.classList.remove('ic-hidden'));
+    
+    const root = document.getElementById('ic-wrapper-{{ section.id }}');
+    const scopeSelector = root.dataset.scope || "#product-grid, .product-grid";
+    const scopeEl = document.querySelector(scopeSelector) || document;
+    const cards = Array.from(scopeEl.querySelectorAll('.grid__item, .product-card'));
+    
+    scopeEl.classList.remove('ic-center-grid');
+
+    if (!qTokens.length || qTokens[0] === "") return;
+
+    const exactMatches = [];
+    cards.forEach(card => {
+      const dataModel = card.getAttribute('data-model') || "";
+      const title = card.textContent || "";
+      const modelSource = (dataModel + " " + title).toUpperCase();
+      
+      const qStr = escapeRegExp(qTokens.join(" "));
+      const regex = new RegExp(`\\b${qStr}\\b(?!\\s*(PRO|MAX|MINI|PLUS))`, "i");
+      
+      if (regex.test(modelSource)) exactMatches.push(card); 
+      else card.classList.add('ic-hidden');
+    });
+
+    if (exactMatches.length === 0) {
+      cards.forEach(c => c.classList.remove('ic-hidden'));
+      errEl.innerHTML = "No parts found for <strong>" + query + "</strong>.";
+      errEl.classList.add('visible');
+    } else {
+      scopeEl.classList.add('ic-center-grid');
+      exactMatches.forEach(c => c.classList.add('ic-highlight'));
+      if(exactMatches.length > 0) exactMatches[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  /* WIZARD LOGIC (Section Safe) */
+  (function initWizard(sid) {
+    const root = document.getElementById('ic-wrapper-' + sid);
+    if(!root) return;
+    
+    const triggerBtn = document.getElementById('ic-trigger-btn-' + sid);
+    const input = document.getElementById('ic-input-' + sid);
+    const findBtn = document.getElementById('ic-find-btn-' + sid);
+    const closeBtn = root.querySelector('.ic-close-wizard');
+    const backBtn = root.querySelector('.ic-back-btn');
+    
+    // Mobile Buttons
+    const mBackBtn = root.querySelector('.ic-m-back');
+    const mRestartBtn = root.querySelector('.ic-m-restart');
+    const mCloseBtn = root.querySelector('.ic-m-close');
+    
+    if(triggerBtn) triggerBtn.onclick = () => open();
+    if(closeBtn) closeBtn.onclick = () => close();
+    if(backBtn) backBtn.onclick = () => back();
+    
+    if(mBackBtn) mBackBtn.onclick = () => back();
+    if(mRestartBtn) mRestartBtn.onclick = () => reset();
+    if(mCloseBtn) mCloseBtn.onclick = () => close();
+
+    if(findBtn) findBtn.onclick = () => runSearch(input.value);
+    if(input) input.onkeydown = (e) => { if(e.key==='Enter') runSearch(input.value); };
+
+    root.querySelectorAll('.ic-opt').forEach(opt => {
+      opt.onclick = () => {
+        if(opt.classList.contains('filtered-out')) return;
+        const step = parseInt(opt.closest('.ic-step').dataset.step, 10);
+        next(step, opt.dataset.val);
+      };
+    });
+
+    // State
+    let state = {};
+    let stepHistory = [];
+    const STEP_KEYS = { 1: 'cams', 2: 'edges', 3: 'screen', 4: 'size' };
+
+    function open() { root.classList.add('is-open'); reset(); }
+    function close() { root.classList.remove('is-open'); }
+    
+    function reset() {
+      state = {}; stepHistory = []; updateBackBtn();
+      root.querySelectorAll('.ic-step').forEach(s => s.classList.remove('active'));
+      root.querySelector('.ic-step[data-step="1"]').classList.add('active');
+      applyFilters(1);
+    }
+
+    function updateBackBtn() {
+      // Desktop: Show/Hide top back button
+      if(backBtn) {
+        if(stepHistory.length > 0) backBtn.classList.add('visible');
+        else backBtn.classList.remove('visible');
+      }
+      // Mobile: Enable/Disable bottom back button
+      if(mBackBtn) {
+        if(stepHistory.length > 0) mBackBtn.classList.remove('disabled');
+        else mBackBtn.classList.add('disabled');
+      }
+    }
+
+    function back() {
+      if(stepHistory.length === 0) return;
+      const prevStep = stepHistory.pop();
+      updateBackBtn();
+      for(let s = prevStep + 1; s <= 4; s++) { delete state[STEP_KEYS[s]]; }
+      goTo(prevStep);
+      applyFilters(prevStep);
+    }
+
+    function candidates() {
+      return DB.filter(m => {
+        if(state.cams && m.cams !== state.cams) return false;
+        if(state.edges && m.edges !== state.edges) return false;
+        if(state.screen && m.screen !== state.screen) return false;
+        if(state.size && m.size !== state.size) return false;
+        return true;
+      });
+    }
+
+    function applyFilters(currentStep) {
+      root.querySelectorAll('.ic-opt').forEach(el => el.classList.remove('filtered-out'));
+
+      for(let step = 1; step <= 4; step++) {
+        const key = STEP_KEYS[step];
+        if(!key) continue;
+
+        const tempState = {};
+        for(let s = 1; s < step; s++) {
+          const k = STEP_KEYS[s];
+          if(state[k]) tempState[k] = state[k];
+        }
+
+        const allowed = new Set(
+          DB.filter(m => {
+            if(tempState.cams && m.cams !== tempState.cams) return false;
+            if(tempState.edges && m.edges !== tempState.edges) return false;
+            if(tempState.screen && m.screen !== tempState.screen) return false;
+            if(tempState.size && m.size !== tempState.size) return false;
+            return true;
+          }).map(m => m[key])
+        );
+
+        const stepEl = root.querySelector(`.ic-step[data-step="${step}"]`);
+        if(stepEl) {
+          stepEl.querySelectorAll('.ic-opt').forEach(opt => {
+            if(!allowed.has(opt.dataset.val)) opt.classList.add('filtered-out');
+          });
+        }
+      }
+    }
+
+    function next(step, val) {
+      stepHistory.push(step);
+      updateBackBtn();
+      state[STEP_KEYS[step]] = val;
+
+      // 1. Immediate Shortcuts
+      if(step === 1 && val === 'single_plat') {
+         state.cams = 'single_plat'; showResult(); return;
+      }
+      
+      // 3 Cam Plateau -> 17 Pro/Max (Skip Edges/Screen)
+      if(step === 1 && val === 'tri_plat') {
+         state.edges = 'curved'; 
+         state.screen = 'island'; 
+         goTo(4); 
+         applyFilters(4); // Ensures correct size filtering
+         return;
+      }
+
+      // 1 Cam Normal -> Force Next based on Edge choice (flat->16e, curved->SE)
+      
+      // Skip logic for 1 Cam Normal -> Auto-fill screen type after edge selection
+      if(step === 2 && state.cams === 'single_std' && val === 'flat') {
+         state.screen = 'notch'; goTo(4); applyFilters(4); return;
+      }
+      
+      // AUTO-FILL Home Button for SE path (since UI option is gone)
+      if(step === 2 && state.cams === 'single_std' && val === 'curved') {
+         state.screen = 'home'; // Internal state only, no UI step needed
+         goTo(4); applyFilters(4); return; 
+      }
+
+      if(step >= 4) { showResult(); return; }
+
+      goTo(step + 1);
+      applyFilters(step + 1);
+    }
+
+    function goTo(n) {
+      root.querySelectorAll('.ic-step').forEach(s => s.classList.remove('active'));
+      const el = root.querySelector(`.ic-step[data-step="${n}"]`);
+      if(el) el.classList.add('active');
+    }
+
+    function showResult() {
+      const matches = candidates();
+      const container = root.querySelector('#ic-result-container-' + sid);
+      container.innerHTML = '';
+      container.classList.remove('ic-single-view');
+      const grid = document.createElement('div');
+      grid.className = 'ic-multi-grid';
+      
+      // Reset classes
+      grid.classList.remove('ic-grid-two');
+      grid.classList.remove('ic-grid-three');
+
+      if(matches.length === 0) {
+        // Unknown Model
+        container.innerHTML = '<div class="ic-result-name">Unknown Model</div><div style="margin-bottom:12px; color:#666;">We could not identify your device.</div>';
+        
+        // Desktop-only restart container
+        const deskRes = document.createElement('div');
+        deskRes.className = 'ic-desktop-restart-container';
+        deskRes.innerHTML = `<button class="ic-action-btn ic-btn-secondary" onclick="document.querySelector('#ic-wrapper-${sid} .ic-close-wizard').click()">Close</button><button class="ic-action-btn ic-btn-secondary" onclick="document.getElementById('ic-trigger-btn-${sid}').click()">Restart</button>`;
+        container.appendChild(deskRes);
+      } 
+      else if(matches.length === 1) {
+        // Single Result
+        const m = matches[0];
+        container.classList.add('ic-single-view');
+        container.innerHTML = `
+          <img src="${m.img}" class="ic-result-img">
+          <div class="ic-result-name">${m.name}</div>
+          <button class="ic-action-btn ic-btn-primary" id="ic-res-btn-${sid}">Yes, Find Parts</button>
+          <button class="ic-action-btn ic-btn-secondary ic-internal-restart" id="ic-res-restart-${sid}">Restart</button>
+        `;
+        document.getElementById(`ic-res-btn-${sid}`).onclick = () => {
+          input.value = m.name; runSearch(m.name);
+        };
+        document.getElementById(`ic-res-restart-${sid}`).onclick = () => reset();
+      } 
+      else {
+        // Multi Results
+        if (matches.length === 2) {
+          grid.classList.add('ic-grid-two');
+        } else if (matches.length === 3) {
+          grid.classList.add('ic-grid-three');
+        }
+
+        matches.forEach(m => {
+          const card = document.createElement('div');
+          card.className = 'ic-result-card';
+          card.innerHTML = `
+            <div class="ic-result-img-wrap">
+              <img src="${m.img}" class="ic-result-img">
+            </div>
+            <div class="ic-result-name" style="font-size:14px;">${m.name}</div>
+          `;
+          card.onclick = () => { input.value = m.name; runSearch(m.name); };
+          grid.appendChild(card);
+        });
+        container.appendChild(grid);
+
+        // Desktop Only Restart Button for Grid
+        const deskRes = document.createElement('div');
+        deskRes.className = 'ic-desktop-restart-container';
+        const restartBtn = document.createElement('button');
+        restartBtn.className = 'ic-action-btn ic-btn-secondary';
+        restartBtn.innerText = 'Restart';
+        restartBtn.onclick = () => reset();
+        deskRes.appendChild(restartBtn);
+        container.appendChild(deskRes);
+      }
+      goTo('result');
+    }
+
+  })('{{ section.id }}');
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.image-with-text.name",
+  "class": "section",
+  "settings": [
+    { "type": "checkbox", "id": "enable_model_search", "label": "Enable Model Search", "default": true },
+    { "type": "text", "id": "model_search_scope_selector", "label": "Grid CSS Selector", "default": "#product-grid, .product-grid" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Top Padding", "default": 36 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Bottom Padding", "default": 36 },
+    { "type": "color_scheme", "id": "section_color_scheme", "label": "Color Scheme", "default": "scheme-1" }
+  ],
+  "blocks": [
+    { "type": "heading", "name": "Heading", "settings": [{"type":"inline_richtext","id":"heading","default":"Identify your iPhone","label":"Heading"}] },
+    { "type": "text", "name": "Text", "settings": [{"type":"richtext","id":"text","default":"<p>Find the right parts for your device.</p>","label":"Text"}] }
+  ],
+  "presets": [{"name": "iPhone Search & Wizard"}]
+}
+{% endschema %}

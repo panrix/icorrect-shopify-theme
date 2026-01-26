@@ -1,0 +1,493 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "vendor": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "{{ product.vendor }}",
+            "text_style": "uppercase"
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {
+            "enable-price": true
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "disabled": true,
+          "settings": {}
+        },
+        "repair_product_YHEQJr": {
+          "type": "repair_product",
+          "settings": {}
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "button",
+            "swatch_shape": "circle"
+          }
+        },
+        "quantity_selector": {
+          "type": "quantity_selector",
+          "disabled": true,
+          "settings": {}
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true,
+            "show_gift_card_recipient": true
+          }
+        },
+        "share": {
+          "type": "share",
+          "disabled": true,
+          "settings": {
+            "share_label": "Share"
+          }
+        },
+        "icorrect_production_star_rating_pjpKmJ": {
+          "type": "shopify://apps/icorrect-production/blocks/star_rating/5c6c7166-7f81-42bf-bbc5-e283148414ba",
+          "disabled": true,
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "vendor",
+        "title",
+        "description",
+        "price",
+        "repair_product_YHEQJr",
+        "variant_picker",
+        "quantity_selector",
+        "buy_buttons",
+        "share",
+        "icorrect_production_star_rating_pjpKmJ"
+      ],
+      "settings": {
+        "enable_sticky_info": true,
+        "color_scheme": "scheme-1",
+        "media_size": "small",
+        "constrain_to_viewport": true,
+        "media_fit": "contain",
+        "gallery_layout": "stacked",
+        "media_position": "left",
+        "image_zoom": "none",
+        "mobile_thumbnails": "hide",
+        "hide_variants": true,
+        "enable_video_looping": false,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "enable-layout": true
+      }
+    },
+    "related-products": {
+      "type": "related-products",
+      "disabled": true,
+      "settings": {
+        "heading": "You may also like",
+        "heading_size": "h2",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 28
+      }
+    },
+    "pdp_sustain_repair_info_9EePrK": {
+      "type": "pdp-sustain-repair-info",
+      "disabled": true,
+      "settings": {
+        "bg": "#586f6b",
+        "heading": "Sustainability in Repair",
+        "details": "Lorem ipsum dolor sit amet, consectetur",
+        "subheading": "Lorem ipsum",
+        "info": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>",
+        "link": "",
+        "btn": "Learn More",
+        "enable_video": true,
+        "video_poster": "shopify://shop_images/bg-banner.webp",
+        "video": "https://youtu.be/SDzi-hqUcB8"
+      }
+    },
+    "about_info_A8a6YY": {
+      "type": "about-info",
+      "disabled": true,
+      "settings": {
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 40,
+        "mob_padding_bottom": 40,
+        "bg": "#ffffff",
+        "heading": "MacBook Keyboard Repair",
+        "details": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>",
+        "btn": "Read more",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 28,
+        "heading_size_mobile": 24,
+        "heading_line_height_desktop": 46,
+        "heading_line_height_mobile": 36
+      }
+    },
+    "rich_text_wHThqd": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_Hyttzc": {
+          "type": "heading",
+          "settings": {
+            "heading": "<strong>MacBook Repair Services in the UK</strong>",
+            "heading_size": "h1"
+          }
+        },
+        "text_bez4LA": {
+          "type": "text",
+          "settings": {
+            "text": "<p>At iCorrect, we specialise in MacBook repair services for all models. Whether the issue is a damaged display, failing battery, keyboard malfunction, charging fault, liquid damage, or a logic-board failure, every repair is carried out by technicians trained on advanced, component-level repairs.</p><p>With years of experience restoring thousands of MacBooks, our approach is built on precision, transparency, and consistency. Every device is tested before and after repair to confirm proper functionality, and all MacBook repairs include a <strong>2-year warranty</strong> for complete peace of mind.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "heading_Hyttzc",
+        "text_bez4LA"
+      ],
+      "name": "t:sections.rich-text.presets.name",
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "",
+        "full_width": true,
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
+    },
+    "macbook_videos_DiRzn3": {
+      "type": "macbook-videos",
+      "name": "MacBook Videos",
+      "settings": {
+        "heading": "Our behind the scenes",
+        "subtitle": "Watch our videos to see how we repair MacBooks, what to expect, and how we work.",
+        "video_1_title": "Repair is better than replace.",
+        "video_2_title": "Our repair approach is sustainable.",
+        "video_3_title": "Do not overpay for your repairs.",
+        "color_scheme": "scheme-2",
+        "padding_top": 48,
+        "padding_bottom": 80
+      }
+    },
+    "video_multicolumn_TRzgaY": {
+      "type": "video-multicolumn",
+      "blocks": {
+        "column_qFkgWq": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/MacBook_Video_1.png",
+            "enable_video": false,
+            "title": "",
+            "text": "",
+            "link_label": "",
+            "link": "https://www.youtube.com/shorts/VP2e-2K6fR0"
+          }
+        },
+        "column_tR4Fyh": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/MacBook_Video_2.png",
+            "enable_video": false,
+            "title": "",
+            "text": "",
+            "link_label": "",
+            "link": "https://www.youtube.com/shorts/SVbeyRWUeh0"
+          }
+        },
+        "column_a43nWD": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/MacBook_Video_3.png",
+            "enable_video": false,
+            "title": "",
+            "text": "",
+            "link_label": "",
+            "link": "https://www.youtube.com/shorts/6j_C-4PejV4"
+          }
+        }
+      },
+      "block_order": [
+        "column_qFkgWq",
+        "column_tR4Fyh",
+        "column_a43nWD"
+      ],
+      "disabled": true,
+      "name": "Video Multicolumn",
+      "settings": {
+        "title": "Our behind the scenes",
+        "heading_size": "h1",
+        "content": "",
+        "image_width": "full",
+        "image_ratio": "portrait",
+        "columns_desktop": 3,
+        "column_alignment": "center",
+        "background_style": "primary",
+        "button_label": "",
+        "button_link": "",
+        "color_scheme": "scheme-2",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "macbook_faqs_zpJfcD": {
+      "type": "macbook-faqs",
+      "blocks": {
+        "accordion_apgpL7": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How long do MacBook repairs take?",
+            "sub_head": "<p>Most MacBook repairs, including screen replacements, battery replacements, and keyboard repairs, take around 3 working days. If you need it done sooner, we offer an express MacBook repair service, allowing next day or same day repairs if booked in advance.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_3cfkFX": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What warranty do you offer?",
+            "sub_head": "<p>We provide a two year warranty on all MacBook repairs, covering issues related to the repair. Whether it is a screen replacement, battery repair, or logic board fix, our warranty ensures long term reliability. This does not cover accidental damage, but we are happy to help if any new issues arise. </p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_hChA4n": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you use original parts?",
+            "sub_head": "<p>Yes, around 90% of the parts we use are original Apple parts, disassembled from genuine Apple devices. We champion sustainable repairs, and reusing parts helps maintain Apple standards without creating unnecessary waste.</p><p>This approach means your MacBook retains features like True Tone, battery health monitoring, and the overall performance it was designed for after any repair at iCorrect.</p><p>The only exception is with older MacBook models, where it is no longer possible to source original batteries in high capacity condition. In those cases, we use the best quality OEM batteries available.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_LEBpET": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you repair damaged MacBook logic boards?",
+            "sub_head": "<p>Yes, this is advanced work we are known for. While many repair centres, including Apple, will write off a faulty logic board and quote a full replacement, we repair them properly.</p><p>Our technicians work under a microscope, diagnosing issues at component and microchip level. That could mean anything from replacing a burned out MOSFET or shorted capacitor to rebuilding complete circuits after liquid damage. We revive boards others declare dead and we do it every day.</p><p>It is precise, delicate work, but it saves clients hundreds compared to Apple, keeps original data intact, and reduces electronic waste.</p><p>If Apple said your MacBook is not fixable and that you need a new one, there is a good chance we will prove them wrong.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_GMmGWT": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What if my MacBook repair does not resolve the issue?",
+            "sub_head": "<p>It is rare, but if a repair does not fully resolve the problem your MacBook has, we will not charge you for it. Our no fix, no fee policy applies to all standard MacBook repairs, and we will always explain what went wrong and what your options are.</p><p>In more advanced logic board diagnostics, if we are unsuccessful, we will suggest an alternative like a logic board replacement or data recovery, depending on what we find.</p><p>Either way, you will get a clear answer, not guesswork. No surprises.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_xegCth": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can I get my MacBook repaired quicker?",
+            "sub_head": "<p>Yes, we offer an Express MacBook Repair Service for clients who need a faster turnaround. This service is limited and subject to availability, so booking in advance is recommended.</p><p>When pre booked, express repairs are often completed within one working day, and in some cases, even the same day. This applies to most issues, including screen, battery, and logic board repairs. Express bookings are prioritised and priced accordingly.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_QWyrGd": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What is your diagnostic process for MacBook repairs?",
+            "sub_head": "<p>Diagnostics are where we do our best thinking. If the fault is not obvious, we run a full diagnostic on your MacBook, going deep into the logic board, charging system, and internal circuitry.</p><p>We perform a full power rail test and visual inspection under a microscope, looking for signs of damage at component level. That includes blown capacitors, corroded traces, and shorted chips. We then test each critical stage of the board to narrow down the fault.</p><p>Once we confirm the issue, we send a detailed report with a clear repair plan and quote so you are fully informed before any work begins.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_LncJP6": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you offer payment plans for MacBook repairs?",
+            "sub_head": "<p>Yes, we offer flexible payment options through Klarna and PayPal Pay in 3. These let you spread the cost of your MacBook repair over time.</p><p>Both options are available at checkout for standard repairs. If you are sending your MacBook in for diagnostics, we will include the payment options with your quote once your MacBook repair plan is confirmed.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_TFh7M3": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How do you ensure the quality of your MacBook repairs?",
+            "sub_head": "<p>Every MacBook goes through multiple rounds of testing to make sure the repair is done right.</p><p>When a device arrives, we carry out a full intake check before it reaches the repair team. Once the repair begins, we run pre checks to confirm the fault and rule out any secondary issues. After the repair, your MacBook goes through full post repair testing and a final quality check completed by a technician who was not involved in the repair itself.</p><p>We also invest in ongoing training, and our technicians develop solutions for the latest MacBook issues, including faults Apple has not published repair procedures for yet.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_HQkDdN": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you repair older MacBook models?",
+            "sub_head": "<p>We mainly repair MacBook models from 2016 onwards, including both MacBook Air and MacBook Pro. For older models, especially those from 2015 and before, we can still help with things like battery replacements or data recovery.</p><p>We will be upfront if a repair does not make financial sense. If the cost outweighs the value of the device, we will recommend a more practical option.</p>",
+            "alignment": "left"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_apgpL7",
+        "accordion_3cfkFX",
+        "accordion_hChA4n",
+        "accordion_LEBpET",
+        "accordion_GMmGWT",
+        "accordion_xegCth",
+        "accordion_QWyrGd",
+        "accordion_LncJP6",
+        "accordion_TFh7M3",
+        "accordion_HQkDdN"
+      ],
+      "name": "MacBook FAQs",
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 50,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#1d1d1f",
+        "heading": "FAQs",
+        "details": "Learn more about our MacBook repair service, parts, diagnostics, turnaround times, and warranty.",
+        "txt-clr": "#ffffff"
+      }
+    },
+    "icorrect_faqs_RVk3VL": {
+      "type": "icorrect-faqs",
+      "blocks": {
+        "accordion_mCCjdt": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do I need an appointment?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_dgGrWD": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do I need to back-up my data before my repair?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_jNEQxe": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Are your repairs covered by a warranty?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_wzPFwd": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How long does it take to diagnose an unknown fault?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_PLgEhN": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Where are you located?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_heFyRm": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will I be charged if you are unable to complete a repair?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_7WpxcT": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do your prices include parts & labour?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_QdhiRR": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can you repair a damaged logic board?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_mCCjdt",
+        "accordion_dgGrWD",
+        "accordion_jNEQxe",
+        "accordion_wzPFwd",
+        "accordion_PLgEhN",
+        "accordion_heFyRm",
+        "accordion_7WpxcT",
+        "accordion_QdhiRR"
+      ],
+      "disabled": true,
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 75,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#ffffff",
+        "heading": "FAQs",
+        "details": "Learn more about iCorrect, the essential repair services that we offer and the warranties that come with each repair.",
+        "txt-clr": "#1d1d1f"
+      }
+    },
+    "contact_with_map_RfErQT": {
+      "type": "contact-with-map",
+      "name": "Contact with map",
+      "settings": {
+        "map_html": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.7925117760165!2d-0.1422392230845079!3d51.51702250999988!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2c5aabf83b%3A0x2abbd489a9d66382!2siCorrect!5e0!3m2!1sen!2sit!4v1766495755523!5m2!1sen!2sit\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
+        "address": "iCorrect\n12 Margaret Street\nAudley House\nLondon\nW1W 8JQ",
+        "form_heading": "Get in Touch",
+        "form_subtitle": "Have a question about your device repair? We're here to help.",
+        "section_bg": "#f4f4f4",
+        "accent_color": "#3b82f6",
+        "text_color": "#171717",
+        "muted_text_color": "#6b7280",
+        "input_bg": "#ffffff",
+        "input_border": "#e5e7eb"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "related-products",
+    "pdp_sustain_repair_info_9EePrK",
+    "about_info_A8a6YY",
+    "rich_text_wHThqd",
+    "macbook_videos_DiRzn3",
+    "video_multicolumn_TRzgaY",
+    "macbook_faqs_zpJfcD",
+    "icorrect_faqs_RVk3VL",
+    "contact_with_map_RfErQT"
+  ]
+}

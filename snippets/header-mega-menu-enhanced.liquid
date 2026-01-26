@@ -1,0 +1,300 @@
+<nav class="header__inline-menu">
+  <ul class="list-menu list-menu--inline" role="list">
+    {%- for link in section.settings.menu.links -%}
+      <li>
+        {%- if link.links != blank -%}
+          <header-menu>
+            <details id="Details-HeaderMenu-{{ forloop.index }}" class="mega-menu mega-menu-enhanced">
+              <summary
+                id="HeaderMenu-{{ link.handle }}"
+                class="header__menu-item list-menu__item link focus-inset mega-menu-enhanced__summary"
+              >
+                <span
+                  {%- if link.child_list_handle != blank %}
+                    class="header__active-menu-item"
+                  {%- endif %}
+                >
+                  {{- link.title | escape -}}
+                </span>
+                <svg class="mega-menu-enhanced__caret" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                  <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </summary>
+              
+              {%- comment -%} REPAIRS MEGA MENU - Two Panel Layout with Tab Switching {%- endcomment -%}
+              {%- if link.title == 'Repairs' or link.handle == 'repairs' -%}
+                {% assign by_device_parent   = link.links | where: 'title', 'By Device' | first %}
+{% assign by_popular_parent  = link.links | where: 'title', 'By Popular Repair' | first %}
+{% assign by_device_links    = by_device_parent.links %}
+{% assign by_popular_links   = by_popular_parent.links %}
+                <div
+                  id="MegaMenu-Content-{{ forloop.index }}"
+                  class="mega-menu-enhanced__content mega-menu-enhanced__content--repairs"
+                  tabindex="-1"
+                >
+                  <div class="mega-menu-enhanced__wrapper page-width">
+                    <div class="mega-menu-enhanced__two-panel">
+                      <div class="mega-menu-enhanced__sidebar">
+                        <span class="mega-menu-enhanced__sidebar-title">Repairs</span>
+                        <ul class="mega-menu-enhanced__sidebar-list" role="list">
+                          <li>
+                            <a
+                              href="#"
+                              class="mega-menu-enhanced__sidebar-tab mega-menu-enhanced__sidebar-tab--active"
+                              data-tab="by-device"
+                              data-menu-index="{{ forloop.index }}"
+                            >
+                              By Device
+                            </a>
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="mega-menu-enhanced__sidebar-tab"
+                              data-tab="by-popular-repair"
+                              data-menu-index="{{ forloop.index }}"
+                            >
+                              By Popular Repair
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                      
+                      {%- comment -%} BY DEVICE Cards - Default View {%- endcomment -%}
+                      <div class="mega-menu-enhanced__cards-grid mega-menu-enhanced__tab-content mega-menu-enhanced__tab-content--active" data-tab-content="by-device" data-menu-index="{{ forloop.index }}">
+                        {%- assign device_categories = "MacBook Repairs,iPhone Repairs,iPad Repairs,Watch Repairs" | split: "," -%}
+                        {%- for category in device_categories -%}
+  {%- assign category_found = false -%}
+  {%- for childlink in by_device_links -%}
+    {%- if childlink.title == category -%}
+      {%- assign category_found = true -%}
+      <a href="{{ childlink.url }}" class="mega-menu-enhanced__card">
+        <div class="mega-menu-enhanced__card-image">
+          {%- case childlink.type -%}
+            {%- when 'collection_link' -%}
+              {%- if childlink.object.image -%}
+                {{ childlink.object.image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+              {%- elsif childlink.object.products.first.featured_image -%}
+                {{ childlink.object.products.first.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+              {%- endif -%}
+            {%- when 'product_link' -%}
+              {%- if childlink.object.featured_image -%}
+                {{ childlink.object.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+              {%- endif -%}
+            {%- when 'page_link' -%}
+              {%- if childlink.object.metafields.custom.featured_image -%}
+                {{ childlink.object.metafields.custom.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+              {%- endif -%}
+          {%- endcase -%}
+        </div>
+        <span class="mega-menu-enhanced__card-title">{{ childlink.title | escape }}</span>
+      </a>
+      {%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- unless category_found -%}
+    <a href="#" class="mega-menu-enhanced__card">
+      <div class="mega-menu-enhanced__card-image"></div>
+      <span class="mega-menu-enhanced__card-title">{{ category }}</span>
+    </a>
+  {%- endunless -%}
+{%- endfor -%}
+                      </div>
+
+                      {%- comment -%} BY POPULAR REPAIR Cards - Hidden by default {%- endcomment -%}
+                      <div class="mega-menu-enhanced__cards-grid mega-menu-enhanced__tab-content" data-tab-content="by-popular-repair" data-menu-index="{{ forloop.index }}">
+                        {%- assign popular_repairs = "MacBook Diagnostic,MacBook Screen,iPhone Screen,iPhone Battery" | split: "," -%}
+                        {%- for repair in popular_repairs -%}
+                          {%- assign repair_found = false -%}
+                          {%- for childlink in by_popular_links -%}
+                            {%- assign title_lower = childlink.title | downcase -%}
+                            {%- assign repair_lower = repair | downcase -%}
+                            {%- if title_lower contains repair_lower -%}
+                              {%- assign repair_found = true -%}
+                              <a href="{{ childlink.url }}" class="mega-menu-enhanced__card">
+                                <div class="mega-menu-enhanced__card-image">
+                                  {%- case childlink.type -%}
+                                    {%- when 'collection_link' -%}
+                                      {%- if childlink.object.image -%}
+                                        {{ childlink.object.image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                                      {%- elsif childlink.object.products.first.featured_image -%}
+                                        {{ childlink.object.products.first.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                                      {%- endif -%}
+                                    {%- when 'product_link' -%}
+                                      {%- if childlink.object.featured_image -%}
+                                        {{ childlink.object.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                                      {%- endif -%}
+                                    {%- when 'page_link' -%}
+                                      {%- if childlink.object.metafields.custom.featured_image -%}
+                                        {{ childlink.object.metafields.custom.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                                      {%- endif -%}
+                                  {%- endcase -%}
+                                </div>
+                                <span class="mega-menu-enhanced__card-title">{{ childlink.title | escape }}</span>
+                              </a>
+                              {%- break -%}
+                            {%- endif -%}
+                          {%- endfor -%}
+                          {%- unless repair_found -%}
+                            <a href="#" class="mega-menu-enhanced__card">
+                              <div class="mega-menu-enhanced__card-image"></div>
+                              <span class="mega-menu-enhanced__card-title">{{ repair }}</span>
+                            </a>
+                          {%- endunless -%}
+                        {%- endfor -%}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              {%- comment -%} HOW IT WORKS MEGA MENU - Cards Only Layout with Title {%- endcomment -%}
+              {%- elsif link.title == 'How it works' or link.handle == 'how-it-works' -%}
+                <div
+                  id="MegaMenu-Content-{{ forloop.index }}"
+                  class="mega-menu-enhanced__content mega-menu-enhanced__content--how-it-works"
+                  tabindex="-1"
+                >
+                  <div class="mega-menu-enhanced__wrapper page-width">
+                    <div class="mega-menu-enhanced__how-it-works-container">
+                      <h3 class="mega-menu-enhanced__section-title">Learn More About Our Process</h3>
+                      <div class="mega-menu-enhanced__cards-only">
+                        {%- comment -%} Get the inner "Our Process" menu children {%- endcomment -%}
+    {%- assign process_parent = link.links | first -%}
+    {%- if process_parent and process_parent.links != blank -%}
+      {%- assign process_links = process_parent.links -%}
+    {%- else -%}
+      {%- assign process_links = link.links -%}
+    {%- endif -%}
+                        {%- assign service_categories = "Our Services,Diagnostics,Our Testing Process,Our Warranty" | split: "," -%}
+    {%- for category in service_categories -%}
+      {%- assign category_found = false -%}
+      {%- for childlink in process_links -%}
+        {%- if childlink.title == category -%}
+          {%- assign category_found = true -%}
+          <a href="{{ childlink.url }}" class="mega-menu-enhanced__card">
+            <div class="mega-menu-enhanced__card-image">
+              {%- case childlink.type -%}
+                                    {%- when 'collection_link' -%}
+                                      {%- if childlink.object.image -%}
+                                        {{ childlink.object.image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                                      {%- elsif childlink.object.products.first.featured_image -%}
+                                        {{ childlink.object.products.first.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                                      {%- endif -%}
+                                    {%- when 'product_link' -%}
+                                      {%- if childlink.object.featured_image -%}
+                                        {{ childlink.object.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                                      {%- endif -%}
+                                    {%- when 'page_link' -%}
+                                      {%- if childlink.object.metafields.custom.featured_image -%}
+                                        {{ childlink.object.metafields.custom.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                                      {%- endif -%}
+                                  {%- endcase -%}
+                                </div>
+                                <span class="mega-menu-enhanced__card-title">{{ childlink.title | escape }}</span>
+                              </a>
+                            {%- endif -%}
+                          {%- endfor -%}
+                          {%- unless category_found -%}
+                            <a href="#" class="mega-menu-enhanced__card">
+                              <div class="mega-menu-enhanced__card-image"></div>
+                              <span class="mega-menu-enhanced__card-title">{{ category }}</span>
+                            </a>
+                          {%- endunless -%}
+                        {%- endfor -%}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              {%- comment -%} DEFAULT MEGA MENU - Standard dropdown for other items {%- endcomment -%}
+              {%- else -%}
+                <div
+                  id="MegaMenu-Content-{{ forloop.index }}"
+                  class="mega-menu-enhanced__content mega-menu-enhanced__content--default"
+                  tabindex="-1"
+                >
+                  <div class="mega-menu-enhanced__wrapper page-width">
+                    <ul class="mega-menu-enhanced__list" role="list">
+                      {%- for childlink in link.links -%}
+                        <li>
+                          <a
+                            href="{{ childlink.url }}"
+                            class="mega-menu-enhanced__link{% if childlink.current %} mega-menu-enhanced__link--active{% endif %}"
+                          >
+                            {{ childlink.title | escape }}
+                          </a>
+                          {%- if childlink.links != blank -%}
+                            <ul class="mega-menu-enhanced__sublist" role="list">
+                              {%- for grandchildlink in childlink.links -%}
+                                <li>
+                                  <a
+                                    href="{{ grandchildlink.url }}"
+                                    class="mega-menu-enhanced__sublink{% if grandchildlink.current %} mega-menu-enhanced__sublink--active{% endif %}"
+                                  >
+                                    {{ grandchildlink.title | escape }}
+                                  </a>
+                                </li>
+                              {%- endfor -%}
+                            </ul>
+                          {%- endif -%}
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                </div>
+              {%- endif -%}
+            </details>
+          </header-menu>
+        {%- else -%}
+          <a
+            href="{{ link.url }}"
+            class="header__menu-item list-menu__item link link--text focus-inset"
+            {% if link.current %}
+              aria-current="page"
+            {% endif %}
+          >
+            <span
+              {%- if link.current %}
+                class="header__active-menu-item"
+              {%- endif %}
+            >
+              {{- link.title | escape -}}
+            </span>
+          </a>
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+  </ul>
+</nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const tabLinks = document.querySelectorAll('.mega-menu-enhanced__sidebar-tab');
+  
+  tabLinks.forEach(function(tabLink) {
+    tabLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      const targetTab = this.getAttribute('data-tab');
+      const menuIndex = this.getAttribute('data-menu-index');
+      
+      const allTabs = document.querySelectorAll('.mega-menu-enhanced__sidebar-tab[data-menu-index="' + menuIndex + '"]');
+      allTabs.forEach(function(tab) {
+        tab.classList.remove('mega-menu-enhanced__sidebar-tab--active');
+      });
+      
+      this.classList.add('mega-menu-enhanced__sidebar-tab--active');
+      
+      const allContents = document.querySelectorAll('.mega-menu-enhanced__tab-content[data-menu-index="' + menuIndex + '"]');
+      allContents.forEach(function(content) {
+        content.classList.remove('mega-menu-enhanced__tab-content--active');
+      });
+      
+      const targetContent = document.querySelector('.mega-menu-enhanced__tab-content[data-tab-content="' + targetTab + '"][data-menu-index="' + menuIndex + '"]');
+      if (targetContent) {
+        targetContent.classList.add('mega-menu-enhanced__tab-content--active');
+      }
+    });
+  });
+});
+</script>

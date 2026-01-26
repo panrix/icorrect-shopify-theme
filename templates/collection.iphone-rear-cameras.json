@@ -1,0 +1,327 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "show_collection_description": true,
+        "show_collection_image": false,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "disabled": true,
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "enable_filtering": true,
+        "filter_type": "horizontal",
+        "enable_sorting": true,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "main_banner_and_video_HjbmW9": {
+      "type": "main-banner-and-video",
+      "disabled": true,
+      "settings": {
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "mob_padding_top": 0,
+        "mob_padding_bottom": 0,
+        "bg": "#ffffff",
+        "video_url": "",
+        "img": "shopify://shop_images/Website-Banner.jpg"
+      }
+    },
+    "about_info_RWbQxj": {
+      "type": "about-info",
+      "name": "About Info",
+      "settings": {
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 40,
+        "mob_padding_bottom": 40,
+        "bg": "#fafafa",
+        "heading": "iPhone Rear Camera Repair Prices",
+        "details": "<p>If your iPhone's rear camera is blurry, refuses to focus, has gone completely black, or shows dust or fog inside the lens, it's time for a proper repair. At iCorrect, we complete iPhone camera repairs the right way. We use genuine Apple camera modules, calibrated through Apple’s internal diagnostic tools to verify part authenticity and log the date the camera was fitted.</p><p><br/>Most camera issues can be resolved with a rear camera replacement. Whether the issue is fuzziness, failure to focus, or no image at all, we’ll fit an original Apple part, restore the camera to full functionality, and calibrate it after fitting so your iPhone recognises the part as original.</p>",
+        "btn": "",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 38,
+        "heading_size_mobile": 24,
+        "heading_line_height_desktop": 46,
+        "heading_line_height_mobile": 36
+      }
+    },
+    "iphone_model_search_PUfCfy": {
+      "type": "iphone-model-search",
+      "name": "iPhone Search & Wizard",
+      "settings": {
+        "enable_model_search": true,
+        "model_search_scope_selector": "#product-grid, .product-grid",
+        "padding_top": 36,
+        "padding_bottom": 36,
+        "section_color_scheme": ""
+      }
+    },
+    "featured_collection_AfhUDd": {
+      "type": "featured-collection",
+      "name": "t:sections.featured-collection.presets.name",
+      "settings": {
+        "title": "",
+        "heading_size": "h1",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "collection": "iphone-rear-camera-repair-prices",
+        "columns_desktop": 3,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "enable_desktop_slider": false,
+        "color_scheme": "scheme-1",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "about_info_XAqnaH": {
+      "type": "about-info",
+      "name": "About Info",
+      "settings": {
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 40,
+        "mob_padding_bottom": 40,
+        "bg": "#fafafa",
+        "heading": "Our Process",
+        "details": "<p>If you’re trading in or selling your iPhone, a faulty camera can slash its value. A repaired, original Apple camera that’s been properly calibrated can protect your resale price and keep the phone functioning properly.</p><p><br/>It’s also important to note that lens damage or poor-quality lens repairs can affect the camera module itself. If your lens is cracked, or you’ve had a rear glass or lens repair elsewhere and now have fog, dust, or specks on your images, the camera may be contaminated or scratched. We check all of this as part of the repair.</p><p><br/>If your iPhone needs both the lens and camera module repaired, we’ll let you know in advance and complete both using original parts. In rare cases where the fault extends beyond the camera to the logic board, we’ll upgrade to a diagnostic and build a repair plan from there. But in most cases, a simple camera module replacement solves the issue quickly and properly.</p>",
+        "btn": "",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 38,
+        "heading_size_mobile": 24,
+        "heading_line_height_desktop": 46,
+        "heading_line_height_mobile": 36
+      }
+    },
+    "iphone_videos_P3hExe": {
+      "type": "iphone-videos",
+      "name": "iPhone Videos",
+      "settings": {
+        "heading": "Behind the scenes",
+        "subtitle": "Watch our videos to understand common repair issues, what to expect, and how we fix your device with care.",
+        "video_1_title": "We specialise in data recovery.",
+        "video_2_title": "Do not compromise on quality.",
+        "video_3_title": "Poor quality parts cause serious issues.",
+        "color_scheme": "scheme-4",
+        "padding_top": 44,
+        "padding_bottom": 80
+      }
+    },
+    "repair_services_nQkwFT": {
+      "type": "repair-services",
+      "blocks": {
+        "service_PEi9BF": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Walk-in.png",
+            "heading": "Walk-In Service",
+            "details": "For clients based in Central London who wish to visit us, we operate a  walk-in drop-off service by appointment. Simply book your repair via our  website booking page to confirm your appointment time before heading to us.",
+            "btn": "Learn more",
+            "link": "shopify://pages/our-services"
+          }
+        },
+        "service_RaggTi": {
+          "type": "service",
+          "disabled": true,
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Courier.png",
+            "heading": "London Courier",
+            "details": "We operate a convenient collection, repair & delivery service for  clients based within Zones 1 & 2 in London. Our couriers are fully  tracked and insured throughout the journey. Book your iPhone repair  before 1pm for a same day return.",
+            "btn": "Learn more",
+            "link": ""
+          }
+        },
+        "service_enBGWD": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Delivery.png",
+            "heading": "National Courier",
+            "details": "We collect from anywhere in the UK. Book online and we send secure packaging to your door. Your device is returned fully repaired and tested.",
+            "btn": "Learn more",
+            "link": "shopify://pages/our-services"
+          }
+        }
+      },
+      "block_order": [
+        "service_PEi9BF",
+        "service_RaggTi",
+        "service_enBGWD"
+      ],
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 50,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#ffffff",
+        "heading": "Our services",
+        "details": "Choose the most convenient service for you"
+      }
+    },
+    "icorrect_faqs_RVk3VL": {
+      "type": "icorrect-faqs",
+      "blocks": {
+        "accordion_mCCjdt": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What are the most common signs my iPhone rear camera needs replacing?",
+            "sub_head": "<p>If your photos are blurry, the camera will not focus, you see black spots or fuzz in your images, or the app opens to a black screen, your rear camera likely needs replacing. Some clients also report flickering, shaking images, or a camera that works intermittently. These are all symptoms of a faulty camera module.</p><p>We’ll test your camera first to confirm the issue and fit an original Apple replacement module if required.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_dgGrWD": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How much does it cost to repair an iPhone rear camera?",
+            "sub_head": "<p>Prices typically range from £99 to £179, depending on your iPhone model. This includes fitting, calibration, and post-repair testing. We use original Apple camera modules and run Apple’s post-repair software to log the camera as verified and ensure all features work exactly as expected.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_jNEQxe": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you use original Apple camera parts?",
+            "sub_head": "<p>Yes. All of our camera modules are original Apple parts. They’re reclaimed from donor devices, tested, and verified to match Apple’s quality. After fitting, we use Apple’s internal diagnostic system to register the repair and confirm full functionality.</p><p>We do not use aftermarket camera modules under any circumstances.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_wzPFwd": {
+          "type": "accordion",
+          "settings": {
+            "heading": " Will I lose any features after a camera replacement?",
+            "sub_head": "<p>No. If fitted and calibrated correctly using original parts, you will not lose features like Portrait Mode, depth sensing, 4K recording, Night Mode, or any Pro camera tools.</p><p>We calibrate each camera with Apple’s tools to confirm compatibility and make sure your iPhone recognises the part as original.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_iPyPC6": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can a cracked camera lens damage the rear camera?",
+            "sub_head": "<p>Yes. A cracked lens can expose the camera module to dust, moisture, and scratches. If you have a cracked lens and now notice blur or haze in your images, the module itself may be affected.</p><p>We check both the lens and camera during intake and will let you know if both need replacing.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_PLgEhN": {
+          "type": "accordion",
+          "settings": {
+            "heading": "I had my rear glass replaced and now my camera is foggy. Can this be fixed?",
+            "sub_head": "<p>This is very common with low-quality rear glass replacements. If the seal around the lens is not restored properly, dust or moisture can get into the camera. In many cases, the camera module needs to be replaced.</p><p>We’ll inspect the entire area and repair both the lens and camera if required, using only original Apple parts.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_wMHNen": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How long does an iPhone rear camera repair take?",
+            "sub_head": "<p>Most camera repairs are completed within 2 to 3 hours. This includes pre-checks, installation, post-repair calibration, and quality control. If you also need a lens or rear glass replaced, we’ll let you know the full turnaround upfront.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_heFyRm": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will the camera still show as original in settings after the repair?",
+            "sub_head": "<p>Yes. All of our rear glass panels and rear housing replacements are original parts, either reclaimed from donor devices or sourced from authorised channels. They match Apple’s factory fit, finish, and durability.</p><p>We do not use generic aftermarket glass or incomplete housing shells. Every part is tested, inspected, and installed to the same standards Apple expects from their own technicians.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_7WpxcT": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Is the repair covered under warranty?",
+            "sub_head": "<p>Yes. All rear camera repairs are covered by our two-year warranty. This includes faults with the part, calibration issues, or workmanship. Accidental damage or damage caused by drops or liquid are not covered.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_LrTg7i": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What if the issue is not the camera but something deeper?",
+            "sub_head": "<p>If we find that a new camera does not resolve the issue, we’ll upgrade the repair to a diagnostic and check for deeper faults such as a damaged logic board or shorted circuitry. We’ll always explain our findings and provide a quote before continuing.</p><p>In most cases, a camera replacement solves the issue completely. But when it does not, we will find out why.</p>",
+            "alignment": "left"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_mCCjdt",
+        "accordion_dgGrWD",
+        "accordion_jNEQxe",
+        "accordion_wzPFwd",
+        "accordion_iPyPC6",
+        "accordion_PLgEhN",
+        "accordion_wMHNen",
+        "accordion_heFyRm",
+        "accordion_7WpxcT",
+        "accordion_LrTg7i"
+      ],
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 75,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#1d1d1f",
+        "heading": "FAQs",
+        "details": "Learn more about iCorrect, the essential repair services that we offer and the warranties that come with each repair.",
+        "txt-clr": "#ffffff"
+      }
+    },
+    "contact_with_map_dXbbDU": {
+      "type": "contact-with-map",
+      "settings": {
+        "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>"
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "product-grid",
+    "main_banner_and_video_HjbmW9",
+    "about_info_RWbQxj",
+    "iphone_model_search_PUfCfy",
+    "featured_collection_AfhUDd",
+    "about_info_XAqnaH",
+    "iphone_videos_P3hExe",
+    "repair_services_nQkwFT",
+    "icorrect_faqs_RVk3VL",
+    "contact_with_map_dXbbDU"
+  ]
+}

@@ -1,0 +1,219 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "show_collection_description": true,
+        "show_collection_image": false,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "disabled": true,
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "enable_filtering": true,
+        "filter_type": "horizontal",
+        "enable_sorting": true,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "main_banner_and_video_HjbmW9": {
+      "type": "main-banner-and-video",
+      "disabled": true,
+      "settings": {
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "mob_padding_top": 0,
+        "mob_padding_bottom": 0,
+        "bg": "#ffffff",
+        "video_url": "",
+        "img": "shopify://shop_images/Website-Banner.jpg"
+      }
+    },
+    "about_info_RWbQxj": {
+      "type": "about-info",
+      "name": "About Info",
+      "settings": {
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 40,
+        "mob_padding_bottom": 40,
+        "bg": "#fafafa",
+        "heading": "iPhone Battery Repair Prices",
+        "details": "<p>If your iPhone battery drains too quickly, shuts down randomly, or feels sluggish even when fully charged, it’s probably time for a replacement. At iCorrect, we replace iPhone batteries using original Apple parts, without the delays or hassle of the Apple Store.</p><p><br/>Most replacements are completed in under two hours, and unlike most repair companies, we complete proper battery rundown tests before we fit the new battery. If the battery doesn’t meet our standard, we don’t proceed. It’s about doing it right the first time, with full transparency and zero guesswork.</p>",
+        "btn": "",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 38,
+        "heading_size_mobile": 24,
+        "heading_line_height_desktop": 46,
+        "heading_line_height_mobile": 36
+      }
+    },
+    "iphone_model_search_fHAtf3": {
+      "type": "iphone-model-search",
+      "name": "iPhone Search & Wizard",
+      "settings": {
+        "enable_model_search": true,
+        "model_search_scope_selector": "#product-grid, .product-grid",
+        "padding_top": 36,
+        "padding_bottom": 36,
+        "section_color_scheme": ""
+      }
+    },
+    "featured_collection_AfhUDd": {
+      "type": "featured-collection",
+      "name": "t:sections.featured-collection.presets.name",
+      "settings": {
+        "title": "",
+        "heading_size": "h1",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "collection": "iphone-battery-repair-prices",
+        "columns_desktop": 3,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "enable_desktop_slider": false,
+        "color_scheme": "scheme-1",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "about_info_XAqnaH": {
+      "type": "about-info",
+      "name": "About Info",
+      "settings": {
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 40,
+        "mob_padding_bottom": 40,
+        "bg": "#fafafa",
+        "heading": "Our Process",
+        "details": "<p>A good battery isn’t just about holding charge, it powers your iPhone’s performance. When it degrades, everything slows down. That’s because your iPhone constantly manages power between its processor, display, and internal systems. If the battery can’t supply stable energy, the system slows performance to prevent crashes.</p><p><br/>At iCorrect, we use original Apple batteries with a genuine BMS (battery management system). That means your iPhone reads the battery properly, retains full battery health tracking, and doesn’t suffer from unexpected shutdowns or throttled performance.</p><p><br/>We don’t use cheap cells. No inflated battery stats. No fake recalibrations. Whether you’ve had a dodgy battery fitted elsewhere or your iPhone’s never been repaired, we’ll restore it back to proper health using tested, reliable, and calibrated components.</p>",
+        "btn": "",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 38,
+        "heading_size_mobile": 24,
+        "heading_line_height_desktop": 46,
+        "heading_line_height_mobile": 36
+      }
+    },
+    "iphone_videos_PKKhN7": {
+      "type": "iphone-videos",
+      "name": "iPhone Videos",
+      "settings": {
+        "heading": "Behind the scenes",
+        "subtitle": "Watch our videos to understand common repair issues, what to expect, and how we fix your device with care.",
+        "video_1_title": "We specialise in data recovery.",
+        "video_2_title": "Do not compromise on quality.",
+        "video_3_title": "Poor quality parts cause serious issues.",
+        "color_scheme": "scheme-4",
+        "padding_top": 44,
+        "padding_bottom": 80
+      }
+    },
+    "repair_services_nQkwFT": {
+      "type": "repair-services",
+      "blocks": {
+        "service_PEi9BF": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Walk-in.png",
+            "heading": "Walk-In Service",
+            "details": "For clients based in Central London who wish to visit us, we operate a  walk-in drop-off service by appointment. Simply book your repair via our  website booking page to confirm your appointment time before heading to us.",
+            "btn": "Learn more",
+            "link": "shopify://pages/our-services"
+          }
+        },
+        "service_RaggTi": {
+          "type": "service",
+          "disabled": true,
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Courier.png",
+            "heading": "London Courier",
+            "details": "We operate a convenient collection, repair & delivery service for  clients based within Zones 1 & 2 in London. Our couriers are fully  tracked and insured throughout the journey. Book your iPhone repair  before 1pm for a same day return.",
+            "btn": "Learn more",
+            "link": ""
+          }
+        },
+        "service_enBGWD": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Delivery.png",
+            "heading": "National Courier",
+            "details": "We collect from anywhere in the UK. Book online and we send secure packaging to your door. Your device is returned fully repaired and tested.",
+            "btn": "Learn more",
+            "link": "shopify://pages/our-services"
+          }
+        }
+      },
+      "block_order": [
+        "service_PEi9BF",
+        "service_RaggTi",
+        "service_enBGWD"
+      ],
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 50,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#ffffff",
+        "heading": "Our services",
+        "details": "Choose the most convenient service for you"
+      }
+    },
+    "contact_with_map_dXbbDU": {
+      "type": "contact-with-map",
+      "settings": {
+        "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>"
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "product-grid",
+    "main_banner_and_video_HjbmW9",
+    "about_info_RWbQxj",
+    "iphone_model_search_fHAtf3",
+    "featured_collection_AfhUDd",
+    "about_info_XAqnaH",
+    "iphone_videos_PKKhN7",
+    "repair_services_nQkwFT",
+    "contact_with_map_dXbbDU"
+  ]
+}

@@ -1,0 +1,327 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "show_collection_description": true,
+        "show_collection_image": false,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "disabled": true,
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "enable_filtering": true,
+        "filter_type": "horizontal",
+        "enable_sorting": true,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "main_banner_and_video_HjbmW9": {
+      "type": "main-banner-and-video",
+      "disabled": true,
+      "settings": {
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "mob_padding_top": 0,
+        "mob_padding_bottom": 0,
+        "bg": "#ffffff",
+        "video_url": "",
+        "img": "shopify://shop_images/Website-Banner.jpg"
+      }
+    },
+    "about_info_RWbQxj": {
+      "type": "about-info",
+      "name": "About Info",
+      "settings": {
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 40,
+        "mob_padding_bottom": 40,
+        "bg": "#fafafa",
+        "heading": "iPhone Microphone Repair Prices",
+        "details": "<p>If your iPhone microphone is not working properly during calls, FaceTime, voice notes, or video recordings, it is likely that one of the multiple microphones inside the phone has failed. Different microphones handle different functions, from the mic used during phone calls to those used for stereo audio and noise cancellation in video capture. At iCorrect, we test every microphone independently to identify the exact fault and complete a proper repair using original parts.</p><p><br/>Whether your voice sounds muffled on calls, Siri cannot hear you, or your videos are recording without audio, we can isolate the faulty microphone and replace it properly. Most microphone repairs are completed within two to three hours, with extended testing to ensure everything is working as it should.</p>",
+        "btn": "",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 38,
+        "heading_size_mobile": 24,
+        "heading_line_height_desktop": 46,
+        "heading_line_height_mobile": 36
+      }
+    },
+    "iphone_model_search_ffm6RB": {
+      "type": "iphone-model-search",
+      "name": "iPhone Search & Wizard",
+      "settings": {
+        "enable_model_search": true,
+        "model_search_scope_selector": "#product-grid, .product-grid",
+        "padding_top": 36,
+        "padding_bottom": 36,
+        "section_color_scheme": ""
+      }
+    },
+    "featured_collection_AfhUDd": {
+      "type": "featured-collection",
+      "name": "t:sections.featured-collection.presets.name",
+      "settings": {
+        "title": "",
+        "heading_size": "h1",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "collection": "iphone-microphone-repair-prices",
+        "columns_desktop": 3,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "enable_desktop_slider": false,
+        "color_scheme": "scheme-1",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "about_info_XAqnaH": {
+      "type": "about-info",
+      "name": "About Info",
+      "settings": {
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 40,
+        "mob_padding_bottom": 40,
+        "bg": "#fafafa",
+        "heading": "Our Process",
+        "details": "<p>iPhone microphone failures can be caused by liquid damage, physical drops, or poor-quality third-party repairs. We have seen rear glass or screen replacements completed with lasers or heat damage the microphone modules, especially in iPhone 12 and 13 models. This can affect both call clarity and video audio, often without visible damage.</p><p><br/>If you are experiencing microphone issues after a repair, or your iPhone has simply started failing tests for audio or speech input, we can help. We complete every repair with full pre and post-testing to confirm which microphone is affected and verify complete functionality before returning the device.</p><p><br/>For complex audio issues where all microphones are failing or audio does not work at all, we may recommend a full diagnostic to check the underlying circuitry on the logic board. In most cases, though, a standard microphone repair restores full sound performance quickly and affordably.</p>",
+        "btn": "",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 38,
+        "heading_size_mobile": 24,
+        "heading_line_height_desktop": 46,
+        "heading_line_height_mobile": 36
+      }
+    },
+    "iphone_videos_JLBLyP": {
+      "type": "iphone-videos",
+      "name": "iPhone Videos",
+      "settings": {
+        "heading": "Behind the scenes",
+        "subtitle": "Watch our videos to understand common repair issues, what to expect, and how we fix your device with care.",
+        "video_1_title": "We specialise in data recovery.",
+        "video_2_title": "Do not compromise on quality.",
+        "video_3_title": "Poor quality parts cause serious issues.",
+        "color_scheme": "scheme-4",
+        "padding_top": 44,
+        "padding_bottom": 80
+      }
+    },
+    "repair_services_nQkwFT": {
+      "type": "repair-services",
+      "blocks": {
+        "service_PEi9BF": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Walk-in.png",
+            "heading": "Walk-In Service",
+            "details": "For clients based in Central London who wish to visit us, we operate a  walk-in drop-off service by appointment. Simply book your repair via our  website booking page to confirm your appointment time before heading to us.",
+            "btn": "Learn more",
+            "link": "shopify://pages/our-services"
+          }
+        },
+        "service_RaggTi": {
+          "type": "service",
+          "disabled": true,
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Courier.png",
+            "heading": "London Courier",
+            "details": "We operate a convenient collection, repair & delivery service for  clients based within Zones 1 & 2 in London. Our couriers are fully  tracked and insured throughout the journey. Book your iPhone repair  before 1pm for a same day return.",
+            "btn": "Learn more",
+            "link": ""
+          }
+        },
+        "service_enBGWD": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Delivery.png",
+            "heading": "National Courier",
+            "details": "We collect from anywhere in the UK. Book online and we send secure packaging to your door. Your device is returned fully repaired and tested.",
+            "btn": "Learn more",
+            "link": "shopify://pages/our-services"
+          }
+        }
+      },
+      "block_order": [
+        "service_PEi9BF",
+        "service_RaggTi",
+        "service_enBGWD"
+      ],
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 50,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#ffffff",
+        "heading": "Our services",
+        "details": "Choose the most convenient service for you"
+      }
+    },
+    "icorrect_faqs_RVk3VL": {
+      "type": "icorrect-faqs",
+      "blocks": {
+        "accordion_mCCjdt": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Why is my iPhone microphone not working during calls or video recordings?",
+            "sub_head": "<p> Your iPhone uses multiple microphones for different functions. If your voice sounds muffled, robotic, or cuts out during calls or recordings, one of those microphones may have failed. Common causes include physical damage, liquid ingress, or poor-quality screen or rear glass repairs that have disturbed internal components.</p><p>We test all microphones individually to confirm which one is at fault and repair it using original parts.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_dgGrWD": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How much does it cost to repair an iPhone microphone?",
+            "sub_head": "<p>Microphone repairs usually cost between £79 and £129 depending on your model and the affected mic. This includes fault testing, original replacement parts, and full post-repair checks to verify audio quality across all functions.</p><p>If we discover that the issue is not just the mic but a deeper logic board fault, we will upgrade the repair to a full diagnostic and quote accordingly.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_jNEQxe": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How long does an iPhone microphone repair take?",
+            "sub_head": "<p>Most microphone repairs are completed within two to three hours. We allow additional time for testing before and after the repair to ensure everything is working perfectly, including calls, video, voice memos, and third-party app usage.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_wzPFwd": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can you fix microphone issues after a screen or rear glass repair?",
+            "sub_head": "<p>Yes. We frequently see microphone failures after poor-quality repairs where heat or laser cutting has damaged nearby components. If your microphone stopped working after another repair, we will inspect it carefully and confirm the issue before completing a proper fix.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_iPyPC6": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What if more than one microphone is not working?",
+            "sub_head": "<p>If multiple microphones are not working, or all sound input on your iPhone has failed, we may need to run a full diagnostic. This helps us rule out logic board damage or damage to supporting audio circuits.</p><p>We will always let you know what is going on, what can be repaired, and what your options are.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_PLgEhN": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will my iPhone work like normal after the microphone is repaired?",
+            "sub_head": "<p>Yes. Once the faulty microphone is replaced and tested, your iPhone will function like normal. We check every microphone during post-repair testing, including recording quality, noise cancellation, and clarity in phone calls and FaceTime.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_wMHNen": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you use original Apple parts for microphone repairs?",
+            "sub_head": "<p>Yes. We only use original iPhone parts, reclaimed or sourced from Apple-authorised channels. This ensures compatibility, proper fit, and long-term reliability. Your repaired iPhone will pass all functional checks with no loss of features.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_heFyRm": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What does your warranty cover for microphone repairs?",
+            "sub_head": "<p>We provide a two-year warranty on all microphone repairs. This includes any fault with the replaced part or the workmanship. Accidental damage or faults caused by third-party repairs or liquid ingress are not covered.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_7WpxcT": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can I still use my iPhone while waiting for a microphone repair?",
+            "sub_head": "<p>You can, but depending on which microphone is affected, you may experience difficulty with calls, recordings, or voice input. Many users resort to using speakerphone or Bluetooth headsets temporarily.</p><p>To avoid further frustration or damage, we recommend getting the issue repaired properly as soon as possible.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_LrTg7i": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will a failed microphone reduce my iPhone’s resale value?",
+            "sub_head": "<p>Yes. Microphone functionality is tested during all trade-in and resale evaluations. A faulty mic can lower your device grade or be marked as BER (beyond economic repair). A quick and proper repair can help you maintain your iPhone’s value and usability.</p>",
+            "alignment": "left"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_mCCjdt",
+        "accordion_dgGrWD",
+        "accordion_jNEQxe",
+        "accordion_wzPFwd",
+        "accordion_iPyPC6",
+        "accordion_PLgEhN",
+        "accordion_wMHNen",
+        "accordion_heFyRm",
+        "accordion_7WpxcT",
+        "accordion_LrTg7i"
+      ],
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 75,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#1d1d1f",
+        "heading": "FAQs",
+        "details": "Learn more about iCorrect, the essential repair services that we offer and the warranties that come with each repair.",
+        "txt-clr": "#ffffff"
+      }
+    },
+    "contact_with_map_dXbbDU": {
+      "type": "contact-with-map",
+      "settings": {
+        "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>"
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "product-grid",
+    "main_banner_and_video_HjbmW9",
+    "about_info_RWbQxj",
+    "iphone_model_search_ffm6RB",
+    "featured_collection_AfhUDd",
+    "about_info_XAqnaH",
+    "iphone_videos_JLBLyP",
+    "repair_services_nQkwFT",
+    "icorrect_faqs_RVk3VL",
+    "contact_with_map_dXbbDU"
+  ]
+}

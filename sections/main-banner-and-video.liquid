@@ -1,0 +1,139 @@
+<section class="banner-video-{{ section.id }}">
+  <div class="banner-video-wrapper">
+    <div class="banner-wrapper-row">
+      {% if section.settings.video_url != blank %}
+        <div class="video-container">
+          <iframe width="100%" height="100%" src="https://www.youtube.com/embed/{{ section.settings.video_url | split: 'v=' | last }}" frameborder="0" allowfullscreen></iframe>
+        </div>
+      {% else %}
+        {% if section.settings.img != blank %}
+          <img class="desktop-banner-img" src="{{ section.settings.img | img_url: 'master' }}">
+        {% endif %}
+        {% if section.settings.mob-img != blank %}
+          <img class="mob-banner-img" src="{{ section.settings.mob-img | img_url: 'master' }}">
+        {% else %}
+          <img class="mob-banner-img" src="{{ section.settings.img | img_url: 'master' }}">
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .banner-video-{{ section.id }}{ 
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    width: 100%;
+    background-color: {{ section.settings.bg }};
+  }
+  .banner-wrapper-row{
+    width: 100%;
+  }
+  .banner-wrapper-row img{
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .video-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    height: 0;
+  }
+  .video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  @media(min-width: 768px){
+    .banner-video-{{ section.id }} .mob-banner-img{
+      display: none;
+    }
+  }
+  @media(max-width: 767px){
+    .banner-video-{{ section.id }}{
+      padding-top: {{ section.settings.mob_padding_top }}px;
+      padding-bottom: {{ section.settings.mob_padding_bottom }}px;
+    }
+    .banner-video-{{ section.id }} .desktop-banner-img{
+      display: none;
+    }
+  }
+</style>
+
+{% schema %}
+  {
+    "name": "Banner and Video",
+    "settings": [
+      {
+         "type": "range",
+         "id": "padding_top",
+         "label": "Section Top Padding",
+         "default": 0,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "range",
+         "id": "padding_bottom",
+         "label": "Section Bottom Padding",
+         "default": 0,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "range",
+         "id": "mob_padding_top",
+         "label": "Mobile Section Top Padding",
+         "default": 0,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "range",
+         "id": "mob_padding_bottom",
+         "label": "Mobile Section Bottom Padding",
+         "default": 0,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "color",
+         "id": "bg",
+         "label": "Section BG Color",
+         "default": "#fff"
+       },
+       {
+         "type": "url",
+         "id": "video_url",
+         "label": "YouTube Video URL",
+         "info": "Add youtube watch link[e.g. https://www.youtube.com/watch?v=y6HjT3nVDyK]"
+       },
+       {
+         "type": "image_picker",
+         "id": "img",
+         "label": "Desktop Banner Image"
+       },
+       {
+         "type": "image_picker",
+         "id": "mob_img",
+         "label": "Mobile Banner Image"
+       }
+    ],
+  "presets": [
+    {
+      "name": "Banner and Video"
+    }
+  ]
+}
+{% endschema %}

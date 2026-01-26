@@ -1,0 +1,566 @@
+/* ============================================
+   iCorrect Enhanced Mega Menu Styles
+   Higher specificity to override Dawn theme
+   ============================================ */
+
+/* Base Mega Menu Container */
+
+  /* Wider cards only for HOW IT WORKS mega menu */
+  @media screen and (min-width: 990px) {
+    .mega-menu-enhanced__content--how-it-works .mega-menu-enhanced__wrapper {
+      max-width: 1200px;
+      margin-inline: auto;
+    }
+
+    .mega-menu-enhanced__content--how-it-works .mega-menu-enhanced__cards-only {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(260px, 1fr));
+      column-gap: 32px;
+    }
+
+    .mega-menu-enhanced__content--how-it-works .mega-menu-enhanced__card {
+      padding: 0px 0px 0px;
+    }
+
+    .mega-menu-enhanced__content--how-it-works .mega-menu-enhanced__card-image img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+  }
+
+.header-wrapper .mega-menu.mega-menu-enhanced {
+  position: static !important;
+}
+
+.header-wrapper .mega-menu.mega-menu-enhanced > summary {
+  position: relative !important;
+}
+
+.header-wrapper .mega-menu.mega-menu-enhanced > summary::after {
+  position: static !important;
+}
+
+/* Mega Menu Dropdown Content */
+.header-wrapper .mega-menu-enhanced .mega-menu-enhanced__content {
+  position: absolute !important;
+  left: 50% !important;
+  transform: translateX(-50%) translateY(-8px) !important;
+  width: 100vw !important;
+  margin-top: 12px !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
+              transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
+              visibility 0.35s;
+  z-index: 100 !important;
+  border-top: 1px solid #e8e8ed !important;
+  padding: 0 !important;
+  display: block !important;
+}
+
+.header-wrapper .mega-menu-enhanced[open] > .mega-menu-enhanced__content {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateX(-50%) translateY(0) !important;
+  display: block !important;
+}
+
+.mega-menu-enhanced__wrapper {
+  padding: 40px 50px !important;
+  max-width: 1400px !important;
+  margin: 0 auto !important;
+}
+
+/* Wrapper for cards-only layout (How it works) - center the cards */
+.mega-menu-enhanced__content--how-it-works .mega-menu-enhanced__wrapper {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+/* ============================================
+   Two Panel Layout (REPAIRS Menu)
+   ============================================ */
+
+.mega-menu-enhanced__two-panel {
+  display: grid !important;
+  grid-template-columns: 200px 1fr !important;
+  gap: 60px !important;
+  align-items: start !important;
+}
+
+/* Sidebar Styles */
+.mega-menu-enhanced__sidebar {
+  padding-right: 40px !important;
+  border-right: 1px solid #e8e8ed !important;
+  min-height: 200px !important;
+}
+
+.mega-menu-enhanced__sidebar-title {
+  display: block !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: #86868b !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  margin-bottom: 20px !important;
+}
+
+.mega-menu-enhanced__sidebar-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mega-menu-enhanced__sidebar-list li {
+  margin-bottom: 4px !important;
+}
+
+/* Tab/Link Styles */
+.mega-menu-enhanced__sidebar-tab {
+  display: block !important;
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  color: #1d1d1f !important;
+  text-decoration: none !important;
+  padding: 10px 16px !important;
+  margin-left: -16px !important;
+  border-radius: 8px !important;
+  transition: all 0.25s ease !important;
+  line-height: 1.4 !important;
+  cursor: pointer !important;
+  background: transparent !important;
+}
+
+.mega-menu-enhanced__sidebar-tab:hover {
+  background-color: #f5f5f7 !important;
+  color: #1d1d1f !important;
+}
+
+.mega-menu-enhanced__sidebar-tab--active {
+  background-color: #4B7FC7 !important;
+  color: #ffffff !important;
+  font-weight: 500 !important;
+}
+
+.mega-menu-enhanced__sidebar-tab--active:hover {
+  background-color: #0077ed !important;
+  color: #ffffff !important;
+}
+
+/* Legacy link styles (keep for compatibility) */
+.mega-menu-enhanced__sidebar-link {
+  display: block !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  color: #1d1d1f !important;
+  text-decoration: none !important;
+  padding: 8px 0 !important;
+  transition: color 0.2s ease !important;
+  line-height: 1.4 !important;
+}
+
+.mega-menu-enhanced__sidebar-link:hover {
+  color: #0071e3 !important;
+}
+
+.mega-menu-enhanced__sidebar-link--active {
+  color: #0071e3 !important;
+  font-weight: 500 !important;
+}
+
+/* ============================================
+   Tab Content Switching
+   ============================================ */
+
+.mega-menu-enhanced__tab-content {
+  display: none !important;
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.mega-menu-enhanced__tab-content--active {
+  display: grid !important;
+  animation: tabFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+}
+
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   Cards Grid (Shared between layouts)
+   ============================================ */
+
+.header-wrapper .mega-menu-enhanced__cards-grid {
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 2rem !important;
+  align-items: start !important;
+}
+
+.header-wrapper .mega-menu-enhanced__cards-only {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 2.4rem !important;
+  max-width: 900px !important;
+}
+
+/* Individual Card Styles */
+.mega-menu-enhanced__card {
+  display: flex !important;
+  flex-direction: column !important;
+  text-decoration: none !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  opacity: 0;
+}
+
+.mega-menu-enhanced__card:hover {
+  transform: translateY(-4px) !important;
+}
+
+.mega-menu-enhanced__card:hover .mega-menu-enhanced__card-image {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+.header-wrapper .mega-menu-enhanced__card-image {
+  width: 100% !important;
+  height: 220px !important;
+  background: #ebecf0 !important;
+  border-radius: 1rem !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.header-wrapper .mega-menu-enhanced__card-image img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.mega-menu-enhanced__card-image img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.mega-menu-enhanced__card-title {
+  display: block !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  color: #1d1d1f !important;
+  text-align: center !important;
+  margin-top: 12px !important;
+  padding: 0 8px !important;
+  line-height: 1.4 !important;
+  text-decoration: none !important;
+}
+
+/* ============================================
+   How It Works - Enhanced Container
+   ============================================ */
+
+.mega-menu-enhanced__how-it-works-container {
+  text-align: center !important;
+  width: 100% !important;
+  max-width: 1000px !important;
+}
+
+.mega-menu-enhanced__section-title {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #86868b !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  margin: 0 0 28px 0 !important;
+  text-align: center !important;
+}
+
+.mega-menu-enhanced__how-it-works-container .mega-menu-enhanced__cards-only {
+  margin: 0 auto !important;
+}
+
+/* ============================================
+   Default List Layout (Fallback for other menus)
+   ============================================ */
+
+.mega-menu-enhanced__content--default .mega-menu-enhanced__list {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 40px !important;
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mega-menu-enhanced__link {
+  display: block !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #1d1d1f !important;
+  text-decoration: none !important;
+  margin-bottom: 12px !important;
+  transition: color 0.2s ease !important;
+}
+
+.mega-menu-enhanced__link:hover {
+  color: #0071e3 !important;
+}
+
+.mega-menu-enhanced__link--active {
+  color: #0071e3 !important;
+}
+
+.mega-menu-enhanced__sublist {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mega-menu-enhanced__sublist li {
+  margin-bottom: 8px !important;
+}
+
+.mega-menu-enhanced__sublink {
+  display: block !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  color: #6e6e73 !important;
+  text-decoration: none !important;
+  transition: color 0.2s ease !important;
+}
+
+.mega-menu-enhanced__sublink:hover {
+  color: #1d1d1f !important;
+}
+
+.mega-menu-enhanced__sublink--active {
+  color: #0071e3 !important;
+}
+
+/* ============================================
+   Header Menu Item Styling
+   ============================================ */
+
+/* Summary/Menu Item Styling */
+.header-wrapper .mega-menu.mega-menu-enhanced > summary,
+.header-wrapper .mega-menu-enhanced .mega-menu-enhanced__summary {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding-right: 0 !important;
+}
+
+.header-wrapper .mega-menu.mega-menu-enhanced > summary::after {
+  display: none !important;
+  content: none !important;
+}
+
+.header-wrapper .mega-menu-enhanced summary.header__menu-item {
+  padding: 12px 0 !important;
+}
+
+.header-wrapper .mega-menu-enhanced summary.header__menu-item span {
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  color: #1d1d1f !important;
+  text-decoration: none !important;
+}
+
+.header-wrapper .mega-menu-enhanced[open] summary.header__menu-item span {
+  text-decoration: underline !important;
+  text-underline-offset: 4px !important;
+}
+
+/* Custom Caret Arrow */
+.mega-menu-enhanced__caret {
+  display: inline-block !important;
+  width: 10px !important;
+  height: 6px !important;
+  flex-shrink: 0 !important;
+  margin-left: 4px !important;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  color: #1d1d1f !important;
+}
+
+.mega-menu-enhanced[open] .mega-menu-enhanced__caret {
+  transform: rotate(180deg) !important;
+}
+
+/* Hide Dawn's default icon-caret */
+.header-wrapper .mega-menu.mega-menu-enhanced summary .icon-caret {
+  display: none !important;
+}
+
+/* ============================================
+   Responsive Styles
+   ============================================ */
+
+@media screen and (max-width: 1200px) {
+  .mega-menu-enhanced__two-panel {
+    grid-template-columns: 180px 1fr !important;
+    gap: 40px !important;
+  }
+  
+  .mega-menu-enhanced__cards-grid,
+  .mega-menu-enhanced__cards-only {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 16px !important;
+  }
+}
+
+@media screen and (max-width: 990px) {
+  .header-wrapper .mega-menu-enhanced .mega-menu-enhanced__content {
+    display: none !important;
+  }
+  
+  .header-wrapper nav.header__inline-menu {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   Animations - Smooth Card Stagger
+   ============================================ */
+
+@keyframes cardFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cards fade in when menu opens */
+.mega-menu-enhanced[open] .mega-menu-enhanced__tab-content--active .mega-menu-enhanced__card,
+.mega-menu-enhanced[open] .mega-menu-enhanced__cards-only .mega-menu-enhanced__card {
+  animation: cardFadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.mega-menu-enhanced[open] .mega-menu-enhanced__card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.mega-menu-enhanced[open] .mega-menu-enhanced__card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.mega-menu-enhanced[open] .mega-menu-enhanced__card:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.mega-menu-enhanced[open] .mega-menu-enhanced__card:nth-child(4) {
+  animation-delay: 0.2s;
+}
+
+/* Sidebar animation */
+.mega-menu-enhanced[open] .mega-menu-enhanced__sidebar {
+  animation: cardFadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Section title animation */
+.mega-menu-enhanced[open] .mega-menu-enhanced__section-title {
+  animation: cardFadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ============================================
+   Focus States for Accessibility
+   ============================================ */
+
+.mega-menu-enhanced__card:focus-visible {
+  outline: 2px solid #0071e3 !important;
+  outline-offset: 4px !important;
+  border-radius: 12px !important;
+}
+
+.mega-menu-enhanced__sidebar-tab:focus-visible {
+  outline: 2px solid #0071e3 !important;
+  outline-offset: 2px !important;
+}
+
+.mega-menu-enhanced__sidebar-link:focus-visible,
+.mega-menu-enhanced__link:focus-visible,
+.mega-menu-enhanced__sublink:focus-visible {
+  outline: 2px solid #0071e3 !important;
+  outline-offset: 2px !important;
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+
+@media print {
+  .mega-menu-enhanced__content {
+    display: none !important;
+  }
+}
+
+/* Fix card image presentation */
+.mega-menu-enhanced__card-image {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #ebecf0;
+  border-radius: 1.2rem;
+}
+
+/* Device image should sit inside, centered, not touching edges */
+.mega-menu-enhanced__card-image img {
+  width: auto;
+  height: 70%;
+  max-height: 70%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  pointer-events: none;
+}
+
+/* Final override for device images inside repair cards */
+.header-wrapper .mega-menu-enhanced__card-image img,
+.mega-menu-enhanced__card-image img {
+  width: auto !important;
+  height: 80% !important;
+  max-height: 80% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  padding: 8px !important;   /* breathing room on all sides */
+}
+
+.header-wrapper .mega-menu-enhanced__card-image {
+  height: 230px !important;
+  padding: 0 !important;     /* padding already applied on image */
+}
+
+.mega-menu-enhanced__card {
+  background-color: #ebecf0 !important;
+}
+
+.mega-menu-enhanced__card-image {
+  background-color: #ebecf0 !important;
+}
+
+.mega-menu-enhanced__card-title {
+  background-color: #ebecf0 !important;
+}
+
+.mega-menu-enhanced__card > * {
+  background-color: #ebecf0 !important;
+}

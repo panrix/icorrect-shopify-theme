@@ -1,0 +1,502 @@
+<section id="find-your-repair" class="find-repair-{{ section.id }}">
+  <div class="find-repair-wrapper page-width">
+    <div class="find-repair-info-row">
+      <div class="repair-info-col">
+        <h2>{{ section.settings.heading }}</h2>
+        {{ section.settings.details }}
+      </div>
+      <div class="repair-btn-col repair-mob-hide">
+      </div>
+    </div>  
+    <div class="find-repair-prods-row">
+      {% for block in section.blocks %}
+        <div class="find-repair-prods-col repair-col-{{ forloop.index }}">
+          <div class="repair-img-wrapper">
+            <img src="{{ block.settings.img | img_url: 'master' }}" alt="{{ block.settings.title | strip_html }}">
+          </div>
+          <div class="find-repair-info">
+            <h3>{{ block.settings.title }}</h3>
+            <p>
+              {{ block.settings.details }}<span><a href="{{ block.settings.link }}">Read More</a></span>
+            </p>
+          <div class="find-repair-btn">
+            <div class="">
+              <a href="{{ block.settings.link }}">{{ block.settings.btn }}</a>
+            </div>
+            <div class="hide-desktop hide-mobile">
+              <a href="{{ block.settings.link }}">
+                Select model & repair
+                <span><img src="https://cdn.shopify.com/s/files/1/0754/5903/5403/files/black-rt-arrow.png?v=1724005968" alt=""></span>
+              </a>
+            </div>
+          </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+
+<style>
+  #find-your-repair{
+  scroll-margin-top: calc(var(--header-height, 90px) + 20px);
+}
+html{
+  scroll-behavior: smooth;
+}
+  .find-repair-{{ section.id }}{
+    padding-top: {{ section.settings.padding-top }}px;
+    padding-bottom: {{ section.settings.padding-bottom }}px;
+    width: 100%;
+    background-color: {{ section.settings.bg }};
+  }
+  .find-repair-info-row{
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding-bottom: 40px;
+  }
+  .repair-info-col{
+    flex: 60%;
+    max-width: 60%;
+    text-align: left;
+  }
+  .repair-info-col h2{
+font-size: 28px;
+font-weight: 600;
+line-height: 45.67px;
+text-align: left;
+color: #1D1D1F;
+    margin: 0;
+    padding: 0;
+    padding-bottom: 8px;
+  }
+  .repair-info-col p{
+font-size: 17px;
+font-weight: 400;
+line-height: 1.65;
+letter-spacing: 0;
+text-align: left;
+margin: 0;
+    padding: 0;
+    padding-bottom: 0px;
+    color: #333;
+  }
+  .repair-btn-col{
+    flex: 40%;
+    max-width: 40%;
+    text-align: right;
+    align-self: flex-end;
+  }
+  .repair-btn-col a{
+    display: flex;
+  column-gap: 5px;
+  justify-content: flex-end;
+  color: #1D1D1F;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 25.34px;
+  text-align: left;
+  text-decoration: none;
+    letter-spacing: 0.2px;
+  }
+  .repair-btn-col a img {
+  max-width: 21px;
+  height: 9px;
+}
+
+  .find-repair-prods-row{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .find-repair-prods-col.repair-col-1, .find-repair-prods-col.repair-col-2{
+    flex: 47.6924%;
+    max-width: 47.6924%;
+  }
+   .find-repair-prods-col{
+     flex: 30.7698%;
+     max-width: 30.7698%;
+     padding-bottom: 30px;
+   }
+  .repair-img-wrapper{
+    width: 100%;
+    padding-bottom: 20px;
+  }
+  .repair-img-wrapper img{
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    object-position: center;
+  }
+  .find-repair-info{
+    text-align: left;
+  }
+  .find-repair-info h3{
+    color: #1D1D1F;
+font-size: 18px;
+font-weight: 600;
+line-height: 19px;
+letter-spacing: 0;
+text-align: left;
+margin: 0px;
+    padding: 0px;
+    padding-bottom: 12px;
+  }
+  .find-repair-info p{
+    color: #333;
+font-size: 16px;
+font-weight: 400;
+line-height: 1.65;
+letter-spacing: 0;
+text-align: left;
+margin: 0px;
+    padding: 0px;
+    padding-bottom: 12px;
+  }
+  .find-repair-info p a{
+    color: #1D1D1F;
+font-size: 16px;
+font-weight: 400;
+line-height: 1.65;
+letter-spacing: 0;
+text-align: left;
+margin: 0px;
+    padding: 0px;
+    padding-left: 3px;
+    padding-bottom: 8px;
+    text-decoration: underline;
+    display: inline-block;
+  }
+  .find-repair-btn{
+    width: 100%;
+    text-align: left;
+    padding-top: 8px;
+  }
+  .find-repair-btn a{
+    width: 154px;
+    text-align: center;
+    padding: 10px 0px;
+    background-color: #000;
+    color: #fff;
+    border-radius: 24px;
+    display: inline-block;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 25.34px;
+  }
+  @media(min-width: 768px){
+    .repair-desk-hide, .hide-desktop{
+      display: none;
+    }
+  }
+  @media(max-width: 767px){
+    .repair-info-col{
+    flex: 100%;
+    max-width: 100%;
+    text-align: left;
+  }
+    .repair-mob-hide, .hide-mobile{
+      display: none;
+    }
+    .repair-btn-col.repair-desk-hide{
+      width: 100%;
+      max-width: 100%;
+      text-align: left;
+      padding-top: 20px;
+    }
+    .find-repair-prods-col.repair-col-1, .find-repair-prods-col.repair-col-2{
+    flex: 100%;
+    max-width: 100%;
+  }
+   .find-repair-prods-col{
+     flex: 100%;
+     max-width: 100%;
+     padding-bottom: 30px;
+   }
+    .repair-info-col h2{
+font-size: 24px;
+font-weight: 600;
+line-height: 1.3;
+text-align: left;
+    }
+    .repair-info-col p{
+font-size: 16px;
+font-weight: 400;
+line-height: 1.6;
+text-align: left;
+    }
+    .find-repair-info p{
+    color: #333;
+font-size: 15px;
+font-weight: 400;
+line-height: 1.6;
+letter-spacing: 0;
+text-align: left;
+
+margin: 0px;
+    padding: 0px;
+    padding-bottom: 10px;
+  }
+    .find-repair-info p a{
+    color: #1D1D1F;
+font-size: 15px;
+font-weight: 400;
+line-height: 20px;
+letter-spacing: 0.05em;
+text-align: left;
+
+margin: 0px;
+    padding: 0px;
+    padding-left: 3px;
+    padding-bottom: 8px;
+    text-decoration: none;
+    display: inline-block;
+  }
+    .find-repair-info h3{
+font-size: 18px;
+font-weight: 600;
+line-height: 29.36px;
+letter-spacing: 0.05em;
+text-align: left;
+
+    }
+    .find-repair-info p{
+font-size: 14px;
+font-weight: 400;
+line-height: 20px;
+letter-spacing: 0.05em;
+text-align: left;
+    }
+    .find-repair-btn{
+      text-align: right;
+    }
+   .find-repair-btn a{
+      /* display: flex;
+  column-gap: 5px;
+  justify-content: flex-start;
+font-size: 16px;
+font-weight: 400;
+line-height: 25.34px;
+text-align: left;
+     background-color: transparent;
+     color: #1d1d1f;
+     padding:0;
+     border-radius: 0px;
+     width: 100%; */
+    }
+    .find-repair-btn a img {
+  max-width: 21px;
+  height: 9px;
+}
+
+  }
+
+  /* --- Make all cards the same width on desktop --- */
+.find-repair-prods-col.repair-col-1,
+.find-repair-prods-col.repair-col-2{
+  flex: 30.7698% !important;   /* ~3 per row */
+  max-width: 30.7698% !important;
+}
+
+/* Optional: consistent spacing between cards */
+.find-repair-prods-row{
+  gap: 30px;                   /* replace space-between if you prefer even gaps */
+  justify-content: flex-start; /* works with gap */
+}
+
+/* Ensure equal image heights */
+.repair-img-wrapper img{
+  width: 100%;
+  height: 280px;               /* already set - keeps all thumbnails equal */
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Make every card the same visual height (button pinned at bottom) */
+.find-repair-prods-col{
+  display: flex;
+  flex-direction: column;
+}
+.find-repair-info{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.find-repair-btn{ 
+  margin-top: auto;            /* pushes button to the bottom of each card */
+}
+
+/* === 2×2 grid on desktop/tablet, 1×1 on mobile === */
+.find-repair-prods-row{
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);   /* 2 across */
+  gap: 28px;                                /* equal gutters */
+}
+
+/* Remove old width constraints from columns */
+.find-repair-prods-col,
+.find-repair-prods-col.repair-col-1,
+.find-repair-prods-col.repair-col-2{
+  flex: unset !important;
+  max-width: unset !important;
+  padding-bottom: 0 !important;             /* gap controls spacing now */
+  display: flex;                            /* make each card equal height */
+}
+
+/* Card wrapper so content heights match */
+.find-repair-prods-col > .find-repair-info,
+.find-repair-prods-col{
+  flex-direction: column;
+}
+
+/* Consistent media ratio (16:10) and cover */
+.repair-img-wrapper{
+  width: 100%;
+  aspect-ratio: 16/10;                      /* forces same visual size */
+  overflow: hidden;
+  border-radius: 8px;                        /* subtle polish (optional) */
+}
+.repair-img-wrapper img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Space/content balance inside the card */
+.find-repair-info{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;                             /* equalize card heights */
+  padding-top: 12px;
+}
+
+/* Button alignment unified */
+.find-repair-btn{
+  margin-top: 12px;
+}
+
+/* Mobile: single column, same spacing */
+@media(max-width: 767px){
+  .find-repair-prods-row{
+    grid-template-columns: 1fr;             /* 1 across on mobile */
+    gap: 24px;
+  }
+}
+  
+</style>
+
+{% schema %}
+  {
+    "name": "Find Your Repair",
+    "settings": [
+      {
+         "type": "range",
+         "id": "padding-top",
+         "label": "Section Top Padding",
+         "default": 50,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "range",
+         "id": "padding-bottom",
+         "label": "Section Bottom Padding",
+         "default": 50,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "range",
+         "id": "mob-padding-top",
+         "label": "Section Top Padding",
+         "default": 40,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "range",
+         "id": "mob-padding-bottom",
+         "label": "Section Bottom Padding",
+         "default": 40,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "color",
+         "id": "bg",
+         "label": "Section BG Color",
+         "default": "#FFF"
+       },
+       {
+         "type": "text",
+         "id": "heading",
+         "label": "Heading",
+         "default": "Find your repair"
+       },
+       {
+         "type": "richtext",
+         "id": "details",
+         "label": "Details",
+         "default": "<p>Either select your device or select the repair you need to find out more</p>"
+       },
+    ],
+    "blocks":[
+      {
+        "type":"repair",
+        "name":"Repair",
+        "settings":[
+            {
+               "type":"image_picker",
+               "id":"img",
+               "label":"Select Repair Image"
+            },
+            {
+              "type": "text",
+              "id": "title",
+              "label": "Repair Title",
+              "default": "iPhone repair"
+            },
+            {
+              "type": "text",
+              "id": "details",
+              "label": "Repair Details",
+              "default": "At iCorrect, we have worked with the iPhone since the release of the  iPhone 3G. With each iteration of this highly popular handset, we have  perfected new techniques in"
+            },
+            {
+              "type": "text",
+              "id": "btn",
+              "label": "Button Label",
+              "default": "View Prices"
+            },
+            {
+              "type": "url",
+              "id": "link",
+              "label": "Button Link"
+            }
+         ]
+      }
+    ],
+  "presets": [
+    {
+      "name": "Find Your Repair", 
+      "category": "section"
+    }
+  ]
+}
+{% endschema %}

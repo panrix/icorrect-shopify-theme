@@ -1,0 +1,170 @@
+<section class="banner-info-{{ section.id }}">
+  <div class="banner-info-wrapper">
+    <div class="banner-info-row">
+      <div class="overlay"></div>
+      <div class="img-wrapper-banner">
+        <img src="{{ section.settings.bg | img_url: 'master' }}" alt="">
+      </div>
+      <div class="info-details-banner">
+        <h2>{{ section.settings.heading }}</h2>
+        <a href="{{ section.settings.link }}">
+          {{ section.settings.btn }}
+          <span><img src="https://cdn.shopify.com/s/files/1/0754/5903/5403/files/btn-arrow.png?v=1723999628" alt=""></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<style>
+.banner-info-{{ section.id }} {
+  width: 100%;
+  position: relative;
+}
+
+.banner-info-row {
+  position: relative;
+}
+
+.banner-info-{{ section.id }} .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: {{ section.settings.height }}px;
+  background-color: #586F6BD9; 
+  z-index: 1; 
+  display: block;
+}
+
+.img-wrapper-banner {
+  width: 100%;
+  height: {{ section.settings.height }}px;
+}
+
+.img-wrapper-banner img {
+  width: 100%;
+  height: {{ section.settings.height }}px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.info-details-banner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 2; 
+  width: 100%;
+}
+
+.info-details-banner h2 {
+  color: #fff;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 45.67px;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  padding-bottom: 10px;
+}
+
+.info-details-banner a {
+  display: flex;
+  column-gap: 5px;
+  justify-content: center;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 25.34px;
+  text-align: left;
+  text-decoration: none;
+}
+
+.info-details-banner a img {
+  max-width: 21px;
+  height: 9px;
+}
+
+@media(max-width: 767px){
+  .info-details-banner h2{
+font-size: 24px;
+font-weight: 600;
+line-height: 36px;
+text-align: center;
+
+  }
+  .banner-info-{{ section.id }} .overlay {
+    height: {{ section.settings.mob-height }}px;
+  }
+  .img-wrapper-banner img {
+  width: 100%;
+  height: {{ section.settings.mob-height }}px;
+  object-fit: cover;
+  object-position: center;
+}
+  .img-wrapper-banner {
+  width: 100%;
+  height: {{ section.settings.mob-height }}px;
+}
+
+}
+  
+</style>
+
+{% schema %}
+  {
+    "name": "Banner Info",
+    "settings": [
+      {
+         "type": "image_picker",
+         "id": "bg",
+         "label": "Background Image"
+      },
+      {
+         "type": "range",
+         "id": "height",
+         "label": "Height",
+         "default": 319,
+         "min": 109,
+         "max": 719,
+         "step": 10,
+         "unit": "px"
+       },
+       {
+         "type": "range",
+         "id": "mob-height",
+         "label": "Mobile Height",
+         "default": 230,
+         "min": 100,
+         "max": 700,
+         "step": 10,
+         "unit": "px"
+       },
+       {
+         "type": "text",
+         "id": "heading",
+         "label": "Heading",
+         "default": "Sustainability in Repair"
+       },
+       {
+         "type": "text",
+         "id": "btn",
+         "label": "Button Label",
+         "default": "Learn more"
+       },
+       {
+         "type": "url",
+         "id": "link",
+         "label": "Button Link"
+       }
+    ],
+  "presets": [
+    {
+      "name": "Banner Info"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,261 @@
+<div class="google-reviews-container">
+  <div class="reviews-header">
+    <h2>Over 700+ Google Reviews</h2>
+    <div class="header-rating">
+      <span class="stars">★★★★★</span>
+      <span class="sub-text">Average 4.8 Rating</span>
+    </div>
+  </div>
+
+  <div class="reviews-grid" id="reviews-output">
+    <!-- Static fallback reviews for SEO - JavaScript will replace these with live data -->
+    <noscript>
+      <style>.loading-state{display:none}</style>
+    </noscript>
+    <div class="loading-state" aria-hidden="true">Loading amazing reviews...</div>
+    <div class="review-card seo-fallback">
+      <div class="review-header">
+        <div class="reviewer-name">Verified Google Review</div>
+        <div class="review-stars">★★★★★</div>
+      </div>
+      <p class="review-text">Fantastic service from start to finish. My MacBook had liquid damage that Apple said was unrepairable. iCorrect fixed it within a week and it's been working perfectly ever since. Highly recommend for any Apple repairs.</p>
+    </div>
+    <div class="review-card seo-fallback">
+      <div class="review-header">
+        <div class="reviewer-name">Verified Google Review</div>
+        <div class="review-stars">★★★★★</div>
+      </div>
+      <p class="review-text">Excellent iPhone screen repair. Quick turnaround, reasonable price, and the quality is indistinguishable from original. The team really knows what they're doing.</p>
+    </div>
+    <div class="review-card seo-fallback">
+      <div class="review-header">
+        <div class="reviewer-name">Verified Google Review</div>
+        <div class="review-stars">★★★★★</div>
+      </div>
+      <p class="review-text">Professional service with great communication throughout. They diagnosed and fixed an issue with my iPad that two other repair shops could not figure out. Will definitely use again.</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* 1. Layout & Container */
+  .google-reviews-container {
+    padding: 60px 20px;
+    background-color: #ffffff; 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  .reviews-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .reviews-header h2 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  .header-rating .stars {
+    color: #ffb400;
+    font-size: 24px;
+    letter-spacing: 2px;
+  }
+
+  .header-rating .sub-text {
+    display: block;
+    font-size: 14px;
+    color: #666;
+    margin-top: 5px;
+    font-weight: 500;
+  }
+
+  /* 2. The Grid */
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* 3. Review Card Styling */
+  .review-card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  }
+
+  .card-top {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Space between stars and G icon */
+  }
+
+  .card-stars {
+    color: #ffb400;
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
+
+  /* The Google Icon Style */
+  .google-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+
+  .review-text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #444;
+    margin-bottom: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 6; 
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .review-author {
+    font-weight: 600;
+    font-size: 14px;
+    color: #222;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .review-date {
+    font-weight: 400;
+    color: #999;
+    font-size: 12px;
+  }
+
+  .loading-state {
+    text-align: center;
+    width: 100%;
+    color: #888;
+  }
+
+  /* Mobile Optimization */
+  @media (max-width: 768px) {
+    .reviews-grid {
+      grid-template-columns: 1fr; 
+    }
+  }
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+  // CONFIGURATION:
+  // Using the official Google "G" logo SVG for sharpness and reliability
+  const GOOGLE_ICON_URL = "https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg";
+
+  // ---------------------------------------------------------
+  // MOCK DATA 
+  // ---------------------------------------------------------
+  const manualReviews = [
+    {
+      author_name: "William",
+      rating: 5,
+      text: "We tried iCorrect for 2 MacBook Pro M1 repairs. They have repaired about 5 screens for us. Apple usually takes 7-10 days. iCorrect turns them around in 2-7 days. Excellent courier service.",
+      time: 1740787200 // Newest
+    },
+    {
+      author_name: "Noah",
+      rating: 5,
+      text: "Apple told me my iPhone was a write-off because of a WiFi issue. iCorrect identified the problem and fixed it perfectly. Amazing service, knowledgeable and responsive.",
+      time: 1747440000
+    },
+    {
+      author_name: "Rainer",
+      rating: 5,
+      text: "I had water damage on my iPad. They did a thorough assessment and gave me a clear list of what needed fixing. Fixed it right away without charging extra. Talk about great service!",
+      time: 1756339200 
+    },
+    {
+      author_name: "Mark",
+      rating: 4, 
+      text: "Excellent screen repair of my Apple Watch. More expensive than other advertisers but you get what you pay for. First class experience.",
+      time: 1762819200
+    },
+  ];
+
+  const container = document.getElementById('reviews-output');
+
+  // FUNCTION 1: Sort Logic (Rating High->Low, then Date New->Old)
+  function sortReviews(reviews) {
+    return reviews.sort((a, b) => {
+      // First, compare ratings
+      if (b.rating !== a.rating) {
+        return b.rating - a.rating; 
+      }
+      // If ratings equal, compare time
+      return b.time - a.time; 
+    });
+  }
+
+  // FUNCTION 2: Render Logic 
+  function renderReviews(reviews) {
+    container.innerHTML = ''; 
+    
+    // Sort and take top 4
+    const topReviews = sortReviews(reviews).slice(0, 4); 
+
+    topReviews.forEach(review => {
+      // Create star string
+      let stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+      
+      // Format Date
+      let dateObj = new Date(review.time * 1000);
+      let dateStr = dateObj.toLocaleDateString();
+
+      const card = `
+        <div class="review-card">
+          <div class="card-top">
+            <span class="card-stars">${stars}</span>
+            <img src="${GOOGLE_ICON_URL}" alt="Google Review" class="google-icon">
+          </div>
+          <div class="review-text">"${review.text}"</div>
+          <div class="review-author">
+            <span>- ${review.author_name}</span>
+            <span class="review-date">${dateStr}</span>
+          </div>
+        </div>
+      `;
+      container.innerHTML += card;
+    });
+  }
+
+  renderReviews(manualReviews);
+
+});
+</script>
+
+{% schema %}
+{
+  "name": "Custom Google Reviews",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Custom Google Reviews"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,478 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "vendor": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "{{ product.vendor }}",
+            "text_style": "uppercase"
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {
+            "enable-price": true
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "disabled": true,
+          "settings": {}
+        },
+        "repair_product_YHEQJr": {
+          "type": "repair_product",
+          "settings": {}
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "button",
+            "swatch_shape": "circle"
+          }
+        },
+        "quantity_selector": {
+          "type": "quantity_selector",
+          "disabled": true,
+          "settings": {}
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true,
+            "show_gift_card_recipient": true
+          }
+        },
+        "share": {
+          "type": "share",
+          "disabled": true,
+          "settings": {
+            "share_label": "Share"
+          }
+        }
+      },
+      "block_order": [
+        "vendor",
+        "title",
+        "description",
+        "price",
+        "repair_product_YHEQJr",
+        "variant_picker",
+        "quantity_selector",
+        "buy_buttons",
+        "share"
+      ],
+      "settings": {
+        "enable_sticky_info": true,
+        "color_scheme": "scheme-1",
+        "media_size": "small",
+        "constrain_to_viewport": true,
+        "media_fit": "contain",
+        "gallery_layout": "stacked",
+        "media_position": "left",
+        "image_zoom": "none",
+        "mobile_thumbnails": "hide",
+        "hide_variants": true,
+        "enable_video_looping": false,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "enable-layout": true
+      }
+    },
+    "related-products": {
+      "type": "related-products",
+      "disabled": true,
+      "settings": {
+        "heading": "You may also like",
+        "heading_size": "h2",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 28
+      }
+    },
+    "pdp_sustain_repair_info_9EePrK": {
+      "type": "pdp-sustain-repair-info",
+      "disabled": true,
+      "settings": {
+        "bg": "#586f6b",
+        "heading": "Sustainability in Repair",
+        "details": "Lorem ipsum dolor sit amet, consectetur",
+        "subheading": "Lorem ipsum",
+        "info": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>",
+        "link": "",
+        "btn": "Learn More",
+        "enable_video": true,
+        "video_poster": "shopify://shop_images/bg-banner.webp",
+        "video": "https://youtu.be/SDzi-hqUcB8"
+      }
+    },
+    "about_info_A8a6YY": {
+      "type": "about-info",
+      "disabled": true,
+      "settings": {
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 40,
+        "mob_padding_bottom": 40,
+        "bg": "#ffffff",
+        "heading": "MacBook Keyboard Repair",
+        "details": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>",
+        "btn": "Read more",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 28,
+        "heading_size_mobile": 24,
+        "heading_line_height_desktop": 46,
+        "heading_line_height_mobile": 36
+      }
+    },
+    "rich_text_j9c7hV": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_BKFqRp": {
+          "type": "heading",
+          "settings": {
+            "heading": "<strong>iPhone Repair Services in the UK</strong>",
+            "heading_size": "h1"
+          }
+        },
+        "text_qUtdDM": {
+          "type": "text",
+          "settings": {
+            "text": "<p>At iCorrect, we specialise in iPhone repair services for all models. Whether you've cracked your screen, need a battery replacement, or are experiencing charging issues, our skilled technicians provide fast, reliable repairs using high-quality parts. We understand how essential your iPhone is to your daily life, which is why we offer <strong>same-day</strong> and while-you-wait repair options for most common issues.</p><p>With over a decade of experience repairing thousands of iPhones, we've built our reputation on quality workmanship, transparent pricing, and exceptional customer service. All our iPhone repairs come with a <strong>2-year warranty</strong>, giving you complete peace of mind.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "heading_BKFqRp",
+        "text_qUtdDM"
+      ],
+      "name": "t:sections.rich-text.presets.name",
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "",
+        "full_width": true,
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
+    },
+    "iphone_videos_8dwmCw": {
+      "type": "iphone-videos",
+      "name": "iPhone Videos",
+      "settings": {
+        "heading": "Our behind the scenes",
+        "subtitle": "Watch our videos to understand common repair issues, what to expect, and how we fix your device with care.",
+        "video_1_title": "Apple said it was not possible to retrieve his data.",
+        "video_2_title": "Do not compromise on quality!",
+        "video_3_title": "Poor quality parts can cause serious issues.",
+        "color_scheme": "scheme-2",
+        "padding_top": 48,
+        "padding_bottom": 80
+      }
+    },
+    "video_multicolumn_hLFiVL": {
+      "type": "video-multicolumn",
+      "blocks": {
+        "column_7NkLkM": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/iPhone_Video_1.jpg",
+            "enable_video": false,
+            "title": "",
+            "text": "",
+            "link_label": "",
+            "link": "https://www.youtube.com/shorts/PEa5le-a5_g"
+          }
+        },
+        "column_PYBLUj": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/iPhone_Video_2.jpg",
+            "enable_video": false,
+            "title": "",
+            "text": "",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column_YD3Vc3": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/iPhone_Video_3.jpg",
+            "enable_video": false,
+            "title": "",
+            "text": "",
+            "link_label": "",
+            "link": "https://www.youtube.com/shorts/P6gIFwmokIQ"
+          }
+        }
+      },
+      "block_order": [
+        "column_7NkLkM",
+        "column_PYBLUj",
+        "column_YD3Vc3"
+      ],
+      "disabled": true,
+      "name": "Video Multicolumn",
+      "settings": {
+        "title": "Our behind the scenes",
+        "heading_size": "h1",
+        "content": "",
+        "image_width": "full",
+        "image_ratio": "portrait",
+        "columns_desktop": 3,
+        "column_alignment": "center",
+        "background_style": "primary",
+        "button_label": "",
+        "button_link": "",
+        "color_scheme": "scheme-2",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "iphone_faqs_xthzUn": {
+      "type": "iphone-faqs",
+      "blocks": {
+        "accordion_DiQpyC": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How long do iPhone repairs take?",
+            "sub_head": "<p>Most iPhone repairs are completed within 4 hours. That includes common faults like screen repairs, battery replacements, charging issues, and back glass damage.</p><p>If you’re in a rush, we offer an express service that can have your repair completed in as little as 1 to 2 hours. This is subject to availability, so we always recommend booking in advance.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_kpeBbG": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What warranty do you offer on iPhone repairs?",
+            "sub_head": "<p>All of our iPhone repairs come with a two-year warranty covering any faults related to the repair. Whether it’s a screen replacement, battery repair, or logic board issue, we stand by the quality of our work.</p><p>The warranty doesn’t cover accidental damage or natural wear and tear, but if anything goes wrong due to the original fault, our team will sort it.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_Cw4PH6": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you use original parts?",
+            "sub_head": "<p>Yes, we use original Apple parts for all iPhone repairs wherever possible. Most of our parts are carefully reclaimed from genuine Apple devices and tested in-house to confirm full functionality. If there’s any sign of wear or damage, we refurbish the part back to the original factory standard before using it in a repair.</p><p>This approach means your iPhone keeps key features like True Tone, battery health tracking, and long-term performance with no compatibility issues or feature loss.</p><p>We also believe this is the most sustainable way to repair. By reusing and refurbishing original Apple components, we avoid adding to the growing pile of electronic waste caused by unnecessary replacements. It’s a better outcome for your device, and a smarter one for the planet.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_UNK7Dx": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will my iPhone show a “non-genuine” message after screen repair?",
+            "sub_head": "<p>No, on devices running iOS 18 or later, we’re able to calibrate the screen directly through the settings so it’s recognised as a verified part. The iPhone just needs to be updated to the latest version of iOS.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_UVB4PQ": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can you repair iPhone logic boards?",
+            "sub_head": "<p>Yes. This is one of our specialties. Logic board faults are often written off as unrepairable, especially by Apple and most high street repair shops. We take a different approach.</p><p>Our technicians work under a microscope at microchip level, repairing faults like power failures, charging issues, and internal connection damage. These issues often happen when the iPhone is dropped and the two layers of the logic board start to separate.</p><p>If your iPhone is not powering on, not charging, or has been declared “dead” by another repair centre, there’s still a good chance we can bring it back to life.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_iAFDN9": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will battery health still show in settings after replacement?",
+            "sub_head": "<p>Yes. All of our iPhone battery replacements support battery health monitoring in settings, so you can continue to track the performance and condition of your battery over time.</p><p>If we install a genuine Apple battery, your iPhone will recognise it as original, and you’ll see a message confirming the part as verified. On models where a genuine battery is no longer available, we use high-quality OEM replacements. These still show battery health in settings, but the message may not include Apple’s verification tag.</p><p>We’ll always tell you exactly what battery is being used and why. We only fit batteries that we’ve tested and approved, and we never use cheap or unstable parts that could cause long-term issues.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_qgAzDY": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can you replace just the back glass on an iPhone?",
+            "sub_head": "<p>It depends on the model. For iPhone 15 and newer (and also the iPhone 14 and 14 Plus), the back glass is modular. This makes it far more repair-friendly, and we can replace just the glass using a genuine part.</p><p>However, for most earlier models, including the iPhone 14 Pro and anything before it, the rear glass is fused to the frame. In these cases, the entire housing needs to be replaced to maintain structural integrity, wireless charging alignment, and proper waterproofing.</p><p>You may have seen cheaper back glass-only repairs offered for these older models, but the quality is poor and they tend to crack easily. It is always best to have an original part fitted, even if that means replacing the full housing.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_NnbCU8": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you need my passcode for testing?",
+            "sub_head": "<p>Yes, we do ask for your passcode so we can carry out full pre-repair and post-repair testing. This helps us check functions like Face ID, the camera, speaker, microphone, touchscreen response, and other key features before we return your device.</p><p>We do not access any personal apps, banking information, or private content. Our only goal is to confirm that everything is working as it should once the repair is complete.</p><p>If you prefer not to share your passcode, we can still carry out the repair. However, we will not be able to test the device fully, and in that case, the warranty will be limited to 30 days rather than our full two-year cover.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_rT9jRy": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What’s included in your diagnostic process for iPhones?",
+            "sub_head": "<p>If the fault is not obvious, we run a full diagnostic on your iPhone to work out exactly what has gone wrong. This includes checking power flow, charging function, logic board health, and all key components like the screen, battery, microphone, speakers, and sensors.</p><p>For more complex issues, especially those related to logic board damage, we inspect the board under a microscope and test individual circuits and chips to identify faults at microchip level.</p><p>Once we have confirmed the issue, we will send you a detailed report with a recommended repair plan and quote, so you know exactly what to expect before any work begins.</p>",
+            "alignment": "left"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_DiQpyC",
+        "accordion_kpeBbG",
+        "accordion_Cw4PH6",
+        "accordion_UNK7Dx",
+        "accordion_UVB4PQ",
+        "accordion_iAFDN9",
+        "accordion_qgAzDY",
+        "accordion_NnbCU8",
+        "accordion_rT9jRy"
+      ],
+      "name": "iPhone FAQs",
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 50,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#1D1D1F",
+        "heading": "FAQs",
+        "details": "Learn more about iCorrect, the essential iPhone repair services we offer and the warranties that come with each repair.",
+        "txt-clr": "#FFFFFF"
+      }
+    },
+    "icorrect_faqs_RVk3VL": {
+      "type": "icorrect-faqs",
+      "blocks": {
+        "accordion_mCCjdt": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do I need an appointment?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_dgGrWD": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do I need to back-up my data before my repair?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_jNEQxe": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Are your repairs covered by a warranty?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_wzPFwd": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How long does it take to diagnose an unknown fault?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_PLgEhN": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Where are you located?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_heFyRm": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will I be charged if you are unable to complete a repair?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_7WpxcT": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do your prices include parts & labour?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_QdhiRR": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can you repair a damaged logic board?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_mCCjdt",
+        "accordion_dgGrWD",
+        "accordion_jNEQxe",
+        "accordion_wzPFwd",
+        "accordion_PLgEhN",
+        "accordion_heFyRm",
+        "accordion_7WpxcT",
+        "accordion_QdhiRR"
+      ],
+      "disabled": true,
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 75,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#ffffff",
+        "heading": "FAQs",
+        "details": "Learn more about iCorrect, the essential repair services that we offer and the warranties that come with each repair.",
+        "txt-clr": "#1d1d1f"
+      }
+    },
+    "contact_with_map_pALE6P": {
+      "type": "contact-with-map",
+      "name": "Contact with map",
+      "settings": {
+        "map_html": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.7925117760165!2d-0.1422392230845079!3d51.51702250999988!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2c5aabf83b%3A0x2abbd489a9d66382!2siCorrect!5e0!3m2!1sen!2sit!4v1766495755523!5m2!1sen!2sit\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
+        "address": "iCorrect\n12 Margaret Street\nAudley House\nLondon\nW1W 8JQ",
+        "form_heading": "Get in Touch",
+        "form_subtitle": "Have a question about your device repair? We're here to help.",
+        "section_bg": "#f4f4f4",
+        "accent_color": "#3b82f6",
+        "text_color": "#171717",
+        "muted_text_color": "#6b7280",
+        "input_bg": "#ffffff",
+        "input_border": "#e5e7eb"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "related-products",
+    "pdp_sustain_repair_info_9EePrK",
+    "about_info_A8a6YY",
+    "rich_text_j9c7hV",
+    "iphone_videos_8dwmCw",
+    "video_multicolumn_hLFiVL",
+    "iphone_faqs_xthzUn",
+    "icorrect_faqs_RVk3VL",
+    "contact_with_map_pALE6P"
+  ]
+}

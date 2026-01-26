@@ -1,0 +1,289 @@
+<section class="lp-faqs-{{ section.id }}">
+  <div class="lp-faqs-wrapper page-width">
+    <div class="lp-faqs-header">
+      <h2>{{ section.settings.heading }}</h2>
+      <p>{{ section.settings.details }}</p>
+    </div>
+    <div class="accordions-row-wrapper">
+    {% for block in section.blocks %}
+      <div style="text-align:{{ block.settings.alignment }};" class="faq-col-icorrect {{ section.settings.txt-clr }} {% if section.settings.txt-clr == '#1d1d1f' %}test{% endif %}">
+        <h3 class="accordion-{{ section.id }}">{{ block.settings.heading }}</h3>
+        <div class="panel-accordion">
+            <p>{{ block.settings.sub_head }}</p>
+        </div>
+      </div>
+    {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .lp-faqs-{{ section.id }}{
+      padding-top: {{ section.settings.padding-top }}px;
+    padding-bottom: {{ section.settings.padding-bottom }}px;
+    width: 100%;
+    background-color: {{ section.settings.bg }};
+  }
+  .lp-faqs-header{
+    text-align: center;
+    width: 100%;
+    padding-bottom: 20px;
+    max-width: 760px;
+  }
+  .lp-faqs-header h2{
+font-size: 28px;
+font-weight: 600;
+line-height: 45.67px;
+text-align: left;
+color: {{ section.settings.txt-clr }};
+margin: 0;
+padding: 0;
+padding-bottom: 10px;
+  }
+  .lp-faqs-header p{
+font-size: 18px;
+font-weight: 400;
+line-height: 30px;
+letter-spacing: 0.05em;
+text-align: left;
+color: {{ section.settings.txt-clr }};
+margin: 0;
+padding: 0;
+  }
+.accordions-row-wrapper{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+  .faq-col-icorrect{
+    flex: 48%;
+    max-width: 48%;
+  }
+  .accordion-{{ section.id }} {
+cursor: pointer;
+padding: 10px 2px 10px 2px;
+width: 100%;
+border: none;
+outline: none;
+transition: 1s;
+  color: {{ section.settings.txt-clr }};
+font-size: 18px;
+font-weight: 600;
+line-height: 19px;
+letter-spacing: 0.05em;
+text-align: left;
+margin: 15px 0px 15px 0px;
+}
+
+  
+.accordion-{{ section.id }}:after {
+  content: "";
+  float: right;
+  font-weight:500;
+  font-size:16px;
+   margin-left: 5px;
+  background-image: url('https://cdn.shopify.com/s/files/1/0754/5903/5403/files/Group.png?v=1723514804');
+  {% if section.settings.txt-clr == '#1d1d1f' %}
+  filter: invert(1);
+{% endif %}
+  background-repeat: no-repeat;
+  background-size: contain;
+  min-height: 16px;
+  width: 16px;
+    height: 16px;
+  
+}
+
+.active-accordion:after {
+content: "";
+   background-image: url('https://cdn.shopify.com/s/files/1/0754/5903/5403/files/Vector.png?v=1723514794');
+  background-repeat: no-repeat;
+  min-height: 16px;
+}
+
+.panel-accordion {
+padding: 0 5px;
+background-color: transparent;
+max-height: 0;
+overflow: hidden;
+transition: max-height 0.8s ease-out;
+font-size: 16px;
+font-weight: 400;
+line-height: 24px;
+text-align: left;
+color: {{ section.settings.txt-clr }};
+   border-bottom: 1px solid {{ section.settings.txt-clr }};
+}
+  .panel-accordion p{
+    margin-top: 0px;
+    margin-bottom: 30px;
+  }
+
+  
+  @media(max-width: 767px){
+    .lp-faqs-{{ section.id }}{
+      padding-top: {{ section.settings.mob-padding-top }}px;
+      padding-bottom: {{ section.settings.mob-padding-bottom }}px;
+    }
+    .faq-col-icorrect{
+    flex: 100%;
+    max-width: 100%;
+  }
+    .lp-faqs-header h2{
+      font-size: 24px;
+      font-weight: 600;
+      line-height: 36px;
+    }
+    .lp-faqs-header p{
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 20px;
+      letter-spacing: 0.05em;
+      text-align: left;
+
+    }
+  }
+  @media(max-width: 500px){
+    .accordion-{{ section.id }} {
+      padding: 10px 20px 10px 2px;
+      position: relative;
+    }
+    .accordion-{{ section.id }}:after {
+      position: absolute;
+      right: 0rem;
+    }
+  }
+</style>
+
+<script>
+      var acc = document.getElementsByClassName("accordion-{{ section.id }}");
+      var i;
+
+      for (i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function() {
+      this.classList.toggle("active-accordion");
+      var panel = this.nextElementSibling;
+      if (panel.style.maxHeight){
+      panel.style.maxHeight = null;
+      } else {
+      panel.style.maxHeight = panel.scrollHeight + "px";
+      }
+      });
+}
+</script>
+
+
+{% schema %}
+  {
+    "name": "iCorrect FAQs",
+    "settings": [
+      {
+         "type": "range",
+         "id": "padding-top",
+         "label": "Section Top Padding",
+         "default": 50,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "range",
+         "id": "padding-bottom",
+         "label": "Section Bottom Padding",
+         "default": 50,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "range",
+         "id": "mob-padding-top",
+         "label": "Section Top Padding",
+         "default": 40,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "range",
+         "id": "mob-padding-bottom",
+         "label": "Section Bottom Padding",
+         "default": 40,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "color",
+         "id": "bg",
+         "label": "Section BG Color",
+         "default": "#1D1D1F"
+       },
+      {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading",
+        "default": "FAQs"
+      },
+      {
+        "type": "text",
+        "id": "details",
+        "label": "Details",
+        "default": "Learn more about iCorrect, the essential repair services that we offer and the warranties that come with each repair."
+      },
+      {
+        "type": "color",
+        "id": "txt-clr",
+        "label": "Text Color",
+        "default": "#FFF"
+      }
+    ],
+    "blocks" : [
+  	  {
+   		"type" : "accordion",
+   		"name" : "Accordion",
+   		"settings" : [
+         {
+              "type" : "text",
+              "id" : "heading",
+               "label" : "Title"
+		 },
+         {
+              "type" : "richtext",
+              "id" : "sub_head",
+              "label" : "Sub Header"
+		 },
+		 {
+   		     "type": "select",
+   			 "id": "alignment",
+     		 "options": [
+             { 
+				"value": "left", 
+				"label": "left"
+    		  },
+        	  { 
+				"value": "center", 
+				"label": "Centered"
+    		  },
+              {
+				"value": "right", 
+				"label": "right"
+    		  }
+       	],
+           "label": "Text Alignment"
+        }
+		]
+	}
+],
+  "presets": [
+    {
+      "name": "iCorrect FAQs"
+    }
+  ]
+}
+{% endschema %}

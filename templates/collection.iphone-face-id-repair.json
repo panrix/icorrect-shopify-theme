@@ -1,0 +1,327 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "show_collection_description": true,
+        "show_collection_image": false,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "disabled": true,
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "enable_filtering": true,
+        "filter_type": "horizontal",
+        "enable_sorting": true,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "main_banner_and_video_HjbmW9": {
+      "type": "main-banner-and-video",
+      "disabled": true,
+      "settings": {
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "mob_padding_top": 0,
+        "mob_padding_bottom": 0,
+        "bg": "#ffffff",
+        "video_url": "",
+        "img": "shopify://shop_images/Website-Banner.jpg"
+      }
+    },
+    "about_info_RWbQxj": {
+      "type": "about-info",
+      "name": "About Info",
+      "settings": {
+        "bg": "#ffffff",
+        "heading": "iPhone Face ID Repair",
+        "details": "<p>If your iPhone's Face ID has stopped working, refuses to set up, or fails to recognise your face, it may be time for a proper repair. At iCorrect, we repair Face ID using genuine Apple modules, fitted and calibrated through Apple’s official diagnostic system. This ensures your new sensor is registered correctly to your device, allowing Face ID to function exactly as it did when the iPhone left the factory.</p><p><br/>Unlike general repair shops, we do not attempt to swap parts or spoof the Face ID circuit. This is not only unreliable, it poses a serious security risk. Instead, we work directly with Apple’s part ordering and calibration system to complete the repair properly. Face ID is now considered a core part of your iPhone’s security profile, and completing the repair the right way ensures your iPhone retains its full value.</p>",
+        "btn": "",
+        "link": ""
+      }
+    },
+    "featured_collection_AfhUDd": {
+      "type": "featured-collection",
+      "name": "t:sections.featured-collection.presets.name",
+      "settings": {
+        "title": "",
+        "heading_size": "h1",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "collection": "iphone-face-id-repair-prices",
+        "columns_desktop": 3,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "enable_desktop_slider": false,
+        "color_scheme": "scheme-1",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "about_info_XAqnaH": {
+      "type": "about-info",
+      "name": "About Info",
+      "settings": {
+        "bg": "#ffffff",
+        "heading": "Our Process",
+        "details": "<p>Face ID modules are uniquely sensitive components, paired to your iPhone through a secure chip. From the iPhone X onwards, Apple has made this part integral to both the front camera and dot projector. We replace the entire Face ID module, including its secure hardware, and calibrate it using Apple’s official tools.</p><p><br/>Repairs take approximately 2 to 3 hours and must be pre-booked to allow time for part ordering and serial number registration. We do not keep Face ID modules in stock, as they must be ordered per device.</p><p><br/>Whether your Face ID failed after a screen repair, water damage, or without any warning at all, we can restore full functionality using the same method Apple uses. That means your iPhone remains secure, verified, and valuable.</p>",
+        "btn": "",
+        "link": ""
+      }
+    },
+    "repair_services_nQkwFT": {
+      "type": "repair-services",
+      "blocks": {
+        "service_PEi9BF": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Walk-in.png",
+            "heading": "Walk-In Service",
+            "details": "For clients based in Central London who wish to visit us, we operate a  walk-in drop-off service by appointment. Simply book your repair via our  website booking page to confirm your appointment time before heading to us.",
+            "btn": "Learn more",
+            "link": ""
+          }
+        },
+        "service_RaggTi": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Courier.png",
+            "heading": "London Courier",
+            "details": "We operate a convenient collection, repair & delivery service for  clients based within Zones 1 & 2 in London. Our couriers are fully  tracked and insured throughout the journey. Book your iPhone repair  before 1pm for a same day return.",
+            "btn": "Learn more",
+            "link": ""
+          }
+        },
+        "service_enBGWD": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Delivery.png",
+            "heading": "National Courier",
+            "details": "We collect from anywhere in the UK. Book online and we send secure packaging to your door. Your device is returned fully repaired and tested.",
+            "btn": "Learn more",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "service_PEi9BF",
+        "service_RaggTi",
+        "service_enBGWD"
+      ],
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 50,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#fafafa",
+        "heading": "Our repair services",
+        "details": "Choose the most convenient service for you"
+      }
+    },
+    "video_reviews_83ReMa": {
+      "type": "video-reviews",
+      "blocks": {
+        "video_W74UiU": {
+          "type": "video",
+          "settings": {
+            "video": "",
+            "img": "shopify://shop_images/Rectangle_2282.webp"
+          }
+        },
+        "video_XGqbiC": {
+          "type": "video",
+          "settings": {
+            "video": "",
+            "img": "shopify://shop_images/Rectangle_2284.webp"
+          }
+        },
+        "video_weLpfR": {
+          "type": "video",
+          "settings": {
+            "video": "",
+            "img": "shopify://shop_images/Rectangle_2283.webp"
+          }
+        }
+      },
+      "block_order": [
+        "video_W74UiU",
+        "video_XGqbiC",
+        "video_weLpfR"
+      ],
+      "settings": {
+        "padding-top": 80,
+        "padding-bottom": 80,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 80,
+        "bg": "#121212",
+        "heading": "See what our clients have to say about us",
+        "facebook": "",
+        "facebook-icon": "shopify://shop_images/fb-icon.png",
+        "insta": "",
+        "insta-icon": "shopify://shop_images/insta-icon.png",
+        "tiktok": "",
+        "tiktok-icon": "shopify://shop_images/tik-icon.png",
+        "youtube": "",
+        "youtube-icon": "shopify://shop_images/utube-icon.png"
+      }
+    },
+    "icorrect_faqs_RVk3VL": {
+      "type": "icorrect-faqs",
+      "blocks": {
+        "accordion_mCCjdt": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can Face ID be repaired properly on an iPhone?",
+            "sub_head": "<p>Yes. Face ID repairs are possible using original Apple modules and the correct calibration process. We do not use aftermarket sensors or attempt risky soldering or spoofing techniques. Our process uses Apple’s part pairing system to ensure the Face ID module is recognised as original and fully functional.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_dgGrWD": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How much does a Face ID repair cost?",
+            "sub_head": "<p>Face ID repairs typically start from £199, depending on your model. This includes part ordering from Apple, calibration, installation, and testing. The process requires your serial number and pre-booking, as the module must be ordered per device.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_jNEQxe": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you use original Face ID modules?",
+            "sub_head": "<p>Yes. We only use genuine Apple Face ID modules sourced through Apple’s part provisioning system. Once fitted, the new module is calibrated through Apple’s software to restore full Face ID functionality and register it correctly to your iPhone.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_wzPFwd": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will Face ID still work after the repair?",
+            "sub_head": "<p>Yes, provided the repair is done correctly using Apple’s calibration system. We complete all Face ID repairs to Apple’s standards, so the feature is fully restored, secure, and operates as if it were never damaged.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_iPyPC6": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Why is Face ID more expensive to repair than other components?",
+            "sub_head": "<p>Face ID is tightly integrated with your iPhone’s security system. It contains encrypted components that must be matched to the logic board. Because Apple requires secure calibration and does not allow third-party modules to be used, the repair involves ordering a specific part tied to your device, which increases cost.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_PLgEhN": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How long does a Face ID repair take?",
+            "sub_head": "<p>Repairs take around 2 to 3 working hours, but must be pre-booked. This allows us to order the module specific to your iPhone’s serial number and complete the repair once the part arrives. Express turnaround may be possible depending on part delivery time.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_wMHNen": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What causes Face ID to stop working?",
+            "sub_head": "<p>Common causes include water damage, impact or drop damage, failed screen replacements, or internal failure of the dot projector or infrared sensor. Once the secure Face ID module is compromised, the only reliable solution is a full replacement with calibration.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_heFyRm": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Is it safe to use Face ID after a repair?",
+            "sub_head": "<p>Yes. We use the official calibration tools provided through Apple’s repair system, so your new Face ID sensor is verified, secure, and logged in your iPhone’s system. No spoofing, no risk.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_7WpxcT": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will my iPhone show any messages after the Face ID repair?",
+            "sub_head": "<p>No. Once calibrated properly using the official Apple system, your iPhone will not show any warnings or errors. Face ID will function as normal, and your device will retain its full value.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_LrTg7i": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you offer a warranty on Face ID repairs?",
+            "sub_head": "<p>Yes. Our Face ID repairs come with a two-year warranty covering part failure or installation issues. This does not cover accidental damage or water exposure after repair.</p>",
+            "alignment": "left"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_mCCjdt",
+        "accordion_dgGrWD",
+        "accordion_jNEQxe",
+        "accordion_wzPFwd",
+        "accordion_iPyPC6",
+        "accordion_PLgEhN",
+        "accordion_wMHNen",
+        "accordion_heFyRm",
+        "accordion_7WpxcT",
+        "accordion_LrTg7i"
+      ],
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 75,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#1d1d1f",
+        "heading": "FAQs",
+        "details": "Learn more about iCorrect, the essential repair services that we offer and the warranties that come with each repair.",
+        "txt-clr": "#ffffff"
+      }
+    },
+    "contact_with_map_dXbbDU": {
+      "type": "contact-with-map",
+      "settings": {
+        "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>"
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "product-grid",
+    "main_banner_and_video_HjbmW9",
+    "about_info_RWbQxj",
+    "featured_collection_AfhUDd",
+    "about_info_XAqnaH",
+    "repair_services_nQkwFT",
+    "video_reviews_83ReMa",
+    "icorrect_faqs_RVk3VL",
+    "contact_with_map_dXbbDU"
+  ]
+}

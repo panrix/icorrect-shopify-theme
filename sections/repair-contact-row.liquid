@@ -1,0 +1,277 @@
+<section class="repair-contact-row-{{ section.id }}">
+  <div class="repair-contact-row-wrapper page-width">
+    <div class="repair-contact-row">
+      <div class="repair-info-column">
+        <h2>{{ section.settings.heading }}</h2>
+        <p>{{ section.settings.details }}</p>
+      </div>
+      <div class="repair-btn-column">
+        <div class="contact-btns-row">
+          <a href="{{ section.settings.link-1 }}" class="secondary-col-btn">
+            {{ section.settings.btn-1 }}
+          </a>
+          <a href="{{ section.settings.link-2 }}" class="solid-col-btn">
+            {{ section.settings.btn-2 }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .repair-contact-row-{{ section.id }}{ 
+    padding-top: {{ section.settings.padding-top }}px;
+    padding-bottom: {{ section.settings.padding-bottom }}px;
+    width: 100%;
+    background-color: {{ section.settings.bg }};
+  }
+  .repair-contact-row{
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .repair-info-column{
+    max-width: 50%;
+    flex: 50%;
+    text-align: left;
+  }
+  .repair-info-column h2{
+   color: #1D1D1F;
+font-size: 28px;
+font-weight: 600;
+line-height: 45.67px;
+text-align: left;
+margin: 0;
+    padding: 0;
+    padding-bottom: 8px;
+  }
+   .repair-info-column p{
+     color: #333;
+font-size: 17px;
+font-weight: 400;
+line-height: 1.65;
+letter-spacing: 0;
+text-align: left;
+padding: 0px;
+     margin: 0px 0px 0.75rem;
+   }
+   .repair-info-column p:last-child{
+     margin-bottom: 0;
+   }
+  .repair-btn-column{
+    max-width: 50%;
+    flex: 50%;
+    align-self: flex-end;
+  }
+  .contact-btns-row{
+    display: flex;
+    column-gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .contact-btns-row a{
+    flex: 47.385%;
+    max-width: 47.385%;
+  }
+  a.secondary-col-btn{
+    background-color: #fff;
+    border: 1px solid #1D1D1F;
+    padding: 0px 16px;
+    height: 43px;
+    width: 100%;
+    align-content: center;
+font-size: 16px;
+font-weight: 400;
+line-height: 25.34px;
+text-align: center;
+color: #1D1D1F;
+    text-decoration: none;
+  }
+  a.solid-col-btn{
+    background-color: #1D1D1F;
+    border: 1px solid #1D1D1F;
+    padding: 0px 16px;
+    height: 43px;
+    align-content: center;
+    width: 100%;
+font-size: 16px;
+font-weight: 400;
+line-height: 25.34px;
+text-align: center;
+color: #fff;
+    text-decoration: none;
+  }
+  @media(max-width: 767px){
+    .repair-contact-row-{{ section.id }}{
+      padding-top: {{ section.settings.mob-padding-top }}px;
+      padding-bottom: {{ section.settings.mob-padding-bottom }}px;
+    }
+    .repair-info-column{
+      max-width: 100%;
+      flex: 100%;
+      padding-bottom: 20px;
+    }
+    .repair-btn-column{
+      max-width: 100%;
+      flex: 100%;
+    }
+    .contact-btns-row a{
+    flex: 100%;
+    max-width: 100%;
+  }
+  .repair-info-column h2{
+    color: #1D1D1F;
+font-size: 24px;
+font-weight: 600;
+line-height: 36px;
+text-align: left;
+padding: 0px;
+    margin: 0px;
+    padding-bottom: 8px;
+    }
+    .repair-info-column p{
+font-size: 16px;
+font-weight: 400;
+line-height: 1.6;
+letter-spacing: 0;
+text-align: left;
+color: #333;
+      padding: 0px;
+    margin: 0px 0 0.5rem;
+    }
+    .contact-btns-row a{
+    flex: 100%;
+    max-width: 100%;
+  }
+
+    a.secondary-col-btn{
+
+       background-color: #1D1D1F;
+    border: 1px solid #1D1D1F;
+    padding: 0px 16px;
+    height: 43px;
+    align-content: center;
+    width: 100%;
+font-size: 16px;
+font-weight: 400;
+line-height: 25.34px;
+text-align: center;
+color: #fff !important;
+    text-decoration: none;
+  }
+  a.solid-col-btn{
+   background-color: #fff;
+    border: 1px solid #1D1D1F;
+    padding: 0px 16px;
+    height: 43px;
+    width: 100%;
+    align-content: center;
+font-size: 16px;
+font-weight: 400;
+line-height: 25.34px;
+text-align: center;
+color: #1D1D1F !important;
+    text-decoration: none;
+  }
+    
+    a.secondary-col-btn{
+      margin-bottom: 20px;
+    }
+  }
+</style>
+
+{% schema %}
+  {
+    "name": "Repair Contact Row",
+    "settings": [
+      {
+         "type": "range",
+         "id": "padding-top",
+         "label": "Section Top Padding",
+         "default": 50,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "range",
+         "id": "padding-bottom",
+         "label": "Section Bottom Padding",
+         "default": 50,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "range",
+         "id": "mob-padding-top",
+         "label": "Section Top Padding",
+         "default": 40,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "range",
+         "id": "mob-padding-bottom",
+         "label": "Section Bottom Padding",
+         "default": 40,
+         "min": 0,
+         "max": 100,
+         "step": 5,
+         "unit": "px"
+       },
+       {
+         "type": "color",
+         "id": "bg",
+         "label": "Section BG Color",
+         "default": "#fff"
+       },
+       {
+         "type": "text",
+         "id": "heading",
+         "label": "Heading",
+         "default": "Ready for your repair?"
+       },
+       {
+         "type": "text",
+         "id": "details",
+         "label": "Details",
+         "default": "Book now or contact us if you still have questions"
+       },
+       {
+         "type": "url",
+         "id": "link-1",
+         "label": "Button One Link"
+       },
+       {
+         "type": "text",
+         "id": "btn-1",
+         "label": "Button One Text",
+         "default": "Contact us"
+       },
+       {
+         "type": "url",
+         "id": "link-2",
+         "label": "Button Two Link"
+       },
+       {
+         "type": "text",
+         "id": "btn-2",
+         "label": "Button Two Text",
+         "default": "Book a repair"
+       }
+    ],
+  "presets": [
+    {
+      "name": "Repair Contact Row"
+    }
+  ]
+}
+{% endschema %}

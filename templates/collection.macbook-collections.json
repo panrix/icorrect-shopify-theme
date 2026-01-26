@@ -1,0 +1,567 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "show_collection_description": true,
+        "show_collection_image": false,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "disabled": true,
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "enable_filtering": true,
+        "filter_type": "horizontal",
+        "enable_sorting": true,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "main_banner_and_video_HjbmW9": {
+      "type": "main-banner-and-video",
+      "disabled": true,
+      "settings": {
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "mob_padding_top": 0,
+        "mob_padding_bottom": 0,
+        "bg": "#ffffff",
+        "video_url": "",
+        "img": "shopify://shop_images/Website-Banner.jpg"
+      }
+    },
+    "parent_categories_mNdHXA": {
+      "type": "parent-categories",
+      "settings": {
+        "column_per_row": 3,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "mob_padding_top": 0,
+        "mob_padding_bottom": 0,
+        "bg": "#ffffff",
+        "heading": "MacBook",
+        "heading_size": 28,
+        "details": "At iCorrect, we specialise in advanced Apple repairs right down to the microchips on the logic board. Our MacBook repairs include screen replacements, battery replacements, logic board repairs, and keyboard fixes. Whether you’ve got a cracked display, your MacBook has suffered liquid damage, or has a dead battery, we use original parts to restore your MacBook Pro or MacBook Air to full health. Need your MacBook repaired faster? Our express repair service offers next-day or same-day turnaround if booked early.",
+        "btn_link": "",
+        "btn_text": ""
+      }
+    },
+    "macbook_matrix_UVLWWb": {
+      "type": "macbook-matrix",
+      "blocks": {
+        "macbook_model_ig8BEf": {
+          "type": "macbook_model",
+          "settings": {
+            "title": "MacBook Pro M1 2020",
+            "family": "Pro",
+            "size": "13",
+            "chip_year": "M1 (2020)",
+            "price_screen": "£400",
+            "product_screen_id": "",
+            "price_battery": "£120",
+            "product_battery_id": "",
+            "price_board": "",
+            "product_board_id": "",
+            "price_keyboard": "",
+            "product_keyboard_id": ""
+          }
+        },
+        "macbook_model_tGGtMm": {
+          "type": "macbook_model",
+          "settings": {
+            "title": "MacBook Pro M1 2020",
+            "family": "Pro",
+            "size": "14",
+            "chip_year": "M1 Pro/Max (2021)",
+            "price_screen": "£550",
+            "product_screen_id": "",
+            "price_battery": "£140",
+            "product_battery_id": "",
+            "price_board": "",
+            "product_board_id": "",
+            "price_keyboard": "",
+            "product_keyboard_id": ""
+          }
+        },
+        "macbook_model_8Kp3cF": {
+          "type": "macbook_model",
+          "settings": {
+            "title": "MacBook Pro M1 2020",
+            "family": "Air",
+            "size": "13",
+            "chip_year": "M2 (2022)",
+            "price_screen": "£450",
+            "product_screen_id": "",
+            "price_battery": "£130",
+            "product_battery_id": "",
+            "price_board": "",
+            "product_board_id": "",
+            "price_keyboard": "",
+            "product_keyboard_id": ""
+          }
+        }
+      },
+      "block_order": [
+        "macbook_model_ig8BEf",
+        "macbook_model_tGGtMm",
+        "macbook_model_8Kp3cF"
+      ],
+      "disabled": true,
+      "name": "MacBook Repair Wizard",
+      "settings": {
+        "heading": "MacBook Repair Pricing",
+        "subheading": "Identify your model to see instant quotes."
+      }
+    },
+    "parent_categories_nWCAYw": {
+      "type": "parent-categories",
+      "blocks": {
+        "category_74pW43": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/Pro_16_general_1b954e05-186c-4ba7-b682-94aca10b1f0b.png",
+            "title": "MacBook Pro 16’’",
+            "price": "",
+            "link": "shopify://collections/macbook-pro-16-repair-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_Fp8mqG": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/Pro_15_general.png",
+            "title": "MacBook Pro 15’’",
+            "price": "",
+            "link": "shopify://collections/macbook-pro-15-repair-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_WqzRyG": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/Pro_14_general.png",
+            "title": "MacBook Pro 14’’",
+            "price": "",
+            "link": "shopify://collections/macbook-pro-14-repair-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_NyLyX9": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/Pro_13_general.png",
+            "title": "MacBook Pro 13\"",
+            "price": "",
+            "link": "shopify://collections/macbook-pro-13-repair-prices",
+            "btn": "View repairs"
+          }
+        }
+      },
+      "block_order": [
+        "category_74pW43",
+        "category_Fp8mqG",
+        "category_WqzRyG",
+        "category_NyLyX9"
+      ],
+      "settings": {
+        "column_per_row": 4,
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 40,
+        "mob_padding_bottom": 40,
+        "bg": "#ffffff",
+        "heading": "MacBook Pro",
+        "heading_size": 28,
+        "details": "",
+        "btn_link": "",
+        "btn_text": ""
+      }
+    },
+    "parent_categories_FywRmd": {
+      "type": "parent-categories",
+      "blocks": {
+        "category_WVx9Bn": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/Air_15_general_637x446_bca0a0dc-901d-4a41-a3ad-ff798e7c3b18.png",
+            "title": "MacBook Air 15’’",
+            "price": "",
+            "link": "shopify://collections/macbook-air-15-repair-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_PFkQVa": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/Air_13_general_637x446_4bd28c8c-b54e-4a38-beeb-c58bf64f0922.png",
+            "title": "MacBook Air 13’’",
+            "price": "",
+            "link": "shopify://collections/macbook-air-13-repair-prices",
+            "btn": "View repairs"
+          }
+        }
+      },
+      "block_order": [
+        "category_WVx9Bn",
+        "category_PFkQVa"
+      ],
+      "settings": {
+        "column_per_row": 4,
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 40,
+        "mob_padding_bottom": 40,
+        "bg": "#ffffff",
+        "heading": "MacBook Air",
+        "heading_size": 28,
+        "details": "",
+        "btn_link": "",
+        "btn_text": ""
+      }
+    },
+    "parent_categories_p3HjEg": {
+      "type": "parent-categories",
+      "blocks": {
+        "category_qVyzHp": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/Diagnostic.png",
+            "title": "Diagnostic",
+            "price": "",
+            "link": "shopify://collections/macbook-diagnostic-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_yqQexj": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/MacBook_screen.png",
+            "title": "Screen Repair",
+            "price": "",
+            "link": "shopify://collections/macbook-screen-repair-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_eHgxiY": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/MacBook_Dustgate.png",
+            "title": "Dustgate Repair",
+            "price": "",
+            "link": "shopify://collections/macbook-dustgate-repair-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_7XYw8T": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/MacBook_Flexgate.png",
+            "title": "Flexgate Repair",
+            "price": "",
+            "link": "shopify://collections/macbook-flexgate-repair-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_9k7iVH": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/Battery_0d0f8ff5-c013-4949-a791-e80cb51fc86a.png",
+            "title": "Battery Repair",
+            "price": "",
+            "link": "shopify://collections/macbook-battery-repair-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_VAxA46": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/Charging_port_891b419f-90c8-4f18-b2d7-e3775c949091.png",
+            "title": "Charging Port Repair",
+            "price": "",
+            "link": "shopify://collections/macbook-charging-port-repair-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_F8khAm": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/MacBook_keyboard.png",
+            "title": "Keyboard Repair",
+            "price": "",
+            "link": "shopify://collections/macbook-keyboard-repair-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_9TUmtn": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/MacBook_Touch_Bar.png",
+            "title": "Touch Bar Repair",
+            "price": "",
+            "link": "shopify://collections/macbook-touch-bar-repair-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_CGdCma": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/MacBook_trackpad.png",
+            "title": "Trackpad Repair",
+            "price": "",
+            "link": "shopify://collections/macbook-trackpad-repair-prices",
+            "btn": "View repairs"
+          }
+        }
+      },
+      "block_order": [
+        "category_qVyzHp",
+        "category_yqQexj",
+        "category_eHgxiY",
+        "category_7XYw8T",
+        "category_9k7iVH",
+        "category_VAxA46",
+        "category_F8khAm",
+        "category_9TUmtn",
+        "category_CGdCma"
+      ],
+      "name": "Parent Categories",
+      "settings": {
+        "column_per_row": 4,
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 40,
+        "mob_padding_bottom": 40,
+        "bg": "#ffffff",
+        "heading": "Choose your MacBook repair",
+        "heading_size": 28,
+        "details": "",
+        "btn_link": "",
+        "btn_text": ""
+      }
+    },
+    "macbook_videos_tLnNVR": {
+      "type": "macbook-videos",
+      "name": "MacBook Videos",
+      "settings": {
+        "heading": "See How We Repair Your MacBook",
+        "subtitle": "Watch our videos to see how we repair MacBooks, what to expect, and how we work.",
+        "video_1_title": "Repair is better than replace.",
+        "video_2_title": "Our repair approach is sustainable.",
+        "video_3_title": "Do not overpay for your repairs.",
+        "color_scheme": "scheme-4",
+        "padding_top": 44,
+        "padding_bottom": 80
+      }
+    },
+    "repair_services_nQkwFT": {
+      "type": "repair-services",
+      "blocks": {
+        "service_PEi9BF": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Walk-in.png",
+            "heading": "Walk-In Service",
+            "details": "For clients based in Central London who wish to visit us, we operate a  walk-in drop-off service by appointment. Simply book your repair via our  website booking page to confirm your appointment time before heading to us.",
+            "btn": "Learn more",
+            "link": "shopify://pages/our-services"
+          }
+        },
+        "service_RaggTi": {
+          "type": "service",
+          "disabled": true,
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Courier.png",
+            "heading": "London Courier",
+            "details": "We operate a convenient collection, repair & delivery service for  clients based within Zones 1 & 2 in London. Our couriers are fully  tracked and insured throughout the journey. Book your iPhone repair  before 1pm for a same day return.",
+            "btn": "Learn more",
+            "link": ""
+          }
+        },
+        "service_enBGWD": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Delivery.png",
+            "heading": "National Courier",
+            "details": "Based outside of same day collection zone? We can still collect and  deliver your device anywhere in the UK. Simply book to have your device  collected via national courier.  Collection is made the following  working day after booking.",
+            "btn": "Learn more",
+            "link": "shopify://pages/our-services"
+          }
+        }
+      },
+      "block_order": [
+        "service_PEi9BF",
+        "service_RaggTi",
+        "service_enBGWD"
+      ],
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 50,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#ffffff",
+        "heading": "Our services",
+        "details": "Choose the most convenient service for you"
+      }
+    },
+    "icorrect_faqs_RVk3VL": {
+      "type": "icorrect-faqs",
+      "blocks": {
+        "accordion_mCCjdt": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How long do MacBook repairs take?",
+            "sub_head": "<p>Most MacBook repairs, including screen replacements, battery replacements, and keyboard repairs, take around 3 working days. If you need it done sooner, we offer an express MacBook repair service, allowing next-day or same-day repairs if booked in advance.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_dgGrWD": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What warranty do you offer?",
+            "sub_head": "<p>We provide a two-year warranty on all MacBook repairs, covering issues related to the repair. Whether it’s a screen replacement, battery repair, or logic board fix, our warranty ensures long-term reliability. This does not cover accidental damage, but we’re happy to help if any new issues arise.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_jNEQxe": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you use original parts?",
+            "sub_head": "<p>Yes, around 90% of the parts we use are original Apple parts, disassembled from genuine Apple devices. We’re the first company to champion sustainable repairs, and reusing parts is the best way to maintain Apple’s standards without creating unnecessary waste.</p><p>This approach means your MacBook retains features like True Tone, battery health monitoring, and the overall performance it was designed for after any repair at iCorrect.</p><p>The only exception is with older MacBook models, where it’s no longer possible to source original batteries in high-capacity condition. In those cases, we use the best quality OEM batteries available.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_wzPFwd": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you repair damaged MacBook logic boards?",
+            "sub_head": "<p>Yes, this is the advanced work we’re known for. While most repair centres, including Apple, will write off a faulty logic board and quote you for a full replacement, we go deeper. We repair them properly.</p><p>Our technicians work under a microscope, diagnosing issues at component and microchip level. That could mean anything from replacing a burned-out MOSFET or shorted capacitor to rebuilding complete circuits after liquid damage. We’ve revived boards others declared dead and we do it every day.</p><p>It’s precise, delicate work, but it saves our clients hundreds (compared to Apple), keeps original data intact, and massively reduces electronic waste.</p><p>If Apple said your MacBook isn’t fixable and that you need a new one, there’s a good chance we’ll prove them wrong.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_PLgEhN": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What if my MacBook repair doesn’t resolve the issue?",
+            "sub_head": "<p>It’s rare, but if a repair doesn’t fully resolve the problem your MacBook has, we won’t charge you for it. Our no-fix, no-fee policy applies to all standard MacBook repairs, and we’ll always explain what went wrong and what your options are.</p><p>In more advanced logic board diagnostics, if we’re unsuccessful (again, this is rare), we’ll suggest an alternative like a logic board replacement or data recovery, depending on what we find.</p><p>Either way, you’ll get a clear answer, not guesswork.</p><p>We’re here to fix the issue properly or give you the best path forward. No dead ends. No surprises.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_heFyRm": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can I get my MacBook repaired quicker?",
+            "sub_head": "<p>Yes, we offer an Express MacBook Repair Service for clients who need a faster turnaround. This service is limited and subject to availability, so we always recommend booking in advance.</p><p>When pre-booked, express repairs are often completed within one working day, and in some cases, even the same day. This applies to most issues, including screen, battery, and logic board repairs. Express bookings are prioritised and priced accordingly.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_7WpxcT": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What is your diagnostic process for MacBook repairs?",
+            "sub_head": "<p>Diagnostics are where we do our best thinking. If the fault isn’t obvious, we’ll run a full diagnostic on your MacBook, not just checking the battery and screen like most repair shops but going deep into the logic board, charging system, and internal circuitry.</p><p>We perform a full power rail test and visual inspection under a microscope, looking for signs of damage at component level. That includes blown capacitors, corroded traces, and shorted chips. We then test each critical stage of the board to narrow down the fault.</p><p>Once we’ve confirmed the issue, we’ll send you a detailed report with a clear repair plan and quote so you’re fully informed before any work begins.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_QdhiRR": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you offer payment plans for MacBook repairs?",
+            "sub_head": "<p>Yes, we offer flexible payment options through Klarna and PayPal Pay in 3. These let you spread the cost of your MacBook repair over time, making it easier to get your device fixed without paying everything upfront.</p><p>Both options are available at checkout for standard repairs. If you’re sending your MacBook in for diagnostics, we’ll include the payment options with your quote once your MacBook's repair plan is confirmed.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_enBnH3": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How do you ensure the quality of your MacBook repairs?",
+            "sub_head": "<p>We take repair quality seriously. Every MacBook we work on goes through multiple rounds of testing to make sure the repair is done right the first time.</p><p>When a device arrives, we carry out a full intake check before it reaches the repair team. Once the repair begins, we run pre-checks to confirm the fault and rule out any secondary issues. After the repair, your MacBook goes through full post-repair testing and a final quality check, completed by a technician who wasn’t involved in the repair itself. This process helps us catch anything that could cause problems down the line.</p><p>We also invest in ongoing training. Our technicians are constantly learning and developing solutions for the latest MacBook issues, including those Apple hasn’t published repair procedures for yet. In many cases, we’re the ones figuring out how to fix new faults before anyone else.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_rqbUQr": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you repair older MacBook models?",
+            "sub_head": "<p>We mainly repair MacBook models from 2016 onwards, including both MacBook Air and MacBook Pro. For older models, especially those from 2015 and before, we can still help with things like battery replacements or data recovery.</p><p>That said, we’ll always be upfront if a repair doesn’t make financial sense. If the cost outweighs the value of the device, we’ll recommend a more practical option instead.</p>",
+            "alignment": "left"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_mCCjdt",
+        "accordion_dgGrWD",
+        "accordion_jNEQxe",
+        "accordion_wzPFwd",
+        "accordion_PLgEhN",
+        "accordion_heFyRm",
+        "accordion_7WpxcT",
+        "accordion_QdhiRR",
+        "accordion_enBnH3",
+        "accordion_rqbUQr"
+      ],
+      "disabled": true,
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 75,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#1d1d1f",
+        "heading": "FAQs",
+        "details": "Learn more about iCorrect, the essential repair services that we offer and the warranties that come with each repair.",
+        "txt-clr": "#ffffff"
+      }
+    },
+    "contact_with_map_UJ4ced": {
+      "type": "contact-with-map",
+      "name": "Enhanced Contact Form",
+      "settings": {
+        "map_html": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.7925117760165!2d-0.1422392230845079!3d51.51702250999988!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2c5aabf83b%3A0x2abbd489a9d66382!2siCorrect!5e0!3m2!1sen!2sit!4v1766495755523!5m2!1sen!2sit\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
+        "address": "12 Margaret Street\nAudley House\nLondon\nW1W 8JQ",
+        "form_heading": "Get in Touch",
+        "form_subtitle": "Have a question about your device repair? We're here to help.",
+        "section_bg": "#f4f4f4",
+        "accent_color": "#3b82f6",
+        "text_color": "#171717",
+        "muted_text_color": "#6b7280",
+        "input_bg": "#ffffff",
+        "input_border": "#e5e7eb"
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "product-grid",
+    "main_banner_and_video_HjbmW9",
+    "parent_categories_mNdHXA",
+    "macbook_matrix_UVLWWb",
+    "parent_categories_nWCAYw",
+    "parent_categories_FywRmd",
+    "parent_categories_p3HjEg",
+    "macbook_videos_tLnNVR",
+    "repair_services_nQkwFT",
+    "icorrect_faqs_RVk3VL",
+    "contact_with_map_UJ4ced"
+  ]
+}

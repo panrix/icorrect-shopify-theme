@@ -1,0 +1,224 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "name": "Page",
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "rich_text_yKUVGV": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_nAfaLQ": {
+          "type": "heading",
+          "settings": {
+            "heading": "<strong>Real Diagnostics. Not Guesswork.</strong>",
+            "heading_size": "h0"
+          }
+        },
+        "text_mkyXTf": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Most repair shops run a quick scan and hope for the best. We don't. At iCorrect, diagnostics means testing at component and microchip level. We trace faults through circuits, not just swap parts until something works. If a shop can't repair a logic board, their diagnostic will only ever end one way: replacement. We go deeper.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "heading_nAfaLQ",
+        "text_mkyXTf"
+      ],
+      "name": "t:sections.rich-text.presets.name",
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "",
+        "full_width": true,
+        "padding_top": 40,
+        "padding_bottom": 52
+      }
+    },
+    "custom_liquid_NQ4xni": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "<style>\n  .diagnostic-section {\n    background: #fafafa;\n    padding: 80px 40px;\n    font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Inter, sans-serif;\n  }\n\n  .diagnostic-header {\n    text-align: center;\n    max-width: 1000px;\n    margin: 0 auto 70px auto;\n  }\n\n  .diagnostic-header h2 {\n    font-size: 40px;\n    font-weight: 700;\n    margin-bottom: 18px;\n    color: #111;\n  }\n\n  .diagnostic-header p {\n    font-size: 18px;\n    line-height: 1.65;\n    color: #444;\n  }\n\n  .diagnostic-grid {\n    display: grid;\n    grid-template-columns: repeat(5, 1fr);\n    gap: 32px;\n    max-width: 1600px;\n    margin: 0 auto;\n  }\n\n  .diagnostic-card {\n    background: #ffffff;\n    border-radius: 20px;\n    padding: 38px 34px 42px;\n    box-shadow: 0 12px 30px rgba(0,0,0,0.08);\n    display: flex;\n    flex-direction: column;\n    height: 100%;\n  }\n\n  .diagnostic-card img {\n    width: 52px;\n    height: 52px;\n    margin-bottom: 26px;\n  }\n\n  .diagnostic-card h3 {\n    font-size: 18px;\n    font-weight: 700;\n    margin-bottom: 16px;\n    color: #111;\n    line-height: 1.3;\n  }\n\n  .diagnostic-card p {\n    font-size: 16px;\n    line-height: 1.6;\n    color: #444;\n    margin: 0;\n  }\n\n  @media (max-width: 1400px) {\n    .diagnostic-grid {\n      grid-template-columns: repeat(2, 1fr);\n    }\n  }\n\n  @media (max-width: 768px) {\n    .diagnostic-grid {\n      grid-template-columns: 1fr;\n    }\n  }\n</style>\n\n<div class=\"diagnostic-section\">\n  <div class=\"diagnostic-header\">\n    <h2>What We Test and How We Do It</h2>\n    <p>\n      We begin by evaluating your device externally, testing voltage and current draw using precision power meters.\n      These tell us if the device is accepting power correctly or if there is a fault in the charging circuit.\n      Then we move to deeper, internal analysis.\n    </p>\n  </div>\n\n  <div class=\"diagnostic-grid\">\n    <div class=\"diagnostic-card\">\n      <img src=\"https://cdn-icons-png.flaticon.com/512/6916/6916653.png\">\n      <h3>Step 1: External Power Testing</h3>\n      <p>\n        We check how much current your device is drawing from the charger.\n        This shows if the power path is working or where power loss occurs.\n      </p>\n    </div>\n\n    <div class=\"diagnostic-card\">\n      <img src=\"https://cdn-icons-png.flaticon.com/512/4102/4102763.png\">\n      <h3>Step 2: DC Power Supply Injection</h3>\n      <p>\n        We apply power directly to the logic board to simulate boot conditions\n        and understand board behaviour under controlled conditions.\n      </p>\n    </div>\n\n    <div class=\"diagnostic-card\">\n      <img src=\"https://cdn-icons-png.flaticon.com/512/4245/4245134.png\">\n      <h3>Step 3: Thermal & Visual Inspection</h3>\n      <p>\n        Using microscopes and thermal imaging, we identify shorts,\n        corrosion, or failed components. Everything is documented and traceable.\n      </p>\n    </div>\n\n    <div class=\"diagnostic-card\">\n      <img src=\"https://cdn-icons-png.flaticon.com/512/1423/1423903.png\">\n      <h3>Step 4: Logic Board Circuit Mapping</h3>\n      <p>\n        We test power, charging and audio circuits using custom repair maps\n        and multimeters to locate the fault precisely.\n      </p>\n    </div>\n\n    <div class=\"diagnostic-card\">\n      <img src=\"https://cdn-icons-png.flaticon.com/512/4388/4388366.png\">\n      <h3>Step 5: Quote and Report</h3>\n      <p>\n        We send a report including the issue found, relevant photos,\n        and a detailed quote. You stay informed every step of the way.\n      </p>\n    </div>\n  </div>\n</div>",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "custom_liquid_bREMwK": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "<div style=\"background-color: #ffffff; padding: 20px 20px; text-align: center;\">\n  <h2 style=\"font-size: 2em; font-weight: bold; margin-bottom: 30px;\">Why Choose iCorrect?</h2>\n\n  <div style=\"display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; max-width: 1000px; margin: 0 auto;\">\n\n    <!-- Point 1: No Guesswork -->\n    <div style=\"flex: 1 1 250px; max-width: 300px;\">\n      <img src=\"https://cdn-icons-png.flaticon.com/512/17221/17221411.png\" alt=\"No Guessing Icon\" style=\"width: 50px; height: 50px; margin-bottom: 10px;\">\n      <h3 style=\"font-weight: 700; margin-bottom: 10px;\">We do not guess</h3>\n      <p style=\"color: #555;\">We do not guess. We prove faults with evidence.</p>\n    </div>\n\n    <!-- Point 2: No Upsell -->\n    <div style=\"flex: 1 1 250px; max-width: 300px;\">\n      <img src=\"https://cdn-icons-png.flaticon.com/512/12771/12771773.png\" alt=\"No Upsell Icon\" style=\"width: 50px; height: 50px; margin-bottom: 10px;\">\n      <h3 style=\"font-weight: 700; margin-bottom: 10px;\">We do not upsell</h3>\n      <p style=\"color: #555;\">We do not upsell. We repair only what is needed.</p>\n    </div>\n\n    <!-- Point 3: Fix, not Replace -->\n    <div style=\"flex: 1 1 250px; max-width: 300px;\">\n      <img src=\"https://cdn-icons-png.flaticon.com/512/13434/13434688.png\" alt=\"Fix Not Replace Icon\" style=\"width: 50px; height: 50px; margin-bottom: 10px;\">\n      <h3 style=\"font-weight: 700; margin-bottom: 10px;\">We fix, not replace</h3>\n      <p style=\"color: #555;\">We do not replace devices unnecessarily. We fix them.</p>\n    </div>\n\n  </div>\n\n  <p style=\"margin-top: 35px; font-size: 1.1em; line-height: 1.6; max-width: 800px; margin-left: auto; margin-right: auto; color: #333;\">\n    <strong>If you have been told your device is unrepairable, let us take a look.</strong> Advanced diagnostics start at £49, and in many cases, we save devices that Apple and others write off.\n  </p>\n</div>",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "contact_with_map_W7B63A": {
+      "type": "contact-with-map",
+      "name": "Contact with map",
+      "settings": {
+        "map_html": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.7925117760165!2d-0.1422392230845079!3d51.51702250999988!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2c5aabf83b%3A0x2abbd489a9d66382!2siCorrect!5e0!3m2!1sen!2sit!4v1766495755523!5m2!1sen!2sit\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
+        "address": "iCorrect\n12 Margaret Street\nAudley House\nLondon\nW1W 8JQ",
+        "form_heading": "Get a Repair Quote",
+        "form_subtitle": "Have a question about your device repair? We're here to help.",
+        "section_bg": "#f4f4f4",
+        "accent_color": "#3b82f6",
+        "text_color": "#171717",
+        "muted_text_color": "#6b7280",
+        "input_bg": "#ffffff",
+        "input_border": "#e5e7eb"
+      }
+    },
+    "repair_form_zeerRf": {
+      "type": "repair-form",
+      "disabled": true,
+      "name": "iCorrect Repair Form",
+      "settings": {
+        "heading": "Get a Repair Quote",
+        "description": "Enter your device details below. We offer component-level repair to save your data and reduce costs.",
+        "button_label": "Request Free Quote",
+        "bg_color": "#f3f3f3",
+        "heading_color": "#282828",
+        "text_color": "#171717",
+        "text_muted": "#737373",
+        "input_border": "#000000",
+        "accent_color": "#3b82f6",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "icorrect_faqs_7eqxnF": {
+      "type": "icorrect-faqs",
+      "blocks": {
+        "accordion_qeMqzz": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What is a diagnostic and why is it necessary?",
+            "sub_head": "<p>A diagnostic is the process of testing, measuring, and analysing your device to find out exactly what is wrong. At iCorrect, it is not a quick scan or guesswork. We test at logic board level and component level so you get a definitive answer, not a vague guess.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_jWCUbh": {
+          "type": "accordion",
+          "settings": {
+            "heading": " What types of issues require a diagnostic first?",
+            "sub_head": "<p>Diagnostics are essential when the fault is unclear or could have multiple causes. Common examples include power failures, battery not charging, no display, random shutdowns, overheating, no sound, camera failures, or post-liquid damage.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_hnPweU": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How much does a diagnostic cost?",
+            "sub_head": "<p>Diagnostics start from £29 for Apple Watch, £39 for iPhone, and £49 for iPad and MacBook. This includes all testing, disassembly, measurements, and a full report. If the fault is obvious, we may go straight to repair and waive the diagnostic fee.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_JTfeqj": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What do I get after the diagnostic?",
+            "sub_head": "<p>You receive a clear breakdown of the fault, supporting test data, photos if applicable, and a confirmed quote to complete the repair. If you choose not to proceed, your device is returned reassembled or you can recycle it with us.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_RPWHN4": {
+          "type": "accordion",
+          "settings": {
+            "heading": " How long does a diagnostic take?`",
+            "sub_head": "<p>Diagnostics usually take 1 to 2 working days for iPhone and Apple Watch, and 2 to 3 working days for iPad and MacBook, depending on complexity and parts required. Express options are available on request.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_w7YxXM": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can diagnostics be done while I wait or same day?",
+            "sub_head": "<p>Some basic tests can be done while you wait, but full diagnostics that involve internal testing, DC power injection, and microscope analysis require more time. We prioritise accuracy over speed.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_JXwH4g": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will I be charged if you can’t repair the device?",
+            "sub_head": "<p>Yes, the diagnostic fee still applies because it covers the full testing process. However, if we determine the device is unrepairable, we can offer a trade-in value or data recovery options where possible.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_YrrXpD": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What if another shop has already looked at my device?",
+            "sub_head": "<p>That is fine. In fact, we regularly diagnose failed repairs or identify faults that other shops missed. Our diagnostics go deeper than most, especially when logic board work is involved.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_ydamVD": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do diagnostics void my Apple warranty?",
+            "sub_head": "<p>If your device is already damaged, it is likely out of Apple warranty. Apple typically considers liquid damage, screen cracks, or internal modifications as voiding the warranty. We are transparent and will always advise you before proceeding.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_gGDBWF": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Is diagnostic testing safe for my data?",
+            "sub_head": "<p>Yes. Our process is non-destructive and we always prioritise data integrity. We do not wipe your device, and we take every precaution to protect your information during testing and repair.</p>",
+            "alignment": "left"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_qeMqzz",
+        "accordion_jWCUbh",
+        "accordion_hnPweU",
+        "accordion_JTfeqj",
+        "accordion_RPWHN4",
+        "accordion_w7YxXM",
+        "accordion_JXwH4g",
+        "accordion_YrrXpD",
+        "accordion_ydamVD",
+        "accordion_gGDBWF"
+      ],
+      "name": "iCorrect FAQs",
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 50,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#1d1d1f",
+        "heading": "FAQs",
+        "details": "Learn more about iCorrect, the essential repair services that we offer and the warranties that come with each repair.",
+        "txt-clr": "#ffffff"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "rich_text_yKUVGV",
+    "custom_liquid_NQ4xni",
+    "custom_liquid_bREMwK",
+    "contact_with_map_W7B63A",
+    "repair_form_zeerRf",
+    "icorrect_faqs_7eqxnF"
+  ]
+}

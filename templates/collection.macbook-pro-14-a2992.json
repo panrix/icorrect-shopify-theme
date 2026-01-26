@@ -1,0 +1,253 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "show_collection_description": true,
+        "show_collection_image": false,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "disabled": true,
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "enable_filtering": true,
+        "filter_type": "horizontal",
+        "enable_sorting": true,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "icorrect_product_grid_PyiYNX": {
+      "type": "icorrect-product-grid",
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 50,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#fafafa"
+      }
+    },
+    "repair_services_nQkwFT": {
+      "type": "repair-services",
+      "blocks": {
+        "service_PEi9BF": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Walk-in.png",
+            "heading": "Walk-In Service",
+            "details": "For clients based in Central London who wish to visit us, we operate a  walk-in drop-off service by appointment. Simply book your repair via our  website booking page to confirm your appointment time before heading to us.",
+            "btn": "Learn more",
+            "link": ""
+          }
+        },
+        "service_RaggTi": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Courier.png",
+            "heading": "London Courier",
+            "details": "We operate a convenient collection, repair & delivery service for  clients based within Zones 1 & 2 in London. Our couriers are fully  tracked and insured throughout the journey. Book your iPhone repair  before 1pm for a same day return.",
+            "btn": "Learn more",
+            "link": ""
+          }
+        },
+        "service_enBGWD": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Delivery.png",
+            "heading": "National Courier",
+            "details": "We collect from anywhere in the UK. Book online and we send secure packaging to your door. Your device is returned fully repaired and tested.",
+            "btn": "Learn more",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "service_PEi9BF",
+        "service_RaggTi",
+        "service_enBGWD"
+      ],
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 50,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#fafafa",
+        "heading": "Our repair services",
+        "details": "Choose the most convenient service for you"
+      }
+    },
+    "video_reviews_83ReMa": {
+      "type": "video-reviews",
+      "blocks": {
+        "video_W74UiU": {
+          "type": "video",
+          "settings": {
+            "video": "",
+            "img": "shopify://shop_images/Rectangle_2282.webp"
+          }
+        },
+        "video_XGqbiC": {
+          "type": "video",
+          "settings": {
+            "video": "",
+            "img": "shopify://shop_images/Rectangle_2284.webp"
+          }
+        },
+        "video_weLpfR": {
+          "type": "video",
+          "settings": {
+            "video": "",
+            "img": "shopify://shop_images/Rectangle_2283.webp"
+          }
+        }
+      },
+      "block_order": [
+        "video_W74UiU",
+        "video_XGqbiC",
+        "video_weLpfR"
+      ],
+      "settings": {
+        "padding-top": 80,
+        "padding-bottom": 80,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 80,
+        "bg": "#121212",
+        "heading": "See what our clients have to say about us",
+        "facebook": "",
+        "facebook-icon": "shopify://shop_images/fb-icon.png",
+        "insta": "",
+        "insta-icon": "shopify://shop_images/insta-icon.png",
+        "tiktok": "",
+        "tiktok-icon": "shopify://shop_images/tik-icon.png",
+        "youtube": "",
+        "youtube-icon": "shopify://shop_images/utube-icon.png"
+      }
+    },
+    "icorrect_faqs_RVk3VL": {
+      "type": "icorrect-faqs",
+      "blocks": {
+        "accordion_mCCjdt": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do I need an appointment?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_dgGrWD": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do I need to back-up my data before my repair?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_jNEQxe": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Are your repairs covered by a warranty?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_wzPFwd": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How long does it take to diagnose an unknown fault?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_PLgEhN": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Where are you located?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_heFyRm": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will I be charged if you are unable to complete a repair?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_7WpxcT": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do your prices include parts & labour?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_QdhiRR": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can you repair a damaged logic board?",
+            "sub_head": "<p>Lorem ipsum odor amet, consectetuer adipiscing elit. Ut sagittis quisque venenatis turpis aptent lacinia. Finibus senectus gravida felis cursus fames parturient gravida pulvinar morbi. Venenatis arcu nisl sodales lacinia blandit tristique.</p>",
+            "alignment": "left"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_mCCjdt",
+        "accordion_dgGrWD",
+        "accordion_jNEQxe",
+        "accordion_wzPFwd",
+        "accordion_PLgEhN",
+        "accordion_heFyRm",
+        "accordion_7WpxcT",
+        "accordion_QdhiRR"
+      ],
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 75,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#1d1d1f",
+        "heading": "FAQs",
+        "details": "Learn more about iCorrect, the essential repair services that we offer and the warranties that come with each repair.",
+        "txt-clr": "#ffffff"
+      }
+    },
+    "contact_with_map_dXbbDU": {
+      "type": "contact-with-map",
+      "settings": {
+        "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>"
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "product-grid",
+    "icorrect_product_grid_PyiYNX",
+    "repair_services_nQkwFT",
+    "video_reviews_83ReMa",
+    "icorrect_faqs_RVk3VL",
+    "contact_with_map_dXbbDU"
+  ]
+}

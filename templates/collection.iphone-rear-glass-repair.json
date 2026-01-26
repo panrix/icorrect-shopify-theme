@@ -1,0 +1,327 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "show_collection_description": true,
+        "show_collection_image": false,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "disabled": true,
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "enable_filtering": true,
+        "filter_type": "horizontal",
+        "enable_sorting": true,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "main_banner_and_video_HjbmW9": {
+      "type": "main-banner-and-video",
+      "disabled": true,
+      "settings": {
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "mob_padding_top": 0,
+        "mob_padding_bottom": 0,
+        "bg": "#ffffff",
+        "video_url": "",
+        "img": "shopify://shop_images/Website-Banner.jpg"
+      }
+    },
+    "about_info_RWbQxj": {
+      "type": "about-info",
+      "name": "About Info",
+      "settings": {
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 40,
+        "mob_padding_bottom": 40,
+        "bg": "#fafafa",
+        "heading": "iPhone Rear Glass Repair Prices",
+        "details": "<p>If your iPhone’s back glass is cracked, smashed, or falling apart, we’ll repair it properly, the right way, using the right parts. On newer iPhones, like the iPhone 14, 14 Plus, 15, and 16 ranges, Apple finally made the back glass modular, allowing it to be removed and replaced without touching the internal components. On these models, we complete a genuine iPhone back glass replacement, restoring the finish and feel of the original part without disturbing the internal hardware.</p><p><br/>For previous generation models, such as the iPhone 14 Pro, iPhone 13 Pro and the iPhone 12, the rear glass is fused to the entire housing. That means the only proper way to complete the repair is by replacing the full iPhone rear housing, which includes the frame and internal mounts. Apple does it this way. So do we. It ensures structural integrity, waterproofing, and internal cleanliness. We do not cut corners. Every repair is completed cleanly with no residual dust or glass left inside, just as Apple would expect.</p>",
+        "btn": "",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 38,
+        "heading_size_mobile": 24,
+        "heading_line_height_desktop": 46,
+        "heading_line_height_mobile": 36
+      }
+    },
+    "iphone_model_search_HhaPKy": {
+      "type": "iphone-model-search",
+      "name": "iPhone Search & Wizard",
+      "settings": {
+        "enable_model_search": true,
+        "model_search_scope_selector": "#product-grid, .product-grid",
+        "padding_top": 36,
+        "padding_bottom": 36,
+        "section_color_scheme": ""
+      }
+    },
+    "featured_collection_AfhUDd": {
+      "type": "featured-collection",
+      "name": "t:sections.featured-collection.presets.name",
+      "settings": {
+        "title": "",
+        "heading_size": "h1",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "collection": "iphone-rear-glass-repair-prices",
+        "columns_desktop": 3,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "enable_desktop_slider": false,
+        "color_scheme": "scheme-1",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "about_info_XAqnaH": {
+      "type": "about-info",
+      "name": "About Info",
+      "settings": {
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 40,
+        "mob_padding_bottom": 40,
+        "bg": "#fafafa",
+        "heading": "Our Process",
+        "details": "<p>You may have seen laser removal kits and online videos promising cheap rear glass repairs for older models. These methods cut the glass away using lasers or heat, often leaving shards, adhesive residue, and microscopic debris inside the device. That debris can lead to camera fog, swollen batteries, or even short-circuit the logic board. It is not a professional repair.</p><p><br/>At iCorrect, we only complete rear glass repairs to Apple standards. It may cost more than a local back street shop, but the result is a professional-grade repair that matches Apple’s own standards. That means genuine modular replacements for newer iPhones, and full iPhone rear housing replacements for earlier models. Rear glass replacements are completed within 2 to 3 hours. We are 50 percent more affordable than the Apple Store, and while our pricing may be slightly higher than a local repair store, our repairs are completed the Apple way. If your iPhone back glass is cracked, scratched, or completely shattered, we will restore your iPhone properly using the correct parts and process.</p>",
+        "btn": "",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 39,
+        "heading_size_mobile": 24,
+        "heading_line_height_desktop": 46,
+        "heading_line_height_mobile": 36
+      }
+    },
+    "iphone_videos_9iUppE": {
+      "type": "iphone-videos",
+      "name": "iPhone Videos",
+      "settings": {
+        "heading": "Behind the scenes",
+        "subtitle": "Watch our videos to understand common repair issues, what to expect, and how we fix your device with care.",
+        "video_1_title": "We specialise in data recovery.",
+        "video_2_title": "Do not compromise on quality.",
+        "video_3_title": "Poor quality parts cause serious issues.",
+        "color_scheme": "scheme-4",
+        "padding_top": 44,
+        "padding_bottom": 80
+      }
+    },
+    "repair_services_nQkwFT": {
+      "type": "repair-services",
+      "blocks": {
+        "service_PEi9BF": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Walk-in.png",
+            "heading": "Walk-In Service",
+            "details": "For clients based in Central London who wish to visit us, we operate a  walk-in drop-off service by appointment. Simply book your repair via our  website booking page to confirm your appointment time before heading to us.",
+            "btn": "Learn more",
+            "link": "shopify://pages/our-services"
+          }
+        },
+        "service_RaggTi": {
+          "type": "service",
+          "disabled": true,
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Courier.png",
+            "heading": "London Courier",
+            "details": "We operate a convenient collection, repair & delivery service for  clients based within Zones 1 & 2 in London. Our couriers are fully  tracked and insured throughout the journey. Book your iPhone repair  before 1pm for a same day return.",
+            "btn": "Learn more",
+            "link": ""
+          }
+        },
+        "service_enBGWD": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Delivery.png",
+            "heading": "National Courier",
+            "details": "We collect from anywhere in the UK. Book online and we send secure packaging to your door. Your device is returned fully repaired and tested.",
+            "btn": "Learn more",
+            "link": "shopify://pages/our-services"
+          }
+        }
+      },
+      "block_order": [
+        "service_PEi9BF",
+        "service_RaggTi",
+        "service_enBGWD"
+      ],
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 50,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#ffffff",
+        "heading": "Our services",
+        "details": "Choose the most convenient service for you"
+      }
+    },
+    "icorrect_faqs_RVk3VL": {
+      "type": "icorrect-faqs",
+      "blocks": {
+        "accordion_mCCjdt": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can you replace just the rear glass or back panel on my iPhone?",
+            "sub_head": "<p>Yes, but only on supported models. Apple made the rear glass modular starting with the iPhone 14 and 14 Plus. All iPhone 15 and 16 models follow this same design, so we can replace the rear glass on these devices without changing the entire housing.</p><p>For previous models, the rear glass is permanently fused to the frame. To repair it properly, we replace the full iPhone rear housing, which ensures the structure, internal shielding, and waterproofing are all intact. We do not offer cheap laser glass-only repairs on fused models, as they risk internal damage and are not comparable to Apple standards.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_dgGrWD": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What is the difference between rear glass and rear housing?",
+            "sub_head": "<p>The rear glass is the visible panel you see on the back of the iPhone. On modular models like the iPhone 14 or newer, it is a standalone piece. The rear housing refers to the structural frame that holds all internal components, and it includes the glass on older models where it is fused.</p><p>If your phone is eligible for rear glass-only repair, we will complete that. If not, we replace the full iPhone rear housing with an original part.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_jNEQxe": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How much does a rear glass or rear housing replacement cost?",
+            "sub_head": "<p>Rear glass repairs on supported models usually cost between £119 and £149, depending on the device. Rear housing replacements start from £199 and go up depending on the model. This is a full iPhone back housing replacement, not just cosmetic.</p><p>Compared to Apple, our prices are typically 50 percent lower. Apple charges up to £580 for a rear system replacement, which includes the housing, glass, and internal components. Our service is faster, more affordable, and held to the same quality standard.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_wzPFwd": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can a cracked rear glass cause other problems with my iPhone?",
+            "sub_head": "<p>Yes. Cracked rear glass can let moisture and dust into the device. On newer models, this could compromise your camera, wireless charging, or internal shielding. On older models, cracks can compromise the entire housing and create stress points that damage the screen or internal frame.</p><p>Even if your phone still works, a cracked rear is a structural fault. It is always best to get it repaired before it leads to bigger issues.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_iPyPC6": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can rear glass damage affect my iPhone’s wireless charging or camera?",
+            "sub_head": "<p>Yes. The rear panel plays a critical role in protecting and aligning both your wireless charging coil and rear camera assembly. If the rear glass is cracked or poorly fitted, it can interfere with charging consistency, cause overheating, or affect focus and image clarity.</p><p>We have seen cases where rear glass shards caused fog inside the camera lens or blocked the wireless charging signal, leading to overheating or failed charging cycles. At iCorrect, we check both features before and after every repair to make sure everything is working perfectly.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_PLgEhN": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How long does a rear glass or rear housing repair take?",
+            "sub_head": "<p>All of our repairs, both glass and housing, take 2 to 3 hours. We allow time to properly test camera function, wireless charging, and reseal integrity before returning the device.</p><p>Express service may be available for both, but must be booked in advance.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_wMHNen": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will my iPhone still be water resistant after the repair?",
+            "sub_head": "<p>Yes. We reseal all rear glass and housing replacements using the same strength adhesive Apple uses in its factory process. This maintains the liquid resistance of your device under normal use.</p><p>However, we advise avoiding full submersion or swim use after any third-party repair, even when resealed. The Apple Store themselves do not officially warranty liquid damage, and no third party, including us, can certify waterproofing.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_heFyRm": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you use original Apple parts for rear repairs?",
+            "sub_head": "<p>Yes. All of our rear glass panels and rear housing replacements are original parts, either reclaimed from donor devices or sourced from authorised channels. They match Apple’s factory fit, finish, and durability.</p><p>We do not use generic aftermarket glass or incomplete housing shells. Every part is tested, inspected, and installed to the same standards Apple expects from their own technicians.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_7WpxcT": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What does your warranty cover on rear glass repairs?",
+            "sub_head": "<p>We provide a two-year warranty on all rear glass and housing repairs. This covers adhesive failure, glass separation, internal issues caused by poor seal, or workmanship-related faults.</p><p>Accidental damage or drops are not covered. If something fails due to the repair itself, we will fix it at no cost.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_LrTg7i": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can you fix a failed rear glass repair done by another shop?",
+            "sub_head": "<p>Yes. We often see rear glass repairs done by laser removal that result in internal dust, fogged cameras, or even short circuits. It is a lot more common than we would like it to be.</p><p>We remove all damaged components, clean the internals, and restore your iPhone using the correct part for your model. It might cost a little more to undo someone else’s mistake, but we will explain the issues clearly and confirm exactly what we have completed to restore your iPhone back to full functionality.</p>",
+            "alignment": "left"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_mCCjdt",
+        "accordion_dgGrWD",
+        "accordion_jNEQxe",
+        "accordion_wzPFwd",
+        "accordion_iPyPC6",
+        "accordion_PLgEhN",
+        "accordion_wMHNen",
+        "accordion_heFyRm",
+        "accordion_7WpxcT",
+        "accordion_LrTg7i"
+      ],
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 75,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#1d1d1f",
+        "heading": "FAQs",
+        "details": "Learn more about iCorrect, the essential repair services that we offer and the warranties that come with each repair.",
+        "txt-clr": "#ffffff"
+      }
+    },
+    "contact_with_map_dXbbDU": {
+      "type": "contact-with-map",
+      "settings": {
+        "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>"
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "product-grid",
+    "main_banner_and_video_HjbmW9",
+    "about_info_RWbQxj",
+    "iphone_model_search_HhaPKy",
+    "featured_collection_AfhUDd",
+    "about_info_XAqnaH",
+    "iphone_videos_9iUppE",
+    "repair_services_nQkwFT",
+    "icorrect_faqs_RVk3VL",
+    "contact_with_map_dXbbDU"
+  ]
+}

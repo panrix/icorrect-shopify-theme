@@ -1,0 +1,327 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "show_collection_description": true,
+        "show_collection_image": false,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "disabled": true,
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "enable_filtering": true,
+        "filter_type": "horizontal",
+        "enable_sorting": true,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "main_banner_and_video_HjbmW9": {
+      "type": "main-banner-and-video",
+      "disabled": true,
+      "settings": {
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "mob_padding_top": 0,
+        "mob_padding_bottom": 0,
+        "bg": "#ffffff",
+        "video_url": "",
+        "img": "shopify://shop_images/Website-Banner.jpg"
+      }
+    },
+    "about_info_RWbQxj": {
+      "type": "about-info",
+      "name": "About Info",
+      "settings": {
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 40,
+        "mob_padding_bottom": 40,
+        "bg": "#fafafa",
+        "heading": "iPhone Front Camera Repair Prices",
+        "details": "<p>Face ID and the front camera are closely linked. On newer models, Apple has made this component available for third-party repair, but the part must be ordered specifically for your device using its serial number. Repairs are completed using Apple’s internal calibration software to pair the part and retain Face ID functionality.</p><p><br/>For older models, it is still possible to complete the repair, but Face ID may be lost if the original sensors have failed. We will always explain your options clearly before beginning.</p><p><br/>Repairs are typically completed within 2 to 3 hours, and every component is fully tested for image clarity, colour balance, and sensor performance before return.</p>",
+        "btn": "",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 38,
+        "heading_size_mobile": 24,
+        "heading_line_height_desktop": 46,
+        "heading_line_height_mobile": 36
+      }
+    },
+    "iphone_model_search_zfyWRr": {
+      "type": "iphone-model-search",
+      "name": "iPhone Search & Wizard",
+      "settings": {
+        "enable_model_search": true,
+        "model_search_scope_selector": "#product-grid, .product-grid",
+        "padding_top": 36,
+        "padding_bottom": 36,
+        "section_color_scheme": ""
+      }
+    },
+    "featured_collection_AfhUDd": {
+      "type": "featured-collection",
+      "name": "t:sections.featured-collection.presets.name",
+      "settings": {
+        "title": "",
+        "heading_size": "h1",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "collection": "iphone-front-camera-repair-prices",
+        "columns_desktop": 3,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "enable_desktop_slider": false,
+        "color_scheme": "scheme-1",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "about_info_XAqnaH": {
+      "type": "about-info",
+      "name": "About Info",
+      "settings": {
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 40,
+        "mob_padding_bottom": 40,
+        "bg": "#fafafa",
+        "heading": "Our Process",
+        "details": "<p>If you’re trading in or selling your iPhone, a faulty camera can slash its value. A repaired, original Apple camera that’s been properly calibrated can protect your resale price and keep the phone functioning properly.</p><p><br/>It’s also important to note that lens damage or poor-quality lens repairs can affect the camera module itself. If your lens is cracked, or you’ve had a rear glass or lens repair elsewhere and now have fog, dust, or specks on your images, the camera may be contaminated or scratched. We check all of this as part of the repair.</p><p><br/>If your iPhone needs both the lens and camera module repaired, we’ll let you know in advance and complete both using original parts. In rare cases where the fault extends beyond the camera to the logic board, we’ll upgrade to a diagnostic and build a repair plan from there. But in most cases, a simple camera module replacement solves the issue quickly and properly.</p>",
+        "btn": "",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 38,
+        "heading_size_mobile": 24,
+        "heading_line_height_desktop": 46,
+        "heading_line_height_mobile": 36
+      }
+    },
+    "iphone_videos_KXcXhK": {
+      "type": "iphone-videos",
+      "name": "iPhone Videos",
+      "settings": {
+        "heading": "Behind the scenes",
+        "subtitle": "Watch our videos to understand common repair issues, what to expect, and how we fix your device with care.",
+        "video_1_title": "We specialise in data recovery.",
+        "video_2_title": "Do not compromise on quality.",
+        "video_3_title": "Poor quality parts cause serious issues.",
+        "color_scheme": "scheme-4",
+        "padding_top": 44,
+        "padding_bottom": 80
+      }
+    },
+    "repair_services_nQkwFT": {
+      "type": "repair-services",
+      "blocks": {
+        "service_PEi9BF": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Walk-in.png",
+            "heading": "Walk-In Service",
+            "details": "For clients based in Central London who wish to visit us, we operate a  walk-in drop-off service by appointment. Simply book your repair via our  website booking page to confirm your appointment time before heading to us.",
+            "btn": "Learn more",
+            "link": "shopify://pages/our-services"
+          }
+        },
+        "service_RaggTi": {
+          "type": "service",
+          "disabled": true,
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Courier.png",
+            "heading": "London Courier",
+            "details": "We operate a convenient collection, repair & delivery service for  clients based within Zones 1 & 2 in London. Our couriers are fully  tracked and insured throughout the journey. Book your iPhone repair  before 1pm for a same day return.",
+            "btn": "Learn more",
+            "link": ""
+          }
+        },
+        "service_enBGWD": {
+          "type": "service",
+          "settings": {
+            "icon": "shopify://shop_images/Service_icon_Delivery.png",
+            "heading": "National Courier",
+            "details": "We collect from anywhere in the UK. Book online and we send secure packaging to your door. Your device is returned fully repaired and tested.",
+            "btn": "Learn more",
+            "link": "shopify://pages/our-services"
+          }
+        }
+      },
+      "block_order": [
+        "service_PEi9BF",
+        "service_RaggTi",
+        "service_enBGWD"
+      ],
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 50,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#ffffff",
+        "heading": "Our services",
+        "details": "Choose the most convenient service for you"
+      }
+    },
+    "icorrect_faqs_RVk3VL": {
+      "type": "icorrect-faqs",
+      "blocks": {
+        "accordion_mCCjdt": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Why has my iPhone front camera stopped working?",
+            "sub_head": "<p>There are a few common causes. Dust or moisture ingress, impact damage, or a faulty screen replacement can all affect the front camera. If you are seeing blurry images, black screens, or the camera is not opening at all, the sensor may need replacing.</p><p>In many cases, the issue is also linked to Face ID, since the camera and Face ID module are mounted together. We will inspect the full unit and confirm what needs to be replaced.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_dgGrWD": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can you repair the front camera without losing Face ID?",
+            "sub_head": "<p>Yes, on supported models. From iPhone 14 onwards, Apple allows authorised repairers to replace the camera and Face ID module together, then calibrate them using official tools. This retains all features and keeps the repair logged in the iPhone settings as verified.</p><p>On older models, if Face ID has already failed or the sensors are damaged, Face ID cannot be restored. We will always let you know what is possible before starting.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_jNEQxe": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How much does it cost to repair the iPhone front camera?",
+            "sub_head": "<p>Front camera repairs start at £200. Pricing includes the original part, full calibration, and all testing. For newer models, the part must be ordered specifically for your iPhone using its serial number, which ensures Face ID is preserved.</p><p>We do not fit aftermarket front cameras and will always confirm compatibility before booking your device in.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_wzPFwd": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will the camera still show as original after the repair?",
+            "sub_head": "<p>Yes, if the repair is done correctly. Using Apple’s calibration tools, we pair the new front camera module to your iPhone and confirm it as original in settings. This preserves full functionality and avoids warning messages.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_iPyPC6": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can a bad screen replacement affect the front camera?",
+            "sub_head": "<p>Absolutely. If your screen was replaced without proper sealing, moisture or dust can enter and affect the front camera lens or sensors. Fog, focus issues, or white haze in selfies can all be caused by this.</p><p>If you have had a screen repair recently and now have camera issues, we will inspect the module and let you know if both need replacing.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_PLgEhN": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What is included in a front camera repair?",
+            "sub_head": "<p>We test the existing camera and Face ID module, remove the faulty unit, and install a genuine replacement. Then we calibrate the new part using Apple’s tools to restore full functionality.</p><p>We also test for image quality, colour balance, and alignment to ensure the new module performs like new.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_wMHNen": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do you use original front camera parts?",
+            "sub_head": "<p>Yes. We order front camera modules directly through Apple using your iPhone’s serial number. This ensures the part is compatible, traceable, and can be calibrated correctly.</p><p>We also use reclaimed original parts for certain models where new stock is unavailable. All parts are tested and approved before use.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_heFyRm": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can you fix failed front camera repairs from other shops?",
+            "sub_head": "<p>Yes. If another company has installed a faulty part or damaged the module during a screen repair, we can usually restore it. We will assess the internal damage, replace what is needed, and recalibrate the camera correctly.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_7WpxcT": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How long does a front camera repair take?",
+            "sub_head": "<p>Most front camera repairs are completed within 2 to 3 hours. If the part needs to be ordered from Apple, we will confirm the estimated timeframe when booking your device in.</p><p>We test and calibrate the part fully before return.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_LrTg7i": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Is this repair covered under warranty?",
+            "sub_head": "<p>Yes. All front camera repairs are covered by our two-year warranty. This includes the camera, Face ID, calibration, and workmanship.</p><p>Accidental damage, water ingress, or issues caused by further damage are not covered.</p>",
+            "alignment": "left"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_mCCjdt",
+        "accordion_dgGrWD",
+        "accordion_jNEQxe",
+        "accordion_wzPFwd",
+        "accordion_iPyPC6",
+        "accordion_PLgEhN",
+        "accordion_wMHNen",
+        "accordion_heFyRm",
+        "accordion_7WpxcT",
+        "accordion_LrTg7i"
+      ],
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 75,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#1d1d1f",
+        "heading": "FAQs",
+        "details": "Learn more about iCorrect, the essential repair services that we offer and the warranties that come with each repair.",
+        "txt-clr": "#ffffff"
+      }
+    },
+    "contact_with_map_dXbbDU": {
+      "type": "contact-with-map",
+      "settings": {
+        "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>"
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "product-grid",
+    "main_banner_and_video_HjbmW9",
+    "about_info_RWbQxj",
+    "iphone_model_search_zfyWRr",
+    "featured_collection_AfhUDd",
+    "about_info_XAqnaH",
+    "iphone_videos_KXcXhK",
+    "repair_services_nQkwFT",
+    "icorrect_faqs_RVk3VL",
+    "contact_with_map_dXbbDU"
+  ]
+}
