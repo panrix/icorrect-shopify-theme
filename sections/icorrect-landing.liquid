@@ -1675,6 +1675,94 @@
     })();
 
     // ----------------------------------------------------
+// 1.5 FORM INTERCEPTOR FOR N8N
+// ----------------------------------------------------
+(function initFormInterceptor() {
+  const form = root.querySelector('#corporate-lead-form');
+  if (!form || form.dataset.n8nIntercepted === 'true') return;
+  
+  form.dataset.n8nIntercepted = 'true';
+  const originalAction = form.action;
+  form.action = 'javascript:void(0);';
+  
+  const N8N_WEBHOOK_URL = 'https://icorrect.app.n8n.cloud/webhook/shopify-contact-form';
+  
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn ? submitBtn.innerHTML : '';
+    
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span style="opacity:0.7">Sending...</span>';
+    }
+    
+    try {
+      const formData = new FormData(form);
+      const data = {
+        contact: {}
+      };
+      
+      for (let [key, value] of formData.entries()) {
+        if (key.startsWith('contact[') && key.endsWith(']')) {
+          const fieldName = key.slice(8, -1);
+          data.contact[fieldName] = value;
+        } else if (key !== 'form_type' && key !== 'utf8') {
+          data[key] = value;
+        }
+      }
+      
+      data.timestamp = new Date().toISOString();
+      data.source = 'shopify-website';
+      data.page_url = window.location.href;
+      data.referrer = document.referrer;
+      
+      const response = await fetch(N8N_WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      
+      // Show success - replace form with success message
+      const formCard = form.closest('.ic-form');
+      if (formCard) {
+        formCard.innerHTML = `
+          <div class="ic-form-success">
+            <div class="ic-form-success__icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <h3 class="ic-form-success__title">Request Received</h3>
+            <p class="ic-form-success__text">
+              Thank you for submitting your details. Our team will review your request and get back to you as soon as possible.
+            </p>
+            <a href="/" class="ic-btn ic-btn--primary ic-btn--sm" style="margin-top: 24px;">Back to Home</a>
+          </div>
+        `;
+      }
+      
+    } catch (error) {
+      console.error('Form submission error:', error);
+      
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+      }
+      
+      alert('Unable to send message. Please try again or contact us at support@icorrect.co.uk');
+    }
+  });
+})();
+
+    // ----------------------------------------------------
     // 2. MOBILE COMPARISON TOGGLE (Previous functionality)
     // ----------------------------------------------------
     (function initMobileCompareToggle() {
