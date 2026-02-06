@@ -4,6 +4,13 @@
 {% assign main_variant = product.selected_or_first_available_variant %}
 
 <style>
+  /* --- SAFARI FONT FIX --- */
+  .additional-repair-wrapper,
+  .additional-repair-wrapper * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
   /* --- GLOBAL HELPERS --- */
   .line-row-wrap .del-price{ font-weight: 700 !important; }
   .price, .product-form{ display:none !important; }
@@ -319,7 +326,7 @@
   .walk-in-book-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     padding-top: 30px;
     margin-top: 20px;
     border-top: 1px solid #e5e5e5;
@@ -339,7 +346,7 @@
     font-weight: 700;
   }
 
-  .custom-add-to-cart { width: 100%; max-width: 200px; }
+  .custom-add-to-cart { width: 100%; max-width: 280px; }
   
   .custom-add-to-cart button {
     font-size: 15px;
