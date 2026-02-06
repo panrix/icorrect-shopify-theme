@@ -326,7 +326,7 @@
   .walk-in-book-row {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     padding-top: 30px;
     margin-top: 20px;
     border-top: 1px solid #e5e5e5;
@@ -1328,7 +1328,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      window.location.href = '/cart';
+      window.location.href = '/checkout';
     } catch (e) {
       showCartError('Error adding to cart: Network or theme script error.');
       resetButton();
