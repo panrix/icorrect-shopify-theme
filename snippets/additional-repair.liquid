@@ -3,2446 +3,738 @@
 {% assign mail_in = all_products['mail-in-service'] %}
 {% assign main_variant = product.selected_or_first_available_variant %}
 
-{% comment %} Fallback: If no metafield repairs, get from product's collection {% endcomment %}
-{% if repair_products == blank or repair_products.size == 0 %}
-  {% for collection in product.collections %}
-    {% if collection.handle contains 'repair' %}
-      {% assign repair_products = collection.products %}
-      {% break %}
-    {% endif %}
-  {% endfor %}
-{% endif %}
-
-{% comment %} Check if product is a Diagnostic {% endcomment %}
-{% assign is_diagnostic = false %}
-{% assign product_title_lower = product.title | downcase %}
-{% if product_title_lower contains 'diagnostic' %}
-  {% assign is_diagnostic = true %}
-{% endif %}
-
-{% comment %} Check if product is iPhone or MacBook {% endcomment %}
-{% assign is_iphone_or_macbook = false %}
-{% if product_title_lower contains 'iphone' or product_title_lower contains 'macbook' %}
-  {% assign is_iphone_or_macbook = true %}
-{% endif %}
-
-{% comment %} Get express diagnostic product {% endcomment %}
-{% assign express_diagnostic = product.metafields.custom.express_diagnostic.value %}
-
-<!-- Flatpickr CSS for date picker -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
-  /* Flatpickr custom styling */
-  .flatpickr-day.flatpickr-disabled,
-  .flatpickr-day.flatpickr-disabled:hover {
-    color: #d2d2d7 !important;
-    background: transparent !important;
-    cursor: not-allowed !important;
-  }
-  
-  .flatpickr-day.today {
-    border-color: var(--ic-primary) !important;
-  }
-  
-  .flatpickr-day.selected {
-    background: var(--ic-primary) !important;
-    border-color: var(--ic-primary) !important;
-  }
-  
-  .flatpickr-calendar {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif !important;
-    border-radius: 12px !important;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
-  }
-</style>
-
-<style>
-  /* =============================================
-     iCorrect Theme v11.17-v12-FINAL-PATCHED
-     
-     FIXES APPLIED:
-     - Fix 1: Deposit hidden for diagnostics (Liquid)
-     - Fix 2: Date formatting in line items (JS)
-     - Fix 3: Duplicate CSS removed
-     - Fix 4: Turnaround dates update on service switch (JS)
-     - Fix 5: Time slot re-validation on service switch (JS)
-     - Fix 6: Null guards on balance elements (JS)
-     - Fix 7: Checkout date validation (JS)
-     ============================================= */
-  
-  :root {
-    --ic-primary: #0071e3;
-    --ic-primary-hover: #0077ED;
-    --ic-primary-light: #e8f4fd;
-    --ic-primary-border: rgba(0, 113, 227, 0.3);
-    --ic-success: #34C759;
-    --ic-success-light: #E8F9ED;
-    --ic-text: #1d1d1f;
-    --ic-text-secondary: #6e6e73;
-    --ic-border: #d2d2d7;
-    --ic-border-light: #e8e8ed;
-    --ic-bg-subtle: #f5f5f7;
-    --ic-bg-card: #ffffff;
-    --ic-radius: 12px;
-    --ic-radius-lg: 16px;
-    --ic-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-    --ic-shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-    --ic-shadow-focus: 0 0 0 4px rgba(0, 113, 227, 0.15);
-    --ic-transition: all 0.2s ease;
-    
-    --ic-font-xs: 11px;
-    --ic-font-sm: 13px;
-    --ic-font-base: 15px;
-    --ic-font-md: 16px;
-    --ic-font-lg: 20px;
-    --ic-font-xl: 24px;
-    
-    --ic-lh-heading: 1.15;
-    --ic-lh-body: 1.5;
-    --ic-tracking-body: -0.02em;
-    --ic-tracking-heading: -0.04em;
-    --ic-touch-min: 44px;
-  }
-  
   /* --- GLOBAL HELPERS --- */
-  .line-row-wrap .del-price { font-weight: 700 !important; }
-  /* Hide default Shopify price/form - Ferrari's custom checkout interface replaces them */
-  .price,
-  .product-form { display: none !important; }
-  .bg-white { display: contents; }
+  .line-row-wrap .del-price{ font-weight: 700 !important; }
+  .price, .product-form{ display:none !important; }
+  .bg-white { display: contents; } 
 
-  /* --- SECTION CONTAINER --- */
-  .ic-booking-container {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif;
-    max-width: 100%;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    letter-spacing: var(--ic-tracking-body);
+  /* --- ADD ONS (Checkboxes) --- */
+  .additionl-repair-product label, .additional-walk-in-product label {
+    position: relative;
+    padding: 12px 0 12px 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.4;
+    text-align: left;
+    color: #1d1d1f;
+    cursor: pointer;
+    border-bottom: 1px solid #f5f5f5;
+    font-family: 'Axiforma-M' !important;
+  }
+  .additionl-repair-product:last-child label { border-bottom: none; }
+  
+  .additionl-repair-product input, .additional-walk-in-product input {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    width: 20px;
+    height: 20px;
+    accent-color: #1d1d1f;
+    margin: 0;
+  }
+  .repair-price {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1d1d1f;
+  }
+
+  /* --- SELECTION GRIDS --- */
+  .choice-btn-row, 
+  .trt_choice-btn-row, 
+  .battery_choice-btn-row, 
+  .color_choice-btn-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); 
+    gap: 12px; 
+    width: 100%;
+    margin-bottom: 30px;
+    background: transparent;
+  }
+
+  /* Base Card Style */
+  .trt-btn, 
+  .color-btn, 
+  .collect-device-btn, 
+  .visit-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    
+    background-color: #FFFFFF;
+    border: 1px solid #d2d2d7; 
+    border-radius: 12px !important; 
+    
+    padding: 10px; 
+    min-height: 60px; 
+    height: auto; 
+    
+    color: #1d1d1f;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    /* overflow: hidden;  <-- REMOVED to allow badge to float out */
+    overflow: visible !important; 
+  }
+
+  /* --- NEW POPULAR BADGE STYLE --- */
+  .popular-badge {
+    position: absolute;
+    background-color: #0071e3; /* Brand Blue */
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 4px; 
+    text-transform: uppercase;
+    line-height: 1;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    z-index: 5;
+    
+    /* MOBILE DEFAULT: Inside the box */
+    top: 6px;
+    right: 6px;
+  }
+
+  /* DESKTOP OVERRIDE: Outside the box */
+  @media(min-width: 750px) {
+    .popular-badge {
+      top: -15px;      /* Pull it up outside the border */
+      right: 15px;     /* Position from right */
+      font-size: 11px; /* Slightly larger on desktop */
+      padding: 5px 10px;
+    }
+  }
+
+  /* Typography inside Cards */
+  .trt-btn p, 
+  .collect-device-btn p, 
+  .visit-btn p {
+    font-family: 'Axiforma-M';
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0 0 4px 0;
+    padding: 0;
+    z-index: 2; 
+  }
+  
+  /* Subtext / Price / Description */
+  .trt-btn small, 
+  .collect-device-btn small,
+  .visit-btn small {
+    font-family: 'Axiforma-R';
+    font-size: 12px;
+    color: #86868b;
+    line-height: 1.2;
+    display: block;
+  }
+  
+  /* Price bolding inside description */
+  .trt-btn small span, 
+  .collect-device-btn small span, 
+  .visit-btn small span {
+    font-weight: 600;
+    color: #1d1d1f;
+  }
+
+  /* Hover State (Desktop) */
+  @media(hover: hover) {
+    .trt-btn:not(.active):hover, 
+    .color-btn:not(.active):hover, 
+    .collect-device-btn:not(.active):hover, 
+    .visit-btn:not(.active):hover {
+      border-color: #86868b;
+      background-color: #fbfbfb;
+    }
+  }
+
+  /* ACTIVE STATE (Selected) */
+  .color-btn.active, 
+  .trt-btn.active, 
+  .collect-device-btn.active, 
+  .visit-btn.active {
+    background-color: #1d1d1f;
+    color: #ffffff;
+    border-color: #1d1d1f;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    z-index: 2;
+  }
+
+  /* Text colors when active */
+  .active p, .active small, .active small span, .active span {
+    color: #ffffff !important;
+  }
+  .active small {
+    opacity: 0.8;
+  }
+
+  /* --- COLOR SWATCHES SPECIFIC --- */
+  #color-chips.color_choice-btn-row {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); 
+    gap: 10px;
+  }
+  .color-btn {
+    padding: 8px;
+    min-height: 70px;
+    font-size: 14px; 
+    font-weight: 500;
+  }
+  /* Force stacking of two words using word-spacing trick */
+  .color-btn span.color-name-text {
+    display: block;
+    word-spacing: 100vw; 
+    white-space: normal;
+    text-align: center;
+    line-height: 1.25;
+  }
+
+  .swatch-circle {
+    display: block !important;
+    flex-shrink: 0 !important;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-bottom: 6px;
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+  }
+  .active .swatch-circle {
+    border: 1px solid rgba(255,255,255,0.3);
   }
 
   /* --- SECTION HEADINGS --- */
-  .ic-section-heading {
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  .trt-heading, .pickup-method-heading, .device-color-selection-wrapper h3 { 
+    font-family: 'Axiforma-M' !important;
     font-weight: 600;
-    font-size: var(--ic-font-lg);
-    line-height: var(--ic-lh-heading);
-    color: var(--ic-text);
-    margin: 32px 0 20px 0;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--ic-border-light);
-    letter-spacing: -0.03em;
-  }
-  
-  .ic-section-heading:first-of-type {
+    font-size: 17px;
+    line-height: 1.3;
+    color: #1d1d1f;
+    margin-bottom: 12px;
     margin-top: 0;
   }
-
-  /* =============================================
-     TRUST BADGES
-     ============================================= */
   
-  .ic-trust-strip {
+  .additional-repairs-heading {
+    width: 100%;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 32px;
-    padding: 20px 0;
-    margin-bottom: 24px;
-    border-bottom: 1px solid var(--ic-border-light);
-  }
-  
-  .ic-trust-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .ic-trust-icon {
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  
-  .ic-trust-icon img,
-  .ic-trust-icon svg {
-    width: 28px;
-    height: 28px;
-    object-fit: contain;
-  }
-  
-  .ic-trust-text {
-    font-size: var(--ic-font-sm);
-    font-weight: 600;
-    color: var(--ic-text);
-    line-height: 1.3;
-  }
-
-  /* =============================================
-     CHOICE CARD GRID SYSTEM
-     ============================================= */
-  
-  .ic-choice-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 10px;
-    margin-bottom: 24px;
-  }
-  
-  .ic-choice-grid-2 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .ic-choice-grid-3 {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .ic-choice-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    background: var(--ic-bg-card);
-    border: 2px solid var(--ic-border);
-    border-radius: var(--ic-radius);
-    padding: 16px 12px;
-    min-height: 88px;
-    cursor: pointer;
-    transition: var(--ic-transition);
-    overflow: visible;
-    box-sizing: border-box;
-  }
-  
-  .ic-choice-card:hover {
-    border-color: var(--ic-text-secondary);
-    background: #fafafa;
-  }
-  
-  .ic-choice-card.active {
-    border-color: var(--ic-text);
-    border-width: 2px;
-    background: #f5f5f7;
-  }
-  
-  .ic-choice-card.active:hover {
-    background: #eeeeef;
-  }
-  
-  .ic-choice-card input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-  }
-  
-  .ic-choice-card-eyebrow {
-    font-size: var(--ic-font-xs);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--ic-primary);
-    margin-bottom: 2px;
-    white-space: normal;
-    text-align: center;
-  }
-  
-  .ic-choice-card-title {
-    font-weight: 600;
-    font-size: var(--ic-font-md);
-    line-height: 1.2;
-    margin: 0 0 4px 0;
-    color: var(--ic-text);
-    letter-spacing: -0.02em;
-    word-break: break-word;
-  }
-  
-  .ic-choice-card-desc {
-    font-size: var(--ic-font-sm);
-    color: var(--ic-text-secondary);
-    line-height: 1.4;
-  }
-  
-  .ic-choice-card-date {
-    font-size: var(--ic-font-sm);
-    font-weight: 600;
-    color: var(--ic-primary);
-    margin-top: 8px;
-    background: var(--ic-primary-light);
-    padding: 6px 12px;
-    border-radius: 6px;
-    white-space: normal;
-    word-break: keep-all;
-    text-align: center;
-    max-width: 100%;
-    line-height: 1.3;
-  }
-  
-  .ic-choice-card.active .ic-choice-card-date {
-    background: white;
-  }
-  
-  .ic-choice-card-price {
-    font-weight: 600;
-    font-size: var(--ic-font-sm);
-    color: var(--ic-text);
-    margin-top: 8px;
-    padding: 4px 0;
-    white-space: nowrap;
-  }
-
-  .ic-badge-corner {
-    position: absolute;
-    top: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--ic-primary);
-    color: white;
-    font-size: 9px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    box-shadow: 0 2px 4px rgba(0,113,227,0.25);
-    z-index: 5;
-  }
-  
-  .ic-choice-card-featured {
-    border-color: var(--ic-primary-border);
-    box-shadow: 0 0 0 1px var(--ic-primary-border), var(--ic-shadow-sm);
-    background: linear-gradient(180deg, #fafcff 0%, #ffffff 100%);
-  }
-  
-  .ic-choice-card-featured:hover {
-    border-color: var(--ic-primary);
-    box-shadow: 0 0 0 1px var(--ic-primary-border), var(--ic-shadow-md);
-  }
-  
-  .ic-choice-card-featured.active {
-    border-color: var(--ic-primary);
-    background: var(--ic-primary-light);
-    box-shadow: var(--ic-shadow-focus);
-  }
-  
-  .ic-choice-card-featured .ic-choice-card-price {
-    color: var(--ic-primary);
-    font-weight: 700;
-  }
-
-  /* =============================================
-     ADDITIONAL REPAIRS - HORIZONTAL PRICING
-     ============================================= */
-
-  .ic-addons-section {
-    background: linear-gradient(135deg, #f8fbff 0%, #ffffff 100%);
-    border: 1.5px solid var(--ic-border);
-    border-radius: var(--ic-radius-lg);
-    padding: 18px 20px;
-    margin-bottom: 24px;
-  }
-
-  .ic-addons-header {
-    display: flex;
-    align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
-    gap: 12px;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px 0;
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 10px;
   }
-
-  .ic-addons-title {
+  .additional-repairs-heading h3 {
+    font-size: 17px;
     font-weight: 600;
-    font-size: 15px;
-    color: var(--ic-text);
     margin: 0;
-    flex-shrink: 1;
   }
-
-  .ic-addons-discount-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: var(--ic-success);
-    color: white;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 20px;
-    text-transform: uppercase;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  .ic-addons-toggle {
-    display: flex;
-    background: var(--ic-bg-subtle);
-    border-radius: 10px;
-    padding: 4px;
-    gap: 4px;
-    margin-bottom: 0;
-    transition: margin 0.3s ease;
-  }
-
-  .ic-addons-section.show-dropdown .ic-addons-toggle {
-    margin-bottom: 16px;
-  }
-
-  .ic-addons-option {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 10px 14px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: var(--ic-transition);
-    border: none;
-    background: transparent;
-    color: var(--ic-text-secondary);
-  }
-
-  .ic-addons-option:hover {
-    color: var(--ic-text);
-  }
-
-  .ic-addons-option.active {
-    background: white;
-    color: var(--ic-text);
-    box-shadow: var(--ic-shadow-sm);
-  }
-
-  .ic-addons-option input {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .ic-addons-check {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    border: 2px solid var(--ic-border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--ic-transition);
-    flex-shrink: 0;
-  }
-
-  .ic-addons-option.active .ic-addons-check {
-    background: var(--ic-primary);
-    border-color: var(--ic-primary);
-  }
-
-  .ic-addons-check svg {
-    width: 10px;
-    height: 10px;
-    opacity: 0;
-    transition: var(--ic-transition);
-  }
-
-  .ic-addons-option.active .ic-addons-check svg {
-    opacity: 1;
-  }
-
-  .ic-addons-dropdown-container {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease, opacity 0.3s ease;
-    opacity: 0;
-  }
-
-  .ic-addons-section.show-dropdown .ic-addons-dropdown-container {
-    max-height: 600px;
-    opacity: 1;
-  }
-
-  .ic-addons-dropdown {
-    position: relative;
-    border: 1.5px solid var(--ic-border);
-    border-radius: var(--ic-radius);
-    background: white;
-    overflow: hidden;
-  }
-
-  .ic-addons-dropdown-trigger {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 16px;
-    cursor: pointer;
-    transition: var(--ic-transition);
-  }
-
-  .ic-addons-dropdown-trigger:hover {
-    background: var(--ic-bg-subtle);
-  }
-
-  .ic-addons-dropdown-trigger-text {
-    font-size: 14px;
-    color: var(--ic-text-secondary);
-  }
-
-  .ic-addons-dropdown.has-selection .ic-addons-dropdown-trigger-text {
-    color: var(--ic-text);
-    font-weight: 500;
-  }
-
-  .ic-addons-dropdown-chevron {
-    width: 18px;
-    height: 18px;
-    color: var(--ic-text-secondary);
+  .additional-repairs-heading img {
+    width: 14px;
+    height: 14px;
     transition: transform 0.25s ease;
   }
+  .expanded .additional-repairs-heading img{ transform: rotate(180deg); }
 
-  .ic-addons-dropdown.open .ic-addons-dropdown-chevron {
-    transform: rotate(180deg);
+  /* --- WALK IN / DATE UI --- */
+  .stuart-integration-wrapper { text-align: left; padding-top: 15px; }
+  
+  .walk-in-schedule-heading h3 {
+    margin: 0 0 10px 0;
+    font-size: 15px;
+    font-weight: 500;
+    color: #1d1d1f;
+    font-family: 'Axiforma-M' !important;
   }
 
-  .ic-addons-dropdown-menu {
-    max-height: 0;
-    overflow: hidden;
-    border-top: 0 solid var(--ic-border-light);
-    transition: max-height 0.3s ease, border-top-width 0.3s ease;
+  .walk-in-schedule {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding-top: 10px;
   }
 
-  .ic-addons-dropdown.open .ic-addons-dropdown-menu {
-    max-height: 400px;
-    border-top-width: 1px;
-    overflow-y: auto;
+  .walk-in-date-col, .walk-in-time-col { flex: 1; }
+  
+  .walk-in-date-col label, .walk-in-time-col label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-family: 'Axiforma-M';
+  }
+  
+  .walk-in-date-col input, .walk-in-time-col select {
+    box-sizing: border-box !important; /* Fixes overlapping caused by padding */
+    width: 100%;
+    height: 52px; 
+    padding: 0 12px;
+    border: 1px solid #d2d2d7;
+    border-radius: 12px; 
+    font-family: 'Axiforma-R';
+    font-size: 14px;
+    color: #1d1d1f;
+    background-color: #fff;
+  }
+  .walk-in-time-col select {
+     appearance: none;
+    -webkit-appearance: none;
+    background-image: url('https://cdn.shopify.com/s/files/1/0754/5903/5403/files/chevron-left_190d2ce0-5628-473b-8e6a-6b53624e68e7.svg?v=1726433326');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
   }
 
-  /* ADDON ITEMS - HORIZONTAL PRICING LAYOUT */
-  .ic-addon-item {
+  .walk-in-prod-info {
+    margin-top: 10px;
+    padding: 15px;
+    background: #fbfbfb;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #666;
+  }
+  .walk-in-prod-info ul { padding-left: 20px; margin: 0; }
+  .walk-in-prod-info li { margin-bottom: 4px; }
+
+  .walkin-error {
+    display:none;
+    margin-top:10px;
+    font-size: 13px;
+    font-weight: 600;
+    color:#c81d2e;
+    background: #fff2f2;
+    padding: 8px;
+    border-radius: 6px;
+  }
+  .walkin-error.is-visible{ display:block; }
+
+  /* --- BOTTOM TOTAL & ADD TO CART --- */
+  .walk-in-book-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--ic-border-light);
-    cursor: pointer;
-    transition: var(--ic-transition);
-    gap: 12px;
+    padding-top: 30px;
+    margin-top: 20px;
+    border-top: 1px solid #e5e5e5;
   }
-
-  .ic-addon-item:last-child {
-    border-bottom: none;
-  }
-
-  .ic-addon-item:hover {
-    background: var(--ic-bg-subtle);
-  }
-
-  .ic-addon-item.checked {
-    background: var(--ic-primary-light);
-  }
-
-  .ic-addon-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .ic-addon-checkbox {
-    width: 22px;
-    height: 22px;
-    border-radius: 6px;
-    border: 2px solid var(--ic-border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--ic-transition);
-    flex-shrink: 0;
-  }
-
-  .ic-addon-item.checked .ic-addon-checkbox {
-    background: var(--ic-primary);
-    border-color: var(--ic-primary);
-  }
-
-  .ic-addon-checkbox svg {
-    width: 12px;
-    height: 12px;
-    opacity: 0;
-    transition: var(--ic-transition);
-  }
-
-  .ic-addon-item.checked .ic-addon-checkbox svg {
-    opacity: 1;
-  }
-
-  .ic-addon-info {
+  
+  .repair-total-price p {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1d1d1f;
+    margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    min-width: 0;
-    flex: 1;
+    align-items: flex-end;
+  }
+  .repair-total-price .total-price {
+    font-size: 24px;
+    font-weight: 700;
   }
 
-  .ic-addon-name {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--ic-text);
-    line-height: 1.3;
-  }
-
-  .ic-addon-desc {
-    font-size: 12px;
-    color: var(--ic-text-secondary);
-    line-height: 1.3;
-  }
-
-  .ic-addon-right {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-  }
-
-  .ic-addon-pricing {
-    display: flex;
-    flex-direction: row;
-    align-items: baseline;
-    gap: 6px;
-  }
-
-  .ic-addon-price-old {
-    font-size: 13px;
-    color: var(--ic-text-secondary);
-    text-decoration: line-through;
-    white-space: nowrap;
-  }
-
-  .ic-addon-price-new {
+  .custom-add-to-cart { width: 100%; max-width: 200px; }
+  
+  .custom-add-to-cart button {
     font-size: 15px;
     font-weight: 600;
-    color: var(--ic-text);
-    white-space: nowrap;
-  }
-
-  .ic-addon-savings {
-    display: inline-flex;
-    align-items: center;
-    background: var(--ic-success);
-    color: white;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 4px 8px;
-    border-radius: 12px;
-    text-transform: uppercase;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  .ic-addon-item input[type="checkbox"] {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  /* SELECTED ITEMS SUMMARY */
-  .ic-addons-selected {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--ic-border-light);
-    display: none;
-  }
-
-  .ic-addons-section.has-selections .ic-addons-selected {
-    display: block;
-  }
-
-  .ic-addons-selected-title {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--ic-text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 8px;
-  }
-
-  .ic-addons-selected-list {
+    font-family: 'Axiforma-M' !important;
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .ic-addons-selected-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 12px;
-    background: var(--ic-primary-light);
-    border-radius: 8px;
-    font-size: 13px;
-  }
-
-  .ic-addons-selected-name {
-    font-weight: 500;
-    color: var(--ic-text);
-  }
-
-  .ic-addons-selected-price {
-    font-weight: 600;
-    color: var(--ic-primary);
-  }
-
-  .ic-addons-selected-remove {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: rgba(0, 113, 227, 0.1);
-    display: flex;
-    align-items: center;
     justify-content: center;
-    cursor: pointer;
-    margin-left: 8px;
-    transition: var(--ic-transition);
-  }
-
-  .ic-addons-selected-remove:hover {
-    background: rgba(0, 113, 227, 0.2);
-  }
-
-  .ic-addons-selected-remove svg {
-    width: 10px;
-    height: 10px;
-    color: var(--ic-primary);
-  }
-
-  /* =============================================
-     MOBILE STYLES - ADDONS (749px and below)
-     ============================================= */
-
-  @media (max-width: 749px) {
-    .ic-addons-section {
-      padding: 16px;
-    }
-    
-    .ic-addons-header {
-      flex-wrap: nowrap;
-      gap: 10px;
-    }
-    
-    .ic-addons-title {
-      font-size: 14px;
-      line-height: 1.3;
-    }
-    
-    .ic-addons-discount-badge {
-      font-size: 9px;
-      padding: 4px 8px;
-    }
-    
-    .ic-addons-option {
-      padding: 12px 14px;
-      font-size: 14px;
-    }
-    
-    .ic-addons-dropdown-trigger {
-      padding: 14px 16px;
-    }
-    
-    .ic-addon-item {
-      padding: 12px 14px;
-      gap: 10px;
-    }
-    
-    .ic-addon-left {
-      gap: 10px;
-    }
-    
-    .ic-addon-checkbox {
-      width: 22px;
-      height: 22px;
-    }
-    
-    .ic-addon-name {
-      font-size: 14px;
-    }
-    
-    .ic-addon-desc {
-      font-size: 11px;
-    }
-    
-    .ic-addon-right {
-      flex-direction: row;
-      align-items: center;
-      gap: 6px;
-    }
-    
-    .ic-addon-pricing {
-      flex-direction: row;
-      align-items: baseline;
-      gap: 4px;
-    }
-    
-    .ic-addon-price-old {
-      font-size: 11px;
-    }
-    
-    .ic-addon-price-new {
-      font-size: 14px;
-    }
-    
-    .ic-addon-savings {
-      font-size: 9px;
-      padding: 3px 6px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .ic-addon-item {
-      padding: 12px;
-      gap: 8px;
-    }
-    
-    .ic-addon-left {
-      gap: 8px;
-    }
-    
-    .ic-addon-right {
-      gap: 5px;
-    }
-    
-    .ic-addon-pricing {
-      gap: 3px;
-    }
-    
-    .ic-addon-price-old {
-      font-size: 10px;
-    }
-    
-    .ic-addon-price-new {
-      font-size: 13px;
-    }
-    
-    .ic-addon-savings {
-      font-size: 8px;
-      padding: 2px 5px;
-    }
-  }
-
-  @media (max-width: 380px) {
-    .ic-addon-item {
-      flex-wrap: wrap;
-    }
-    
-    .ic-addon-left {
-      flex: 1 1 100%;
-      margin-bottom: 8px;
-    }
-    
-    .ic-addon-right {
-      flex: 1 1 100%;
-      justify-content: flex-start;
-      padding-left: 30px;
-    }
-  }
-  
-  /* =============================================
-     SERVICE METHOD SELECTION
-     ============================================= */
-  
-  .ic-service-section {
-    margin-bottom: 24px;
-  }
-  
-  .ic-service-section > h3 {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--ic-text);
-    margin: 0 0 12px 0;
-  }
-  
-  .ic-service-card {
-    border: 2px solid var(--ic-border);
-    border-radius: var(--ic-radius);
-    overflow: hidden;
-    transition: var(--ic-transition);
-    margin-bottom: 12px;
-  }
-  
-  .ic-service-card.active {
-    border-color: var(--ic-primary);
-  }
-  
-  .ic-service-header {
-    display: flex;
     align-items: center;
-    padding: 18px 20px;
-    min-height: var(--ic-touch-min);
-    cursor: pointer;
-    transition: var(--ic-transition);
-  }
-  
-  .ic-service-header:hover {
-    background: #fafafa;
-  }
-  
-  .ic-service-card.active .ic-service-header {
-    background: #fafafa;
-  }
-  
-  .ic-service-radio {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: 2px solid var(--ic-border);
-    margin-right: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--ic-transition);
-    flex-shrink: 0;
-    background: white;
-  }
-  
-  .ic-service-card.active .ic-service-radio {
-    border-color: var(--ic-primary);
-    background: var(--ic-primary);
-  }
-  
-  .ic-service-radio svg {
-    width: 14px;
-    height: 14px;
-    opacity: 0;
-    transition: var(--ic-transition);
-  }
-  
-  .ic-service-card.active .ic-service-radio svg {
-    opacity: 1;
-  }
-  
-  .ic-service-info {
-    flex: 1;
-  }
-  
-  .ic-service-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--ic-text);
-    margin: 0 0 4px 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .ic-service-badge {
-    background: var(--ic-primary);
-    color: white;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    white-space: nowrap;
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-  }
-  
-  .ic-service-desc {
-    font-size: 14px;
-    color: var(--ic-text-secondary);
-  }
-  
-  .ic-service-price {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--ic-text);
-  }
-  
-  .ic-service-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-  }
-  
-  .ic-service-card.active .ic-service-content {
-    max-height: 1500px;
-  }
-  
-  .ic-service-content-inner {
-    padding: 0 18px 18px 18px;
-  }
-  
-  .ic-turnaround-inline {
-    margin-bottom: 16px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--ic-border-light);
-  }
-  
-  .ic-turnaround-inline .ic-payment-heading {
-    margin-bottom: 12px;
-  }
-  
-  .ic-turnaround-inline .ic-time-warning {
-    margin-top: 10px;
-    font-size: 12px;
-    color: var(--ic-text-secondary);
-    line-height: 1.4;
-  }
-
-  /* =============================================
-     WALK-IN SCHEDULING
-     ============================================= */
-  
-  .ic-schedule-section {
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px solid var(--ic-border-light);
-  }
-  
-  .ic-schedule-label {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--ic-text);
-    margin-bottom: 4px;
-    display: block;
-    line-height: var(--ic-lh-heading);
-    letter-spacing: var(--ic-tracking-heading);
-  }
-  
-  .ic-schedule-note {
-    font-size: 13px;
-    color: var(--ic-text-secondary);
-    margin: 0 0 16px 0;
-    font-weight: 400;
-  }
-  
-  .ic-schedule-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-  
-  .ic-schedule-input-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  
-  .ic-schedule-input-wrap label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--ic-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-  }
-  
-  .ic-schedule-input {
     width: 100%;
-    height: 44px;
-    padding: 0 12px;
-    border: 1.5px solid var(--ic-border);
-    border-radius: 8px;
-    font-size: 13px;
-    color: var(--ic-text);
-    background: white;
-    transition: var(--ic-transition);
-    box-sizing: border-box;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-  
-  .ic-schedule-input:focus {
-    outline: none;
-    border-color: var(--ic-primary);
-    box-shadow: 0 0 0 3px var(--ic-primary-border);
-  }
-  
-  select.ic-schedule-input {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2386868b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 36px;
+    height: 50px;
+    background-color: #005BBE;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px !important; 
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: none !important;
+    outline: none !important;
   }
 
-  /* =============================================
-     PAYMENT OPTIONS
-     ============================================= */
+  /* Kill theme focus ring */
+.custom-add-to-cart button:focus,
+.custom-add-to-cart button:focus-visible,
+.custom-add-to-cart button.button:focus,
+.custom-add-to-cart button.button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.custom-add-to-cart button::after {
+  box-shadow: none !important;
+  outline: none !important;
+}
   
-  .ic-payment-section {
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid var(--ic-border-light);
+  .custom-add-to-cart button:hover:not(:disabled) {
+      background-color: #1A6FD1;
+      transform: scale(1.02);
   }
-  
-  .ic-payment-heading {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--ic-text);
-    margin: 0 0 14px 0;
-  }
-  
-  .ic-payment-options {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .ic-payment-option {
-    display: flex;
-    align-items: flex-start;
-    padding: 16px 18px;
-    min-height: var(--ic-touch-min);
-    border: 2px solid var(--ic-border);
-    border-radius: var(--ic-radius);
-    cursor: pointer;
-    transition: var(--ic-transition);
-    position: relative;
-    overflow: visible;
-  }
-  
-  .ic-payment-option:hover {
-    border-color: var(--ic-text-secondary);
-    background: #fafafa;
-  }
-  
-  .ic-payment-option.active {
-    border-color: var(--ic-primary);
-    background: var(--ic-primary-light);
-  }
-  
-  .ic-payment-recommended-badge {
-    display: inline-flex;
-    align-items: center;
-    background: var(--ic-success);
-    color: white;
-    font-size: var(--ic-font-xs);
-    font-weight: 700;
-    padding: 4px 8px;
-    border-radius: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    margin-left: 8px;
-    vertical-align: middle;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  
-  .ic-payment-radio {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: 2px solid var(--ic-border);
-    margin-right: 14px;
-    margin-top: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--ic-transition);
-    flex-shrink: 0;
-    background: white;
-  }
-  
-  .ic-payment-option.active .ic-payment-radio {
-    border-color: var(--ic-primary);
-    background: var(--ic-primary);
-  }
-  
-  .ic-payment-radio svg {
-    width: 14px;
-    height: 14px;
-    opacity: 0;
-    transition: var(--ic-transition);
-  }
-  
-  .ic-payment-option.active .ic-payment-radio svg {
-    opacity: 1;
-  }
-  
-  .ic-payment-info {
-    flex: 1;
-    min-width: 0;
-  }
-  
-  .ic-payment-title {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--ic-text);
-    margin: 0 0 4px 0;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 6px;
-  }
-  
-  .ic-payment-desc {
-    font-size: 14px;
-    color: var(--ic-text-secondary);
-    line-height: 1.4;
-  }
-  
-  .ic-payment-amount {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--ic-text);
-    margin-left: 12px;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  
-  .ic-payment-option input[type="radio"] {
-    position: absolute;
-    opacity: 0;
+
+  .custom-add-to-cart button.disabled-state,
+  .custom-add-to-cart button:disabled {
+    background-color: #e5e5e5 !important;
+    color: #999 !important;
+    cursor: not-allowed;
     pointer-events: none;
   }
-
-  .ic-balance-info {
-    margin-top: 10px;
-    padding: 10px 14px;
-    background: linear-gradient(135deg, #e8f9ed 0%, #f0fff4 100%);
-    border: 1px solid var(--ic-success);
-    border-radius: 8px;
-    display: none;
-  }
   
-  .ic-balance-info.visible {
-    display: block;
-  }
-  
-  .ic-balance-text {
-    font-size: 12px;
-    color: var(--ic-text);
-    margin: 0;
-  }
-  
-  .ic-balance-text strong {
-    font-weight: 600;
-    color: #1a7f37;
+  .custom-add-to-cart button.loading .loading__spinner.hidden{
+    display: flex !important;
   }
 
-  /* =============================================
-     MAIL-IN INFO & PAYMENT
-     ============================================= */
-  
-  .ic-mailin-info {
-    background: var(--ic-bg-subtle);
-    border-radius: 10px;
-    padding: 14px 16px;
-    margin-bottom: 14px;
-  }
-  
-  .ic-mailin-info-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--ic-text);
-    margin: 0 0 6px 0;
-  }
-  
-  .ic-mailin-info-list {
-    font-size: 12px;
-    color: var(--ic-text-secondary);
-    margin: 0;
-    padding-left: 18px;
-    line-height: 1.6;
-  }
-
-  /* =============================================
-     COLOR SELECTION - LARGER SWATCHES
-     ============================================= */
-
-  .ic-color-section {
-    margin-bottom: 24px;
-    display: none;
-  }
-
-  .ic-color-section.visible {
-    display: block;
-  }
-
-  .ic-color-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 10px;
-  }
-
-  .ic-color-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 14px 10px;
-    min-height: 90px;
-    background: white;
-    border: 2px solid var(--ic-border);
-    border-radius: 12px;
-    cursor: pointer;
-    transition: var(--ic-transition);
-  }
-
-  .ic-color-btn:hover {
-    border-color: var(--ic-text-secondary);
-    background: #fafafa;
-  }
-
-  .ic-color-btn.active {
-    border-color: var(--ic-text);
-    background: #f5f5f7;
-  }
-
-  .ic-color-swatch {
-    display: block !important;
-    width: 36px !important;
-    height: 36px !important;
-    border-radius: 50% !important;
-    border: 2px solid rgba(0,0,0,0.1) !important;
-    margin-bottom: 8px !important;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08) !important;
-    flex-shrink: 0 !important;
-  }
-
-  .ic-color-swatch[data-color="White"],
-  .ic-color-swatch[data-color="Starlight"],
-  .ic-color-swatch[data-color="Silver"],
-  .ic-color-swatch[data-color="White Titanium"],
-  .ic-color-swatch[data-color="Natural Titanium"] {
-    border: 2px solid #d2d2d7;
-  }
-
-  .ic-color-btn.active .ic-color-swatch {
-    border-color: var(--ic-text);
-    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--ic-text);
-  }
-
-  .ic-color-name {
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 1.3;
-    text-align: center;
-    color: var(--ic-text);
-    word-spacing: 100vw;
-    white-space: normal;
-  }
-
-  .ic-color-btn.active .ic-color-name {
-    font-weight: 600;
+  /* --- MOBILE SPECIFICS (Keeping Functional) --- */
+  @media(min-width: 750px){
+    .additional-repair-container {
+      height: 0;
+      overflow: hidden;
+      transition: height 0.3s ease;
+    }
+    .expanded .additional-repair-container { height: auto; }
   }
 
   @media (max-width: 749px) {
-    .ic-color-grid {
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
-    .ic-color-btn {
-      padding: 12px 8px;
-      min-height: 85px;
-    }
-    .ic-color-swatch {
-      width: 32px;
-      height: 32px;
-      margin-bottom: 6px;
-    }
-    .ic-color-name {
-      font-size: 12px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .ic-color-grid {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-    .ic-color-btn {
-      padding: 10px 6px;
-      min-height: 80px;
-    }
-    .ic-color-swatch {
-      width: 28px;
-      height: 28px;
-    }
-    .ic-color-name {
-      font-size: 11px;
-    }
-  }
-
-  @media (max-width: 380px) {
-    .ic-color-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-    .ic-color-btn {
-      padding: 12px 8px;
-      min-height: 90px;
-    }
-    .ic-color-swatch {
-      width: 32px;
-      height: 32px;
-    }
-    .ic-color-name {
-      font-size: 12px;
-      word-spacing: normal;
-    }
-  }
-
-  /* =============================================
-     PAYMENT BADGES
-     ============================================= */
-  
-  .ic-payment-methods {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px 0;
-    background: transparent;
-    border-radius: 0;
-    margin-bottom: 16px;
-  }
-  
-  .ic-payment-badges-img {
-    height: auto;
-    width: 100%;
-    max-width: 320px;
-    object-fit: contain;
-  }
-
-  /* =============================================
-     CHECKOUT SECTION
-     ============================================= */
-  
-  .ic-checkout-section {
-    padding-top: 20px;
-    margin-top: 20px;
-    border-top: 1px solid var(--ic-border-light);
-  }
-  
-  .ic-total-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-  }
-  
-  .ic-total-label {
-    font-size: 14px;
-    color: var(--ic-text-secondary);
-  }
-  
-  .ic-total-amount {
-    text-align: right;
-  }
-  
-  .ic-total-price {
-    font-size: 26px;
-    font-weight: 700;
-    color: var(--ic-text);
-    line-height: 1;
-  }
-  
-  .ic-total-note {
-    font-size: 11px;
-    color: var(--ic-text-secondary);
-    margin-top: 3px;
-  }
-  
-  .ic-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    height: 52px;
-    border-radius: var(--ic-radius);
-    font-size: 15px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    transition: var(--ic-transition);
-    border: none;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .ic-btn:focus {
-    outline: none;
-    box-shadow: var(--ic-shadow-focus);
-  }
-  
-  .ic-btn-primary {
-    background: var(--ic-primary);
-    color: white;
-  }
-  
-  .ic-btn-primary:hover:not(:disabled) {
-    background: var(--ic-primary-hover);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(0,113,227,0.35);
-  }
-  
-  .ic-btn-primary:active:not(:disabled) {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(0,113,227,0.25);
-  }
-  
-  .ic-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none !important;
-    box-shadow: none !important;
-  }
-  
-  .ic-btn .loading__spinner {
-    position: absolute;
-    right: 16px;
-  }
-
-  /* =============================================
-     ERROR MESSAGES
-     ============================================= */
-  
-  .ic-error-message {
-    display: none;
-    margin-top: 10px;
-    padding: 10px 14px;
-    background: #fff2f2;
-    border: 1px solid #ffcdd2;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 500;
-    color: #c62828;
-  }
-  
-  .ic-error-message.visible {
-    display: block;
-  }
-  
-  .ic-time-warning {
-    display: none;
-    margin-top: 12px;
-    margin-bottom: 24px;
-    padding: 12px 16px;
-    background: #fffbeb;
-    border: 1px solid #fbbf24;
-    border-radius: 8px;
-    font-size: 13px;
-    line-height: 1.5;
-    color: #92400e;
-  }
-  
-  .ic-time-warning.visible {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-  }
-  
-  .ic-time-warning::before {
-    content: "⚠️";
-    flex-shrink: 0;
-    font-size: 16px;
-  }
-
-  /* =============================================
-     MOBILE STYLES (749px and below)
-     ============================================= */
-  
-  @media (max-width: 749px) {
+    .additional-repairs-heading img { display: none; }
+    .additional-repairs-heading { pointer-events: none; }
     
-    .ic-trust-strip {
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 16px 32px;
-      padding: 20px 16px;
-      background: var(--ic-bg-subtle);
-      border-radius: var(--ic-radius);
-      border-bottom: none;
-    }
-    
-    .ic-trust-item {
-      flex-basis: auto;
-    }
-    
-    .ic-trust-icon {
-      width: 28px;
-      height: 28px;
-    }
-    
-    .ic-trust-icon img,
-    .ic-trust-icon svg {
-      width: 28px;
-      height: 28px;
-    }
-    
-    .ic-trust-text {
-      font-size: 13px;
-    }
-    
-    /* TURNAROUND - MOBILE - TALL CARDS */
-    .ic-turnaround-inline .ic-choice-grid,
-    .ic-turnaround-inline .ic-choice-grid-2,
-    .ic-turnaround-inline .ic-choice-grid-3 {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 0;
-    }
-    
-    .ic-turnaround-inline .ic-choice-card {
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      grid-template-rows: auto auto;
-      align-items: start;
-      text-align: left;
-      padding: 16px;
-      min-height: 76px;
-      gap: 2px 12px;
-    }
-    
-    .ic-turnaround-inline .ic-badge-corner {
-      display: none;
-    }
-    
-    .ic-turnaround-inline .ic-choice-card::before {
-      content: '';
-      grid-row: 1 / 3;
-      grid-column: 1;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      border: 2px solid var(--ic-border);
-      background: white;
-      transition: var(--ic-transition);
-      margin-top: 2px;
-    }
-    
-    .ic-turnaround-inline .ic-choice-card.active::before {
-      border-color: var(--ic-primary);
-      background: var(--ic-primary);
-      box-shadow: inset 0 0 0 3px white;
-    }
-    
-    .ic-turnaround-inline .ic-choice-card-eyebrow {
-      display: none;
-    }
-    
-    .ic-turnaround-inline .ic-choice-card-title {
-      grid-row: 1;
-      grid-column: 2;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--ic-text);
-      margin: 0;
-      line-height: 1.3;
-    }
-    
-    .ic-turnaround-inline .ic-choice-card-desc {
-      grid-row: 2;
-      grid-column: 2;
-      font-size: 14px;
-      color: var(--ic-text-secondary);
-      margin: 0;
-      line-height: 1.4;
-    }
-    
-    .ic-turnaround-inline .ic-choice-card-date {
-      grid-row: 1;
-      grid-column: 3;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--ic-primary);
-      background: transparent;
-      padding: 0;
-      margin: 0;
-      border-radius: 0;
-      text-align: right;
-      white-space: nowrap;
-      align-self: start;
-    }
-    
-    .ic-turnaround-inline .ic-choice-card.active .ic-choice-card-date {
-      background: transparent;
-    }
-    
-    .ic-turnaround-inline .ic-choice-card-price {
-      grid-row: 2;
-      grid-column: 3;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--ic-text);
-      margin: 0;
-      padding: 0;
-      text-align: right;
-      white-space: nowrap;
-      align-self: start;
-    }
-    
-    .ic-turnaround-inline .ic-choice-card-featured {
-      border-color: var(--ic-primary-border);
-      background: linear-gradient(180deg, #fafcff 0%, #ffffff 100%);
-      box-shadow: none;
-    }
-    
-    .ic-turnaround-inline .ic-choice-card-featured.active {
-      border-color: var(--ic-primary);
-      background: var(--ic-primary-light);
-    }
-    
-    /* SERVICE CARDS */
-    .ic-service-header {
-      padding: 16px;
-      min-height: 64px;
-    }
-    
-    .ic-service-radio {
-      width: 24px;
-      height: 24px;
-      margin-right: 14px;
-    }
-    
-    .ic-service-title {
-      font-size: 15px;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    
-    .ic-service-badge {
-      font-size: 9px;
-      padding: 3px 6px;
-    }
-    
-    .ic-service-desc {
-      font-size: 13px;
-    }
-    
-    .ic-service-price {
-      font-size: 14px;
-    }
-    
-    .ic-service-content-inner {
-      padding: 0 16px 16px 16px;
-    }
-    
-    /* PAYMENT OPTIONS */
-    .ic-payment-option {
-      padding: 14px 16px;
-      min-height: 64px;
-    }
-    
-    .ic-payment-radio {
-      width: 22px;
-      height: 22px;
-      margin-right: 12px;
-    }
-    
-    .ic-payment-title {
-      font-size: 14px;
-    }
-    
-    .ic-payment-recommended-badge {
-      font-size: 9px;
-      padding: 3px 6px;
-      margin-left: 0;
-      margin-top: 4px;
-      display: block;
-      width: fit-content;
-    }
-    
-    .ic-payment-desc {
-      font-size: 13px;
-      margin-top: 2px;
-    }
-    
-    .ic-payment-amount {
-      font-size: 14px;
-    }
-    
-    /* SCHEDULE INPUTS */
-    .ic-schedule-input-wrap label {
-      font-size: 11px;
-    }
-    
-    .ic-schedule-label {
-      font-size: 14px;
-    }
-    
-    .ic-schedule-note {
-      font-size: 12px;
-    }
-    
-    .ic-schedule-input {
-      height: 46px;
-      font-size: 14px;
-    }
-    
-    /* SECTION HEADINGS */
-    .ic-section-heading {
-      font-size: 18px;
-      margin: 20px 0 14px 0;
-      padding-bottom: 10px;
-    }
-    
-    /* PAYMENT BADGES */
-    .ic-payment-badges-img {
-      max-width: 280px;
-    }
-    
-    /* CHECKOUT */
-    .ic-total-price {
-      font-size: 24px;
-    }
-    
-    .ic-btn {
-      height: 52px;
-      font-size: 14px;
-    }
-    
-    .ic-balance-info {
-      padding: 12px 14px;
-    }
-    
-    .ic-balance-text {
-      font-size: 13px;
-    }
-    
-    .ic-error-message {
-      font-size: 13px;
-      padding: 12px 14px;
-    }
-    
-    .ic-time-warning {
-      font-size: 12px;
-      padding: 10px 12px;
-    }
-    
-    .ic-mailin-info {
-      padding: 14px 16px;
-    }
-    
-    .ic-mailin-info-title {
-      font-size: 13px;
-    }
-    
-    .ic-mailin-info-list {
-      font-size: 12px;
-      line-height: 1.7;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .ic-trust-strip {
-      gap: 14px 20px;
-    }
-    
-    .ic-trust-item {
-      flex-basis: calc(50% - 10px);
-      justify-content: flex-start;
-    }
-    
-    .ic-schedule-grid {
+    .choice-btn-row, .trt_choice-btn-row, .battery_choice-btn-row {
       grid-template-columns: 1fr;
+      gap: 10px;
     }
     
-    .ic-payment-badges-img {
-      max-width: 260px;
+    /* FIX: Ensure Date/Time share space without overlapping */
+    .walk-in-schedule {
+        display: flex;
+        flex-direction: row; 
+        gap: 10px;
     }
-    
-    .ic-section-heading {
-      font-size: 17px;
-      margin: 18px 0 12px 0;
+    .walk-in-date-col, .walk-in-time-col {
+        flex: 1; /* Allow equal width sharing */
+        min-width: 0; /* Prevent flex overflow */
+        width: auto; /* Remove hardcoded 50% */
     }
-  }
-  
-  @media (max-width: 380px) {
-    .ic-trust-strip {
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-    }
-    
-    .ic-trust-item {
-      flex-basis: auto;
-      justify-content: center;
-    }
-    
-    .ic-payment-badges-img {
-      max-width: 240px;
-    }
-    
-    .ic-section-heading {
-      font-size: 16px;
-      margin: 16px 0 10px 0;
-    }
-    
-    .ic-payment-heading {
-      font-size: 14px;
-    }
-    
-    .ic-total-price {
-      font-size: 22px;
-    }
-    
-    .ic-btn {
-      height: 50px;
-      font-size: 14px;
-    }
-  }
 
-  /* =============================================
-     iCorrect Theme v12.1
-     
-     FIXES APPLIED:
-     - Fix 1: Deposit hidden for diagnostics (Liquid)
-     - Fix 2: Date formatting in line items (JS)
-     - Fix 3: Duplicate CSS removed
-     - Fix 4: Turnaround dates update on service switch (JS)
-     - Fix 5: Time slot re-validation on service switch (JS)
-     - Fix 6: Null guards on balance elements (JS)
-     - Fix 7: Checkout date validation (JS)
-     - Fix 8: Addon mutual exclusion logic (JS) — NEW
-     - Fix 9: Addon name consistency cleanup (JS) — NEW
-     ============================================= */
-     
+    .walk-in-book-row { 
+        flex-direction: column-reverse; 
+        gap: 20px;
+        align-items: stretch;
+    }
+    .repair-total-price p { align-items: center; }
+    .custom-add-to-cart { max-width: 100%; }
+    
+    #color-chips.color_choice-btn-row {
+        grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  /* ==============================
+   FIX: Mobile Date/Time overlap
+   Equal width, equal height, aligned text
+   ============================== */
+
+/* Use grid, not flex. Removes iOS flex sizing glitches. */
+.walk-in-schedule{
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 10px !important;
+  width: 100% !important;
+  align-items: start !important;
+}
+
+/* Ensure columns can shrink without overflow */
+.walk-in-date-col,
+.walk-in-time-col{
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+/* Controls: same box model, same height, same baseline feel */
+.walk-in-date-col input,
+.walk-in-time-col select{
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+
+  height: 52px !important;
+  box-sizing: border-box !important;
+
+  font-size: 14px !important;
+  line-height: 52px !important;     /* aligns text level */
+  padding: 0 12px !important;
+
+  border-radius: 12px !important;
+  border: 1px solid #d2d2d7 !important;
+  background-color: #fff !important;
+  color: #1d1d1f !important;
+
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+/* Keep the iOS date control from adding its own inner padding that shifts text */
+.walk-in-date-col input[type="date"]{
+  padding-right: 12px !important;
+}
+
+/* Select chevron room, never changes field width */
+.walk-in-time-col select{
+  padding-right: 42px !important;
+  background-position: right 14px center !important;
+  background-size: 12px !important;
+}
+
+/* If the viewport is too narrow, stack cleanly with identical sizing */
+@media (max-width: 380px){
+  .walk-in-schedule{
+    grid-template-columns: 1fr !important;
+  }
+}
 </style>
 
-<div class="ic-booking-container">
-  
-  <!-- TRUST STRIP -->
-  <div class="ic-trust-strip">
-    <div class="ic-trust-item">
-      <div class="ic-trust-icon">
-        <img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/original_2.png?v=1770134472" alt="Genuine Parts" loading="lazy">
-      </div>
-      <span class="ic-trust-text">Genuine Parts Used</span>
-    </div>
-    <div class="ic-trust-item">
-      <div class="ic-trust-icon">
-        <img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/shield-badge.png?v=1770134473" alt="Warranty" loading="lazy">
-      </div>
-      <span class="ic-trust-text">2-Year Warranty</span>
-    </div>
-    <div class="ic-trust-item">
-      <div class="ic-trust-icon">
-        <img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/thumb-up.png?v=1770134472" alt="Reviews" loading="lazy">
-      </div>
-      <span class="ic-trust-text">700+ Reviews</span>
-    </div>
+{% if repair_products != blank %}
+  <div class="additional-repairs-heading" id="toggle-repair-section">
+    <h3>Add additional services</h3>
+    <img src="https://cdn.shopify.com/s/files/1/0754/5903/5403/files/chevron-left_190d2ce0-5628-473b-8e6a-6b53624e68e7.svg?v=1726433326" alt="Toggle Icon" id="toggle-icon">
   </div>
+{% endif %}
 
-  <!-- ADDITIONAL REPAIRS -->
-  {% assign battery_replacement = product.metafields.custom.battery_replacement.value %}
-  {% assign has_addons = false %}
-  {% if repair_products != blank or battery_replacement %}
-    {% assign has_addons = true %}
-  {% endif %}
-  
-  {% if has_addons %}
-  <div class="ic-addons-section" id="ic-addons-section">
-    <div class="ic-addons-header">
-      <h3 class="ic-addons-title">Would you require any additional repairs?</h3>
-      <span class="ic-addons-discount-badge">Save 30%</span>
-    </div>
-    
-    <div class="ic-addons-toggle">
-      <label class="ic-addons-option active" for="addons_no">
-        <span class="ic-addons-check">
-          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        </span>
-        <span>No thanks</span>
-        <input type="radio" id="addons_no" name="addonsOption" value="no" checked>
-      </label>
-      <label class="ic-addons-option" for="addons_yes">
-        <span class="ic-addons-check">
-          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        </span>
-        <span>Yes please</span>
-        <input type="radio" id="addons_yes" name="addonsOption" value="yes">
+<div class="additional-repair-container">
+  {% for repair_product in repair_products %}
+    <div class="additionl-repair-product">
+      <label>
+        {{ repair_product.title | split: '|' | last }}
+        <span class="repair-price">{{ repair_product.price | money }}</span>
+        <input
+          type="checkbox"
+          class="repair-checkbox"
+          data-title="{{ repair_product.title | escape }}"
+          value="{{ repair_product.selected_or_first_available_variant.id }}"
+          data-price="{{ repair_product.price | money_without_trailing_zeros | remove:cart.currency.symbol }}"
+        >
       </label>
     </div>
-    
-    <div class="ic-addons-dropdown-container">
-      <div class="ic-addons-dropdown" id="ic-addons-dropdown">
-        <div class="ic-addons-dropdown-trigger" id="ic-addons-dropdown-trigger">
-          <span class="ic-addons-dropdown-trigger-text">Select additional repairs...</span>
-          <svg class="ic-addons-dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </div>
-        <div class="ic-addons-dropdown-menu">
-          {% if battery_replacement %}
-            {% assign battery_original = battery_replacement.price %}
-            {% assign battery_discounted_cents = battery_replacement.price | times: 0.7 | round %}
-            {% assign battery_discounted_display = battery_discounted_cents | money_without_trailing_zeros | remove:cart.currency.symbol %}
-            {% assign battery_savings = battery_original | minus: battery_discounted_cents | divided_by: 100.0 | round %}
-          <div class="ic-addon-item" 
-               data-variant-id="{{ battery_replacement.selected_or_first_available_variant.id }}" 
-               data-price="{{ battery_discounted_display }}" 
-               data-original-price="{{ battery_original | divided_by: 100.0 | round }}"
-               data-is-battery="true"
-               data-battery-desc="Bundle a battery replacement with your repair. New batteries last 2-3x longer.">
-            <div class="ic-addon-left">
-              <div class="ic-addon-checkbox">
-                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-              </div>
-              <div class="ic-addon-info">
-                <span class="ic-addon-name">🔋 Battery Replacement</span>
-                <span class="ic-addon-desc">New batteries last 2-3x longer</span>
-              </div>
-            </div>
-            <div class="ic-addon-right">
-              <div class="ic-addon-pricing">
-                <span class="ic-addon-price-old">{{ battery_original | money }}</span>
-                <span class="ic-addon-price-new">{{ battery_discounted_cents | money }}</span>
-              </div>
-              <span class="ic-addon-savings">Save £{{ battery_savings }}</span>
-            </div>
-            <input type="checkbox" class="repair-checkbox" data-title="Battery Replacement" value="{{ battery_replacement.selected_or_first_available_variant.id }}" data-price="{{ battery_discounted_display }}">
-          </div>
-          {% endif %}
-          
-          {% for repair_product in repair_products %}
-            {% if repair_product.id == product.id %}
-              {% continue %}
-            {% endif %}
-            {% assign repair_title_lower = repair_product.title | downcase %}
-            {% if repair_title_lower contains 'battery' %}
-              {% continue %}
-            {% endif %}
-            {% if repair_title_lower contains 'diagnostic' %}
-              {% continue %}
-            {% endif %}
-            {% assign original_price = repair_product.price %}
-            {% assign discounted_price_cents = repair_product.price | times: 0.7 | round %}
-            {% assign savings = original_price | minus: discounted_price_cents | divided_by: 100.0 | round %}
-          <div class="ic-addon-item" 
-               data-variant-id="{{ repair_product.selected_or_first_available_variant.id }}" 
-               data-price="{{ discounted_price_cents | money_without_trailing_zeros | remove:cart.currency.symbol }}" 
-               data-original-price="{{ original_price | divided_by: 100.0 | round }}">
-            <div class="ic-addon-left">
-              <div class="ic-addon-checkbox">
-                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-              </div>
-              <div class="ic-addon-info">
-                <span class="ic-addon-name">{{ repair_product.title | split: '|' | last | strip }}</span>
-              </div>
-            </div>
-            <div class="ic-addon-right">
-              <div class="ic-addon-pricing">
-                <span class="ic-addon-price-old">{{ original_price | money }}</span>
-                <span class="ic-addon-price-new">{{ discounted_price_cents | money }}</span>
-              </div>
-              <span class="ic-addon-savings">Save £{{ savings }}</span>
-            </div>
-            <input type="checkbox" class="repair-checkbox" data-title="{{ repair_product.title | escape }}" value="{{ repair_product.selected_or_first_available_variant.id }}" data-price="{{ discounted_price_cents | money_without_trailing_zeros | remove:cart.currency.symbol }}">
-          </div>
-          {% endfor %}
-        </div>
-      </div>
+  {% endfor %}
+</div>
+
+<div id="device-color-selection" class="device-color-selection-wrapper">
+  <h3>What colour is your device?</h3>
+  <div id="color-chips" class="color_choice-btn-row"></div>
+</div>
+
+{% assign turn_arround = product.metafields.custom.additonal_turn_arround_product_1.value %}
+{% assign turn_arround_two = product.metafields.custom.additonal_turn_arround_product_2.value %}
+{% assign device_collection_setting = product.metafields.custom.device_collection_setting.value %}
+
+{% if turn_arround or turn_arround_two %}
+  <div class="turn_arround_time-wrapper">
+    <h3 class="trt-heading">Repair turnaround</h3>
+    <div class="trt_choice-btn-row">
       
-      <div class="ic-addons-selected">
-        <div class="ic-addons-selected-title">Selected repairs</div>
-        <div class="ic-addons-selected-list" id="ic-addons-selected-list"></div>
-      </div>
+        <label for="three_day-btn" class="trt-btn active">
+          <p>Standard</p>
+          <small>2-3 Working Days</small>
+          <input class="hidden" id="three_day-btn" type="radio" name="turnArroundTime" value="200000" data-price="0" checked>
+        </label>
+        
+        {% if turn_arround %}
+          <label for="one_day-btn" class="trt-btn">
+            <p>Fast</p>
+            <small>1 Working Day <span>+{{ turn_arround.price | money }}</span></small>
+            <input class="hidden" id="one_day-btn" type="radio" name="turnArroundTime" value="{{ turn_arround.selected_or_first_available_variant.id }}" data-price="{{ turn_arround.price | money_without_trailing_zeros | remove:cart.currency.symbol }}">
+          </label>
+        {% endif %}
+      
+      {% if turn_arround_two %}
+        <label class="trt-btn">
+          <p>Fastest</p>
+          <small>4 hours <span>+{{ turn_arround_two.price | money }}</span></small>
+          <input class="hidden" id="four_hrs-btn" type="radio" name="turnArroundTime" value="{{ turn_arround_two.selected_or_first_available_variant.id }}" data-price="{{ turn_arround_two.price | money_without_trailing_zeros | remove:cart.currency.symbol }}">
+        </label>
+      {% endif %}
     </div>
   </div>
-  {% endif %}
+{% endif %}
 
-  <!-- COLOR SELECTION -->
-  <div id="ic-color-section" class="ic-color-section">
-    <h3 class="ic-section-heading">What colour is your device?</h3>
-    <div id="ic-color-chips" class="ic-color-grid"></div>
-  </div>
-
-  {% assign turn_arround = product.metafields.custom.additonal_turn_arround_product_1.value %}
-  {% assign turn_arround_two = product.metafields.custom.additonal_turn_arround_product_2.value %}
-  {% assign device_collection_setting = product.metafields.custom.device_collection_setting.value %}
-
-  <!-- SERVICE METHOD SELECTION -->
-  <div class="ic-service-section">
-    <h3 class="ic-section-heading">How would you like to get the device to us?</h3>
-    
-    <!-- WALK-IN OPTION -->
-    <div class="ic-service-card {% if device_collection_setting == blank %}active{% endif %}" id="ic-walkin-card">
-      <div class="ic-service-header">
-        <div class="ic-service-radio">
-          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        </div>
-        <div class="ic-service-info">
-          <h4 class="ic-service-title">I'll visit you</h4>
-          <span class="ic-service-desc">Drop off at our store in person</span>
-        </div>
-        <span class="ic-service-price">Free</span>
-      </div>
-      <div class="ic-service-content">
-        <div class="ic-service-content-inner">
-          
-          <!-- TURNAROUND OPTIONS (walk-in) -->
-          {% if is_diagnostic and is_iphone_or_macbook %}
-            {% assign express_diagnostic = product.metafields.custom.custom_express_diagnostic.value %}
-            {% if express_diagnostic == blank %}
-              {% assign express_diagnostic = all_products['express-diagnostic'] %}
-            {% endif %}
-            
-            <div class="ic-turnaround-inline" id="ic-turnaround-section">
-              <h4 class="ic-payment-heading">Diagnostic turnaround</h4>
-              <div class="ic-choice-grid ic-choice-grid-2">
-                <label class="ic-choice-card active" for="diagnostic_standard">
-                  <span class="ic-choice-card-title">Standard</span>
-                  <span class="ic-choice-card-desc">2-3 Working Days</span>
-                  <span class="ic-choice-card-date" id="trt-standard-date">Calculating...</span>
-                  <input type="radio" id="diagnostic_standard" name="turnaround" value="200000" data-price="0" data-days-min="2" data-days-max="3" checked>
-                </label>
-                {% if express_diagnostic %}
-                <label class="ic-choice-card" for="diagnostic_express">
-                  <span class="ic-choice-card-title">Fast</span>
-                  <span class="ic-choice-card-desc">1 Working Day</span>
-                  <span class="ic-choice-card-date" id="trt-fast-date">Calculating...</span>
-                  <span class="ic-choice-card-price">+{{ express_diagnostic.price | money }}</span>
-                  <input type="radio" id="diagnostic_express" name="turnaround" value="{{ express_diagnostic.selected_or_first_available_variant.id }}" data-price="{{ express_diagnostic.price | money_without_trailing_zeros | remove:cart.currency.symbol }}" data-days-min="1" data-days-max="1">
-                </label>
-                {% endif %}
-              </div>
-            </div>
-          {% elsif turn_arround or turn_arround_two %}
-            <div class="ic-turnaround-inline" id="ic-turnaround-section">
-              <h4 class="ic-payment-heading">Repair turnaround</h4>
-              <div class="ic-choice-grid ic-choice-grid-{% if turn_arround_two %}3{% else %}2{% endif %}">
-                <label class="ic-choice-card active" for="trt_standard">
-                  <span class="ic-choice-card-title">Standard</span>
-                  <span class="ic-choice-card-desc">2-3 Working Days</span>
-                  <span class="ic-choice-card-date" id="trt-standard-date">Select date first</span>
-                  <input type="radio" id="trt_standard" name="turnaround" value="200000" data-price="0" data-days-min="2" data-days-max="3" checked>
-                </label>
-                {% if turn_arround %}
-                <label class="ic-choice-card" for="trt_fast">
-                  <span class="ic-choice-card-title">Fast</span>
-                  <span class="ic-choice-card-desc">1 Working Day</span>
-                  <span class="ic-choice-card-date" id="trt-fast-date">Select date first</span>
-                  <span class="ic-choice-card-price">+{{ turn_arround.price | money }}</span>
-                  <input type="radio" id="trt_fast" name="turnaround" value="{{ turn_arround.selected_or_first_available_variant.id }}" data-price="{{ turn_arround.price | money_without_trailing_zeros | remove:cart.currency.symbol }}" data-days-min="1" data-days-max="1">
-                </label>
-                {% endif %}
-                {% if turn_arround_two %}
-                <label class="ic-choice-card ic-choice-card-featured" for="trt_fastest">
-                  <span class="ic-choice-card-title">Fastest</span>
-                  <span class="ic-choice-card-desc">4 Hours</span>
-                  <span class="ic-choice-card-date" id="trt-fastest-date">Select date first</span>
-                  <span class="ic-choice-card-price">+{{ turn_arround_two.price | money }}</span>
-                  <input type="radio" id="trt_fastest" name="turnaround" value="{{ turn_arround_two.selected_or_first_available_variant.id }}" data-price="{{ turn_arround_two.price | money_without_trailing_zeros | remove:cart.currency.symbol }}" data-days-min="0" data-days-max="0" data-same-day="true">
-                </label>
-                {% endif %}
-              </div>
-              <div class="ic-time-warning" id="ic-fastest-warning">
-                For same-day service, appointments must be booked by 1pm. Later appointments will be ready by 1pm the following day.
-              </div>
-            </div>
-          {% endif %}
-          
-          <!-- Walk-in scheduling -->
-          <div class="ic-schedule-section">
-            <span class="ic-schedule-label">When would you like to visit?</span>
-            <p class="ic-schedule-note">Walk-in appointments available Monday to Friday only</p>
-            <div class="ic-schedule-grid">
-              <div class="ic-schedule-input-wrap">
-                <label for="ic-walkin-date">Date</label>
-                <input type="text" id="ic-walkin-date" name="walk_in_date" class="ic-schedule-input" placeholder="Select date" readonly>
-              </div>
-              <div class="ic-schedule-input-wrap">
-                <label for="ic-walkin-time">Time</label>
-                <select id="ic-walkin-time" name="walk_in_time" class="ic-schedule-input" disabled>
-                  <option value="">Select date first</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          
-          <!-- =============================================
-               FIX 1: WALK-IN PAYMENT OPTIONS
-               Deposit option HIDDEN for diagnostics
-               ============================================= -->
-          <div class="ic-payment-section" id="ic-walkin-payment">
-            <h4 class="ic-payment-heading">Choose how to pay</h4>
-            <div class="ic-payment-options">
-              <!-- Pay Now -->
-              <div class="ic-payment-option active" data-payment="pay_now">
-                <div class="ic-payment-radio">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                </div>
-                <div class="ic-payment-info">
-                  <h5 class="ic-payment-title">Pay now</h5>
-                  <p class="ic-payment-desc">Pay in full today</p>
-                </div>
-                <span class="ic-payment-amount" id="ic-pay-now-amount">£0</span>
-                <input type="radio" name="walkinPayment" value="pay_now" checked>
-              </div>
-              
-              {% comment %} FIX 1: Hide deposit option for diagnostics {% endcomment %}
-              {% unless is_diagnostic %}
-              <!-- Pay on Arrival - Deposit -->
-              <div class="ic-payment-option" data-payment="deposit">
-                <div class="ic-payment-radio">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                </div>
-                <div class="ic-payment-info">
-                  <h5 class="ic-payment-title"><span>Pay on arrival</span> <span class="ic-payment-recommended-badge">Recommended</span></h5>
-                  <p class="ic-payment-desc">Small deposit now, balance when you arrive</p>
-                </div>
-                <span class="ic-payment-amount" id="ic-deposit-amount">£20</span>
-                <input type="radio" name="walkinPayment" value="deposit">
-              </div>
-              {% endunless %}
-              
-              <!-- Pay in Store -->
-              <div class="ic-payment-option" data-payment="in_store">
-                <div class="ic-payment-radio">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                </div>
-                <div class="ic-payment-info">
-                  <h5 class="ic-payment-title">Pay in store</h5>
-                  <p class="ic-payment-desc">Pay during your appointment</p>
-                </div>
-                <span class="ic-payment-amount" id="ic-instore-amount">£0</span>
-                <input type="radio" name="walkinPayment" value="in_store">
-              </div>
-            </div>
-            
-            {% comment %} FIX 1: Hide balance info for diagnostics (only relevant for deposit) {% endcomment %}
-            {% unless is_diagnostic %}
-            <div class="ic-balance-info" id="ic-balance-info">
-              <p class="ic-balance-text">Balance of <strong id="ic-balance-due">£0</strong> to pay when you arrive</p>
-            </div>
-            {% endunless %}
-          </div>
-        </div>
-      </div>
-      <input type="checkbox" id="ic-walkin-checkbox" value="{{ walk_in.selected_or_first_available_variant.id }}" data-price="0" style="display:none;">
-    </div>
-    
-    <!-- MAIL-IN OPTION -->
-    <div class="ic-service-card {% if device_collection_setting %}active{% endif %}" id="ic-mailin-card">
-      <div class="ic-service-header">
-        <div class="ic-service-radio">
-          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        </div>
-        <div class="ic-service-info">
-          <h4 class="ic-service-title">
-            Please collect & deliver
-            <span class="ic-service-badge">Popular</span>
-          </h4>
-          <span class="ic-service-desc">We'll ship you secure packaging</span>
-        </div>
-        <span class="ic-service-price">+{{ mail_in.price | money }}</span>
-      </div>
-      <div class="ic-service-content">
-        <div class="ic-service-content-inner">
-          <div class="ic-mailin-info">
-            <h5 class="ic-mailin-info-title">How mail-in works</h5>
-            <ol class="ic-mailin-info-list">
-              <li>We ship you secure packaging (1 day)</li>
-              <li>Pack your device & post it back (1 day)</li>
-              <li>We repair & return it to you (1 day)</li>
-            </ol>
-          </div>
-          
-          <!-- TURNAROUND (mail-in - no Same Day) -->
-          {% if is_diagnostic and is_iphone_or_macbook %}
-            {% assign express_diagnostic = product.metafields.custom.custom_express_diagnostic.value %}
-            {% if express_diagnostic == blank %}
-              {% assign express_diagnostic = all_products['express-diagnostic'] %}
-            {% endif %}
-            
-            <div class="ic-turnaround-inline" id="ic-turnaround-mailin">
-              <h4 class="ic-payment-heading">Diagnostic turnaround</h4>
-              <div class="ic-choice-grid ic-choice-grid-2">
-                <label class="ic-choice-card active" for="mailin_diagnostic_standard">
-                  <span class="ic-choice-card-title">Standard</span>
-                  <span class="ic-choice-card-desc">2-3 Working Days</span>
-                  <input type="radio" id="mailin_diagnostic_standard" name="turnaround" value="200000" data-price="0" data-days-min="2" data-days-max="3">
-                </label>
-                {% if express_diagnostic %}
-                <label class="ic-choice-card" for="mailin_diagnostic_express">
-                  <span class="ic-choice-card-title">Fast</span>
-                  <span class="ic-choice-card-desc">1 Working Day</span>
-                  <span class="ic-choice-card-price">+{{ express_diagnostic.price | money }}</span>
-                  <input type="radio" id="mailin_diagnostic_express" name="turnaround" value="{{ express_diagnostic.selected_or_first_available_variant.id }}" data-price="{{ express_diagnostic.price | money_without_trailing_zeros | remove:cart.currency.symbol }}" data-days-min="1" data-days-max="1">
-                </label>
-                {% endif %}
-              </div>
-            </div>
-          {% elsif turn_arround %}
-            <div class="ic-turnaround-inline" id="ic-turnaround-mailin">
-              <h4 class="ic-payment-heading">Repair turnaround</h4>
-              <div class="ic-choice-grid ic-choice-grid-2">
-                <label class="ic-choice-card active" for="mailin_trt_standard">
-                  <span class="ic-choice-card-title">Standard</span>
-                  <span class="ic-choice-card-desc">2-3 Working Days</span>
-                  <input type="radio" id="mailin_trt_standard" name="turnaround" value="200000" data-price="0" data-days-min="2" data-days-max="3">
-                </label>
-                <label class="ic-choice-card" for="mailin_trt_fast">
-                  <span class="ic-choice-card-title">Fast</span>
-                  <span class="ic-choice-card-desc">1 Working Day</span>
-                  <span class="ic-choice-card-price">+{{ turn_arround.price | money }}</span>
-                  <input type="radio" id="mailin_trt_fast" name="turnaround" value="{{ turn_arround.selected_or_first_available_variant.id }}" data-price="{{ turn_arround.price | money_without_trailing_zeros | remove:cart.currency.symbol }}" data-days-min="1" data-days-max="1">
-                </label>
-              </div>
-            </div>
-          {% endif %}
-          
-          <div class="ic-mailin-estimate" id="ic-mailin-estimate" style="background: #f5f5f7; padding: 12px 14px; border-radius: 8px; margin-bottom: 14px;">
-            <p style="margin: 0; font-size: 14px; font-weight: 600; color: var(--ic-text);">
-              Estimated return: <span id="ic-mailin-date">Calculating...</span>
-            </p>
-            <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--ic-text-secondary);">Based on <span id="ic-mailin-tier">Standard</span> turnaround + shipping</p>
-          </div>
-          
-          <div class="ic-mailin-collection" style="margin-bottom: 14px;">
-            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 13px;">
-              <input type="checkbox" id="ic-mailin-collection-checkbox" style="width: 18px; height: 18px; accent-color: var(--ic-primary);">
-              <span>Request collection from my address (+1 day)</span>
-            </label>
-          </div>
-          
-          <!-- MAIL-IN PAYMENT OPTIONS -->
-          <div class="ic-payment-section">
-            <h4 class="ic-payment-heading">Choose how to pay</h4>
-            <div class="ic-payment-options">
-              <div class="ic-payment-option active" data-payment="mailin_pay_now">
-                <div class="ic-payment-radio">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                </div>
-                <div class="ic-payment-info">
-                  <h5 class="ic-payment-title">Pay now</h5>
-                  <p class="ic-payment-desc">Complete payment today</p>
-                </div>
-                <span class="ic-payment-amount" id="ic-mailin-pay-now-amount">£0</span>
-                <input type="radio" name="mailinPayment" value="mailin_pay_now" checked>
-              </div>
-              
-              <div class="ic-payment-option" data-payment="mailin_pay_later">
-                <div class="ic-payment-radio">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                </div>
-                <div class="ic-payment-info">
-                  <h5 class="ic-payment-title"><span>Pay after diagnostic</span> <span class="ic-payment-recommended-badge">Flexible</span></h5>
-                  <p class="ic-payment-desc">We confirm the issue, then you pay</p>
-                </div>
-                <span class="ic-payment-amount">Postage only</span>
-                <input type="radio" name="mailinPayment" value="mailin_pay_later">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <input type="checkbox" id="ic-mailin-checkbox" value="{{ mail_in.selected_or_first_available_variant.id }}" data-price="{{ mail_in.price | money_without_trailing_zeros | remove:cart.currency.symbol }}" style="display:none;">
+{% assign battery_replacement = product.metafields.custom.battery_replacement.value %}
+{% if battery_replacement %}
+  <div class="battery_life">
+    <h3 class="trt-heading">How is your battery life?</h3>
+    <div class="battery_choice-btn-row">
+      <label for="batteryOkay" class="trt-btn active">
+        <p>It's good</p>
+        <small>No replacement needed</small>
+        <input class="hidden" id="batteryOkay" type="radio" name="batteryStatus" value="ok" checked>
+      </label>
+      <label for="batteryReplace" class="trt-btn">
+        <p>Not good</p>
+        <small>Replace it <span>+{{ battery_replacement.price | money }}</span></small>
+        <input
+          class="hidden"
+          id="batteryReplace"
+          type="radio"
+          name="batteryStatus"
+          value="replace"
+          data-variant-id="{{ battery_replacement.selected_or_first_available_variant.id }}"
+          data-price="{{ battery_replacement.price | money_without_trailing_zeros | remove: cart.currency.symbol }}"
+        >
+      </label>
     </div>
   </div>
+{% endif %}
 
-  <!-- ERROR MESSAGES -->
-  <div id="ic-error-message" class="ic-error-message"></div>
+<div class="stuart-integration-wrapper">
+  <h3 class="pickup-method-heading">How {{ device_collection_setting }} do you want to get the device to us?</h3>
 
-  <!-- CHECKOUT SECTION -->
-  <div class="ic-checkout-section">
-    <div class="ic-payment-methods">
-      <img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/payment_badges.png?v=1770135647" alt="We accept Apple Pay, Google Pay, Visa, Mastercard, and Klarna" loading="lazy" class="ic-payment-badges-img">
+  <div class="choice-btn-row">
+    {% if device_collection_setting %}
+      <div class="visit-btn">
+          <p>I will visit you</p>
+          <small>Drop off in store</small> </div>
+      <div class="collect-device-btn active">
+          <span class="popular-badge">Popular</span>
+          <p>Please collect and deliver</p>
+          <small>+{{ mail_in.price | money }}</small> </div>
+    {% else %}
+      <div class="visit-btn active">
+          <p>I will visit you</p>
+          <small>Drop off in store</small> </div>
+      <div class="collect-device-btn">
+          <span class="popular-badge">Popular</span>
+          <p>Please collect and deliver</p>
+          <small>+{{ mail_in.price | money }}</small> </div>
+    {% endif %}
+  </div>
+
+  <div class="walk-in-service-content">
+    <div class="additional-walk-in-product" style="display:none;"> <label>
+        <input
+          type="checkbox"
+          id="walk-in-checkbox"
+          value="{{ walk_in.selected_or_first_available_variant.id }}"
+          data-price="0"
+          checked
+        >
+      </label>
     </div>
     
-    <div class="ic-total-row">
-      <span class="ic-total-label">Total</span>
-      <div class="ic-total-amount">
-        <span class="ic-total-price" id="ic-total-price">{{ product.price | money }}</span>
-        <div class="ic-total-note" id="ic-total-note"></div>
+    <div class="walk-in-prod-info">
+      <strong>{{ walk_in.title }}</strong><br>
+      {{ walk_in.description }}
+    </div>
+
+    <div class="walk-in-schedule-heading" style="margin-top:20px;">
+      <h3>When would you like to come and visit us?</h3>
+    </div>
+
+    <div class="walk-in-schedule">
+      <div class="walk-in-date-col">
+        <label for="walk-in-date">Date:</label>
+        <input type="date" id="walk-in-date" name="walk_in_date">
+      </div>
+      <div class="walk-in-time-col">
+        <label for="walk-in-time">Time:</label>
+        <select id="walk-in-time" name="walk_in_time"></select>
       </div>
     </div>
+
+    <div id="walkin-inline-error" class="walkin-error"></div>
+  </div>
+
+  <div class="collect-device-content">
+    <div class="additional-walk-in-product" style="display:none;"> <label>
+        <input
+          type="checkbox"
+          id="mail-in-checkbox"
+          value="{{ mail_in.selected_or_first_available_variant.id }}"
+          data-price="{{ mail_in.price | money_without_trailing_zeros | remove:cart.currency.symbol }}"
+        >
+      </label>
+    </div>
     
-    <button type="button" class="ic-btn ic-btn-primary" id="ic-btn-checkout" data-main-variant="{{ main_variant.id }}" data-main-available="{{ main_variant.available }}" disabled>
-      <span class="ic-btn-text">Proceed to Checkout</span>
-      {%- render 'loading-spinner' -%}
+    <div class="walk-in-prod-info">
+      <strong>MAIL-IN SERVICE</strong>
+      <ul>
+        <li>We will ship you our packaging</li>
+        <li>Pack up the device and attach the return label</li>
+        <li>Either drop off to a post office or request a collection</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div id="cart-inline-error" class="walkin-error"></div>
+
+<div class="walk-in-book-row">
+  <div class="custom-add-to-cart">
+    <button
+      type="button"
+      class="button button--full-width button--primary disabled-state"
+      data-main-variant="{{ main_variant.id }}"
+      data-main-available="{{ main_variant.available }}"
+      disabled
+    >
+      BOOK NOW {%- render 'loading-spinner' -%}
     </button>
   </div>
-  
-  <!-- Hidden data attributes for JS -->
-  <div id="ic-product-data" 
-       data-product-price="{{ product.price | money_without_trailing_zeros | remove:cart.currency.symbol }}"
-       data-currency-symbol="{{ cart.currency.symbol }}"
-       data-product-title="{{ product.title | escape }}"
-       data-walkin-variant="{{ walk_in.selected_or_first_available_variant.id }}"
-       data-mailin-variant="{{ mail_in.selected_or_first_available_variant.id }}"
-       data-mailin-price="{{ mail_in.price | money_without_trailing_zeros | remove:cart.currency.symbol }}"
-       data-is-diagnostic="{{ is_diagnostic }}"
-       style="display:none;"></div>
+
+  <div class="repair-total-price" data-productprice="{{ product.price | money_without_trailing_zeros | remove:cart.currency.symbol }}">
+    <p>
+        <small style="font-size:12px; font-weight:400; color:#666;">Total</small>
+        <span class="total-price">{{ product.price | money }}</span>
+    </p>
+  </div>
 </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  // =============================================
-  // CONFIGURATION & STATE
-  // =============================================
-  const productData = document.getElementById('ic-product-data');
-  const currency = productData.dataset.currencySymbol;
-  const basePrice = parseFloat(productData.dataset.productPrice) || 0;
-  const productTitle = productData.dataset.productTitle;
-  const mailinPrice = parseFloat(productData.dataset.mailinPrice) || 0;
-  const isDiagnostic = productData.dataset.isDiagnostic === 'true'; // FIX 1: Track diagnostic state in JS
-  
-  let state = {
-    turnaroundPrice: 0,
-    turnaroundVariantId: null,
-    turnaroundDaysMin: 2,
-    turnaroundDaysMax: 3,
-    turnaroundSameDay: false,
-    addons: [],
-    serviceType: 'walkin',
-    paymentMethod: 'pay_now',
-    deviceColor: '',
-    walkInDate: '',
-    walkInTime: '',
-    mailinCollection: false
-  };
-  
-  // Deposit tiers
-  const depositTiers = [
-    { max: 199.99, deposit: 20, variantId: 47170786427133 },
-    { max: 399.99, deposit: 35, variantId: 47170786459901 },
-    { max: 599.99, deposit: 50, variantId: 47170786492669 },
-    { max: 799.99, deposit: 70, variantId: 47170786525437 },
-    { max: Infinity, deposit: 100, variantId: 47170786558205 }
-  ];
-  
-  // Color hex map
+  const currency_symbol = "{{ cart.currency.symbol }}";
+  let selectedTurnaroundPrice = 0;
+  let selectedDeviceColor = "";
+
+  const addToCartButton = document.querySelector('.custom-add-to-cart button');
+  const cartErrorEl = document.getElementById('cart-inline-error');
+  const walkinErrorEl = document.getElementById('walkin-inline-error');
+
+  const walkInCheckbox = document.getElementById('walk-in-checkbox');
+  const mailInCheckbox = document.getElementById('mail-in-checkbox');
+  const walkInDate = document.getElementById('walk-in-date');
+  const walkInTime = document.getElementById('walk-in-time');
+  const pointOfCollec = document.getElementById('point-of-collec');
+  const visitBtn = document.querySelector('.visit-btn');
+
+  const collectDeviceBtn = document.querySelector('.collect-device-btn');
+  const walkInContent = document.querySelector('.walk-in-service-content');
+  const collectDeviceContent = document.querySelector('.collect-device-content');
+
+  // --- HELPER TO NORMALIZE COLOR NAMES ---
+  function normalizeColorName(name) {
+    return String(name || '')
+      .replace(/\(PRODUCT\)RED/i, 'Red')
+      .trim();
+  }
+
+  // --- SWATCH COLOR CONFIG ---
   const colorHexMap = {
-    "Midnight": "#2c3e50", "Starlight": "#f5f5dc", "Red": "#e74c3c", "Blue": "#3498db",
+    "Midnight": "#2c3e50", "Starlight": "#f5f5dc", "Red": "#e74c3c", "Blue": "#3498db", 
     "Purple": "#9b59b6", "Yellow": "#f1c40f", "Black": "#1c1c1c", "White": "#f9f9f9",
     "Pink": "#ffc0cb", "Teal": "#008080", "Ultramarine": "#120a8f", "Natural Titanium": "#bebebe",
     "Black Titanium": "#212121", "White Titanium": "#f2f2f2", "Desert Titanium": "#d2b48c",
     "Space Black": "#1a1a1a", "Deep Purple": "#3c2a4d", "Sierra Blue": "#9fb1bd", "Alpine Green": "#505e4d",
     "Graphite": "#4b4e53", "Gold": "#e3d0b1", "Silver": "#e2e4e1", "Midnight Green": "#4e5851",
-    "Space Gray": "#535150", "Cosmic Orange": "#e67e22", "Mist Blue": "#a0d1e5", "Sage": "#9db4a1",
-    "Lavender": "#e6e6fa", "Blue Titanium": "#4b6f86", "Sky Blue": "#87CEEB", "Green": "#4cd964",
-    "Pacific Blue": "#5a9", "Deep Blue": "#1a237e"
+    "Space Gray": "#535150", "Cosmic Orange": "#e67e22", "Mist Blue": "#a0d1e5", "Sage": "#9db4a1", 
+    "Lavender": "#e6e6fa", "Blue Titanium": "#4b6f86", "Sky Blue": "#87CEEB"
   };
-  
-  // Color maps
+
+  // --- IPHONE REAR GLASS COLOR CONFIG ---
   const colorMap = {
     "iPhone 17 Pro Max": ["Silver", "Cosmic Orange", "Deep Blue"],
     "iPhone 17 Pro": ["Silver", "Cosmic Orange", "Deep Blue"],
@@ -2472,8 +764,10 @@ document.addEventListener("DOMContentLoaded", () => {
     "iPhone 11 Pro": ["Silver", "Space Gray", "Gold", "Midnight Green"],
     "iPhone 11": ["Purple", "Green", "Yellow", "Black", "White", "Red"]
   };
-  
+
+  // --- MACBOOK TRACKPAD COLOR CONFIG ---
   const macbookColorMap = {
+    // Airs
     "A1932": ["Space Gray", "Gold", "Silver"],
     "A2179": ["Space Gray", "Gold", "Silver"],
     "A2337": ["Space Gray", "Gold", "Silver"],
@@ -2483,6 +777,8 @@ document.addEventListener("DOMContentLoaded", () => {
     "A3114": ["Silver", "Starlight", "Space Gray", "Midnight"],
     "A3240": ["Silver", "Starlight", "Sky Blue", "Midnight"],
     "A3241": ["Silver", "Starlight", "Sky Blue", "Midnight"],
+
+    // Pros - Silver / Space Gray
     "A2141": ["Silver", "Space Gray"],
     "A2485": ["Silver", "Space Gray"],
     "A2780": ["Silver", "Space Gray"],
@@ -2499,6 +795,8 @@ document.addEventListener("DOMContentLoaded", () => {
     "A2918": ["Silver", "Space Gray"],
     "A2992": ["Silver", "Space Gray"],
     "A2442": ["Silver", "Space Gray"],
+    
+    // Pros - Silver / Space Black
     "A2991": ["Silver", "Space Black"],
     "A2996": ["Silver", "Space Black"],
     "A2998": ["Silver", "Space Black"],
@@ -2509,233 +807,119 @@ document.addEventListener("DOMContentLoaded", () => {
     "A3112": ["Silver", "Space Black"]
   };
 
-  // =============================================
-  // DOM ELEMENTS (FIX 6: null-safe references)
-  // =============================================
-  const checkoutBtn = document.getElementById('ic-btn-checkout');
-  const totalPriceEl = document.getElementById('ic-total-price');
-  const totalNoteEl = document.getElementById('ic-total-note');
-  const errorEl = document.getElementById('ic-error-message');
-  const balanceInfo = document.getElementById('ic-balance-info');   // May be null for diagnostics (FIX 1)
-  const balanceDue = document.getElementById('ic-balance-due');     // May be null for diagnostics (FIX 1)
-  const payNowAmount = document.getElementById('ic-pay-now-amount');
-  const depositAmount = document.getElementById('ic-deposit-amount'); // May be null for diagnostics (FIX 1)
-  const instoreAmount = document.getElementById('ic-instore-amount');
-  const mailinPayNowAmount = document.getElementById('ic-mailin-pay-now-amount');
-  const fastestWarning = document.getElementById('ic-fastest-warning');
-  
-  const walkinCard = document.getElementById('ic-walkin-card');
-  const mailinCard = document.getElementById('ic-mailin-card');
-  const walkinCheckbox = document.getElementById('ic-walkin-checkbox');
-  const mailinCheckbox = document.getElementById('ic-mailin-checkbox');
-  const walkInDateInput = document.getElementById('ic-walkin-date');
-  const walkInTimeSelect = document.getElementById('ic-walkin-time');
-  const mailinCollectionCheckbox = document.getElementById('ic-mailin-collection-checkbox');
-  
-  const colorSection = document.getElementById('ic-color-section');
-  const colorChips = document.getElementById('ic-color-chips');
-  
-  // =============================================
-  // HELPER FUNCTIONS
-  // =============================================
-  
-  function normalizeColorName(name) {
-    return String(name || '').replace(/\(PRODUCT\)RED/i, 'Red').trim();
-  }
-  
-  function getDepositTier(total) {
-    for (const tier of depositTiers) {
-      if (total <= tier.max) return tier;
-    }
-    return depositTiers[depositTiers.length - 1];
-  }
-  
-  function formatCurrency(amount) {
-    return `${currency}${amount.toFixed(2)}`;
-  }
-  
-  function showError(msg) {
-    errorEl.textContent = msg;
-    errorEl.classList.add('visible');
-  }
-  
-  function clearError() {
-    errorEl.textContent = '';
-    errorEl.classList.remove('visible');
-  }
-  
-  // =============================================
-  // FIX 2: HUMAN-READABLE DATE FORMATTING
-  // Converts Y-m-d to "Monday 9th February 2026"
-  // =============================================
-  
-  function formatDateForDisplay(ymd) {
-    if (!ymd) return 'Not specified';
-    const date = parseYMDToLocalDate(ymd);
-    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
-                        'July', 'August', 'September', 'October', 'November', 'December'];
-    const dayName = dayNames[date.getDay()];
-    const day = date.getDate();
-    const suffix = getDaySuffix(day);
-    const month = monthNames[date.getMonth()];
-    const year = date.getFullYear();
-    return `${dayName} ${day}${suffix} ${month} ${year}`;
-  }
-  
-  // =============================================
-  // DATE CALCULATION FUNCTIONS
-  // =============================================
-  
-  function addWorkingDays(startDate, days) {
-    const result = new Date(startDate);
-    let added = 0;
-    while (added < days) {
-      result.setDate(result.getDate() + 1);
-      const dow = result.getDay();
-      if (dow !== 0 && dow !== 6 && !isClosedHolidayPeriod(result)) {
-        added++;
+  function updateColorSelector() {
+    const box = document.getElementById('device-color-selection');
+    const container = document.getElementById('color-chips');
+    const pageTitle = "{{ product.title | escape }}";
+    
+    const isIphone = pageTitle.toLowerCase().includes('iphone');
+    const isTargetRepair = pageTitle.toLowerCase().includes('rear glass') || pageTitle.toLowerCase().includes('rear housing');
+    const isMacBookTrackpad = pageTitle.toLowerCase().includes('macbook') && pageTitle.toLowerCase().includes('trackpad');
+    
+    // Check additional repairs checkboxes
+    const checkedAddons = document.querySelectorAll('.repair-checkbox:checked');
+    let addonNeedsColor = false;
+    checkedAddons.forEach(cb => {
+      const title = cb.getAttribute('data-title').toLowerCase();
+      if (title.includes('rear glass') || title.includes('rear housing')) addonNeedsColor = true;
+    });
+
+    let colorsToShow = null;
+
+    // 1. iPhone Logic
+    if (isIphone && (isTargetRepair || addonNeedsColor)) {
+      const modelKey = Object.keys(colorMap).find(key => pageTitle.includes(key));
+      if (modelKey) {
+        colorsToShow = colorMap[modelKey];
       }
     }
-    return result;
-  }
-  
-  function formatDateShort(date) {
-    const day = date.getDate();
-    const month = date.toLocaleString('en-GB', { month: 'short' });
-    const suffix = getDaySuffix(day);
-    return `${day}${suffix} ${month}`;
-  }
-  
-  function getDaySuffix(day) {
-    if (day > 3 && day < 21) return 'th';
-    switch (day % 10) {
-      case 1: return 'st';
-      case 2: return 'nd';
-      case 3: return 'rd';
-      default: return 'th';
-    }
-  }
-  
-  function updateTurnaroundDates() {
-    const hasWalkinDate = walkInDateInput && walkInDateInput.value;
-    
-    const standardEl = document.getElementById('trt-standard-date');
-    if (standardEl) {
-      if (hasWalkinDate) {
-        const baseDate = parseYMDToLocalDate(walkInDateInput.value);
-        const minDate = addWorkingDays(baseDate, 2);
-        const maxDate = addWorkingDays(baseDate, 3);
-        standardEl.textContent = `${formatDateShort(minDate)} - ${formatDateShort(maxDate)}`;
-      } else {
-        standardEl.textContent = 'Select date first';
+    // 2. MacBook Logic
+    else if (isMacBookTrackpad) {
+      // Find matching key in macbookColorMap based on A-number or unique substring
+      const modelKey = Object.keys(macbookColorMap).find(key => pageTitle.includes(key));
+      if (modelKey) {
+        colorsToShow = macbookColorMap[modelKey];
       }
     }
-    
-    const fastEl = document.getElementById('trt-fast-date');
-    if (fastEl) {
-      if (hasWalkinDate) {
-        const baseDate = parseYMDToLocalDate(walkInDateInput.value);
-        const fastDate = addWorkingDays(baseDate, 1);
-        fastEl.textContent = formatDateShort(fastDate);
-      } else {
-        fastEl.textContent = 'Select date first';
-      }
+
+    // Render if we have colors
+    if (colorsToShow) {
+        box.style.display = 'block';
+        if (container.children.length === 0) {
+          colorsToShow.forEach(color => {
+            const btn = document.createElement('div');
+            btn.className = 'color-btn';
+            
+            // NORMALIZE THE COLOR NAME
+            const normalized = normalizeColorName(color);
+
+            // GENERATE SWATCH
+            const swatch = document.createElement('div');
+            swatch.className = 'swatch-circle';
+            // Use normalized name for lookup
+            swatch.style.backgroundColor = colorHexMap[normalized] || '#ddd';
+            btn.appendChild(swatch);
+            
+            // Wrap text in a span for styling control (wrapping)
+            const textSpan = document.createElement('span');
+            textSpan.className = 'color-name-text';
+            // Use normalized name for display text
+            textSpan.textContent = normalized;
+            btn.appendChild(textSpan);
+            
+            btn.onclick = () => {
+              document.querySelectorAll('.color-btn').forEach(c => c.classList.remove('active'));
+              btn.classList.add('active');
+              // Use normalized name for selection logic
+              selectedDeviceColor = normalized;
+              calculateTotalPrice();
+            };
+            container.appendChild(btn);
+          });
+        }
+        return true; 
     }
-    
-    updateFastestDate();
-    updateMailinDate();
+
+    // If no match, hide
+    box.style.display = 'none';
+    selectedDeviceColor = "";
+    return false;
   }
-  
-  function updateFastestDate() {
-    const fastestEl = document.getElementById('trt-fastest-date');
-    if (!fastestEl) return;
-    
-    if (!walkInDateInput.value) {
-      fastestEl.textContent = 'Select date first';
-      return;
-    }
-    
-    if (!walkInTimeSelect.value) {
-      fastestEl.textContent = 'Select time first';
-      return;
-    }
-    
-    const appointmentDate = parseYMDToLocalDate(walkInDateInput.value);
-    const timeStr = walkInTimeSelect.value;
-    const timeMinutes = parse12HourToMinutes(timeStr);
-    
-    const cutoffMinutes = 13 * 60; // 1pm
-    
-    if (timeMinutes <= cutoffMinutes) {
-      const completionMinutes = timeMinutes + (4 * 60);
-      fastestEl.textContent = `${formatDateShort(appointmentDate)} by ${minutesTo12Hour(completionMinutes)}`;
-      if (fastestWarning) fastestWarning.classList.remove('visible');
-    } else {
-      const nextDay = addWorkingDays(appointmentDate, 1);
-      fastestEl.textContent = `${formatDateShort(nextDay)} by 1pm`;
-      if (fastestWarning) fastestWarning.classList.add('visible');
-    }
+
+  // ---------- DATE + TIME RULES (LOCAL TIME) ----------
+  function parseYMDToLocalDate(ymd) {
+    const [y, m, d] = ymd.split('-').map(n => parseInt(n, 10));
+    return new Date(y, m - 1, d, 0, 0, 0, 0);
   }
-  
-  function updateMailinDate() {
-    const mailinDateEl = document.getElementById('ic-mailin-date');
-    const mailinTierEl = document.getElementById('ic-mailin-tier');
-    if (!mailinDateEl) return;
-    
-    const today = new Date();
-    let totalDays = 2 + state.turnaroundDaysMax + 1;
-    if (state.mailinCollection) {
-      totalDays += 1;
-    }
-    
-    const returnDate = addWorkingDays(today, totalDays);
-    mailinDateEl.textContent = formatDateShort(returnDate);
-    
-    if (mailinTierEl) {
-      if (state.turnaroundDaysMax === 0) mailinTierEl.textContent = 'Fastest';
-      else if (state.turnaroundDaysMax === 1) mailinTierEl.textContent = 'Fast';
-      else mailinTierEl.textContent = 'Standard';
-    }
-  }
-  
-  // =============================================
-  // DATE/TIME FUNCTIONS
-  // =============================================
-  
+
   function localTodayMidnight() {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
   }
-  
+
   function formatLocalYMD(dateObj) {
     const y = dateObj.getFullYear();
     const m = String(dateObj.getMonth() + 1).padStart(2, '0');
     const d = String(dateObj.getDate()).padStart(2, '0');
     return `${y}-${m}-${d}`;
   }
-  
-  function parseYMDToLocalDate(ymd) {
-    const [y, m, d] = ymd.split('-').map(n => parseInt(n, 10));
-    return new Date(y, m - 1, d, 0, 0, 0, 0);
-  }
-  
+
   function isClosedHolidayPeriod(localDate) {
-    const month = localDate.getMonth() + 1;
-    const day = localDate.getDate();
+    const month = localDate.getMonth() + 1; // 1-12
+    const day = localDate.getDate();        // 1-31
     return (month === 12 && day >= 24) || (month === 1 && day <= 4);
   }
-  
+
   function getWeekdayFromYMD(ymd) {
     const [y, m, d] = ymd.split('-').map(n => parseInt(n, 10));
-    return new Date(y, m - 1, d).getDay();
+    return new Date(y, m - 1, d).getDay(); // local, 0 Sun .. 6 Sat
   }
-  
+
   function hhmmToMinutes(hhmm) {
     const [h, m] = hhmm.split(':').map(n => parseInt(n, 10));
     return (h * 60) + m;
   }
-  
+
   function minutesTo12Hour(mins) {
     let h24 = Math.floor(mins / 60);
     const m = mins % 60;
@@ -2745,7 +929,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (h12 === 0) h12 = 12;
     return `${h12}:${String(m).padStart(2, '0')} ${suffix}`;
   }
-  
+
+  function ceilNowToNextHalfHourMinutes() {
+    const now = new Date();
+    const mins = now.getHours() * 60 + now.getMinutes();
+    const remainder = mins % 30;
+    return remainder === 0 ? mins : (mins + (30 - remainder));
+  }
+
   function parse12HourToMinutes(str) {
     const s = String(str || '').trim();
     const match = s.match(/^(\d{1,2})\:(\d{2})\s*(AM|PM)$/i);
@@ -2760,895 +951,404 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     return (h * 60) + m;
   }
-  
-  function ceilNowToNextHalfHourMinutes() {
-    const now = new Date();
-    const mins = now.getHours() * 60 + now.getMinutes();
-    const remainder = mins % 30;
-    return remainder === 0 ? mins : (mins + (30 - remainder));
+
+  function clearAndDisableTimeSelect() {
+    if (!walkInTime) return;
+    walkInTime.innerHTML = '';
+    walkInTime.value = '';
+    walkInTime.disabled = true;
   }
-  
-  function populateTimeSlots() {
-    clearError();
-    walkInTimeSelect.innerHTML = '';
-    walkInTimeSelect.disabled = true;
-    
-    if (!walkInDateInput.value) return;
-    
-    const selected = parseYMDToLocalDate(walkInDateInput.value);
+
+  function validateDateRulesOrShowError() {
+    if (!walkInDate || !walkInDate.value) return false;
+
+    const selected = parseYMDToLocalDate(walkInDate.value);
     const today = localTodayMidnight();
-    
+
     if (selected < today) {
-      showError('Please select a date in the future.');
-      return;
+      showWalkinError('Please select a date in the future.');
+      walkInDate.value = '';
+      clearAndDisableTimeSelect();
+      return false;
     }
-    
-    const dow = getWeekdayFromYMD(walkInDateInput.value);
-    
-    // FIX 7: Extra validation — reject weekends even if Flatpickr somehow allowed them
+
+    if (isClosedHolidayPeriod(selected)) {
+      showWalkinError('We are closed from 24 December to 4 January. Please select another date.');
+      walkInDate.value = '';
+      clearAndDisableTimeSelect();
+      return false;
+    }
+
+    const dow = getWeekdayFromYMD(walkInDate.value);
     if (dow === 0 || dow === 6) {
-      showError('Walk-in appointments are only available Monday to Friday.');
-      return;
+      showWalkinError('Walk-in appointments are available Monday to Friday only. Please select a weekday.');
+      walkInDate.value = '';
+      clearAndDisableTimeSelect();
+      return false;
     }
-    
+
+    return true;
+  }
+
+  function populateSlotsForSelectedDate() {
+    if (!walkInDate || !walkInTime) return;
+
+    clearWalkinError();
+    clearAndDisableTimeSelect();
+
+    if (!walkInDate.value) return;
+    if (!validateDateRulesOrShowError()) return;
+
+    const dow = getWeekdayFromYMD(walkInDate.value);
+
+    // Hours
     let dayStartHHMM = '09:30';
     let dayEndHHMM = '17:30';
-    if (dow === 5) {
+    if (dow === 5) { // Friday
       dayStartHHMM = '10:00';
       dayEndHHMM = '17:30';
     }
-    
+
     let startMin = hhmmToMinutes(dayStartHHMM);
     const endMin = hhmmToMinutes(dayEndHHMM);
-    
+
+    // Same-day filtering
+    const selected = parseYMDToLocalDate(walkInDate.value);
+    const today = localTodayMidnight();
     const isToday = selected.getTime() === today.getTime();
     if (isToday) {
       const nextSlotMin = ceilNowToNextHalfHourMinutes();
       if (nextSlotMin > startMin) startMin = nextSlotMin;
     }
-    
+
+    // No slots left
     if (startMin > endMin) {
-      showError('No appointments available for this date. Please select another day.');
+      showWalkinError('No appointments are available for the selected date. Please choose another date.');
       return;
     }
-    
+
+    // Build options
     for (let t = startMin; t <= endMin; t += 30) {
       const label = minutesTo12Hour(t);
-      walkInTimeSelect.appendChild(new Option(label, label));
+      walkInTime.appendChild(new Option(label, label));
     }
-    
-    walkInTimeSelect.disabled = false;
-    state.walkInDate = walkInDateInput.value;
-    updateState();
-    updateTurnaroundDates();
-  }
-  
-  // =============================================
-  // ADDON NAME CLEANUP
-  // =============================================
-  
-  function cleanAddonNames() {
-    const stripPatterns = [
-      /MacBook\s*(Pro|Air)?\s*\d{2}[\-\s]?inch\s*/gi,
-      /['']M\d['']?\s*/gi,
-      /A\d{4}\s*/g,
-      /\(\d{4}\)\s*/g,
-      /iPhone\s*\d{1,2}\s*(Pro\s*Max|Pro|Plus|mini|e)?\s*/gi,
-      /iPad\s*(Pro|Air|mini)?\s*\d{0,2}[\.\d]*\s*/gi,
-      /\s{2,}/g,
-    ];
 
-    const repairSuffixes = [
-      { find: /^charging\s*port$/i, replace: 'Charging Port Repair' },
-      { find: /^keyboard$/i, replace: 'Keyboard Repair' },
-      { find: /^trackpad$/i, replace: 'Trackpad Repair' },
-      { find: /^screen$/i, replace: 'Screen Repair' },
-      { find: /^display$/i, replace: 'Display Repair' },
-      { find: /^battery$/i, replace: 'Battery Replacement' },
-      { find: /^speaker$/i, replace: 'Speaker Repair' },
-      { find: /^camera$/i, replace: 'Camera Repair' },
-      { find: /^touch\s*bar$/i, replace: 'Touch Bar Repair' },
-      { find: /^touch\s*id$/i, replace: 'Touch ID Repair' },
-      { find: /^logic\s*board$/i, replace: 'Logic Board Repair' },
-      { find: /^fan$/i, replace: 'Fan Replacement' },
-      { find: /^microphone$/i, replace: 'Microphone Repair' },
-      { find: /^rear\s*camera\s*lens$/i, replace: 'Rear Camera Lens Repair' },
-      { find: /^rear\s*glass$/i, replace: 'Rear Glass Repair' },
-      { find: /^rear\s*housing$/i, replace: 'Rear Housing Repair' },
-      { find: /^usb[\-\s]*c\s*(port)?$/i, replace: 'USB-C Port Repair' },
-      { find: /^thunderbolt\s*(port)?$/i, replace: 'Thunderbolt Port Repair' },
-      { find: /^hinge$/i, replace: 'Hinge Repair' },
-      { find: /^flexgate$/i, replace: 'Flexgate Repair' },
-      { find: /^dustgate$/i, replace: 'Dustgate Repair' },
-      { find: /^ssd$/i, replace: 'SSD Upgrade' },
-      { find: /^ram$/i, replace: 'RAM Upgrade' },
-    ];
+    walkInTime.disabled = false;
+  }
 
-    document.querySelectorAll('.ic-addon-name').forEach(nameEl => {
-      let text = nameEl.textContent.trim().replace(/🔋\s*/g, '');
-      
-      // Strip all model-specific prefixes
-      for (const pattern of stripPatterns) {
-        text = text.replace(pattern, '');
-      }
-      text = text.replace(/^\s*[\-–—|:]\s*/, '').trim();
-      
-      // If bare keyword remains, add proper suffix
-      let matched = false;
-      for (const kw of repairSuffixes) {
-        if (kw.find.test(text)) {
-          text = kw.replace;
-          matched = true;
-          break;
-        }
-      }
-      
-      // If already has "Repair"/"Replacement" in it, just title-case it
-      if (!matched) {
-        text = text.replace(/\b\w/g, c => c.toUpperCase());
-      }
-      
-      if (text) nameEl.textContent = text;
-    });
+  // Block past dates in the picker UI
+  if (walkInDate) walkInDate.min = formatLocalYMD(localTodayMidnight());
+
+  // Date change
+  if (walkInDate && walkInTime) {
+    walkInDate.addEventListener('change', populateSlotsForSelectedDate);
   }
-  
-  cleanAddonNames();
-  
-  // FIX 8: Filter out conflicting addons based on main product repair type
-  function filterConflictingAddons() {
-    const mainTitleLower = productTitle.toLowerCase();
-    
-    const exclusionRules = [
-      {
-        // Screen/Display repair → hide Flexgate & Dustgate
-        mainMatches: (t) => (t.includes('screen') || t.includes('display')) 
-                           && !t.includes('flexgate') && !t.includes('dustgate'),
-        hideAddons: (n) => n.includes('flexgate') || n.includes('dustgate')
-      },
-      {
-        // Flexgate repair → hide Screen/Display & Dustgate
-        mainMatches: (t) => t.includes('flexgate'),
-        hideAddons: (n) => n.includes('screen') || n.includes('display') || n.includes('dustgate')
-      },
-      {
-        // Dustgate repair → hide Screen/Display & Flexgate
-        mainMatches: (t) => t.includes('dustgate'),
-        hideAddons: (n) => n.includes('screen') || n.includes('display') || n.includes('flexgate')
-      },
-      {
-        // Rear Glass/Housing → hide Rear Camera Lens (glass includes lenses)
-        mainMatches: (t) => t.includes('rear glass') || t.includes('rear housing'),
-        hideAddons: (n) => n.includes('rear camera lens')
-      },
-      {
-        // Rear Camera Lens → hide Rear Glass/Housing
-        mainMatches: (t) => t.includes('rear camera lens'),
-        hideAddons: (n) => n.includes('rear glass') || n.includes('rear housing')
-      }
-    ];
-    
-    const activeRules = exclusionRules.filter(rule => rule.mainMatches(mainTitleLower));
-    if (activeRules.length === 0) return;
-    
-    document.querySelectorAll('.ic-addon-item').forEach(item => {
-      const addonNameEl = item.querySelector('.ic-addon-name');
-      if (!addonNameEl) return;
-      
-      const addonName = addonNameEl.textContent.trim().toLowerCase();
-      const shouldHide = activeRules.some(rule => rule.hideAddons(addonName));
-      
-      if (shouldHide) {
-        item.style.display = 'none';
-        
-        // Uncheck if it was selected
-        if (item.classList.contains('checked')) {
-          item.classList.remove('checked');
-          const checkbox = item.querySelector('input[type="checkbox"]');
-          if (checkbox) checkbox.checked = false;
-          const variantId = parseInt(item.dataset.variantId);
-          state.addons = state.addons.filter(a => a.variantId !== variantId);
-        }
-      }
-    });
+
+  function showCartError(message){
+    if (!cartErrorEl) return;
+    cartErrorEl.textContent = message;
+    cartErrorEl.classList.add('is-visible');
   }
-  
-  filterConflictingAddons();
-  
-  const addonMenuEl = document.querySelector('.ic-addons-dropdown-menu');
-  if (addonMenuEl) {
-    new MutationObserver(() => {
-      cleanAddonNames();
-      filterConflictingAddons();
-    }).observe(addonMenuEl, { childList: true, subtree: true });
+  function clearCartError(){
+    if (!cartErrorEl) return;
+    cartErrorEl.textContent = '';
+    cartErrorEl.classList.remove('is-visible');
   }
-  
-  // =============================================
-  // COLOR SELECTION
-  // =============================================
-  
-  function updateColorSelector() {
-    const pageTitle = productTitle;
-    const isIphone = pageTitle.toLowerCase().includes('iphone');
-    const isTargetRepair = pageTitle.toLowerCase().includes('rear glass') || pageTitle.toLowerCase().includes('rear housing');
-    const isMacBookTrackpad = pageTitle.toLowerCase().includes('macbook') && pageTitle.toLowerCase().includes('trackpad');
-    
-    let addonNeedsColor = false;
-    document.querySelectorAll('.ic-addon-item.checked').forEach(item => {
-      const name = item.querySelector('.ic-addon-name')?.textContent.toLowerCase() || '';
-      if (name.includes('rear glass') || name.includes('rear housing')) addonNeedsColor = true;
-    });
-    
-    let colorsToShow = null;
-    
-    if (isIphone && (isTargetRepair || addonNeedsColor)) {
-      const modelKey = Object.keys(colorMap).find(key => pageTitle.includes(key));
-      if (modelKey) colorsToShow = colorMap[modelKey];
-    } else if (isMacBookTrackpad) {
-      const modelKey = Object.keys(macbookColorMap).find(key => pageTitle.includes(key));
-      if (modelKey) colorsToShow = macbookColorMap[modelKey];
-    }
-    
-    if (colorsToShow) {
-      colorSection.classList.add('visible');
-      if (colorChips.children.length === 0) {
-        colorsToShow.forEach(color => {
-          const normalized = normalizeColorName(color);
-          const hexColor = colorHexMap[normalized] || '#ddd';
-          
-          const btn = document.createElement('div');
-          btn.className = 'ic-color-btn';
-          
-          const swatch = document.createElement('div');
-          swatch.className = 'ic-color-swatch';
-          swatch.style.backgroundColor = hexColor;
-          swatch.setAttribute('data-color', normalized);
-          
-          const nameSpan = document.createElement('span');
-          nameSpan.className = 'ic-color-name';
-          nameSpan.textContent = normalized;
-          
-          btn.appendChild(swatch);
-          btn.appendChild(nameSpan);
-          
-          btn.addEventListener('click', () => {
-            document.querySelectorAll('.ic-color-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            state.deviceColor = normalized;
-            updateState();
-          });
-          
-          colorChips.appendChild(btn);
-        });
-      }
-      return true;
-    }
-    
-    colorSection.classList.remove('visible');
-    state.deviceColor = '';
-    return false;
+
+  function showWalkinError(message){
+    if (!walkinErrorEl) return;
+    walkinErrorEl.textContent = message;
+    walkinErrorEl.classList.add('is-visible');
   }
-  
-  // =============================================
-  // CALCULATE TOTAL
-  // =============================================
-  
-  function calculateTotal() {
-    let total = basePrice;
-    total += state.turnaroundPrice;
-    state.addons.forEach(addon => {
-      total += addon.price;
-    });
-    if (state.serviceType === 'mailin') {
-      total += mailinPrice;
-    }
-    return total;
+  function clearWalkinError(){
+    if (!walkinErrorEl) return;
+    walkinErrorEl.textContent = '';
+    walkinErrorEl.classList.remove('is-visible');
   }
-  
-  // =============================================
-  // UPDATE STATE & UI
-  // =============================================
-  
-  function updateState() {
-    const total = calculateTotal();
-    const tier = getDepositTier(total);
-    
-    // Update payment amounts (FIX 6: null-safe)
-    if (payNowAmount) payNowAmount.textContent = formatCurrency(total);
-    if (mailinPayNowAmount) mailinPayNowAmount.textContent = formatCurrency(total);
-    if (depositAmount) depositAmount.textContent = formatCurrency(tier.deposit);
-    if (instoreAmount) instoreAmount.textContent = formatCurrency(total);
-    
-    let displayTotal = total;
-    let noteText = '';
-    
-    if (state.serviceType === 'walkin') {
-      if (state.paymentMethod === 'deposit') {
-        displayTotal = tier.deposit;
-        noteText = `Balance of ${formatCurrency(total - tier.deposit)} due on arrival`;
-        if (balanceInfo) balanceInfo.classList.add('visible');      // FIX 6: null guard
-        if (balanceDue) balanceDue.textContent = formatCurrency(total - tier.deposit); // FIX 6: null guard
-      } else if (state.paymentMethod === 'in_store') {
-        displayTotal = 0;
-        noteText = `Full amount of ${formatCurrency(total)} due on arrival`;
-        if (balanceInfo) balanceInfo.classList.remove('visible');   // FIX 6: null guard
-      } else {
-        if (balanceInfo) balanceInfo.classList.remove('visible');   // FIX 6: null guard
-      }
+
+  function resetButton(){
+    addToCartButton.classList.remove('loading');
+    addToCartButton.disabled = false;
+  }
+
+  function calculateTotalPrice() {
+    const checkedCheckboxes = document.querySelectorAll('.additional-repair-container input[type="checkbox"]:checked');
+    const walkInChecked = walkInCheckbox ? walkInCheckbox.checked : false;
+    const mailInChecked = mailInCheckbox ? mailInCheckbox.checked : false;
+
+    // --- LOGIC TO GREY OUT BUTTON (WITH COLOR CHECK) ---
+    const needsColor = updateColorSelector();
+    const colorPicked = !needsColor || (needsColor && selectedDeviceColor !== "");
+
+    // Logic: Requires one of Walk-in or Mail-in to be active AND color (if needed)
+    // Note: The script below ensures one of them is always checked when toggling UI
+    const isServiceSelected = (walkInChecked || mailInChecked);
+
+    if(isServiceSelected && colorPicked){
+      addToCartButton.disabled = false;
+      addToCartButton.classList.remove('disabled-state');
     } else {
-      if (balanceInfo) balanceInfo.classList.remove('visible');     // FIX 6: null guard
-      if (state.paymentMethod === 'mailin_pay_later') {
-        displayTotal = mailinPrice;
-        noteText = `Repair cost of ${formatCurrency(total - mailinPrice)} due after diagnostic`;
-      }
+      addToCartButton.disabled = true;
+      addToCartButton.classList.add('disabled-state');
     }
-    
-    totalPriceEl.textContent = formatCurrency(displayTotal);
-    totalNoteEl.textContent = noteText;
-    
-    // Button state
-    const needsColor = colorSection.classList.contains('visible');
-    const colorPicked = !needsColor || state.deviceColor !== '';
-    
-    let canProceed = colorPicked;
-    
-    if (state.serviceType === 'walkin') {
-      canProceed = canProceed && walkInDateInput.value && walkInTimeSelect.value;
+    // --------------------------------
+
+    let checkboxTotal = 0;
+    checkedCheckboxes.forEach(checkbox => {
+      const price = parseFloat(checkbox.getAttribute('data-price'));
+      if (!isNaN(price)) checkboxTotal += price;
+    });
+
+    let batteryPrice = 0;
+    const batteryReplaceRadioChecked = document.querySelector('input[name="batteryStatus"][value="replace"]:checked');
+    if (batteryReplaceRadioChecked) {
+      const bPrice = parseFloat(batteryReplaceRadioChecked.getAttribute('data-price'));
+      if (!isNaN(bPrice)) batteryPrice = bPrice;
     }
-    
-    // Button text
-    const btnText = checkoutBtn.querySelector('.ic-btn-text');
-    if (state.paymentMethod === 'in_store') {
-      btnText.textContent = 'Reserve Appointment';
-    } else if (state.paymentMethod === 'mailin_pay_later') {
-      btnText.textContent = 'Book Repair';
-    } else {
-      btnText.textContent = 'Proceed to Checkout';
+
+    let serviceFee = 0;
+    if (mailInChecked) {
+      const mPrice = parseFloat(mailInCheckbox.getAttribute('data-price'));
+      if (!isNaN(mPrice)) serviceFee += mPrice;
     }
-    
-    checkoutBtn.disabled = !canProceed;
-    
-    updateMailinDate();
+    if (walkInChecked) {
+      const wPrice = parseFloat(walkInCheckbox.getAttribute('data-price'));
+      if (!isNaN(wPrice)) serviceFee += wPrice;
+    }
+
+    const productPriceElement = document.querySelector('.walk-in-book-row .repair-total-price');
+    const productPrice = parseFloat(productPriceElement.getAttribute('data-productprice')) || 0;
+
+    const finalTotal = checkboxTotal + productPrice + selectedTurnaroundPrice + batteryPrice + serviceFee;
+
+    const repairPriceElement = document.querySelector('.walk-in-book-row .total-price');
+    productPriceElement.dataset.productpricefinal = String(finalTotal.toFixed(2));
+    repairPriceElement.textContent = `${currency_symbol}${finalTotal.toFixed(2)}`;
   }
-  
-  // =============================================
-  // ADDITIONAL REPAIRS - SECTION HANDLERS
-  // =============================================
-  
-  const addonsSection = document.getElementById('ic-addons-section');
-  const addonsDropdown = document.getElementById('ic-addons-dropdown');
-  const addonsDropdownTrigger = document.getElementById('ic-addons-dropdown-trigger');
-  const addonsSelectedList = document.getElementById('ic-addons-selected-list');
-  
-  document.querySelectorAll('.ic-addons-option').forEach(option => {
-    option.addEventListener('click', () => {
-      document.querySelectorAll('.ic-addons-option').forEach(o => o.classList.remove('active'));
-      option.classList.add('active');
-      option.querySelector('input').checked = true;
-      
-      const value = option.querySelector('input').value;
-      
-      if (value === 'yes') {
-        addonsSection.classList.add('show-dropdown');
-      } else {
-        addonsSection.classList.remove('show-dropdown');
-        document.querySelectorAll('.ic-addon-item.checked').forEach(item => {
-          item.classList.remove('checked');
-          item.querySelector('input[type="checkbox"]').checked = false;
-        });
-        state.addons = [];
-        updateAddonsUI();
-        updateColorSelector();
-        updateState();
-      }
-    });
-  });
-  
-  if (addonsDropdownTrigger) {
-    addonsDropdownTrigger.addEventListener('click', () => {
-      addonsDropdown.classList.toggle('open');
-    });
-    
-    document.addEventListener('click', (e) => {
-      if (addonsDropdown && !addonsDropdown.contains(e.target)) {
-        addonsDropdown.classList.remove('open');
-      }
-    });
-  }
-  
-  document.querySelectorAll('.ic-addon-item').forEach(item => {
-    item.addEventListener('click', (e) => {
-      e.stopPropagation();
-      item.classList.toggle('checked');
-      const checkbox = item.querySelector('input[type="checkbox"]');
-      checkbox.checked = item.classList.contains('checked');
-      
-      state.addons = [];
-      document.querySelectorAll('.ic-addon-item.checked').forEach(checkedItem => {
-        state.addons.push({
-          variantId: parseInt(checkedItem.dataset.variantId),
-          price: parseFloat(checkedItem.dataset.price) || 0,
-          originalPrice: parseFloat(checkedItem.dataset.originalPrice) || 0,
-          title: checkedItem.querySelector('.ic-addon-name')?.textContent?.trim() || '',
-          isBattery: checkedItem.dataset.isBattery === 'true'
-        });
-      });
-      
-      updateAddonsUI();
-      updateColorSelector();
-      updateState();
-    });
-  });
-  
-  function updateAddonsUI() {
-    const triggerText = document.querySelector('.ic-addons-dropdown-trigger-text');
-    const selectedCount = state.addons.length;
-    
-    if (selectedCount === 0) {
-      if (triggerText) triggerText.textContent = 'Select additional repairs...';
-      addonsDropdown?.classList.remove('has-selection');
-      addonsSection?.classList.remove('has-selections');
-    } else {
-      if (triggerText) triggerText.textContent = `${selectedCount} repair${selectedCount > 1 ? 's' : ''} selected`;
-      addonsDropdown?.classList.add('has-selection');
-      addonsSection?.classList.add('has-selections');
-    }
-    
-    if (addonsSelectedList) {
-      addonsSelectedList.innerHTML = '';
-      state.addons.forEach(addon => {
-        const item = document.createElement('div');
-        item.className = 'ic-addons-selected-item';
-        item.innerHTML = `
-          <span class="ic-addons-selected-name">${addon.title}</span>
-          <span class="ic-addons-selected-price">${formatCurrency(addon.price)}</span>
-          <div class="ic-addons-selected-remove" data-variant-id="${addon.variantId}">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </div>
-        `;
-        addonsSelectedList.appendChild(item);
-        
-        item.querySelector('.ic-addons-selected-remove').addEventListener('click', (e) => {
-          e.stopPropagation();
-          const variantId = parseInt(e.currentTarget.dataset.variantId);
-          const addonItem = document.querySelector(`.ic-addon-item[data-variant-id="${variantId}"]`);
-          if (addonItem) {
-            addonItem.classList.remove('checked');
-            addonItem.querySelector('input[type="checkbox"]').checked = false;
-          }
-          state.addons = state.addons.filter(a => a.variantId !== variantId);
-          updateAddonsUI();
-          updateColorSelector();
-          updateState();
-        });
-      });
-    }
-  }
-  
-  // =============================================
-  // TURNAROUND SELECTION
-  // =============================================
-  
-  document.querySelectorAll('input[name="turnaround"]').forEach(radio => {
+
+  // Turnaround listeners
+  document.querySelectorAll('.trt_choice-btn-row .trt-btn input[type="radio"]').forEach(radio => {
     radio.addEventListener('change', () => {
-      document.querySelectorAll('.ic-turnaround-inline .ic-choice-card, .ic-turnaround-section .ic-choice-card').forEach(c => {
-        c.classList.remove('active');
-      });
-      
-      const selectedValue = radio.value;
-      document.querySelectorAll(`input[name="turnaround"][value="${selectedValue}"]`).forEach(r => {
-        const card = r.closest('.ic-choice-card');
-        if (card) card.classList.add('active');
-      });
-      
-      state.turnaroundPrice = parseFloat(radio.dataset.price) || 0;
-      state.turnaroundVariantId = radio.value !== '200000' ? parseInt(radio.value) : null;
-      
-      const daysMin = parseInt(radio.dataset.daysMin);
-      const daysMax = parseInt(radio.dataset.daysMax);
-      state.turnaroundDaysMin = isNaN(daysMin) ? 2 : daysMin;
-      state.turnaroundDaysMax = isNaN(daysMax) ? 3 : daysMax;
-      state.turnaroundSameDay = radio.dataset.sameDay === 'true';
-      
-      updateState();
-      updateFastestDate();
+      if (!radio.checked) return;
+      document.querySelectorAll('.trt_choice-btn-row .trt-btn').forEach(el => el.classList.remove('active'));
+      const parent = radio.closest('.trt-btn');
+      if (parent) parent.classList.add('active');
+      selectedTurnaroundPrice = parseFloat(radio.getAttribute('data-price')) || 0;
+      calculateTotalPrice();
     });
   });
-  
-  // =============================================
-  // SERVICE TYPE SELECTION (FIX 4 & 5)
-  // =============================================
-  
-  function selectServiceType(type) {
-    state.serviceType = type;
-    
-    if (type === 'walkin') {
-      walkinCard.classList.add('active');
-      mailinCard.classList.remove('active');
-      walkinCheckbox.checked = true;
-      mailinCheckbox.checked = false;
-      state.paymentMethod = 'pay_now';
-      
-      // FIX 5: Re-validate time slots when switching back to walk-in
-      if (walkInDateInput.value) {
-        populateTimeSlots();
-      }
+
+  // Battery listeners
+  document.querySelectorAll('.battery_choice-btn-row .trt-btn input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      if (!radio.checked) return;
+      document.querySelectorAll('.battery_choice-btn-row .trt-btn').forEach(el => el.classList.remove('active'));
+      const parent = radio.closest('.trt-btn');
+      if (parent) parent.classList.add('active');
+      calculateTotalPrice();
+    });
+  });
+
+  // Add-on checkbox listeners
+  document.querySelectorAll('.additional-repair-container input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', calculateTotalPrice);
+  });
+
+  // Service UI toggle logic
+  // Triggered when user clicks the VISIBLE cards (.visit-btn or .collect-device-btn)
+  function toggleServiceType(type) {
+    if (type === 'visit') {
+        visitBtn.classList.add('active');
+        collectDeviceBtn.classList.remove('active');
+        
+        // Handle logic checkboxes
+        if(walkInCheckbox) walkInCheckbox.checked = true;
+        if(mailInCheckbox) mailInCheckbox.checked = false;
+        
+        // Show/Hide Content
+        if(walkInContent) walkInContent.style.display = 'block';
+        if(collectDeviceContent) collectDeviceContent.style.display = 'none';
     } else {
-      walkinCard.classList.remove('active');
-      mailinCard.classList.add('active');
-      walkinCheckbox.checked = false;
-      mailinCheckbox.checked = true;
-      state.paymentMethod = 'mailin_pay_now';
-      
-      if (state.turnaroundSameDay) {
-        const mailinStandard = document.querySelector('#mailin_trt_standard, #mailin_diagnostic_standard');
-        if (mailinStandard) {
-          mailinStandard.checked = true;
-          mailinStandard.dispatchEvent(new Event('change'));
-        }
-      }
+        visitBtn.classList.remove('active');
+        collectDeviceBtn.classList.add('active');
+        
+        // Handle logic checkboxes
+        if(walkInCheckbox) walkInCheckbox.checked = false;
+        if(mailInCheckbox) mailInCheckbox.checked = true;
+        
+        // Show/Hide Content
+        if(walkInContent) walkInContent.style.display = 'none';
+        if(collectDeviceContent) collectDeviceContent.style.display = 'block';
     }
-    
-    // Reset payment selections within the active service
-    document.querySelectorAll('.ic-payment-option').forEach(opt => {
-      opt.classList.remove('active');
-      opt.querySelector('input').checked = false;
-    });
-    
-    const defaultOpt = type === 'walkin' 
-      ? document.querySelector('[data-payment="pay_now"]')
-      : document.querySelector('[data-payment="mailin_pay_now"]');
-    if (defaultOpt) {
-      defaultOpt.classList.add('active');
-      defaultOpt.querySelector('input').checked = true;
-    }
-    
-    // FIX 4: Recalculate turnaround dates when switching service types
-    updateTurnaroundDates();
-    updateState();
+    calculateTotalPrice();
   }
-  
-  walkinCard.querySelector('.ic-service-header').addEventListener('click', () => selectServiceType('walkin'));
-  mailinCard.querySelector('.ic-service-header').addEventListener('click', () => selectServiceType('mailin'));
-  
-  // =============================================
-  // PAYMENT METHOD SELECTION
-  // =============================================
-  
-  document.querySelectorAll('.ic-payment-option').forEach(option => {
-    option.addEventListener('click', () => {
-      const parentSection = option.closest('.ic-service-content-inner');
-      parentSection.querySelectorAll('.ic-payment-option').forEach(opt => {
-        opt.classList.remove('active');
-        opt.querySelector('input').checked = false;
-      });
-      
-      option.classList.add('active');
-      option.querySelector('input').checked = true;
-      
-      state.paymentMethod = option.dataset.payment;
-      updateState();
-    });
-  });
-  
-  // =============================================
-  // DATE/TIME INPUTS - Flatpickr
-  // =============================================
-  
-  const flatpickrScript = document.createElement('script');
-  flatpickrScript.src = 'https://cdn.jsdelivr.net/npm/flatpickr';
-  flatpickrScript.onload = function() {
-    if (walkInDateInput) {
-      flatpickr(walkInDateInput, {
-        dateFormat: 'Y-m-d',
-        altInput: true,
-        altFormat: 'D, d M Y',
-        minDate: 'today',
-        locale: {
-          firstDayOfWeek: 1
-        },
-        disable: [
-          function(date) {
-            const day = date.getDay();
-            if (day === 0 || day === 6) return true;
-            
-            const month = date.getMonth() + 1;
-            const dateNum = date.getDate();
-            if ((month === 12 && dateNum >= 24) || (month === 1 && dateNum <= 4)) return true;
-            
-            return false;
-          }
-        ],
-        onChange: function(selectedDates, dateStr) {
-          if (dateStr) {
-            // FIX 2: Flatpickr with altInput already sets the hidden input value,
-            // but we set it explicitly for safety
-            walkInDateInput.value = dateStr;
-            populateTimeSlots();
-          }
-        }
-      });
-    }
-  };
-  document.head.appendChild(flatpickrScript);
-  
-  if (walkInTimeSelect) {
-    walkInTimeSelect.addEventListener('change', () => {
-      state.walkInTime = walkInTimeSelect.value;
-      updateState();
-      updateTurnaroundDates();
-    });
+
+  if (collectDeviceBtn) collectDeviceBtn.addEventListener('click', () => toggleServiceType('collect'));
+  if (visitBtn) visitBtn.addEventListener('click', () => toggleServiceType('visit'));
+
+  // Ensure initial state matches
+  if (visitBtn && visitBtn.classList.contains('active')) {
+      toggleServiceType('visit');
+  } else if (collectDeviceBtn && collectDeviceBtn.classList.contains('active')) {
+      toggleServiceType('collect');
   }
-  
-  if (mailinCollectionCheckbox) {
-    mailinCollectionCheckbox.addEventListener('change', () => {
-      state.mailinCollection = mailinCollectionCheckbox.checked;
-      updateMailinDate();
-    });
-  }
-  
-  // =============================================
-  // CHECKOUT HANDLER
-  // FIX 2: Human-readable dates in line items
-  // FIX 7: Date validation before submission
-  // =============================================
-  
-  checkoutBtn.addEventListener('click', async (e) => {
-    e.preventDefault();
-    clearError();
-    
-    const mainVariantId = parseInt(checkoutBtn.dataset.mainVariant);
-    const mainAvailable = checkoutBtn.dataset.mainAvailable === 'true';
-    
-    if (!mainVariantId || !mainAvailable) {
-      showError('This repair is currently unavailable.');
+
+  // Add to cart
+  addToCartButton.addEventListener('click', async (event) => {
+    event.preventDefault();
+    clearCartError();
+    clearWalkinError();
+
+    const mainAvailable = (addToCartButton.dataset.mainAvailable === 'true');
+    const mainVariantId = parseInt(addToCartButton.dataset.mainVariant, 10);
+
+    if (!mainVariantId || Number.isNaN(mainVariantId)) {
+      showCartError('Error adding to cart: Main variant ID missing.');
       return;
     }
-    
-    // FIX 7: Validate walk-in date/time before submission
-    if (state.serviceType === 'walkin') {
-      if (!walkInDateInput.value || !walkInTimeSelect.value) {
-        showError('Please select a date and time for your visit.');
+
+    if (!mainAvailable) {
+      showCartError("Error adding to cart: This repair is currently unavailable. Fix the variant availability in Shopify Admin.");
+      return;
+    }
+
+    // If walk-in is checked, enforce date/time
+    if (visitBtn && visitBtn.classList.contains('active') && walkInCheckbox && walkInCheckbox.checked) {
+      if (!walkInDate.value) {
+        showWalkinError('Please select a date and time for your visit.');
         return;
       }
-      
-      // FIX 7: Re-validate the selected date hasn't become stale
-      const selectedDate = parseYMDToLocalDate(walkInDateInput.value);
+
+      // Rebuild slots for that date in case user changed system time or came back later
+      // FIX: Save selected time before repopulating (prevents reset to first slot)
+      const savedTimeValue = walkInTime ? walkInTime.value : '';
+      populateSlotsForSelectedDate();
+      // FIX: Restore selected time if still valid
+      if (savedTimeValue && walkInTime) {
+        const stillExists = [...walkInTime.options].some(opt => opt.value === savedTimeValue);
+        if (stillExists) walkInTime.value = savedTimeValue;
+      }
+
+      if (!walkInTime.value) {
+        showWalkinError('Please select a date and time for your visit.');
+        return;
+      }
+
+      // Final same-day guard
+      const selected = parseYMDToLocalDate(walkInDate.value);
       const today = localTodayMidnight();
-      if (selectedDate < today) {
-        showError('Your selected date has passed. Please choose a new date.');
-        return;
-      }
-      
-      // FIX 7: Re-validate it's not a weekend
-      const dow = selectedDate.getDay();
-      if (dow === 0 || dow === 6) {
-        showError('Walk-in appointments are only available Monday to Friday. Please choose another date.');
-        return;
+      if (selected.getTime() === today.getTime()) {
+        const chosenMin = parse12HourToMinutes(walkInTime.value);
+        const nextSlotMin = ceilNowToNextHalfHourMinutes();
+        if (chosenMin === null || chosenMin < nextSlotMin) {
+          showWalkinError('No appointments are available for today at the selected time. Please choose another time or date.');
+          return;
+        }
       }
     }
-    
-    checkoutBtn.classList.add('loading');
-    checkoutBtn.disabled = true;
-    
+
+    addToCartButton.classList.add('loading');
+    addToCartButton.disabled = true;
+
     try {
       const items = [];
-      const total = calculateTotal();
-      const tier = getDepositTier(total);
-      
-      const addonsSavings = state.addons.reduce((sum, a) => sum + (a.originalPrice - a.price), 0);
-      const totalBeforeDiscount = total + addonsSavings;
-      const hasAddons = state.addons.length > 0;
-      
-      let repairDesc = productTitle;
-      if (hasAddons) {
-        repairDesc += ' + ' + state.addons.map(a => a.title).join(', ');
-      }
-      
-      let turnaroundLabel = 'Standard (2-3 Working Days)';
-      if (state.turnaroundDaysMax === 0 || state.turnaroundSameDay) {
-        turnaroundLabel = 'Fastest (4 Hours)';
-      } else if (state.turnaroundDaysMax === 1) {
-        turnaroundLabel = 'Fast (1 Working Day)';
-      }
-      
-      // FIX 2: Format date for line item properties (human-readable)
-      const displayDate = formatDateForDisplay(walkInDateInput.value);
-      
-      // =============================================
-      // WALK-IN FLOWS
-      // =============================================
-      if (state.serviceType === 'walkin') {
-        
-        // DEPOSIT FLOW
-        if (state.paymentMethod === 'deposit') {
-          const depositProperties = {
-            'Service Type': 'Walk-in (Pay on Arrival)',
-            'Repair': repairDesc,
-            'Turnaround': turnaroundLabel,
-            'Appointment Date': displayDate,          // FIX 2: Human-readable
-            'Appointment Time': walkInTimeSelect.value,
-            ...(state.deviceColor && { 'Device Color': state.deviceColor })
-          };
-          
-          if (hasAddons) {
-            depositProperties['Price (before discount)'] = formatCurrency(totalBeforeDiscount);
-            depositProperties['Addon Discount (30%)'] = '-' + formatCurrency(addonsSavings);
-            depositProperties['Price (after discount)'] = formatCurrency(total);
-          } else {
-            depositProperties['Full Price'] = formatCurrency(total);
-          }
-          
-          depositProperties['Balance Due on Arrival'] = formatCurrency(total - tier.deposit);
-          
+
+      // MAIN PRODUCT
+      const mainProps = {};
+      if (selectedDeviceColor) mainProps['Device Color'] = selectedDeviceColor;
+      items.push({ id: mainVariantId, quantity: 1, properties: mainProps });
+
+      // ADDITIONAL REPAIRS
+      document.querySelectorAll('.additional-repair-container input[type="checkbox"]:checked').forEach(cb => {
+        const id = parseInt(cb.value, 10);
+        if (id && !Number.isNaN(id)) items.push({ id, quantity: 1 });
+      });
+
+      // WALK-IN
+      if (walkInCheckbox && walkInCheckbox.checked) {
+        const id = parseInt(walkInCheckbox.value, 10);
+        if (id && !Number.isNaN(id)) {
           items.push({
-            id: tier.variantId,
-            quantity: 1,
-            properties: depositProperties
-          });
-        
-        // PAY IN STORE FLOW
-        } else if (state.paymentMethod === 'in_store') {
-          const instoreProperties = {
-            'Service Type': 'Walk-in (Pay in Store)',
-            'Repair': repairDesc,
-            'Turnaround': turnaroundLabel,
-            'Appointment Date': displayDate,          // FIX 2: Human-readable
-            'Appointment Time': walkInTimeSelect.value,
-            ...(state.deviceColor && { 'Device Color': state.deviceColor })
-          };
-          
-          if (hasAddons) {
-            instoreProperties['Price (before discount)'] = formatCurrency(totalBeforeDiscount);
-            instoreProperties['Addon Discount (30%)'] = '-' + formatCurrency(addonsSavings);
-            instoreProperties['Total Due on Arrival'] = formatCurrency(total);
-          } else {
-            instoreProperties['Total Due on Arrival'] = formatCurrency(total);
-          }
-          
-          items.push({
-            id: parseInt(productData.dataset.walkinVariant),
-            quantity: 1,
-            properties: instoreProperties
-          });
-        
-        // PAY NOW FLOW
-        } else {
-          const mainProps = {
-            ...(state.deviceColor && { 'Device Color': state.deviceColor })
-          };
-          items.push({ id: mainVariantId, quantity: 1, properties: mainProps });
-          
-          state.addons.forEach(addon => {
-            items.push({ id: addon.variantId, quantity: 1 });
-          });
-          
-          if (state.turnaroundVariantId) {
-            items.push({ id: state.turnaroundVariantId, quantity: 1 });
-          }
-          
-          items.push({
-            id: parseInt(productData.dataset.walkinVariant),
+            id,
             quantity: 1,
             properties: {
               'Service Type': 'Walk-in',
-              'Turnaround': turnaroundLabel,
-              'Preferred Date': displayDate,           // FIX 2: Human-readable
-              'Preferred Time': walkInTimeSelect.value || 'Not specified'
-            }
-          });
-        }
-        
-      // =============================================
-      // MAIL-IN FLOWS
-      // =============================================
-      } else {
-        
-        // PAY AFTER DIAGNOSTIC
-        if (state.paymentMethod === 'mailin_pay_later') {
-          const mailinProperties = {
-            'Service Type': 'Mail-in (Pay After Diagnostic)',
-            'Repair': repairDesc,
-            'Turnaround': turnaroundLabel,
-            ...(state.deviceColor && { 'Device Color': state.deviceColor }),
-            ...(state.mailinCollection && { 'Collection Requested': 'Yes' })
-          };
-          
-          if (hasAddons) {
-            mailinProperties['Repair Cost (before discount)'] = formatCurrency(totalBeforeDiscount - mailinPrice);
-            mailinProperties['Addon Discount (30%)'] = '-' + formatCurrency(addonsSavings);
-            mailinProperties['Repair Cost (after discount)'] = formatCurrency(total - mailinPrice);
-          } else {
-            mailinProperties['Repair Cost'] = formatCurrency(total - mailinPrice);
-          }
-          
-          items.push({
-            id: parseInt(productData.dataset.mailinVariant),
-            quantity: 1,
-            properties: mailinProperties
-          });
-        
-        // MAIL-IN PAY NOW FLOW
-        } else {
-          const mainProps = {
-            ...(state.deviceColor && { 'Device Color': state.deviceColor })
-          };
-          items.push({ id: mainVariantId, quantity: 1, properties: mainProps });
-          
-          state.addons.forEach(addon => {
-            items.push({ id: addon.variantId, quantity: 1 });
-          });
-          
-          if (state.turnaroundVariantId) {
-            items.push({ id: state.turnaroundVariantId, quantity: 1 });
-          }
-          
-          items.push({
-            id: parseInt(productData.dataset.mailinVariant),
-            quantity: 1,
-            properties: { 
-              'Service Type': 'Mail-in',
-              'Turnaround': turnaroundLabel,
-              ...(state.mailinCollection && { 'Collection Requested': 'Yes' })
+              'Preferred Date': walkInDate ? walkInDate.value : '',
+              'Preferred Time': walkInTime ? walkInTime.value : '',
+              'Point of Collection': pointOfCollec ? pointOfCollec.value : ''
             }
           });
         }
       }
-      
-      // =============================================
-      // ADD TO CART
-      // =============================================
+
+      // MAIL-IN
+      if (mailInCheckbox && mailInCheckbox.checked) {
+        const id = parseInt(mailInCheckbox.value, 10);
+        if (id && !Number.isNaN(id)) {
+          items.push({
+            id,
+            quantity: 1,
+            properties: { 'Service Type': 'Mail-in Service' }
+          });
+        }
+      }
+
+      // TURNAROUND
+      const trt = document.querySelector('.turn_arround_time-wrapper input[type="radio"]:checked');
+      if (trt && trt.value && trt.value !== '200000') {
+        const id = parseInt(trt.value, 10);
+        if (id && !Number.isNaN(id)) items.push({ id, quantity: 1 });
+      }
+
+      // BATTERY
+      const batteryReplace = document.querySelector('#batteryReplace');
+      if (batteryReplace && batteryReplace.checked) {
+        const id = parseInt(batteryReplace.dataset.variantId, 10);
+        if (id && !Number.isNaN(id)) items.push({ id, quantity: 1 });
+      }
+
       const res = await fetch(window.Shopify.routes.root + 'cart/add.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items })
       });
-      
+
       const json = await res.json();
-      
+
       if (!res.ok) {
-        showError('Error adding to cart: ' + (json.description || json.message || 'Unknown error'));
-        checkoutBtn.classList.remove('loading');
-        checkoutBtn.disabled = false;
+        showCartError('Error adding to cart: ' + (json.description || json.message || 'Unknown error'));
+        resetButton();
         return;
       }
-      
-      // =============================================
-      // REDIRECT TO CHECKOUT
-      // =============================================
-      const shouldApplyDiscount = hasAddons && (
-        (state.serviceType === 'walkin' && state.paymentMethod === 'pay_now') ||
-        (state.serviceType === 'mailin' && state.paymentMethod === 'mailin_pay_now')
-      );
-      
-      if (shouldApplyDiscount) {
-        window.location.assign('/checkout?discount=ADDON30');
-      } else {
-        window.location.assign('/checkout?discount=');
-      }
-      
-    } catch (err) {
-      showError('Network error. Please try again.');
-      checkoutBtn.classList.remove('loading');
-      checkoutBtn.disabled = false;
+
+      window.location.href = '/cart';
+    } catch (e) {
+      showCartError('Error adding to cart: Network or theme script error.');
+      resetButton();
     }
   });
-  
-  // =============================================
-  // INITIALIZE
-  // =============================================
-  
-  const deviceCollectionSetting = {{ device_collection_setting | json }};
-  if (deviceCollectionSetting) {
-    selectServiceType('mailin');
-  } else {
-    selectServiceType('walkin');
+
+  // Accordion for additional repairs
+  const toggle = document.getElementById('toggle-repair-section');
+  const container = document.querySelector('.additional-repair-container');
+  if (toggle && container) {
+    const wrapper = toggle.parentElement;
+    wrapper.classList.add('expanded');
+    container.style.height = 'auto';
+
+    toggle.addEventListener('click', () => {
+      const isOpen = wrapper.classList.contains('expanded');
+      if (isOpen) {
+        container.style.height = '0px';
+        wrapper.classList.remove('expanded');
+      } else {
+        container.style.height = 'auto';
+        wrapper.classList.add('expanded');
+      }
+    });
   }
-  
-  updateColorSelector();
-  updateTurnaroundDates();
-  updateState();
+
+  // Initial calculation to set the disabled state on page load
+  calculateTotalPrice();
 });
 </script>

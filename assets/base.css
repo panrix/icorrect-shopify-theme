@@ -3752,6 +3752,7 @@ body p,
   line-height: 1.7 !important;
 }
 
+/* Cart remove button icon fix */
 cart-remove-button .icon-remove,
 cart-remove-button .icon-remove path {
   fill: rgb(var(--color-foreground)) !important;

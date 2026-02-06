@@ -215,51 +215,51 @@
                   {{- block.settings.text -}}
                 </p>
               {%- when 'title' -%}
-  <div
-    class="product__title blog {% if block.settings.enable-price %}title-price-row{% endif %}"
-    {{ block.shopify_attributes }}
-  >
-    {% comment %} Breadcrumb Navigation {% endcomment %}
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-      <a href="/">Home</a>
-      <span class="breadcrumb-separator">›</span>
-      {% if collection %}
-        <a href="{{ collection.url }}">{{ collection.title }}</a>
-      {% elsif product.collections.size > 0 %}
-        {% assign primary_collection = product.collections | first %}
-        <a href="{{ primary_collection.url }}">{{ primary_collection.title }}</a>
-      {% endif %}
-    </nav>
+                <div
+                  class="product__title blog {% if block.settings.enable-price %}title-price-row{% endif %}"
+                  {{ block.shopify_attributes }}
+                >
+                  {% comment %} Breadcrumb Navigation {% endcomment %}
+                  <nav class="breadcrumb" aria-label="Breadcrumb">
+                    <a href="/">Home</a>
+                    <span class="breadcrumb-separator">›</span>
+                    {% if collection %}
+                      <a href="{{ collection.url }}">{{ collection.title }}</a>
+                    {% elsif product.collections.size > 0 %}
+                      {% assign primary_collection = product.collections | first %}
+                      <a href="{{ primary_collection.url }}">{{ primary_collection.title }}</a>
+                    {% endif %}
+                  </nav>
 
-    <style>
-      .breadcrumb {
-        width: 100%;
-        padding-bottom: 8px;
-        font-size: 13px;
-        color: #6b7280;
-      }
-      .breadcrumb a {
-        color: #6b7280;
-        text-decoration: none;
-        transition: color 0.2s ease;
-      }
-      .breadcrumb a:hover {
-        color: #1d1d1f;
-        text-decoration: underline;
-      }
-      .breadcrumb-separator {
-        margin: 0 6px;
-        color: #9ca3af;
-      }
-      @media screen and (max-width: 749px) {
-        .breadcrumb {
-          font-size: 12px;
-          padding-bottom: 6px;
-        }
-      }
-    </style>
+                  <style>
+                    .breadcrumb {
+                      width: 100%;
+                      padding-bottom: 8px;
+                      font-size: 13px;
+                      color: #6b7280;
+                    }
+                    .breadcrumb a {
+                      color: #6b7280;
+                      text-decoration: none;
+                      transition: color 0.2s ease;
+                    }
+                    .breadcrumb a:hover {
+                      color: #1d1d1f;
+                      text-decoration: underline;
+                    }
+                    .breadcrumb-separator {
+                      margin: 0 6px;
+                      color: #9ca3af;
+                    }
+                    @media screen and (max-width: 749px) {
+                      .breadcrumb {
+                        font-size: 12px;
+                        padding-bottom: 6px;
+                      }
+                    }
+                  </style>
 
-    <h1>{{ product.title | escape }}</h1>
+                  <h1>{{ product.title | escape }}</h1>
                   <a href="{{ product.url }}" class="product__title">
                     <h2 class="h1">
                       {{ product.title | escape }}
