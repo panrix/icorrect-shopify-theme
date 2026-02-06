@@ -112,7 +112,6 @@
         "show_description": false,
         "description_style": "body",
         "collection": "iphone-screen-repair-prices",
-        "products_to_show": 3,
         "columns_desktop": 3,
         "full_width": false,
         "show_view_all": false,
@@ -474,15 +473,7 @@
     "contact_with_map_dXbbDU": {
       "type": "contact-with-map",
       "settings": {
-        "padding-top": 0,
-        "padding-bottom": 0,
-        "mob-padding-top": 0,
-        "mob-padding-bottom": 0,
-        "bg": "#fafafa",
-        "map": "shopify://shop_images/map-img.webp",
-        "heading": "Get In Touch",
-        "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>",
-        "hours": "<h3>Hours</h3><p>Mon–Thur: 9am–6pm </p><p>Fri: 10am–6pm </p><p>Sat: Closed </p><p>Sun: Closed</p>"
+        "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>"
       }
     }
   },
