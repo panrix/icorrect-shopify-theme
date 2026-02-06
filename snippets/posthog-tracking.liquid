@@ -1,0 +1,21 @@
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof posthog === 'undefined') return;
+  
+  document.addEventListener('click', function(e) {
+    var target = e.target.closest('[name="checkout"], a[href*="/checkout"], .cart__checkout-button');
+    if (target) {
+      posthog.capture('Checkout Started');
+    }
+  }, true);
+  
+  document.addEventListener('click', function(e) {
+    var target = e.target.closest('[name="add"], .product-form__submit');
+    if (target) {
+      posthog.capture('Add to Cart', {
+        product: document.querySelector('.product__title')?.textContent?.trim()
+      });
+    }
+  }, true);
+});
+</script>
