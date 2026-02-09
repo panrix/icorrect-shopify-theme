@@ -1,1 +1,149 @@
-{"sections": {"main": {"type": "main-page","disabled": true,"name": "Page","settings": {"padding_top": 28,"padding_bottom": 28}},"custom_liquid_XByNwd": {"type": "custom-liquid","name": "t:sections.custom-liquid.presets.name","settings": {"custom_liquid": "<!-- Warranty Page Heading -->\n<section style=\"padding: 20px 20px; background: #FFFFFF; text-align: center;\">\n  <h1 style=\"font-size: 50px; font-weight: bold; margin-bottom: 20px;\">Our Repair Warranty</h1>\n  <p style=\"max-width: 800px; margin: 0 auto; font-size: 16px; color: #555;\">\n    We take pride in the quality of our work. That is why every repair we carry out, from routine screen fixes to complex logic board repairs, is backed by a 2-year warranty as standard. No extra fees, no hidden conditions, just complete peace of mind.\n  </p>\n</section>","color_scheme": "","padding_top": 0,"padding_bottom": 52}},"custom_liquid_NQ4xni": {"type": "custom-liquid","name": "t:sections.custom-liquid.presets.name","settings": {"custom_liquid": "<style>\n  .visit-button {\n    display: inline-block;\n    margin-top: 30px;\n    padding: 12px 28px;\n    background-color: #111;\n    color: #fff;\n    text-decoration: none;\n    font-weight: bold;\n    border-radius: 6px;\n    transition: background-color 0.3s ease;\n  }\n\n  .visit-button:hover {\n    background-color: #333;\n  }\n  .warranty-detail {\n    background: #f9f9f9;\n    padding: 60px 20px;\n  }\n  .detail-block {\n    max-width: 800px;\n    margin: 0 auto 60px auto;\n    text-align: center;\n  }\n  .detail-block h3 {\n    font-size: 24px;\n    font-weight: 600;\n    margin-top: 20px;\n    margin-bottom: 20px;\n  }\n  .detail-block p {\n    font-size: 16px;\n    color: #444;\n    line-height: 1.6;\n    margin-bottom: 16px;\n  }\n  .detail-icon {\n    width: 64px;\n    height: 64px;\n  }\n</style>\n\n<div class=\"warranty-detail\">\n  <div class=\"detail-block\">\n    <img src=\"https://cdn-icons-png.flaticon.com/512/8031/8031372.png\" alt=\"2-Year Warranty Icon\" class=\"detail-icon\">\n    <h3>2 Years Coverage</h3>\n    <p>Every repair we complete includes a 2-year warranty. This applies to screens, batteries, logic boards, and all other services. We stand by the durability of our work.</p>\n    <p>The warranty applies whether you visit us in London or send your device from anywhere in the country.</p>\n  </div>\n\n  <div class=\"detail-block\">\n    <img src=\"https://cdn-icons-png.flaticon.com/512/2910/2910768.png\" alt=\"Built to Last Icon\" class=\"detail-icon\">\n    <h3>Built to Last</h3>\n    <p>We use original Apple parts wherever possible, sourced and tested to meet factory standards. Combined with precision workmanship from experienced engineers, our repairs are made to last.</p>\n    <p>Every device goes through our full testing process before it leaves. We check what we fixed and everything else. Problems get caught before you see them.</p>\n  </div>\n\n  <div class=\"detail-block\">\n    <img src=\"https://cdn-icons-png.flaticon.com/512/7920/7920222.png\" alt=\"Logic Board Icon\" class=\"detail-icon\">\n    <h3>Logic Board Repairs Covered</h3>\n    <p>Logic board repairs are included in the 2-year warranty. We do not handle complex repairs differently. If something fails, we fix it.</p>\n    <p>This level of confidence applies to every repair we take on.</p>\n  </div>\n\n  <div class=\"detail-block\">\n    <img src=\"https://cdn-icons-png.flaticon.com/512/10240/10240281.png\" alt=\"Evidence Based Icon\" class=\"detail-icon\">\n    <h3>Transparent, Evidence Based Decisions</h3>\n    <p>If a repaired device fails, we inspect it properly and show you the findings. We explain clearly why it failed, whether it is covered, and we support this with photos and proof.</p>\n    <p>There is no fine print. You get direct answers and full clarity every time.</p>\n  </div>\n\n  <div class=\"detail-block\">\n    <img src=\"https://cdn-icons-png.flaticon.com/512/6146/6146665.png\" alt=\"Easy Claim Icon\" class=\"detail-icon\">\n    <h3>Simple and Fair Claims</h3>\n    <p>If you need to use the warranty, contact us or submit a claim using the form below. We will inspect your device and handle it if the issue is covered.</p>\n    <p>Our process is designed to help you and avoid unnecessary complications.</p>\n  </div>\n</div>","color_scheme": "","padding_top": 0,"padding_bottom": 0}},"icorrect_faqs_7eqxnF": {"type": "icorrect-faqs","blocks": {"accordion_warr_1": {"type": "accordion","settings": {"heading": "What does the 2-year warranty cover?","sub_head": "<p>The warranty covers faults related to the repair we completed and the parts we fitted. If something we fixed fails under normal use, we fix it again at no cost.</p>","alignment": "left"}},"accordion_warr_2": {"type": "accordion","settings": {"heading": "What is not covered by the warranty?","sub_head": "<p>Accidental damage, liquid exposure after the repair, and faults unrelated to our work. Normal wear like battery capacity loss over time is also not covered.</p>","alignment": "left"}},"accordion_warr_3": {"type": "accordion","settings": {"heading": "How do I make a warranty claim?","sub_head": "<p>Contact us or submit a claim through the warranty form on this page. Describe the issue and we will arrange collection or a visit to our London office.</p>","alignment": "left"}},"accordion_warr_4": {"type": "accordion","settings": {"heading": "Do I need my original receipt?","sub_head": "<p>We keep records of all repairs. If you have your receipt or booking confirmation that helps, but we can look you up by name, email, or device serial number.</p>","alignment": "left"}},"accordion_warr_5": {"type": "accordion","settings": {"heading": "How long does a warranty repair take?","sub_head": "<p>Most warranty repairs follow the same turnaround as standard repairs. 1 to 3 working days for common issues, longer for complex faults. We prioritise getting it right.</p>","alignment": "left"}},"accordion_warr_6": {"type": "accordion","settings": {"heading": "Will I be charged for inspection if it is not covered?","sub_head": "<p>If we inspect a device and find the issue is not related to our original repair, we will explain what we found and quote separately. No surprise charges.</p>","alignment": "left"}},"accordion_warr_7": {"type": "accordion","settings": {"heading": "Does the warranty reset after a warranty repair?","sub_head": "<p>The original 2-year period continues from your first repair date. Warranty repairs do not extend or restart the coverage period.</p>","alignment": "left"}},"accordion_warr_8": {"type": "accordion","settings": {"heading": "Can I use the warranty if I am outside London?","sub_head": "<p>Yes. We arrange courier collection anywhere in the UK. Same process, same coverage, same service.</p>","alignment": "left"}}},"block_order": ["accordion_warr_1","accordion_warr_2","accordion_warr_3","accordion_warr_4","accordion_warr_5","accordion_warr_6","accordion_warr_7","accordion_warr_8"],"name": "iCorrect FAQs","settings": {"padding-top": 50,"padding-bottom": 50,"mob-padding-top": 40,"mob-padding-bottom": 40,"bg": "#1d1d1f","heading": "FAQs","details": "Learn more about iCorrect, the essential repair services that we offer and the warranties that come with each repair.","txt-clr": "#ffffff"}},"warranty_claim_form": {"type": "custom-liquid","name": "Warranty Claim Form","settings": {"custom_liquid": "<style>\n  .warranty-form-section {\n    background: #ffffff;\n    padding: 60px 20px;\n  }\n  .warranty-form-container {\n    max-width: 700px;\n    margin: 0 auto;\n    background: #f9f9f9;\n    padding: 40px;\n    border-radius: 12px;\n    box-shadow: 0 4px 12px rgba(0,0,0,0.08);\n  }\n  .warranty-form-container h2 {\n    text-align: center;\n    font-size: 28px;\n    font-weight: 700;\n    margin-bottom: 10px;\n  }\n  .warranty-form-container .subtitle {\n    text-align: center;\n    color: #666;\n    margin-bottom: 30px;\n    font-size: 15px;\n  }\n  .warranty-form-container label {\n    display: block;\n    font-weight: 600;\n    margin-bottom: 6px;\n    color: #333;\n    font-size: 14px;\n  }\n  .warranty-form-container input,\n  .warranty-form-container select,\n  .warranty-form-container textarea {\n    width: 100%;\n    padding: 12px 14px;\n    border: 1px solid #ddd;\n    border-radius: 6px;\n    font-size: 15px;\n    margin-bottom: 20px;\n    box-sizing: border-box;\n  }\n  .warranty-form-container textarea {\n    min-height: 120px;\n    resize: vertical;\n  }\n  .warranty-form-container input:focus,\n  .warranty-form-container select:focus,\n  .warranty-form-container textarea:focus {\n    outline: none;\n    border-color: #111;\n  }\n  .warranty-form-container .form-row {\n    display: flex;\n    gap: 20px;\n  }\n  .warranty-form-container .form-row > div {\n    flex: 1;\n  }\n  .warranty-form-container button {\n    width: 100%;\n    padding: 14px;\n    background: #111;\n    color: #fff;\n    border: none;\n    border-radius: 6px;\n    font-size: 16px;\n    font-weight: 600;\n    cursor: pointer;\n    transition: background 0.3s ease;\n  }\n  .warranty-form-container button:hover {\n    background: #333;\n  }\n  .required-star {\n    color: #e53935;\n  }\n  @media (max-width: 600px) {\n    .warranty-form-container .form-row {\n      flex-direction: column;\n      gap: 0;\n    }\n    .warranty-form-container {\n      padding: 25px 20px;\n    }\n  }\n</style>\n\n<div class=\"warranty-form-section\">\n  <div class=\"warranty-form-container\">\n    <h2>Warranty Claim Form</h2>\n    <p class=\"subtitle\">Submit your warranty claim and we will get back to you within 24 hours.</p>\n    \n    <form action=\"/contact#contact_form\" method=\"post\">\n      <input type=\"hidden\" name=\"form_type\" value=\"contact\">\n      <input type=\"hidden\" name=\"contact[subject]\" value=\"Warranty Claim\">\n      \n      <div class=\"form-row\">\n        <div>\n          <label for=\"warranty-name\">Name <span class=\"required-star\">*</span></label>\n          <input type=\"text\" id=\"warranty-name\" name=\"contact[name]\" placeholder=\"Your full name\" required>\n        </div>\n        <div>\n          <label for=\"warranty-email\">Email <span class=\"required-star\">*</span></label>\n          <input type=\"email\" id=\"warranty-email\" name=\"contact[email]\" placeholder=\"your@email.com\" required>\n        </div>\n      </div>\n      \n      <div class=\"form-row\">\n        <div>\n          <label for=\"warranty-phone\">Phone Number <span class=\"required-star\">*</span></label>\n          <input type=\"tel\" id=\"warranty-phone\" name=\"contact[phone]\" placeholder=\"+44 (0)000 000 0000\" required>\n        </div>\n        <div>\n          <label for=\"warranty-date\">Approximate Repair Date</label>\n          <input type=\"text\" id=\"warranty-date\" name=\"contact[repair_date]\" placeholder=\"e.g. March 2025\">\n        </div>\n      </div>\n      \n      <div class=\"form-row\">\n        <div>\n          <label for=\"warranty-device\">Device Type <span class=\"required-star\">*</span></label>\n          <select id=\"warranty-device\" name=\"contact[device_type]\" required>\n            <option value=\"\">Select device...</option>\n            <option value=\"MacBook\">MacBook</option>\n            <option value=\"iPhone\">iPhone</option>\n            <option value=\"iPad\">iPad</option>\n            <option value=\"Apple Watch\">Apple Watch</option>\n          </select>\n        </div>\n        <div>\n          <label for=\"warranty-model\">Model</label>\n          <input type=\"text\" id=\"warranty-model\" name=\"contact[model]\" placeholder=\"e.g. MacBook Pro 14 M3\">\n        </div>\n      </div>\n      \n      <label for=\"warranty-issue\">Describe the Issue <span class=\"required-star\">*</span></label>\n      <textarea id=\"warranty-issue\" name=\"contact[body]\" placeholder=\"Please describe what is happening with your device...\" required></textarea>\n      \n      <button type=\"submit\">Submit Warranty Claim</button>\n    </form>\n  </div>\n</div>","color_scheme": "","padding_top": 0,"padding_bottom": 0}}},"order": ["main","custom_liquid_XByNwd","custom_liquid_NQ4xni","icorrect_faqs_7eqxnF","warranty_claim_form"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "name": "Page",
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "custom_liquid_XByNwd": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "<!-- Warranty Page Heading -->\n<section style=\"padding: 20px 20px; background: #FFFFFF; text-align: center;\">\n  <h1 style=\"font-size: 50px; font-weight: bold; margin-bottom: 20px;\">Our Repair Warranty</h1>\n  <p style=\"max-width: 800px; margin: 0 auto; font-size: 16px; color: #555;\">\n    We take pride in the quality of our work. That is why every repair we carry out, from routine screen fixes to complex logic board repairs, is backed by a 2-year warranty as standard. No extra fees, no hidden conditions, just complete peace of mind.\n  </p>\n</section>",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 52
+      }
+    },
+    "custom_liquid_NQ4xni": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "<style>\n  .visit-button {\n    display: inline-block;\n    margin-top: 30px;\n    padding: 12px 28px;\n    background-color: #111;\n    color: #fff;\n    text-decoration: none;\n    font-weight: bold;\n    border-radius: 6px;\n    transition: background-color 0.3s ease;\n  }\n\n  .visit-button:hover {\n    background-color: #333;\n  }\n  .warranty-detail {\n    background: #f9f9f9;\n    padding: 60px 20px;\n  }\n  .detail-block {\n    max-width: 800px;\n    margin: 0 auto 60px auto;\n    text-align: center;\n  }\n  .detail-block h3 {\n    font-size: 24px;\n    font-weight: 600;\n    margin-top: 20px;\n    margin-bottom: 20px;\n  }\n  .detail-block p {\n    font-size: 16px;\n    color: #444;\n    line-height: 1.6;\n    margin-bottom: 16px;\n  }\n  .detail-icon {\n    width: 64px;\n    height: 64px;\n  }\n</style>\n\n<div class=\"warranty-detail\">\n  <div class=\"detail-block\">\n    <img src=\"https://cdn-icons-png.flaticon.com/512/8031/8031372.png\" alt=\"2-Year Warranty Icon\" class=\"detail-icon\">\n    <h3>2 Years Coverage</h3>\n    <p>Every repair we complete includes a 2-year warranty. This applies to screens, batteries, logic boards, and all other services. We stand by the durability of our work.</p>\n    <p>The warranty applies whether you visit us in London or send your device from anywhere in the country.</p>\n  </div>\n\n  <div class=\"detail-block\">\n    <img src=\"https://cdn-icons-png.flaticon.com/512/2910/2910768.png\" alt=\"Built to Last Icon\" class=\"detail-icon\">\n    <h3>Built to Last</h3>\n    <p>We use original Apple parts wherever possible, sourced and tested to meet factory standards. Combined with precision workmanship from experienced engineers, our repairs are made to last.</p>\n    <p>Every device goes through our full testing process before it leaves. We check what we fixed and everything else. Problems get caught before you see them.</p>\n  </div>\n\n  <div class=\"detail-block\">\n    <img src=\"https://cdn-icons-png.flaticon.com/512/7920/7920222.png\" alt=\"Logic Board Icon\" class=\"detail-icon\">\n    <h3>Logic Board Repairs Covered</h3>\n    <p>Logic board repairs are included in the 2-year warranty. We do not handle complex repairs differently. If something fails, we fix it.</p>\n    <p>This level of confidence applies to every repair we take on.</p>\n  </div>\n\n  <div class=\"detail-block\">\n    <img src=\"https://cdn-icons-png.flaticon.com/512/10240/10240281.png\" alt=\"Evidence Based Icon\" class=\"detail-icon\">\n    <h3>Transparent, Evidence Based Decisions</h3>\n    <p>If a repaired device fails, we inspect it properly and show you the findings. We explain clearly why it failed, whether it is covered, and we support this with photos and proof.</p>\n    <p>There is no fine print. You get direct answers and full clarity every time.</p>\n  </div>\n\n  <div class=\"detail-block\">\n    <img src=\"https://cdn-icons-png.flaticon.com/512/6146/6146665.png\" alt=\"Easy Claim Icon\" class=\"detail-icon\">\n    <h3>Simple and Fair Claims</h3>\n    <p>If you need to use the warranty, contact us or submit a claim using the form below. We will inspect your device and handle it if the issue is covered.</p>\n    <p>Our process is designed to help you and avoid unnecessary complications.</p>\n  </div>\n</div>",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "icorrect_faqs_7eqxnF": {
+      "type": "icorrect-faqs",
+      "blocks": {
+        "accordion_warr_1": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What does the 2-year warranty cover?",
+            "sub_head": "<p>The warranty covers faults related to the repair we completed and the parts we fitted. If something we fixed fails under normal use, we fix it again at no cost.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_warr_2": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What is not covered by the warranty?",
+            "sub_head": "<p>Accidental damage, liquid exposure after the repair, and faults unrelated to our work. Normal wear like battery capacity loss over time is also not covered.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_warr_3": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How do I make a warranty claim?",
+            "sub_head": "<p>Contact us or submit a claim through the warranty form on this page. Describe the issue and we will arrange collection or a visit to our London office.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_warr_4": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Do I need my original receipt?",
+            "sub_head": "<p>We keep records of all repairs. If you have your receipt or booking confirmation that helps, but we can look you up by name, email, or device serial number.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_warr_5": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How long does a warranty repair take?",
+            "sub_head": "<p>Most warranty repairs follow the same turnaround as standard repairs. 1 to 3 working days for common issues, longer for complex faults. We prioritise getting it right.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_warr_6": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will I be charged for inspection if it is not covered?",
+            "sub_head": "<p>If we inspect a device and find the issue is not related to our original repair, we will explain what we found and quote separately. No surprise charges.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_warr_7": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Does the warranty reset after a warranty repair?",
+            "sub_head": "<p>The original 2-year period continues from your first repair date. Warranty repairs do not extend or restart the coverage period.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_warr_8": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Can I use the warranty if I am outside London?",
+            "sub_head": "<p>Yes. We arrange courier collection anywhere in the UK. Same process, same coverage, same service.</p>",
+            "alignment": "left"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_warr_1",
+        "accordion_warr_2",
+        "accordion_warr_3",
+        "accordion_warr_4",
+        "accordion_warr_5",
+        "accordion_warr_6",
+        "accordion_warr_7",
+        "accordion_warr_8"
+      ],
+      "name": "iCorrect FAQs",
+      "settings": {
+        "padding-top": 50,
+        "padding-bottom": 50,
+        "mob-padding-top": 40,
+        "mob-padding-bottom": 40,
+        "bg": "#1d1d1f",
+        "heading": "FAQs",
+        "details": "Learn more about iCorrect, the essential repair services that we offer and the warranties that come with each repair.",
+        "txt-clr": "#ffffff"
+      }
+    },
+    "warranty_claim_form": {
+      "type": "custom-liquid",
+      "name": "Warranty Claim Form",
+      "settings": {
+        "custom_liquid": "<style>\n  .warranty-form-section {\n    background: #ffffff;\n    padding: 60px 20px;\n  }\n  .warranty-form-container {\n    max-width: 700px;\n    margin: 0 auto;\n    background: #f9f9f9;\n    padding: 40px;\n    border-radius: 12px;\n    box-shadow: 0 4px 12px rgba(0,0,0,0.08);\n  }\n  .warranty-form-container h2 {\n    text-align: center;\n    font-size: 28px;\n    font-weight: 700;\n    margin-bottom: 10px;\n  }\n  .warranty-form-container .subtitle {\n    text-align: center;\n    color: #666;\n    margin-bottom: 30px;\n    font-size: 15px;\n  }\n  .warranty-form-container label {\n    display: block;\n    font-weight: 600;\n    margin-bottom: 6px;\n    color: #333;\n    font-size: 14px;\n  }\n  .warranty-form-container input,\n  .warranty-form-container select,\n  .warranty-form-container textarea {\n    width: 100%;\n    padding: 12px 14px;\n    border: 1px solid #ddd;\n    border-radius: 6px;\n    font-size: 15px;\n    margin-bottom: 20px;\n    box-sizing: border-box;\n  }\n  .warranty-form-container textarea {\n    min-height: 120px;\n    resize: vertical;\n  }\n  .warranty-form-container input:focus,\n  .warranty-form-container select:focus,\n  .warranty-form-container textarea:focus {\n    outline: none;\n    border-color: #111;\n  }\n  .warranty-form-container .form-row {\n    display: flex;\n    gap: 20px;\n  }\n  .warranty-form-container .form-row > div {\n    flex: 1;\n  }\n  .warranty-form-container button {\n    width: 100%;\n    padding: 14px;\n    background: #111;\n    color: #fff;\n    border: none;\n    border-radius: 6px;\n    font-size: 16px;\n    font-weight: 600;\n    cursor: pointer;\n    transition: background 0.3s ease;\n  }\n  .warranty-form-container button:hover {\n    background: #333;\n  }\n  .warranty-form-container button:disabled {\n    background: #999;\n    cursor: not-allowed;\n  }\n  .required-star {\n    color: #e53935;\n  }\n  .warranty-form-message {\n    text-align: center;\n    padding: 14px;\n    border-radius: 6px;\n    margin-bottom: 20px;\n    display: none;\n    font-size: 15px;\n  }\n  .warranty-form-message.success {\n    display: block;\n    background: #e8f5e9;\n    color: #2e7d32;\n    border: 1px solid #a5d6a7;\n  }\n  .warranty-form-message.error {\n    display: block;\n    background: #ffebee;\n    color: #c62828;\n    border: 1px solid #ef9a9a;\n  }\n  @media (max-width: 600px) {\n    .warranty-form-container .form-row {\n      flex-direction: column;\n      gap: 0;\n    }\n    .warranty-form-container {\n      padding: 25px 20px;\n    }\n  }\n</style>\n\n<div class=\"warranty-form-section\">\n  <div class=\"warranty-form-container\">\n    <h2>Warranty Claim Form</h2>\n    <p class=\"subtitle\">Submit your warranty claim and we will get back to you within 24 hours.</p>\n    \n    <div id=\"warranty-form-message\" class=\"warranty-form-message\"></div>\n    \n    <form id=\"warranty-claim-form\">\n      <div class=\"form-row\">\n        <div>\n          <label for=\"warranty-name\">Name <span class=\"required-star\">*</span></label>\n          <input type=\"text\" id=\"warranty-name\" name=\"name\" placeholder=\"Your full name\" required>\n        </div>\n        <div>\n          <label for=\"warranty-email\">Email <span class=\"required-star\">*</span></label>\n          <input type=\"email\" id=\"warranty-email\" name=\"email\" placeholder=\"your@email.com\" required>\n        </div>\n      </div>\n      \n      <div class=\"form-row\">\n        <div>\n          <label for=\"warranty-phone\">Phone Number <span class=\"required-star\">*</span></label>\n          <input type=\"tel\" id=\"warranty-phone\" name=\"phone\" placeholder=\"+44 (0)000 000 0000\" required>\n        </div>\n        <div>\n          <label for=\"warranty-date\">Approximate Repair Date</label>\n          <input type=\"text\" id=\"warranty-date\" name=\"repair_date\" placeholder=\"e.g. March 2025\">\n        </div>\n      </div>\n      \n      <div class=\"form-row\">\n        <div>\n          <label for=\"warranty-device\">Device Type <span class=\"required-star\">*</span></label>\n          <select id=\"warranty-device\" name=\"device_type\" required>\n            <option value=\"\">Select device...</option>\n            <option value=\"MacBook\">MacBook</option>\n            <option value=\"iPhone\">iPhone</option>\n            <option value=\"iPad\">iPad</option>\n            <option value=\"Apple Watch\">Apple Watch</option>\n          </select>\n        </div>\n        <div>\n          <label for=\"warranty-model\">Model</label>\n          <input type=\"text\" id=\"warranty-model\" name=\"model\" placeholder=\"e.g. MacBook Pro 14 M3\">\n        </div>\n      </div>\n      \n      <label for=\"warranty-issue\">Describe the Issue <span class=\"required-star\">*</span></label>\n      <textarea id=\"warranty-issue\" name=\"body\" placeholder=\"Please describe what is happening with your device...\" required></textarea>\n      \n      <button type=\"submit\" id=\"warranty-submit-btn\">Submit Warranty Claim</button>\n    </form>\n  </div>\n</div>\n\n<script>\n(function() {\n  // ⚠️ REPLACE THIS with your actual n8n webhook URL from the Warranty Claim Form workflow\n  var WEBHOOK_URL = 'https://icorrect.app.n8n.cloud/webhook/warranty-claim';\n\n  var form = document.getElementById('warranty-claim-form');\n  var messageDiv = document.getElementById('warranty-form-message');\n  var submitBtn = document.getElementById('warranty-submit-btn');\n\n  form.addEventListener('submit', function(e) {\n    e.preventDefault();\n\n    submitBtn.disabled = true;\n    submitBtn.textContent = 'Submitting...';\n    messageDiv.className = 'warranty-form-message';\n    messageDiv.style.display = 'none';\n\n    var formData = {\n      name: form.querySelector('[name=\"name\"]').value.trim(),\n      email: form.querySelector('[name=\"email\"]').value.trim(),\n      phone: form.querySelector('[name=\"phone\"]').value.trim(),\n      repair_date: form.querySelector('[name=\"repair_date\"]').value.trim(),\n      device_type: form.querySelector('[name=\"device_type\"]').value,\n      model: form.querySelector('[name=\"model\"]').value.trim(),\n      body: form.querySelector('[name=\"body\"]').value.trim()\n    };\n\n    fetch(WEBHOOK_URL, {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify(formData)\n    })\n    .then(function(response) { return response.json(); })\n    .then(function(data) {\n      if (data.success) {\n        messageDiv.className = 'warranty-form-message success';\n        messageDiv.textContent = 'Your warranty claim has been submitted successfully. We will review it and get back to you within 24 hours.';\n        messageDiv.style.display = 'block';\n        form.reset();\n      } else {\n        throw new Error(data.error || 'Something went wrong');\n      }\n    })\n    .catch(function(err) {\n      messageDiv.className = 'warranty-form-message error';\n      messageDiv.textContent = 'Something went wrong. Please try again or contact us at support@icorrect.co.uk';\n      messageDiv.style.display = 'block';\n    })\n    .finally(function() {\n      submitBtn.disabled = false;\n      submitBtn.textContent = 'Submit Warranty Claim';\n    });\n  });\n})();\n</script>",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    }
+  },
+  "order": [
+    "main",
+    "custom_liquid_XByNwd",
+    "custom_liquid_NQ4xni",
+    "icorrect_faqs_7eqxnF",
+    "warranty_claim_form"
+  ]
+}
