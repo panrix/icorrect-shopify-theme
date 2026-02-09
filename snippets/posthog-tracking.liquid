@@ -2,13 +2,45 @@
 document.addEventListener('DOMContentLoaded', function() {
   if (typeof posthog === 'undefined') return;
   
+  // Cross-domain linking: append PostHog ID to checkout URLs
+  function addPostHogToCheckoutLinks() {
+    var distinctId = posthog.get_distinct_id();
+    if (!distinctId) return;
+    
+    document.querySelectorAll('a[href*="/checkout"], form[action*="/checkout"]').forEach(function(el) {
+      if (el.tagName === 'A') {
+        var url = new URL(el.href, window.location.origin);
+        url.searchParams.set('ph_id', distinctId);
+        el.href = url.toString();
+      } else if (el.tagName === 'FORM') {
+        var input = el.querySelector('input[name="ph_id"]');
+        if (!input) {
+          input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'ph_id';
+          el.appendChild(input);
+        }
+        input.value = distinctId;
+      }
+    });
+  }
+  
+  // Run on load and after cart updates
+  posthog.onFeatureFlags(addPostHogToCheckoutLinks);
+  setTimeout(addPostHogToCheckoutLinks, 1000);
+  document.addEventListener('cart:updated', addPostHogToCheckoutLinks);
+  
+  // Track checkout button clicks
   document.addEventListener('click', function(e) {
     var target = e.target.closest('[name="checkout"], a[href*="/checkout"], .cart__checkout-button');
     if (target) {
-      posthog.capture('Checkout Started');
+      posthog.capture('Checkout Started', {
+        distinct_id: posthog.get_distinct_id()
+      });
     }
   }, true);
   
+  // Track add to cart
   document.addEventListener('click', function(e) {
     var target = e.target.closest('[name="add"], .product-form__submit');
     if (target) {
