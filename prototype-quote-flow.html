@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>iCorrect — Repair Quote</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--black:#0a0a0a;--white:#ffffff;--gray-50:#f8f8f8;--gray-100:#f0f0f0;--gray-200:#e0e0e0;--gray-300:#ccc;--gray-400:#999;--gray-500:#777;--gray-600:#555;--accent:#0a0a0a;--green:#22c55e;--radius:14px;--transition:0.35s cubic-bezier(.4,0,.2,1)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--white);color:var(--black);min-height:100dvh;overflow-x:hidden}
+.app{max-width:480px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;position:relative}
+
+/* Header */
+.header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--gray-100);position:sticky;top:0;background:var(--white);z-index:10}
+.logo{font-size:22px;font-weight:800;letter-spacing:-0.5px}
+.logo span{color:var(--gray-400)}
+.back-btn{width:40px;height:40px;border-radius:50%;border:none;background:var(--gray-100);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--transition);font-size:18px}
+.back-btn:hover{background:var(--gray-200)}
+.back-btn.hidden{opacity:0;pointer-events:none}
+
+/* Progress */
+.progress{padding:12px 20px 0}
+.progress-bar{height:3px;background:var(--gray-100);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--black);border-radius:2px;transition:width 0.5s ease}
+.progress-text{font-size:11px;color:var(--gray-400);margin-top:6px;text-align:right}
+
+/* Screen container */
+.screen-container{flex:1;position:relative;overflow:hidden}
+.screen{position:absolute;inset:0;padding:28px 20px 100px;overflow-y:auto;display:flex;flex-direction:column;transition:transform var(--transition),opacity var(--transition)}
+.screen.enter-right{transform:translateX(60px);opacity:0}
+.screen.enter-left{transform:translateX(-60px);opacity:0}
+.screen.active{transform:translateX(0);opacity:1}
+.screen.exit-left{transform:translateX(-60px);opacity:0}
+.screen.exit-right{transform:translateX(60px);opacity:0}
+
+/* Typography */
+h2{font-size:26px;font-weight:700;line-height:1.2;letter-spacing:-0.5px;margin-bottom:8px}
+.subtitle{font-size:15px;color:var(--gray-500);line-height:1.5;margin-bottom:28px}
+
+/* Buttons / Options */
+.options{display:flex;flex-direction:column;gap:10px}
+.opt-btn{width:100%;padding:18px 20px;border:2px solid var(--gray-200);border-radius:var(--radius);background:var(--white);cursor:pointer;text-align:left;font-size:16px;font-weight:500;transition:var(--transition);display:flex;align-items:center;gap:14px;position:relative}
+.opt-btn:hover{border-color:var(--black);background:var(--gray-50)}
+.opt-btn:active{transform:scale(0.98)}
+.opt-btn .icon{font-size:24px;width:40px;text-align:center;flex-shrink:0}
+.opt-btn .label{flex:1}
+.opt-btn .label small{display:block;font-size:13px;font-weight:400;color:var(--gray-500);margin-top:2px}
+.opt-btn.disabled{opacity:0.4;pointer-events:none;border-style:dashed}
+.opt-btn .badge{font-size:10px;background:var(--gray-200);color:var(--gray-500);padding:2px 8px;border-radius:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.opt-btn.primary{background:var(--black);color:var(--white);border-color:var(--black);text-align:center;justify-content:center;font-weight:600;font-size:17px}
+.opt-btn.primary:hover{background:#222}
+.opt-btn.secondary{border-color:var(--black);text-align:center;justify-content:center;font-weight:600}
+.opt-btn.ghost{border:none;background:transparent;color:var(--gray-500);text-align:center;justify-content:center;font-size:14px;padding:12px}
+
+/* Grid for devices */
+.device-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.device-grid .opt-btn{flex-direction:column;padding:24px 16px;text-align:center;gap:8px}
+.device-grid .opt-btn .icon{font-size:32px;width:auto}
+
+/* Trust bar */
+.trust-bar{display:flex;justify-content:center;gap:20px;padding:16px 20px;font-size:11px;color:var(--gray-400);border-top:1px solid var(--gray-100);flex-wrap:wrap}
+.trust-bar span{white-space:nowrap}
+
+/* Quote result */
+.quote-card{background:var(--gray-50);border-radius:var(--radius);padding:28px 24px;text-align:center;margin-bottom:20px}
+.quote-price{font-size:48px;font-weight:800;letter-spacing:-2px;margin:8px 0 4px}
+.quote-price small{font-size:16px;font-weight:400;color:var(--gray-500);letter-spacing:0}
+.quote-label{font-size:14px;color:var(--gray-500);font-weight:500}
+.quote-includes{text-align:left;margin-top:20px;padding-top:16px;border-top:1px solid var(--gray-200)}
+.quote-includes li{font-size:14px;color:var(--gray-600);padding:6px 0;list-style:none;display:flex;align-items:center;gap:8px}
+.quote-includes li::before{content:"✓";color:var(--green);font-weight:700;font-size:16px}
+
+/* Video placeholder */
+.video-placeholder{background:var(--gray-50);border-radius:var(--radius);padding:40px 20px;text-align:center;margin-bottom:20px;border:1px dashed var(--gray-300);cursor:pointer;transition:var(--transition)}
+.video-placeholder:hover{border-color:var(--gray-400);background:var(--gray-100)}
+.video-placeholder .play{font-size:36px;margin-bottom:8px}
+.video-placeholder p{font-size:13px;color:var(--gray-500)}
+
+/* Email form */
+.form-group{margin-bottom:14px}
+.form-group input{width:100%;padding:16px;border:2px solid var(--gray-200);border-radius:var(--radius);font-size:16px;transition:var(--transition);background:var(--white)}
+.form-group input:focus{outline:none;border-color:var(--black)}
+.form-group input::placeholder{color:var(--gray-300)}
+
+/* Info note */
+.info-note{background:var(--gray-50);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--gray-500);line-height:1.5;margin-bottom:20px;display:flex;gap:10px;align-items:flex-start}
+.info-note .ni{font-size:18px;flex-shrink:0}
+
+/* Diagnostic card */
+.diag-card{background:var(--black);color:var(--white);border-radius:var(--radius);padding:28px 24px;text-align:center;margin-bottom:20px}
+.diag-card h3{font-size:20px;font-weight:700;margin-bottom:6px}
+.diag-card .diag-price{font-size:40px;font-weight:800;margin:12px 0}
+.diag-card p{font-size:14px;color:var(--gray-400);line-height:1.5}
+
+/* Scrollbar */
+.screen::-webkit-scrollbar{width:0;background:transparent}
+
+/* Responsive */
+@media(min-width:481px){
+  .app{border-left:1px solid var(--gray-100);border-right:1px solid var(--gray-100)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <button class="back-btn hidden" id="backBtn" onclick="goBack()">←</button>
+    <div class="logo">iCorrect</div>
+    <div style="width:40px"></div>
+  </div>
+  <div class="progress" id="progressWrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-text" id="progressText"></div>
+  </div>
+  <div class="screen-container" id="screenContainer"></div>
+  <div class="trust-bar">
+    <span>🔧 250,000+ repairs</span>
+    <span>🛡️ 2-year warranty</span>
+    <span>⭐ 4.8★ rating</span>
+  </div>
+</div>
+
+<script>
+const history = [];
+let currentScreen = null;
+const $ = id => document.getElementById(id);
+
+const PRICES = {
+  screen: {price:'£349', from:true, label:'Screen Repair'},
+  flexgate: {price:'£289', from:false, label:'Flexgate Repair'},
+  battery: {price:'£199', from:true, label:'Battery Replacement'},
+  keyboard: {price:'£249', from:false, label:'Keyboard Replacement'},
+  keyReplacement: {price:'£49', from:false, label:'Key Replacement'},
+  trackpad: {price:'£199', from:false, label:'Trackpad Repair'},
+  touchbar: {price:'£229', from:false, label:'Touch Bar Repair'},
+  speaker: {price:'£149', from:false, label:'Speaker Replacement'},
+  microphone: {price:'£129', from:false, label:'Microphone Repair'},
+  headphoneJack: {price:'£99', from:false, label:'Headphone Jack Replacement'},
+  chargingPort: {price:'£179', from:false, label:'Charging Port Repair'},
+  diagnostic: {price:'£49', from:false, label:'Expert Diagnostic'},
+  wifi: {price:'£149', from:true, label:'WiFi / Bluetooth Repair'},
+  dustgate: {price:'£199', from:false, label:'Dustgate Repair'},
+};
+
+function showScreen(id, content, opts={}) {
+  const container = $('screenContainer');
+  const dir = opts.back ? 'left' : 'right';
+  
+  if (currentScreen) {
+    currentScreen.classList.remove('active');
+    currentScreen.classList.add(opts.back ? 'exit-right' : 'exit-left');
+    const old = currentScreen;
+    setTimeout(() => old.remove(), 350);
+  }
+
+  const el = document.createElement('div');
+  el.className = `screen enter-${dir}`;
+  el.id = id;
+  el.innerHTML = content;
+  container.appendChild(el);
+  
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => el.classList.add('active'));
+  });
+  el.classList.remove(`enter-${dir}`);
+  // Force reflow
+  void el.offsetHeight;
+  el.classList.add(`enter-${dir}`);
+  requestAnimationFrame(() => {
+    el.classList.remove(`enter-${dir}`);
+    el.classList.add('active');
+  });
+
+  currentScreen = el;
+  
+  // Update back button
+  $('backBtn').classList.toggle('hidden', history.length === 0 && !opts.back);
+  
+  // Update progress
+  const step = opts.step || 0;
+  const total = opts.totalSteps || 5;
+  const pct = Math.min(100, Math.round((step / total) * 100));
+  $('progressFill').style.width = pct + '%';
+  $('progressText').textContent = step > 0 ? `Step ${step} of ${total}` : '';
+}
+
+function navigate(fn, ...args) {
+  history.push({fn: currentNav, args: currentArgs});
+  currentNav = fn;
+  currentArgs = args;
+  fn(...args);
+}
+
+let currentNav = null, currentArgs = [];
+
+function goBack() {
+  if (history.length === 0) return;
+  const prev = history.pop();
+  currentNav = prev.fn;
+  currentArgs = prev.args;
+  prev.fn(...prev.args, {back:true});
+}
+
+function startScreen(opts={}) {
+  $('backBtn').classList.add('hidden');
+  showScreen('start', `
+    <h2>Get a repair quote</h2>
+    <p class="subtitle">Select your device to get an instant estimate.</p>
+    <div class="device-grid">
+      <button class="opt-btn" onclick="navigate(categoryScreen)">
+        <div class="icon">💻</div>
+        <div class="label">MacBook</div>
+      </button>
+      <button class="opt-btn disabled">
+        <div class="icon">📱</div>
+        <div class="label">iPhone<small><span class="badge">Coming Soon</span></small></div>
+      </button>
+      <button class="opt-btn disabled">
+        <div class="icon">📲</div>
+        <div class="label">iPad<small><span class="badge">Coming Soon</span></small></div>
+      </button>
+      <button class="opt-btn disabled">
+        <div class="icon">⌚</div>
+        <div class="label">Apple Watch<small><span class="badge">Coming Soon</span></small></div>
+      </button>
+    </div>
+  `, {step:0, ...opts});
+}
+
+function categoryScreen(opts={}) {
+  showScreen('category', `
+    <h2>What needs fixing?</h2>
+    <p class="subtitle">Select the issue with your MacBook.</p>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(displayFlow1)"><div class="icon">🖥️</div><div class="label">Display</div></button>
+      <button class="opt-btn" onclick="navigate(keyboardFlow)"><div class="icon">⌨️</div><div class="label">Keyboard / Trackpad</div></button>
+      <button class="opt-btn" onclick="navigate(powerFlow)"><div class="icon">🔋</div><div class="label">Power / Battery</div></button>
+      <button class="opt-btn" onclick="navigate(liquidFlow)"><div class="icon">💧</div><div class="label">Liquid Damage</div></button>
+      <button class="opt-btn" onclick="navigate(audioFlow)"><div class="icon">🔊</div><div class="label">Audio</div></button>
+      <button class="opt-btn" onclick="navigate(cameraFlow)"><div class="icon">📷</div><div class="label">Camera</div></button>
+      <button class="opt-btn" onclick="navigate(connectivityFlow)"><div class="icon">📶</div><div class="label">Connectivity</div></button>
+      <button class="opt-btn" onclick="navigate(touchbarFlow)"><div class="icon">━</div><div class="label">Touch Bar</div></button>
+    </div>
+  `, {step:1, totalSteps:5, ...opts});
+}
+
+/* ============ DISPLAY FLOW ============ */
+function displayFlow1(opts={}) {
+  showScreen('disp1', `
+    <h2>Does your MacBook work with an external screen?</h2>
+    <p class="subtitle">Connect to a TV or monitor via HDMI/USB-C to check.</p>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(displayDamageType)"><div class="icon">✅</div><div class="label">Yes, external works</div></button>
+      <button class="opt-btn" onclick="navigate(displayNoExternal)"><div class="icon">❌</div><div class="label">No, external doesn't work</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">🤷</div><div class="label">I'm not sure / Can't test</div></button>
+    </div>
+  `, {step:2, totalSteps:5, ...opts});
+}
+
+function displayDamageType(opts={}) {
+  showScreen('dispType', `
+    <h2>What type of display damage?</h2>
+    <p class="subtitle">Select the option that best describes your issue.</p>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'screen')"><div class="icon">🔲</div><div class="label">Cracked screen / LCD</div></button>
+      <button class="opt-btn" onclick="navigate(displayNoDisplay)"><div class="icon">⬛</div><div class="label">No display at all</div></button>
+      <button class="opt-btn" onclick="navigate(displayLiquidInScreen)"><div class="icon">💧</div><div class="label">Liquid marks in screen</div></button>
+      <button class="opt-btn" onclick="navigate(displayFlexgate)"><div class="icon">📐</div><div class="label">Only works at certain angles</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'screen')"><div class="icon">🔴</div><div class="label">Red / pink tint on screen</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">❓</div><div class="label">Something else</div></button>
+    </div>
+  `, {step:3, totalSteps:5, ...opts});
+}
+
+function displayNoDisplay(opts={}) {
+  showScreen('dispNone', `
+    <h2>Has it come into contact with liquid?</h2>
+    <p class="subtitle">Even a small spill can cause display issues.</p>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">💧</div><div class="label">Yes</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'screen')"><div class="icon">❌</div><div class="label">No</div></button>
+    </div>
+  `, {step:4, totalSteps:5, ...opts});
+}
+
+function displayLiquidInScreen(opts={}) {
+  showScreen('dispLiq', `
+    <div class="video-placeholder" onclick="alert('Video would play here')">
+      <div class="play">▶️</div>
+      <p><strong>Watch:</strong> Understanding screen liquid marks</p>
+    </div>
+    <h2>Liquid marks behind the display</h2>
+    <p class="subtitle">This is caused by liquid seeping between the LCD layers. A screen replacement will fix this.</p>
+    <div class="options">
+      <button class="opt-btn primary" onclick="navigate(showQuote,'screen')">Get Screen Repair Quote</button>
+    </div>
+  `, {step:4, totalSteps:5, ...opts});
+}
+
+function displayFlexgate(opts={}) {
+  showScreen('dispFlex', `
+    <div class="video-placeholder" onclick="alert('Flexgate explainer video would play here')">
+      <div class="play">▶️</div>
+      <p><strong>Watch:</strong> What is Flexgate? (Common on 2016-2017 MacBook Pro)</p>
+    </div>
+    <h2>Does this look like your fault?</h2>
+    <p class="subtitle">Screen goes dark or shows a "stage light" effect at the bottom when opened fully.</p>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'flexgate')"><div class="icon">✅</div><div class="label">Yes, that's exactly it</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">❌</div><div class="label">No / Not sure</div></button>
+    </div>
+  `, {step:4, totalSteps:5, ...opts});
+}
+
+function displayNoExternal(opts={}) {
+  showScreen('dispNoExt', `
+    <h2>Does it charge or show a green caps lock light?</h2>
+    <p class="subtitle">Press Caps Lock — does the green light come on?</p>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'screen')"><div class="icon">💡</div><div class="label">Yes, caps lock lights up</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">❌</div><div class="label">No, nothing happens</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">🤷</div><div class="label">I'm not sure</div></button>
+    </div>
+  `, {step:3, totalSteps:5, ...opts});
+}
+
+/* ============ KEYBOARD FLOW ============ */
+function keyboardFlow(opts={}) {
+  showScreen('kb1', `
+    <h2>What's the keyboard / trackpad issue?</h2>
+    <p class="subtitle">Select the best match.</p>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(kbStickyKeys)"><div class="icon">🔤</div><div class="label">Sticky keys</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'keyReplacement')"><div class="icon">⬜</div><div class="label">Worn out keys</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'keyReplacement')"><div class="icon">🕳️</div><div class="label">Missing keys</div></button>
+      <button class="opt-btn" onclick="navigate(kbNoResponse)"><div class="icon">⌨️</div><div class="label">Keyboard not responding</div></button>
+      <button class="opt-btn" onclick="navigate(trackpadFlow)"><div class="icon">🖱️</div><div class="label">Trackpad issue</div></button>
+    </div>
+  `, {step:2, totalSteps:5, ...opts});
+}
+
+function kbStickyKeys(opts={}) {
+  showScreen('kbSticky', `
+    <h2>Has your MacBook been liquid damaged?</h2>
+    <p class="subtitle">Sticky keys are often caused by liquid spills.</p>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(kbStickyLiquid)"><div class="icon">💧</div><div class="label">Yes</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'keyboard')"><div class="icon">❌</div><div class="label">No</div></button>
+    </div>
+  `, {step:3, totalSteps:5, ...opts});
+}
+
+function kbStickyLiquid(opts={}) {
+  showScreen('kbStickyLiq', `
+    <h2>Is everything else working OK?</h2>
+    <p class="subtitle">Other than the sticky keys, does the MacBook function normally?</p>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'keyboard')"><div class="icon">✅</div><div class="label">Yes, just the keyboard</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">❌</div><div class="label">No, other issues too</div></button>
+    </div>
+  `, {step:4, totalSteps:5, ...opts});
+}
+
+function kbNoResponse(opts={}) {
+  showScreen('kbNone', `
+    <h2>Does the trackpad still respond?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(kbNoResponseTrackpadYes)"><div class="icon">✅</div><div class="label">Yes, trackpad works</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">❌</div><div class="label">No, trackpad is dead too</div></button>
+    </div>
+  `, {step:3, totalSteps:5, ...opts});
+}
+
+function kbNoResponseTrackpadYes(opts={}) {
+  showScreen('kbNoneTP', `
+    <h2>Any previous liquid damage?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">💧</div><div class="label">Yes</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'keyboard')"><div class="icon">❌</div><div class="label">No</div></button>
+    </div>
+  `, {step:4, totalSteps:5, ...opts});
+}
+
+function trackpadFlow(opts={}) {
+  showScreen('tp1', `
+    <h2>What's the trackpad issue?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(trackpadLiquid, 'no_response')"><div class="icon">🚫</div><div class="label">No response at all</div></button>
+      <button class="opt-btn" onclick="navigate(trackpadLiquid, 'not_clicking')"><div class="icon">👆</div><div class="label">Not clicking properly</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'trackpad')"><div class="icon">💥</div><div class="label">Physical damage</div></button>
+    </div>
+  `, {step:3, totalSteps:5, ...opts});
+}
+
+function trackpadLiquid(issue, opts={}) {
+  showScreen('tpLiq', `
+    <h2>Has it come into contact with liquid?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">💧</div><div class="label">Yes</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'trackpad')"><div class="icon">❌</div><div class="label">No</div></button>
+    </div>
+  `, {step:4, totalSteps:5, ...opts});
+}
+
+/* ============ POWER / BATTERY ============ */
+function powerFlow(opts={}) {
+  showScreen('pow1', `
+    <h2>Does your MacBook turn on?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(powerOn)"><div class="icon">✅</div><div class="label">Yes, it turns on</div></button>
+      <button class="opt-btn" onclick="navigate(powerOff)"><div class="icon">❌</div><div class="label">No, it won't turn on</div></button>
+    </div>
+  `, {step:2, totalSteps:5, ...opts});
+}
+
+function powerOn(opts={}) {
+  showScreen('powOn', `
+    <h2>What issue are you experiencing?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(batteryDrain)"><div class="icon">🪫</div><div class="label">Battery draining quickly</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'chargingPort')"><div class="icon">🔌</div><div class="label">Difficulty charging</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">💥</div><div class="label">Crashing / Shutting down</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">❓</div><div class="label">Other</div></button>
+    </div>
+  `, {step:3, totalSteps:5, ...opts});
+}
+
+function batteryDrain(opts={}) {
+  showScreen('batDrain', `
+    <h2>Does the battery show "Service" in the menu bar?</h2>
+    <p class="subtitle">Click the battery icon in the top-right — does it say "Service Recommended" or "Replace Now"?</p>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'battery')"><div class="icon">⚠️</div><div class="label">Yes, it says Service</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">❌</div><div class="label">No / Not sure</div></button>
+    </div>
+  `, {step:4, totalSteps:5, ...opts});
+}
+
+function powerOff(opts={}) {
+  showScreen('powOff', `
+    <h2>What happens when you try to turn it on?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">🔄</div><div class="label">Apple logo loops / restarts</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">⏳</div><div class="label">Stuck on Apple logo + progress bar</div></button>
+      <button class="opt-btn" onclick="navigate(powerNotCharging)"><div class="icon">🔌</div><div class="label">Not charging at all</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">⬛</div><div class="label">No signs of life</div></button>
+    </div>
+  `, {step:3, totalSteps:5, ...opts});
+}
+
+function powerNotCharging(opts={}) {
+  showScreen('powNC', `
+    <h2>Has it come into contact with liquid?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">💧</div><div class="label">Yes</div></button>
+      <button class="opt-btn" onclick="navigate(powerCapsLock)"><div class="icon">❌</div><div class="label">No</div></button>
+    </div>
+  `, {step:4, totalSteps:5, ...opts});
+}
+
+function powerCapsLock(opts={}) {
+  showScreen('powCaps', `
+    <h2>Can you see the green Caps Lock light?</h2>
+    <p class="subtitle">Press Caps Lock — does the green indicator light up?</p>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'screen')"><div class="icon">💡</div><div class="label">Yes</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">❌</div><div class="label">No</div></button>
+    </div>
+  `, {step:5, totalSteps:5, ...opts});
+}
+
+/* ============ LIQUID DAMAGE ============ */
+function liquidFlow(opts={}) {
+  showScreen('liq1', `
+    <h2>How long ago was the liquid damage?</h2>
+    <div class="info-note"><div class="ni">⏰</div>Timing affects repair success — the sooner we see it, the better the outcome.</div>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(liquidFunctions)"><div class="icon">🔴</div><div class="label">Last 24 hours<small>Urgent — switch off immediately</small></div></button>
+      <button class="opt-btn" onclick="navigate(liquidFunctions)"><div class="icon">🟠</div><div class="label">Last week</div></button>
+      <button class="opt-btn" onclick="navigate(liquidFunctions)"><div class="icon">🟡</div><div class="label">Last month</div></button>
+      <button class="opt-btn" onclick="navigate(liquidFunctions)"><div class="icon">⚪</div><div class="label">Over 1 month ago</div></button>
+    </div>
+  `, {step:2, totalSteps:4, ...opts});
+}
+
+function liquidFunctions(opts={}) {
+  showScreen('liq2', `
+    <h2>Does the MacBook turn on?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">✅</div><div class="label">Yes</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">❌</div><div class="label">No</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">🤷</div><div class="label">Not sure</div></button>
+    </div>
+  `, {step:3, totalSteps:4, ...opts});
+}
+
+/* ============ AUDIO ============ */
+function audioFlow(opts={}) {
+  showScreen('aud1', `
+    <h2>Which audio component?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(speakerFlow)"><div class="icon">🔊</div><div class="label">Speakers</div></button>
+      <button class="opt-btn" onclick="navigate(micFlow)"><div class="icon">🎤</div><div class="label">Microphone</div></button>
+      <button class="opt-btn" onclick="navigate(headphoneFlow)"><div class="icon">🎧</div><div class="label">Headphone jack</div></button>
+    </div>
+  `, {step:2, totalSteps:5, ...opts});
+}
+
+function speakerFlow(opts={}) {
+  showScreen('spk1', `
+    <h2>What's the speaker issue?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(speakerLiquid)"><div class="icon">🔇</div><div class="label">No sound</div></button>
+      <button class="opt-btn" onclick="navigate(speakerLiquid)"><div class="icon">📢</div><div class="label">Distorted / crackling</div></button>
+      <button class="opt-btn" onclick="navigate(speakerLiquid)"><div class="icon">🔈</div><div class="label">Low volume</div></button>
+    </div>
+  `, {step:3, totalSteps:5, ...opts});
+}
+
+function speakerLiquid(opts={}) {
+  showScreen('spkLiq', `
+    <h2>Has it come into contact with liquid?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">💧</div><div class="label">Yes</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'speaker')"><div class="icon">❌</div><div class="label">No</div></button>
+    </div>
+  `, {step:4, totalSteps:5, ...opts});
+}
+
+function micFlow(opts={}) {
+  showScreen('mic1', `
+    <h2>Any previous liquid damage?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">💧</div><div class="label">Yes</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'microphone')"><div class="icon">❌</div><div class="label">No</div></button>
+    </div>
+  `, {step:3, totalSteps:5, ...opts});
+}
+
+function headphoneFlow(opts={}) {
+  showScreen('hp1', `
+    <h2>Have you tested with a known working pair of headphones?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'headphoneJack')"><div class="icon">✅</div><div class="label">Yes, still not working</div></button>
+      <button class="opt-btn" onclick="navigate(headphoneTest)"><div class="icon">❌</div><div class="label">No, not yet</div></button>
+    </div>
+  `, {step:3, totalSteps:5, ...opts});
+}
+
+function headphoneTest(opts={}) {
+  showScreen('hpTest', `
+    <h2>Please test with another pair first</h2>
+    <p class="subtitle">Try a different pair of headphones to rule out a headphone issue. If the problem persists, come back and select "Yes".</p>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'headphoneJack')">I've tested — still broken</button>
+      <button class="opt-btn ghost" onclick="navigate(categoryScreen)">Back to categories</button>
+    </div>
+  `, {step:4, totalSteps:5, ...opts});
+}
+
+/* ============ CAMERA ============ */
+function cameraFlow(opts={}) {
+  showScreen('cam1', `
+    <h2>Any previous repairs on this MacBook?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">🔧</div><div class="label">Yes</div></button>
+      <button class="opt-btn" onclick="navigate(cameraLiquid)"><div class="icon">❌</div><div class="label">No</div></button>
+    </div>
+  `, {step:2, totalSteps:4, ...opts});
+}
+
+function cameraLiquid(opts={}) {
+  showScreen('cam2', `
+    <h2>Any liquid damage?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">💧</div><div class="label">Yes</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">❌</div><div class="label">No</div></button>
+    </div>
+  `, {step:3, totalSteps:4, ...opts});
+}
+
+/* ============ CONNECTIVITY ============ */
+function connectivityFlow(opts={}) {
+  showScreen('conn1', `
+    <h2>What connectivity issue?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(wifiFlow)"><div class="icon">📶</div><div class="label">WiFi</div></button>
+      <button class="opt-btn" onclick="navigate(wifiFlow)"><div class="icon">🔵</div><div class="label">Bluetooth</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">📶🔵</div><div class="label">Both</div></button>
+    </div>
+  `, {step:2, totalSteps:5, ...opts});
+}
+
+function wifiFlow(opts={}) {
+  showScreen('wifi1', `
+    <h2>Is the option greyed out in settings?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(wifiGreyedLiquid)"><div class="icon">🚫</div><div class="label">Yes, greyed out</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">📶</div><div class="label">No, just weak signal</div></button>
+    </div>
+  `, {step:3, totalSteps:5, ...opts});
+}
+
+function wifiGreyedLiquid(opts={}) {
+  showScreen('wifiLiq', `
+    <h2>Any previous liquid damage?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">💧</div><div class="label">Yes</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">❌</div><div class="label">No</div></button>
+    </div>
+  `, {step:4, totalSteps:5, ...opts});
+}
+
+/* ============ TOUCH BAR ============ */
+function touchbarFlow(opts={}) {
+  showScreen('tb1', `
+    <h2>What's the Touch Bar issue?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(touchbarLiquid)"><div class="icon">⬛</div><div class="label">No image / blank</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'touchbar')"><div class="icon">👆</div><div class="label">Not responding to touch</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'touchbar')"><div class="icon">💥</div><div class="label">Physical damage</div></button>
+    </div>
+  `, {step:2, totalSteps:5, ...opts});
+}
+
+function touchbarLiquid(opts={}) {
+  showScreen('tbLiq', `
+    <h2>Any previous liquid damage?</h2>
+    <div class="options">
+      <button class="opt-btn" onclick="navigate(showQuote,'diagnostic')"><div class="icon">💧</div><div class="label">Yes</div></button>
+      <button class="opt-btn" onclick="navigate(showQuote,'touchbar')"><div class="icon">❌</div><div class="label">No</div></button>
+    </div>
+  `, {step:3, totalSteps:5, ...opts});
+}
+
+/* ============ QUOTE RESULT ============ */
+function showQuote(type, opts={}) {
+  const q = PRICES[type];
+  const isDiag = type === 'diagnostic';
+  
+  let html = '';
+  if (isDiag) {
+    html = `
+      <div class="diag-card">
+        <h3>Diagnostic Recommended</h3>
+        <div class="diag-price">${q.price}</div>
+        <p>Your MacBook needs a hands-on assessment by our technicians to identify the exact issue and provide an accurate repair quote.</p>
+      </div>
+      <div class="info-note"><div class="ni">💡</div>The diagnostic fee is deducted from your repair cost if you go ahead with the repair.</div>
+      <div class="options">
+        <button class="opt-btn primary" onclick="navigate(emailForm, '${type}')">Book Diagnostic</button>
+        <button class="opt-btn secondary" onclick="navigate(emailForm, '${type}')">Email Me This Quote</button>
+        <button class="opt-btn ghost" onclick="navigate(categoryScreen)">Check another issue</button>
+      </div>
+    `;
+  } else {
+    html = `
+      <div class="quote-card">
+        <div class="quote-label">${q.label}</div>
+        <div class="quote-price">${q.from ? '<small>from </small>' : ''}${q.price}</div>
+        <ul class="quote-includes">
+          <li>Free diagnosis included</li>
+          <li>Genuine / OEM quality parts</li>
+          <li>2-year warranty on repair</li>
+          <li>Same-day service available</li>
+          <li>Free return shipping (postal repairs)</li>
+        </ul>
+      </div>
+      <div class="options">
+        <button class="opt-btn primary" onclick="navigate(emailForm, '${type}')">Book This Repair</button>
+        <button class="opt-btn secondary" onclick="navigate(emailForm, '${type}')">Email Me This Quote</button>
+        <button class="opt-btn ghost" onclick="navigate(categoryScreen)">Check another issue</button>
+      </div>
+    `;
+  }
+  
+  showScreen('quote', html, {step:5, totalSteps:5, ...opts});
+}
+
+/* ============ EMAIL FORM ============ */
+function emailForm(type, opts={}) {
+  const q = PRICES[type];
+  showScreen('email', `
+    <h2>Get your quote</h2>
+    <p class="subtitle">We'll send your ${q.label} quote (${q.price}) straight to your inbox.</p>
+    <div class="form-group"><input type="text" placeholder="Your name" /></div>
+    <div class="form-group"><input type="email" placeholder="Email address" /></div>
+    <div class="form-group"><input type="tel" placeholder="Phone number (optional)" /></div>
+    <div style="margin-top:8px" class="options">
+      <button class="opt-btn primary" onclick="showConfirmation()">Send My Quote</button>
+    </div>
+  `, {step:5, totalSteps:5, ...opts});
+}
+
+function showConfirmation() {
+  const container = $('screenContainer');
+  const el = container.querySelector('.screen');
+  if (el) {
+    el.innerHTML = `
+      <div style="text-align:center;padding-top:60px">
+        <div style="font-size:64px;margin-bottom:16px">✅</div>
+        <h2>Quote sent!</h2>
+        <p class="subtitle">Check your inbox. We'll be in touch shortly.</p>
+        <div class="options" style="margin-top:32px">
+          <button class="opt-btn primary" onclick="history.length=0;currentNav=startScreen;currentArgs=[];startScreen()">Start Over</button>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// Init
+currentNav = startScreen;
+currentArgs = [];
+startScreen();
+</script>
+</body>
+</html>
