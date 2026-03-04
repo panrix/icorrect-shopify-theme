@@ -1,53 +1,72 @@
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  if (typeof posthog === 'undefined') return;
-  
-  // Cross-domain linking: append PostHog ID to checkout URLs
-  function addPostHogToCheckoutLinks() {
-    var distinctId = posthog.get_distinct_id();
-    if (!distinctId) return;
-    
-    document.querySelectorAll('a[href*="/checkout"], form[action*="/checkout"]').forEach(function(el) {
-      if (el.tagName === 'A') {
-        var url = new URL(el.href, window.location.origin);
-        url.searchParams.set('ph_id', distinctId);
-        el.href = url.toString();
-      } else if (el.tagName === 'FORM') {
-        var input = el.querySelector('input[name="ph_id"]');
-        if (!input) {
-          input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = 'ph_id';
-          el.appendChild(input);
-        }
-        input.value = distinctId;
+/**
+ * PostHog cross-domain identity linking for Shopify checkout.
+ *
+ * Problem: the storefront runs on icorrect.co.uk and the checkout runs on
+ * checkout.shopify.com (different domain). PostHog generates a random UUID
+ * on the storefront; the Shopify web pixel identifies users by email at
+ * checkout. Without this bridge the two sessions are permanently disconnected.
+ *
+ * Solution: append ?ph_distinct_id=<uuid> to every checkout URL before the
+ * user leaves the storefront. The web pixel reads this param and calls
+ * posthog.identify(email, { $anon_distinct_id: ph_distinct_id }), which
+ * merges the two PostHog profiles retroactively.
+ *
+ * NOTE: The web pixel (Shopify Admin > Customer Events) must also be updated
+ * to read ph_distinct_id from the URL — see the pixel code doc.
+ */
+(function () {
+  function waitForPostHog(cb, attempts) {
+    attempts = attempts || 0;
+    if (typeof posthog !== 'undefined' && posthog.__loaded) {
+      cb();
+    } else if (attempts < 30) {
+      setTimeout(function () { waitForPostHog(cb, attempts + 1); }, 200);
+    }
+  }
+
+  function appendIdentityToUrl(url) {
+    try {
+      var distinctId = posthog.get_distinct_id();
+      if (!distinctId) return url;
+      var u = new URL(url, window.location.origin);
+      u.searchParams.set('ph_distinct_id', distinctId);
+      return u.toString();
+    } catch (e) {
+      return url;
+    }
+  }
+
+  function patchCheckoutLinks() {
+    // Patch <a> tags pointing to checkout
+    document.querySelectorAll(
+      'a[href*="/checkout"], a[href*="checkout.shopify.com"]'
+    ).forEach(function (el) {
+      el.href = appendIdentityToUrl(el.href);
+    });
+
+    // Patch <form> actions pointing to checkout
+    document.querySelectorAll('form[action*="/checkout"]').forEach(function (form) {
+      var input = form.querySelector('input[name="ph_distinct_id"]');
+      if (!input) {
+        input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'ph_distinct_id';
+        form.appendChild(input);
       }
+      input.value = posthog.get_distinct_id();
     });
   }
-  
-  // Run on load and after cart updates
-  posthog.onFeatureFlags(addPostHogToCheckoutLinks);
-  setTimeout(addPostHogToCheckoutLinks, 1000);
-  document.addEventListener('cart:updated', addPostHogToCheckoutLinks);
-  
-  // Track checkout button clicks
-  document.addEventListener('click', function(e) {
-    var target = e.target.closest('[name="checkout"], a[href*="/checkout"], .cart__checkout-button');
-    if (target) {
-      posthog.capture('Checkout Started', {
-        distinct_id: posthog.get_distinct_id()
-      });
-    }
-  }, true);
-  
-  // Track add to cart
-  document.addEventListener('click', function(e) {
-    var target = e.target.closest('[name="add"], .product-form__submit');
-    if (target) {
-      posthog.capture('Add to Cart', {
-        product: document.querySelector('.product__title')?.textContent?.trim()
-      });
-    }
-  }, true);
-});
+
+  waitForPostHog(function () {
+    // Run immediately and re-run whenever the cart updates (e.g. mini-cart drawer)
+    patchCheckoutLinks();
+    document.addEventListener('cart:updated', patchCheckoutLinks);
+
+    // Re-patch periodically to catch dynamically injected checkout buttons
+    // (Shopify themes often render cart drawers after DOMContentLoaded)
+    var patchInterval = setInterval(patchCheckoutLinks, 2000);
+    setTimeout(function () { clearInterval(patchInterval); }, 15000);
+  });
+})();
 </script>

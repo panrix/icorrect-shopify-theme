@@ -1328,7 +1328,21 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      window.location.href = '/checkout';
+      // Fire PostHog event before leaving the storefront
+      if (typeof posthog !== 'undefined') {
+        posthog.capture('Product Added to Cart', {
+          item_count: items.length,
+          total: parseFloat(document.querySelector('.walk-in-book-row .repair-total-price')?.dataset?.productpricefinal || 0)
+        });
+      }
+
+      // Append PostHog distinct_id to checkout URL so the web pixel can link
+      // the anonymous storefront session to the identified checkout session
+      var checkoutUrl = '/checkout';
+      if (typeof posthog !== 'undefined' && typeof posthog.get_distinct_id === 'function') {
+        checkoutUrl += '?ph_distinct_id=' + encodeURIComponent(posthog.get_distinct_id());
+      }
+      window.location.href = checkoutUrl;
     } catch (e) {
       showCartError('Error adding to cart: Network or theme script error.');
       resetButton();

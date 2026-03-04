@@ -310,6 +310,12 @@
       api_host: 'https://us.i.posthog.com',
       person_profiles: 'always'
     });
+    {% if customer %}
+    posthog.identify('{{ customer.email }}', {
+      name: '{{ customer.name }}',
+      shopify_customer_id: '{{ customer.id }}'
+    });
+    {% endif %}
   </script>
   </head>
 
@@ -408,3 +414,4 @@ document.addEventListener('DOMContentLoaded',function(){
 {% render 'posthog-tracking' %}
   </body>
 </html>
+
