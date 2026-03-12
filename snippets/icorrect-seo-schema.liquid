@@ -1,0 +1,189 @@
+{% comment %}
+  icorrect-seo-schema.liquid
+  Outputs JSON-LD structured data for collection and page templates.
+  Handles: Service schema (Fix 3), BreadcrumbList schema (Fix 9)
+{% endcomment %}
+
+{%- if request.page_type == 'collection' -%}
+
+  {%- comment -%} Determine device type from collection handle {%- endcomment -%}
+  {%- assign col_handle = collection.handle -%}
+  {%- assign device_type = '' -%}
+  {%- assign service_name = '' -%}
+  {%- assign service_desc = '' -%}
+  {%- assign service_url = '' -%}
+
+  {%- if col_handle contains 'macbook' or col_handle contains 'keyboard' or col_handle contains 'touchbar' or col_handle contains 'trackpad' or col_handle contains 'flexgate' or col_handle contains 'dustgate' -%}
+    {%- assign device_type = 'macbook' -%}
+    {%- assign service_name = 'MacBook Repair London' -%}
+    {%- assign service_desc = 'Professional MacBook repair in London. Logic board, screen, battery, keyboard, and liquid damage specialists. Same-day and next-day service available. All models covered. 2-year warranty.' -%}
+    {%- assign service_url = 'https://icorrect.co.uk/pages/macbook-repairs' -%}
+  {%- elsif col_handle contains 'iphone' -%}
+    {%- assign device_type = 'iphone' -%}
+    {%- assign service_name = 'iPhone Repair London' -%}
+    {%- assign service_desc = 'Professional iPhone repair in London. Screen replacement, battery, charging port, camera, and logic board repairs. All models from iPhone 8 onwards. 2-year warranty.' -%}
+    {%- assign service_url = 'https://icorrect.co.uk/pages/iphone-repairs' -%}
+  {%- elsif col_handle contains 'ipad' -%}
+    {%- assign device_type = 'ipad' -%}
+    {%- assign service_name = 'iPad Repair London' -%}
+    {%- assign service_desc = 'Professional iPad repair in London. Screen, battery, charging port, and glass repairs. All models covered including iPad Pro, Air, Mini, and standard iPad. 2-year warranty.' -%}
+    {%- assign service_url = 'https://icorrect.co.uk/pages/ipad-repairs' -%}
+  {%- elsif col_handle contains 'watch' -%}
+    {%- assign device_type = 'watch' -%}
+    {%- assign service_name = 'Apple Watch Repair London' -%}
+    {%- assign service_desc = 'Professional Apple Watch repair in London. Screen, battery, and heart rate sensor repairs. Series 1 to latest. 2-year warranty.' -%}
+    {%- assign service_url = 'https://icorrect.co.uk/pages/apple-watch-repairs' -%}
+  {%- endif -%}
+
+  {%- if device_type != '' -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": {{ service_name | json }},
+    "serviceType": "Electronics Repair",
+    "description": {{ service_desc | json }},
+    "url": {{ request.origin | append: request.path | json }},
+    "provider": {
+      "@type": "LocalBusiness",
+      "name": "iCorrect",
+      "@id": "https://icorrect.co.uk/#localbusiness",
+      "url": "https://icorrect.co.uk",
+      "telephone": "+44 20 7580 0028",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "12 Margaret Street, Audley House",
+        "addressLocality": "London",
+        "addressRegion": "Greater London",
+        "postalCode": "W1W 8JQ",
+        "addressCountry": "GB"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "reviewCount": "700",
+        "bestRating": "5"
+      }
+    },
+    "areaServed": {
+      "@type": "City",
+      "name": "London"
+    },
+    "availableChannel": {
+      "@type": "ServiceChannel",
+      "serviceUrl": {{ service_url | json }},
+      "availableLanguage": "English"
+    }
+  }
+  </script>
+  {%- endif -%}
+
+  {%- comment -%} BreadcrumbList for collection pages {%- endcomment -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": {{ request.origin | json }}
+      },
+      {%- if device_type == 'macbook' -%}
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "MacBook Repairs",
+        "item": "https://icorrect.co.uk/pages/macbook-repairs"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": {{ collection.title | json }},
+        "item": {{ request.origin | append: request.path | json }}
+      }
+      {%- elsif device_type == 'iphone' -%}
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "iPhone Repairs",
+        "item": "https://icorrect.co.uk/pages/iphone-repairs"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": {{ collection.title | json }},
+        "item": {{ request.origin | append: request.path | json }}
+      }
+      {%- elsif device_type == 'ipad' -%}
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "iPad Repairs",
+        "item": "https://icorrect.co.uk/pages/ipad-repairs"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": {{ collection.title | json }},
+        "item": {{ request.origin | append: request.path | json }}
+      }
+      {%- elsif device_type == 'watch' -%}
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Apple Watch Repairs",
+        "item": "https://icorrect.co.uk/pages/apple-watch-repairs"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": {{ collection.title | json }},
+        "item": {{ request.origin | append: request.path | json }}
+      }
+      {%- else -%}
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ collection.title | json }},
+        "item": {{ request.origin | append: request.path | json }}
+      }
+      {%- endif -%}
+    ]
+  }
+  </script>
+
+{%- elsif request.page_type == 'page' -%}
+
+  {%- comment -%} BreadcrumbList for service pages {%- endcomment -%}
+  {%- assign page_handle = page.handle -%}
+  {%- assign is_service_page = false -%}
+  {%- if page_handle == 'macbook-repairs' or page_handle == 'macbook-repair-page' or page_handle == 'iphone-repairs' or page_handle == 'ipad-repairs' or page_handle == 'apple-watch-repairs' or page_handle == 'our-services' -%}
+    {%- assign is_service_page = true -%}
+  {%- endif -%}
+
+  {%- if is_service_page -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": {{ request.origin | json }}
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ page.title | json }},
+        "item": {{ request.origin | append: request.path | json }}
+      }
+    ]
+  }
+  </script>
+  {%- endif -%}
+
+{%- endif -%}

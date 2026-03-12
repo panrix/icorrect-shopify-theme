@@ -650,6 +650,8 @@
     "name": {{ shop.name | json }},
     {% if settings.logo %}
       "logo": {{ settings.logo | image_url: width: 500 | prepend: "https:" | json }},
+    {% else %}
+      "logo": "https://icorrect.co.uk/cdn/shop/files/iCorrect_Logo_1.png",
     {% endif %}
     "sameAs": [
       {{ settings.social_twitter_link | json }},

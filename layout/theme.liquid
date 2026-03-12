@@ -13,6 +13,13 @@
 
     {%- unless settings.type_header_font.system? and settings.type_body_font.system? -%}
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+      {%- comment -%} Preload primary fonts to eliminate flash of unstyled text (FOUT) {%- endcomment -%}
+      {%- unless settings.type_body_font.system? -%}
+        <link rel="preload" as="font" href="{{ settings.type_body_font | font_url }}" type="font/woff2" crossorigin>
+      {%- endunless -%}
+      {%- unless settings.type_header_font.system? -%}
+        <link rel="preload" as="font" href="{{ settings.type_header_font | font_url }}" type="font/woff2" crossorigin>
+      {%- endunless -%}
     {%- endunless -%}
 
     <title>
@@ -54,11 +61,11 @@
     %}
 
     {% style %}
-      {{ settings.type_body_font | font_face: font_display: 'swap' }}
-      {{ body_font_bold | font_face: font_display: 'swap' }}
-      {{ body_font_italic | font_face: font_display: 'swap' }}
-      {{ body_font_bold_italic | font_face: font_display: 'swap' }}
-      {{ settings.type_header_font | font_face: font_display: 'swap' }}
+      {{ settings.type_body_font | font_face: font_display: 'optional' }}
+      {{ body_font_bold | font_face: font_display: 'optional' }}
+      {{ body_font_italic | font_face: font_display: 'optional' }}
+      {{ body_font_bold_italic | font_face: font_display: 'optional' }}
+      {{ settings.type_header_font | font_face: font_display: 'optional' }}
 
       {% for scheme in settings.color_schemes -%}
         {% assign scheme_classes = scheme_classes | append: ', .color-' | append: scheme.id %}
@@ -311,6 +318,8 @@
     gtag('js', new Date());
     gtag('config', 'G-YHN7YHZNM8');
   </script>
+
+  {% render 'icorrect-seo-schema' %}
 
   <!-- PostHog Analytics -->
   <script>

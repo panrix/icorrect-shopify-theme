@@ -24,7 +24,7 @@
         <!-- Stat 1: Devices Repaired (HARDCODED) -->
         <div class="ic-stat" data-stat="devices">
           <div class="ic-stat-inner">
-            <span class="ic-stat-value" data-target="100000" data-type="integer">0</span>
+            <span class="ic-stat-value" data-target="100000" data-type="integer">100,000+</span>
             <span class="ic-stat-label">Devices Repaired</span>
           </div>
         </div>
@@ -32,7 +32,7 @@
         <!-- Stat 2: Rating -->
         <div class="ic-stat" data-stat="rating">
           <div class="ic-stat-inner">
-            <span class="ic-stat-value" data-target="{{ section.settings.stat_2_num }}" data-type="rating">0</span>
+            <span class="ic-stat-value" data-target="{{ section.settings.stat_2_num }}" data-type="rating">{{ section.settings.stat_2_num }}/5</span>
             <div class="ic-stars" role="img" aria-label="{{ section.settings.stat_2_num }} out of 5 stars">
               {% for i in (1..5) %}
                 <svg class="ic-star" data-index="{{ i }}" width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -48,7 +48,7 @@
         <!-- Stat 3: Experience -->
         <div class="ic-stat" data-stat="experience">
           <div class="ic-stat-inner">
-            <span class="ic-stat-value" data-target="{{ section.settings.stat_3_num }}" data-type="experience">0</span>
+            <span class="ic-stat-value" data-target="{{ section.settings.stat_3_num }}" data-type="experience">{{ section.settings.stat_3_num }}+</span>
             <span class="ic-stat-label">Years Experience</span>
           </div>
         </div>
