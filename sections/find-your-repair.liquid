@@ -23,6 +23,11 @@
             <div class="">
               <a href="{{ block.settings.link }}">{{ block.settings.btn }}</a>
             </div>
+            {%- if block.settings.service_link != blank -%}
+            <div class="find-repair-service-link">
+              <a href="{{ block.settings.service_link }}">{{ block.settings.service_link_label | default: 'About our repair service' }} →</a>
+            </div>
+            {%- endif -%}
             <div class="hide-desktop hide-mobile">
               <a href="{{ block.settings.link }}">
                 Select model & repair
@@ -176,6 +181,18 @@ margin: 0px;
     width: 100%;
     text-align: left;
     padding-top: 8px;
+  }
+  .find-repair-service-link {
+    margin-top: 10px;
+  }
+  .find-repair-service-link a {
+    font-size: 14px;
+    color: #4b7fc7;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .find-repair-service-link a:hover {
+    text-decoration: underline;
   }
   .find-repair-btn a{
     width: 154px;
@@ -488,6 +505,17 @@ text-align: left;
               "type": "url",
               "id": "link",
               "label": "Button Link"
+            },
+            {
+              "type": "url",
+              "id": "service_link",
+              "label": "Service Page Link (e.g. /pages/macbook-repairs)"
+            },
+            {
+              "type": "text",
+              "id": "service_link_label",
+              "label": "Service Page Link Label",
+              "default": "About our repair service"
             }
          ]
       }
