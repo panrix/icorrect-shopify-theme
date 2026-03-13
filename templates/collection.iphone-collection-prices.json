@@ -227,11 +227,16 @@
       "settings": {
         "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>"
       }
+    },
+    "iphone_repair_link_bugsR": {
+      "type": "iphone-repair-link",
+      "settings": {}
     }
   },
   "order": [
     "banner",
     "product-grid",
+    "iphone_repair_link_bugsR",
     "icorrect_product_grid_AAVQCj",
     "iphone_videos_GEpK4D",
     "repair_services_nQkwFT",

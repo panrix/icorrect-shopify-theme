@@ -318,11 +318,16 @@
         "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>",
         "hours": "<h3>Hours</h3><p>Mon–Thur: 9am–6pm </p><p>Fri: 10am–6pm </p><p>Sat: Closed </p><p>Sun: Closed</p>"
       }
+    },
+    "iphone_repair_link_LzGyH": {
+      "type": "iphone-repair-link",
+      "settings": {}
     }
   },
   "order": [
     "banner",
     "product-grid",
+    "iphone_repair_link_LzGyH",
     "main_banner_and_video_HjbmW9",
     "about_info_RWbQxj",
     "iphone_model_search_qAVWPj",
