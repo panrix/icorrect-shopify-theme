@@ -79,14 +79,14 @@
         "heading_4tRXTh": {
           "type": "heading",
           "settings": {
-            "heading": "Image with text",
+            "heading": "Need help identifying your MacBook?",
             "heading_size": "h1"
           }
         },
         "text_aHhpHK": {
           "type": "text",
           "settings": {
-            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
+            "text": "<p>Check the model number printed on the underside of your MacBook. It starts with the letter “A” followed by four digits. Use this number to quickly identify your exact model and ensure you select the correct repair or service.</p>",
             "text_style": "body"
           }
         }
@@ -126,7 +126,6 @@
         "show_description": false,
         "description_style": "body",
         "collection": "macbook-touch-bar-repair-prices",
-        "products_to_show": 3,
         "columns_desktop": 3,
         "full_width": false,
         "show_view_all": false,
@@ -340,15 +339,16 @@
     "contact_with_map_dXbbDU": {
       "type": "contact-with-map",
       "settings": {
-        "padding-top": 0,
-        "padding-bottom": 0,
-        "mob-padding-top": 0,
-        "mob-padding-bottom": 0,
-        "bg": "#fafafa",
-        "map": "shopify://shop_images/map-img.webp",
-        "heading": "Get In Touch",
+        "map_html": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.7925117760165!2d-0.1422392230845079!3d51.51702250999988!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2c5aabf83b%3A0x2abbd489a9d66382!2siCorrect!5e0!3m2!1sen!2sit!4v1766495755523!5m2!1sen!2sit\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
         "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>",
-        "hours": "<h3>Hours</h3><p>Mon–Thur: 9am–6pm </p><p>Fri: 10am–6pm </p><p>Sat: Closed </p><p>Sun: Closed</p>"
+        "form_heading": "Get Your Free Quote!",
+        "form_subtitle": "Have a question about your device repair? We're here to help.",
+        "section_bg": "#f4f4f4",
+        "accent_color": "#3b82f6",
+        "text_color": "#171717",
+        "muted_text_color": "#6b7280",
+        "input_bg": "#ffffff",
+        "input_border": "#e5e7eb"
       }
     }
   },
