@@ -84,19 +84,69 @@ window.WIZARD_CONTEXT = {
 </script>
 
 <!-- Subtask 1.1.3 — HTML Skeleton -->
-<div id="qw" class="quote-wizard" aria-label="Repair quote wizard">
-  <div class="qw-header">
-    <h2>{{ section.settings.heading }}</h2>
-    <p>{{ section.settings.subheading }}</p>
-  </div>
-  <div class="qw-progress" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="4">
-    <div class="qw-progress-bar"></div>
-  </div>
-  <div id="qw-content" aria-live="polite" aria-atomic="true">
-    <!-- JS renders step content here -->
-  </div>
-  <div id="qw-result" aria-live="polite" aria-atomic="true">
-    <!-- JS renders resolution cards here -->
+<div class="qw-section">
+  <div class="qw-wrap">
+
+    {%- if section.settings.show_map -%}
+    <!-- LEFT: MAP + DETAILS -->
+    <div class="qw-info">
+      <div class="qw-map">
+        {%- if section.settings.map_html != blank -%}
+          {{ section.settings.map_html }}
+        {%- else -%}
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.7925117760165!2d-0.1422392230845079!3d51.51702250999988!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2c5aabf83b%3A0x2abbd489a9d66382!2siCorrect!5e0!3m2!1sen!2sit!4v1766495755523!5m2!1sen!2sit" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="iCorrect London"></iframe>
+        {%- endif -%}
+      </div>
+      <div class="qw-details-card qw-details-grid">
+        <div class="qw-details-col qw-details-left">
+          <div class="qw-d-group">
+            <p class="qw-d-label"><svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>Address</p>
+            <a href="https://maps.google.com/?q=iCorrect+12+Margaret+Street+London+W1W+8JQ" target="_blank" rel="noopener" class="qw-d-val">iCorrect<br>12 Margaret Street<br>Audley House<br>London W1W 8JQ</a>
+          </div>
+          <div class="qw-d-group">
+            <p class="qw-d-label"><svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>Phone</p>
+            <a href="tel:+442070998517" class="qw-d-val">+44 (0)207 099 8517</a>
+          </div>
+          <div class="qw-d-group">
+            <p class="qw-d-label"><svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email</p>
+            <a href="mailto:support@icorrect.co.uk" class="qw-d-val">support@icorrect.co.uk</a>
+          </div>
+        </div>
+        <div class="qw-details-col">
+          <div class="qw-d-group">
+            <p class="qw-d-label"><svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Opening Hours</p>
+            <div class="qw-hrs">
+              <span class="qw-hrs-d">Mon</span><span class="qw-hrs-t">9am - 6pm</span>
+              <span class="qw-hrs-d">Tue</span><span class="qw-hrs-t">9am - 6pm</span>
+              <span class="qw-hrs-d">Wed</span><span class="qw-hrs-t">9am - 6pm</span>
+              <span class="qw-hrs-d">Thu</span><span class="qw-hrs-t">9am - 6pm</span>
+              <span class="qw-hrs-d">Fri</span><span class="qw-hrs-t">10am - 6pm</span>
+              <span class="qw-hrs-d">Sat</span><span class="qw-hrs-t qw-hrs-c">Closed</span>
+              <span class="qw-hrs-d">Sun</span><span class="qw-hrs-t qw-hrs-c">Closed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {%- endif -%}
+
+    <!-- RIGHT: WIZARD -->
+    <div id="qw" class="quote-wizard" aria-label="Repair quote wizard">
+      <div class="qw-header">
+        <h2>{{ section.settings.heading }}</h2>
+        <p>{{ section.settings.subheading }}</p>
+      </div>
+      <div class="qw-progress" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="4">
+        <div class="qw-progress-bar"></div>
+      </div>
+      <div id="qw-content" aria-live="polite" aria-atomic="true">
+        <!-- JS renders step content here -->
+      </div>
+      <div id="qw-result" aria-live="polite" aria-atomic="true">
+        <!-- JS renders resolution cards here -->
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1745,6 +1795,102 @@ window.WIZARD_CONTEXT = {
      ============================================ -->
 <style>
 /* ========================================
+   SECTION LAYOUT — MAP + WIZARD
+   ======================================== */
+.qw-section {
+  width: 100%;
+  padding: 40px 16px;
+}
+.qw-wrap {
+  max-width: 1360px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+@media (min-width: 1024px) {
+  .qw-section { padding: 56px 24px; }
+  .qw-wrap { flex-direction: row; align-items: flex-start; gap: 52px; }
+  .qw-info { width: 44%; flex-shrink: 0; position: sticky; top: 28px; }
+  .qw-wrap .quote-wizard { width: 56%; }
+}
+
+/* LEFT: MAP + DETAILS */
+.qw-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.qw-map {
+  width: 100%;
+  height: 240px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #e4e6ec;
+  box-shadow: 0 1px 2px rgba(15,15,20,0.04);
+}
+@media (min-width: 1024px) {
+  .qw-map { height: auto; aspect-ratio: 4 / 3; }
+}
+.qw-map iframe { width: 100%; height: 100%; border: 0; display: block; }
+.qw-details-card {
+  background: #ffffff;
+  border: 1px solid #e4e6ec;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.qw-details-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 560px) {
+  .qw-details-grid { grid-template-columns: 1fr 1fr; }
+  .qw-details-left { border-right: 1px solid #e4e6ec; border-bottom: none; }
+}
+.qw-details-left { border-bottom: 1px solid #e4e6ec; }
+.qw-details-col {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.qw-d-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.qw-d-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #8c8c9e;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+}
+.qw-d-label svg { width: 14px; height: 14px; color: #2563eb; flex-shrink: 0; }
+.qw-d-val {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #1d1d2b;
+  text-decoration: none;
+  display: block;
+}
+a.qw-d-val:hover { color: #2563eb; }
+.qw-hrs {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 4px 10px;
+  font-size: 13px;
+}
+.qw-hrs-d { color: #8c8c9e; font-weight: 500; }
+.qw-hrs-t { color: #1d1d2b; font-weight: 600; }
+.qw-hrs-c { color: #2563eb; }
+
+/* ========================================
    QUOTE WIZARD — SCOPED STYLES
    ======================================== */
 .quote-wizard {
@@ -1774,9 +1920,8 @@ window.WIZARD_CONTEXT = {
   --qw-ease: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: var(--qw-text);
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Header */
@@ -2311,6 +2456,12 @@ window.WIZARD_CONTEXT = {
       "id": "show_map",
       "label": "Show map & contact details",
       "default": true
+    },
+    {
+      "type": "html",
+      "id": "map_html",
+      "label": "Map embed HTML",
+      "info": "Paste a Google Maps embed iframe. Leave blank for default iCorrect map."
     },
     {
       "type": "text",
