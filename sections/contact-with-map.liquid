@@ -381,7 +381,7 @@ window.WIZARD_CFG = {
         { label: 'Dead pixels or bright spots', route: 'repair', repairType: 'screen', copy: 'Dead or stuck pixels indicate panel failure. A genuine display replacement will restore your screen to full quality.' },
         { label: 'Black screen (external monitor works)', route: 'repair', repairType: 'screen', copy: 'Your MacBook works fine on an external monitor, which confirms the issue is the built-in display. A screen replacement will fix this.' },
         { label: 'Black screen (external doesn\'t work or untested)', route: 'diagnostic', repairType: 'diagnostic', copy: 'A completely black screen with no external output could be the display, logic board, or GPU. We need to run a diagnostic to pinpoint the cause before recommending a repair.', likelyRepair: 'screen', likelyCopy: 'Should the display need replacing' },
-        { label: 'Backlight fading or dim at angle', route: 'repair', repairType: 'flexgate', copy: 'This is a known issue on certain MacBook Pro models where the display cable wears over time. We\'ll replace the affected components.' }
+        { label: 'Backlight fading or dim at angle', route: 'repair', repairType: 'screen', copy: 'Lines or colour issues on your display typically mean the LCD panel needs replacing. We use genuine displays with full colour calibration.', flexgateCheck: true }
       ],
       'Power / Battery / Charging': [
         { label: 'Battery draining quickly', route: 'repair', repairType: 'battery', copy: 'Your battery has degraded and isn\'t holding a full charge. We\'ll replace it with an original-spec battery and your MacBook will show accurate health monitoring again.' },
@@ -1270,6 +1270,8 @@ window.WIZARD_CFG = {
     /* Dustgate sub-question: if this issue has dustgateCheck and dustgate product exists */
     if (iss.dustgateCheck && _repairsMap['dustgate']) {
       showDustgateQuestion(iss);
+    } else if (iss.flexgateCheck && _repairsMap['flexgate']) {
+      showFlexgateQuestion(iss);
     } else {
       showResolution(iss);
     }
@@ -1282,7 +1284,7 @@ window.WIZARD_CFG = {
     p.innerHTML =
       '<div class="qw-res"><div class="qw-res-top" style="padding-bottom:24px;">' +
         '<h3 class="qw-res-h">Do the marks on your screen look like this?</h3>' +
-        '<p class="qw-res-p">Some MacBook models develop dust or debris trapped behind the display glass. This is known as "dustgate" and requires a specific repair.</p>' +
+        '<p class="qw-res-p">Dustgate is a known design flaw on 2016-2020 MacBook Pro models. Dust accumulates in the hinge and damages the display flex cable, causing purple lines or screen corruption at certain angles.</p>' +
         '<div class="qw-dustgate-imgs">' +
           '<img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/dustgate_example_1.jpg?v=1773931594" alt="Dustgate example 1">' +
           '<img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/dustgate_example_2.jpg?v=1773931593" alt="Dustgate example 2">' +
@@ -1293,9 +1295,35 @@ window.WIZARD_CFG = {
         '</div>' +
       '</div></div>';
     document.getElementById('qwDgYes').onclick = function() {
-      showResolution({ label: 'Dustgate repair', route: 'repair', repairType: 'dustgate', copy: 'Dust or particles trapped behind the glass is a known issue on some MacBook models. We\'ll replace the display to eliminate the debris and restore a clean picture.' });
+      showResolution({ label: 'Dustgate repair', route: 'repair', repairType: 'dustgate', copy: 'Dustgate is a design flaw affecting 2016-2020 MacBook Pro models. Dust and debris accumulate in the hinge and damage the display flex cable over time, causing purple lines and screen corruption. We repair the damaged flex cable at component level, avoiding a full display replacement.' });
     };
     document.getElementById('qwDgNo').onclick = function() {
+      showResolution(originalIss);
+    };
+    scrollToEl(p, 200);
+  }
+
+  function showFlexgateQuestion(originalIss) {
+    var p = document.getElementById('qw-rP');
+    if (!p) return;
+    p.style.display = 'block';
+    p.innerHTML =
+      '<div class="qw-res"><div class="qw-res-top" style="padding-bottom:24px;">' +
+        '<h3 class="qw-res-h">Does your screen look like this?</h3>' +
+        '<p class="qw-res-p">Flexgate is a manufacturing fault on certain MacBook Pro models where the backlight flex cable is too short. The backlight fades or fails entirely, usually starting from the bottom of the screen.</p>' +
+        '<div class="qw-dustgate-imgs">' +
+          '<img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/flexgate_1.webp?v=1773951159" alt="Flexgate example 1">' +
+          '<img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/flexgate_2.jpg?v=1773951159" alt="Flexgate example 2">' +
+        '</div>' +
+        '<div class="qw-res-cta" style="padding:0;">' +
+          '<button class="qw-btn-book" id="qwFgYes">Yes, that\'s what I see</button>' +
+          '<button class="qw-btn-q" id="qwFgNo">No, it looks different</button>' +
+        '</div>' +
+      '</div></div>';
+    document.getElementById('qwFgYes').onclick = function() {
+      showResolution({ label: 'Flexgate repair', route: 'repair', repairType: 'flexgate', copy: 'Flexgate is a manufacturing fault on 2016-2018 MacBook Pro models where the backlight flex cable is too short. Opening and closing the lid gradually wears through the cable, causing the backlight to fail. We repair the issue by fixing the snapped flex at component level.' });
+    };
+    document.getElementById('qwFgNo').onclick = function() {
       showResolution(originalIss);
     };
     scrollToEl(p, 200);
@@ -1346,6 +1374,7 @@ window.WIZARD_CFG = {
           '<div class="qw-res-badge qw-badge-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>We can fix this</div>' +
           '<h3 class="qw-res-h">' + esc(product.title) + '</h3>' +
           '<p class="qw-res-p">' + esc(iss.copy) + '</p>' +
+          (iss.refImages ? '<div class="qw-dustgate-imgs">' + iss.refImages.map(function(src,i){ return '<img src="' + src + '" alt="Reference image ' + (i+1) + '">'; }).join('') + '</div>' : '') +
           priceHtml +
         '</div>' +
         '<div class="qw-svc">' + badges + '</div>' +
