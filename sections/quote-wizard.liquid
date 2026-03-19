@@ -84,6 +84,7 @@ window.WIZARD_CONTEXT = {
 <!-- Service products (global) -->
 {%- assign walk_in_prod = all_products['walk-in-service'] -%}
 {%- assign mail_in_prod = all_products['mail-in-service'] -%}
+{%- assign express_prod = section.settings.express_product -%}
 <script>
 window.WIZARD_CFG = {
   warrantyLabel: {{ section.settings.warranty_label | default: '2-year warranty' | json }},
@@ -101,6 +102,14 @@ window.WIZARD_CFG = {
     variantId: {{ mail_in_prod.selected_or_first_available_variant.id | default: 'null' }},
     description: {{ mail_in_prod.description | strip_html | truncate: 200 | default: '' | json }}
   }
+  {%- if express_prod -%}
+  ,express: {
+    title: {{ express_prod.title | json }},
+    price: {{ express_prod.price | divided_by: 100.0 }},
+    variantId: {{ express_prod.selected_or_first_available_variant.id }},
+    devices: ['macbook']
+  }
+  {%- endif -%}
 };
 </script>
 
@@ -669,16 +678,13 @@ window.WIZARD_CFG = {
     var h = svcBadge('warranty', CFG.warrantyLabel || '2-year warranty');
     var ta = { macbook: '2-3 working days', iphone: '2-4 hours', ipad: '2-3 working days', watch: '2-3 working days' };
     h += svcBadge('turnaround', ta[device] || '2-3 working days');
-    if (device === 'macbook') h += svcBadge('express', CFG.expressLabel || 'Next-day (pre-book required)');
     h += svcBadge('parts', 'Genuine Apple parts');
-    h += svcBadge('service', 'Walk-in, Collection & Delivery');
     return h;
   }
 
   function buildDiagnosticBadges(device) {
     return svcBadge('turnaround', CFG.diagnosticTurnaround || '2 working days') +
-      svcBadge('diagnostic', 'Diagnostic fee applied to repair cost') +
-      svcBadge('service', 'Walk-in, Collection & Delivery');
+      svcBadge('diagnostic', 'Diagnostic fee applied to repair cost');
   }
 
   /* Service type cards from Liquid-provided walk-in + mail-in products */
@@ -699,6 +705,28 @@ window.WIZARD_CFG = {
           '<div class="qw-opt-name">Collection & Delivery</div>' +
           '<div class="qw-opt-meta">We collect and return your device</div>' +
           '<div class="qw-opt-price">+' + gbp.format(cdFee) + '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* Turnaround cards: Standard (free) vs Fast (+£79) — only for eligible devices */
+  function buildTurnaroundCards(device) {
+    var ex = CFG.express;
+    if (!ex || !ex.devices) return '';
+    if (ex.devices.indexOf(device) === -1) return '';
+    return '<div class="qw-opt-section">' +
+      '<div class="qw-opt-label">Repair turnaround</div>' +
+      '<div class="qw-opt-row">' +
+        '<div class="qw-opt-card sel" data-opt="speed" data-add="0" tabindex="0">' +
+          '<div class="qw-opt-name">Standard</div>' +
+          '<div class="qw-opt-meta">2-3 Working Days</div>' +
+          '<div class="qw-opt-price free">Included</div>' +
+        '</div>' +
+        '<div class="qw-opt-card" data-opt="speed" data-add="' + ex.price + '" tabindex="0">' +
+          '<div class="qw-opt-name">Fast</div>' +
+          '<div class="qw-opt-meta">1 Working Day</div>' +
+          '<div class="qw-opt-price">+' + gbp.format(ex.price) + '</div>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -1227,7 +1255,8 @@ window.WIZARD_CFG = {
 
     var badges = buildRepairBadges(S.device);
 
-    /* Service cards from Liquid-provided global products */
+    /* Turnaround + Service cards from Liquid-provided global products */
+    var turnaroundHtml = buildTurnaroundCards(S.device);
     var serviceHtml = buildServiceCards();
 
     var cdFee = CFG.mailIn ? CFG.mailIn.price : 0;
@@ -1242,7 +1271,7 @@ window.WIZARD_CFG = {
           priceHtml +
         '</div>' +
         '<div class="qw-svc">' + badges + '</div>' +
-        '<div style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
+        '<div style="padding:0 24px 8px;">' + turnaroundHtml + serviceHtml + '</div>' +
         totalHtml +
         '<div class="qw-res-cta">' +
           '<a href="/products/' + product.handle + '" class="qw-btn-book" id="qwBookBtn">Book this repair <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>' +
@@ -1950,6 +1979,12 @@ a.qw-d-val:hover{color:var(--qw-accent);}
       "id": "subheading",
       "label": "Subheading",
       "default": "Pick your device and we'll point you to the right repair."
+    },
+    {
+      "type": "product",
+      "id": "express_product",
+      "label": "Express turnaround product",
+      "info": "Select the 'Turn around time (1 Working Day)' product. Express option will show for MacBook repairs only."
     },
     {
       "type": "text",
