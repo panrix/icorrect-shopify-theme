@@ -405,10 +405,6 @@
     }
   },
   "platform_customizations": {
-    "custom_css": [
-      "html {scroll-behavior: smooth;}",
-      "#home-contact {scroll-margin-top: 120px;}",
-      " /* adjust if header height differs */"
-    ]
+    "custom_css": []
   }
 }
