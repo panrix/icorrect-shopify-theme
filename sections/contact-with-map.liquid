@@ -851,6 +851,23 @@ window.WIZARD_CFG = {
   /* =============================================
      STEP 2: MODELS (accordion + auto-expand)
      ============================================= */
+  /* Sort models: newest year first, then highest M-chip first within same year */
+  function sortModels(models) {
+    return models.slice().sort(function(a, b) {
+      var ya = parseInt((a.name.match(/\((\d{4})\)/) || [])[1]) || 0;
+      var yb = parseInt((b.name.match(/\((\d{4})\)/) || [])[1]) || 0;
+      if (yb !== ya) return yb - ya;
+      /* Extract M-chip number: M4=4, M3=3, M2=2, M1=1, none=0 */
+      var ma = parseInt((a.name.match(/M(\d)/i) || [])[1]) || 0;
+      var mb = parseInt((b.name.match(/M(\d)/i) || [])[1]) || 0;
+      if (mb !== ma) return mb - ma;
+      /* Within same chip, Max > Pro > base */
+      var ra = a.name.indexOf('Max') !== -1 ? 3 : a.name.indexOf('Pro') !== -1 ? 2 : 1;
+      var rb = b.name.indexOf('Max') !== -1 ? 3 : b.name.indexOf('Pro') !== -1 ? 2 : 1;
+      return rb - ra;
+    });
+  }
+
   function renderModels(dev) {
     var c = document.getElementById('qw-mC');
     if (!c) return;
@@ -880,7 +897,8 @@ window.WIZARD_CFG = {
 
       var b = document.createElement('div'); b.className = 'qw-m-body';
       var l = document.createElement('div'); l.className = 'qw-m-list';
-      g.models.forEach(function(m) {
+      var sorted = sortModels(g.models);
+      sorted.forEach(function(m) {
         var it = document.createElement('div'); it.className = 'qw-m-item';
         it.innerHTML = '<span class="qw-mn">' + esc(m.name) + '</span>';
         wireA11y(it, 'Select ' + m.name);
@@ -1101,12 +1119,13 @@ window.WIZARD_CFG = {
   /* [3.4] MacBook helper with reference image */
   function renderMacbookHelper(panel) {
     panel.innerHTML =
-      '<div class="qw-help-card"><div class="qw-help-body">' +
-      '<img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/MacBook_Model_Number_7104995a-bc9e-4b6d-9a9b-5578f42b4a7b.png?v=1773930835" alt="Where to find your MacBook model number" class="qw-help-img" style="max-height:200px;object-fit:contain;">' +
+      '<div class="qw-help-card"><div class="qw-help-body qw-help-split">' +
+      '<div class="qw-help-left"><img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/MacBook_Model_Number_7104995a-bc9e-4b6d-9a9b-5578f42b4a7b.png?v=1773930835" alt="Where to find your MacBook model number" class="qw-help-img"></div>' +
+      '<div class="qw-help-right">' +
       '<p class="qw-help-inst">Flip your MacBook over. The model number (e.g. <code>A1989</code>) is printed on the bottom case near the hinge.</p>' +
       '<div class="qw-help-row"><input class="qw-help-input" type="text" id="qwMbSearch" placeholder="Type model number, e.g. A1989"></div>' +
       '<div class="qw-help-results" id="qwMbRes"></div>' +
-      '</div><button class="qw-help-close">Close</button></div>';
+      '</div></div><button class="qw-help-close">Close</button></div>';
     panel.querySelector('.qw-help-close').onclick = function() { panel.classList.remove('open'); };
 
     /* Build a lookup: extract A-numbers from WIZARD_MODELS names */
@@ -1880,7 +1899,12 @@ a.qw-d-val:hover{color:var(--qw-accent);}
 .qw-help-panel.open{max-height:900px;opacity:1;}
 .qw-help-card{background:var(--qw-white);border:1px solid var(--qw-line);border-radius:var(--qw-r-md);overflow:hidden;}
 .qw-help-body{padding:18px;}
-.qw-help-img{width:100%;border-radius:var(--qw-r-sm);margin-bottom:14px;}
+.qw-help-split{display:flex;flex-direction:column;gap:16px;}
+@media(min-width:560px){.qw-help-split{flex-direction:row;align-items:flex-start;}}
+.qw-help-left{flex-shrink:0;}
+@media(min-width:560px){.qw-help-left{width:45%;}}
+.qw-help-right{flex:1;min-width:0;}
+.qw-help-img{width:100%;border-radius:var(--qw-r-sm);object-fit:contain;}
 .qw-help-inst{font-size:13px;color:var(--qw-text-2);line-height:1.55;margin-bottom:14px;}
 .qw-help-inst code{background:#f0f1f5;padding:2px 5px;border-radius:3px;font-size:12px;font-weight:600;color:var(--qw-text);}
 .qw-help-row{display:flex;gap:8px;margin-bottom:10px;}
