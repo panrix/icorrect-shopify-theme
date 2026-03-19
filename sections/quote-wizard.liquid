@@ -143,10 +143,6 @@ window.WIZARD_CFG = {
       <div class="qw-head">
         <h2 class="qw-title">{{ section.settings.heading }}</h2>
         <p class="qw-sub">{{ section.settings.subheading }}</p>
-        <!-- [1.3] Trust line + [1.4] Time estimate -->
-        {%- if section.settings.trust_line != blank -%}
-        <p class="qw-trust"><svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>{{ section.settings.trust_line }}{%- if section.settings.time_estimate != blank %} <span class="qw-trust-sep">&bull;</span> {{ section.settings.time_estimate }}{%- endif -%}</p>
-        {%- endif -%}
       </div>
 
       <!-- Step indicator -->
@@ -165,10 +161,6 @@ window.WIZARD_CFG = {
         <h3 class="qw-s-title">What needs fixing?</h3>
         <p class="qw-s-sub">Pick your device to get started.</p>
         <div class="qw-dev-grid" id="qw-devGrid"></div>
-        <!-- [5.4] Price anchoring -->
-        {%- if section.settings.price_hint != blank -%}
-        <p class="qw-price-hint">{{ section.settings.price_hint }}</p>
-        {%- endif -%}
       </div>
 
       <!-- Step 2: Models -->
@@ -350,13 +342,11 @@ window.WIZARD_CFG = {
     macbook: {
       'Screen / Display': [
         { label: 'Cracked or shattered screen', route: 'repair', repairType: 'screen', copy: 'Your MacBook screen is damaged and needs replacing. We use genuine Apple displays and preserve True Tone calibration.' },
-        { label: 'Lines, discolouration, or artefacts', route: 'repair', repairType: 'screen', copy: 'Lines or colour issues on your display typically mean the LCD panel needs replacing. We use genuine displays with full colour calibration.' },
+        { label: 'Thick bands, artefacts, or distortion', route: 'repair', repairType: 'screen', copy: 'Lines or colour issues on your display typically mean the LCD panel needs replacing. We use genuine displays with full colour calibration.', dustgateCheck: true },
         { label: 'Dead pixels or bright spots', route: 'repair', repairType: 'screen', copy: 'Dead or stuck pixels indicate panel failure. A genuine display replacement will restore your screen to full quality.' },
         { label: 'Black screen (external monitor works)', route: 'repair', repairType: 'screen', copy: 'Your MacBook works fine on an external monitor, which confirms the issue is the built-in display. A screen replacement will fix this.' },
         { label: 'Black screen (external doesn\'t work or untested)', route: 'diagnostic', repairType: 'diagnostic', copy: 'A completely black screen with no external output could be the display, logic board, or GPU. We need to run a diagnostic to pinpoint the cause before recommending a repair.', likelyRepair: 'screen', likelyCopy: 'Should the display need replacing' },
-        { label: 'Backlight fading or dim at angle', route: 'repair', repairType: 'flexgate', copy: 'This is a known issue on certain MacBook Pro models where the display cable wears over time. We\'ll replace the affected components.' },
-        { label: 'Dust or debris behind the screen', route: 'repair', repairType: 'dustgate', copy: 'Dust or particles trapped behind the glass is a known issue on some MacBook models. We\'ll replace the display to eliminate the debris and restore a clean picture.', dustgate: true },
-        { label: 'Not sure, looks like something behind the glass', route: 'diagnostic', repairType: 'diagnostic', copy: 'If you can see particles or marks behind the glass but aren\'t sure what\'s causing it, we need to take a look. This could be dust, delamination, or a display defect.', likelyRepair: 'dustgate', likelyCopy: 'Should it be a dustgate issue' }
+        { label: 'Backlight fading or dim at angle', route: 'repair', repairType: 'flexgate', copy: 'This is a known issue on certain MacBook Pro models where the display cable wears over time. We\'ll replace the affected components.' }
       ],
       'Power / Battery / Charging': [
         { label: 'Battery draining quickly', route: 'repair', repairType: 'battery', copy: 'Your battery has degraded and isn\'t holding a full charge. We\'ll replace it with an original-spec battery and your MacBook will show accurate health monitoring again.' },
@@ -560,7 +550,7 @@ window.WIZARD_CFG = {
     {n:"A3401",m:"MacBook Pro 14-inch 'M4 Pro/Max' A3112/A3185/A3401 (2024)"},{n:"A3112",m:"MacBook Pro 14-inch 'M4 Pro/Max' A3112/A3185/A3401 (2024)"},{n:"A3185",m:"MacBook Pro 14-inch 'M4 Pro/Max' A3112/A3185/A3401 (2024)"},
     {n:"A2918",m:"MacBook Pro 14-inch 'M3 Pro/Max' A2918/A2992 (2023)"},{n:"A2992",m:"MacBook Pro 14-inch 'M3 Pro/Max' A2918/A2992 (2023)"},
     {n:"A2779",m:"MacBook Pro 14-inch 'M2 Pro/Max' A2779 (2023)"},{n:"A2442",m:"MacBook Pro 14-inch 'M1 Pro/Max' A2442 (2021)"},
-    {n:"A2338",m:"MacBook Pro 13-inch 'M1' A2338 (2020)"},{n:"A2251",m:"MacBook Pro 13-inch A2251 (2020)"},
+    {n:"A2338",m:"MacBook Pro 13-inch 'M2' A2338 (2022)"},{n:"A2338",m:"MacBook Pro 13-inch 'M1' A2338 (2020)"},{n:"A2251",m:"MacBook Pro 13-inch A2251 (2020)"},
     {n:"A2289",m:"MacBook Pro 13-inch A2289 (2020)"},{n:"A2159",m:"MacBook Pro 13-inch A2159 (2019)"},
     {n:"A1989",m:"MacBook Pro 13-inch A1989 (2018-2019)"},{n:"A3241",m:"MacBook Air 15-inch 'M4' A3241 (2025)"},
     {n:"A3114",m:"MacBook Air 15-inch 'M3' A3114 (2024)"},{n:"A2941",m:"MacBook Air 15-inch 'M2' A2941 (2023)"},
@@ -623,50 +613,71 @@ window.WIZARD_CFG = {
   function parseProductOptions(product) {
     if (!product || !product.options || !product.variants) return { basePrice: 0, turnaroundOpts: [], serviceOpts: [], qualityOpts: [] };
 
-    var opts = product.options;
-    var vars = product.variants;
+    var opts = product.options || [];
+    var vars = product.variants || [];
+    if (!vars.length) return { basePrice: 0, turnaroundOpts: [], serviceOpts: [], qualityOpts: [] };
+
     var turnaroundIdx = -1, serviceIdx = -1, qualityIdx = -1;
 
-    /* Classify each option by its values */
+    /*
+     * Classify by checking the FIRST VALUE of each option.
+     * Discovered from live iCorrect products:
+     *   Turnaround: "Standard 2-3 Working Days", "Standard"
+     *   Quality:    "It's good"
+     *   Service:    "I will visit you", "Drop off in store"
+     */
     for (var i = 0; i < opts.length; i++) {
-      var vals = (opts[i].values || []).join(' ').toLowerCase();
-      if (vals.match(/standard|working day|fast|hour/i)) turnaroundIdx = i;
-      else if (vals.match(/visit|collect|deliver|walk|mail/i)) serviceIdx = i;
-      else if (vals.match(/good|replacement|not good/i)) qualityIdx = i;
+      var firstVal = ((opts[i].values || [])[0] || '').toLowerCase().trim();
+      var allVals = (opts[i].values || []).join(' ').toLowerCase();
+
+      if (firstVal.indexOf('standard') === 0) { turnaroundIdx = i; }
+      else if (firstVal === "it's good" || firstVal === 'its good' || firstVal === "it\u2019s good") { qualityIdx = i; }
+      else if (firstVal.indexOf('i will visit') === 0 || firstVal.indexOf('drop off') === 0 || firstVal.indexOf('walk') === 0) { serviceIdx = i; }
+      /* Broader fallback on all values */
+      else if (allVals.match(/working day|fast|next.day|express/)) { turnaroundIdx = i; }
+      else if (allVals.match(/visit|collect|deliver|mail.in|drop.off/)) { serviceIdx = i; }
+      else if (allVals.match(/good|replace/)) { qualityIdx = i; }
     }
 
-    /* Find the base variant: first value of each option (the default/cheapest) */
-    var baseVariant = vars[0];
-    var basePrice = parseFloat(baseVariant ? baseVariant.price : 0);
+    /* Find global cheapest price */
+    var globalMin = Infinity;
+    for (var v = 0; v < vars.length; v++) {
+      var vp = parseFloat(vars[v].price);
+      if (vp < globalMin) globalMin = vp;
+    }
+    if (globalMin === Infinity) globalMin = 0;
 
-    /* For each option, compute the add-on prices relative to the base */
+    /* For each option, compute the add-on prices relative to global minimum */
     function buildOpts(optIdx) {
       if (optIdx < 0) return [];
-      var optName = 'option' + (optIdx + 1);
+      var optKey = 'option' + (optIdx + 1);
       var seen = {};
       var result = [];
       for (var v = 0; v < vars.length; v++) {
-        var val = vars[v][optName];
-        if (seen[val]) continue;
+        var val = vars[v][optKey];
+        if (!val || seen[val]) continue;
         seen[val] = true;
-        /* Find cheapest variant with this option value (to isolate its add-on) */
-        var cheapest = null;
+        /* Find cheapest variant with this option value */
+        var cheapest = Infinity;
         for (var c = 0; c < vars.length; c++) {
-          if (vars[c][optName] === val) {
-            var p = parseFloat(vars[c].price);
-            if (cheapest === null || p < cheapest) cheapest = p;
+          if (vars[c][optKey] === val) {
+            var cp = parseFloat(vars[c].price);
+            if (cp < cheapest) cheapest = cp;
           }
         }
-        result.push({ name: val, add: Math.round((cheapest || 0) - basePrice) });
+        result.push({ name: val, add: Math.round(cheapest - globalMin) });
       }
-      /* Normalise so the cheapest option has add=0 */
-      var minAdd = Math.min.apply(null, result.map(function(r) { return r.add; }));
-      if (minAdd !== 0) {
-        for (var r = 0; r < result.length; r++) result[r].add -= minAdd;
-        basePrice += minAdd;
+      /* Normalise: subtract the minimum add so the cheapest option = 0 */
+      var minAdd = Infinity;
+      for (var r = 0; r < result.length; r++) { if (result[r].add < minAdd) minAdd = result[r].add; }
+      if (minAdd > 0 && minAdd !== Infinity) {
+        for (var r2 = 0; r2 < result.length; r2++) result[r2].add -= minAdd;
       }
       return result;
     }
+
+    /* Build base price as the cheapest variant that picks the first/default value of each option */
+    var basePrice = globalMin;
 
     return {
       basePrice: basePrice,
@@ -847,11 +858,13 @@ window.WIZARD_CFG = {
     var w = document.createElement('div'); w.className = 'qw-m-groups';
     groups.forEach(function(g, gi) {
       var ge = document.createElement('div'); ge.className = 'qw-m-group';
-      /* [4.1] Auto-expand first group */
-      if (gi === 0) ge.classList.add('open');
       var h = document.createElement('div'); h.className = 'qw-m-head';
       h.innerHTML = '<div><span class="qw-m-name">' + esc(g.group) + '</span><span class="qw-m-count">' + g.models.length + ' models</span></div><svg class="qw-m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>';
-      h.onclick = function() { ge.classList.toggle('open'); };
+      h.onclick = function() {
+        var wasOpen = ge.classList.contains('open');
+        w.querySelectorAll('.qw-m-group.open').forEach(function(g) { g.classList.remove('open'); });
+        if (!wasOpen) ge.classList.add('open');
+      };
       ge.appendChild(h);
 
       var b = document.createElement('div'); b.className = 'qw-m-body';
@@ -1072,41 +1085,55 @@ window.WIZARD_CFG = {
   function renderMacbookHelper(panel) {
     panel.innerHTML =
       '<div class="qw-help-card"><div class="qw-help-body">' +
-      '<img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/MacBook_Model_Number_7104995a-bc9e-4b6d-9a9b-5578f42b4a7b.png?v=1773930835" alt="Where to find your MacBook model number" class="qw-help-img">' +
+      '<img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/MacBook_Model_Number_7104995a-bc9e-4b6d-9a9b-5578f42b4a7b.png?v=1773930835" alt="Where to find your MacBook model number" class="qw-help-img" style="max-height:200px;object-fit:contain;">' +
       '<p class="qw-help-inst">Flip your MacBook over. The model number (e.g. <code>A1989</code>) is printed on the bottom case near the hinge.</p>' +
       '<div class="qw-help-row"><input class="qw-help-input" type="text" id="qwMbSearch" placeholder="Type model number, e.g. A1989"></div>' +
       '<div class="qw-help-results" id="qwMbRes"></div>' +
       '</div><button class="qw-help-close">Close</button></div>';
     panel.querySelector('.qw-help-close').onclick = function() { panel.classList.remove('open'); };
 
+    /* Build a lookup: extract A-numbers from WIZARD_MODELS names */
+    var aNumToModel = {};
+    var groups = MODELS['macbook'] || [];
+    for (var g = 0; g < groups.length; g++) {
+      for (var m = 0; m < groups[g].models.length; m++) {
+        var modelName = groups[g].models[m].name;
+        var aMatches = modelName.match(/A\d{4}/g);
+        if (aMatches) {
+          for (var a = 0; a < aMatches.length; a++) {
+            aNumToModel[aMatches[a].toUpperCase()] = groups[g].models[m];
+          }
+        }
+      }
+    }
+
     function mbFilter() {
       var q = (document.getElementById('qwMbSearch').value || '').trim().toUpperCase();
       var r = document.getElementById('qwMbRes');
       if (!r) return;
       r.innerHTML = '';
-      /* Only show results when user types something */
       if (!q) return;
       var f = MB_NUMS.filter(function(n) { return n.n.toUpperCase().indexOf(q) !== -1 || n.m.toUpperCase().indexOf(q) !== -1; });
       if (!f.length) { r.innerHTML = '<div style="padding:10px;font-size:13px;color:var(--qw-text-3);">No match. Check the number and try again.</div>'; return; }
+      /* Deduplicate by model name to avoid showing A2338 twice with same target */
+      var seen = {};
       f.forEach(function(n) {
+        if (seen[n.m]) return;
+        seen[n.m] = true;
         var d = document.createElement('div'); d.className = 'qw-help-hit';
         d.innerHTML = '<span class="qw-hn">' + n.n + '</span><span class="qw-hm">' + n.m + '</span><span class="qw-hs">Select</span>';
         d.onclick = function() {
-          /* [3.2] Always use pickModel - find the matching model in MODELS */
-          var groups = MODELS['macbook'] || [];
-          for (var g = 0; g < groups.length; g++) {
-            for (var m = 0; m < groups[g].models.length; m++) {
-              if (groups[g].models[m].name === n.m || n.m.indexOf(groups[g].models[m].name) !== -1 || groups[g].models[m].name.indexOf(n.m) !== -1) {
-                panel.classList.remove('open');
-                pickModel(groups[g].models[m].name, groups[g].models[m].collectionHandle, null);
-                return;
-              }
-            }
+          /* Match by A-number extraction */
+          var model = aNumToModel[n.n.toUpperCase()];
+          if (model) {
+            panel.classList.remove('open');
+            pickModel(model.name, model.collectionHandle, null);
+          } else {
+            r.innerHTML = '<div style="padding:10px;font-size:13px;color:var(--qw-text-3);">This model isn\'t configured in our system yet. Please pick from the list above.</div>';
           }
-          /* If no match found in MODELS, inform user */
-          r.innerHTML = '<div style="padding:10px;font-size:13px;color:var(--qw-text-3);">This model isn\'t configured in our system yet. Please pick from the list above.</div>';
         };
         r.appendChild(d);
+      });
       });
     }
     document.getElementById('qwMbSearch').oninput = mbFilter;
@@ -1189,7 +1216,39 @@ window.WIZARD_CFG = {
     document.querySelectorAll('#qw-s4 .qw-t-card').forEach(function(c) { c.classList.remove('sel'); });
     if (el) el.classList.add('sel');
     if (window.posthog) posthog.capture('wizard_step', { step: 'resolution', device: S.device, model: S.model, fault: S.fault });
-    showResolution(iss);
+
+    /* Dustgate sub-question: if this issue has dustgateCheck and dustgate product exists */
+    if (iss.dustgateCheck && _repairsMap['dustgate']) {
+      showDustgateQuestion(iss);
+    } else {
+      showResolution(iss);
+    }
+  }
+
+  function showDustgateQuestion(originalIss) {
+    var p = document.getElementById('qw-rP');
+    if (!p) return;
+    p.style.display = 'block';
+    p.innerHTML =
+      '<div class="qw-res"><div class="qw-res-top" style="padding-bottom:24px;">' +
+        '<h3 class="qw-res-h">Do the marks on your screen look like this?</h3>' +
+        '<p class="qw-res-p">Some MacBook models develop dust or debris trapped behind the display glass. This is known as "dustgate" and requires a specific repair.</p>' +
+        '<div class="qw-dustgate-imgs">' +
+          '<img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/dustgate_example_1.jpg?v=1773931594" alt="Dustgate example 1">' +
+          '<img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/dustgate_example_2.jpg?v=1773931593" alt="Dustgate example 2">' +
+        '</div>' +
+        '<div class="qw-res-cta" style="padding:0;">' +
+          '<button class="qw-btn-book" id="qwDgYes">Yes, that\'s what I see</button>' +
+          '<button class="qw-btn-q" id="qwDgNo">No, it looks different</button>' +
+        '</div>' +
+      '</div></div>';
+    document.getElementById('qwDgYes').onclick = function() {
+      showResolution({ label: 'Dustgate repair', route: 'repair', repairType: 'dustgate', copy: 'Dust or particles trapped behind the glass is a known issue on some MacBook models. We\'ll replace the display to eliminate the debris and restore a clean picture.' });
+    };
+    document.getElementById('qwDgNo').onclick = function() {
+      showResolution(originalIss);
+    };
+    setTimeout(function() { p.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 200);
   }
 
   /* =============================================
@@ -1216,14 +1275,13 @@ window.WIZARD_CFG = {
 
     var fullProduct = await fetchProduct(product.handle);
     var parsed = parseProductOptions(fullProduct);
+    if (fullProduct) console.log('[Wizard] ' + product.handle, 'options:', (fullProduct.options||[]).map(function(o){return o.name+': ['+o.values.join(', ')+']';}), 'parsed:', {base:parsed.basePrice, turnaround:parsed.turnaroundOpts, service:parsed.serviceOpts, quality:parsed.qualityOpts});
 
     var urgentHtml = iss.urgent ? '<div class="qw-urgent" role="alert"><span>\u26A0\uFE0F Safety concern: stop using the device and don\'t charge it.</span></div>' : '';
 
     var priceHtml = parsed.basePrice ? '<div class="qw-price-from">From</div><div class="qw-price-big">' + gbp.format(parsed.basePrice) + '</div>' : '';
 
     var badges = buildRepairBadges(S.device, parsed);
-
-    /* Turnaround option cards (dynamic from product variants) */
     var turnaroundHtml = '';
     if (parsed.turnaroundOpts.length > 1) {
       var tCards = '';
@@ -1255,19 +1313,12 @@ window.WIZARD_CFG = {
 
     var totalHtml = parsed.basePrice ? '<div class="qw-price-total"><span class="qw-price-total-label">Total</span><span class="qw-price-total-val" id="qwPriceTotal">' + gbp.format(parsed.basePrice) + '</span></div>' : '';
 
-    /* [2.4] Dustgate images */
-    var dustgateHtml = '';
-    if (iss.dustgate) {
-      dustgateHtml = '<div class="qw-dustgate-imgs"><img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/dustgate_example_1.jpg?v=1773931594" alt="Dustgate example 1"><img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/dustgate_example_2.jpg?v=1773931593" alt="Dustgate example 2"></div>';
-    }
-
     container.innerHTML = urgentHtml +
       '<div class="qw-res" id="qwResCard" data-base="' + parsed.basePrice + '">' +
         '<div class="qw-res-top">' +
           '<div class="qw-res-badge qw-badge-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>We can fix this</div>' +
           '<h3 class="qw-res-h">' + esc(product.title) + '</h3>' +
           '<p class="qw-res-p">' + esc(iss.copy) + '</p>' +
-          dustgateHtml +
           priceHtml +
         '</div>' +
         '<div class="qw-svc">' + badges + '</div>' +
@@ -1713,11 +1764,6 @@ a.qw-d-val:hover{color:var(--qw-accent);}
 .qw-head{margin-bottom:28px;}
 .qw-title{font-size:clamp(28px,4.5vw,48px);font-weight:700;line-height:1.08;letter-spacing:-0.035em;color:var(--qw-dark);margin:0 0 8px;}
 .qw-sub{font-size:clamp(14px,1.1vw,16px);font-weight:400;line-height:1.55;color:var(--qw-text-2);margin:0;}
-/* [1.3] Trust line */
-.qw-trust{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--qw-green);margin:8px 0 0;}
-.qw-trust svg{width:14px;height:14px;flex-shrink:0;fill:var(--qw-green);}
-.qw-trust-sep{color:var(--qw-text-3);margin:0 2px;}
-
 /* STEP INDICATOR */
 .qw-prog{display:flex;align-items:center;margin-bottom:24px;}
 .qw-prog-s{display:flex;align-items:center;gap:6px;flex:1;cursor:pointer;}
@@ -1765,8 +1811,6 @@ a.qw-d-val:hover{color:var(--qw-accent);}
 .qw-dev-ico svg{width:100%;height:100%;color:var(--qw-text);}
 .qw-dev.sel .qw-dev-ico svg{color:var(--qw-accent);}
 .qw-dev-lbl{font-size:13px;font-weight:600;}
-/* [5.4] Price hint */
-.qw-price-hint{text-align:center;font-size:13px;color:var(--qw-text-3);margin-top:16px;}
 
 /* MODEL GROUPS */
 .qw-m-groups{display:flex;flex-direction:column;gap:6px;}
@@ -2002,24 +2046,6 @@ a.qw-d-val:hover{color:var(--qw-accent);}
       "id": "subheading",
       "label": "Subheading",
       "default": "Pick your device and we'll point you to the right repair."
-    },
-    {
-      "type": "text",
-      "id": "trust_line",
-      "label": "Trust line (below heading)",
-      "default": "Rated 4.8/5 from 700+ Google reviews"
-    },
-    {
-      "type": "text",
-      "id": "time_estimate",
-      "label": "Time estimate text",
-      "default": "4 quick steps"
-    },
-    {
-      "type": "text",
-      "id": "price_hint",
-      "label": "Price hint (shown on step 1)",
-      "default": "Repairs from £89. Free quotes, no obligation."
     },
     {
       "type": "number",
