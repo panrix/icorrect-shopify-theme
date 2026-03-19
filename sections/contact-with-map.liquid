@@ -246,16 +246,7 @@ window.WIZARD_CFG = {
     _scrollLock = true;
     setTimeout(function() {
       requestAnimationFrame(function() {
-        /* Account for sticky header: find the tallest fixed/sticky element at the top */
-        var headerOffset = 0;
-        var header = document.querySelector('header, .header, .shopify-section-header, [data-section-type="header"]');
-        if (header) {
-          var style = window.getComputedStyle(header);
-          if (style.position === 'fixed' || style.position === 'sticky') headerOffset = header.offsetHeight;
-        }
-        var rect = el.getBoundingClientRect();
-        var targetY = rect.top + window.pageYOffset - headerOffset - 24;
-        window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         _scrollLock = false;
       });
     }, delay || 80);
@@ -1818,6 +1809,21 @@ window.WIZARD_CFG = {
   /* =============================================
      INIT
      ============================================= */
+  /* Measure sticky header height and set CSS variable for scroll-margin-top */
+  (function() {
+    var selectors = ['header', '.header', '.shopify-section-header', '.section-header', '[data-section-type="header"]'];
+    for (var i = 0; i < selectors.length; i++) {
+      var h = document.querySelector(selectors[i]);
+      if (h) {
+        var s = window.getComputedStyle(h);
+        if (s.position === 'fixed' || s.position === 'sticky') {
+          document.documentElement.style.setProperty('--qw-scroll-top', (h.offsetHeight + 20) + 'px');
+          break;
+        }
+      }
+    }
+  })();
+
   wireProgDots();
   updateOpenClosed();
   initPrefill();
@@ -1844,6 +1850,9 @@ window.WIZARD_CFG = {
   width:100%;padding:40px 16px;
 }
 @media(min-width:1024px){.qw-section{padding:56px 24px;}}
+
+/* Scroll clearance: --qw-scroll-top is set by JS measuring the actual sticky header */
+.qw-prog,.qw-res-badge,.qw-res-h,.qw-res,.qw-c-acc,.qw-step,.qw-s-title{scroll-margin-top:var(--qw-scroll-top,90px);}
 
 /* LAYOUT */
 .qw-wrap{max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:32px;}
