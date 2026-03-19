@@ -465,7 +465,7 @@ window.WIZARD_CFG = {
       ],
       'Data Recovery': [
         { label: 'Phone dead, need data', route: 'diagnostic', repairType: 'diagnostic', copy: 'We can attempt a specialised repair to get the phone working long enough to back up. Success depends on the fault.' },
-        { label: 'Forgotten passcode', route: 'contact', repairType: null, copy: 'We can\'t bypass an iPhone passcode or iCloud lock. If you\'re the original owner, Apple Support can help with account recovery.' }
+        { label: 'Forgotten passcode', route: 'dismiss', repairType: null, copy: 'We can\'t bypass an iPhone passcode or iCloud lock. If you\'re the original owner, Apple Support can help with account recovery.' }
       ],
       'Other': [
         { label: 'Vibration not working', route: 'contact', repairType: null, copy: 'The Taptic Engine may have failed. Get in touch and we\'ll confirm whether we can repair it for your model.' },
@@ -663,7 +663,7 @@ window.WIZARD_CFG = {
     var issues = TS[device] && TS[device][fault];
     if (!issues) return [];
     return issues.filter(function(iss) {
-      if (iss.route === 'contact') return true;
+      if (iss.route === 'contact' || iss.route === 'dismiss') return true;
       if (iss.route === 'diagnostic') return !!repairsMap['diagnostic'];
       return !!repairsMap[iss.repairType];
     });
@@ -1278,6 +1278,7 @@ window.WIZARD_CFG = {
     updateProg(4);
     if (iss.route === 'repair') await showRepairCard(iss, p);
     else if (iss.route === 'diagnostic') await showDiagnosticCard(iss, p);
+    else if (iss.route === 'dismiss') showDismissCard(iss, p);
     else showContactCard(iss, p);
     if (window.posthog) posthog.capture('wizard_resolution', { route: iss.route, device: S.device, model: S.model, fault: S.fault, issue: S.issue });
     scrollToEl(p, 250);
@@ -1410,6 +1411,21 @@ window.WIZARD_CFG = {
     wireRestart(container);
     wireBookTracking(container);
     if (diagPrice) setupStickyCTA(gbp.format(diagPrice), '/products/' + diagProduct.handle);
+  }
+
+  /* ---- DISMISS CARD (dead-end, no form) ---- */
+  function showDismissCard(iss, container) {
+    container.innerHTML =
+      '<div class="qw-res">' +
+        '<div class="qw-res-top" style="padding-bottom:24px;">' +
+          '<div class="qw-res-badge qw-badge-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v2m0 4h.01M5.07 19h13.86c1.5 0 2.47-1.6 1.73-2.88L13.73 4.13c-.74-1.28-2.72-1.28-3.46 0L3.34 16.12C2.6 17.4 3.57 19 5.07 19z"/></svg>We can\'t help with this one</div>' +
+          '<h3 class="qw-res-h">Contact Apple Support</h3>' +
+          '<p class="qw-res-p">' + esc(iss.copy) + '</p>' +
+          '<a href="https://support.apple.com" target="_blank" rel="noopener" class="qw-btn-book" style="max-width:280px;">Visit Apple Support <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a>' +
+        '</div>' +
+      '</div>' +
+      '<button class="qw-restart" id="qwRestart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 105.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg> Start over</button>';
+    wireRestart(container);
   }
 
   /* ---- CONTACT CARD ---- */
@@ -1801,7 +1817,7 @@ a.qw-d-val:hover{color:var(--qw-accent);}
 .qw-prog-s.on .qw-prog-lbl{color:var(--qw-accent);display:block;}
 .qw-prog-s.done .qw-prog-lbl{color:var(--qw-dark);display:block;}
 @media(min-width:560px){.qw-prog-lbl{display:block;}}
-.qw-prog-line{flex:1;height:3px;background:var(--qw-line);margin:0 8px;border-radius:2px;position:relative;overflow:hidden;}
+.qw-prog-line{flex:1;height:2px;background:var(--qw-line-h);margin:0 8px;border-radius:2px;position:relative;overflow:hidden;min-width:20px;}
 .qw-prog-line::after{content:'';position:absolute;left:0;top:0;height:100%;width:0;background:var(--qw-dark);border-radius:2px;transition:width 0.4s cubic-bezier(0.4,0,0.2,1);}
 .qw-prog-s.done .qw-prog-line::after{width:100%;}
 .qw-prog-s.on .qw-prog-line::after{width:0;}
