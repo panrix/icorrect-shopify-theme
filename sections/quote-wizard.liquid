@@ -84,32 +84,20 @@ window.WIZARD_CONTEXT = {
 <!-- Service products (global) -->
 {%- assign walk_in_prod = all_products['walk-in-service'] -%}
 {%- assign mail_in_prod = all_products['mail-in-service'] -%}
-{%- assign express_prod = section.settings.express_product -%}
 <script>
 window.WIZARD_CFG = {
   warrantyLabel: {{ section.settings.warranty_label | default: '2-year warranty' | json }},
-  expressLabel: {{ section.settings.express_label | default: 'Next-day (pre-book required)' | json }},
   diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: '2 working days' | json }},
   walkIn: {
     title: {{ walk_in_prod.title | default: 'Walk-in Service' | json }},
     price: {{ walk_in_prod.price | default: 0 | divided_by: 100.0 }},
-    variantId: {{ walk_in_prod.selected_or_first_available_variant.id | default: 'null' }},
-    description: {{ walk_in_prod.description | strip_html | truncate: 200 | default: '' | json }}
+    variantId: {{ walk_in_prod.selected_or_first_available_variant.id | default: 'null' }}
   },
   mailIn: {
     title: {{ mail_in_prod.title | default: 'Collection & Delivery' | json }},
     price: {{ mail_in_prod.price | default: 2000 | divided_by: 100.0 }},
-    variantId: {{ mail_in_prod.selected_or_first_available_variant.id | default: 'null' }},
-    description: {{ mail_in_prod.description | strip_html | truncate: 200 | default: '' | json }}
+    variantId: {{ mail_in_prod.selected_or_first_available_variant.id | default: 'null' }}
   }
-  {%- if express_prod -%}
-  ,express: {
-    title: {{ express_prod.title | json }},
-    price: {{ express_prod.price | divided_by: 100.0 }},
-    variantId: {{ express_prod.selected_or_first_available_variant.id }},
-    devices: ['macbook']
-  }
-  {%- endif -%}
 };
 </script>
 
@@ -710,11 +698,36 @@ window.WIZARD_CFG = {
     '</div>';
   }
 
-  /* Turnaround cards: Standard (free) vs Fast (+£79) — only for eligible devices */
-  function buildTurnaroundCards(device) {
-    var ex = CFG.express;
-    if (!ex || !ex.devices) return '';
-    if (ex.devices.indexOf(device) === -1) return '';
+  /* Turnaround cards: detected dynamically from the product page HTML.
+     The product template renders .turn_arround_time-wrapper only if the
+     turnaround metafield exists. We fetch the page, check for that marker,
+     and parse the express price. Cached per handle. Zero maintenance. */
+  var _expressCache = {};
+  async function detectExpressFromPage(handle) {
+    if (_expressCache[handle] !== undefined) return _expressCache[handle];
+    try {
+      var res = await fetch('/products/' + handle);
+      if (!res.ok) { _expressCache[handle] = null; return null; }
+      var html = await res.text();
+      var marker = html.indexOf('turn_arround_time-wrapper');
+      if (marker === -1) { _expressCache[handle] = null; return null; }
+      /* Parse express price from the one_day-btn label */
+      var priceMatch = html.match(/id="one_day-btn"[^>]*data-price="([^"]+)"/);
+      var price = priceMatch ? parseFloat(priceMatch[1]) : 0;
+      if (!price) {
+        /* Fallback: look for +£NN in the Fast label */
+        var fastSection = html.substring(marker, marker + 2000);
+        var moneyMatch = fastSection.match(/\+[£](\d+(?:\.\d+)?)/);
+        price = moneyMatch ? parseFloat(moneyMatch[1]) : 0;
+      }
+      var result = price ? { price: price } : null;
+      _expressCache[handle] = result;
+      return result;
+    } catch(e) { _expressCache[handle] = null; return null; }
+  }
+
+  function buildTurnaroundCards(expressData) {
+    if (!expressData || !expressData.price) return '';
     return '<div class="qw-opt-section">' +
       '<div class="qw-opt-label">Repair turnaround</div>' +
       '<div class="qw-opt-row">' +
@@ -723,10 +736,10 @@ window.WIZARD_CFG = {
           '<div class="qw-opt-meta">2-3 Working Days</div>' +
           '<div class="qw-opt-price free">Included</div>' +
         '</div>' +
-        '<div class="qw-opt-card" data-opt="speed" data-add="' + ex.price + '" tabindex="0">' +
+        '<div class="qw-opt-card" data-opt="speed" data-add="' + expressData.price + '" tabindex="0">' +
           '<div class="qw-opt-name">Fast</div>' +
           '<div class="qw-opt-meta">1 Working Day</div>' +
-          '<div class="qw-opt-price">+' + gbp.format(ex.price) + '</div>' +
+          '<div class="qw-opt-price">+' + gbp.format(expressData.price) + '</div>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -1255,8 +1268,9 @@ window.WIZARD_CFG = {
 
     var badges = buildRepairBadges(S.device);
 
-    /* Turnaround + Service cards from Liquid-provided global products */
-    var turnaroundHtml = buildTurnaroundCards(S.device);
+    /* Turnaround + Service cards */
+    var expressData = await detectExpressFromPage(product.handle);
+    var turnaroundHtml = buildTurnaroundCards(expressData);
     var serviceHtml = buildServiceCards();
 
     var cdFee = CFG.mailIn ? CFG.mailIn.price : 0;
@@ -1981,22 +1995,10 @@ a.qw-d-val:hover{color:var(--qw-accent);}
       "default": "Pick your device and we'll point you to the right repair."
     },
     {
-      "type": "product",
-      "id": "express_product",
-      "label": "Express turnaround product",
-      "info": "Select the 'Turn around time (1 Working Day)' product. Express option will show for MacBook repairs only."
-    },
-    {
       "type": "text",
       "id": "warranty_label",
       "label": "Warranty badge label",
       "default": "2-year warranty"
-    },
-    {
-      "type": "text",
-      "id": "express_label",
-      "label": "Express badge label",
-      "default": "Next-day (pre-book required)"
     },
     {
       "type": "text",
