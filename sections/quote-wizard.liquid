@@ -97,8 +97,8 @@ window.WIZARD_CONTEXT = {
           <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.7925117760165!2d-0.1422392230845079!3d51.51702250999988!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2c5aabf83b%3A0x2abbd489a9d66382!2siCorrect!5e0!3m2!1sen!2sit!4v1766495755523!5m2!1sen!2sit" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="iCorrect London"></iframe>
         {%- endif -%}
       </div>
-      <div class="qw-details-card qw-details-grid">
-        <div class="qw-details-col qw-details-left">
+      <div class="qw-card qw-card-grid">
+        <div class="qw-card-col qw-card-left">
           <div class="qw-d-group">
             <p class="qw-d-label"><svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>Address</p>
             <a href="https://maps.google.com/?q=iCorrect+12+Margaret+Street+London+W1W+8JQ" target="_blank" rel="noopener" class="qw-d-val">iCorrect<br>12 Margaret Street<br>Audley House<br>London W1W 8JQ</a>
@@ -112,7 +112,7 @@ window.WIZARD_CONTEXT = {
             <a href="mailto:support@icorrect.co.uk" class="qw-d-val">support@icorrect.co.uk</a>
           </div>
         </div>
-        <div class="qw-details-col">
+        <div class="qw-card-col">
           <div class="qw-d-group">
             <p class="qw-d-label"><svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Opening Hours</p>
             <div class="qw-hrs">
@@ -131,19 +131,55 @@ window.WIZARD_CONTEXT = {
     {%- endif -%}
 
     <!-- RIGHT: WIZARD -->
-    <div id="qw" class="quote-wizard" aria-label="Repair quote wizard">
-      <div class="qw-header">
-        <h2>{{ section.settings.heading }}</h2>
-        <p>{{ section.settings.subheading }}</p>
+    <div class="qw-wizard" aria-label="Repair quote wizard">
+      <div class="qw-head">
+        <h2 class="qw-title">{{ section.settings.heading }}</h2>
+        <p class="qw-sub">{{ section.settings.subheading }}</p>
       </div>
-      <div class="qw-progress" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="4">
-        <div class="qw-progress-bar"></div>
+
+      <!-- Step indicator: numbered circles -->
+      <div class="qw-prog" role="navigation" aria-label="Progress">
+        <div class="qw-prog-s on" data-s="1"><div class="qw-prog-dot">1</div><span class="qw-prog-lbl">Device</span><div class="qw-prog-line"></div></div>
+        <div class="qw-prog-s" data-s="2"><div class="qw-prog-dot">2</div><span class="qw-prog-lbl">Model</span><div class="qw-prog-line"></div></div>
+        <div class="qw-prog-s" data-s="3"><div class="qw-prog-dot">3</div><span class="qw-prog-lbl">Fault</span><div class="qw-prog-line"></div></div>
+        <div class="qw-prog-s" data-s="4"><div class="qw-prog-dot">4</div><span class="qw-prog-lbl">Result</span></div>
       </div>
-      <div id="qw-content" aria-live="polite" aria-atomic="true">
-        <!-- JS renders step content here -->
+
+      <!-- Step 1: Devices -->
+      <div class="qw-step on" id="qw-s1">
+        <h3 class="qw-s-title">What needs fixing?</h3>
+        <p class="qw-s-sub">Pick your device to get started.</p>
+        <div class="qw-dev-grid" id="qw-devGrid"></div>
       </div>
-      <div id="qw-result" aria-live="polite" aria-atomic="true">
-        <!-- JS renders resolution cards here -->
+
+      <!-- Step 2: Models -->
+      <div class="qw-step" id="qw-s2">
+        <button class="qw-back" id="qw-back2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+        <h3 class="qw-s-title" id="qw-s2t"></h3>
+        <p class="qw-s-sub">Pick your exact model for accurate pricing.</p>
+        <div id="qw-mC"></div>
+        <button class="qw-help-trig" id="qw-hT">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          Not sure which model? We'll help you find it.
+        </button>
+        <div class="qw-help-panel" id="qw-hP"></div>
+      </div>
+
+      <!-- Step 3: Faults -->
+      <div class="qw-step" id="qw-s3">
+        <button class="qw-back" id="qw-back3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+        <h3 class="qw-s-title" id="qw-s3t"></h3>
+        <p class="qw-s-sub">Pick the category that fits best.</p>
+        <div class="qw-f-grid" id="qw-fC"></div>
+      </div>
+
+      <!-- Step 4: Issues + Result -->
+      <div class="qw-step" id="qw-s4">
+        <button class="qw-back" id="qw-back4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+        <h3 class="qw-s-title" id="qw-s4t"></h3>
+        <p class="qw-s-sub" id="qw-s4s"></p>
+        <div class="qw-t-grid" id="qw-tC"></div>
+        <div id="qw-rP" style="display:none;margin-top:20px;"></div>
       </div>
     </div>
 
@@ -157,7 +193,9 @@ window.WIZARD_CONTEXT = {
 (function() {
   'use strict';
 
-  // === DEVICE CARDS (4 devices, stable) ===
+  /* =============================================
+     DEVICE CARDS (4 devices, stable)
+     ============================================= */
   var DEVS = [
     { id: 'macbook', label: 'MacBook', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M2 17h20M8 21h8M12 17v4"/></svg>' },
     { id: 'iphone', label: 'iPhone', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="1" width="12" height="22" rx="2.5"/><path d="M10 19h4"/></svg>' },
@@ -165,7 +203,11 @@ window.WIZARD_CONTEXT = {
     { id: 'watch', label: 'Watch', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="4" width="12" height="16" rx="6"/><path d="M9 1h6M9 23h6"/></svg>' }
   ];
 
-  // === FAULT CATEGORIES BY DEVICE ===
+  var DN = { iphone: 'iPhone', macbook: 'MacBook', ipad: 'iPad', watch: 'Apple Watch' };
+
+  /* =============================================
+     FAULT CATEGORIES BY DEVICE
+     ============================================= */
   var FAULTS = {
     macbook: [
       { v: 'Screen / Display', icon: 'screen', label: 'Screen / Display' },
@@ -207,7 +249,9 @@ window.WIZARD_CONTEXT = {
     ]
   };
 
-  // === FAULT ICONS (SVG strings from original prototype) ===
+  /* =============================================
+     FAULT ICONS (SVG strings)
+     ============================================= */
   var FAULT_ICONS = {
     'screen': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',
     'battery': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
@@ -222,7 +266,9 @@ window.WIZARD_CONTEXT = {
     'other': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>'
   };
 
-  // === HANDLE SUFFIX → REPAIR TYPE (37 entries) ===
+  /* =============================================
+     HANDLE SUFFIX → REPAIR TYPE (37 entries)
+     ============================================= */
   var HANDLE_SUFFIX_MAP = {
     'screen-repair': 'screen',
     'display-screen-repair': 'screen',
@@ -268,7 +314,9 @@ window.WIZARD_CONTEXT = {
     'diagnostic': 'diagnostic'
   };
 
-  // === REPAIR TYPE → FAULT CATEGORY (25 entries) ===
+  /* =============================================
+     REPAIR TYPE → FAULT CATEGORY (25 entries)
+     ============================================= */
   var REPAIR_TYPE_TO_FAULT = {
     'screen': 'Screen / Display',
     'screen-glass': 'Screen / Display',
@@ -297,7 +345,9 @@ window.WIZARD_CONTEXT = {
     'diagnostic': '_diagnostic'
   };
 
-  // === STATE ===
+  /* =============================================
+     STATE
+     ============================================= */
   var S = {
     device: null,
     model: null,
@@ -312,677 +362,252 @@ window.WIZARD_CONTEXT = {
   var _productCache = {};
   var _repairsMap = {};
 
-  // === DYNAMIC DATA (from Liquid) ===
   var MODELS = window.WIZARD_MODELS || {};
   var CONTEXT = window.WIZARD_CONTEXT || {};
 
-  // === TRIAGE/ISSUE DATA (92 issues total) ===
-  // Sources: quote-wizard-audit.md + corrections from quote-wizard-fix-plan.md
-  // MacBook: 34, iPhone: 30, iPad: 15, Watch: 13
+  /* =============================================
+     TRIAGE/ISSUE DATA (92 issues total)
+     ============================================= */
   var TS = {
     macbook: {
       'Screen / Display': [
-        {
-          label: 'Cracked or shattered screen',
-          route: 'repair',
-          repairType: 'screen',
-          copy: 'Your MacBook screen is damaged and needs replacing. We use genuine Apple displays and preserve True Tone calibration.'
-        },
-        {
-          label: 'Lines, discolouration, or artefacts',
-          route: 'repair',
-          repairType: 'screen',
-          copy: 'Lines or colour issues on your display typically mean the LCD panel needs replacing. We use genuine displays with full colour calibration.'
-        },
-        {
-          label: 'Dead pixels or bright spots',
-          route: 'repair',
-          repairType: 'screen',
-          copy: 'Dead or stuck pixels indicate panel failure. A genuine display replacement will restore your screen to full quality.'
-        },
-        {
-          label: 'Black screen (external monitor works)',
-          route: 'repair',
-          repairType: 'screen',
-          copy: 'Your MacBook works fine on an external monitor, which confirms the issue is the built-in display. A screen replacement will fix this.'
-        },
-        {
-          label: 'Black screen (external doesn\'t work or untested)',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'A completely black screen with no external output could be the display, logic board, or GPU. We need to run a diagnostic to pinpoint the cause before recommending a repair.',
-          likelyRepair: 'screen',
-          likelyCopy: 'Should the display need replacing'
-        },
-        {
-          label: 'Backlight fading or dim at angle',
-          route: 'repair',
-          repairType: 'flexgate',
-          copy: 'This is a known issue on certain MacBook Pro models where the display cable wears over time. The backlight fades or cuts out when the lid is opened fully. We\'ll replace the affected components.'
-        },
-        {
-          label: 'Dust or debris behind the screen',
-          route: 'repair',
-          repairType: 'dustgate',
-          copy: 'Dust or particles trapped behind the glass is a known issue on some MacBook models. We\'ll replace the display to eliminate the debris and restore a clean picture.'
-        }
+        { label: 'Cracked or shattered screen', route: 'repair', repairType: 'screen', copy: 'Your MacBook screen is damaged and needs replacing. We use genuine Apple displays and preserve True Tone calibration.' },
+        { label: 'Lines, discolouration, or artefacts', route: 'repair', repairType: 'screen', copy: 'Lines or colour issues on your display typically mean the LCD panel needs replacing. We use genuine displays with full colour calibration.' },
+        { label: 'Dead pixels or bright spots', route: 'repair', repairType: 'screen', copy: 'Dead or stuck pixels indicate panel failure. A genuine display replacement will restore your screen to full quality.' },
+        { label: 'Black screen (external monitor works)', route: 'repair', repairType: 'screen', copy: 'Your MacBook works fine on an external monitor, which confirms the issue is the built-in display. A screen replacement will fix this.' },
+        { label: 'Black screen (external doesn\'t work or untested)', route: 'diagnostic', repairType: 'diagnostic', copy: 'A completely black screen with no external output could be the display, logic board, or GPU. We need to run a diagnostic to pinpoint the cause before recommending a repair.', likelyRepair: 'screen', likelyCopy: 'Should the display need replacing' },
+        { label: 'Backlight fading or dim at angle', route: 'repair', repairType: 'flexgate', copy: 'This is a known issue on certain MacBook Pro models where the display cable wears over time. The backlight fades or cuts out when the lid is opened fully. We\'ll replace the affected components.' },
+        { label: 'Dust or debris behind the screen', route: 'repair', repairType: 'dustgate', copy: 'Dust or particles trapped behind the glass is a known issue on some MacBook models. We\'ll replace the display to eliminate the debris and restore a clean picture.' }
       ],
       'Power / Battery / Charging': [
-        {
-          label: 'Battery draining quickly',
-          route: 'repair',
-          repairType: 'battery',
-          copy: 'Your battery has degraded and isn\'t holding a full charge. We replace it with an original-spec battery and your MacBook will show accurate health monitoring again.'
-        },
-        {
-          label: '"Service Recommended" warning',
-          route: 'repair',
-          repairType: 'battery',
-          copy: 'macOS is telling you the battery needs replacing. We use original-spec batteries and your health monitoring will report accurately after the swap.'
-        },
-        {
-          label: 'Battery swollen or expanding',
-          route: 'repair',
-          repairType: 'battery',
-          copy: 'We\'ll safely remove the old battery and fit a new one.',
-          urgent: true
-        },
-        {
-          label: 'Won\'t turn on',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'A MacBook that won\'t power on could be the battery, logic board, or charging circuit. We need to run a diagnostic to identify the root cause before we can quote a repair.'
-        },
-        {
-          label: 'Random shutdowns or reboots',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Unexpected shutdowns can be caused by a failing battery, overheating, or a logic board fault. A diagnostic will tell us exactly what\'s going on.'
-        },
-        {
-          label: 'Won\'t charge or charger not recognised',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Charging issues could be the USB-C port, the charging circuit on the logic board, or even the cable. We\'ll test each component during a diagnostic to find the fault.'
-        }
+        { label: 'Battery draining quickly', route: 'repair', repairType: 'battery', copy: 'Your battery has degraded and isn\'t holding a full charge. We replace it with an original-spec battery and your MacBook will show accurate health monitoring again.' },
+        { label: '"Service Recommended" warning', route: 'repair', repairType: 'battery', copy: 'macOS is telling you the battery needs replacing. We use original-spec batteries and your health monitoring will report accurately after the swap.' },
+        { label: 'Battery swollen or expanding', route: 'repair', repairType: 'battery', copy: 'We\'ll safely remove the old battery and fit a new one.', urgent: true },
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'A MacBook that won\'t power on could be the battery, logic board, or charging circuit. We need to run a diagnostic to identify the root cause before we can quote a repair.' },
+        { label: 'Random shutdowns or reboots', route: 'diagnostic', repairType: 'diagnostic', copy: 'Unexpected shutdowns can be caused by a failing battery, overheating, or a logic board fault. A diagnostic will tell us exactly what\'s going on.' },
+        { label: 'Won\'t charge or charger not recognised', route: 'diagnostic', repairType: 'diagnostic', copy: 'Charging issues could be the USB-C port, the charging circuit on the logic board, or even the cable. We\'ll test each component during a diagnostic to find the fault.' }
       ],
       'Trackpad / Keyboard': [
-        {
-          label: 'Keys not responding',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Non-responsive keys can be caused by liquid damage, a failing keyboard mechanism, or a flex cable issue. We need to open the MacBook and check for corrosion before confirming the repair.',
-          likelyRepair: 'keyboard',
-          likelyCopy: 'Should the keyboard need replacing'
-        },
-        {
-          label: 'Sticky, stuck, or crunchy keys',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Keys that feel sticky or crunchy are almost always a sign of liquid exposure, even if you don\'t remember a spill. We need to assess the extent of the damage before recommending a repair.',
-          likelyRepair: 'keyboard',
-          likelyCopy: 'Should the keyboard need replacing'
-        },
-        {
-          label: 'Trackpad not clicking',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'A trackpad that won\'t click can be caused by a swollen battery pushing against it from underneath, or by trackpad failure. We need to open it up and check the battery before quoting.',
-          likelyRepair: 'trackpad',
-          likelyCopy: 'Should the trackpad need replacing'
-        },
-        {
-          label: 'Ghost typing or phantom input',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Random characters appearing on screen is typically caused by liquid damage to the keyboard flex cable or connector. A diagnostic will reveal the extent of the damage and what needs replacing.',
-          likelyRepair: 'keyboard',
-          likelyCopy: 'Should the keyboard need replacing'
-        },
-        {
-          label: 'Missing or broken keycap',
-          route: 'repair',
-          repairType: 'keyboard',
-          copy: 'A physically broken or missing keycap means the keyboard mechanism underneath is likely damaged too. We\'ll replace the full top case, which includes a brand new keyboard.'
-        }
+        { label: 'Keys not responding', route: 'diagnostic', repairType: 'diagnostic', copy: 'Non-responsive keys can be caused by liquid damage, a failing keyboard mechanism, or a flex cable issue. We need to open the MacBook and check for corrosion before confirming the repair.', likelyRepair: 'keyboard', likelyCopy: 'Should the keyboard need replacing' },
+        { label: 'Sticky, stuck, or crunchy keys', route: 'diagnostic', repairType: 'diagnostic', copy: 'Keys that feel sticky or crunchy are almost always a sign of liquid exposure, even if you don\'t remember a spill. We need to assess the extent of the damage before recommending a repair.', likelyRepair: 'keyboard', likelyCopy: 'Should the keyboard need replacing' },
+        { label: 'Trackpad not clicking', route: 'diagnostic', repairType: 'diagnostic', copy: 'A trackpad that won\'t click can be caused by a swollen battery pushing against it from underneath, or by trackpad failure. We need to open it up and check the battery before quoting.', likelyRepair: 'trackpad', likelyCopy: 'Should the trackpad need replacing' },
+        { label: 'Ghost typing or phantom input', route: 'diagnostic', repairType: 'diagnostic', copy: 'Random characters appearing on screen is typically caused by liquid damage to the keyboard flex cable or connector. A diagnostic will reveal the extent of the damage and what needs replacing.', likelyRepair: 'keyboard', likelyCopy: 'Should the keyboard need replacing' },
+        { label: 'Missing or broken keycap', route: 'repair', repairType: 'keyboard', copy: 'A physically broken or missing keycap means the keyboard mechanism underneath is likely damaged too. We\'ll replace the full top case, which includes a brand new keyboard.' }
       ],
       'Touch Bar': [
-        {
-          label: 'Touch Bar not responding or frozen',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'The Touch Bar can stop responding due to a software glitch, a loose connector, or a failed Touch Bar module. A diagnostic will help us determine whether it\'s a quick fix or needs a replacement.'
-        },
-        {
-          label: 'Touch Bar flickering or displaying incorrectly',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Flickering or display issues on the Touch Bar usually indicate a failing OLED panel or a cable issue. We need to inspect the internals to confirm the cause.',
-          likelyRepair: 'touch-bar',
-          likelyCopy: 'Should the Touch Bar need replacing'
-        },
-        {
-          label: 'Touch Bar cracked or physically damaged',
-          route: 'repair',
-          repairType: 'touch-bar',
-          copy: 'The Touch Bar\'s glass surface is cracked and needs replacing. We\'ll fit a new Touch Bar module as part of a top case replacement.'
-        }
+        { label: 'Touch Bar not responding or frozen', route: 'diagnostic', repairType: 'diagnostic', copy: 'The Touch Bar can stop responding due to a software glitch, a loose connector, or a failed Touch Bar module. A diagnostic will help us determine whether it\'s a quick fix or needs a replacement.' },
+        { label: 'Touch Bar flickering or displaying incorrectly', route: 'diagnostic', repairType: 'diagnostic', copy: 'Flickering or display issues on the Touch Bar usually indicate a failing OLED panel or a cable issue. We need to inspect the internals to confirm the cause.', likelyRepair: 'touch-bar', likelyCopy: 'Should the Touch Bar need replacing' },
+        { label: 'Touch Bar cracked or physically damaged', route: 'repair', repairType: 'touch-bar', copy: 'The Touch Bar\'s glass surface is cracked and needs replacing. We\'ll fit a new Touch Bar module as part of a top case replacement.' }
       ],
       'Audio / Mic / Speaker': [
-        {
-          label: 'No sound from speakers',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Complete speaker failure could be the speaker module, audio IC, or liquid damage. We need to check the internals before confirming a repair.'
-        },
-        {
-          label: 'Crackling or distorted audio',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Distorted sound can be a blown speaker cone or liquid corrosion on the audio circuit. We\'ll test the speakers and check for any underlying damage.'
-        },
-        {
-          label: 'Microphone not working',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'A dead mic could be the module, the flex cable, or corrosion from liquid. We need to diagnose which component has failed.'
-        }
+        { label: 'No sound from speakers', route: 'diagnostic', repairType: 'diagnostic', copy: 'Complete speaker failure could be the speaker module, audio IC, or liquid damage. We need to check the internals before confirming a repair.' },
+        { label: 'Crackling or distorted audio', route: 'diagnostic', repairType: 'diagnostic', copy: 'Distorted sound can be a blown speaker cone or liquid corrosion on the audio circuit. We\'ll test the speakers and check for any underlying damage.' },
+        { label: 'Microphone not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'A dead mic could be the module, the flex cable, or corrosion from liquid. We need to diagnose which component has failed.' }
       ],
       'Water Damage': [
-        {
-          label: 'Spilled liquid recently (within 24 hours)',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Time is critical with liquid damage. We\'ll open it up, clean the affected components with ultrasonic cleaning, and assess which parts need replacing.',
-          urgent: true
-        },
-        {
-          label: 'Spilled liquid (more than 24 hours ago)',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Liquid causes corrosion that spreads over time. Even if your MacBook seems to work now, internal damage may be progressing. We need to open it, assess the corrosion, and determine which components are affected.'
-        },
-        {
-          label: 'Partial failure after liquid exposure',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'When some functions still work after a spill, it means the liquid damaged specific circuits but not the entire board. A diagnostic will map exactly what\'s affected so we can target the repair.'
-        },
-        {
-          label: 'MacBook was submerged',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Full submersion causes widespread corrosion. Bring it in without attempting to charge or turn it on. We\'ll do a full strip-down, ultrasonic clean, and component-level assessment.',
-          urgent: true
-        }
+        { label: 'Spilled liquid recently (within 24 hours)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Time is critical with liquid damage. We\'ll open it up, clean the affected components with ultrasonic cleaning, and assess which parts need replacing.', urgent: true },
+        { label: 'Spilled liquid (more than 24 hours ago)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Liquid causes corrosion that spreads over time. Even if your MacBook seems to work now, internal damage may be progressing. We need to open it, assess the corrosion, and determine which components are affected.' },
+        { label: 'Partial failure after liquid exposure', route: 'diagnostic', repairType: 'diagnostic', copy: 'When some functions still work after a spill, it means the liquid damaged specific circuits but not the entire board. A diagnostic will map exactly what\'s affected so we can target the repair.' },
+        { label: 'MacBook was submerged', route: 'diagnostic', repairType: 'diagnostic', copy: 'Full submersion causes widespread corrosion. Bring it in without attempting to charge or turn it on. We\'ll do a full strip-down, ultrasonic clean, and component-level assessment.', urgent: true }
       ],
       'Data Recovery': [
-        {
-          label: 'Drive not mounting or not detected',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'If your MacBook\'s drive isn\'t showing up, it could be the SSD, the connector, or a logic board issue. We need to diagnose the fault to determine whether data can be recovered and how.'
-        },
-        {
-          label: 'Accidentally deleted files',
-          route: 'contact',
-          repairType: null,
-          copy: 'Data recovery from accidental deletion depends on the drive type and how much the drive has been used since. Get in touch and we\'ll advise on your options. On newer Macs, recovery is extremely limited once files are deleted.'
-        },
-        {
-          label: 'MacBook dead, need data',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'If your MacBook won\'t turn on but you need the data, we\'ll diagnose the board to find the fault. In many cases we can repair the board enough to extract the data, or access the storage directly.'
-        }
+        { label: 'Drive not mounting or not detected', route: 'diagnostic', repairType: 'diagnostic', copy: 'If your MacBook\'s drive isn\'t showing up, it could be the SSD, the connector, or a logic board issue. We need to diagnose the fault to determine whether data can be recovered and how.' },
+        { label: 'Accidentally deleted files', route: 'contact', repairType: null, copy: 'Data recovery from accidental deletion depends on the drive type and how much the drive has been used since. Get in touch and we\'ll advise on your options. On newer Macs, recovery is extremely limited once files are deleted.' },
+        { label: 'MacBook dead, need data', route: 'diagnostic', repairType: 'diagnostic', copy: 'If your MacBook won\'t turn on but you need the data, we\'ll diagnose the board to find the fault. In many cases we can repair the board enough to extract the data, or access the storage directly.' }
       ],
       'Other': [
-        {
-          label: 'Overheating or fans running loud',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Excessive heat or fan noise can be caused by clogged vents, dried-out thermal paste, or a failing fan. We\'ll clean the internals, reapply thermal compound, and test the cooling system.'
-        },
-        {
-          label: 'Slow performance',
-          route: 'contact',
-          repairType: null,
-          copy: 'Performance issues are often software-related and may not need a physical repair. Get in touch and we\'ll help work out whether it\'s a hardware or software problem.'
-        },
-        {
-          label: 'Something else',
-          route: 'contact',
-          repairType: null,
-          copy: 'Tell us what\'s going on and we\'ll point you in the right direction. Use the form below to describe the issue and we\'ll get back to you.'
-        }
+        { label: 'Overheating or fans running loud', route: 'diagnostic', repairType: 'diagnostic', copy: 'Excessive heat or fan noise can be caused by clogged vents, dried-out thermal paste, or a failing fan. We\'ll clean the internals, reapply thermal compound, and test the cooling system.' },
+        { label: 'Slow performance', route: 'contact', repairType: null, copy: 'Performance issues are often software-related and may not need a physical repair. Get in touch and we\'ll help work out whether it\'s a hardware or software problem.' },
+        { label: 'Something else', route: 'contact', repairType: null, copy: 'Tell us what\'s going on and we\'ll point you in the right direction. Use the form below to describe the issue and we\'ll get back to you.' }
       ]
     },
-
     iphone: {
       'Screen / Display': [
-        {
-          label: 'Cracked glass (touch still works)',
-          route: 'repair',
-          repairType: 'screen',
-          copy: 'Your iPhone screen is cracked but still functional. We replace it with a genuine Apple OLED display that\'s verified in iOS Settings, so you know it\'s the real thing.'
-        },
-        {
-          label: 'Touch not responding',
-          route: 'repair',
-          repairType: 'screen',
-          copy: 'A dead touchscreen means the digitiser is damaged. A genuine screen replacement will restore full touch functionality.'
-        },
-        {
-          label: 'Lines, discolouration, or green line',
-          route: 'repair',
-          repairType: 'screen',
-          copy: 'Display lines or colour shifting indicate panel damage. This is a known issue on some OLED displays. A genuine screen replacement will fix it.'
-        },
-        {
-          label: 'Black screen (phone still vibrates/rings)',
-          route: 'repair',
-          repairType: 'screen',
-          copy: 'If your phone vibrates or makes sounds but the screen is black, the display has failed. A screen replacement will bring it back.'
-        },
-        {
-          label: 'No display, no response',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'If your iPhone shows no signs of life at all, it could be the display, battery, or logic board. We need to test the device to find the cause.'
-        }
+        { label: 'Cracked glass (touch still works)', route: 'repair', repairType: 'screen', copy: 'Your iPhone screen is cracked but still functional. We replace it with a genuine Apple OLED display that\'s verified in iOS Settings, so you know it\'s the real thing.' },
+        { label: 'Touch not responding', route: 'repair', repairType: 'screen', copy: 'A dead touchscreen means the digitiser is damaged. A genuine screen replacement will restore full touch functionality.' },
+        { label: 'Lines, discolouration, or green line', route: 'repair', repairType: 'screen', copy: 'Display lines or colour shifting indicate panel damage. This is a known issue on some OLED displays. A genuine screen replacement will fix it.' },
+        { label: 'Black screen (phone still vibrates/rings)', route: 'repair', repairType: 'screen', copy: 'If your phone vibrates or makes sounds but the screen is black, the display has failed. A screen replacement will bring it back.' },
+        { label: 'No display, no response', route: 'diagnostic', repairType: 'diagnostic', copy: 'If your iPhone shows no signs of life at all, it could be the display, battery, or logic board. We need to test the device to find the cause.' }
       ],
       'Power / Battery / Charging': [
-        {
-          label: 'Battery drains fast',
-          route: 'repair',
-          repairType: 'battery',
-          copy: 'Your battery has degraded below healthy capacity. We replace it with a genuine Apple battery, and your battery health will read accurately again in Settings.'
-        },
-        {
-          label: 'Won\'t charge',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Charging failure could be the Lightning/USB-C port, the battery, or the charging circuit. We need to test each component to identify the fault.'
-        },
-        {
-          label: 'Random shutdowns or reboots',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Unexpected shutdowns can be a failing battery or a logic board issue. A diagnostic will tell us whether a battery replacement will fix it or if there\'s a deeper fault.'
-        },
-        {
-          label: 'Swollen battery',
-          route: 'repair',
-          repairType: 'battery',
-          copy: 'We\'ll replace the battery safely.',
-          urgent: true
-        }
+        { label: 'Battery drains fast', route: 'repair', repairType: 'battery', copy: 'Your battery has degraded below healthy capacity. We replace it with a genuine Apple battery, and your battery health will read accurately again in Settings.' },
+        { label: 'Won\'t charge', route: 'diagnostic', repairType: 'diagnostic', copy: 'Charging failure could be the Lightning/USB-C port, the battery, or the charging circuit. We need to test each component to identify the fault.' },
+        { label: 'Random shutdowns or reboots', route: 'diagnostic', repairType: 'diagnostic', copy: 'Unexpected shutdowns can be a failing battery or a logic board issue. A diagnostic will tell us whether a battery replacement will fix it or if there\'s a deeper fault.' },
+        { label: 'Swollen battery', route: 'repair', repairType: 'battery', copy: 'We\'ll replace the battery safely.', urgent: true }
       ],
       'Camera': [
-        {
-          label: 'Blurry photos or shaking camera',
-          route: 'repair',
-          repairType: 'rear-camera',
-          copy: 'A blurry or shaking camera usually means the camera\'s stabilisation system has failed, or the lens is damaged internally. We\'ll replace the camera module to restore sharp photos and video.'
-        },
-        {
-          label: 'Camera shows black (no image)',
-          route: 'repair',
-          repairType: 'rear-camera',
-          copy: 'A black camera feed means the module has failed. We\'ll replace it with a genuine camera module.'
-        },
-        {
-          label: 'Front camera or Face ID not working',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'The front camera is linked to Face ID, and both share the same module. If either isn\'t working, we need to diagnose whether it\'s the camera, the Face ID sensor array, or a software pairing issue.',
-          likelyRepair: 'front-camera',
-          likelyCopy: 'Should the front camera need replacing'
-        },
-        {
-          label: 'Condensation in camera',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Moisture inside the camera lens is a sign of liquid damage or a broken seal. We need to check for internal corrosion before recommending a repair.'
-        }
+        { label: 'Blurry photos or shaking camera', route: 'repair', repairType: 'rear-camera', copy: 'A blurry or shaking camera usually means the camera\'s stabilisation system has failed, or the lens is damaged internally. We\'ll replace the camera module to restore sharp photos and video.' },
+        { label: 'Camera shows black (no image)', route: 'repair', repairType: 'rear-camera', copy: 'A black camera feed means the module has failed. We\'ll replace it with a genuine camera module.' },
+        { label: 'Front camera or Face ID not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'The front camera is linked to Face ID, and both share the same module. If either isn\'t working, we need to diagnose whether it\'s the camera, the Face ID sensor array, or a software pairing issue.', likelyRepair: 'front-camera', likelyCopy: 'Should the front camera need replacing' },
+        { label: 'Condensation in camera', route: 'diagnostic', repairType: 'diagnostic', copy: 'Moisture inside the camera lens is a sign of liquid damage or a broken seal. We need to check for internal corrosion before recommending a repair.' }
       ],
       'Audio / Mic / Speaker': [
-        {
-          label: 'No sound or low volume from speaker',
-          route: 'repair',
-          repairType: 'loudspeaker',
-          copy: 'The loudspeaker module has likely failed. We\'ll replace it to restore full volume and clarity.'
-        },
-        {
-          label: 'Earpiece quiet or silent during calls',
-          route: 'repair',
-          repairType: 'earpiece',
-          copy: 'If you can\'t hear callers properly, the earpiece speaker needs replacing. A quick swap will fix this.'
-        },
-        {
-          label: 'Microphone not picking up voice',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'iPhone has multiple microphones, and the faulty one depends on when it fails (calls, video, Siri). We need to test each mic to identify which module or flex cable needs replacing.'
-        }
+        { label: 'No sound or low volume from speaker', route: 'repair', repairType: 'loudspeaker', copy: 'The loudspeaker module has likely failed. We\'ll replace it to restore full volume and clarity.' },
+        { label: 'Earpiece quiet or silent during calls', route: 'repair', repairType: 'earpiece', copy: 'If you can\'t hear callers properly, the earpiece speaker needs replacing. A quick swap will fix this.' },
+        { label: 'Microphone not picking up voice', route: 'diagnostic', repairType: 'diagnostic', copy: 'iPhone has multiple microphones, and the faulty one depends on when it fails (calls, video, Siri). We need to test each mic to identify which module or flex cable needs replacing.' }
       ],
       'Rear Glass': [
-        {
-          label: 'Cracked back glass',
-          route: 'repair',
-          repairType: 'rear-glass',
-          copy: 'We replace the rear glass with a genuine Apple housing in your original colour. Your iPhone will look and feel brand new.'
-        },
-        {
-          label: 'Camera lens cover cracked',
-          route: 'repair',
-          repairType: 'rear-camera-lens',
-          copy: 'A cracked camera lens cover lets dust and moisture into the camera module. We\'ll replace the lens cover to protect your cameras. If the camera itself is damaged, we\'ll let you know during the repair.'
-        }
+        { label: 'Cracked back glass', route: 'repair', repairType: 'rear-glass', copy: 'We replace the rear glass with a genuine Apple housing in your original colour. Your iPhone will look and feel brand new.' },
+        { label: 'Camera lens cover cracked', route: 'repair', repairType: 'rear-camera-lens', copy: 'A cracked camera lens cover lets dust and moisture into the camera module. We\'ll replace the lens cover to protect your cameras. If the camera itself is damaged, we\'ll let you know during the repair.' }
       ],
       'Buttons': [
-        {
-          label: 'Power button not working',
-          route: 'repair',
-          repairType: 'power-button',
-          copy: 'The power button or its flex cable has failed. We\'ll replace the flex to restore full function.'
-        },
-        {
-          label: 'Volume buttons not working',
-          route: 'repair',
-          repairType: 'volume-button',
-          copy: 'The volume button flex cable needs replacing. Quick repair to restore control.'
-        },
-        {
-          label: 'Mute switch not working',
-          route: 'repair',
-          repairType: 'mute-button',
-          copy: 'The mute switch mechanism has failed. We\'ll replace the flex cable to fix it.'
-        }
+        { label: 'Power button not working', route: 'repair', repairType: 'power-button', copy: 'The power button or its flex cable has failed. We\'ll replace the flex to restore full function.' },
+        { label: 'Volume buttons not working', route: 'repair', repairType: 'volume-button', copy: 'The volume button flex cable needs replacing. Quick repair to restore control.' },
+        { label: 'Mute switch not working', route: 'repair', repairType: 'mute-button', copy: 'The mute switch mechanism has failed. We\'ll replace the flex cable to fix it.' }
       ],
       'Water Damage': [
-        {
-          label: 'Dropped in liquid (within 24 hours)',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Don\'t try to charge or turn on your iPhone. Bring it in as soon as possible. We\'ll open it up, perform an ultrasonic clean, and assess which components have been affected. The sooner we get to it, the better the outcome.',
-          urgent: true
-        },
-        {
-          label: 'Liquid damage (more than 24 hours ago)',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Liquid causes corrosion that spreads over time, even after the device dries out. We need to open the phone, clean the corrosion, and check each circuit to see what\'s still working and what needs repair.'
-        }
+        { label: 'Dropped in liquid (within 24 hours)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Don\'t try to charge or turn on your iPhone. Bring it in as soon as possible. We\'ll open it up, perform an ultrasonic clean, and assess which components have been affected. The sooner we get to it, the better the outcome.', urgent: true },
+        { label: 'Liquid damage (more than 24 hours ago)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Liquid causes corrosion that spreads over time, even after the device dries out. We need to open the phone, clean the corrosion, and check each circuit to see what\'s still working and what needs repair.' }
       ],
       'Data Recovery': [
-        {
-          label: 'Phone dead, need data',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'If your iPhone won\'t turn on but you need photos, messages, or other data, we can attempt a specialised repair to get the phone working long enough to back up. Success depends on the fault.'
-        },
-        {
-          label: 'Forgotten passcode',
-          route: 'contact',
-          repairType: null,
-          copy: 'We can\'t bypass an iPhone passcode or iCloud lock. If you\'re the original owner, Apple Support can help with account recovery. Get in touch and we\'ll advise on your options.'
-        }
+        { label: 'Phone dead, need data', route: 'diagnostic', repairType: 'diagnostic', copy: 'If your iPhone won\'t turn on but you need photos, messages, or other data, we can attempt a specialised repair to get the phone working long enough to back up. Success depends on the fault.' },
+        { label: 'Forgotten passcode', route: 'contact', repairType: null, copy: 'We can\'t bypass an iPhone passcode or iCloud lock. If you\'re the original owner, Apple Support can help with account recovery. Get in touch and we\'ll advise on your options.' }
       ],
       'Other': [
-        {
-          label: 'Vibration not working',
-          route: 'contact',
-          repairType: null,
-          copy: 'The vibration motor (Taptic Engine) may have failed. Get in touch and we\'ll confirm whether this is something we can repair for your model.'
-        },
-        {
-          label: 'No signal / "No Service" / "SOS only"',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Loss of cellular signal could be an antenna, baseband chip, or SIM reader issue. We need to diagnose the specific component.'
-        },
-        {
-          label: 'WiFi not connecting or greyed out',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'A greyed-out WiFi toggle usually indicates a hardware fault on the logic board. We\'ll diagnose whether it\'s repairable.'
-        },
-        {
-          label: 'Bluetooth not working',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Bluetooth and WiFi share the same chip on iPhones. A diagnostic will confirm whether the module or antenna is at fault.'
-        },
-        {
-          label: 'Something else',
-          route: 'contact',
-          repairType: null,
-          copy: 'Describe your issue below and we\'ll get back to you with the right repair option.'
-        }
+        { label: 'Vibration not working', route: 'contact', repairType: null, copy: 'The vibration motor (Taptic Engine) may have failed. Get in touch and we\'ll confirm whether this is something we can repair for your model.' },
+        { label: 'No signal / "No Service" / "SOS only"', route: 'diagnostic', repairType: 'diagnostic', copy: 'Loss of cellular signal could be an antenna, baseband chip, or SIM reader issue. We need to diagnose the specific component.' },
+        { label: 'WiFi not connecting or greyed out', route: 'diagnostic', repairType: 'diagnostic', copy: 'A greyed-out WiFi toggle usually indicates a hardware fault on the logic board. We\'ll diagnose whether it\'s repairable.' },
+        { label: 'Bluetooth not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth and WiFi share the same chip on iPhones. A diagnostic will confirm whether the module or antenna is at fault.' },
+        { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe your issue below and we\'ll get back to you with the right repair option.' }
       ]
     },
-
     ipad: {
       'Screen / Display': [
-        {
-          label: 'Cracked glass (display still works)',
-          route: 'repair',
-          repairType: 'screen',
-          copy: 'Your iPad glass is cracked. Depending on the model, we can replace just the glass digitiser or the full display assembly. We use genuine parts to ensure Apple Pencil compatibility and full touch accuracy.'
-        },
-        {
-          label: 'Touch not responding',
-          route: 'repair',
-          repairType: 'screen',
-          copy: 'A dead touchscreen needs a display replacement. We use genuine panels to maintain Apple Pencil support and colour accuracy.'
-        },
-        {
-          label: 'Lines or dead areas on screen',
-          route: 'repair',
-          repairType: 'screen',
-          copy: 'Lines or dead zones on the display mean the LCD/LED panel is damaged internally. A display replacement will fix this.'
-        },
-        {
-          label: 'Black screen',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'A completely black screen could be the display, battery, or logic board. If your iPad still makes sounds or responds to touch, it\'s likely the display. If there\'s no response at all, we need to test the device to find the root cause.'
-        }
+        { label: 'Cracked glass (display still works)', route: 'repair', repairType: 'screen', copy: 'Your iPad glass is cracked. Depending on the model, we can replace just the glass digitiser or the full display assembly. We use genuine parts to ensure Apple Pencil compatibility and full touch accuracy.' },
+        { label: 'Touch not responding', route: 'repair', repairType: 'screen', copy: 'A dead touchscreen needs a display replacement. We use genuine panels to maintain Apple Pencil support and colour accuracy.' },
+        { label: 'Lines or dead areas on screen', route: 'repair', repairType: 'screen', copy: 'Lines or dead zones on the display mean the LCD/LED panel is damaged internally. A display replacement will fix this.' },
+        { label: 'Black screen', route: 'diagnostic', repairType: 'diagnostic', copy: 'A completely black screen could be the display, battery, or logic board. If your iPad still makes sounds or responds to touch, it\'s likely the display. If there\'s no response at all, we need to test the device to find the root cause.' }
       ],
       'Power / Battery / Charging': [
-        {
-          label: 'Battery drains quickly',
-          route: 'repair',
-          repairType: 'battery',
-          copy: 'Your iPad battery has degraded. We\'ll replace it with an original-spec battery so it holds a full charge again.'
-        },
-        {
-          label: 'Won\'t charge',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Charging failures on iPads can be the Lightning or USB-C port, the battery itself, or the charging IC on the logic board. We need to test each component to find the fault. If you\'re using a third-party cable, try an Apple cable first to rule that out.'
-        },
-        {
-          label: 'Won\'t turn on',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'An iPad that won\'t power on could have a dead battery, a logic board fault, or a charging issue. If it was working recently and suddenly died, try a hard reset first (hold Power + Volume Down for 10 seconds). If that doesn\'t help, bring it in for a diagnostic.'
-        }
+        { label: 'Battery drains quickly', route: 'repair', repairType: 'battery', copy: 'Your iPad battery has degraded. We\'ll replace it with an original-spec battery so it holds a full charge again.' },
+        { label: 'Won\'t charge', route: 'diagnostic', repairType: 'diagnostic', copy: 'Charging failures on iPads can be the Lightning or USB-C port, the battery itself, or the charging IC on the logic board. We need to test each component to find the fault. If you\'re using a third-party cable, try an Apple cable first to rule that out.' },
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'An iPad that won\'t power on could have a dead battery, a logic board fault, or a charging issue. If it was working recently and suddenly died, try a hard reset first (hold Power + Volume Down for 10 seconds). If that doesn\'t help, bring it in for a diagnostic.' }
       ],
       'Camera': [],
       'Buttons': [
-        {
-          label: 'Home button or Touch ID not working',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Touch ID is paired to the logic board, so a failed Home button needs careful diagnosis. We\'ll check whether it\'s the button, flex cable, or a pairing issue.'
-        }
+        { label: 'Home button or Touch ID not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Touch ID is paired to the logic board, so a failed Home button needs careful diagnosis. We\'ll check whether it\'s the button, flex cable, or a pairing issue.' }
       ],
       'Water Damage': [
-        {
-          label: 'Liquid exposure',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'iPads are not waterproof. Any liquid exposure can cause corrosion on internal components. We need to open the device, clean it, and assess the damage.'
-        }
+        { label: 'Liquid exposure', route: 'diagnostic', repairType: 'diagnostic', copy: 'iPads are not waterproof. Any liquid exposure can cause corrosion on internal components. We need to open the device, clean it, and assess the damage.' }
       ],
       'Data Recovery': [
-        {
-          label: 'Need data from broken iPad',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'If your iPad is damaged but you need the data, we\'ll attempt to repair it enough to allow a backup. Success depends on the fault.'
-        }
+        { label: 'Need data from broken iPad', route: 'diagnostic', repairType: 'diagnostic', copy: 'If your iPad is damaged but you need the data, we\'ll attempt to repair it enough to allow a backup. Success depends on the fault.' }
       ],
       'Other': [
-        {
-          label: 'No sound from speakers',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'iPad speaker issues can be the speaker module itself or a logic board fault. If sound works through headphones but not the built-in speakers, it\'s likely the module. We\'ll test to confirm before recommending a repair.'
-        },
-        {
-          label: 'Microphone not working',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'iPad microphones can fail due to the module, flex cable, or corrosion. A diagnostic will pinpoint the issue.'
-        },
-        {
-          label: 'WiFi not connecting',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'WiFi issues on iPads can be the antenna, wireless chip, or a software problem. We\'ll diagnose the hardware first.'
-        },
-        {
-          label: 'Bluetooth not working',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Bluetooth and WiFi share components on iPads. A diagnostic will identify which part has failed.'
-        },
-        {
-          label: 'Something else',
-          route: 'contact',
-          repairType: null,
-          copy: 'Describe the issue and we\'ll advise on the right repair.'
-        }
+        { label: 'No sound from speakers', route: 'diagnostic', repairType: 'diagnostic', copy: 'iPad speaker issues can be the speaker module itself or a logic board fault. If sound works through headphones but not the built-in speakers, it\'s likely the module. We\'ll test to confirm before recommending a repair.' },
+        { label: 'Microphone not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'iPad microphones can fail due to the module, flex cable, or corrosion. A diagnostic will pinpoint the issue.' },
+        { label: 'WiFi not connecting', route: 'diagnostic', repairType: 'diagnostic', copy: 'WiFi issues on iPads can be the antenna, wireless chip, or a software problem. We\'ll diagnose the hardware first.' },
+        { label: 'Bluetooth not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth and WiFi share components on iPads. A diagnostic will identify which part has failed.' },
+        { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe the issue and we\'ll advise on the right repair.' }
       ]
     },
-
     watch: {
       'Screen / Display': [
-        {
-          label: 'Cracked screen (display still works)',
-          route: 'repair',
-          repairType: 'screen-glass',
-          copy: 'Your watch glass is cracked but the display underneath still works. We\'ll replace the glass and re-seal the watch.'
-        },
-        {
-          label: 'Cracked screen (display damaged or bleeding)',
-          route: 'repair',
-          repairType: 'screen',
-          copy: 'The OLED display is damaged and needs a full replacement. We\'ll fit a genuine panel and re-seal the watch.'
-        },
-        {
-          label: 'Display dead or unresponsive',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'A watch display that won\'t turn on could be the screen, battery, or main board. We need to test it.'
-        }
+        { label: 'Cracked screen (display still works)', route: 'repair', repairType: 'screen-glass', copy: 'Your watch glass is cracked but the display underneath still works. We\'ll replace the glass and re-seal the watch.' },
+        { label: 'Cracked screen (display damaged or bleeding)', route: 'repair', repairType: 'screen', copy: 'The OLED display is damaged and needs a full replacement. We\'ll fit a genuine panel and re-seal the watch.' },
+        { label: 'Display dead or unresponsive', route: 'diagnostic', repairType: 'diagnostic', copy: 'A watch display that won\'t turn on could be the screen, battery, or main board. We need to test it.' }
       ],
       'Power / Battery / Charging': [
-        {
-          label: 'Won\'t charge',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Charging failures on Apple Watch can be the charging coil, battery, or main board. We\'ll test to find the cause.'
-        },
-        {
-          label: 'Battery drains fast',
-          route: 'repair',
-          repairType: 'battery',
-          copy: 'Your watch battery has degraded. We\'ll swap it for a new one and re-seal the watch.'
-        },
-        {
-          label: 'Won\'t turn on',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'If the watch won\'t power on at all, it needs a diagnostic to determine whether it\'s the battery or a board-level issue.'
-        }
+        { label: 'Won\'t charge', route: 'diagnostic', repairType: 'diagnostic', copy: 'Charging failures on Apple Watch can be the charging coil, battery, or main board. We\'ll test to find the cause.' },
+        { label: 'Battery drains fast', route: 'repair', repairType: 'battery', copy: 'Your watch battery has degraded. We\'ll swap it for a new one and re-seal the watch.' },
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'If the watch won\'t power on at all, it needs a diagnostic to determine whether it\'s the battery or a board-level issue.' }
       ],
       'Rear Glass': [
-        {
-          label: 'Cracked back crystal / sensor glass',
-          route: 'repair',
-          repairType: 'heart-rate-monitor',
-          copy: 'The rear crystal houses the heart rate and blood oxygen sensors. We\'ll replace it to restore sensor accuracy and the water seal.'
-        }
+        { label: 'Cracked back crystal / sensor glass', route: 'repair', repairType: 'heart-rate-monitor', copy: 'The rear crystal houses the heart rate and blood oxygen sensors. We\'ll replace it to restore sensor accuracy and the water seal.' }
       ],
       'Buttons / Crown': [
-        {
-          label: 'Digital Crown stuck or not rotating',
-          route: 'repair',
-          repairType: 'crown',
-          copy: 'The Digital Crown can get jammed by dirt or debris. We\'ll clean or replace the crown mechanism.'
-        },
-        {
-          label: 'Side button not responding',
-          route: 'repair',
-          repairType: 'side-button',
-          copy: 'A faulty side button needs the button module replaced. Quick repair.'
-        }
+        { label: 'Digital Crown stuck or not rotating', route: 'repair', repairType: 'crown', copy: 'The Digital Crown can get jammed by dirt or debris. We\'ll clean or replace the crown mechanism.' },
+        { label: 'Side button not responding', route: 'repair', repairType: 'side-button', copy: 'A faulty side button needs the button module replaced. Quick repair.' }
       ],
       'Water Damage': [
-        {
-          label: 'Water ingress despite water resistance',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Even water-resistant watches can fail if the seals are compromised. We\'ll open the watch, clean any corrosion, and assess the damage.'
-        }
+        { label: 'Water ingress despite water resistance', route: 'diagnostic', repairType: 'diagnostic', copy: 'Even water-resistant watches can fail if the seals are compromised. We\'ll open the watch, clean any corrosion, and assess the damage.' }
       ],
       'Other': [
-        {
-          label: 'Bluetooth not connecting to phone',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'Bluetooth pairing issues can be hardware or software. We\'ll test the wireless module.'
-        },
-        {
-          label: 'WiFi not working',
-          route: 'diagnostic',
-          repairType: 'diagnostic',
-          copy: 'WiFi faults on Apple Watch are typically the antenna or wireless chip. Diagnostic needed.'
-        },
-        {
-          label: 'Something else',
-          route: 'contact',
-          repairType: null,
-          copy: 'Describe the issue and we\'ll advise.'
-        }
+        { label: 'Bluetooth not connecting to phone', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth pairing issues can be hardware or software. We\'ll test the wireless module.' },
+        { label: 'WiFi not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'WiFi faults on Apple Watch are typically the antenna or wireless chip. Diagnostic needed.' },
+        { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe the issue and we\'ll advise.' }
       ]
     }
   };
 
-  // === UTILITY: HTML ESCAPING (XSS prevention) ===
-  function escapeHtml(str) {
+  /* =============================================
+     iPhone Visual Guide DB
+     ============================================= */
+  var VG_DB = [
+    {n:"iPhone 17 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/17_pro_max_colours.png?v=1766237419",cams:"tri_plat",edges:"curved",screen:"island",size:"max"},
+    {n:"iPhone 17 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/17_pro_max_colours.png?v=1766237419",cams:"tri_plat",edges:"curved",screen:"island",size:"pro"},
+    {n:"iPhone 17",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/17_colours.png?v=1766237419",cams:"vert",edges:"flat",screen:"island",size:"std"},
+    {n:"iPhone Air",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/air_colours.png?v=1766237418",cams:"single_plat",edges:"flat",screen:"island",size:"max"},
+    {n:"iPhone 16 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"island",size:"max"},
+    {n:"iPhone 16 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"island",size:"pro"},
+    {n:"iPhone 16 Plus",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16_colours.png?v=1766237419",cams:"vert",edges:"flat",screen:"island",size:"max"},
+    {n:"iPhone 16",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16_colours.png?v=1766237419",cams:"vert",edges:"flat",screen:"island",size:"std"},
+    {n:"iPhone 16e",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16e_colours.png?v=1766237418",cams:"single_std",edges:"flat",screen:"notch",size:"std"},
+    {n:"iPhone 15 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/15_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"island",size:"max"},
+    {n:"iPhone 15 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/15_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"island",size:"pro"},
+    {n:"iPhone 15 Plus",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/15_colours.png?v=1766237419",cams:"diag",edges:"flat",screen:"island",size:"max"},
+    {n:"iPhone 15",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/15_colours.png?v=1766237419",cams:"diag",edges:"flat",screen:"island",size:"std"},
+    {n:"iPhone 14 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/14_pro_max_colours.png?v=1766237418",cams:"tri_std",edges:"flat",screen:"island",size:"max"},
+    {n:"iPhone 14 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/14_pro_max_colours.png?v=1766237418",cams:"tri_std",edges:"flat",screen:"island",size:"pro"},
+    {n:"iPhone 14 Plus",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/14_colours.png?v=1766237419",cams:"diag",edges:"flat",screen:"notch",size:"max"},
+    {n:"iPhone 14",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/14_colours.png?v=1766237419",cams:"diag",edges:"flat",screen:"notch",size:"std"},
+    {n:"iPhone 13 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/13_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"notch",size:"max"},
+    {n:"iPhone 13 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/13_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"notch",size:"pro"},
+    {n:"iPhone 13 Mini",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/13_colours.png?v=1766237419",cams:"diag",edges:"flat",screen:"notch",size:"mini"},
+    {n:"iPhone 13",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/13_colours.png?v=1766237419",cams:"diag",edges:"flat",screen:"notch",size:"std"},
+    {n:"iPhone 12 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/12_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"notch",size:"max"},
+    {n:"iPhone 12 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/12_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"notch",size:"pro"},
+    {n:"iPhone 12 Mini",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/12_colours.png?v=1766237419",cams:"vert",edges:"flat",screen:"notch",size:"mini"},
+    {n:"iPhone 12",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/12_colours.png?v=1766237419",cams:"vert",edges:"flat",screen:"notch",size:"std"},
+    {n:"iPhone 11 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/11_pro_max.png?v=1766237419",cams:"tri_std",edges:"curved",screen:"notch",size:"max"},
+    {n:"iPhone 11 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/11_pro_max.png?v=1766237419",cams:"tri_std",edges:"curved",screen:"notch",size:"pro"},
+    {n:"iPhone 11",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/11_colours.png?v=1766237419",cams:"vert",edges:"curved",screen:"notch",size:"std"},
+    {n:"iPhone SE (3rd Gen)",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/se3_colours.png?v=1766237418",cams:"single_std",edges:"curved",screen:"home",size:"std"},
+    {n:"iPhone SE (2nd Gen)",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/se2_colours.png?v=1766237418",cams:"single_std",edges:"curved",screen:"home",size:"std"}
+  ];
+
+  /* MacBook model number lookup DB */
+  var MB_NUMS = [
+    {n:"A3403",m:"MacBook Pro 16-inch 'M4 Pro/Max' A3186/A3403 (2024)"},{n:"A3186",m:"MacBook Pro 16-inch 'M4 Pro/Max' A3186/A3403 (2024)"},
+    {n:"A2991",m:"MacBook Pro 16-inch 'M3 Pro/Max' A2991 (2023)"},{n:"A2780",m:"MacBook Pro 16-inch 'M2 Pro/Max' A2780 (2023)"},
+    {n:"A2485",m:"MacBook Pro 16-inch 'M1 Pro/Max' A2485 (2021)"},{n:"A2141",m:"MacBook Pro 16-inch A2141 (2019)"},
+    {n:"A1990",m:"MacBook Pro 15-inch A1990 (2018-2019)"},{n:"A1707",m:"MacBook Pro 15-inch A1707 (2016-2017)"},
+    {n:"A3401",m:"MacBook Pro 14-inch 'M4 Pro/Max' A3112/A3185/A3401 (2024)"},{n:"A3112",m:"MacBook Pro 14-inch 'M4 Pro/Max' A3112/A3185/A3401 (2024)"},{n:"A3185",m:"MacBook Pro 14-inch 'M4 Pro/Max' A3112/A3185/A3401 (2024)"},
+    {n:"A2918",m:"MacBook Pro 14-inch 'M3 Pro/Max' A2918/A2992 (2023)"},{n:"A2992",m:"MacBook Pro 14-inch 'M3 Pro/Max' A2918/A2992 (2023)"},
+    {n:"A2779",m:"MacBook Pro 14-inch 'M2 Pro/Max' A2779 (2023)"},{n:"A2442",m:"MacBook Pro 14-inch 'M1 Pro/Max' A2442 (2021)"},
+    {n:"A2338",m:"MacBook Pro 13-inch 'M1' A2338 (2020)"},{n:"A2251",m:"MacBook Pro 13-inch A2251 (2020)"},
+    {n:"A2289",m:"MacBook Pro 13-inch A2289 (2020)"},{n:"A2159",m:"MacBook Pro 13-inch A2159 (2019)"},
+    {n:"A1989",m:"MacBook Pro 13-inch A1989 (2018-2019)"},{n:"A3241",m:"MacBook Air 15-inch 'M4' A3241 (2025)"},
+    {n:"A3114",m:"MacBook Air 15-inch 'M3' A3114 (2024)"},{n:"A2941",m:"MacBook Air 15-inch 'M2' A2941 (2023)"},
+    {n:"A3240",m:"MacBook Air 13-inch 'M4' A3240 (2025)"},{n:"A3113",m:"MacBook Air 13-inch 'M3' A3113 (2024)"},
+    {n:"A2681",m:"MacBook Air 13-inch 'M2' A2681 (2022)"},{n:"A2337",m:"MacBook Air 13-inch 'M1' A2337 (2020)"},
+    {n:"A2179",m:"MacBook Air 13-inch A2179 (2020)"},{n:"A1932",m:"MacBook Air 13-inch A1932 (2018-2019)"}
+  ];
+
+  /* =============================================
+     UTILITY: HTML ESCAPING
+     ============================================= */
+  function esc(str) {
     var div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
   }
 
-  // === REPAIR TYPE RESOLUTION ===
+  /* =============================================
+     REPAIR TYPE RESOLUTION
+     ============================================= */
   function deriveRepairTypeFromHandle(handle) {
     var keys = Object.keys(HANDLE_SUFFIX_MAP);
     keys.sort(function(a, b) { return b.length - a.length; });
     for (var i = 0; i < keys.length; i++) {
-      if (handle.endsWith(keys[i])) {
-        return HANDLE_SUFFIX_MAP[keys[i]];
-      }
+      if (handle.endsWith(keys[i])) return HANDLE_SUFFIX_MAP[keys[i]];
     }
     return null;
   }
 
-  // === FETCH COLLECTION PRODUCTS ===
+  /* =============================================
+     FETCH COLLECTION PRODUCTS
+     ============================================= */
   async function fetchCollection(handle) {
     if (_collectionCache[handle]) return _collectionCache[handle];
     try {
@@ -991,25 +616,18 @@ window.WIZARD_CONTEXT = {
       var data = await res.json();
       _collectionCache[handle] = data.products;
       return data.products;
-    } catch(e) {
-      return [];
-    }
+    } catch(e) { return []; }
   }
 
-  // === BUILD REPAIRS MAP FROM COLLECTION PRODUCTS ===
   function buildRepairsMap(products) {
     var map = {};
     for (var i = 0; i < products.length; i++) {
-      var p = products[i];
-      var rt = deriveRepairTypeFromHandle(p.handle);
-      if (rt) {
-        map[rt] = p;
-      }
+      var rt = deriveRepairTypeFromHandle(products[i].handle);
+      if (rt) map[rt] = products[i];
     }
     return map;
   }
 
-  // === FETCH INDIVIDUAL PRODUCT (for pricing, with 1 retry) ===
   async function fetchProduct(handle) {
     if (_productCache[handle]) return _productCache[handle];
     try {
@@ -1019,7 +637,6 @@ window.WIZARD_CONTEXT = {
       _productCache[handle] = data.product;
       return data.product;
     } catch(e) {
-      // 1 retry after 1s delay
       await new Promise(function(r) { setTimeout(r, 1000); });
       try {
         var res2 = await fetch('/products/' + handle + '.json');
@@ -1027,707 +644,745 @@ window.WIZARD_CONTEXT = {
         var data2 = await res2.json();
         _productCache[handle] = data2.product;
         return data2.product;
-      } catch(e2) {
-        return null;
-      }
+      } catch(e2) { return null; }
     }
   }
 
-  // === FILTER FAULTS BY AVAILABLE PRODUCTS ===
+  /* =============================================
+     FILTER FAULTS / ISSUES BY AVAILABLE PRODUCTS
+     ============================================= */
   function getAvailableFaults(device, repairsMap) {
     var available = {};
     for (var repairType in repairsMap) {
       var fault = REPAIR_TYPE_TO_FAULT[repairType];
-      if (fault && fault !== '_diagnostic') {
-        available[fault] = true;
-      }
+      if (fault && fault !== '_diagnostic') available[fault] = true;
     }
-
-    // Always show these (they route to diagnostic/contact, not specific products)
     available['Water Damage'] = true;
     available['Data Recovery'] = true;
     available['Other'] = true;
-
-    return FAULTS[device].filter(function(f) {
-      return available[f.v];
-    });
+    return FAULTS[device].filter(function(f) { return available[f.v]; });
   }
 
-  // === FILTER ISSUES BY AVAILABLE PRODUCTS ===
   function getAvailableIssues(device, fault, repairsMap) {
     var issues = TS[device] && TS[device][fault];
     if (!issues) return [];
-
     return issues.filter(function(iss) {
-      // Contact routes always show (no product dependency)
       if (iss.route === 'contact') return true;
-      // Diagnostic routes show only if diagnostic product exists
       if (iss.route === 'diagnostic') return !!repairsMap['diagnostic'];
-      // Repair routes show only if their specific repair product exists
       return !!repairsMap[iss.repairType];
     });
   }
 
-  // === STEP NAVIGATION ===
+  /* =============================================
+     BADGE ICONS (for resolution card)
+     ============================================= */
+  var BADGE_ICONS = {
+    warranty: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+    turnaround: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
+    express: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
+    parts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>',
+    service: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>'
+  };
+  var BADGE_LABELS = { warranty: 'Warranty', turnaround: 'Turnaround', express: 'Express', parts: 'Parts', service: 'Service' };
+
+  function svcBadge(k, v) {
+    return '<div class="qw-svc-r"><div class="qw-svc-i">' + BADGE_ICONS[k] + '</div><span class="qw-svc-l">' + BADGE_LABELS[k] + '</span><span class="qw-svc-v">' + v + '</span></div>';
+  }
+
+  /* =============================================
+     STEP NAVIGATION
+     ============================================= */
   function go(n) {
     S.step = n;
-    history.pushState(
-      { step: n, device: S.device, model: S.model, fault: S.fault },
-      ''
-    );
-    updateProgress(n);
-    renderStep(n);
+    history.pushState({ step: n, device: S.device, model: S.model, fault: S.fault }, '');
+    document.querySelectorAll('.qw-step').forEach(function(el) { el.classList.remove('on'); });
+    document.getElementById('qw-s' + n).classList.add('on');
+    updateProg(n);
+    document.querySelector('.qw-wizard').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  function updateProgress(step) {
-    var bar = document.querySelector('.qw-progress-bar');
-    var container = document.querySelector('.qw-progress');
-    if (bar) bar.style.width = (step / 4 * 100) + '%';
-    if (container) container.setAttribute('aria-valuenow', step);
+  function updateProg(step) {
+    document.querySelectorAll('.qw-prog-s').forEach(function(el) {
+      var s = parseInt(el.dataset.s);
+      el.classList.remove('on', 'done');
+      if (s < step) el.classList.add('done');
+      else if (s === step) el.classList.add('on');
+    });
   }
 
-  function renderStep(n) {
-    var content = document.getElementById('qw-content');
-    var result = document.getElementById('qw-result');
-    if (!content || !result) return;
-
-    result.innerHTML = '';
-
-    switch(n) {
-      case 1: renderDevices(content); break;
-      case 2: renderModels(content); break;
-      case 3: renderFaults(content); break;
-      case 4: renderIssues(content); break;
-    }
+  /* =============================================
+     STEP 1: DEVICES
+     ============================================= */
+  function renderDevices() {
+    var g = document.getElementById('qw-devGrid');
+    DEVS.forEach(function(d) {
+      var c = document.createElement('div');
+      c.className = 'qw-dev';
+      c.tabIndex = 0;
+      c.setAttribute('role', 'button');
+      c.innerHTML = '<div class="qw-dev-ico">' + d.icon + '</div><span class="qw-dev-lbl">' + d.label + '</span>';
+      c.onclick = function() { pickDev(d.id, c); };
+      c.onkeydown = function(e) { if (e.key === 'Enter') pickDev(d.id, c); };
+      g.appendChild(c);
+    });
   }
 
-  // === STEP 1: DEVICES ===
-  function renderDevices(container) {
-    var html = '<div class="qw-grid qw-grid-4">';
-    for (var i = 0; i < DEVS.length; i++) {
-      var d = DEVS[i];
-      html += '<button class="qw-card" data-device="' + d.id + '" tabindex="0">';
-      html += '<div class="qw-card-icon">' + d.icon + '</div>';
-      html += '<div class="qw-card-label">' + d.label + '</div>';
-      html += '</button>';
-    }
-    html += '</div>';
-    container.innerHTML = html;
-
-    var cards = container.querySelectorAll('.qw-card');
-    for (var j = 0; j < cards.length; j++) {
-      cards[j].addEventListener('click', function() {
-        pickDev(this.getAttribute('data-device'));
-      });
-    }
+  function pickDev(id, el) {
+    S.device = id; S.model = null; S.fault = null; S.issue = null;
+    S.collectionHandle = null; _repairsMap = {};
+    document.querySelectorAll('#qw-s1 .qw-dev').forEach(function(c) { c.classList.remove('sel'); });
+    el.classList.add('sel');
+    if (window.posthog) posthog.capture('wizard_step', { step: 2, device: S.device });
+    setTimeout(function() { renderModels(id); go(2); }, 150);
   }
 
-  function pickDev(deviceId) {
-    S.device = deviceId;
-    S.model = null;
-    S.fault = null;
-    S.issue = null;
-    S.collectionHandle = null;
-    _repairsMap = {};
+  /* =============================================
+     STEP 2: MODELS (accordion groups)
+     ============================================= */
+  function renderModels(dev) {
+    var c = document.getElementById('qw-mC'); c.innerHTML = '';
+    document.getElementById('qw-s2t').textContent = 'Pick your ' + DN[dev] + ' model';
+    document.getElementById('qw-hP').classList.remove('open');
+    document.getElementById('qw-hP').innerHTML = '';
 
-    if (window.posthog) {
-      posthog.capture('wizard_step', { step: 2, device: S.device, model: null, fault: null });
-    }
-
-    go(2);
-  }
-
-  // === STEP 2: MODELS ===
-  function renderModels(container) {
-    var groups = MODELS[S.device];
+    var groups = MODELS[dev];
     if (!groups || groups.length === 0) {
-      container.innerHTML = '<div class="qw-empty">' +
-        '<p>Contact us for a quote on this device.</p>' +
-        '<a href="/pages/contact" class="qw-btn">Get in touch</a>' +
-        '</div>';
+      c.innerHTML = '<div class="qw-empty"><p>Contact us for a quote on this device.</p><a href="/pages/contact" class="qw-btn-book">Get in touch</a></div>';
       return;
     }
 
-    var html = '<div class="qw-back-row"><button class="qw-back" tabindex="0">&larr; Back</button></div>';
-    html += '<div class="qw-model-list">';
-    for (var g = 0; g < groups.length; g++) {
-      html += '<div class="qw-model-group">';
-      html += '<h3 class="qw-model-group-label">' + escapeHtml(groups[g].group) + '</h3>';
-      for (var m = 0; m < groups[g].models.length; m++) {
-        var model = groups[g].models[m];
-        html += '<button class="qw-model-btn" data-handle="' + model.collectionHandle + '" data-name="' + escapeHtml(model.name) + '" tabindex="0">';
-        html += escapeHtml(model.name);
-        html += '</button>';
-      }
-      html += '</div>';
-    }
-    html += '</div>';
-    container.innerHTML = html;
+    var w = document.createElement('div'); w.className = 'qw-m-groups';
+    groups.forEach(function(g) {
+      var ge = document.createElement('div'); ge.className = 'qw-m-group';
+      var h = document.createElement('div'); h.className = 'qw-m-head';
+      h.innerHTML = '<div><span class="qw-m-name">' + esc(g.group) + '</span><span class="qw-m-count">' + g.models.length + ' models</span></div><svg class="qw-m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>';
+      h.onclick = function() { ge.classList.toggle('open'); };
+      ge.appendChild(h);
 
-    // Back button
-    container.querySelector('.qw-back').addEventListener('click', function() { go(1); });
-
-    // Model buttons
-    var btns = container.querySelectorAll('.qw-model-btn');
-    for (var b = 0; b < btns.length; b++) {
-      btns[b].addEventListener('click', function() {
-        pickModel(this.getAttribute('data-name'), this.getAttribute('data-handle'));
+      var b = document.createElement('div'); b.className = 'qw-m-body';
+      var l = document.createElement('div'); l.className = 'qw-m-list';
+      g.models.forEach(function(m) {
+        var it = document.createElement('div'); it.className = 'qw-m-item'; it.tabIndex = 0; it.setAttribute('role', 'button');
+        it.innerHTML = '<span class="qw-mn">' + esc(m.name) + '</span>';
+        it.setAttribute('data-handle', m.collectionHandle);
+        it.onclick = function() { pickModel(m.name, m.collectionHandle, it); };
+        it.onkeydown = function(e) { if (e.key === 'Enter') pickModel(m.name, m.collectionHandle, it); };
+        l.appendChild(it);
       });
-    }
+      b.appendChild(l); ge.appendChild(b); w.appendChild(ge);
+    });
+    c.appendChild(w);
+    renderHelper(dev);
   }
 
-  async function pickModel(name, handle) {
-    S.model = name;
-    S.collectionHandle = handle;
-    S.fault = null;
-    S.issue = null;
+  async function pickModel(name, handle, el) {
+    S.model = name; S.collectionHandle = handle; S.fault = null; S.issue = null;
+    document.querySelectorAll('.qw-m-item').forEach(function(c) { c.classList.remove('sel'); });
+    if (el) el.classList.add('sel');
 
-    // Show loading state
-    var content = document.getElementById('qw-content');
-    if (content) {
-      content.innerHTML = '<div class="qw-loading"><div class="qw-spinner"></div><p>Loading repairs for ' + escapeHtml(name) + '...</p></div>';
-    }
+    /* Show loading */
+    document.getElementById('qw-s3').querySelector('.qw-f-grid').innerHTML = '<div class="qw-loading"><div class="qw-spinner"></div><p>Loading repairs for ' + esc(name) + '...</p></div>';
 
-    // Fetch collection products and build repairs map
     var products = await fetchCollection(handle);
     _repairsMap = buildRepairsMap(products);
 
-    if (window.posthog) {
-      posthog.capture('wizard_step', { step: 3, device: S.device, model: S.model, fault: null });
-    }
+    if (window.posthog) posthog.capture('wizard_step', { step: 3, device: S.device, model: S.model });
 
-    // Check for pre-queued fault from pre-fill
     if (S.preFault) {
-      var pf = S.preFault;
-      S.preFault = null;
-      S.fault = pf;
+      var pf = S.preFault; S.preFault = null; S.fault = pf;
+      renderFaults(S.device);
+      renderIssues(S.device, pf);
       go(4);
       return;
     }
 
+    renderFaults(S.device);
     go(3);
   }
 
-  // === STEP 3: FAULTS ===
-  function renderFaults(container) {
-    var faults = getAvailableFaults(S.device, _repairsMap);
+  /* =============================================
+     MODEL HELPERS (iPhone visual guide + MacBook search)
+     ============================================= */
+  function renderHelper(dev) {
+    var hT = document.getElementById('qw-hT');
+    var hP = document.getElementById('qw-hP');
+    hT.style.display = '';
+    hP.innerHTML = '';
 
+    hT.onclick = function() { hP.classList.toggle('open'); };
+
+    if (dev === 'iphone') renderIphoneVG(hP);
+    else if (dev === 'macbook') renderMacbookHelper(hP);
+    else renderGenericHelper(hP, dev);
+  }
+
+  function renderIphoneVG(panel) {
+    var vgS = {};
+    var VK = { 1: 'cams', 2: 'edges', 3: 'screen', 4: 'size' };
+    var CDN = 'https://cdn.shopify.com/s/files/1/0728/7111/7053/files/';
+
+    function vgOpt(val, img, lbl) {
+      return '<div class="qw-vg-opt" data-v="' + val + '"><img src="' + img + '" class="qw-vg-img"><div class="qw-vg-lbl">' + lbl + '</div></div>';
+    }
+    function vgSize(val, lbl, det) {
+      return '<div class="qw-vg-opt" data-v="' + val + '"><div style="font-size:22px;font-weight:700;height:70px;display:flex;align-items:center;justify-content:center;">' + lbl.charAt(0) + '</div><div class="qw-vg-lbl">' + lbl + '<br><span style="font-weight:400;color:var(--qw-text-3);font-size:11px;">' + det + '</span></div></div>';
+    }
+
+    var html = '<div class="qw-help-card"><div id="qwVgWiz">';
+    html += '<div class="qw-vg-step on" data-vs="1"><div class="qw-vg-title">Rear cameras</div><div class="qw-vg-sub">What does the back look like?</div><div class="qw-vg-grid">';
+    html += vgOpt('tri_plat', CDN + '17pm.png?v=1766083751', '3 Cameras<br>(Plateau)');
+    html += vgOpt('tri_std', CDN + '16pm.png?v=1766083961', '3 Cameras<br>(Standard)');
+    html += vgOpt('diag', CDN + '15.png?v=1766083751', '2 Cameras<br>(Diagonal)');
+    html += vgOpt('vert', CDN + '16.png?v=1766083751', '2 Cameras<br>(Vertical)');
+    html += vgOpt('single_plat', CDN + 'air.png?v=1766083751', '1 Camera<br>(Plateau)');
+    html += vgOpt('single_std', CDN + '16e.png?v=1766083751', '1 Camera<br>(Standard)');
+    html += '</div></div>';
+
+    html += '<div class="qw-vg-step" data-vs="2"><button class="qw-vg-back" data-from="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back</button><div class="qw-vg-title">Frame shape</div><div class="qw-vg-sub">Check the metal edge</div><div class="qw-vg-grid">';
+    html += vgOpt('flat', CDN + 'squared.png?v=1766085750', 'Flat (Square)');
+    html += vgOpt('curved', CDN + 'round.png?v=1766085749', 'Curved (Round)');
+    html += '</div></div>';
+
+    html += '<div class="qw-vg-step" data-vs="3"><button class="qw-vg-back" data-from="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back</button><div class="qw-vg-title">Screen type</div><div class="qw-vg-sub">Look at the top of the display</div><div class="qw-vg-grid">';
+    html += vgOpt('island', CDN + 'dynamic_island.png?v=1766085749', 'Dynamic Island');
+    html += vgOpt('notch', CDN + 'notch.png?v=1766085750', 'Notch');
+    html += '</div></div>';
+
+    html += '<div class="qw-vg-step" data-vs="4"><button class="qw-vg-back" data-from="4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back</button><div class="qw-vg-title">Size</div><div class="qw-vg-sub">How big is it?</div><div class="qw-vg-grid">';
+    html += vgSize('max', 'Pro Max / Plus', '6.5" - 6.9"');
+    html += vgSize('pro', 'Pro', '5.8" - 6.3"');
+    html += vgSize('std', 'Standard', '4.7" - 6.1"');
+    html += vgSize('mini', 'Mini', '5.4"');
+    html += '</div></div>';
+
+    html += '<div class="qw-vg-step" data-vs="result"><div class="qw-vg-result" id="qwVgResult"></div></div>';
+    html += '</div><button class="qw-help-close">Close</button></div>';
+    panel.innerHTML = html;
+
+    panel.querySelector('.qw-help-close').onclick = function() { panel.classList.remove('open'); };
+
+    function vgGoTo(n) {
+      panel.querySelectorAll('.qw-vg-step').forEach(function(s) { s.classList.remove('on'); });
+      panel.querySelector('.qw-vg-step[data-vs="' + n + '"]').classList.add('on');
+    }
+
+    panel.querySelectorAll('.qw-vg-back').forEach(function(btn) {
+      btn.onclick = function() {
+        var from = parseInt(btn.dataset.from);
+        delete vgS[VK[from]];
+        vgGoTo(from - 1);
+      };
+    });
+
+    panel.querySelectorAll('.qw-vg-opt').forEach(function(o) {
+      o.onclick = function() {
+        var vs = parseInt(o.closest('.qw-vg-step').dataset.vs);
+        vgS[VK[vs]] = o.dataset.v;
+        if (vs === 1 && o.dataset.v === 'single_plat') { vgShowResult(); return; }
+        if (vs === 1 && o.dataset.v === 'tri_plat') { vgS.edges = 'curved'; vgS.screen = 'island'; vgGoTo(4); return; }
+        if (vs === 2 && vgS.cams === 'single_std' && o.dataset.v === 'flat') { vgS.screen = 'notch'; vgGoTo(4); return; }
+        if (vs === 2 && vgS.cams === 'single_std' && o.dataset.v === 'curved') { vgS.screen = 'home'; vgGoTo(4); return; }
+        if (vs >= 4) { vgShowResult(); return; }
+        vgGoTo(vs + 1);
+      };
+    });
+
+    function vgShowResult() {
+      var matches = VG_DB.filter(function(m) {
+        if (vgS.cams && m.cams !== vgS.cams) return false;
+        if (vgS.edges && m.edges !== vgS.edges) return false;
+        if (vgS.screen && m.screen !== vgS.screen) return false;
+        if (vgS.size && m.size !== vgS.size) return false;
+        return true;
+      });
+      var rc = document.getElementById('qwVgResult');
+      if (matches.length === 0) {
+        rc.innerHTML = '<div class="qw-vg-title">No match found</div><button class="qw-vg-btn qw-vg-btn-s" id="qwVgReset">Try again</button>';
+        document.getElementById('qwVgReset').onclick = vgReset;
+      } else if (matches.length === 1) {
+        var m = matches[0];
+        rc.innerHTML = '<img src="' + m.img + '" style="max-width:180px;max-height:140px;object-fit:contain;margin-bottom:12px;"><div class="qw-vg-result-name">' + m.n + '</div><button class="qw-vg-btn qw-vg-btn-p" id="qwVgSel">Select this model</button> <button class="qw-vg-btn qw-vg-btn-s" id="qwVgReset2">Try again</button>';
+        document.getElementById('qwVgSel').onclick = function() { vgSelect(m.n); };
+        document.getElementById('qwVgReset2').onclick = vgReset;
+      } else {
+        var h = '<div class="qw-vg-title" style="margin-bottom:14px;">Which one?</div><div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;">';
+        matches.forEach(function(m) {
+          h += '<div class="qw-vg-opt" style="width:130px;" data-vgname="' + esc(m.n) + '"><img src="' + m.img + '" style="max-width:100px;max-height:80px;object-fit:contain;"><div class="qw-vg-lbl">' + m.n + '</div></div>';
+        });
+        h += '</div><button class="qw-vg-btn qw-vg-btn-s" style="margin-top:14px;" id="qwVgReset3">Try again</button>';
+        rc.innerHTML = h;
+        rc.querySelectorAll('[data-vgname]').forEach(function(el) {
+          el.onclick = function() { vgSelect(el.dataset.vgname); };
+        });
+        document.getElementById('qwVgReset3').onclick = vgReset;
+      }
+      vgGoTo('result');
+    }
+
+    function vgReset() {
+      for (var k in vgS) delete vgS[k];
+      vgGoTo(1);
+    }
+
+    function vgSelect(name) {
+      /* Find the corresponding model in MODELS and pick it */
+      var groups = MODELS[S.device] || [];
+      for (var g = 0; g < groups.length; g++) {
+        for (var m = 0; m < groups[g].models.length; m++) {
+          if (groups[g].models[m].name.indexOf(name) !== -1 || name.indexOf(groups[g].models[m].name) !== -1) {
+            panel.classList.remove('open');
+            pickModel(groups[g].models[m].name, groups[g].models[m].collectionHandle, null);
+            return;
+          }
+        }
+      }
+      /* Fallback: just set the model name and proceed */
+      S.model = name;
+      panel.classList.remove('open');
+      renderFaults(S.device);
+      go(3);
+    }
+  }
+
+  function renderMacbookHelper(panel) {
+    panel.innerHTML =
+      '<div class="qw-help-card"><div class="qw-help-body on"><p class="qw-help-inst">Flip your MacBook over. The model number (e.g. <code>A1989</code>) is printed on the bottom case near the hinge.</p><div class="qw-help-row"><input class="qw-help-input" type="text" id="qwMbSearch" placeholder="Type model number, e.g. A1989"></div><div class="qw-help-results" id="qwMbRes"></div></div><button class="qw-help-close">Close</button></div>';
+    panel.querySelector('.qw-help-close').onclick = function() { panel.classList.remove('open'); };
+
+    function mbFilter() {
+      var q = (document.getElementById('qwMbSearch').value || '').trim().toUpperCase();
+      var r = document.getElementById('qwMbRes'); r.innerHTML = '';
+      var f = q ? MB_NUMS.filter(function(n) { return n.n.toUpperCase().indexOf(q) !== -1 || n.m.toUpperCase().indexOf(q) !== -1; }) : MB_NUMS.slice(0, 8);
+      if (!f.length) { r.innerHTML = '<div style="padding:10px;font-size:13px;color:var(--qw-text-3);">No match. Check the number and try again.</div>'; return; }
+      f.forEach(function(n) {
+        var d = document.createElement('div'); d.className = 'qw-help-hit';
+        d.innerHTML = '<span class="qw-hn">' + n.n + '</span><span class="qw-hm">' + n.m + '</span><span class="qw-hs">Select</span>';
+        d.onclick = function() {
+          /* Find model in MODELS by matching name */
+          var groups = MODELS['macbook'] || [];
+          for (var g = 0; g < groups.length; g++) {
+            for (var m = 0; m < groups[g].models.length; m++) {
+              if (groups[g].models[m].name === n.m || n.m.indexOf(groups[g].models[m].name) !== -1) {
+                panel.classList.remove('open');
+                pickModel(groups[g].models[m].name, groups[g].models[m].collectionHandle, null);
+                return;
+              }
+            }
+          }
+          /* Fallback */
+          S.model = n.m;
+          panel.classList.remove('open');
+          renderFaults(S.device);
+          go(3);
+        };
+        r.appendChild(d);
+      });
+    }
+
+    document.getElementById('qwMbSearch').oninput = mbFilter;
+    mbFilter();
+  }
+
+  function renderGenericHelper(panel, dev) {
+    panel.innerHTML = '<div class="qw-help-card"><div style="padding:20px;"><p class="qw-help-inst">Go to <code>Settings > General > About</code> on your device. The model number is listed there. If you can\'t find it, just pick the closest match from the list above.</p></div><button class="qw-help-close">Close</button></div>';
+    panel.querySelector('.qw-help-close').onclick = function() { panel.classList.remove('open'); };
+  }
+
+  /* =============================================
+     STEP 3: FAULTS
+     ============================================= */
+  function renderFaults(dev) {
+    var c = document.getElementById('qw-fC'); c.innerHTML = '';
+    document.getElementById('qw-s3t').textContent = "What's wrong with your " + DN[dev] + "?";
+
+    var faults = getAvailableFaults(dev, _repairsMap);
     if (faults.length === 0) {
-      container.innerHTML = '<div class="qw-empty">' +
-        '<p>We\'re setting up pricing for this model. Get in touch for a quote.</p>' +
-        '<a href="/pages/contact" class="qw-btn">Contact us</a>' +
-        '</div>';
+      c.innerHTML = '<div class="qw-empty"><p>We\'re setting up pricing for this model. Get in touch for a quote.</p><a href="/pages/contact" class="qw-btn-book">Contact us</a></div>';
       return;
     }
 
-    var html = '<div class="qw-back-row"><button class="qw-back" tabindex="0">&larr; Back</button></div>';
-    html += '<h3 class="qw-step-label">What\'s the issue with your ' + escapeHtml(S.model) + '?</h3>';
-    html += '<div class="qw-grid qw-grid-3">';
-    for (var i = 0; i < faults.length; i++) {
-      var f = faults[i];
-      var iconHtml = FAULT_ICONS[f.icon] || '';
-      html += '<button class="qw-card qw-fault-card" data-fault="' + escapeHtml(f.v) + '" tabindex="0">';
-      html += '<div class="qw-card-icon">' + iconHtml + '</div>';
-      html += '<div class="qw-card-label">' + escapeHtml(f.label) + '</div>';
-      html += '</button>';
-    }
-    html += '</div>';
-    container.innerHTML = html;
-
-    container.querySelector('.qw-back').addEventListener('click', function() { go(2); });
-
-    var cards = container.querySelectorAll('.qw-fault-card');
-    for (var c = 0; c < cards.length; c++) {
-      cards[c].addEventListener('click', function() {
-        pickFault(this.getAttribute('data-fault'));
-      });
-    }
+    faults.forEach(function(f) {
+      var card = document.createElement('div');
+      card.className = 'qw-f-card'; card.tabIndex = 0; card.setAttribute('role', 'button');
+      card.innerHTML = '<div class="qw-f-ico">' + (FAULT_ICONS[f.icon] || FAULT_ICONS.other) + '</div><span class="qw-f-lbl">' + esc(f.label) + '</span>';
+      card.onclick = function() { pickFault(f.v, card); };
+      card.onkeydown = function(e) { if (e.key === 'Enter') pickFault(f.v, card); };
+      c.appendChild(card);
+    });
   }
 
-  function pickFault(faultValue) {
-    S.fault = faultValue;
-    S.issue = null;
-
-    if (window.posthog) {
-      posthog.capture('wizard_step', { step: 4, device: S.device, model: S.model, fault: S.fault });
-    }
-
-    go(4);
+  function pickFault(v, el) {
+    S.fault = v; S.issue = null;
+    document.querySelectorAll('#qw-s3 .qw-f-card').forEach(function(c) { c.classList.remove('sel'); });
+    el.classList.add('sel');
+    if (window.posthog) posthog.capture('wizard_step', { step: 4, device: S.device, model: S.model, fault: S.fault });
+    setTimeout(function() { renderIssues(S.device, v); go(4); }, 150);
   }
 
-  // === STEP 4: ISSUES ===
-  function renderIssues(container) {
-    var issues = getAvailableIssues(S.device, S.fault, _repairsMap);
+  /* =============================================
+     STEP 4: ISSUES + RESOLUTION
+     ============================================= */
+  function renderIssues(dev, fault) {
+    var c = document.getElementById('qw-tC'); c.innerHTML = '';
+    document.getElementById('qw-rP').style.display = 'none';
+    document.getElementById('qw-rP').innerHTML = '';
+
+    var issues = getAvailableIssues(dev, fault, _repairsMap);
+    document.getElementById('qw-s4t').textContent = fault;
+    document.getElementById('qw-s4s').textContent = 'Which best describes the problem?';
+
+    /* Get the fault icon for this category */
+    var faultObj = (FAULTS[dev] || []).find(function(f) { return f.v === fault; });
+    var fi = FAULT_ICONS[(faultObj && faultObj.icon) || 'other'] || FAULT_ICONS.other;
 
     if (issues.length === 0) {
-      container.innerHTML = '<div class="qw-empty">' +
-        '<p>No specific issues found. Get in touch and we\'ll help.</p>' +
-        '<a href="/pages/contact" class="qw-btn">Contact us</a>' +
-        '</div>';
+      c.innerHTML = '<div class="qw-empty"><p>No specific issues found. Get in touch and we\'ll help.</p><a href="/pages/contact" class="qw-btn-book">Contact us</a></div>';
       return;
     }
 
-    var html = '<div class="qw-back-row"><button class="qw-back" tabindex="0">&larr; Back</button></div>';
-    html += '<h3 class="qw-step-label">Which best describes your issue?</h3>';
-    html += '<div class="qw-issue-list">';
-    for (var i = 0; i < issues.length; i++) {
-      var iss = issues[i];
-      html += '<button class="qw-issue-btn" data-index="' + i + '" tabindex="0">';
-      html += escapeHtml(iss.label);
-      html += '</button>';
-    }
-    html += '</div>';
-    container.innerHTML = html;
-
-    container.querySelector('.qw-back').addEventListener('click', function() { go(3); });
-
-    var filteredIssues = issues;
-    var btns = container.querySelectorAll('.qw-issue-btn');
-    for (var b = 0; b < btns.length; b++) {
-      btns[b].addEventListener('click', function() {
-        var idx = parseInt(this.getAttribute('data-index'), 10);
-        pickIssue(filteredIssues[idx]);
-      });
-    }
+    issues.forEach(function(iss) {
+      var card = document.createElement('div');
+      card.className = 'qw-t-card'; card.tabIndex = 0; card.setAttribute('role', 'button');
+      card.innerHTML = '<div class="qw-tw">' + fi + '</div><span class="qw-tt">' + esc(iss.label) + '</span>';
+      card.onclick = function() { pickIssue(iss, card); };
+      card.onkeydown = function(e) { if (e.key === 'Enter') pickIssue(iss, card); };
+      c.appendChild(card);
+    });
   }
 
-  function pickIssue(iss) {
+  function pickIssue(iss, el) {
     S.issue = iss.label;
-
-    if (window.posthog) {
-      posthog.capture('wizard_step', { step: 'resolution', device: S.device, model: S.model, fault: S.fault });
-    }
-
+    document.querySelectorAll('#qw-s4 .qw-t-card').forEach(function(c) { c.classList.remove('sel'); });
+    el.classList.add('sel');
+    if (window.posthog) posthog.capture('wizard_step', { step: 'resolution', device: S.device, model: S.model, fault: S.fault });
     showResolution(iss);
   }
 
-  // === RESOLUTION DISPATCHER ===
+  /* =============================================
+     RESOLUTION: REPAIR / DIAGNOSTIC / CONTACT
+     ============================================= */
   async function showResolution(iss) {
-    var result = document.getElementById('qw-result');
-    if (!result) return;
+    var p = document.getElementById('qw-rP');
+    p.style.display = 'block';
+    p.innerHTML = '<div class="qw-loading"><div class="qw-spinner"></div></div>';
 
-    var content = document.getElementById('qw-content');
-    if (content) content.innerHTML = '<div class="qw-back-row"><button class="qw-back" tabindex="0">&larr; Start over</button></div>';
+    /* Update progress to step 4 (Result) */
+    document.querySelectorAll('.qw-prog-s').forEach(function(el) {
+      var s = parseInt(el.dataset.s); el.classList.remove('on', 'done');
+      if (s < 4) el.classList.add('done'); else if (s === 4) el.classList.add('on');
+    });
 
-    var backBtn = content && content.querySelector('.qw-back');
-    if (backBtn) backBtn.addEventListener('click', function() { go(1); });
-
-    switch(iss.route) {
-      case 'repair':
-        await showRepairCard(iss, result);
-        break;
-      case 'diagnostic':
-        await showDiagnosticCard(iss, result);
-        break;
-      case 'contact':
-        showContactCard(iss, result);
-        break;
-    }
+    if (iss.route === 'repair') await showRepairCard(iss, p);
+    else if (iss.route === 'diagnostic') await showDiagnosticCard(iss, p);
+    else showContactCard(iss, p);
 
     if (window.posthog) {
-      posthog.capture('wizard_resolution', {
-        route: iss.route,
-        device: S.device,
-        model: S.model,
-        fault: S.fault,
-        issue: S.issue
-      });
+      posthog.capture('wizard_resolution', { route: iss.route, device: S.device, model: S.model, fault: S.fault, issue: S.issue });
     }
-
-    var heading = result.querySelector('h3, h4');
-    if (heading) heading.focus();
+    setTimeout(function() { p.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 80);
   }
 
-  // === TEMPLATE A: REPAIR CARD ===
+  /* ---- REPAIR CARD ---- */
   async function showRepairCard(iss, container) {
     var product = _repairsMap[iss.repairType];
-    if (!product) {
-      showContactCard(iss, container);
-      return;
-    }
+    if (!product) { showContactCard(iss, container); return; }
 
-    var html = '';
-
-    if (iss.urgent) {
-      html += '<div class="qw-urgent" role="alert">';
-      html += '<span>\u26A0\uFE0F Safety concern: stop using the device and don\'t charge it.</span>';
-      html += '</div>';
-    }
-
-    html += '<div class="qw-resolution qw-resolution-repair">';
-    html += '<div class="qw-badge qw-badge-green"><span class="qw-badge-icon">\u2713</span> We can fix this</div>';
-    html += '<h3 tabindex="-1">' + escapeHtml(product.title) + '</h3>';
-    html += '<p class="qw-copy">' + escapeHtml(iss.copy) + '</p>';
-    html += '<div class="qw-price" id="qw-price"><div class="qw-skeleton-price"></div></div>';
-    html += '<div class="qw-ctas">';
-    html += '<a href="/products/' + product.handle + '" class="qw-btn qw-btn-primary">Book this repair</a>';
-    html += '<button class="qw-btn qw-btn-secondary qw-question-toggle" tabindex="0">I have a question</button>';
-    html += '</div>';
-    html += '</div>';
-    container.innerHTML = html;
-
-    wireQuestionToggle(container);
-
-    var bookBtn = container.querySelector('.qw-btn-primary');
-    if (bookBtn) {
-      bookBtn.addEventListener('click', function() {
-        if (window.posthog) {
-          posthog.capture('wizard_conversion', {
-            action: 'book_repair', device: S.device, model: S.model, fault: S.fault, issue: S.issue
-          });
-        }
-      });
-    }
-
-    // Fetch full product for pricing
     var fullProduct = await fetchProduct(product.handle);
-    var priceEl = document.getElementById('qw-price');
-    if (fullProduct && priceEl) {
-      var price = fullProduct.variants && fullProduct.variants[0] ? fullProduct.variants[0].price : null;
-      if (price) {
-        priceEl.innerHTML = '<span class="qw-price-value">From \u00A3' + price + '</span>';
-      } else {
-        priceEl.innerHTML = '<a href="/products/' + product.handle + '" class="qw-price-link">View pricing \u2192</a>';
-      }
-    } else if (priceEl) {
-      priceEl.innerHTML = '<a href="/products/' + product.handle + '" class="qw-price-link">View pricing \u2192</a>';
+    var price = fullProduct && fullProduct.variants && fullProduct.variants[0] ? fullProduct.variants[0].price : null;
+    var basePrice = price ? parseInt(price) : null;
+
+    var urgentHtml = '';
+    if (iss.urgent) {
+      urgentHtml = '<div class="qw-urgent" role="alert"><span>\u26A0\uFE0F Safety concern: stop using the device and don\'t charge it.</span></div>';
     }
+
+    var priceHtml = '';
+    if (basePrice) {
+      priceHtml = '<div class="qw-price-from">From</div><div class="qw-price-big">\u00A3' + basePrice + '</div>';
+    }
+
+    var badges = svcBadge('warranty', '2-year warranty') +
+      svcBadge('turnaround', '2-3 working days') +
+      svcBadge('express', 'Same-day / next-day (pre-book required)') +
+      svcBadge('parts', 'Genuine Apple parts') +
+      svcBadge('service', 'Walk-in, Collection & Delivery');
+
+    /* Speed tiers: if product has multiple variants */
+    var speedHtml = '';
+    if (fullProduct && fullProduct.variants && fullProduct.variants.length > 1) {
+      var tOpts = '';
+      fullProduct.variants.forEach(function(v, i) {
+        var varPrice = parseInt(v.price);
+        var add = varPrice - basePrice;
+        tOpts += '<div class="qw-opt-card' + (i === 0 ? ' sel' : '') + '" data-opt="speed" data-add="' + add + '" tabindex="0">';
+        tOpts += '<div class="qw-opt-name">' + esc(v.title) + '</div>';
+        tOpts += '<div class="qw-opt-price' + (add === 0 ? ' free' : '') + '">' + (add === 0 ? 'Included' : '+\u00A3' + add) + '</div>';
+        tOpts += '</div>';
+      });
+      speedHtml = '<div class="qw-opt-section"><div class="qw-opt-label">Repair turnaround</div><div class="qw-opt-row">' + tOpts + '</div></div>';
+    }
+
+    /* Service choice */
+    var svcHtml =
+      '<div class="qw-opt-section"><div class="qw-opt-label">How to get the device to us</div><div class="qw-opt-row">' +
+        '<div class="qw-opt-card sel" data-opt="svc" data-add="0" tabindex="0"><span class="qw-pop-tag">Popular</span><div class="qw-opt-name">Walk-in</div><div class="qw-opt-meta">12 Margaret St, W1W 8JQ</div><div class="qw-opt-price free">Included</div></div>' +
+        '<div class="qw-opt-card" data-opt="svc" data-add="20" tabindex="0"><div class="qw-opt-name">Collection & Delivery</div><div class="qw-opt-meta">We collect and return your device</div><div class="qw-opt-price">+\u00A320</div></div>' +
+      '</div></div>';
+
+    var totalHtml = '';
+    if (basePrice) {
+      totalHtml = '<div class="qw-price-total"><span class="qw-price-total-label">Total</span><span class="qw-price-total-val" id="qwPriceTotal">\u00A3' + basePrice + '</span></div>';
+    }
+
+    container.innerHTML = urgentHtml +
+      '<div class="qw-res" id="qwResCard" data-base="' + (basePrice || 0) + '">' +
+        '<div class="qw-res-top">' +
+          '<div class="qw-res-badge qw-badge-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>We can fix this</div>' +
+          '<h3 class="qw-res-h">' + esc(product.title) + '</h3>' +
+          '<p class="qw-res-p">' + esc(iss.copy) + '</p>' +
+          priceHtml +
+        '</div>' +
+        '<div class="qw-svc">' + badges + '</div>' +
+        '<div style="padding:0 24px 8px;">' + speedHtml + svcHtml + '</div>' +
+        totalHtml +
+        '<div class="qw-res-cta">' +
+          '<a href="/products/' + product.handle + '" class="qw-btn-book">Book this repair <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>' +
+          '<button class="qw-btn-q" id="qwToggleCF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>I have a question first</button>' +
+        '</div>' +
+        buildContactAccordion() +
+      '</div>' +
+      '<button class="qw-restart" id="qwRestart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 105.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg> Start over</button>';
+
+    wireOptCards(container);
+    wireCFToggle(container);
+    wireRestart(container);
+    wireBookTracking(container);
   }
 
-  // === TEMPLATE B: DIAGNOSTIC CARD ===
+  /* ---- DIAGNOSTIC CARD ---- */
   async function showDiagnosticCard(iss, container) {
     var diagProduct = _repairsMap['diagnostic'];
-    if (!diagProduct) {
-      showContactCard(iss, container);
-      return;
-    }
+    if (!diagProduct) { showContactCard(iss, container); return; }
 
-    var html = '';
-
-    if (iss.urgent) {
-      html += '<div class="qw-urgent" role="alert">';
-      html += '<span>\u26A0\uFE0F Safety concern: stop using the device and don\'t charge it.</span>';
-      html += '</div>';
-    }
-
-    html += '<div class="qw-resolution qw-resolution-diagnostic">';
-    html += '<div class="qw-badge qw-badge-amber"><span class="qw-badge-icon">\uD83D\uDD0D</span> We need to take a look</div>';
-    html += '<h3 tabindex="-1">Book a Diagnostic</h3>';
-    html += '<p class="qw-copy">' + escapeHtml(iss.copy) + '</p>';
-    html += '<div class="qw-price" id="qw-price"><div class="qw-skeleton-price"></div></div>';
-
-    if (iss.likelyRepair && _repairsMap[iss.likelyRepair]) {
-      html += '<div class="qw-likely-repair" id="qw-likely-price"><div class="qw-skeleton-price"></div></div>';
-    }
-
-    html += '<div class="qw-ctas">';
-    html += '<a href="/products/' + diagProduct.handle + '" class="qw-btn qw-btn-primary">Book a Diagnostic</a>';
-    html += '<button class="qw-btn qw-btn-secondary qw-question-toggle" tabindex="0">I have a question</button>';
-    html += '</div>';
-    html += '</div>';
-    container.innerHTML = html;
-
-    wireQuestionToggle(container);
-
-    var bookBtn = container.querySelector('.qw-btn-primary');
-    if (bookBtn) {
-      bookBtn.addEventListener('click', function() {
-        if (window.posthog) {
-          posthog.capture('wizard_conversion', {
-            action: 'book_diagnostic', device: S.device, model: S.model, fault: S.fault, issue: S.issue
-          });
-        }
-      });
-    }
-
-    // Fetch diagnostic product price
     var fullDiag = await fetchProduct(diagProduct.handle);
-    var priceEl = document.getElementById('qw-price');
-    if (fullDiag && priceEl) {
-      var price = fullDiag.variants && fullDiag.variants[0] ? fullDiag.variants[0].price : null;
-      if (price) {
-        priceEl.innerHTML = '<span class="qw-price-value">From \u00A3' + price + '</span>';
-      } else {
-        priceEl.innerHTML = '<a href="/products/' + diagProduct.handle + '" class="qw-price-link">View pricing \u2192</a>';
-      }
-    } else if (priceEl) {
-      priceEl.innerHTML = '<a href="/products/' + diagProduct.handle + '" class="qw-price-link">View pricing \u2192</a>';
-    }
+    var diagPrice = fullDiag && fullDiag.variants && fullDiag.variants[0] ? fullDiag.variants[0].price : null;
+    var basePrice = diagPrice ? parseInt(diagPrice) : null;
 
-    // Fetch likely repair price (SEPARATE try/catch)
-    if (iss.likelyRepair && _repairsMap[iss.likelyRepair]) {
-      var likelyProduct = _repairsMap[iss.likelyRepair];
-      var likelyEl = document.getElementById('qw-likely-price');
-      try {
-        var fullLikely = await fetchProduct(likelyProduct.handle);
-        if (fullLikely && likelyEl) {
-          var lp = fullLikely.variants && fullLikely.variants[0] ? fullLikely.variants[0].price : null;
-          if (lp && iss.likelyCopy) {
-            likelyEl.innerHTML = '<p class="qw-likely-text">' + escapeHtml(iss.likelyCopy) + ': from \u00A3' + lp + '</p>';
-          } else {
-            likelyEl.innerHTML = '';
-          }
-        } else if (likelyEl) {
-          likelyEl.innerHTML = '';
-        }
-      } catch(e) {
-        if (likelyEl) likelyEl.innerHTML = '';
-      }
-    }
-  }
-
-  // === TEMPLATE C: CONTACT CARD ===
-  function showContactCard(iss, container) {
-    var html = '';
-
+    var urgentHtml = '';
     if (iss.urgent) {
-      html += '<div class="qw-urgent" role="alert">';
-      html += '<span>\u26A0\uFE0F Safety concern: stop using the device and don\'t charge it.</span>';
-      html += '</div>';
+      urgentHtml = '<div class="qw-urgent" role="alert"><span>\u26A0\uFE0F Safety concern: stop using the device and don\'t charge it.</span></div>';
     }
 
-    html += '<div class="qw-resolution qw-resolution-contact">';
-    html += '<div class="qw-badge qw-badge-blue"><span class="qw-badge-icon">\uD83D\uDCAC</span> Let\'s chat about this</div>';
-    html += '<h3 tabindex="-1">Get in Touch</h3>';
-    html += '<p class="qw-copy">' + escapeHtml(iss.copy) + '</p>';
-    html += '<form class="qw-contact-form" id="qw-contact-form" novalidate>';
-    html += '<div class="qw-field"><label for="qw-name">Name</label><input type="text" id="qw-name" name="name" required minlength="2" autocomplete="name"><span class="qw-error" id="qw-name-err"></span></div>';
-    html += '<div class="qw-field"><label for="qw-email">Email</label><input type="email" id="qw-email" name="email" required autocomplete="email"><span class="qw-error" id="qw-email-err"></span></div>';
-    html += '<div class="qw-field"><label for="qw-phone">Phone</label><input type="tel" id="qw-phone" name="phone" required autocomplete="tel"><span class="qw-error" id="qw-phone-err"></span></div>';
-    html += '<div class="qw-field"><label for="qw-message">Message (optional)</label><textarea id="qw-message" name="message" rows="3"></textarea></div>';
-    html += '<button type="submit" class="qw-btn qw-btn-primary qw-submit-btn" disabled>Send</button>';
-    html += '</form>';
-    html += '</div>';
-    container.innerHTML = html;
-
-    wireContactForm();
-  }
-
-  // === SHARED FORM VALIDATION ===
-  function validateFormFields(nameEl, emailEl, phoneEl, nameErrEl, emailErrEl, phoneErrEl, submitBtn) {
-    var valid = true;
-
-    // Name: required, min 2 chars
-    if (!nameEl.value || nameEl.value.trim().length < 2) {
-      nameErrEl.textContent = 'Please enter your name';
-      valid = false;
-    } else {
-      nameErrEl.textContent = '';
+    var priceHtml = '';
+    if (basePrice) {
+      priceHtml = '<div class="qw-price-from">From</div><div class="qw-price-big">\u00A3' + basePrice + '</div>';
     }
 
-    // Email: required, must contain @ and .
-    var ev = emailEl.value.trim();
-    if (!ev || ev.indexOf('@') === -1 || ev.indexOf('.') === -1) {
-      emailErrEl.textContent = 'Please enter a valid email';
-      valid = false;
-    } else {
-      emailErrEl.textContent = '';
-    }
-
-    // Phone: required, min 8 digits
-    var digits = (phoneEl.value || '').replace(/\D/g, '');
-    if (digits.length < 8) {
-      phoneErrEl.textContent = 'Please enter a valid phone number';
-      valid = false;
-    } else {
-      phoneErrEl.textContent = '';
-    }
-
-    submitBtn.disabled = !valid;
-    return valid;
-  }
-
-  // === CONTACT FORM WIRING ===
-  function wireContactForm() {
-    var form = document.getElementById('qw-contact-form');
-    if (!form) return;
-
-    var nameIn = document.getElementById('qw-name');
-    var emailIn = document.getElementById('qw-email');
-    var phoneIn = document.getElementById('qw-phone');
-    var submitBtn = form.querySelector('.qw-submit-btn');
-
-    function validate() {
-      return validateFormFields(
-        nameIn, emailIn, phoneIn,
-        document.getElementById('qw-name-err'),
-        document.getElementById('qw-email-err'),
-        document.getElementById('qw-phone-err'),
-        submitBtn
-      );
-    }
-
-    nameIn.addEventListener('input', validate);
-    emailIn.addEventListener('input', validate);
-    phoneIn.addEventListener('input', validate);
-
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      if (!validate()) return;
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Sending...';
-
-      var payload = {
-        source: 'quote-wizard',
-        device: S.device || '',
-        model: S.model || '',
-        fault: S.fault || '',
-        issue: S.issue || '',
-        route: 'contact',
-        name: nameIn.value.trim(),
-        email: emailIn.value.trim(),
-        phone: phoneIn.value.trim(),
-        message: (document.getElementById('qw-message').value || '').trim(),
-        url: window.location.href,
-        timestamp: new Date().toISOString()
-      };
-
-      fetch('https://icorrect.app.n8n.cloud/workflow/tNQphRiUo0L8SdBn', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      })
-      .then(function(res) {
-        if (res.ok) {
-          form.innerHTML = '<div class="qw-success"><p>Thanks! We\'ll be in touch shortly.</p></div>';
-          if (window.posthog) {
-            posthog.capture('wizard_conversion', {
-              action: 'contact_submit', device: S.device, model: S.model, fault: S.fault, issue: S.issue
-            });
-          }
-        } else {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Send';
-          var errDiv = form.querySelector('.qw-form-error') || document.createElement('div');
-          errDiv.className = 'qw-form-error';
-          errDiv.textContent = 'Something went wrong. Please try again.';
-          if (!form.querySelector('.qw-form-error')) form.appendChild(errDiv);
+    /* Likely repair price */
+    var likelyHtml = '';
+    if (iss.likelyRepair && _repairsMap[iss.likelyRepair]) {
+      try {
+        var likelyProd = await fetchProduct(_repairsMap[iss.likelyRepair].handle);
+        if (likelyProd && likelyProd.variants && likelyProd.variants[0] && iss.likelyCopy) {
+          likelyHtml = '<div class="qw-likely"><p class="qw-likely-text">' + esc(iss.likelyCopy) + ': from \u00A3' + likelyProd.variants[0].price + '</p></div>';
         }
-      })
-      .catch(function() {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Send';
-        var errDiv = form.querySelector('.qw-form-error') || document.createElement('div');
-        errDiv.className = 'qw-form-error';
-        errDiv.textContent = 'Something went wrong. Please try again.';
-        if (!form.querySelector('.qw-form-error')) form.appendChild(errDiv);
-      });
+      } catch(e) {}
+    }
+
+    var badges = svcBadge('warranty', '2-year warranty') +
+      svcBadge('parts', 'Genuine Apple parts') +
+      svcBadge('service', 'Walk-in, Collection & Delivery');
+
+    /* Service choice */
+    var svcHtml =
+      '<div class="qw-opt-section"><div class="qw-opt-label">How to get the device to us</div><div class="qw-opt-row">' +
+        '<div class="qw-opt-card sel" data-opt="svc" data-add="0" tabindex="0"><span class="qw-pop-tag">Popular</span><div class="qw-opt-name">Walk-in</div><div class="qw-opt-meta">12 Margaret St, W1W 8JQ</div><div class="qw-opt-price free">Included</div></div>' +
+        '<div class="qw-opt-card" data-opt="svc" data-add="20" tabindex="0"><div class="qw-opt-name">Collection & Delivery</div><div class="qw-opt-meta">We collect and return your device</div><div class="qw-opt-price">+\u00A320</div></div>' +
+      '</div></div>';
+
+    var totalHtml = '';
+    if (basePrice) {
+      totalHtml = '<div class="qw-price-total"><span class="qw-price-total-label">Total</span><span class="qw-price-total-val" id="qwPriceTotal">\u00A3' + basePrice + '</span></div>';
+    }
+
+    container.innerHTML = urgentHtml +
+      '<div class="qw-res" id="qwResCard" data-base="' + (basePrice || 0) + '">' +
+        '<div class="qw-res-top">' +
+          '<div class="qw-res-badge qw-badge-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>We need to take a look</div>' +
+          '<h3 class="qw-res-h">Book a Diagnostic</h3>' +
+          '<p class="qw-res-p">' + esc(iss.copy) + '</p>' +
+          priceHtml +
+          likelyHtml +
+        '</div>' +
+        '<div class="qw-svc">' + badges + '</div>' +
+        '<div style="padding:0 24px 8px;">' + svcHtml + '</div>' +
+        totalHtml +
+        '<div class="qw-res-cta">' +
+          '<a href="/products/' + diagProduct.handle + '" class="qw-btn-book">Book a Diagnostic <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>' +
+          '<button class="qw-btn-q" id="qwToggleCF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>I have a question first</button>' +
+        '</div>' +
+        buildContactAccordion() +
+      '</div>' +
+      '<button class="qw-restart" id="qwRestart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 105.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg> Start over</button>';
+
+    wireOptCards(container);
+    wireCFToggle(container);
+    wireRestart(container);
+    wireBookTracking(container);
+  }
+
+  /* ---- CONTACT CARD ---- */
+  function showContactCard(iss, container) {
+    var urgentHtml = '';
+    if (iss.urgent) {
+      urgentHtml = '<div class="qw-urgent" role="alert"><span>\u26A0\uFE0F Safety concern: stop using the device and don\'t charge it.</span></div>';
+    }
+
+    container.innerHTML = urgentHtml +
+      '<div class="qw-res">' +
+        '<div class="qw-res-top">' +
+          '<div class="qw-res-badge qw-badge-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>Let\'s chat about this</div>' +
+          '<h3 class="qw-res-h">Get in Touch</h3>' +
+          '<p class="qw-res-p">' + esc(iss.copy) + '</p>' +
+        '</div>' +
+        '<div class="qw-c-inner-open">' +
+          '<div class="qw-c-sum"><strong>Device:</strong> ' + (DN[S.device] || '') + ' &bull; <strong>Model:</strong> ' + esc(S.model || 'N/A') + ' &bull; <strong>Fault:</strong> ' + esc(S.fault || 'N/A') + ' &bull; <strong>Issue:</strong> ' + esc(S.issue || 'N/A') + '</div>' +
+          '<form class="qw-cf" id="qwCFDirect" novalidate>' +
+            '<div class="qw-f-row two"><div class="qw-f-grp"><label class="qw-f-lbl" for="qwCn">Name<span class="qw-req">*</span></label><input class="qw-f-inp" type="text" id="qwCn" placeholder="Full name" required></div><div class="qw-f-grp"><label class="qw-f-lbl" for="qwCe">Email<span class="qw-req">*</span></label><input class="qw-f-inp" type="email" id="qwCe" placeholder="you@email.com" required></div></div>' +
+            '<div class="qw-f-row"><div class="qw-f-grp"><label class="qw-f-lbl" for="qwCp">Phone<span class="qw-req">*</span></label><input class="qw-f-inp" type="tel" id="qwCp" placeholder="+44 7000 000000" required></div></div>' +
+            '<div class="qw-f-row"><div class="qw-f-grp"><label class="qw-f-lbl" for="qwCm">Your question</label><textarea class="qw-f-ta" id="qwCm" placeholder="What do you need help with?"></textarea></div></div>' +
+            '<button type="submit" class="qw-f-sub">Send question</button>' +
+          '</form>' +
+          '<div class="qw-f-ok" id="qwFOkDirect"><h3>Sent!</h3><p>We\'ll be in touch shortly.</p></div>' +
+        '</div>' +
+      '</div>' +
+      '<button class="qw-restart" id="qwRestart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 105.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg> Start over</button>';
+
+    wireContactForm(container, 'qwCFDirect', 'qwFOkDirect', 'qwCn', 'qwCe', 'qwCp', 'qwCm', 'contact');
+    wireRestart(container);
+  }
+
+  /* ---- CONTACT ACCORDION (inside repair/diagnostic cards) ---- */
+  function buildContactAccordion() {
+    return '<div class="qw-c-acc" id="qwCAcc">' +
+      '<div class="qw-c-inner" id="qwCWrap">' +
+        '<div class="qw-c-sum"><strong>Device:</strong> ' + (DN[S.device] || '') + ' &bull; <strong>Model:</strong> ' + esc(S.model || 'N/A') + ' &bull; <strong>Fault:</strong> ' + esc(S.fault || 'N/A') + ' &bull; <strong>Issue:</strong> ' + esc(S.issue || 'N/A') + '</div>' +
+        '<form class="qw-cf" id="qwCF" novalidate>' +
+          '<div class="qw-f-row two"><div class="qw-f-grp"><label class="qw-f-lbl" for="qwCFn">Name<span class="qw-req">*</span></label><input class="qw-f-inp" type="text" id="qwCFn" placeholder="Full name" required></div><div class="qw-f-grp"><label class="qw-f-lbl" for="qwCFe">Email<span class="qw-req">*</span></label><input class="qw-f-inp" type="email" id="qwCFe" placeholder="you@email.com" required></div></div>' +
+          '<div class="qw-f-row"><div class="qw-f-grp"><label class="qw-f-lbl" for="qwCFp">Phone<span class="qw-req">*</span></label><input class="qw-f-inp" type="tel" id="qwCFp" placeholder="+44 7000 000000" required></div></div>' +
+          '<div class="qw-f-row"><div class="qw-f-grp"><label class="qw-f-lbl" for="qwCFm">Your question</label><textarea class="qw-f-ta" id="qwCFm" placeholder="What do you need help with?"></textarea></div></div>' +
+          '<button type="submit" class="qw-f-sub">Send question</button>' +
+        '</form>' +
+        '<div class="qw-f-ok" id="qwFOk"><h3>Sent!</h3><p>We\'ll be in touch shortly.</p></div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ---- WIRING FUNCTIONS ---- */
+  function wireOptCards(container) {
+    container.querySelectorAll('.qw-opt-card').forEach(function(card) {
+      card.onclick = function() {
+        var resCard = document.getElementById('qwResCard');
+        if (!resCard) return;
+        var base = parseInt(resCard.dataset.base, 10);
+        var group = card.dataset.opt;
+        card.parentNode.querySelectorAll('.qw-opt-card[data-opt="' + group + '"]').forEach(function(c) { c.classList.remove('sel'); });
+        card.classList.add('sel');
+        var total = base;
+        resCard.querySelectorAll('.qw-opt-card.sel').forEach(function(c) { total += parseInt(c.dataset.add || 0, 10); });
+        var totalEl = document.getElementById('qwPriceTotal');
+        if (totalEl) totalEl.textContent = '\u00A3' + total;
+      };
     });
   }
 
-  // === QUESTION TOGGLE (for repair/diagnostic cards) ===
-  function wireQuestionToggle(container) {
-    var toggle = container.querySelector('.qw-question-toggle');
-    if (!toggle) return;
+  function wireCFToggle(container) {
+    var toggle = container.querySelector('#qwToggleCF');
+    if (toggle) {
+      toggle.onclick = function() {
+        var acc = document.getElementById('qwCAcc');
+        acc.classList.toggle('open');
+        if (acc.classList.contains('open')) {
+          setTimeout(function() { acc.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 180);
+          wireContactForm(container, 'qwCF', 'qwFOk', 'qwCFn', 'qwCFe', 'qwCFp', 'qwCFm', 'question');
+        }
+      };
+    }
+  }
 
-    toggle.addEventListener('click', function() {
-      var existing = container.querySelector('.qw-question-form');
-      if (existing) {
-        existing.remove();
+  function wireContactForm(container, formId, okId, nId, eId, pId, mId, source) {
+    var form = document.getElementById(formId);
+    if (!form || form._wired) return;
+    form._wired = true;
+
+    form.onsubmit = function(e) {
+      e.preventDefault();
+      var n = document.getElementById(nId).value.trim();
+      var em = document.getElementById(eId).value.trim();
+      var ph = document.getElementById(pId).value.trim();
+      var msg = (document.getElementById(mId).value || '').trim();
+
+      if (!n || n.length < 2 || em.indexOf('@') === -1 || ph.replace(/\D/g, '').length < 8) {
+        alert('Please fill in all required fields correctly.');
         return;
       }
 
-      var formHtml = '<div class="qw-question-form">';
-      formHtml += '<form class="qw-contact-form" id="qw-question-form" novalidate>';
-      formHtml += '<div class="qw-field"><label for="qwq-name">Name</label><input type="text" id="qwq-name" name="name" required minlength="2" autocomplete="name"><span class="qw-error" id="qwq-name-err"></span></div>';
-      formHtml += '<div class="qw-field"><label for="qwq-email">Email</label><input type="email" id="qwq-email" name="email" required autocomplete="email"><span class="qw-error" id="qwq-email-err"></span></div>';
-      formHtml += '<div class="qw-field"><label for="qwq-phone">Phone</label><input type="tel" id="qwq-phone" name="phone" required autocomplete="tel"><span class="qw-error" id="qwq-phone-err"></span></div>';
-      formHtml += '<div class="qw-field"><label for="qwq-message">Your question</label><textarea id="qwq-message" name="message" rows="3"></textarea></div>';
-      formHtml += '<button type="submit" class="qw-btn qw-btn-primary qw-submit-btn" disabled>Send</button>';
-      formHtml += '</form>';
-      formHtml += '</div>';
-
-      toggle.insertAdjacentHTML('afterend', formHtml);
-      wireQuestionForm();
-
-      if (window.posthog) {
-        posthog.capture('wizard_conversion', {
-          action: 'question_form', device: S.device, model: S.model, fault: S.fault, issue: S.issue
-        });
-      }
-    });
-  }
-
-  function wireQuestionForm() {
-    var form = document.getElementById('qw-question-form');
-    if (!form) return;
-
-    var nameIn = document.getElementById('qwq-name');
-    var emailIn = document.getElementById('qwq-email');
-    var phoneIn = document.getElementById('qwq-phone');
-    var submitBtn = form.querySelector('.qw-submit-btn');
-
-    function validate() {
-      return validateFormFields(
-        nameIn, emailIn, phoneIn,
-        document.getElementById('qwq-name-err'),
-        document.getElementById('qwq-email-err'),
-        document.getElementById('qwq-phone-err'),
-        submitBtn
-      );
-    }
-
-    nameIn.addEventListener('input', validate);
-    emailIn.addEventListener('input', validate);
-    phoneIn.addEventListener('input', validate);
-
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      if (!validate()) return;
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Sending...';
-
-      var payload = {
-        source: 'quote-wizard-question',
-        device: S.device || '',
-        model: S.model || '',
-        fault: S.fault || '',
-        issue: S.issue || '',
-        route: 'question',
-        name: nameIn.value.trim(),
-        email: emailIn.value.trim(),
-        phone: phoneIn.value.trim(),
-        message: (document.getElementById('qwq-message').value || '').trim(),
-        url: window.location.href,
-        timestamp: new Date().toISOString()
-      };
+      var sub = form.querySelector('.qw-f-sub');
+      sub.disabled = true; sub.textContent = 'Sending...';
 
       fetch('https://icorrect.app.n8n.cloud/workflow/tNQphRiUo0L8SdBn', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      })
-      .then(function(res) {
+        body: JSON.stringify({
+          source: 'quote-wizard-' + source,
+          device: S.device || '', model: S.model || '', fault: S.fault || '', issue: S.issue || '',
+          route: source, name: n, email: em, phone: ph, message: msg,
+          url: window.location.href, timestamp: new Date().toISOString()
+        })
+      }).then(function(res) {
         if (res.ok) {
-          form.innerHTML = '<div class="qw-success"><p>Thanks! We\'ll be in touch shortly.</p></div>';
-          if (window.posthog) {
-            posthog.capture('wizard_conversion', {
-              action: 'question_submit', device: S.device, model: S.model, fault: S.fault, issue: S.issue
-            });
-          }
+          document.getElementById(formId).style.display = 'none';
+          document.getElementById(okId).classList.add('show');
+          if (window.posthog) posthog.capture('wizard_conversion', { action: source + '_submit', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
         } else {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Send';
-          var errDiv = form.querySelector('.qw-form-error') || document.createElement('div');
-          errDiv.className = 'qw-form-error';
-          errDiv.textContent = 'Something went wrong. Please try again.';
-          if (!form.querySelector('.qw-form-error')) form.appendChild(errDiv);
+          sub.disabled = false; sub.textContent = 'Send question';
         }
-      })
-      .catch(function() {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Send';
-        var errDiv = form.querySelector('.qw-form-error') || document.createElement('div');
-        errDiv.className = 'qw-form-error';
-        errDiv.textContent = 'Something went wrong. Please try again.';
-        if (!form.querySelector('.qw-form-error')) form.appendChild(errDiv);
-      });
-    });
+      }).catch(function() { sub.disabled = false; sub.textContent = 'Send question'; });
+    };
   }
 
-  // === PRE-FILL SYSTEM ===
+  function wireRestart(container) {
+    var btn = container.querySelector('#qwRestart');
+    if (btn) btn.onclick = function() { reset(); };
+  }
+
+  function wireBookTracking(container) {
+    var btn = container.querySelector('.qw-btn-book');
+    if (btn) {
+      btn.addEventListener('click', function() {
+        if (window.posthog) posthog.capture('wizard_conversion', { action: 'book_repair', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
+      });
+    }
+  }
+
+  function reset() {
+    S.device = null; S.model = null; S.fault = null; S.issue = null; S.step = 1; S.collectionHandle = null; _repairsMap = {};
+    document.querySelectorAll('.qw-dev').forEach(function(c) { c.classList.remove('sel'); });
+    document.getElementById('qw-rP').style.display = 'none';
+    document.getElementById('qw-rP').innerHTML = '';
+    go(1);
+  }
+
+  /* =============================================
+     BACK BUTTONS
+     ============================================= */
+  document.getElementById('qw-back2').onclick = function() { go(1); };
+  document.getElementById('qw-back3').onclick = function() { go(2); };
+  document.getElementById('qw-back4').onclick = function() { go(3); };
+
+  /* =============================================
+     PRE-FILL SYSTEM
+     ============================================= */
   function findModelByCollection(handle) {
     var devices = ['macbook', 'iphone', 'ipad', 'watch'];
     for (var d = 0; d < devices.length; d++) {
@@ -1748,152 +1403,59 @@ window.WIZARD_CONTEXT = {
     var ctx = CONTEXT;
     if (!ctx) { go(1); return; }
 
-    // Priority 1: Collection handle matches a model
     if (ctx.collectionHandle) {
       var modelMatch = findModelByCollection(ctx.collectionHandle);
       if (modelMatch) {
         S.device = modelMatch.device;
-        S.model = modelMatch.model.name;
-        S.collectionHandle = modelMatch.model.collectionHandle;
-        pickModel(modelMatch.model.name, modelMatch.model.collectionHandle);
+        pickModel(modelMatch.model.name, modelMatch.model.collectionHandle, null);
         return;
       }
     }
 
-    // Priority 2: Device metafield
     if (ctx.device) {
       S.device = ctx.device;
       if (ctx.fault) S.preFault = ctx.fault;
+      renderDevices();
+      renderModels(ctx.device);
       go(2);
       return;
     }
 
-    // No context — start fresh
+    renderDevices();
     go(1);
   }
 
-  // === BROWSER BACK BUTTON ===
+  /* =============================================
+     BROWSER BACK BUTTON
+     ============================================= */
   window.addEventListener('popstate', function(e) {
     if (e.state && typeof e.state.step === 'number') {
       S.device = e.state.device || null;
       S.model = e.state.model || null;
       S.fault = e.state.fault || null;
       S.issue = null;
-      renderStep(e.state.step);
-      updateProgress(e.state.step);
+      document.querySelectorAll('.qw-step').forEach(function(el) { el.classList.remove('on'); });
+      document.getElementById('qw-s' + e.state.step).classList.add('on');
+      updateProg(e.state.step);
     }
   });
 
-  // === INIT ===
+  /* =============================================
+     INIT
+     ============================================= */
   initPrefill();
 
 })();
 </script>
 
 <!-- ============================================
-     PHASE 8: CSS STYLES
+     PHASE 8: CSS STYLES (matching HTML prototype)
      ============================================ -->
 <style>
 /* ========================================
-   SECTION LAYOUT — MAP + WIZARD
+   VARIABLES & BASE
    ======================================== */
 .qw-section {
-  width: 100%;
-  padding: 40px 16px;
-}
-.qw-wrap {
-  max-width: 1360px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-@media (min-width: 1024px) {
-  .qw-section { padding: 56px 24px; }
-  .qw-wrap { flex-direction: row; align-items: flex-start; gap: 52px; }
-  .qw-info { width: 44%; flex-shrink: 0; position: sticky; top: 28px; }
-  .qw-wrap .quote-wizard { width: 56%; }
-}
-
-/* LEFT: MAP + DETAILS */
-.qw-info {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.qw-map {
-  width: 100%;
-  height: 240px;
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid #e4e6ec;
-  box-shadow: 0 1px 2px rgba(15,15,20,0.04);
-}
-@media (min-width: 1024px) {
-  .qw-map { height: auto; aspect-ratio: 4 / 3; }
-}
-.qw-map iframe { width: 100%; height: 100%; border: 0; display: block; }
-.qw-details-card {
-  background: #ffffff;
-  border: 1px solid #e4e6ec;
-  border-radius: 16px;
-  overflow: hidden;
-}
-.qw-details-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-}
-@media (min-width: 560px) {
-  .qw-details-grid { grid-template-columns: 1fr 1fr; }
-  .qw-details-left { border-right: 1px solid #e4e6ec; border-bottom: none; }
-}
-.qw-details-left { border-bottom: 1px solid #e4e6ec; }
-.qw-details-col {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-.qw-d-group {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.qw-d-label {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: #8c8c9e;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin: 0;
-}
-.qw-d-label svg { width: 14px; height: 14px; color: #2563eb; flex-shrink: 0; }
-.qw-d-val {
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.5;
-  color: #1d1d2b;
-  text-decoration: none;
-  display: block;
-}
-a.qw-d-val:hover { color: #2563eb; }
-.qw-hrs {
-  display: grid;
-  grid-template-columns: 80px 1fr;
-  gap: 4px 10px;
-  font-size: 13px;
-}
-.qw-hrs-d { color: #8c8c9e; font-weight: 500; }
-.qw-hrs-t { color: #1d1d2b; font-weight: 600; }
-.qw-hrs-c { color: #2563eb; }
-
-/* ========================================
-   QUOTE WIZARD — SCOPED STYLES
-   ======================================== */
-.quote-wizard {
   --qw-dark: #0f0f14;
   --qw-text: #1d1d2b;
   --qw-text-2: #4a4a5c;
@@ -1918,531 +1480,280 @@ a.qw-d-val:hover { color: #2563eb; }
   --qw-sh-2: 0 4px 12px rgba(15,15,20,0.07);
   --qw-sh-focus: 0 0 0 3px rgba(37,99,235,0.12);
   --qw-ease: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: var(--qw-text);
-  display: flex;
-  flex-direction: column;
-}
-
-/* Header */
-.quote-wizard .qw-header {
-  margin-bottom: 24px;
-}
-.quote-wizard .qw-header h2 {
-  font-size: clamp(24px, 4vw, 40px);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-  color: var(--qw-dark);
-  margin: 0 0 6px;
-}
-.quote-wizard .qw-header p {
-  font-size: clamp(14px, 1.1vw, 16px);
-  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.015em;
   line-height: 1.5;
-  color: var(--qw-text-2);
-  margin: 0;
-}
-
-/* Progress bar */
-.quote-wizard .qw-progress {
-  height: 4px;
-  background: var(--qw-line);
-  border-radius: 2px;
-  margin-bottom: 28px;
-  overflow: hidden;
-}
-.quote-wizard .qw-progress-bar {
-  height: 100%;
-  width: 25%;
-  background: var(--qw-accent);
-  border-radius: 2px;
-  transition: width 0.4s ease;
-}
-
-/* Animation */
-@keyframes qw-fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Content area */
-#qw-content, #qw-result {
-  animation: qw-fadeUp 0.28s ease-out;
-}
-
-/* Grid layouts */
-.quote-wizard .qw-grid {
-  display: grid;
-  gap: 12px;
-}
-.quote-wizard .qw-grid-4 {
-  grid-template-columns: repeat(2, 1fr);
-}
-.quote-wizard .qw-grid-3 {
-  grid-template-columns: repeat(2, 1fr);
-}
-@media (min-width: 480px) {
-  .quote-wizard .qw-grid-4 { grid-template-columns: repeat(4, 1fr); }
-  .quote-wizard .qw-grid-3 { grid-template-columns: repeat(3, 1fr); }
-}
-
-/* Cards (device + fault) */
-.quote-wizard .qw-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 20px 10px;
-  background: var(--qw-white);
-  border: 2px solid var(--qw-line);
-  border-radius: var(--qw-r-md);
-  cursor: pointer;
-  transition: all var(--qw-ease);
-  min-height: 90px;
-  text-align: center;
-  -webkit-tap-highlight-color: transparent;
-  font-family: inherit;
-  font-size: inherit;
-  color: inherit;
-}
-.quote-wizard .qw-card:hover {
-  border-color: var(--qw-line-h);
-  box-shadow: var(--qw-sh-2);
-  transform: translateY(-2px);
-}
-.quote-wizard .qw-card:active {
-  transform: scale(0.97);
-}
-.quote-wizard .qw-card:focus-visible {
-  outline: 2px solid var(--qw-accent);
-  outline-offset: 2px;
-}
-.quote-wizard .qw-card-icon {
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--qw-text-2);
-}
-.quote-wizard .qw-card-icon svg {
   width: 100%;
-  height: 100%;
-}
-.quote-wizard .qw-card-label {
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-/* Back button */
-.quote-wizard .qw-back-row {
-  margin-bottom: 14px;
-}
-.quote-wizard .qw-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: none;
-  border: none;
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--qw-text-3);
-  cursor: pointer;
-  padding: 6px 0;
-  transition: color var(--qw-ease);
-}
-.quote-wizard .qw-back:hover {
-  color: var(--qw-text);
-}
-
-/* Step label */
-.quote-wizard .qw-step-label {
-  font-size: clamp(18px, 2.2vw, 24px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-  margin: 0 0 16px;
-  color: var(--qw-dark);
-}
-
-/* Model list */
-.quote-wizard .qw-model-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.quote-wizard .qw-model-group {
-  border: 1px solid var(--qw-line);
-  border-radius: var(--qw-r-md);
-  overflow: hidden;
-  background: var(--qw-white);
-}
-.quote-wizard .qw-model-group-label {
-  padding: 12px 16px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--qw-text);
-  margin: 0;
-  border-bottom: 1px solid var(--qw-line);
-  background: #fafbfc;
-}
-.quote-wizard .qw-model-btn {
-  display: block;
-  width: 100%;
-  text-align: left;
-  padding: 12px 16px;
-  background: none;
-  border: none;
-  border-bottom: 1px solid #f0f1f5;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--qw-text);
-  cursor: pointer;
-  transition: background var(--qw-ease);
-}
-.quote-wizard .qw-model-btn:last-child {
-  border-bottom: none;
-}
-.quote-wizard .qw-model-btn:hover {
-  background: var(--qw-accent-bg);
-}
-.quote-wizard .qw-model-btn:focus-visible {
-  outline: 2px solid var(--qw-accent);
-  outline-offset: -2px;
-}
-
-/* Issue list */
-.quote-wizard .qw-issue-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.quote-wizard .qw-issue-btn {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  text-align: left;
-  padding: 14px 18px;
-  background: var(--qw-white);
-  border: 2px solid var(--qw-line);
-  border-radius: var(--qw-r-md);
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--qw-text);
-  cursor: pointer;
-  transition: all var(--qw-ease);
-  -webkit-tap-highlight-color: transparent;
-}
-.quote-wizard .qw-issue-btn:hover {
-  border-color: var(--qw-line-h);
-  box-shadow: var(--qw-sh-1);
-}
-.quote-wizard .qw-issue-btn:active {
-  transform: scale(0.98);
-}
-.quote-wizard .qw-issue-btn:focus-visible {
-  outline: 2px solid var(--qw-accent);
-  outline-offset: 2px;
-}
-
-/* Loading state */
-.quote-wizard .qw-loading {
-  text-align: center;
-  padding: 48px 16px;
-}
-.quote-wizard .qw-loading p {
-  font-size: 14px;
-  color: var(--qw-text-2);
-  margin-top: 16px;
-}
-
-/* Spinner */
-.quote-wizard .qw-spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid var(--qw-line);
-  border-top-color: var(--qw-accent);
-  border-radius: 50%;
-  animation: qw-spin 0.7s linear infinite;
-  margin: 0 auto;
-}
-@keyframes qw-spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Skeleton loading */
-.quote-wizard .qw-skeleton-price {
-  width: 120px;
-  height: 32px;
-  border-radius: 6px;
-  background: linear-gradient(90deg, #f0f1f5 25%, #e8e9ee 50%, #f0f1f5 75%);
-  background-size: 200% 100%;
-  animation: qw-shimmer 1.5s infinite;
-}
-@keyframes qw-shimmer {
-  from { background-position: 200% 0; }
-  to { background-position: -200% 0; }
-}
-
-/* Empty state */
-.quote-wizard .qw-empty {
-  text-align: center;
   padding: 40px 16px;
 }
-.quote-wizard .qw-empty p {
-  font-size: 15px;
-  color: var(--qw-text-2);
-  margin-bottom: 16px;
+@media(min-width:1024px){ .qw-section { padding: 56px 24px; } }
+
+/* LAYOUT */
+.qw-wrap { max-width: 1360px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+@media(min-width:1024px){
+  .qw-wrap { flex-direction: row; align-items: flex-start; gap: 52px; }
+  .qw-info { width: 44%; flex-shrink: 0; position: sticky; top: 28px; }
+  .qw-wizard { width: 56%; }
 }
 
-/* Urgent banner */
-.quote-wizard .qw-urgent {
-  background: #FEF3C7;
-  border-left: 4px solid #F59E0B;
-  padding: 12px 16px;
-  border-radius: 0 var(--qw-r-sm) var(--qw-r-sm) 0;
-  margin-bottom: 16px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #92400E;
-}
+/* LEFT: MAP + DETAILS */
+.qw-info { display: flex; flex-direction: column; gap: 16px; }
+.qw-map { width: 100%; height: 240px; border-radius: var(--qw-r-lg); overflow: hidden; border: 1px solid var(--qw-line); box-shadow: var(--qw-sh-1); }
+@media(min-width:1024px){ .qw-map { height: auto; aspect-ratio: 4 / 3; } }
+.qw-map iframe { width: 100%; height: 100%; border: 0; display: block; }
+.qw-card { background: var(--qw-white); border: 1px solid var(--qw-line); border-radius: var(--qw-r-lg); overflow: hidden; }
+.qw-card-grid { display: grid; grid-template-columns: 1fr; }
+@media(min-width:560px){ .qw-card-grid { grid-template-columns: 1fr 1fr; } .qw-card-left { border-right: 1px solid var(--qw-line); border-bottom: none; } }
+.qw-card-left { border-bottom: 1px solid var(--qw-line); }
+.qw-card-col { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.qw-d-group { display: flex; flex-direction: column; gap: 5px; }
+.qw-d-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--qw-text-3); display: flex; align-items: center; gap: 5px; margin: 0; }
+.qw-d-label svg { width: 14px; height: 14px; color: var(--qw-accent); flex-shrink: 0; }
+.qw-d-val { font-size: 14px; font-weight: 500; line-height: 1.5; color: var(--qw-text); text-decoration: none; display: block; }
+a.qw-d-val:hover { color: var(--qw-accent); }
+.qw-hrs { display: grid; grid-template-columns: 80px 1fr; gap: 4px 10px; font-size: 13px; }
+.qw-hrs-d { color: var(--qw-text-3); font-weight: 500; }
+.qw-hrs-t { color: var(--qw-text); font-weight: 600; }
+.qw-hrs-c { color: var(--qw-accent); }
 
-/* Resolution cards */
-.quote-wizard .qw-resolution {
-  background: var(--qw-white);
-  border: 1px solid var(--qw-line);
-  border-radius: var(--qw-r-lg);
-  padding: 24px;
-  margin-top: 8px;
-}
+/* ========================================
+   WIZARD
+   ======================================== */
+.qw-wizard { display: flex; flex-direction: column; }
+.qw-head { margin-bottom: 28px; }
+.qw-title { font-size: clamp(28px, 4.5vw, 48px); font-weight: 700; line-height: 1.08; letter-spacing: -0.035em; color: var(--qw-dark); margin: 0 0 8px; }
+.qw-sub { font-size: clamp(14px, 1.1vw, 16px); font-weight: 400; line-height: 1.55; color: var(--qw-text-2); margin: 0; }
 
-/* Badges */
-.quote-wizard .qw-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 5px 12px;
-  border-radius: 100px;
-  margin-bottom: 14px;
-}
-.quote-wizard .qw-badge-green {
-  background: var(--qw-green-bg);
-  color: var(--qw-green);
-}
-.quote-wizard .qw-badge-amber {
-  background: var(--qw-amber-bg);
-  color: var(--qw-amber);
-}
-.quote-wizard .qw-badge-blue {
-  background: var(--qw-blue-bg);
-  color: var(--qw-blue);
-}
+/* STEP INDICATOR (numbered circles) */
+.qw-prog { display: flex; align-items: center; margin-bottom: 32px; }
+.qw-prog-s { display: flex; align-items: center; gap: 6px; flex: 1; }
+.qw-prog-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; transition: all var(--qw-ease); border: 2px solid var(--qw-line); background: var(--qw-white); color: var(--qw-text-3); }
+.qw-prog-s.on .qw-prog-dot { background: var(--qw-accent); border-color: var(--qw-accent); color: #fff; box-shadow: 0 2px 8px rgba(37,99,235,0.2); }
+.qw-prog-s.done .qw-prog-dot { background: var(--qw-dark); border-color: var(--qw-dark); color: #fff; }
+.qw-prog-lbl { font-size: 11px; font-weight: 600; color: var(--qw-text-3); display: none; white-space: nowrap; }
+.qw-prog-s.on .qw-prog-lbl { color: var(--qw-accent); display: block; }
+.qw-prog-s.done .qw-prog-lbl { color: var(--qw-dark); display: block; }
+@media(min-width:560px){ .qw-prog-lbl { display: block; } }
+.qw-prog-line { flex: 1; height: 2px; background: var(--qw-line); margin: 0 6px; border-radius: 1px; transition: background var(--qw-ease); }
+.qw-prog-s.done .qw-prog-line { background: var(--qw-dark); }
+.qw-prog-s:last-child .qw-prog-line { display: none; }
 
-.quote-wizard .qw-resolution h3 {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  margin: 0 0 8px;
-  color: var(--qw-dark);
-}
-.quote-wizard .qw-resolution h3:focus {
-  outline: none;
-}
-.quote-wizard .qw-copy {
-  font-size: 14px;
-  color: var(--qw-text-2);
-  line-height: 1.55;
-  margin: 0 0 16px;
-}
+/* STEPS */
+.qw-step { display: none; animation: qwFadeUp .28s ease-out; }
+.qw-step.on { display: block; }
+@keyframes qwFadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.qw-s-title { font-size: clamp(18px, 2.2vw, 26px); font-weight: 700; letter-spacing: -0.025em; line-height: 1.12; margin: 0 0 4px; color: var(--qw-dark); }
+.qw-s-sub { font-size: 14px; color: var(--qw-text-2); margin: 0 0 20px; line-height: 1.5; }
+.qw-back { display: inline-flex; align-items: center; gap: 5px; background: none; border: none; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--qw-text-3); cursor: pointer; padding: 6px 0; margin-bottom: 14px; transition: color var(--qw-ease); }
+.qw-back:hover { color: var(--qw-text); }
+.qw-back svg { width: 15px; height: 15px; }
+
+/* DEVICE GRID */
+.qw-dev-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+@media(min-width:480px){ .qw-dev-grid { grid-template-columns: repeat(3, 1fr); } }
+@media(min-width:680px){ .qw-dev-grid { grid-template-columns: repeat(4, 1fr); } }
+.qw-dev { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 20px 10px; background: var(--qw-white); border: 2px solid var(--qw-line); border-radius: var(--qw-r-md); cursor: pointer; transition: all var(--qw-ease); min-height: 100px; text-align: center; -webkit-tap-highlight-color: transparent; }
+.qw-dev:hover { border-color: var(--qw-line-h); box-shadow: var(--qw-sh-2); transform: translateY(-2px); }
+.qw-dev:active { transform: scale(0.97); }
+.qw-dev.sel { border-color: var(--qw-accent); background: var(--qw-accent-bg); box-shadow: var(--qw-sh-focus); }
+.qw-dev:focus-visible { outline: none; box-shadow: var(--qw-sh-focus); }
+.qw-dev-ico { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+.qw-dev-ico svg { width: 100%; height: 100%; color: var(--qw-text); }
+.qw-dev.sel .qw-dev-ico svg { color: var(--qw-accent); }
+.qw-dev-lbl { font-size: 13px; font-weight: 600; }
+
+/* MODEL GROUPS (accordion) */
+.qw-m-groups { display: flex; flex-direction: column; gap: 6px; }
+.qw-m-group { border: 1px solid var(--qw-line); border-radius: var(--qw-r-md); overflow: hidden; background: var(--qw-white); }
+.qw-m-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; cursor: pointer; user-select: none; transition: background var(--qw-ease); -webkit-tap-highlight-color: transparent; }
+.qw-m-head:hover { background: #fafbfc; }
+.qw-m-head:active { background: #f4f5f7; }
+.qw-m-name { font-size: 15px; font-weight: 700; color: var(--qw-text); letter-spacing: -0.02em; }
+.qw-m-count { font-size: 12px; color: var(--qw-text-3); font-weight: 500; margin-top: 1px; display: block; }
+.qw-m-chev { width: 18px; height: 18px; color: var(--qw-text-3); transition: transform .25s ease; flex-shrink: 0; }
+.qw-m-group.open .qw-m-chev { transform: rotate(180deg); }
+.qw-m-body { max-height: 0; overflow: hidden; transition: max-height .35s ease; }
+.qw-m-group.open .qw-m-body { max-height: 3000px; }
+.qw-m-list { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 2px; }
+.qw-m-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: var(--qw-r-sm); cursor: pointer; transition: all var(--qw-ease); -webkit-tap-highlight-color: transparent; }
+.qw-m-item:hover { background: #f5f6fa; }
+.qw-m-item:active { background: #eef0f5; }
+.qw-m-item.sel { background: var(--qw-accent-bg); outline: 1.5px solid var(--qw-accent); }
+.qw-mn { font-size: 14px; font-weight: 600; color: var(--qw-text); line-height: 1.3; flex: 1; min-width: 0; }
+
+/* HELPER TRIGGER + PANEL */
+.qw-help-trig { display: flex; align-items: center; gap: 7px; padding: 10px 0; margin-top: 14px; background: none; border: none; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--qw-blue); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.qw-help-trig:hover { text-decoration: underline; }
+.qw-help-trig svg { width: 16px; height: 16px; flex-shrink: 0; }
+.qw-help-panel { max-height: 0; overflow: hidden; transition: max-height .4s ease, opacity .3s ease; opacity: 0; margin-top: 6px; }
+.qw-help-panel.open { max-height: 800px; opacity: 1; }
+.qw-help-card { background: var(--qw-white); border: 1px solid var(--qw-line); border-radius: var(--qw-r-md); overflow: hidden; }
+
+/* Visual guide wizard */
+.qw-vg-step { display: none; padding: 20px; animation: qwFadeUp .25s ease-out; }
+.qw-vg-step.on { display: block; }
+.qw-vg-title { font-size: 16px; font-weight: 700; color: var(--qw-text); margin-bottom: 2px; text-align: center; }
+.qw-vg-sub { font-size: 13px; color: var(--qw-text-3); margin-bottom: 16px; text-align: center; }
+.qw-vg-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.qw-vg-opt { background: var(--qw-white); border: 2px solid var(--qw-line); border-radius: var(--qw-r-md); padding: 14px 10px; cursor: pointer; text-align: center; transition: all var(--qw-ease); width: 120px; display: flex; flex-direction: column; align-items: center; gap: 8px; -webkit-tap-highlight-color: transparent; }
+.qw-vg-opt:hover { border-color: var(--qw-blue); transform: scale(1.03); }
+.qw-vg-opt:active { transform: scale(0.97); }
+.qw-vg-opt img, .qw-vg-img { max-width: 80px; max-height: 70px; object-fit: contain; }
+.qw-vg-lbl { font-size: 12px; font-weight: 600; color: var(--qw-text); line-height: 1.3; }
+.qw-vg-back { display: inline-flex; align-items: center; gap: 4px; background: none; border: none; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--qw-text-3); cursor: pointer; margin-bottom: 12px; }
+.qw-vg-back:hover { color: var(--qw-text); }
+.qw-vg-result { text-align: center; padding: 20px; }
+.qw-vg-result-name { font-size: 18px; font-weight: 700; margin-bottom: 14px; }
+.qw-vg-btn { padding: 10px 20px; border-radius: 20px; border: none; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; margin: 0 4px; }
+.qw-vg-btn-p { background: var(--qw-blue); color: #fff; }
+.qw-vg-btn-s { background: #f0f1f5; color: var(--qw-text-2); }
+.qw-help-close { display: flex; align-items: center; justify-content: center; padding: 10px; background: #f5f6fa; border: none; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--qw-text-3); cursor: pointer; width: 100%; transition: all var(--qw-ease); }
+.qw-help-close:hover { background: #eef0f4; color: var(--qw-text); }
+
+/* MacBook model search */
+.qw-help-body { padding: 18px; }
+.qw-help-body.on { display: block; }
+.qw-help-inst { font-size: 13px; color: var(--qw-text-2); line-height: 1.55; margin-bottom: 14px; }
+.qw-help-inst code { background: #f0f1f5; padding: 2px 5px; border-radius: 3px; font-size: 12px; font-weight: 600; color: var(--qw-text); }
+.qw-help-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.qw-help-input { flex: 1; padding: 10px 12px; border: 1px solid var(--qw-line); border-radius: var(--qw-r-sm); font-size: 14px; font-family: inherit; }
+.qw-help-input:focus { outline: none; border-color: var(--qw-blue); box-shadow: 0 0 0 2px rgba(37,99,235,0.1); }
+.qw-help-results { max-height: 180px; overflow-y: auto; }
+.qw-help-hit { display: flex; align-items: center; justify-content: space-between; padding: 9px 10px; border-bottom: 1px solid #f0f1f5; cursor: pointer; transition: background var(--qw-ease); font-size: 13px; }
+.qw-help-hit:hover { background: var(--qw-blue-bg); }
+.qw-help-hit:last-child { border-bottom: none; }
+.qw-hn { font-weight: 700; color: var(--qw-text); font-family: monospace; font-size: 12px; }
+.qw-hm { color: var(--qw-text-2); font-weight: 500; flex: 1; margin: 0 8px; }
+.qw-hs { font-size: 11px; font-weight: 700; color: var(--qw-blue); flex-shrink: 0; }
+
+/* FAULT CARDS */
+.qw-f-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+@media(min-width:560px){ .qw-f-grid { grid-template-columns: repeat(3, 1fr); } }
+@media(min-width:720px){ .qw-f-grid { grid-template-columns: repeat(4, 1fr); } }
+.qw-f-card { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 18px 8px; background: var(--qw-white); border: 2px solid var(--qw-line); border-radius: var(--qw-r-md); cursor: pointer; transition: all var(--qw-ease); text-align: center; min-height: 90px; -webkit-tap-highlight-color: transparent; }
+.qw-f-card:hover { border-color: var(--qw-line-h); box-shadow: var(--qw-sh-2); transform: translateY(-1px); }
+.qw-f-card:active { transform: scale(0.97); }
+.qw-f-card.sel { border-color: var(--qw-accent); background: var(--qw-accent-bg); box-shadow: var(--qw-sh-focus); }
+.qw-f-ico { width: 24px; height: 24px; color: var(--qw-text-2); transition: color var(--qw-ease); }
+.qw-f-ico svg { width: 100%; height: 100%; }
+.qw-f-card.sel .qw-f-ico { color: var(--qw-accent); }
+.qw-f-lbl { font-size: 12px; font-weight: 600; line-height: 1.3; }
+
+/* TROUBLESHOOT / ISSUE CARDS */
+.qw-t-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+@media(min-width:560px){ .qw-t-grid { grid-template-columns: repeat(2, 1fr); } }
+.qw-t-card { display: flex; align-items: center; gap: 12px; padding: 16px 18px; background: var(--qw-white); border: 2px solid var(--qw-line); border-radius: var(--qw-r-md); cursor: pointer; transition: all var(--qw-ease); -webkit-tap-highlight-color: transparent; }
+.qw-t-card:hover { border-color: var(--qw-line-h); box-shadow: var(--qw-sh-1); }
+.qw-t-card:active { transform: scale(0.98); }
+.qw-t-card.sel { border-color: var(--qw-accent); background: var(--qw-accent-bg); }
+.qw-tw { width: 36px; height: 36px; border-radius: 8px; background: #f0f1f5; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.qw-t-card.sel .qw-tw { background: rgba(37,99,235,0.08); }
+.qw-tw svg { width: 18px; height: 18px; color: var(--qw-text-2); }
+.qw-t-card.sel .qw-tw svg { color: var(--qw-accent); }
+.qw-tt { font-size: 14px; font-weight: 600; line-height: 1.3; }
+
+/* ========================================
+   RESOLUTION CARD
+   ======================================== */
+.qw-res { background: var(--qw-white); border: 1px solid var(--qw-line); border-radius: var(--qw-r-lg); overflow: hidden; }
+.qw-res-top { padding: 24px 24px 0; }
+.qw-res-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 5px 10px; border-radius: 100px; margin-bottom: 14px; }
+.qw-res-badge svg { width: 13px; height: 13px; }
+.qw-badge-green { background: var(--qw-green-bg); color: var(--qw-green); }
+.qw-badge-amber { background: var(--qw-amber-bg); color: var(--qw-amber); }
+.qw-badge-blue { background: var(--qw-blue-bg); color: var(--qw-blue); }
+.qw-res-h { font-size: 20px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.2; margin: 0 0 6px; color: var(--qw-dark); }
+.qw-res-p { font-size: 14px; color: var(--qw-text-2); line-height: 1.55; margin: 0 0 20px; max-width: 480px; }
 
 /* Pricing */
-.quote-wizard .qw-price {
-  margin-bottom: 20px;
-}
-.quote-wizard .qw-price-value {
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--qw-dark);
-}
-.quote-wizard .qw-price-link {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--qw-accent);
-  text-decoration: none;
-}
-.quote-wizard .qw-price-link:hover {
-  text-decoration: underline;
-}
+.qw-price-from { font-size: 13px; color: var(--qw-text-3); font-weight: 500; margin-bottom: 4px; }
+.qw-price-big { font-size: 36px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; color: var(--qw-dark); margin-bottom: 20px; }
+.qw-likely { margin-bottom: 16px; }
+.qw-likely-text { font-size: 13px; color: var(--qw-text-2); margin: 0; padding: 10px 14px; background: #fef9c3; border-radius: var(--qw-r-sm); }
 
-/* Likely repair */
-.quote-wizard .qw-likely-repair {
-  margin-bottom: 16px;
-}
-.quote-wizard .qw-likely-text {
-  font-size: 13px;
-  color: var(--qw-text-2);
-  margin: 0;
-  padding: 10px 14px;
-  background: #fef9c3;
-  border-radius: var(--qw-r-sm);
-}
+/* Service badges */
+.qw-svc { padding: 0 24px; margin-bottom: 2px; }
+.qw-svc-r { display: flex; align-items: center; padding: 9px 0; border-bottom: 1px solid #f0f1f5; }
+.qw-svc-r:last-child { border-bottom: none; }
+.qw-svc-i { width: 18px; height: 18px; color: var(--qw-accent); margin-right: 10px; flex-shrink: 0; }
+.qw-svc-i svg { width: 100%; height: 100%; }
+.qw-svc-l { width: 90px; font-size: 12px; font-weight: 500; color: var(--qw-text-3); flex-shrink: 0; }
+.qw-svc-v { font-size: 13px; font-weight: 600; }
+
+/* Option cards (speed tiers + service) */
+.qw-opt-section { margin-bottom: 18px; }
+.qw-opt-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--qw-text-3); margin-bottom: 8px; padding: 0 2px; }
+.qw-opt-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.qw-opt-card { flex: 1; min-width: 0; padding: 14px; background: var(--qw-white); border: 2px solid var(--qw-line); border-radius: var(--qw-r-md); cursor: pointer; transition: all var(--qw-ease); -webkit-tap-highlight-color: transparent; position: relative; }
+.qw-opt-card:hover { border-color: var(--qw-line-h); }
+.qw-opt-card.sel { border-color: var(--qw-accent); background: var(--qw-accent-bg); }
+.qw-opt-name { font-size: 13px; font-weight: 700; color: var(--qw-text); margin-bottom: 2px; }
+.qw-opt-meta { font-size: 12px; color: var(--qw-text-3); font-weight: 500; }
+.qw-opt-price { font-size: 14px; font-weight: 700; color: var(--qw-text); margin-top: 6px; }
+.qw-opt-price.free { color: var(--qw-green); }
+.qw-pop-tag { position: absolute; top: -8px; right: 10px; background: var(--qw-dark); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; letter-spacing: 0.03em; }
+
+/* Price total */
+.qw-price-total { display: flex; align-items: baseline; justify-content: space-between; padding: 16px 0; margin: 0 24px; border-top: 1px solid var(--qw-line); }
+.qw-price-total-label { font-size: 14px; font-weight: 600; color: var(--qw-text-2); }
+.qw-price-total-val { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; color: var(--qw-dark); }
 
 /* CTAs */
-.quote-wizard .qw-ctas {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+.qw-res-cta { padding: 16px 24px 24px; display: flex; flex-direction: column; gap: 10px; }
+.qw-btn-book { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 14px 28px; background: var(--qw-accent); color: #fff; border: none; border-radius: var(--qw-r-sm); font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; transition: all var(--qw-ease); text-decoration: none; letter-spacing: -0.01em; width: 100%; }
+.qw-btn-book:hover { background: var(--qw-accent-h); box-shadow: 0 4px 16px rgba(37,99,235,0.2); transform: translateY(-1px); }
+.qw-btn-book:active { transform: scale(0.98); }
+.qw-btn-book svg { width: 16px; height: 16px; }
+.qw-btn-q { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 24px; background: transparent; color: var(--qw-text-2); border: 2px solid var(--qw-line); border-radius: var(--qw-r-sm); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: all var(--qw-ease); width: 100%; }
+.qw-btn-q:hover { border-color: var(--qw-line-h); background: #fafbfc; color: var(--qw-text); }
 
-/* Buttons */
-.quote-wizard .qw-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 24px;
-  border-radius: var(--qw-r-sm);
-  font-family: inherit;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all var(--qw-ease);
-  text-decoration: none;
-  text-align: center;
-  border: none;
-}
-.quote-wizard .qw-btn-primary {
-  background: var(--qw-accent);
-  color: #fff;
-}
-.quote-wizard .qw-btn-primary:hover {
-  background: var(--qw-accent-h);
-  box-shadow: 0 4px 16px rgba(37,99,235,0.2);
-  transform: translateY(-1px);
-}
-.quote-wizard .qw-btn-primary:active {
-  transform: scale(0.98);
-}
-.quote-wizard .qw-btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-.quote-wizard .qw-btn-secondary {
-  background: transparent;
-  color: var(--qw-text-2);
-  border: 2px solid var(--qw-line);
-}
-.quote-wizard .qw-btn-secondary:hover {
-  border-color: var(--qw-line-h);
-  background: #fafbfc;
-  color: var(--qw-text);
-}
+/* Contact accordion (inside repair/diagnostic) */
+.qw-c-acc { max-height: 0; overflow: hidden; transition: max-height .4s ease, opacity .3s ease; opacity: 0; }
+.qw-c-acc.open { max-height: 700px; opacity: 1; }
+.qw-c-inner { padding: 20px 24px 24px; border-top: 1px solid var(--qw-line); }
+.qw-c-inner-open { padding: 20px 24px 24px; }
+.qw-c-sum { background: #f5f6fa; border-radius: var(--qw-r-sm); padding: 12px 14px; margin-bottom: 16px; font-size: 12px; color: var(--qw-text-2); line-height: 1.5; }
+.qw-c-sum strong { color: var(--qw-text); font-weight: 600; }
 
-/* Forms */
-.quote-wizard .qw-contact-form {
-  margin-top: 16px;
-}
-.quote-wizard .qw-field {
-  margin-bottom: 14px;
-}
-.quote-wizard .qw-field label {
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--qw-text-3);
-  margin-bottom: 5px;
-}
-.quote-wizard .qw-field input,
-.quote-wizard .qw-field textarea {
-  width: 100%;
-  padding: 11px 14px;
-  font-size: 14px;
-  font-family: inherit;
-  color: var(--qw-text);
-  background: var(--qw-white);
-  border: 1px solid var(--qw-line);
-  border-radius: var(--qw-r-sm);
-  transition: all var(--qw-ease);
-  box-sizing: border-box;
-}
-.quote-wizard .qw-field input:focus,
-.quote-wizard .qw-field textarea:focus {
-  outline: none;
-  border-color: var(--qw-accent);
-  box-shadow: 0 0 0 2px rgba(37,99,235,0.1);
-}
-.quote-wizard .qw-field textarea {
-  min-height: 80px;
-  resize: vertical;
-  line-height: 1.5;
-}
-.quote-wizard .qw-error {
-  display: block;
-  font-size: 12px;
-  color: #dc2626;
-  margin-top: 4px;
-  min-height: 16px;
-}
-.quote-wizard .qw-form-error {
-  font-size: 13px;
-  color: #dc2626;
-  padding: 10px 0;
-  text-align: center;
-}
+/* Form fields */
+.qw-f-row { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 14px; }
+@media(min-width:560px){ .qw-f-row.two { grid-template-columns: 1fr 1fr; } }
+.qw-f-grp { display: flex; flex-direction: column; gap: 5px; }
+.qw-f-lbl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--qw-text-3); }
+.qw-req { color: var(--qw-accent); margin-left: 2px; }
+.qw-f-inp, .qw-f-ta { width: 100%; padding: 11px 14px; font-size: 14px; font-family: inherit; color: var(--qw-text); background: var(--qw-white); border: 1px solid var(--qw-line); border-radius: var(--qw-r-sm); transition: all var(--qw-ease); box-sizing: border-box; }
+.qw-f-inp:focus, .qw-f-ta:focus { outline: none; border-color: var(--qw-accent); box-shadow: 0 0 0 2px rgba(37,99,235,0.1); }
+.qw-f-inp::placeholder, .qw-f-ta::placeholder { color: var(--qw-text-3); }
+.qw-f-ta { min-height: 90px; resize: vertical; line-height: 1.5; }
+.qw-f-sub { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 12px 24px; background: var(--qw-dark); color: #fff; border: none; border-radius: var(--qw-r-sm); font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 4px; width: 100%; }
+.qw-f-sub:hover { background: #0a0a0f; }
+.qw-f-sub:disabled { opacity: 0.5; cursor: not-allowed; }
+.qw-f-ok { display: none; text-align: center; padding: 28px 20px; }
+.qw-f-ok.show { display: block; }
+.qw-f-ok h3 { font-size: 18px; font-weight: 700; color: var(--qw-green); margin: 0 0 4px; }
+.qw-f-ok p { font-size: 14px; color: var(--qw-text-2); margin: 0; }
 
-/* Question form toggle */
-.quote-wizard .qw-question-form {
-  border-top: 1px solid var(--qw-line);
-  padding-top: 16px;
-  margin-top: 16px;
-}
+/* Restart button */
+.qw-restart { display: flex; align-items: center; justify-content: center; gap: 5px; padding: 10px; margin-top: 16px; background: none; border: none; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--qw-text-3); cursor: pointer; width: 100%; }
+.qw-restart:hover { color: var(--qw-accent); }
 
-/* Success message */
-.quote-wizard .qw-success {
-  text-align: center;
-  padding: 24px 16px;
-}
-.quote-wizard .qw-success p {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--qw-green);
-  margin: 0;
-}
+/* Urgent banner */
+.qw-urgent { background: #FEF3C7; border-left: 4px solid #F59E0B; padding: 12px 16px; border-radius: 0 var(--qw-r-sm) var(--qw-r-sm) 0; margin-bottom: 16px; font-size: 14px; font-weight: 600; color: #92400E; }
 
-/* Submit button (inherits qw-btn-primary) */
-.quote-wizard .qw-submit-btn {
-  width: 100%;
-  margin-top: 4px;
-}
+/* Loading + Spinner */
+.qw-loading { text-align: center; padding: 48px 16px; }
+.qw-loading p { font-size: 14px; color: var(--qw-text-2); margin-top: 16px; }
+.qw-spinner { width: 32px; height: 32px; border: 3px solid var(--qw-line); border-top-color: var(--qw-accent); border-radius: 50%; animation: qwSpin 0.7s linear infinite; margin: 0 auto; }
+@keyframes qwSpin { to { transform: rotate(360deg); } }
 
-/* Focus visible outlines */
-.quote-wizard [tabindex]:focus-visible {
-  outline: 2px solid var(--qw-accent);
-  outline-offset: 2px;
-}
+/* Empty state */
+.qw-empty { text-align: center; padding: 40px 16px; }
+.qw-empty p { font-size: 15px; color: var(--qw-text-2); margin-bottom: 16px; }
 
-/* Mobile adjustments */
-@media (max-width: 479px) {
-  .quote-wizard .qw-grid-4 { grid-template-columns: repeat(2, 1fr); }
-  .quote-wizard .qw-grid-3 { grid-template-columns: repeat(2, 1fr); }
-  .quote-wizard .qw-resolution { padding: 18px; }
-  .quote-wizard .qw-price-value { font-size: 24px; }
-}
+/* Focus visible */
+.qw-wizard [tabindex]:focus-visible { outline: 2px solid var(--qw-accent); outline-offset: 2px; }
 </style>
 
 {% schema %}
