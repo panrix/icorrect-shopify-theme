@@ -191,6 +191,7 @@ window.WIZARD_CONTEXT = {
     ipad: [
       { v: 'Screen / Display', icon: 'screen', label: 'Screen / Display' },
       { v: 'Power / Battery / Charging', icon: 'battery', label: 'Power / Battery / Charging' },
+      { v: 'Camera', icon: 'camera', label: 'Camera' },
       { v: 'Buttons', icon: 'buttons', label: 'Buttons' },
       { v: 'Water Damage', icon: 'water', label: 'Water Damage' },
       { v: 'Data Recovery', icon: 'data', label: 'Data Recovery' },
@@ -809,6 +810,7 @@ window.WIZARD_CONTEXT = {
           copy: 'An iPad that won\'t power on could have a dead battery, a logic board fault, or a charging issue. If it was working recently and suddenly died, try a hard reset first (hold Power + Volume Down for 10 seconds). If that doesn\'t help, bring it in for a diagnostic.'
         }
       ],
+      'Camera': [],
       'Buttons': [
         {
           label: 'Home button or Touch ID not working',
@@ -1147,14 +1149,6 @@ window.WIZARD_CONTEXT = {
     }
 
     var html = '<div class="qw-back-row"><button class="qw-back" tabindex="0">&larr; Back</button></div>';
-
-    // Model identification helper
-    html += '<button class="qw-helper-trigger" id="qw-helper-trigger" tabindex="0">';
-    html += '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="6"/><path d="M14 14l4 4"/></svg>';
-    html += 'Not sure which model? We\'ll help you find it.';
-    html += '</button>';
-    html += '<div class="qw-helper-panel" id="qw-helper-panel"></div>';
-
     html += '<div class="qw-model-list">';
     for (var g = 0; g < groups.length; g++) {
       html += '<div class="qw-model-group">';
@@ -1173,18 +1167,6 @@ window.WIZARD_CONTEXT = {
     // Back button
     container.querySelector('.qw-back').addEventListener('click', function() { go(1); });
 
-    // Helper trigger
-    var helperTrigger = document.getElementById('qw-helper-trigger');
-    var helperPanel = document.getElementById('qw-helper-panel');
-    if (helperTrigger && helperPanel) {
-      helperTrigger.addEventListener('click', function() {
-        var isOpen = helperPanel.classList.toggle('qw-helper-open');
-        if (isOpen && !helperPanel.hasChildNodes()) {
-          renderModelHelper(helperPanel, S.device, groups);
-        }
-      });
-    }
-
     // Model buttons
     var btns = container.querySelectorAll('.qw-model-btn');
     for (var b = 0; b < btns.length; b++) {
@@ -1192,86 +1174,6 @@ window.WIZARD_CONTEXT = {
         pickModel(this.getAttribute('data-name'), this.getAttribute('data-handle'));
       });
     }
-  }
-
-  // === MODEL IDENTIFICATION HELPER ===
-  function renderModelHelper(panel, device, groups) {
-    if (device === 'macbook') {
-      renderMacbookHelper(panel, groups);
-    } else {
-      renderGenericHelper(panel, device);
-    }
-  }
-
-  function renderMacbookHelper(panel, groups) {
-    // Build A-number lookup from model names
-    var anums = [];
-    for (var g = 0; g < groups.length; g++) {
-      for (var m = 0; m < groups[g].models.length; m++) {
-        var mod = groups[g].models[m];
-        var matches = mod.name.match(/A\d{4}/g);
-        if (matches) {
-          for (var a = 0; a < matches.length; a++) {
-            anums.push({ num: matches[a], name: mod.name, handle: mod.collectionHandle });
-          }
-        }
-      }
-    }
-
-    var html = '<div class="qw-helper-card">';
-    html += '<p class="qw-helper-inst">Flip your MacBook over and look for the model number (starts with <code>A</code>) on the bottom case near the regulatory text.</p>';
-    html += '<div class="qw-helper-search-row"><input type="text" class="qw-helper-input" id="qw-helper-search" placeholder="e.g. A2337" autocomplete="off" maxlength="5"></div>';
-    html += '<div class="qw-helper-results" id="qw-helper-results"></div>';
-    html += '</div>';
-    panel.innerHTML = html;
-
-    var searchInput = document.getElementById('qw-helper-search');
-    var resultsDiv = document.getElementById('qw-helper-results');
-
-    searchInput.addEventListener('input', function() {
-      var q = searchInput.value.trim().toUpperCase();
-      if (q.length < 2) { resultsDiv.innerHTML = ''; return; }
-      var hits = anums.filter(function(a) { return a.num.indexOf(q) !== -1; });
-      if (hits.length === 0) {
-        resultsDiv.innerHTML = '<p class="qw-helper-noresult">No match found. Try checking the number again.</p>';
-        return;
-      }
-      var rhtml = '';
-      var seen = {};
-      for (var i = 0; i < hits.length && i < 8; i++) {
-        if (seen[hits[i].name]) continue;
-        seen[hits[i].name] = true;
-        rhtml += '<button class="qw-helper-hit" data-name="' + escapeHtml(hits[i].name) + '" data-handle="' + hits[i].handle + '">';
-        rhtml += '<span class="qw-helper-hit-num">' + escapeHtml(hits[i].num) + '</span>';
-        rhtml += '<span class="qw-helper-hit-name">' + escapeHtml(hits[i].name) + '</span>';
-        rhtml += '<span class="qw-helper-hit-action">Select</span>';
-        rhtml += '</button>';
-      }
-      resultsDiv.innerHTML = rhtml;
-
-      var hitBtns = resultsDiv.querySelectorAll('.qw-helper-hit');
-      for (var h = 0; h < hitBtns.length; h++) {
-        hitBtns[h].addEventListener('click', function() {
-          pickModel(this.getAttribute('data-name'), this.getAttribute('data-handle'));
-        });
-      }
-    });
-
-    searchInput.focus();
-  }
-
-  function renderGenericHelper(panel, device) {
-    var deviceLabel = device === 'iphone' ? 'iPhone' : device === 'ipad' ? 'iPad' : 'Apple Watch';
-    var html = '<div class="qw-helper-card">';
-    html += '<p class="qw-helper-inst">';
-    if (device === 'watch') {
-      html += 'Open the <strong>Watch</strong> app on your iPhone, then tap <strong>General &gt; About</strong> to find your model.';
-    } else {
-      html += 'On your ' + deviceLabel + ', go to <strong>Settings &gt; General &gt; About</strong>. Your model name is shown next to "Model Name".';
-    }
-    html += '</p>';
-    html += '</div>';
-    panel.innerHTML = html;
   }
 
   async function pickModel(name, handle) {
@@ -1399,28 +1301,6 @@ window.WIZARD_CONTEXT = {
     showResolution(iss);
   }
 
-  // === TRUST BADGES ===
-  function buildTrustBadges(includeAll) {
-    var badges = [
-      { icon: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 1l2.39 4.84L17.82 6.5 13.91 10.3l.92 5.38L10 13.01 5.17 15.68l.92-5.38L2.18 6.5l5.43-.66z"/></svg>', label: 'Warranty', value: '12-month warranty' },
-      { icon: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 2a5 5 0 00-5 5v3l-1.5 2H16.5L15 10V7a5 5 0 00-5-5z"/><path d="M10 18a2 2 0 002-2H8a2 2 0 002 2z"/></svg>', label: 'Parts', value: 'Genuine Apple parts' },
-      { icon: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="7"/><path d="M10 6v4l2.5 2.5"/></svg>', label: 'Turnaround', value: 'Same-day available' }
-    ];
-    if (includeAll) {
-      badges.push({ icon: '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 2C6 2 2.73 4.11 1 7.5 2.73 10.89 6 13 10 13s7.27-2.11 9-5.5C17.27 4.11 14 2 10 2z"/><circle cx="10" cy="7.5" r="2.5"/></svg>', label: 'Service', value: 'Walk-in or collection' });
-    }
-    var html = '<div class="qw-trust-badges">';
-    for (var i = 0; i < badges.length; i++) {
-      var b = badges[i];
-      html += '<div class="qw-trust-badge">';
-      html += '<div class="qw-trust-icon">' + b.icon + '</div>';
-      html += '<div class="qw-trust-text"><span class="qw-trust-label">' + b.label + '</span><span class="qw-trust-value">' + b.value + '</span></div>';
-      html += '</div>';
-    }
-    html += '</div>';
-    return html;
-  }
-
   // === RESOLUTION DISPATCHER ===
   async function showResolution(iss) {
     var result = document.getElementById('qw-result');
@@ -1478,7 +1358,6 @@ window.WIZARD_CONTEXT = {
     html += '<div class="qw-badge qw-badge-green"><span class="qw-badge-icon">\u2713</span> We can fix this</div>';
     html += '<h3 tabindex="-1">' + escapeHtml(product.title) + '</h3>';
     html += '<p class="qw-copy">' + escapeHtml(iss.copy) + '</p>';
-    html += buildTrustBadges(true);
     html += '<div class="qw-price" id="qw-price"><div class="qw-skeleton-price"></div></div>';
     html += '<div class="qw-ctas">';
     html += '<a href="/products/' + product.handle + '" class="qw-btn qw-btn-primary">Book this repair</a>';
@@ -1535,9 +1414,7 @@ window.WIZARD_CONTEXT = {
     html += '<div class="qw-badge qw-badge-amber"><span class="qw-badge-icon">\uD83D\uDD0D</span> We need to take a look</div>';
     html += '<h3 tabindex="-1">Book a Diagnostic</h3>';
     html += '<p class="qw-copy">' + escapeHtml(iss.copy) + '</p>';
-    html += buildTrustBadges(true);
     html += '<div class="qw-price" id="qw-price"><div class="qw-skeleton-price"></div></div>';
-    html += '<div class="qw-diag-note"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="8"/><path d="M10 9v4M10 7h.01"/></svg><span>The diagnostic fee is deducted from the repair cost if you go ahead with the fix.</span></div>';
 
     if (iss.likelyRepair && _repairsMap[iss.likelyRepair]) {
       html += '<div class="qw-likely-repair" id="qw-likely-price"><div class="qw-skeleton-price"></div></div>';
@@ -2559,202 +2436,12 @@ a.qw-d-val:hover { color: #2563eb; }
   outline-offset: 2px;
 }
 
-/* Diagnostic fee note */
-.quote-wizard .qw-diag-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  background: #fef9c3;
-  border-radius: var(--qw-r-sm);
-  padding: 10px 14px;
-  margin-bottom: 16px;
-  font-size: 13px;
-  color: #854d0e;
-  line-height: 1.4;
-}
-.quote-wizard .qw-diag-note svg {
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-
-/* Trust badges */
-.quote-wizard .qw-trust-badges {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 18px;
-  padding: 14px;
-  background: var(--qw-bg);
-  border-radius: var(--qw-r-md);
-}
-.quote-wizard .qw-trust-badge {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-}
-.quote-wizard .qw-trust-icon {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-  color: var(--qw-green);
-  margin-top: 1px;
-}
-.quote-wizard .qw-trust-icon svg {
-  width: 100%;
-  height: 100%;
-}
-.quote-wizard .qw-trust-text {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-.quote-wizard .qw-trust-label {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--qw-text-3);
-}
-.quote-wizard .qw-trust-value {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--qw-text);
-}
-
-/* Model helper */
-.quote-wizard .qw-helper-trigger {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  width: 100%;
-  padding: 10px 14px;
-  background: var(--qw-accent-bg);
-  border: 1px solid transparent;
-  border-radius: var(--qw-r-sm);
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--qw-accent);
-  cursor: pointer;
-  transition: all var(--qw-ease);
-  margin-bottom: 14px;
-}
-.quote-wizard .qw-helper-trigger:hover {
-  background: #dbeafe;
-}
-.quote-wizard .qw-helper-trigger svg {
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-}
-.quote-wizard .qw-helper-panel {
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: max-height 0.35s ease, opacity 0.25s ease;
-}
-.quote-wizard .qw-helper-panel.qw-helper-open {
-  max-height: 400px;
-  opacity: 1;
-  margin-bottom: 14px;
-}
-.quote-wizard .qw-helper-card {
-  border: 1px solid var(--qw-line);
-  border-radius: var(--qw-r-md);
-  padding: 16px;
-  background: var(--qw-white);
-}
-.quote-wizard .qw-helper-inst {
-  font-size: 13px;
-  color: var(--qw-text-2);
-  line-height: 1.5;
-  margin: 0 0 12px;
-}
-.quote-wizard .qw-helper-inst code {
-  background: var(--qw-bg);
-  padding: 1px 5px;
-  border-radius: 3px;
-  font-size: 12px;
-  font-weight: 600;
-}
-.quote-wizard .qw-helper-search-row {
-  margin-bottom: 10px;
-}
-.quote-wizard .qw-helper-input {
-  width: 100%;
-  padding: 10px 14px;
-  font-size: 15px;
-  font-family: inherit;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--qw-text);
-  background: var(--qw-white);
-  border: 2px solid var(--qw-line);
-  border-radius: var(--qw-r-sm);
-  box-sizing: border-box;
-  transition: border-color var(--qw-ease);
-}
-.quote-wizard .qw-helper-input:focus {
-  outline: none;
-  border-color: var(--qw-accent);
-  box-shadow: var(--qw-sh-focus);
-}
-.quote-wizard .qw-helper-results {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.quote-wizard .qw-helper-hit {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 10px 12px;
-  background: none;
-  border: 1px solid var(--qw-line);
-  border-radius: var(--qw-r-sm);
-  font-family: inherit;
-  cursor: pointer;
-  transition: background var(--qw-ease);
-  text-align: left;
-}
-.quote-wizard .qw-helper-hit:hover {
-  background: var(--qw-accent-bg);
-}
-.quote-wizard .qw-helper-hit-num {
-  font-size: 13px;
-  font-weight: 700;
-  font-family: 'SF Mono', 'Consolas', monospace;
-  color: var(--qw-text);
-  min-width: 48px;
-}
-.quote-wizard .qw-helper-hit-name {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--qw-text-2);
-  flex: 1;
-}
-.quote-wizard .qw-helper-hit-action {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--qw-accent);
-}
-.quote-wizard .qw-helper-noresult {
-  font-size: 13px;
-  color: var(--qw-text-3);
-  padding: 8px 0;
-  margin: 0;
-}
-
 /* Mobile adjustments */
 @media (max-width: 479px) {
   .quote-wizard .qw-grid-4 { grid-template-columns: repeat(2, 1fr); }
   .quote-wizard .qw-grid-3 { grid-template-columns: repeat(2, 1fr); }
   .quote-wizard .qw-resolution { padding: 18px; }
   .quote-wizard .qw-price-value { font-size: 24px; }
-  .quote-wizard .qw-trust-badges { grid-template-columns: 1fr; }
 }
 </style>
 
