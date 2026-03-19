@@ -63,12 +63,19 @@ window.WIZARD_CONTEXT = {
   pageType: "{{ template.name }}",
   collectionHandle: {{ collection.handle | default: '' | json }},
   productHandle: {{ product.handle | default: '' | json }},
-  {%- if collection -%}
-    device: {{ collection.metafields.custom.wizard_device | default: '' | json }},
-    fault: {{ collection.metafields.custom.wizard_fault | default: '' | json }}
-  {%- elsif product -%}
+  {%- if product -%}
+    {%- comment -%}On product pages, find the model's repair-prices collection{%- endcomment -%}
+    {%- for col in product.collections -%}
+      {%- if col.handle contains 'repair-prices' -%}
+        modelCollection: {{ col.handle | json }},
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
     device: {{ product.metafields.custom.wizard_device | default: '' | json }},
     fault: ""
+  {%- elsif collection -%}
+    device: {{ collection.metafields.custom.wizard_device | default: '' | json }},
+    fault: {{ collection.metafields.custom.wizard_fault | default: '' | json }}
   {%- else -%}
     device: "",
     fault: ""
@@ -230,6 +237,23 @@ window.WIZARD_CFG = {
 
   function esc(str) { var d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
 
+  /* Centralized scroll: precise, firm, no clunkiness.
+     Scrolls so the target element sits 20px below the viewport top.
+     Uses requestAnimationFrame to ensure DOM has settled. */
+  var _scrollLock = false;
+  function scrollToEl(el, delay) {
+    if (!el || _scrollLock) return;
+    _scrollLock = true;
+    setTimeout(function() {
+      requestAnimationFrame(function() {
+        var rect = el.getBoundingClientRect();
+        var targetY = rect.top + window.pageYOffset - 20;
+        window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+        _scrollLock = false;
+      });
+    }, delay || 80);
+  }
+
   /* [4.7] Shared a11y helper */
   function wireA11y(el, label) {
     if (label) el.setAttribute('aria-label', label);
@@ -344,6 +368,7 @@ window.WIZARD_CFG = {
   var S = { device: null, model: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null };
   var _collectionCache = {}, _productCache = {}, _repairsMap = {};
   var _stepStartTime = Date.now();
+  var _suppressScroll = false;
 
   /* =============================================
      TRIAGE/ISSUE DATA (updated: Batch 2)
@@ -757,8 +782,7 @@ window.WIZARD_CFG = {
     if (stepEl) stepEl.classList.add('on');
     updateProg(n);
     updateCrumb();
-    var wiz = document.querySelector('.qw-wizard');
-    if (wiz) wiz.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (!_suppressScroll) scrollToEl(document.querySelector('.qw-wizard'), 100);
   }
 
   function updateProg(step) {
@@ -1234,7 +1258,7 @@ window.WIZARD_CFG = {
     document.getElementById('qwDgNo').onclick = function() {
       showResolution(originalIss);
     };
-    setTimeout(function() { p.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 200);
+    scrollToEl(p, 200);
   }
 
   /* =============================================
@@ -1250,8 +1274,7 @@ window.WIZARD_CFG = {
     else if (iss.route === 'diagnostic') await showDiagnosticCard(iss, p);
     else showContactCard(iss, p);
     if (window.posthog) posthog.capture('wizard_resolution', { route: iss.route, device: S.device, model: S.model, fault: S.fault, issue: S.issue });
-    /* [4.10] Improved scroll timing */
-    setTimeout(function() { p.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 200);
+    scrollToEl(p, 250);
   }
 
   /* ---- REPAIR CARD ---- */
@@ -1502,7 +1525,7 @@ window.WIZARD_CFG = {
       acc.classList.toggle('open');
       if (acc.classList.contains('open')) {
         wireContactForm('qwCFA', 'question');
-        setTimeout(function() { acc.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 180);
+        scrollToEl(acc, 200);
       }
     };
   }
@@ -1603,25 +1626,65 @@ window.WIZARD_CFG = {
 
   function initPrefill() {
     var ctx = CONTEXT;
-    if (ctx && ctx.collectionHandle) {
-      var modelMatch = findModelByCollection(ctx.collectionHandle);
-      if (modelMatch) {
-        S.device = modelMatch.device;
+    _suppressScroll = true; /* Don't scroll during init - page should load from top */
+
+    /* CASE 1: Product page — pre-fill device + model, derive fault from handle */
+    if (ctx && ctx.productHandle) {
+      var modelCol = ctx.modelCollection || ctx.collectionHandle || '';
+      if (modelCol) {
+        var modelMatch = findModelByCollection(modelCol);
+        if (modelMatch) {
+          /* Derive repair type from product handle */
+          var rt = deriveRepairTypeFromHandle(ctx.productHandle);
+          var faultName = rt ? REPAIR_TYPE_TO_FAULT[rt] : null;
+          S.device = modelMatch.device;
+          if (faultName && faultName !== '_diagnostic') S.preFault = faultName;
+          renderDevices();
+          pickModel(modelMatch.model.name, modelMatch.model.collectionHandle, null).then(function() {
+            _suppressScroll = false;
+          });
+          return;
+        }
+      }
+      /* Product page but can't find model — try device at least */
+      if (ctx.device) {
+        S.device = ctx.device;
         renderDevices();
-        pickModel(modelMatch.model.name, modelMatch.model.collectionHandle, null);
+        renderModels(ctx.device);
+        go(2);
+        _suppressScroll = false;
         return;
       }
     }
+
+    /* CASE 2: Collection page — pre-fill device + model */
+    if (ctx && ctx.collectionHandle) {
+      var match = findModelByCollection(ctx.collectionHandle);
+      if (match) {
+        S.device = match.device;
+        renderDevices();
+        pickModel(match.model.name, match.model.collectionHandle, null).then(function() {
+          _suppressScroll = false;
+        });
+        return;
+      }
+    }
+
+    /* CASE 3: Device context from metafield */
     if (ctx && ctx.device) {
       S.device = ctx.device;
       if (ctx.fault) S.preFault = ctx.fault;
       renderDevices();
       renderModels(ctx.device);
       go(2);
+      _suppressScroll = false;
       return;
     }
+
+    /* CASE 4: No context — start fresh */
     renderDevices();
     go(1);
+    _suppressScroll = false;
   }
 
   /* =============================================
