@@ -217,17 +217,6 @@ window.WIZARD_CFG = {
 <!-- [5.1] Sticky CTA (injected by JS when needed) -->
 <div class="qw-sticky-cta" id="qw-sticky-cta"></div>
 
-<!-- Hidden Shopify contact form for native submission -->
-<div style="display:none;">
-  {%- form 'contact', id: 'qwShopifyForm' -%}
-    <input type="hidden" name="contact[name]" id="qwSfName">
-    <input type="hidden" name="contact[email]" id="qwSfEmail">
-    <input type="hidden" name="contact[phone]" id="qwSfPhone">
-    <input type="hidden" name="contact[body]" id="qwSfBody">
-    <button type="submit" id="qwSfSubmit"></button>
-  {%- endform -%}
-</div>
-
 <!-- JAVASCRIPT -->
 <script>
 (function() {
@@ -1585,26 +1574,22 @@ window.WIZARD_CFG = {
       var userMsg = (document.getElementById(prefix + 'M').value || '').trim();
 
       /* Build context for message body */
-      var ctx = '';
-      if (S.device) ctx += 'Device: ' + (DN[S.device] || S.device) + '\n';
-      if (S.model) ctx += 'Model: ' + S.model + '\n';
-      if (S.fault) ctx += 'Fault: ' + S.fault + '\n';
-      if (S.issue) ctx += 'Issue: ' + S.issue + '\n';
-      ctx += 'Source: quote-wizard-' + source + '\n';
-      var fullBody = ctx + (userMsg ? '\n' + userMsg : '');
+      var parts = [];
+      if (S.device) parts.push('Device: ' + (DN[S.device] || S.device));
+      if (S.model) parts.push('Model: ' + S.model);
+      if (S.fault) parts.push('Fault: ' + S.fault);
+      if (S.issue) parts.push('Issue: ' + S.issue);
+      parts.push('Source: quote-wizard-' + source);
+      var fullBody = parts.join('\n') + (userMsg ? '\n\n' + userMsg : '');
 
-      /* Primary: n8n webhook (creates Intercom contact + Slack notification) */
+      /* Submit to n8n webhook (Intercom contact + Slack notification) */
       fetch('https://icorrect.app.n8n.cloud/webhook/shopify-contact-form', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: userName,
-          email: userEmail,
-          phone: userPhone,
-          body: fullBody,
-          device_type: DN[S.device] || S.device || '',
-          device_model: S.model || '',
-          fault_area: S.fault || ''
+          name: userName, email: userEmail, phone: userPhone,
+          body: fullBody, device_type: DN[S.device] || S.device || '',
+          device_model: S.model || '', fault_area: S.fault || ''
         })
       }).then(function(res) {
         if (res.ok) {
@@ -1612,31 +1597,8 @@ window.WIZARD_CFG = {
           var ok = document.getElementById(prefix + 'Ok');
           if (ok) ok.classList.add('show');
           if (window.posthog) posthog.capture('wizard_conversion', { action: source + '_submit', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
-        } else { throw new Error('n8n failed'); }
-      }).catch(function() {
-        /* Fallback: Shopify native contact form */
-        var sfForm = document.getElementById('qwShopifyForm');
-        var sfName = document.getElementById('qwSfName');
-        var sfEmail = document.getElementById('qwSfEmail');
-        var sfPhone = document.getElementById('qwSfPhone');
-        var sfBody = document.getElementById('qwSfBody');
-        if (sfForm && sfName && sfEmail && sfPhone && sfBody) {
-          sfName.value = userName;
-          sfEmail.value = userEmail;
-          sfPhone.value = userPhone;
-          sfBody.value = fullBody;
-          var formData = new FormData(sfForm);
-          fetch(sfForm.action || window.location.pathname, {
-            method: 'POST', body: formData, headers: { 'Accept': 'text/html' }
-          }).then(function() {
-            form.style.display = 'none';
-            var ok = document.getElementById(prefix + 'Ok');
-            if (ok) ok.classList.add('show');
-          }).catch(function() { sub.disabled = false; sub.textContent = 'Send question'; });
-        } else {
-          sub.disabled = false; sub.textContent = 'Send question';
-        }
-      });
+        } else { sub.disabled = false; sub.textContent = 'Send question'; }
+      }).catch(function() { sub.disabled = false; sub.textContent = 'Send question'; });
     };
   }
 
@@ -1886,8 +1848,15 @@ window.WIZARD_CFG = {
 }
 @media(min-width:1024px){.qw-section{padding:56px 24px;}}
 
-/* Scroll clearance for sticky header + announcement bar */
-.qw-section *{scroll-margin-top:120px;}
+/* Scroll clearance for sticky header */
+.qw-section .qw-prog,
+.qw-section .qw-res,
+.qw-section .qw-res-badge,
+.qw-section .qw-res-h,
+.qw-section .qw-c-acc,
+.qw-section .qw-step,
+.qw-section .qw-s-title,
+.qw-section #qw-rP{scroll-margin-top:120px;}
 
 /* LAYOUT */
 .qw-wrap{max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:32px;}
