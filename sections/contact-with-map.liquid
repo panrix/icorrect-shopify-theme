@@ -1811,7 +1811,7 @@ window.WIZARD_CFG = {
      ============================================= */
   /* Measure sticky header height and set CSS variable for scroll-margin-top */
   (function() {
-    var selectors = ['header', '.header', '.shopify-section-header', '.section-header', '[data-section-type="header"]'];
+    var selectors = ['.section-header', 'sticky-header', '.header-wrapper', 'header', '.header', '.shopify-section-header'];
     for (var i = 0; i < selectors.length; i++) {
       var h = document.querySelector(selectors[i]);
       if (h) {
