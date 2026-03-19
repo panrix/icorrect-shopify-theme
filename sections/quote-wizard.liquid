@@ -1817,11 +1817,9 @@ a.qw-d-val:hover{color:var(--qw-accent);}
 .qw-prog-s.on .qw-prog-lbl{color:var(--qw-accent);display:block;}
 .qw-prog-s.done .qw-prog-lbl{color:var(--qw-dark);display:block;}
 @media(min-width:560px){.qw-prog-lbl{display:block;}}
-.qw-prog-line{flex:1;height:2px;background:var(--qw-line-h);margin:0 8px;border-radius:2px;position:relative;overflow:hidden;min-width:20px;}
-.qw-prog-line::after{content:'';position:absolute;left:0;top:0;height:100%;width:0;background:var(--qw-dark);border-radius:2px;transition:width 0.4s cubic-bezier(0.4,0,0.2,1);}
-.qw-prog-s.done .qw-prog-line::after{width:100%;}
-.qw-prog-s.on .qw-prog-line::after{width:0;}
-.qw-prog-s:last-child .qw-prog-line{display:none;}
+.qw-prog-line{flex:1 1 auto !important;height:2px;background:var(--qw-line-h);margin:0 6px;border-radius:1px;transition:background var(--qw-ease);min-width:16px !important;display:block !important;}
+.qw-prog-s.done .qw-prog-line{background:var(--qw-dark);}
+.qw-prog-s:last-child .qw-prog-line{display:none !important;}
 
 /* [4.3] Breadcrumb */
 .qw-crumb{display:flex;align-items:center;flex-wrap:wrap;gap:2px;margin-bottom:16px;min-height:20px;}
