@@ -1323,7 +1323,7 @@ window.WIZARD_CFG = {
         '</div>' +
         buildContactAccordion() +
       '</div>' +
-      '<button class="qw-restart" id="qwRestart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 105.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg> Start over</button>';
+      '<button class="qw-restart" id="qwRestart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Start over</button>';
 
     wireOptCards(container);
     wireCFToggle(container);
@@ -1397,7 +1397,7 @@ window.WIZARD_CFG = {
         '</div>' +
         buildContactAccordion() +
       '</div>' +
-      '<button class="qw-restart" id="qwRestart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 105.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg> Start over</button>';
+      '<button class="qw-restart" id="qwRestart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Start over</button>';
 
     /* Show Intercom button if available */
     var icBtn = document.getElementById('qwIntercomBtn');
@@ -1424,7 +1424,7 @@ window.WIZARD_CFG = {
           '<a href="https://support.apple.com" target="_blank" rel="noopener" class="qw-btn-book" style="max-width:280px;">Visit Apple Support <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a>' +
         '</div>' +
       '</div>' +
-      '<button class="qw-restart" id="qwRestart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 105.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg> Start over</button>';
+      '<button class="qw-restart" id="qwRestart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Start over</button>';
     wireRestart(container);
   }
 
@@ -1443,7 +1443,7 @@ window.WIZARD_CFG = {
           buildContactFormHTML('qwCFD', true) +
         '</div>' +
       '</div>' +
-      '<button class="qw-restart" id="qwRestart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 105.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg> Start over</button>';
+      '<button class="qw-restart" id="qwRestart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Start over</button>';
     wireContactForm('qwCFD', 'contact');
     wireRestart(container);
   }
@@ -2036,7 +2036,8 @@ a.qw-d-val:hover{color:var(--qw-accent);}
 .qw-f-ok p{font-size:14px;color:var(--qw-text-2);margin:0;}
 
 /* Restart */
-.qw-restart{display:flex;align-items:center;justify-content:center;gap:5px;padding:10px;margin-top:16px;background:none;border:none;font-family:inherit;font-size:13px;font-weight:500;color:var(--qw-text-3);cursor:pointer;width:100%;}
+.qw-restart{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;margin:16px auto 0;background:none;border:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--qw-text-3);cursor:pointer;letter-spacing:-0.01em;transition:color var(--qw-ease);}
+.qw-restart svg{flex-shrink:0;}
 .qw-restart:hover{color:var(--qw-accent);}
 /* Urgent */
 .qw-urgent{background:#FEF3C7;border-left:4px solid #F59E0B;padding:12px 16px;border-radius:0 var(--qw-r-sm) var(--qw-r-sm) 0;margin-bottom:16px;font-size:14px;font-weight:600;color:#92400E;}
