@@ -1809,21 +1809,6 @@ window.WIZARD_CFG = {
   /* =============================================
      INIT
      ============================================= */
-  /* Measure sticky header height and set CSS variable for scroll-margin-top */
-  (function() {
-    var selectors = ['.section-header', 'sticky-header', '.header-wrapper', 'header', '.header', '.shopify-section-header'];
-    for (var i = 0; i < selectors.length; i++) {
-      var h = document.querySelector(selectors[i]);
-      if (h) {
-        var s = window.getComputedStyle(h);
-        if (s.position === 'fixed' || s.position === 'sticky') {
-          document.documentElement.style.setProperty('--qw-scroll-top', (h.offsetHeight + 20) + 'px');
-          break;
-        }
-      }
-    }
-  })();
-
   wireProgDots();
   updateOpenClosed();
   initPrefill();
@@ -1851,8 +1836,8 @@ window.WIZARD_CFG = {
 }
 @media(min-width:1024px){.qw-section{padding:56px 24px;}}
 
-/* Scroll clearance: --qw-scroll-top is set by JS measuring the actual sticky header */
-.qw-prog,.qw-res-badge,.qw-res-h,.qw-res,.qw-c-acc,.qw-step,.qw-s-title{scroll-margin-top:var(--qw-scroll-top,90px);}
+/* Scroll clearance for sticky header */
+.qw-section *{scroll-margin-top:100px;}
 
 /* LAYOUT */
 .qw-wrap{max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:32px;}
