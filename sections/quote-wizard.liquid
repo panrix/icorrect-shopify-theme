@@ -81,13 +81,26 @@ window.WIZARD_CONTEXT = {
 <script>window.WIZARD_CUSTOMER = { name: {{ customer.name | json }}, email: {{ customer.email | json }} };</script>
 {%- endif -%}
 
-<!-- [1.6] Config from section settings -->
+<!-- Service products (global) -->
+{%- assign walk_in_prod = all_products['walk-in-service'] -%}
+{%- assign mail_in_prod = all_products['mail-in-service'] -%}
 <script>
 window.WIZARD_CFG = {
-  cdFee: {{ section.settings.collection_delivery_fee | default: 20 }},
   warrantyLabel: {{ section.settings.warranty_label | default: '2-year warranty' | json }},
   expressLabel: {{ section.settings.express_label | default: 'Next-day (pre-book required)' | json }},
-  diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: '2 working days' | json }}
+  diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: '2 working days' | json }},
+  walkIn: {
+    title: {{ walk_in_prod.title | default: 'Walk-in Service' | json }},
+    price: {{ walk_in_prod.price | default: 0 | divided_by: 100.0 }},
+    variantId: {{ walk_in_prod.selected_or_first_available_variant.id | default: 'null' }},
+    description: {{ walk_in_prod.description | strip_html | truncate: 200 | default: '' | json }}
+  },
+  mailIn: {
+    title: {{ mail_in_prod.title | default: 'Collection & Delivery' | json }},
+    price: {{ mail_in_prod.price | default: 2000 | divided_by: 100.0 }},
+    variantId: {{ mail_in_prod.selected_or_first_available_variant.id | default: 'null' }},
+    description: {{ mail_in_prod.description | strip_html | truncate: 200 | default: '' | json }}
+  }
 };
 </script>
 
@@ -609,90 +622,6 @@ window.WIZARD_CFG = {
     }
   }
 
-  /* [3.5] Dynamic product option parsing */
-  function parseProductOptions(product) {
-    if (!product || !product.options || !product.variants) return { basePrice: 0, turnaroundOpts: [], serviceOpts: [], qualityOpts: [] };
-
-    var opts = product.options || [];
-    var vars = product.variants || [];
-    if (!vars.length) return { basePrice: 0, turnaroundOpts: [], serviceOpts: [], qualityOpts: [] };
-
-    var turnaroundIdx = -1, serviceIdx = -1, qualityIdx = -1;
-
-    /*
-     * Extract unique values per option position from VARIANTS.
-     * This is bulletproof because variant.option1/option2/option3
-     * are flat strings and we KNOW variants work (price renders).
-     */
-    var optionValues = [[], [], []];
-    for (var v = 0; v < vars.length; v++) {
-      for (var oi = 0; oi < 3; oi++) {
-        var val = vars[v]['option' + (oi + 1)];
-        if (val && optionValues[oi].indexOf(val) === -1) optionValues[oi].push(val);
-      }
-    }
-
-    /* Classify each option position by its first value */
-    for (var i = 0; i < optionValues.length; i++) {
-      if (!optionValues[i].length) continue;
-      var firstVal = optionValues[i][0].toLowerCase().trim();
-      var allVals = optionValues[i].join(' ').toLowerCase();
-
-      if (firstVal.indexOf('standard') === 0 || allVals.match(/working day|fast|next.day|express/)) { turnaroundIdx = i; }
-      else if (firstVal.indexOf("it") === 0 && allVals.match(/good/)) { qualityIdx = i; }
-      else if (firstVal.indexOf('i will') === 0 || firstVal.indexOf('drop off') === 0 || allVals.match(/visit|collect|deliver/)) { serviceIdx = i; }
-    }
-
-    console.log('[Wizard] Option classification:', optionValues.map(function(v,i){return 'option'+(i+1)+': ['+v.join(', ')+']';}).join(' | '), '=> turnaround:', turnaroundIdx, 'quality:', qualityIdx, 'service:', serviceIdx);
-
-    /* Find global cheapest price */
-    var globalMin = Infinity;
-    for (var v = 0; v < vars.length; v++) {
-      var vp = parseFloat(vars[v].price);
-      if (vp < globalMin) globalMin = vp;
-    }
-    if (globalMin === Infinity) globalMin = 0;
-
-    /* For each option, compute the add-on prices relative to global minimum */
-    function buildOpts(optIdx) {
-      if (optIdx < 0) return [];
-      var optKey = 'option' + (optIdx + 1);
-      var seen = {};
-      var result = [];
-      for (var v = 0; v < vars.length; v++) {
-        var val = vars[v][optKey];
-        if (!val || seen[val]) continue;
-        seen[val] = true;
-        /* Find cheapest variant with this option value */
-        var cheapest = Infinity;
-        for (var c = 0; c < vars.length; c++) {
-          if (vars[c][optKey] === val) {
-            var cp = parseFloat(vars[c].price);
-            if (cp < cheapest) cheapest = cp;
-          }
-        }
-        result.push({ name: val, add: Math.round(cheapest - globalMin) });
-      }
-      /* Normalise: subtract the minimum add so the cheapest option = 0 */
-      var minAdd = Infinity;
-      for (var r = 0; r < result.length; r++) { if (result[r].add < minAdd) minAdd = result[r].add; }
-      if (minAdd > 0 && minAdd !== Infinity) {
-        for (var r2 = 0; r2 < result.length; r2++) result[r2].add -= minAdd;
-      }
-      return result;
-    }
-
-    /* Build base price as the cheapest variant that picks the first/default value of each option */
-    var basePrice = globalMin;
-
-    return {
-      basePrice: basePrice,
-      turnaroundOpts: buildOpts(turnaroundIdx),
-      serviceOpts: buildOpts(serviceIdx),
-      qualityOpts: buildOpts(qualityIdx)
-    };
-  }
-
   /* =============================================
      FAULT/ISSUE FILTERING
      ============================================= */
@@ -736,25 +665,13 @@ window.WIZARD_CFG = {
   }
 
   /* [2.2] Device-specific badge builders */
-  function buildRepairBadges(device, parsed) {
+  function buildRepairBadges(device) {
     var h = svcBadge('warranty', CFG.warrantyLabel || '2-year warranty');
-    /* Turnaround: derive from parsed product options if available */
-    if (parsed.turnaroundOpts.length > 0) {
-      h += svcBadge('turnaround', parsed.turnaroundOpts[0].name);
-      if (parsed.turnaroundOpts.length > 1) h += svcBadge('express', CFG.expressLabel || 'Next-day (pre-book required)');
-    } else {
-      /* Fallback turnaround by device */
-      var ta = { macbook: '2-3 working days', iphone: '2-4 hours', ipad: '2-3 working days', watch: '2-3 working days' };
-      h += svcBadge('turnaround', ta[device] || '2-3 working days');
-    }
+    var ta = { macbook: '2-3 working days', iphone: '2-4 hours', ipad: '2-3 working days', watch: '2-3 working days' };
+    h += svcBadge('turnaround', ta[device] || '2-3 working days');
+    if (device === 'macbook') h += svcBadge('express', CFG.expressLabel || 'Next-day (pre-book required)');
     h += svcBadge('parts', 'Genuine Apple parts');
-    /* Service: derive from parsed */
-    if (parsed.serviceOpts.length > 0) {
-      var svcNames = parsed.serviceOpts.map(function(o) { return o.name.replace(/^I will visit you$/i,'Walk-in').replace(/^Please collect and deliver$/i,'Collection & Delivery'); });
-      h += svcBadge('service', svcNames.join(', '));
-    } else {
-      h += svcBadge('service', 'Walk-in, Collection & Delivery');
-    }
+    h += svcBadge('service', 'Walk-in, Collection & Delivery');
     return h;
   }
 
@@ -762,6 +679,29 @@ window.WIZARD_CFG = {
     return svcBadge('turnaround', CFG.diagnosticTurnaround || '2 working days') +
       svcBadge('diagnostic', 'Diagnostic fee applied to repair cost') +
       svcBadge('service', 'Walk-in, Collection & Delivery');
+  }
+
+  /* Service type cards from Liquid-provided walk-in + mail-in products */
+  function buildServiceCards() {
+    var wi = CFG.walkIn || {};
+    var mi = CFG.mailIn || {};
+    var cdFee = mi.price || 0;
+    return '<div class="qw-opt-section">' +
+      '<div class="qw-opt-label">How to get the device to us</div>' +
+      '<div class="qw-opt-row">' +
+        '<div class="qw-opt-card sel" data-opt="svc" data-add="0" tabindex="0">' +
+          '<div class="qw-opt-name">Walk-in</div>' +
+          '<div class="qw-opt-meta">12 Margaret St, W1W 8JQ</div>' +
+          '<div class="qw-opt-price free">Included</div>' +
+        '</div>' +
+        '<div class="qw-opt-card" data-opt="svc" data-add="' + cdFee + '" tabindex="0">' +
+          '<span class="qw-pop-tag">Popular</span>' +
+          '<div class="qw-opt-name">Collection & Delivery</div>' +
+          '<div class="qw-opt-meta">We collect and return your device</div>' +
+          '<div class="qw-opt-price">+' + gbp.format(cdFee) + '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
   }
 
   /* =============================================
@@ -1279,47 +1219,22 @@ window.WIZARD_CFG = {
     if (!product) { showContactCard(iss, container); return; }
 
     var fullProduct = await fetchProduct(product.handle);
-    var parsed = parseProductOptions(fullProduct);
-    if (fullProduct) console.log('[Wizard] ' + product.handle, 'options:', (fullProduct.options||[]).map(function(o){return o.name+': ['+o.values.join(', ')+']';}), 'parsed:', {base:parsed.basePrice, turnaround:parsed.turnaroundOpts, service:parsed.serviceOpts, quality:parsed.qualityOpts});
+    var basePrice = fullProduct ? parseFloat(fullProduct.variants[0].price) : 0;
 
     var urgentHtml = iss.urgent ? '<div class="qw-urgent" role="alert"><span>\u26A0\uFE0F Safety concern: stop using the device and don\'t charge it.</span></div>' : '';
 
-    var priceHtml = parsed.basePrice ? '<div class="qw-price-from">From</div><div class="qw-price-big">' + gbp.format(parsed.basePrice) + '</div>' : '';
+    var priceHtml = basePrice ? '<div class="qw-price-from">From</div><div class="qw-price-big">' + gbp.format(basePrice) + '</div>' : '';
 
-    var badges = buildRepairBadges(S.device, parsed);
-    var turnaroundHtml = '';
-    if (parsed.turnaroundOpts.length > 1) {
-      var tCards = '';
-      parsed.turnaroundOpts.forEach(function(t, i) {
-        tCards += '<div class="qw-opt-card' + (i === 0 ? ' sel' : '') + '" data-opt="speed" data-add="' + t.add + '" tabindex="0">';
-        tCards += '<div class="qw-opt-name">' + esc(t.name) + '</div>';
-        tCards += '<div class="qw-opt-price' + (t.add === 0 ? ' free' : '') + '">' + (t.add === 0 ? 'Included' : '+' + gbp.format(t.add)) + '</div>';
-        tCards += '</div>';
-      });
-      turnaroundHtml = '<div class="qw-opt-section"><div class="qw-opt-label">Repair turnaround</div><div class="qw-opt-row">' + tCards + '</div></div>';
-    }
+    var badges = buildRepairBadges(S.device);
 
-    /* Service option cards (dynamic from product variants) */
-    var serviceHtml = '';
-    if (parsed.serviceOpts.length > 1) {
-      var sCards = '';
-      parsed.serviceOpts.forEach(function(s, i) {
-        var isWalkin = s.name.toLowerCase().indexOf('visit') !== -1 || s.add === 0;
-        sCards += '<div class="qw-opt-card' + (i === 0 ? ' sel' : '') + '" data-opt="svc" data-add="' + s.add + '" tabindex="0">';
-        if (isWalkin) sCards += '<span class="qw-pop-tag">Popular</span>';
-        sCards += '<div class="qw-opt-name">' + esc(s.name.replace(/^I will visit you$/i, 'Walk-in').replace(/^Please collect and deliver$/i, 'Collection & Delivery')) + '</div>';
-        if (isWalkin) sCards += '<div class="qw-opt-meta">12 Margaret St, W1W 8JQ</div>';
-        else sCards += '<div class="qw-opt-meta">We collect and return your device</div>';
-        sCards += '<div class="qw-opt-price' + (s.add === 0 ? ' free' : '') + '">' + (s.add === 0 ? 'Included' : '+' + gbp.format(s.add)) + '</div>';
-        sCards += '</div>';
-      });
-      serviceHtml = '<div class="qw-opt-section"><div class="qw-opt-label">How to get the device to us</div><div class="qw-opt-row">' + sCards + '</div></div>';
-    }
+    /* Service cards from Liquid-provided global products */
+    var serviceHtml = buildServiceCards();
 
-    var totalHtml = parsed.basePrice ? '<div class="qw-price-total"><span class="qw-price-total-label">Total</span><span class="qw-price-total-val" id="qwPriceTotal">' + gbp.format(parsed.basePrice) + '</span></div>' : '';
+    var cdFee = CFG.mailIn ? CFG.mailIn.price : 0;
+    var totalHtml = basePrice ? '<div class="qw-price-total"><span class="qw-price-total-label">Total</span><span class="qw-price-total-val" id="qwPriceTotal">' + gbp.format(basePrice) + '</span></div>' : '';
 
     container.innerHTML = urgentHtml +
-      '<div class="qw-res" id="qwResCard" data-base="' + parsed.basePrice + '">' +
+      '<div class="qw-res" id="qwResCard" data-base="' + basePrice + '">' +
         '<div class="qw-res-top">' +
           '<div class="qw-res-badge qw-badge-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>We can fix this</div>' +
           '<h3 class="qw-res-h">' + esc(product.title) + '</h3>' +
@@ -1327,7 +1242,7 @@ window.WIZARD_CFG = {
           priceHtml +
         '</div>' +
         '<div class="qw-svc">' + badges + '</div>' +
-        '<div style="padding:0 24px 8px;">' + turnaroundHtml + serviceHtml + '</div>' +
+        '<div style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
         totalHtml +
         '<div class="qw-res-cta">' +
           '<a href="/products/' + product.handle + '" class="qw-btn-book" id="qwBookBtn">Book this repair <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>' +
@@ -1341,7 +1256,7 @@ window.WIZARD_CFG = {
     wireCFToggle(container);
     wireRestart(container);
     wireBookTracking(container);
-    if (parsed.basePrice) setupStickyCTA(gbp.format(parsed.basePrice), '/products/' + product.handle);
+    if (basePrice) setupStickyCTA(gbp.format(basePrice), '/products/' + product.handle);
   }
 
   /* ---- DIAGNOSTIC CARD ---- */
@@ -1350,8 +1265,7 @@ window.WIZARD_CFG = {
     if (!diagProduct) { showContactCard(iss, container); return; }
 
     var fullDiag = await fetchProduct(diagProduct.handle);
-    var diagParsed = parseProductOptions(fullDiag);
-    var diagPrice = diagParsed.basePrice;
+    var diagPrice = fullDiag ? parseFloat(fullDiag.variants[0].price) : 0;
 
     var urgentHtml = iss.urgent ? '<div class="qw-urgent" role="alert"><span>\u26A0\uFE0F Safety concern: stop using the device and don\'t charge it.</span></div>' : '';
 
@@ -1362,34 +1276,19 @@ window.WIZARD_CFG = {
     if (iss.likelyRepair && _repairsMap[iss.likelyRepair]) {
       try {
         var likelyProd = await fetchProduct(_repairsMap[iss.likelyRepair].handle);
-        var likelyParsed = parseProductOptions(likelyProd);
-        if (likelyParsed.basePrice && iss.likelyCopy) {
-          var estTotal = diagPrice + likelyParsed.basePrice;
+        var likelyPrice = likelyProd ? parseFloat(likelyProd.variants[0].price) : 0;
+        if (likelyPrice && iss.likelyCopy) {
+          var estTotal = diagPrice + likelyPrice;
           likelyHtml = '<div class="qw-estimate">' +
             '<div class="qw-estimate-row"><span>Diagnostic</span><span>' + gbp.format(diagPrice) + '</span></div>' +
-            '<div class="qw-estimate-row"><span>' + esc(iss.likelyCopy) + '</span><span>from ' + gbp.format(likelyParsed.basePrice) + '</span></div>' +
+            '<div class="qw-estimate-row"><span>' + esc(iss.likelyCopy) + '</span><span>from ' + gbp.format(likelyPrice) + '</span></div>' +
             '<div class="qw-estimate-total"><span>Estimated total</span><span>from ' + gbp.format(estTotal) + '</span></div>' +
           '</div>';
         }
       } catch(e) {}
     }
 
-    /* Service options from diagnostic product */
-    var serviceHtml = '';
-    if (diagParsed.serviceOpts.length > 1) {
-      var sCards = '';
-      diagParsed.serviceOpts.forEach(function(s, i) {
-        var isWalkin = s.name.toLowerCase().indexOf('visit') !== -1 || s.add === 0;
-        sCards += '<div class="qw-opt-card' + (i === 0 ? ' sel' : '') + '" data-opt="svc" data-add="' + s.add + '" tabindex="0">';
-        if (isWalkin) sCards += '<span class="qw-pop-tag">Popular</span>';
-        sCards += '<div class="qw-opt-name">' + esc(s.name.replace(/^I will visit you$/i, 'Walk-in').replace(/^Please collect and deliver$/i, 'Collection & Delivery')) + '</div>';
-        if (isWalkin) sCards += '<div class="qw-opt-meta">12 Margaret St, W1W 8JQ</div>';
-        else sCards += '<div class="qw-opt-meta">We collect and return your device</div>';
-        sCards += '<div class="qw-opt-price' + (s.add === 0 ? ' free' : '') + '">' + (s.add === 0 ? 'Included' : '+' + gbp.format(s.add)) + '</div></div>';
-      });
-      serviceHtml = '<div class="qw-opt-section"><div class="qw-opt-label">How to get the device to us</div><div class="qw-opt-row">' + sCards + '</div></div>';
-    }
-
+    var serviceHtml = buildServiceCards();
     var totalHtml = diagPrice ? '<div class="qw-price-total"><span class="qw-price-total-label">Total</span><span class="qw-price-total-val" id="qwPriceTotal">' + gbp.format(diagPrice) + '</span></div>' : '';
 
     var badges = buildDiagnosticBadges(S.device);
@@ -2051,12 +1950,6 @@ a.qw-d-val:hover{color:var(--qw-accent);}
       "id": "subheading",
       "label": "Subheading",
       "default": "Pick your device and we'll point you to the right repair."
-    },
-    {
-      "type": "number",
-      "id": "collection_delivery_fee",
-      "label": "Collection & Delivery fee (£)",
-      "default": 20
     },
     {
       "type": "text",
