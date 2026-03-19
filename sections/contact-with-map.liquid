@@ -246,8 +246,15 @@ window.WIZARD_CFG = {
     _scrollLock = true;
     setTimeout(function() {
       requestAnimationFrame(function() {
+        /* Account for sticky header: find the tallest fixed/sticky element at the top */
+        var headerOffset = 0;
+        var header = document.querySelector('header, .header, .shopify-section-header, [data-section-type="header"]');
+        if (header) {
+          var style = window.getComputedStyle(header);
+          if (style.position === 'fixed' || style.position === 'sticky') headerOffset = header.offsetHeight;
+        }
         var rect = el.getBoundingClientRect();
-        var targetY = rect.top + window.pageYOffset - 20;
+        var targetY = rect.top + window.pageYOffset - headerOffset - 24;
         window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
         _scrollLock = false;
       });
