@@ -1298,7 +1298,7 @@ window.WIZARD_CFG = {
     document.getElementById('qwDgNo').onclick = function() {
       showResolution(originalIss);
     };
-    scrollToEl(p.querySelector('.qw-res-h') || p, 200);
+    scrollToEl(p, 200);
   }
 
   function showFlexgateQuestion(originalIss) {
@@ -1324,7 +1324,7 @@ window.WIZARD_CFG = {
     document.getElementById('qwFgNo').onclick = function() {
       showResolution(originalIss);
     };
-    scrollToEl(p.querySelector('.qw-res-h') || p, 200);
+    scrollToEl(p, 200);
   }
 
   /* =============================================
@@ -1573,14 +1573,12 @@ window.WIZARD_CFG = {
       var userPhone = pIn.value.trim();
       var userMsg = (document.getElementById(prefix + 'M').value || '').trim();
 
-      /* Build context for message body */
-      var parts = [];
-      if (S.device) parts.push('Device: ' + (DN[S.device] || S.device));
-      if (S.model) parts.push('Model: ' + S.model);
-      if (S.fault) parts.push('Fault: ' + S.fault);
-      if (S.issue) parts.push('Issue: ' + S.issue);
-      parts.push('Source: quote-wizard-' + source);
-      var fullBody = parts.join('\n') + (userMsg ? '\n\n' + userMsg : '');
+      /* Build structured body: device context + customer message */
+      var deviceParts = [];
+      if (S.fault) deviceParts.push('Fault: ' + S.fault);
+      if (S.issue && S.issue !== S.fault) deviceParts.push('Issue: ' + S.issue);
+      var fullBody = deviceParts.length ? deviceParts.join('\n') : '';
+      if (userMsg) fullBody += (fullBody ? '\n\n' : '') + 'Message:\n' + userMsg;
 
       /* Submit to n8n webhook (Intercom contact + Slack notification) */
       fetch('https://icorrect.app.n8n.cloud/webhook/shopify-contact-form', {
