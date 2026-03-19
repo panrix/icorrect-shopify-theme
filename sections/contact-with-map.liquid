@@ -422,7 +422,7 @@ window.WIZARD_CFG = {
       'Other': [
         { label: 'Overheating or fans running loud', route: 'diagnostic', repairType: 'diagnostic', copy: 'Excessive heat or fan noise can be caused by clogged vents, dried-out thermal paste, or a failing fan. We\'ll clean the internals and test the cooling system.' },
         { label: 'Slow performance', route: 'contact', repairType: null, copy: 'Performance issues are often software-related. Get in touch and we\'ll help work out whether it\'s hardware or software.' },
-        { label: 'Something else', route: 'contact', repairType: null, copy: 'Tell us what\'s going on and we\'ll point you in the right direction.' }
+        { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe the issue and we\'ll get back to you with the best repair option.' }
       ]
     },
     iphone: {
@@ -472,7 +472,7 @@ window.WIZARD_CFG = {
         { label: 'No signal / "No Service" / "SOS only"', route: 'diagnostic', repairType: 'diagnostic', copy: 'Loss of cellular signal could be an antenna, baseband chip, or SIM reader issue.' },
         { label: 'WiFi not connecting or greyed out', route: 'diagnostic', repairType: 'diagnostic', copy: 'A greyed-out WiFi toggle usually indicates a hardware fault on the logic board.' },
         { label: 'Bluetooth not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth and WiFi share the same chip on iPhones. A diagnostic will confirm the fault.' },
-        { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe your issue and we\'ll get back to you with the right repair option.' }
+        { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe the issue and we\'ll get back to you with the best repair option.' }
       ]
     },
     ipad: {
@@ -506,7 +506,7 @@ window.WIZARD_CFG = {
         { label: 'Microphone not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'iPad microphones can fail due to the module, flex cable, or corrosion.' },
         { label: 'WiFi not connecting', route: 'diagnostic', repairType: 'diagnostic', copy: 'WiFi issues can be the antenna, wireless chip, or a software problem. We\'ll diagnose the hardware first.' },
         { label: 'Bluetooth not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth and WiFi share components on iPads. A diagnostic will identify the fault.' },
-        { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe the issue and we\'ll advise on the right repair.' }
+        { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe the issue and we\'ll get back to you with the best repair option.' }
       ]
     },
     watch: {
@@ -535,7 +535,7 @@ window.WIZARD_CFG = {
       'Other': [
         { label: 'Bluetooth not connecting to phone', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth pairing issues can be hardware or software. We\'ll test the wireless module.' },
         { label: 'WiFi not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'WiFi faults are typically the antenna or wireless chip. Diagnostic needed.' },
-        { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe the issue and we\'ll advise.' }
+        { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe the issue and we\'ll get back to you with the best repair option.' }
       ]
     }
   };
@@ -879,7 +879,7 @@ window.WIZARD_CFG = {
 
     var groups = MODELS[dev];
     if (!groups || groups.length === 0) {
-      c.innerHTML = '<div class="qw-empty"><p>Contact us for a quote on this device.</p><a href="/pages/contact" class="qw-btn-book">Get in touch</a></div>';
+      c.innerHTML = '<div class="qw-empty"><p>We don\'t have pricing for this model yet. Get in touch for a quote.</p><a href="/pages/contact" class="qw-btn-book">Get in touch</a></div>';
       return;
     }
 
@@ -1191,7 +1191,7 @@ window.WIZARD_CFG = {
 
     var faults = getAvailableFaults(dev, _repairsMap);
     if (faults.length === 0) {
-      c.innerHTML = '<div class="qw-empty"><p>We\'re setting up pricing for this model. Get in touch for a quote.</p><a href="/pages/contact" class="qw-btn-book">Contact us</a></div>';
+      c.innerHTML = '<div class="qw-empty"><p>We\'re setting up pricing for this model. Get in touch for a quote.</p><a href="/pages/contact" class="qw-btn-book">Get in touch</a></div>';
       return;
     }
     faults.forEach(function(f) {
@@ -1209,6 +1209,21 @@ window.WIZARD_CFG = {
     document.querySelectorAll('#qw-s3 .qw-f-card').forEach(function(c) { c.classList.remove('sel'); });
     if (el) el.classList.add('sel');
     if (window.posthog) posthog.capture('wizard_step', { step: 4, device: S.device, model: S.model, fault: S.fault, duration: Date.now() - _stepStartTime });
+
+    /* "Other" skips issues and goes straight to contact */
+    if (v === 'Other') {
+      S.issue = 'Other';
+      setTimeout(function() {
+        var tC = document.getElementById('qw-tC'); if (tC) tC.innerHTML = '';
+        var rP = document.getElementById('qw-rP'); if (rP) { rP.style.display = 'none'; rP.innerHTML = ''; }
+        go(4);
+        var titleEl = document.getElementById('qw-s4t'); if (titleEl) titleEl.textContent = 'Tell us what\'s going on';
+        var subEl = document.getElementById('qw-s4s'); if (subEl) subEl.textContent = 'Describe the issue and we\'ll get back to you with the right repair option.';
+        showResolution({ label: 'Other', route: 'contact', repairType: null, copy: 'Tell us what\'s happening with your ' + (DN[S.device] || 'device') + ' and we\'ll point you in the right direction.' });
+      }, 150);
+      return;
+    }
+
     setTimeout(function() { renderIssues(S.device, v); go(4); }, 150);
   }
 
@@ -1233,7 +1248,7 @@ window.WIZARD_CFG = {
     var fi = FAULT_ICONS[(faultObj && faultObj.icon) || 'other'] || FAULT_ICONS.other;
 
     if (issues.length === 0) {
-      c.innerHTML = '<div class="qw-empty"><p>No specific issues found. Get in touch and we\'ll help.</p><a href="/pages/contact" class="qw-btn-book">Contact us</a></div>';
+      c.innerHTML = '<div class="qw-empty"><p>No specific issues found. Get in touch and we\'ll help.</p><a href="/pages/contact" class="qw-btn-book">Get in touch</a></div>';
       return;
     }
     issues.forEach(function(iss) {
@@ -1885,10 +1900,10 @@ a.qw-d-val:hover{color:var(--qw-accent);}
 .qw-m-group.open .qw-m-chev{transform:rotate(180deg);}
 .qw-m-body{max-height:0;overflow:hidden;transition:max-height .35s ease;}
 .qw-m-group.open .qw-m-body{max-height:3000px;}
-.qw-m-list{padding:0 14px 14px;display:flex;flex-direction:column;gap:2px;}
+.qw-m-list{padding:6px 14px 14px;display:flex;flex-direction:column;gap:2px;}
 .qw-m-item{display:flex;align-items:center;padding:12px 14px;border-radius:var(--qw-r-sm);cursor:pointer;transition:all var(--qw-ease);-webkit-tap-highlight-color:transparent;}
 .qw-m-item:hover{background:#f5f6fa;}.qw-m-item:active{background:#eef0f5;}
-.qw-m-item.sel{background:var(--qw-accent-bg);outline:1.5px solid var(--qw-accent);}
+.qw-m-item.sel{background:var(--qw-accent-bg);box-shadow:inset 0 0 0 1.5px var(--qw-accent);}
 .qw-mn{font-size:14px;font-weight:600;color:var(--qw-text);line-height:1.3;flex:1;min-width:0;}
 
 /* HELPER */
@@ -1980,8 +1995,8 @@ a.qw-d-val:hover{color:var(--qw-accent);}
 .qw-res-p{font-size:14px;color:var(--qw-text-2);line-height:1.55;margin:0 0 20px;max-width:480px;}
 
 /* Dustgate images */
-.qw-dustgate-imgs{display:flex;gap:10px;margin-bottom:20px;}
-.qw-dustgate-imgs img{flex:1;min-width:0;height:120px;object-fit:cover;border-radius:var(--qw-r-sm);border:1px solid var(--qw-line);}
+.qw-dustgate-imgs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.qw-dustgate-imgs img{width:100%;aspect-ratio:4/3;object-fit:cover;object-position:center;border-radius:var(--qw-r-sm);border:1px solid var(--qw-line);}
 
 /* Pricing */
 .qw-price-from{font-size:13px;color:var(--qw-text-3);font-weight:500;margin-bottom:4px;}
