@@ -789,7 +789,7 @@ window.WIZARD_CFG = {
     if (stepEl) stepEl.classList.add('on');
     updateProg(n);
     updateCrumb();
-    if (!_suppressScroll) scrollToEl(document.querySelector('.qw-wizard'), 100);
+    if (!_suppressScroll) scrollToEl(document.querySelector('.qw-prog') || document.querySelector('.qw-wizard'), 100);
   }
 
   function updateProg(step) {
@@ -1307,7 +1307,7 @@ window.WIZARD_CFG = {
     document.getElementById('qwDgNo').onclick = function() {
       showResolution(originalIss);
     };
-    scrollToEl(p, 200);
+    scrollToEl(p.querySelector('.qw-res-h') || p, 200);
   }
 
   function showFlexgateQuestion(originalIss) {
@@ -1333,7 +1333,7 @@ window.WIZARD_CFG = {
     document.getElementById('qwFgNo').onclick = function() {
       showResolution(originalIss);
     };
-    scrollToEl(p, 200);
+    scrollToEl(p.querySelector('.qw-res-h') || p, 200);
   }
 
   /* =============================================
@@ -1350,7 +1350,9 @@ window.WIZARD_CFG = {
     else if (iss.route === 'dismiss') showDismissCard(iss, p);
     else showContactCard(iss, p);
     if (window.posthog) posthog.capture('wizard_resolution', { route: iss.route, device: S.device, model: S.model, fault: S.fault, issue: S.issue });
-    scrollToEl(p, 250);
+    /* Scroll to the actual rendered card, not the wrapper */
+    var scrollTarget = p.querySelector('.qw-res-badge') || p.querySelector('.qw-res') || p;
+    scrollToEl(scrollTarget, 250);
   }
 
   /* ---- REPAIR CARD ---- */
