@@ -620,24 +620,30 @@ window.WIZARD_CFG = {
     var turnaroundIdx = -1, serviceIdx = -1, qualityIdx = -1;
 
     /*
-     * Classify by checking the FIRST VALUE of each option.
-     * Discovered from live iCorrect products:
-     *   Turnaround: "Standard 2-3 Working Days", "Standard"
-     *   Quality:    "It's good"
-     *   Service:    "I will visit you", "Drop off in store"
+     * Extract unique values per option position from VARIANTS.
+     * This is bulletproof because variant.option1/option2/option3
+     * are flat strings and we KNOW variants work (price renders).
      */
-    for (var i = 0; i < opts.length; i++) {
-      var firstVal = ((opts[i].values || [])[0] || '').toLowerCase().trim();
-      var allVals = (opts[i].values || []).join(' ').toLowerCase();
-
-      if (firstVal.indexOf('standard') === 0) { turnaroundIdx = i; }
-      else if (firstVal === "it's good" || firstVal === 'its good' || firstVal === "it\u2019s good") { qualityIdx = i; }
-      else if (firstVal.indexOf('i will visit') === 0 || firstVal.indexOf('drop off') === 0 || firstVal.indexOf('walk') === 0) { serviceIdx = i; }
-      /* Broader fallback on all values */
-      else if (allVals.match(/working day|fast|next.day|express/)) { turnaroundIdx = i; }
-      else if (allVals.match(/visit|collect|deliver|mail.in|drop.off/)) { serviceIdx = i; }
-      else if (allVals.match(/good|replace/)) { qualityIdx = i; }
+    var optionValues = [[], [], []];
+    for (var v = 0; v < vars.length; v++) {
+      for (var oi = 0; oi < 3; oi++) {
+        var val = vars[v]['option' + (oi + 1)];
+        if (val && optionValues[oi].indexOf(val) === -1) optionValues[oi].push(val);
+      }
     }
+
+    /* Classify each option position by its first value */
+    for (var i = 0; i < optionValues.length; i++) {
+      if (!optionValues[i].length) continue;
+      var firstVal = optionValues[i][0].toLowerCase().trim();
+      var allVals = optionValues[i].join(' ').toLowerCase();
+
+      if (firstVal.indexOf('standard') === 0 || allVals.match(/working day|fast|next.day|express/)) { turnaroundIdx = i; }
+      else if (firstVal.indexOf("it") === 0 && allVals.match(/good/)) { qualityIdx = i; }
+      else if (firstVal.indexOf('i will') === 0 || firstVal.indexOf('drop off') === 0 || allVals.match(/visit|collect|deliver/)) { serviceIdx = i; }
+    }
+
+    console.log('[Wizard] Option classification:', optionValues.map(function(v,i){return 'option'+(i+1)+': ['+v.join(', ')+']';}).join(' | '), '=> turnaround:', turnaroundIdx, 'quality:', qualityIdx, 'service:', serviceIdx);
 
     /* Find global cheapest price */
     var globalMin = Infinity;
