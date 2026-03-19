@@ -1352,9 +1352,7 @@ window.WIZARD_CFG = {
     else if (iss.route === 'dismiss') showDismissCard(iss, p);
     else showContactCard(iss, p);
     if (window.posthog) posthog.capture('wizard_resolution', { route: iss.route, device: S.device, model: S.model, fault: S.fault, issue: S.issue });
-    /* Scroll to the actual rendered card, not the wrapper */
-    var scrollTarget = p.querySelector('.qw-res-badge') || p.querySelector('.qw-res') || p;
-    scrollToEl(scrollTarget, 250);
+    scrollToEl(p, 300);
   }
 
   /* ---- REPAIR CARD ---- */
@@ -1581,58 +1579,64 @@ window.WIZARD_CFG = {
       if (!validate()) return;
       sub.disabled = true; sub.textContent = 'Sending...';
 
-      /* Build context line for the message body */
-      var ctx = 'Device: ' + (S.device || 'N/A') + '\nModel: ' + (S.model || 'N/A') + '\nFault: ' + (S.fault || 'N/A') + '\nIssue: ' + (S.issue || 'N/A') + '\nSource: quote-wizard-' + source + '\nPage: ' + window.location.href + '\n\n';
+      var userName = nIn.value.trim();
+      var userEmail = eIn.value.trim();
+      var userPhone = pIn.value.trim();
       var userMsg = (document.getElementById(prefix + 'M').value || '').trim();
-      var fullBody = ctx + (userMsg ? 'Customer message:\n' + userMsg : '(No additional message)');
 
-      /* Populate hidden Shopify contact form */
-      var sfForm = document.getElementById('qwShopifyForm');
-      var sfName = document.getElementById('qwSfName');
-      var sfEmail = document.getElementById('qwSfEmail');
-      var sfPhone = document.getElementById('qwSfPhone');
-      var sfBody = document.getElementById('qwSfBody');
+      /* Build context for message body */
+      var ctx = '';
+      if (S.device) ctx += 'Device: ' + (DN[S.device] || S.device) + '\n';
+      if (S.model) ctx += 'Model: ' + S.model + '\n';
+      if (S.fault) ctx += 'Fault: ' + S.fault + '\n';
+      if (S.issue) ctx += 'Issue: ' + S.issue + '\n';
+      ctx += 'Source: quote-wizard-' + source + '\n';
+      var fullBody = ctx + (userMsg ? '\n' + userMsg : '');
 
-      if (sfForm && sfName && sfEmail && sfPhone && sfBody) {
-        sfName.value = nIn.value.trim();
-        sfEmail.value = eIn.value.trim();
-        sfPhone.value = pIn.value.trim();
-        sfBody.value = fullBody;
-
-        /* Submit via fetch to Shopify's form handler */
-        var formData = new FormData(sfForm);
-        fetch(sfForm.action || window.location.pathname, {
-          method: 'POST',
-          body: formData,
-          headers: { 'Accept': 'text/html' }
-        }).then(function(res) {
-          if (res.ok || res.status === 302 || res.status === 200) {
+      /* Primary: n8n webhook (creates Intercom contact + Slack notification) */
+      fetch('https://icorrect.app.n8n.cloud/webhook/shopify-contact-form', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: userName,
+          email: userEmail,
+          phone: userPhone,
+          body: fullBody,
+          device_type: DN[S.device] || S.device || '',
+          device_model: S.model || '',
+          fault_area: S.fault || ''
+        })
+      }).then(function(res) {
+        if (res.ok) {
+          form.style.display = 'none';
+          var ok = document.getElementById(prefix + 'Ok');
+          if (ok) ok.classList.add('show');
+          if (window.posthog) posthog.capture('wizard_conversion', { action: source + '_submit', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
+        } else { throw new Error('n8n failed'); }
+      }).catch(function() {
+        /* Fallback: Shopify native contact form */
+        var sfForm = document.getElementById('qwShopifyForm');
+        var sfName = document.getElementById('qwSfName');
+        var sfEmail = document.getElementById('qwSfEmail');
+        var sfPhone = document.getElementById('qwSfPhone');
+        var sfBody = document.getElementById('qwSfBody');
+        if (sfForm && sfName && sfEmail && sfPhone && sfBody) {
+          sfName.value = userName;
+          sfEmail.value = userEmail;
+          sfPhone.value = userPhone;
+          sfBody.value = fullBody;
+          var formData = new FormData(sfForm);
+          fetch(sfForm.action || window.location.pathname, {
+            method: 'POST', body: formData, headers: { 'Accept': 'text/html' }
+          }).then(function() {
             form.style.display = 'none';
             var ok = document.getElementById(prefix + 'Ok');
             if (ok) ok.classList.add('show');
-            if (window.posthog) posthog.capture('wizard_conversion', { action: source + '_submit', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
-          } else { sub.disabled = false; sub.textContent = 'Send question'; }
-        }).catch(function() { sub.disabled = false; sub.textContent = 'Send question'; });
-      } else {
-        /* Fallback: n8n webhook */
-        fetch('https://icorrect.app.n8n.cloud/webhook/tNQphRiUo0L8SdBn', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            source: 'quote-wizard-' + source, device: S.device || '', model: S.model || '',
-            fault: S.fault || '', issue: S.issue || '', route: source,
-            name: nIn.value.trim(), email: eIn.value.trim(), phone: pIn.value.trim(),
-            message: userMsg, url: window.location.href, timestamp: new Date().toISOString()
-          })
-        }).then(function(res) {
-          if (res.ok) {
-            form.style.display = 'none';
-            var ok = document.getElementById(prefix + 'Ok');
-            if (ok) ok.classList.add('show');
-            if (window.posthog) posthog.capture('wizard_conversion', { action: source + '_submit', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
-          } else { sub.disabled = false; sub.textContent = 'Send question'; }
-        }).catch(function() { sub.disabled = false; sub.textContent = 'Send question'; });
-      }
+          }).catch(function() { sub.disabled = false; sub.textContent = 'Send question'; });
+        } else {
+          sub.disabled = false; sub.textContent = 'Send question';
+        }
+      });
     };
   }
 
@@ -1882,8 +1886,8 @@ window.WIZARD_CFG = {
 }
 @media(min-width:1024px){.qw-section{padding:56px 24px;}}
 
-/* Scroll clearance for sticky header */
-.qw-section *{scroll-margin-top:100px;}
+/* Scroll clearance for sticky header + announcement bar */
+.qw-section *{scroll-margin-top:120px;}
 
 /* LAYOUT */
 .qw-wrap{max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:32px;}
