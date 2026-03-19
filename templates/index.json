@@ -718,6 +718,16 @@
         "txt-clr": "#ffffff"
       }
     },
+    "custom_liquid_8aD8UK": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "<div id=\"home-contact\"></div>",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
     "contact_with_map_Ej8GrR": {
       "type": "contact-with-map",
       "name": "Contact with map",
@@ -748,6 +758,7 @@
     "repair_services_nQkwFT",
     "image_banner_eU9nzn",
     "homepage_faqs_LfBAfa",
+    "custom_liquid_8aD8UK",
     "contact_with_map_Ej8GrR"
   ]
 }
