@@ -697,7 +697,7 @@ window.WIZARD_CFG = {
 
   function buildDiagnosticBadges(device) {
     return svcBadge('turnaround', CFG.diagnosticTurnaround || '2 working days') +
-      svcBadge('diagnostic', 'Diagnostic fee applied to repair cost');
+      svcBadge('diagnostic', 'Full report and quote sent via email');
   }
 
   /* Service type cards from Liquid-provided walk-in + mail-in products */
@@ -1337,22 +1337,33 @@ window.WIZARD_CFG = {
 
     var priceHtml = diagPrice ? '<div class="qw-price-from">From</div><div class="qw-price-big">' + gbp.format(diagPrice) + '</div>' : '';
 
-    /* [6.1] Likely repair + combined estimate */
-    var likelyHtml = '';
+    /* Build estimate rows: diagnostic + likely repair + logic board (where relevant) */
+    var estimateRows = '';
+    estimateRows += '<div class="qw-estimate-row"><span>Diagnostic</span><span>' + gbp.format(diagPrice) + '</span></div>';
+
     if (iss.likelyRepair && _repairsMap[iss.likelyRepair]) {
       try {
         var likelyProd = await fetchProduct(_repairsMap[iss.likelyRepair].handle);
         var likelyPrice = likelyProd ? parseFloat(likelyProd.variants[0].price) : 0;
         if (likelyPrice && iss.likelyCopy) {
-          var estTotal = diagPrice + likelyPrice;
-          likelyHtml = '<div class="qw-estimate">' +
-            '<div class="qw-estimate-row"><span>Diagnostic</span><span>' + gbp.format(diagPrice) + '</span></div>' +
-            '<div class="qw-estimate-row"><span>' + esc(iss.likelyCopy) + '</span><span>from ' + gbp.format(likelyPrice) + '</span></div>' +
-            '<div class="qw-estimate-total"><span>Estimated total</span><span>from ' + gbp.format(estTotal) + '</span></div>' +
-          '</div>';
+          estimateRows += '<div class="qw-estimate-row"><span>' + esc(iss.likelyCopy) + '</span><span>from ' + gbp.format(likelyPrice) + '</span></div>';
         }
       } catch(e) {}
     }
+
+    /* Logic board line: show for issues where the board could be the cause */
+    var boardIssues = ['Won\'t turn on', 'Random shutdowns', 'Won\'t charge', 'No display, no response',
+      'Black screen (external doesn\'t work or untested)', 'No sound from speakers', 'Microphone not working',
+      'Ghost typing', 'Touch Bar not responding', 'Won\'t charge or charger not recognised'];
+    var showBoard = boardIssues.some(function(bi) { return S.issue && S.issue.toLowerCase().indexOf(bi.toLowerCase().substring(0, 12)) !== -1; });
+    /* Also show for water damage and generic diagnostics */
+    if (S.fault === 'Water Damage' || !iss.likelyRepair) showBoard = true;
+    if (showBoard) {
+      var boardFloor = (S.device === 'macbook') ? 249 : 199;
+      estimateRows += '<div class="qw-estimate-row"><span>Should the logic board need repair</span><span>from ' + gbp.format(boardFloor) + '</span></div>';
+    }
+
+    var likelyHtml = estimateRows ? '<div class="qw-estimate">' + estimateRows + '</div>' : '';
 
     var serviceHtml = buildServiceCards();
     var totalHtml = diagPrice ? '<div class="qw-price-total"><span class="qw-price-total-label">Total</span><span class="qw-price-total-val" id="qwPriceTotal">' + gbp.format(diagPrice) + '</span></div>' : '';
@@ -1932,7 +1943,6 @@ a.qw-d-val:hover{color:var(--qw-accent);}
 /* [6.1] Diagnostic estimate */
 .qw-estimate{background:#f8f9fb;border-radius:var(--qw-r-sm);padding:14px 16px;margin-bottom:20px;border:1px solid var(--qw-line);}
 .qw-estimate-row{display:flex;justify-content:space-between;font-size:13px;color:var(--qw-text-2);padding:4px 0;}
-.qw-estimate-total{display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:var(--qw-dark);padding:8px 0 0;margin-top:6px;border-top:1px solid var(--qw-line);}
 
 /* Service badges */
 .qw-svc{padding:0 24px;margin-bottom:2px;}
