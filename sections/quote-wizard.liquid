@@ -1720,7 +1720,7 @@ window.WIZARD_CFG = {
         addToCartAndCheckout();
       };
     }
-    wireEmailQuote(container, product.title, basePrice ? '\u00A3' + basePrice : '', 'repair');
+        wireEmailQuote(container, product.title, basePrice ? '\u00A3' + basePrice : '', 'repair', product.handle);
     if (basePrice) setupStickyCTA(gbp.format(basePrice));
   }
 
@@ -1812,7 +1812,7 @@ window.WIZARD_CFG = {
         addToCartAndCheckout();
       };
     }
-    wireEmailQuote(container, 'Diagnostic', diagPrice ? '\u00A3' + diagPrice : '', 'diagnostic');
+        wireEmailQuote(container, 'Diagnostic', diagPrice ? '\u00A3' + diagPrice : '', 'diagnostic', diagProduct.handle);
     if (diagPrice) setupStickyCTA(gbp.format(diagPrice));
   }
 
@@ -1990,7 +1990,7 @@ window.WIZARD_CFG = {
     if (btn) btn.onclick = function() { reset(); };
   }
 
-  function wireEmailQuote(container, productTitle, price, route) {
+    function wireEmailQuote(container, productTitle, price, route, productHandle) {
     var btn = container.querySelector('#qwEmailQuote');
     if (!btn) return;
 
@@ -2107,6 +2107,7 @@ document.getElementById('qwEqErr').style.display = 'none';
             estimates: estimates.length > 0 ? JSON.stringify(estimates) : null,
             warranty: CFG.warrantyLabel || '2-year warranty',
             parts: 'Genuine Apple parts',
+                        productUrl: productHandle ? 'https://www.icorrect.co.uk/products/' + productHandle : null,
             url: window.location.href,
             timestamp: new Date().toISOString()
         };
