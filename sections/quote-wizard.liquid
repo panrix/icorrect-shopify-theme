@@ -2039,56 +2039,78 @@ window.WIZARD_CFG = {
           return;
         }
 
-        document.getElementById('qwEqErr').style.display = 'none';
+document.getElementById('qwEqErr').style.display = 'none';
         var sendBtn = document.getElementById('qwEqSend');
         sendBtn.disabled = true;
         sendBtn.textContent = 'Sending…';
-
-        var selectedSpeed = '';
+ 
+        /* Read base price from resolution card */
+        var resCard = document.getElementById('qwResCard');
+        var basePrice = resCard ? parseFloat(resCard.dataset.base || 0) : 0;
+ 
+        /* Read express turnaround add-on */
         var speedCard = document.querySelector('.qw-opt-card.sel[data-opt="speed"]');
-        if (speedCard) {
+        var expressName = '';
+        var expressMeta = '';
+        var expressPrice = 0;
+        if (speedCard && parseFloat(speedCard.dataset.add || 0) > 0) {
           var sn = speedCard.querySelector('.qw-opt-name');
-          if (sn) selectedSpeed = sn.textContent.trim();
+          var sm = speedCard.querySelector('.qw-opt-meta');
+          expressName = sn ? sn.textContent.trim() : '';
+          expressMeta = sm ? sm.textContent.trim() : '';
+          expressPrice = parseFloat(speedCard.dataset.add);
         }
-
-        var selectedService = 'Walk-in';
+ 
+        /* Read service type and price */
         var svcCard = document.querySelector('.qw-opt-card.sel[data-opt="svc"]');
+        var serviceName = 'Walk-in';
+        var servicePrice = 0;
         if (svcCard) {
           var svn = svcCard.querySelector('.qw-opt-name');
-          if (svn) selectedService = svn.textContent.trim();
+          serviceName = svn ? svn.textContent.trim() : 'Walk-in';
+          servicePrice = parseFloat(svcCard.dataset.add || 0);
         }
-
+ 
+        /* Read diagnostic estimate rows */
+        var estimates = [];
+        document.querySelectorAll('.qw-estimate-row').forEach(function(row) {
+          var spans = row.querySelectorAll('span');
+          if (spans.length >= 2) {
+            estimates.push({
+              label: spans[0].textContent.trim(),
+              value: spans[1].textContent.trim()
+            });
+          }
+        });
+ 
+        /* Read running total */
         var totalEl = document.getElementById('qwPriceTotal');
-        var totalPrice = totalEl ? totalEl.textContent.trim() : (price || '');
-
-        /* Build turnaround text: use device default, override if express selected */
-        var baseTurnaround = { macbook: '2-3 working days', iphone: '2-4 hours', ipad: '2-3 working days', watch: '2-3 working days' };
-        var turnaroundText = (route === 'diagnostic')
-          ? (CFG.diagnosticTurnaround || '2 working days')
-          : (baseTurnaround[S.device] || '2-3 working days');
-        if (selectedSpeed && selectedSpeed !== 'Standard') {
-          turnaroundText = selectedSpeed === 'Fast' ? '1 working day (express)' : selectedSpeed;
-        }
+        var totalPrice = totalEl ? totalEl.textContent.trim() : gbp.format(basePrice);
  
         var payload = {
             source: 'quote-wizard-email-quote',
             name: name,
             email: email,
-            device_type: DN[S.device] || S.device,
-            device_model: S.model || '',
-            fault_area: S.fault || '',
+            deviceType: DN[S.device] || S.device,
+            deviceModel: S.model || '',
+            faultArea: S.fault || '',
             issue: S.issue || '',
-            repair_title: productTitle || '',
-            price: totalPrice,
-            turnaround: turnaroundText,
-            service_type: selectedService,
+            repairTitle: productTitle || '',
+            route: route || 'repair',
+            basePrice: basePrice,
+            expressName: expressName || null,
+            expressMeta: expressMeta || null,
+            expressPrice: expressPrice,
+            serviceName: serviceName,
+            servicePrice: servicePrice,
+            totalPrice: totalPrice,
+            estimates: estimates.length > 0 ? JSON.stringify(estimates) : null,
             warranty: CFG.warrantyLabel || '2-year warranty',
             parts: 'Genuine Apple parts',
-            route: route || 'repair',
             url: window.location.href,
             timestamp: new Date().toISOString()
         };
-
+ 
         function showEmailSuccess() {
           var panel = document.getElementById('qwEmailPanel');
           panel.querySelector('.qw-eq-fields').style.display = 'none';
@@ -2096,7 +2118,7 @@ window.WIZARD_CFG = {
           document.getElementById('qwEqOk').style.display = 'flex';
           if (window.posthog) posthog.capture('wizard_conversion', { action: 'email_quote', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
         }
-
+ 
         fetch('https://icorrect.app.n8n.cloud/webhook/shopify-contact-form', {
           method: 'POST',
           mode: 'no-cors',
