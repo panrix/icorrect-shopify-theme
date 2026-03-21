@@ -361,6 +361,122 @@ window.WIZARD_CFG = {
   };
 
   /* =============================================
+     DEVICE COLOUR DATA
+     ============================================= */
+  var COLOR_HEX = {
+    "Midnight":"#2c3e50","Starlight":"#f5f5dc","Red":"#e74c3c","Blue":"#3498db",
+    "Purple":"#9b59b6","Yellow":"#f1c40f","Black":"#1c1c1c","White":"#f9f9f9",
+    "Pink":"#ffc0cb","Teal":"#008080","Ultramarine":"#120a8f","Natural Titanium":"#bebebe",
+    "Black Titanium":"#212121","White Titanium":"#f2f2f2","Desert Titanium":"#d2b48c",
+    "Space Black":"#1a1a1a","Deep Purple":"#3c2a4d","Sierra Blue":"#9fb1bd","Alpine Green":"#505e4d",
+    "Graphite":"#4b4e53","Gold":"#e3d0b1","Silver":"#e2e4e1","Midnight Green":"#4e5851",
+    "Space Gray":"#535150","Cosmic Orange":"#e67e22","Mist Blue":"#a0d1e5","Sage":"#9db4a1",
+    "Lavender":"#e6e6fa","Blue Titanium":"#4b6f86","Sky Blue":"#87CEEB",
+    "Green":"#505e4d","Pacific Blue":"#2d4e5c","Deep Blue":"#1a3a5c"
+  };
+
+  var IPHONE_COLORS = {
+    "iPhone 17 Pro Max":["Silver","Cosmic Orange","Deep Blue"],
+    "iPhone 17 Pro":["Silver","Cosmic Orange","Deep Blue"],
+    "iPhone 17":["Black","White","Mist Blue","Sage","Lavender"],
+    "iPhone 16e":["Black","White"],
+    "iPhone 16 Pro Max":["Black Titanium","White Titanium","Natural Titanium","Desert Titanium"],
+    "iPhone 16 Pro":["Black Titanium","White Titanium","Natural Titanium","Desert Titanium"],
+    "iPhone 16 Plus":["Black","White","Pink","Teal","Ultramarine"],
+    "iPhone 16":["Black","White","Pink","Teal","Ultramarine"],
+    "iPhone 15 Pro Max":["Black Titanium","White Titanium","Blue Titanium","Natural Titanium"],
+    "iPhone 15 Pro":["Black Titanium","White Titanium","Blue Titanium","Natural Titanium"],
+    "iPhone 15 Plus":["Black","Blue","Green","Yellow","Pink"],
+    "iPhone 15":["Black","Blue","Green","Yellow","Pink"],
+    "iPhone 14 Pro Max":["Silver","Gold","Space Black","Deep Purple"],
+    "iPhone 14 Pro":["Silver","Gold","Space Black","Deep Purple"],
+    "iPhone 14 Plus":["Midnight","Starlight","Red","Blue","Purple","Yellow"],
+    "iPhone 14":["Midnight","Starlight","Red","Blue","Purple","Yellow"],
+    "iPhone 13 Pro Max":["Graphite","Gold","Silver","Sierra Blue","Alpine Green"],
+    "iPhone 13 Pro":["Graphite","Gold","Silver","Sierra Blue","Alpine Green"],
+    "iPhone 13":["Red","Starlight","Midnight","Blue","Pink","Green"],
+    "iPhone 13 Mini":["Red","Starlight","Midnight","Blue","Pink","Green"],
+    "iPhone 12 Pro Max":["Silver","Graphite","Gold","Pacific Blue"],
+    "iPhone 12 Pro":["Silver","Graphite","Gold","Pacific Blue"],
+    "iPhone 12":["Black","White","Red","Green","Blue","Purple"],
+    "iPhone 12 Mini":["Black","White","Red","Green","Blue","Purple"],
+    "iPhone 11 Pro Max":["Silver","Space Gray","Gold","Midnight Green"],
+    "iPhone 11 Pro":["Silver","Space Gray","Gold","Midnight Green"],
+    "iPhone 11":["Purple","Green","Yellow","Black","White","Red"]
+  };
+
+  var MACBOOK_COLORS = {
+    "A1932":["Space Gray","Gold","Silver"],"A2179":["Space Gray","Gold","Silver"],
+    "A2337":["Space Gray","Gold","Silver"],"A2681":["Silver","Starlight","Space Gray","Midnight"],
+    "A2941":["Silver","Starlight","Space Gray","Midnight"],"A3113":["Silver","Starlight","Space Gray","Midnight"],
+    "A3114":["Silver","Starlight","Space Gray","Midnight"],"A3240":["Silver","Starlight","Sky Blue","Midnight"],
+    "A3241":["Silver","Starlight","Sky Blue","Midnight"],
+    "A2141":["Silver","Space Gray"],"A2485":["Silver","Space Gray"],"A2780":["Silver","Space Gray"],
+    "A1707":["Silver","Space Gray"],"A1990":["Silver","Space Gray"],"A1989":["Silver","Space Gray"],
+    "A1706":["Silver","Space Gray"],"A1708":["Silver","Space Gray"],"A2251":["Silver","Space Gray"],
+    "A2289":["Silver","Space Gray"],"A2159":["Silver","Space Gray"],"A2338":["Silver","Space Gray"],
+    "A2779":["Silver","Space Gray"],"A2918":["Silver","Space Gray"],"A2992":["Silver","Space Gray"],
+    "A2442":["Silver","Space Gray"],
+    "A2991":["Silver","Space Black"],"A2996":["Silver","Space Black"],"A2998":["Silver","Space Black"],
+    "A3401":["Silver","Space Black"],"A3185":["Silver","Space Black"],"A3403":["Silver","Space Black"],
+    "A3186":["Silver","Space Black"],"A3112":["Silver","Space Black"]
+  };
+
+  function getDeviceColors(device, model, repairType) {
+    var needsColor = (device === 'iphone' && (repairType === 'rear-glass' || repairType === 'rear-camera-lens')) ||
+                     (device === 'macbook' && repairType === 'trackpad');
+    if (!needsColor || !model) return null;
+
+    if (device === 'iphone') {
+      var colors = IPHONE_COLORS[model];
+      if (!colors) {
+        var keys = Object.keys(IPHONE_COLORS);
+        for (var i = 0; i < keys.length; i++) {
+          if (model.indexOf(keys[i]) !== -1 || keys[i].indexOf(model) !== -1) { colors = IPHONE_COLORS[keys[i]]; break; }
+        }
+      }
+      return colors || null;
+    }
+
+    if (device === 'macbook') {
+      var aMatches = model.match(/A\d{4}/g);
+      if (aMatches) {
+        for (var j = 0; j < aMatches.length; j++) {
+          if (MACBOOK_COLORS[aMatches[j]]) return MACBOOK_COLORS[aMatches[j]];
+        }
+      }
+      return null;
+    }
+
+    return null;
+  }
+
+  function buildColorSelector(colors) {
+    if (!colors || !colors.length) return '';
+    var h = '<div class="qw-opt-section"><div class="qw-opt-label">What colour is your device?</div><div class="qw-color-grid" id="qwColorGrid">';
+    colors.forEach(function(c) {
+      var hex = COLOR_HEX[c] || '#ccc';
+      h += '<div class="qw-color-btn" data-color="' + esc(c) + '" tabindex="0">' +
+        '<div class="qw-color-swatch" style="background-color:' + hex + '"></div>' +
+        '<span class="qw-color-name">' + esc(c) + '</span></div>';
+    });
+    h += '</div></div>';
+    return h;
+  }
+
+  function wireColorSelector(container) {
+    var grid = container.querySelector('#qwColorGrid');
+    if (!grid) return;
+    grid.querySelectorAll('.qw-color-btn').forEach(function(btn) {
+      wireA11y(btn, 'Select ' + btn.dataset.color);
+      btn.onclick = function() {
+        grid.querySelectorAll('.qw-color-btn').forEach(function(b) { b.classList.remove('sel'); });
+        btn.classList.add('sel');
+      };
+    });
+  }
+
+  /* =============================================
      STATE
      ============================================= */
   var S = { device: null, model: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null };
@@ -1428,12 +1544,24 @@ window.WIZARD_CFG = {
     var mainVid = resCard ? parseInt(resCard.dataset.vid, 10) : null;
     if (!mainVid) return null;
 
+    var needsColor = resCard.dataset.needsColor === '1';
+    var selectedColor = '';
+    if (needsColor) {
+      var colorBtn = document.querySelector('#qwColorGrid .qw-color-btn.sel');
+      if (!colorBtn) {
+        if (err) err.textContent = 'Please select your device colour.';
+        return null;
+      }
+      selectedColor = colorBtn.dataset.color || '';
+    }
+
     var mainProps = {
       '_device': DN[S.device] || S.device,
       '_model': S.model || '',
       '_fault': S.fault || '',
       '_issue': S.issue || ''
     };
+    if (selectedColor) mainProps['Device Color'] = selectedColor;
     items.push({ id: mainVid, quantity: 1, properties: mainProps });
 
     var speedCard = document.querySelector('.qw-opt-card.sel[data-opt="speed"]');
@@ -1545,10 +1673,12 @@ window.WIZARD_CFG = {
 
     var badges = buildRepairBadges(S.device);
 
-    /* Turnaround + Service cards */
+    /* Turnaround + Service + Colour cards */
     var expressData = await detectExpressFromPage(product.handle);
     var turnaroundHtml = buildTurnaroundCards(expressData);
     var serviceHtml = buildServiceCards();
+    var deviceColors = getDeviceColors(S.device, S.model, iss.repairType);
+    var colorHtml = buildColorSelector(deviceColors);
 
     var cdFee = CFG.mailIn ? CFG.mailIn.price : 0;
     var totalHtml = basePrice ? '<div class="qw-price-total"><span class="qw-price-total-label">Total</span><span class="qw-price-total-val" id="qwPriceTotal">' + gbp.format(basePrice) + '</span></div>' : '';
@@ -1556,7 +1686,7 @@ window.WIZARD_CFG = {
     var mainVariantId = fullProduct ? fullProduct.variants[0].id : 0;
 
     container.innerHTML = urgentHtml +
-      '<div class="qw-res" id="qwResCard" data-base="' + basePrice + '" data-vid="' + mainVariantId + '">' +
+      '<div class="qw-res" id="qwResCard" data-base="' + basePrice + '" data-vid="' + mainVariantId + '" data-needs-color="' + (deviceColors ? '1' : '0') + '">' +
         '<div class="qw-res-top">' +
           '<div class="qw-res-badge qw-badge-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>We can fix this</div>' +
           '<h3 class="qw-res-h">' + esc(product.title) + '</h3>' +
@@ -1565,7 +1695,7 @@ window.WIZARD_CFG = {
           priceHtml +
         '</div>' +
         '<div class="qw-svc">' + badges + '</div>' +
-        '<div style="padding:0 24px 8px;">' + turnaroundHtml + serviceHtml + '</div>' +
+        '<div style="padding:0 24px 8px;">' + colorHtml + turnaroundHtml + serviceHtml + '</div>' +
         totalHtml +
         '<div class="qw-res-cta">' +
           '<button class="qw-btn-book" id="qwBookBtn">Proceed to checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
@@ -1577,6 +1707,7 @@ window.WIZARD_CFG = {
       '<button class="qw-restart" id="qwRestart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Start over</button>';
 
     wireOptCards(container);
+    wireColorSelector(container);
     wireWalkinPicker(container);
     wireCFToggle(container);
     wireRestart(container);
@@ -2385,6 +2516,14 @@ a.qw-d-val:hover{color:var(--qw-accent);}
 .qw-walkin-inp{width:100%;padding:10px 12px;font-size:14px;font-family:inherit;color:var(--qw-text);background:var(--qw-white);border:1px solid var(--qw-line);border-radius:var(--qw-r-sm);transition:all var(--qw-ease);box-sizing:border-box;-webkit-appearance:none;}
 .qw-walkin-inp:focus{outline:none;border-color:var(--qw-accent);box-shadow:0 0 0 2px rgba(37,99,235,0.1);}
 .qw-walkin-err{font-size:12px;color:#dc2626;padding:4px 0;min-height:0;}
+
+/* Colour selector */
+.qw-color-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;}
+.qw-color-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px 6px;background:var(--qw-white);border:2px solid var(--qw-line);border-radius:var(--qw-r-sm);cursor:pointer;transition:all var(--qw-ease);text-align:center;-webkit-tap-highlight-color:transparent;min-height:64px;}
+.qw-color-btn:hover{border-color:var(--qw-line-h);box-shadow:var(--qw-sh-1);}
+.qw-color-btn.sel{border-color:var(--qw-dark);background:#f8f8fa;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
+.qw-color-swatch{width:24px;height:24px;border-radius:50%;border:1px solid rgba(0,0,0,0.1);flex-shrink:0;}
+.qw-color-name{font-size:11px;font-weight:600;color:var(--qw-text);line-height:1.2;}
 
 /* Price total */
 .qw-price-total{display:flex;align-items:baseline;justify-content:space-between;padding:16px 0;margin:0 24px;border-top:1px solid var(--qw-line);}
