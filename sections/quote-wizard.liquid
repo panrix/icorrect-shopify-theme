@@ -2008,14 +2008,18 @@ window.WIZARD_CFG = {
 
       var cust = window.WIZARD_CUSTOMER || {};
       var html = '<div class="qw-eq-panel show" id="qwEmailPanel">' +
-        '<div class="qw-eq-row">' +
-          '<input type="text" class="qw-eq-input" placeholder="Your name" id="qwEqName" required value="' + esc(cust.name || '') + '">' +
+        '<div class="qw-eq-fields">' +
+          '<div class="qw-eq-field">' +
+            '<label class="qw-eq-label" for="qwEqName">Name</label>' +
+            '<input type="text" class="qw-eq-input" placeholder="John Smith" id="qwEqName" required value="' + esc(cust.name || '') + '">' +
+          '</div>' +
+          '<div class="qw-eq-field">' +
+            '<label class="qw-eq-label" for="qwEqEmail">Email</label>' +
+            '<input type="email" class="qw-eq-input" placeholder="you@example.com" id="qwEqEmail" required value="' + esc(cust.email || '') + '">' +
+          '</div>' +
         '</div>' +
-        '<div class="qw-eq-row" style="margin-top:8px;">' +
-          '<input type="email" class="qw-eq-input" placeholder="Your email address" id="qwEqEmail" required value="' + esc(cust.email || '') + '">' +
-          '<button class="qw-eq-send" id="qwEqSend">Send</button>' +
-        '</div>' +
-        '<div class="qw-eq-ok" id="qwEqOk">Sent! Check your inbox.</div>' +
+        '<button class="qw-eq-send" id="qwEqSend"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/></svg>Send quote</button>' +
+        '<div class="qw-eq-ok" id="qwEqOk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Sent! Check your inbox.</div>' +
         '<div class="qw-eq-err" id="qwEqErr"></div>' +
       '</div>';
 
@@ -2039,7 +2043,7 @@ window.WIZARD_CFG = {
         document.getElementById('qwEqErr').style.display = 'none';
         var sendBtn = document.getElementById('qwEqSend');
         sendBtn.disabled = true;
-        sendBtn.textContent = '...';
+        sendBtn.textContent = 'Sending…';
 
         var selectedSpeed = '';
         var speedCard = document.querySelector('.qw-opt-card.sel[data-opt="speed"]');
@@ -2083,12 +2087,16 @@ window.WIZARD_CFG = {
           );
         }
 
-        if (sent) {
-          document.getElementById('qwEqName').style.display = 'none';
-          document.getElementById('qwEqEmail').style.display = 'none';
+        function showEmailSuccess() {
+          var panel = document.getElementById('qwEmailPanel');
+          panel.querySelector('.qw-eq-fields').style.display = 'none';
           sendBtn.style.display = 'none';
-          document.getElementById('qwEqOk').style.display = 'block';
+          document.getElementById('qwEqOk').style.display = 'flex';
           if (window.posthog) posthog.capture('wizard_conversion', { action: 'email_quote', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
+        }
+
+        if (sent) {
+          showEmailSuccess();
         } else {
           fetch('https://icorrect.app.n8n.cloud/webhook/shopify-contact-form', {
             method: 'POST',
@@ -2096,18 +2104,14 @@ window.WIZARD_CFG = {
             body: JSON.stringify(payload)
           }).then(function(res) {
             if (res.ok) {
-              document.getElementById('qwEqName').style.display = 'none';
-              document.getElementById('qwEqEmail').style.display = 'none';
-              sendBtn.style.display = 'none';
-              document.getElementById('qwEqOk').style.display = 'block';
-              if (window.posthog) posthog.capture('wizard_conversion', { action: 'email_quote', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
+              showEmailSuccess();
             } else {
-              sendBtn.disabled = false; sendBtn.textContent = 'Send';
+              sendBtn.disabled = false; sendBtn.textContent = 'Send quote';
               document.getElementById('qwEqErr').textContent = 'Something went wrong. Please try again.';
               document.getElementById('qwEqErr').style.display = 'block';
             }
           }).catch(function() {
-            sendBtn.disabled = false; sendBtn.textContent = 'Send';
+            sendBtn.disabled = false; sendBtn.textContent = 'Send quote';
             document.getElementById('qwEqErr').textContent = 'Something went wrong. Please try again.';
             document.getElementById('qwEqErr').style.display = 'block';
           });
@@ -2536,7 +2540,7 @@ a.qw-d-val:hover{color:var(--qw-accent);}
 .qw-color-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px 6px;background:var(--qw-white);border:2px solid var(--qw-line);border-radius:var(--qw-r-sm);cursor:pointer;transition:all var(--qw-ease);text-align:center;-webkit-tap-highlight-color:transparent;min-height:64px;}
 .qw-color-btn:hover{border-color:var(--qw-line-h);box-shadow:var(--qw-sh-1);}
 .qw-color-btn.sel{border-color:var(--qw-dark);background:#f8f8fa;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
-.qw-color-swatch{width:28px;height:28px;min-width:28px;min-height:28px;border-radius:50%;border:1px solid rgba(0,0,0,0.12);flex-shrink:0;display:block;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.2);}
+.qw-color-swatch{width:24px !important;height:24px !important;min-width:24px !important;min-height:24px !important;border-radius:50% !important;border:1px solid rgba(0,0,0,0.12) !important;flex-shrink:0;display:block !important;box-shadow:inset 0 1px 3px rgba(0,0,0,0.1);}
 .qw-color-name{font-size:11px;font-weight:600;color:var(--qw-text);line-height:1.2;}
 
 /* Price total */
@@ -2554,15 +2558,22 @@ a.qw-d-val:hover{color:var(--qw-accent);}
 .qw-btn-q:hover{border-color:var(--qw-line-h);background:#fafbfc;color:var(--qw-text);}
 .qw-btn-email{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 24px;background:var(--qw-white);color:var(--qw-text);border:2px solid var(--qw-accent);border-radius:var(--qw-r-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all var(--qw-ease);width:100%;}
 .qw-btn-email:hover{background:var(--qw-accent-bg);color:var(--qw-accent);}
-.qw-eq-panel{display:none;padding:12px 0 0;}
+.qw-eq-panel{display:none;margin-top:12px;padding:16px;background:var(--qw-bg);border:1px solid var(--qw-line);border-radius:var(--qw-r-sm);animation:qwEqSlide .2s ease-out;}
 .qw-eq-panel.show{display:block;}
-.qw-eq-row{display:flex;gap:8px;}
-.qw-eq-input{flex:1;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid var(--qw-line);border-radius:var(--qw-r-sm);box-sizing:border-box;}
-.qw-eq-input:focus{outline:none;border-color:var(--qw-accent);box-shadow:0 0 0 2px rgba(37,99,235,0.1);}
-.qw-eq-send{padding:10px 18px;background:var(--qw-accent);color:#fff;border:none;border-radius:var(--qw-r-sm);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;}
+@keyframes qwEqSlide{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+.qw-eq-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:480px){.qw-eq-fields{grid-template-columns:1fr;}}
+.qw-eq-field{display:flex;flex-direction:column;gap:4px;}
+.qw-eq-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--qw-text-3);padding-left:2px;}
+.qw-eq-input{width:100%;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid var(--qw-line);border-radius:var(--qw-r-sm);box-sizing:border-box;background:var(--qw-white);color:var(--qw-text);transition:border-color var(--qw-ease),box-shadow var(--qw-ease);}
+.qw-eq-input:focus{outline:none;border-color:var(--qw-accent);box-shadow:0 0 0 3px rgba(37,99,235,0.08);}
+.qw-eq-send{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:12px;padding:12px 24px;background:var(--qw-accent);color:#fff;border:none;border-radius:var(--qw-r-sm);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all var(--qw-ease);}
+.qw-eq-send:hover{background:var(--qw-accent-h);}
 .qw-eq-send:disabled{opacity:0.5;cursor:not-allowed;}
-.qw-eq-ok{display:none;font-size:13px;font-weight:600;color:var(--qw-green);padding:8px 0;}
-.qw-eq-err{display:none;font-size:12px;color:#dc2626;padding:4px 0;}
+.qw-eq-send svg{flex-shrink:0;}
+.qw-eq-ok{display:none;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--qw-green);padding:10px 0 2px;}
+.qw-eq-ok svg{flex-shrink:0;stroke:var(--qw-green);}
+.qw-eq-err{display:none;font-size:12px;color:#dc2626;padding:6px 0 0;}
 /* [4.6] Intercom chat link */
 .qw-btn-chat{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:none;border:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--qw-accent);cursor:pointer;text-decoration:none;}
 .qw-btn-chat:hover{text-decoration:underline;}
