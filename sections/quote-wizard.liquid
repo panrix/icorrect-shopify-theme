@@ -510,7 +510,8 @@ window.WIZARD_CFG = {
         { label: 'Sticky, stuck, or crunchy keys', route: 'diagnostic', repairType: 'diagnostic', copy: 'Keys that feel sticky or crunchy are almost always a sign of liquid exposure. We need to assess the extent of the damage before recommending a repair.', likelyRepair: 'keyboard', likelyCopy: 'Should the keyboard need replacing' },
         { label: 'Trackpad not clicking', route: 'diagnostic', repairType: 'diagnostic', copy: 'A trackpad that won\'t click can be caused by a swollen battery or trackpad failure. We need to open it up and check before quoting.', likelyRepair: 'trackpad', likelyCopy: 'Should the trackpad need replacing' },
         { label: 'Ghost typing or phantom input', route: 'diagnostic', repairType: 'diagnostic', copy: 'Random characters appearing is typically caused by liquid damage to the keyboard flex cable. A diagnostic will reveal the extent of the damage.', likelyRepair: 'keyboard', likelyCopy: 'Should the keyboard need replacing' },
-        { label: 'Missing or broken keycap', route: 'repair', repairType: 'keyboard', copy: 'A physically broken or missing keycap means the keyboard mechanism is likely damaged too. We\'ll replace the full top case with a brand new keyboard.' }
+        { label: 'Missing or broken keycap', route: 'repair', repairType: 'keyboard', copy: 'A physically broken or missing keycap means the keyboard mechanism is likely damaged too. We\'ll replace the full top case with a brand new keyboard.' },
+        { label: 'Physically damaged trackpad', route: 'repair', repairType: 'trackpad', copy: 'The trackpad is physically cracked or damaged. We\'ll replace the trackpad as part of a top case replacement.' }
       ],
       'Touch Bar': [
         { label: 'Touch Bar not responding or frozen', route: 'diagnostic', repairType: 'diagnostic', copy: 'The Touch Bar can stop responding due to a software glitch, loose connector, or failed module. A diagnostic will help us determine the cause.' },
@@ -1720,7 +1721,7 @@ window.WIZARD_CFG = {
       };
     }
     wireEmailQuote(container, product.title, basePrice ? '\u00A3' + basePrice : '', 'repair');
-    if (basePrice) setupStickyCTA(gbp.format(basePrice), '/products/' + product.handle);
+    if (basePrice) setupStickyCTA(gbp.format(basePrice));
   }
 
   /* ---- DIAGNOSTIC CARD ---- */
@@ -1812,7 +1813,7 @@ window.WIZARD_CFG = {
       };
     }
     wireEmailQuote(container, 'Diagnostic', diagPrice ? '\u00A3' + diagPrice : '', 'diagnostic');
-    if (diagPrice) setupStickyCTA(gbp.format(diagPrice), '/products/' + diagProduct.handle);
+    if (diagPrice) setupStickyCTA(gbp.format(diagPrice));
   }
 
   /* ---- DISMISS CARD (dead-end, no form) ---- */
@@ -2106,10 +2107,10 @@ window.WIZARD_CFG = {
      [5.1] STICKY CTA ON MOBILE
      ============================================= */
   var _stickyObserver = null;
-  function setupStickyCTA(price, url) {
+  function setupStickyCTA(price) {
     var sticky = document.getElementById('qw-sticky-cta');
     if (!sticky) return;
-    sticky.innerHTML = '<span class="qw-sticky-price">' + price + '</span><a href="' + url + '" class="qw-sticky-book">Book now</a>';
+    sticky.innerHTML = '<span class="qw-sticky-price">' + price + '</span><button class="qw-sticky-book" onclick="document.getElementById(\'qwBookBtn\').click()">Book now</button>';
 
     var cta = document.querySelector('.qw-res-cta');
     if (!cta || !('IntersectionObserver' in window)) return;
