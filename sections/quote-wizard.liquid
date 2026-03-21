@@ -2006,9 +2006,13 @@ window.WIZARD_CFG = {
         return;
       }
 
+      var cust = window.WIZARD_CUSTOMER || {};
       var html = '<div class="qw-eq-panel show" id="qwEmailPanel">' +
         '<div class="qw-eq-row">' +
-          '<input type="email" class="qw-eq-input" placeholder="Your email address" id="qwEqEmail" required>' +
+          '<input type="text" class="qw-eq-input" placeholder="Your name" id="qwEqName" required value="' + esc(cust.name || '') + '">' +
+        '</div>' +
+        '<div class="qw-eq-row" style="margin-top:8px;">' +
+          '<input type="email" class="qw-eq-input" placeholder="Your email address" id="qwEqEmail" required value="' + esc(cust.email || '') + '">' +
           '<button class="qw-eq-send" id="qwEqSend">Send</button>' +
         '</div>' +
         '<div class="qw-eq-ok" id="qwEqOk">Sent! Check your inbox.</div>' +
@@ -2016,9 +2020,15 @@ window.WIZARD_CFG = {
       '</div>';
 
       btn.insertAdjacentHTML('afterend', html);
-      document.getElementById('qwEqEmail').focus();
+      document.getElementById('qwEqName').focus();
 
       document.getElementById('qwEqSend').onclick = function() {
+        var name = document.getElementById('qwEqName').value.trim();
+        if (!name || name.length < 2) {
+          document.getElementById('qwEqErr').textContent = 'Please enter your name.';
+          document.getElementById('qwEqErr').style.display = 'block';
+          return;
+        }
         var email = document.getElementById('qwEqEmail').value.trim();
         if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
           document.getElementById('qwEqErr').textContent = 'Please enter a valid email address.';
@@ -2050,6 +2060,7 @@ window.WIZARD_CFG = {
 
         var payload = {
             source: 'quote-wizard-email-quote',
+            name: name,
             email: email,
             device_type: DN[S.device] || S.device,
             device_model: S.model || '',
@@ -2073,6 +2084,7 @@ window.WIZARD_CFG = {
         }
 
         if (sent) {
+          document.getElementById('qwEqName').style.display = 'none';
           document.getElementById('qwEqEmail').style.display = 'none';
           sendBtn.style.display = 'none';
           document.getElementById('qwEqOk').style.display = 'block';
@@ -2084,6 +2096,7 @@ window.WIZARD_CFG = {
             body: JSON.stringify(payload)
           }).then(function(res) {
             if (res.ok) {
+              document.getElementById('qwEqName').style.display = 'none';
               document.getElementById('qwEqEmail').style.display = 'none';
               sendBtn.style.display = 'none';
               document.getElementById('qwEqOk').style.display = 'block';
