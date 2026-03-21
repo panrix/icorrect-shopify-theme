@@ -2061,18 +2061,29 @@ window.WIZARD_CFG = {
         var totalEl = document.getElementById('qwPriceTotal');
         var totalPrice = totalEl ? totalEl.textContent.trim() : (price || '');
 
+        /* Build turnaround text: use device default, override if express selected */
+        var baseTurnaround = { macbook: '2-3 working days', iphone: '2-4 hours', ipad: '2-3 working days', watch: '2-3 working days' };
+        var turnaroundText = (route === 'diagnostic')
+          ? (CFG.diagnosticTurnaround || '2 working days')
+          : (baseTurnaround[S.device] || '2-3 working days');
+        if (selectedSpeed && selectedSpeed !== 'Standard') {
+          turnaroundText = selectedSpeed === 'Fast' ? '1 working day (express)' : selectedSpeed;
+        }
+ 
         var payload = {
             source: 'quote-wizard-email-quote',
             name: name,
             email: email,
-            deviceType: DN[S.device] || S.device,
-            deviceModel: S.model || '',
-            faultArea: S.fault || '',
+            device_type: DN[S.device] || S.device,
+            device_model: S.model || '',
+            fault_area: S.fault || '',
             issue: S.issue || '',
-            repairTitle: productTitle || '',
+            repair_title: productTitle || '',
             price: totalPrice,
-            turnaround: selectedSpeed || '',
-            serviceType: selectedService,
+            turnaround: turnaroundText,
+            service_type: selectedService,
+            warranty: CFG.warrantyLabel || '2-year warranty',
+            parts: 'Genuine Apple parts',
             route: route || 'repair',
             url: window.location.href,
             timestamp: new Date().toISOString()
