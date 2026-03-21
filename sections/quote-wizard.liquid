@@ -1380,30 +1380,37 @@ window.WIZARD_CFG = {
 
   function addToCartAndCheckout(variantId, quantity, properties) {
     var btn = document.getElementById('qwBookBtn');
-    if (btn) { btn.disabled = true; btn.textContent = 'Adding to cart...'; }
+    if (btn) { btn.disabled = true; btn.textContent = 'Redirecting...'; }
 
-    fetch('/cart/add.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        items: [{
-          id: variantId,
-          quantity: quantity || 1,
-          properties: properties || {}
-        }]
-      })
-    })
-    .then(function(res) {
-      if (!res.ok) throw new Error('Cart add failed');
-      return res.json();
-    })
-    .then(function() {
-      window.location.href = '/checkout';
-    })
-    .catch(function(err) {
-      if (btn) { btn.disabled = false; btn.textContent = 'Proceed to checkout'; }
-      alert('Something went wrong. Please try again.');
-    });
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/cart/add';
+    form.style.display = 'none';
+
+    var idInput = document.createElement('input');
+    idInput.type = 'hidden'; idInput.name = 'id'; idInput.value = variantId;
+    form.appendChild(idInput);
+
+    var qtyInput = document.createElement('input');
+    qtyInput.type = 'hidden'; qtyInput.name = 'quantity'; qtyInput.value = quantity || 1;
+    form.appendChild(qtyInput);
+
+    var returnInput = document.createElement('input');
+    returnInput.type = 'hidden'; returnInput.name = 'return_to'; returnInput.value = '/checkout';
+    form.appendChild(returnInput);
+
+    if (properties) {
+      Object.keys(properties).forEach(function(key) {
+        var inp = document.createElement('input');
+        inp.type = 'hidden';
+        inp.name = 'properties[' + key + ']';
+        inp.value = properties[key];
+        form.appendChild(inp);
+      });
+    }
+
+    document.body.appendChild(form);
+    form.submit();
   }
 
   /* =============================================
@@ -1808,10 +1815,7 @@ window.WIZARD_CFG = {
         var totalEl = document.getElementById('qwPriceTotal');
         var totalPrice = totalEl ? totalEl.textContent.trim() : (price || '');
 
-        fetch('https://icorrect.app.n8n.cloud/webhook/shopify-contact-form', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+        var payload = {
             source: 'quote-wizard-email-quote',
             email: email,
             device_type: DN[S.device] || S.device,
@@ -1825,23 +1829,43 @@ window.WIZARD_CFG = {
             route: route || 'repair',
             url: window.location.href,
             timestamp: new Date().toISOString()
-          })
-        }).then(function(res) {
-          if (res.ok) {
-            document.getElementById('qwEqEmail').style.display = 'none';
-            sendBtn.style.display = 'none';
-            document.getElementById('qwEqOk').style.display = 'block';
-            if (window.posthog) posthog.capture('wizard_conversion', { action: 'email_quote', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
-          } else {
+        };
+
+        var sent = false;
+        if (navigator.sendBeacon) {
+          sent = navigator.sendBeacon(
+            'https://icorrect.app.n8n.cloud/webhook/shopify-contact-form',
+            new Blob([JSON.stringify(payload)], { type: 'application/json' })
+          );
+        }
+
+        if (sent) {
+          document.getElementById('qwEqEmail').style.display = 'none';
+          sendBtn.style.display = 'none';
+          document.getElementById('qwEqOk').style.display = 'block';
+          if (window.posthog) posthog.capture('wizard_conversion', { action: 'email_quote', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
+        } else {
+          fetch('https://icorrect.app.n8n.cloud/webhook/shopify-contact-form', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }).then(function(res) {
+            if (res.ok) {
+              document.getElementById('qwEqEmail').style.display = 'none';
+              sendBtn.style.display = 'none';
+              document.getElementById('qwEqOk').style.display = 'block';
+              if (window.posthog) posthog.capture('wizard_conversion', { action: 'email_quote', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
+            } else {
+              sendBtn.disabled = false; sendBtn.textContent = 'Send';
+              document.getElementById('qwEqErr').textContent = 'Something went wrong. Please try again.';
+              document.getElementById('qwEqErr').style.display = 'block';
+            }
+          }).catch(function() {
             sendBtn.disabled = false; sendBtn.textContent = 'Send';
             document.getElementById('qwEqErr').textContent = 'Something went wrong. Please try again.';
             document.getElementById('qwEqErr').style.display = 'block';
-          }
-        }).catch(function() {
-          sendBtn.disabled = false; sendBtn.textContent = 'Send';
-          document.getElementById('qwEqErr').textContent = 'Something went wrong. Please try again.';
-          document.getElementById('qwEqErr').style.display = 'block';
-        });
+          });
+        }
       };
     };
   }
