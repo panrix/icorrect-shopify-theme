@@ -139,15 +139,15 @@ window.WIZARD_CFG = {
         </div>
         <div class="qw-card-col">
           <div class="qw-d-group">
-            <p class="qw-d-label"><svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Opening Hours <span id="qw-open-badge"></span></p>
+            <p class="qw-d-label"><svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Opening Hours</p>
             <div class="qw-hrs">
-              <span class="qw-hrs-d">Mon</span><span class="qw-hrs-t">9am - 6pm</span>
-              <span class="qw-hrs-d">Tue</span><span class="qw-hrs-t">9am - 6pm</span>
-              <span class="qw-hrs-d">Wed</span><span class="qw-hrs-t">9am - 6pm</span>
-              <span class="qw-hrs-d">Thu</span><span class="qw-hrs-t">9am - 6pm</span>
-              <span class="qw-hrs-d">Fri</span><span class="qw-hrs-t">10am - 6pm</span>
-              <span class="qw-hrs-d">Sat</span><span class="qw-hrs-t qw-hrs-c">Closed</span>
-              <span class="qw-hrs-d">Sun</span><span class="qw-hrs-t qw-hrs-c">Closed</span>
+              <span class="qw-hrs-d">Mon</span><span class="qw-hrs-t">{{ section.settings.hours_mon | default: '9am - 6pm' }}</span>
+              <span class="qw-hrs-d">Tue</span><span class="qw-hrs-t">{{ section.settings.hours_tue | default: '9am - 6pm' }}</span>
+              <span class="qw-hrs-d">Wed</span><span class="qw-hrs-t">{{ section.settings.hours_wed | default: '9am - 6pm' }}</span>
+              <span class="qw-hrs-d">Thu</span><span class="qw-hrs-t">{{ section.settings.hours_thu | default: '9am - 6pm' }}</span>
+              <span class="qw-hrs-d">Fri</span><span class="qw-hrs-t">{{ section.settings.hours_fri | default: '10am - 6pm' }}</span>
+              <span class="qw-hrs-d">Sat</span><span class="qw-hrs-t">{{ section.settings.hours_sat | default: 'Closed' }}</span>
+              <span class="qw-hrs-d">Sun</span><span class="qw-hrs-t">{{ section.settings.hours_sun | default: 'Closed' }}</span>
             </div>
           </div>
         </div>
@@ -1328,6 +1328,85 @@ window.WIZARD_CFG = {
   }
 
   /* =============================================
+     VARIANT RESOLVER + CART
+     ============================================= */
+  function resolveVariantId(fullProduct, wizardSelections) {
+    if (!fullProduct || !fullProduct.variants || fullProduct.variants.length === 1) {
+      return fullProduct.variants[0].id;
+    }
+
+    var opts = fullProduct.options || [];
+    var targetOptions = {};
+
+    opts.forEach(function(opt, idx) {
+      var optName = opt.name.toLowerCase();
+      var optKey = 'option' + (idx + 1);
+
+      if (optName.indexOf('turn') !== -1 || optName.indexOf('working') !== -1 || optName.indexOf('day') !== -1 || optName.indexOf('speed') !== -1) {
+        var speedCard = document.querySelector('.qw-opt-card.sel[data-opt="speed"]');
+        if (speedCard) {
+          var speedName = speedCard.querySelector('.qw-opt-name');
+          var selectedLabel = speedName ? speedName.textContent.trim() : '';
+          var match = opt.values.find(function(v) { return v.toLowerCase().indexOf(selectedLabel.toLowerCase().split(' ')[0]) !== -1; });
+          targetOptions[optKey] = match || opt.values[0];
+        } else {
+          targetOptions[optKey] = opt.values[0];
+        }
+      } else if (optName.indexOf('good') !== -1 || optName.indexOf('replac') !== -1 || optName.indexOf('quality') !== -1 || optName.indexOf('part') !== -1) {
+        targetOptions[optKey] = opt.values[0];
+      } else if (optName.indexOf('visit') !== -1 || optName.indexOf('collect') !== -1 || optName.indexOf('deliver') !== -1 || optName.indexOf('service') !== -1) {
+        var svcCard = document.querySelector('.qw-opt-card.sel[data-opt="svc"]');
+        if (svcCard) {
+          var svcAdd = parseInt(svcCard.dataset.add || '0');
+          targetOptions[optKey] = svcAdd > 0 ? opt.values.find(function(v) { return v.toLowerCase().indexOf('collect') !== -1; }) || opt.values[1] : opt.values[0];
+        } else {
+          targetOptions[optKey] = opt.values[0];
+        }
+      } else {
+        targetOptions[optKey] = opt.values[0];
+      }
+    });
+
+    var match = fullProduct.variants.find(function(v) {
+      var m = true;
+      if (targetOptions.option1 && v.option1 !== targetOptions.option1) m = false;
+      if (targetOptions.option2 && v.option2 !== targetOptions.option2) m = false;
+      if (targetOptions.option3 && v.option3 !== targetOptions.option3) m = false;
+      return m;
+    });
+
+    return match ? match.id : fullProduct.variants[0].id;
+  }
+
+  function addToCartAndCheckout(variantId, quantity, properties) {
+    var btn = document.getElementById('qwBookBtn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Adding to cart...'; }
+
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        items: [{
+          id: variantId,
+          quantity: quantity || 1,
+          properties: properties || {}
+        }]
+      })
+    })
+    .then(function(res) {
+      if (!res.ok) throw new Error('Cart add failed');
+      return res.json();
+    })
+    .then(function() {
+      window.location.href = '/checkout';
+    })
+    .catch(function(err) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Proceed to checkout'; }
+      alert('Something went wrong. Please try again.');
+    });
+  }
+
+  /* =============================================
      RESOLUTION CARDS
      ============================================= */
   async function showResolution(iss) {
@@ -1379,7 +1458,8 @@ window.WIZARD_CFG = {
         '<div style="padding:0 24px 8px;">' + turnaroundHtml + serviceHtml + '</div>' +
         totalHtml +
         '<div class="qw-res-cta">' +
-          '<a href="/products/' + product.handle + '" class="qw-btn-book" id="qwBookBtn">Book this repair <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>' +
+          '<button class="qw-btn-book" id="qwBookBtn">Proceed to checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
+          '<button class="qw-btn-email" id="qwEmailQuote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email me this quote</button>' +
           '<button class="qw-btn-q" id="qwToggleCF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>I have a question first</button>' +
         '</div>' +
         buildContactAccordion() +
@@ -1389,7 +1469,22 @@ window.WIZARD_CFG = {
     wireOptCards(container);
     wireCFToggle(container);
     wireRestart(container);
-    wireBookTracking(container);
+
+    var bookBtn = container.querySelector('#qwBookBtn');
+    if (bookBtn) {
+      bookBtn.onclick = function() {
+        if (window.posthog) posthog.capture('wizard_conversion', { action: 'book_repair', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
+        var variantId = resolveVariantId(fullProduct, {});
+        var props = {
+          '_device': DN[S.device] || S.device,
+          '_model': S.model || '',
+          '_fault': S.fault || '',
+          '_issue': S.issue || ''
+        };
+        addToCartAndCheckout(variantId, 1, props);
+      };
+    }
+    wireEmailQuote(container, product.title, basePrice ? '\u00A3' + basePrice : '', 'repair');
     if (basePrice) setupStickyCTA(gbp.format(basePrice), '/products/' + product.handle);
   }
 
@@ -1451,9 +1546,9 @@ window.WIZARD_CFG = {
         '<div style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
         totalHtml +
         '<div class="qw-res-cta">' +
-          '<a href="/products/' + diagProduct.handle + '" class="qw-btn-book" id="qwBookBtn">Book a Diagnostic <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>' +
+          '<button class="qw-btn-book" id="qwBookBtn">Proceed to checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
+          '<button class="qw-btn-email" id="qwEmailQuote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email me this quote</button>' +
           '<button class="qw-btn-q" id="qwToggleCF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>I have a question first</button>' +
-          /* [4.6] Intercom chat link */
           '<a href="#" class="qw-btn-chat" id="qwIntercomBtn" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>Chat with us now</a>' +
         '</div>' +
         buildContactAccordion() +
@@ -1470,7 +1565,22 @@ window.WIZARD_CFG = {
     wireOptCards(container);
     wireCFToggle(container);
     wireRestart(container);
-    wireBookTracking(container);
+
+    var bookBtn = container.querySelector('#qwBookBtn');
+    if (bookBtn) {
+      bookBtn.onclick = function() {
+        if (window.posthog) posthog.capture('wizard_conversion', { action: 'book_diagnostic', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
+        var variantId = resolveVariantId(fullDiag, {});
+        var props = {
+          '_device': DN[S.device] || S.device,
+          '_model': S.model || '',
+          '_fault': S.fault || '',
+          '_issue': S.issue || ''
+        };
+        addToCartAndCheckout(variantId, 1, props);
+      };
+    }
+    wireEmailQuote(container, 'Diagnostic', diagPrice ? '\u00A3' + diagPrice : '', 'diagnostic');
     if (diagPrice) setupStickyCTA(gbp.format(diagPrice), '/products/' + diagProduct.handle);
   }
 
@@ -1641,11 +1751,99 @@ window.WIZARD_CFG = {
     if (btn) btn.onclick = function() { reset(); };
   }
 
-  function wireBookTracking(container) {
-    var btn = container.querySelector('#qwBookBtn');
-    if (btn) btn.addEventListener('click', function() {
-      if (window.posthog) posthog.capture('wizard_conversion', { action: 'book_repair', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
-    });
+  function wireEmailQuote(container, productTitle, price, route) {
+    var btn = container.querySelector('#qwEmailQuote');
+    if (!btn) return;
+
+    btn.onclick = function() {
+      var panel = document.getElementById('qwEmailPanel');
+      if (panel) {
+        panel.classList.toggle('show');
+        if (panel.classList.contains('show')) {
+          var inp = panel.querySelector('.qw-eq-input');
+          if (inp) inp.focus();
+        }
+        return;
+      }
+
+      var html = '<div class="qw-eq-panel show" id="qwEmailPanel">' +
+        '<div class="qw-eq-row">' +
+          '<input type="email" class="qw-eq-input" placeholder="Your email address" id="qwEqEmail">' +
+          '<button class="qw-eq-send" id="qwEqSend">Send</button>' +
+        '</div>' +
+        '<div class="qw-eq-ok" id="qwEqOk">Sent! Check your inbox.</div>' +
+        '<div class="qw-eq-err" id="qwEqErr"></div>' +
+      '</div>';
+
+      btn.insertAdjacentHTML('afterend', html);
+      document.getElementById('qwEqEmail').focus();
+
+      document.getElementById('qwEqSend').onclick = function() {
+        var email = document.getElementById('qwEqEmail').value.trim();
+        if (!email || email.indexOf('@') === -1) {
+          document.getElementById('qwEqErr').textContent = 'Please enter a valid email address.';
+          document.getElementById('qwEqErr').style.display = 'block';
+          return;
+        }
+
+        document.getElementById('qwEqErr').style.display = 'none';
+        var sendBtn = document.getElementById('qwEqSend');
+        sendBtn.disabled = true;
+        sendBtn.textContent = '...';
+
+        var selectedSpeed = '';
+        var speedCard = document.querySelector('.qw-opt-card.sel[data-opt="speed"]');
+        if (speedCard) {
+          var sn = speedCard.querySelector('.qw-opt-name');
+          if (sn) selectedSpeed = sn.textContent.trim();
+        }
+
+        var selectedService = 'Walk-in';
+        var svcCard = document.querySelector('.qw-opt-card.sel[data-opt="svc"]');
+        if (svcCard) {
+          var svn = svcCard.querySelector('.qw-opt-name');
+          if (svn) selectedService = svn.textContent.trim();
+        }
+
+        var totalEl = document.getElementById('qwPriceTotal');
+        var totalPrice = totalEl ? totalEl.textContent.trim() : (price || '');
+
+        fetch('https://icorrect.app.n8n.cloud/webhook/shopify-contact-form', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            source: 'quote-wizard-email-quote',
+            email: email,
+            device_type: DN[S.device] || S.device,
+            device_model: S.model || '',
+            fault_area: S.fault || '',
+            issue: S.issue || '',
+            repair_title: productTitle || '',
+            price: totalPrice,
+            turnaround: selectedSpeed || '',
+            service_type: selectedService,
+            route: route || 'repair',
+            url: window.location.href,
+            timestamp: new Date().toISOString()
+          })
+        }).then(function(res) {
+          if (res.ok) {
+            document.getElementById('qwEqEmail').style.display = 'none';
+            sendBtn.style.display = 'none';
+            document.getElementById('qwEqOk').style.display = 'block';
+            if (window.posthog) posthog.capture('wizard_conversion', { action: 'email_quote', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
+          } else {
+            sendBtn.disabled = false; sendBtn.textContent = 'Send';
+            document.getElementById('qwEqErr').textContent = 'Something went wrong. Please try again.';
+            document.getElementById('qwEqErr').style.display = 'block';
+          }
+        }).catch(function() {
+          sendBtn.disabled = false; sendBtn.textContent = 'Send';
+          document.getElementById('qwEqErr').textContent = 'Something went wrong. Please try again.';
+          document.getElementById('qwEqErr').style.display = 'block';
+        });
+      };
+    };
   }
 
   /* =============================================
@@ -1692,26 +1890,6 @@ window.WIZARD_CFG = {
   var b2 = document.getElementById('qw-back2'); if (b2) b2.onclick = function() { go(1); };
   var b3 = document.getElementById('qw-back3'); if (b3) b3.onclick = function() { go(2); };
   var b4 = document.getElementById('qw-back4'); if (b4) b4.onclick = function() { go(3); };
-
-  /* =============================================
-     [1.5] OPEN/CLOSED INDICATOR
-     ============================================= */
-  function updateOpenClosed() {
-    var badge = document.getElementById('qw-open-badge');
-    if (!badge) return;
-    try {
-      var now = new Date();
-      var london = new Date(now.toLocaleString('en-GB', { timeZone: 'Europe/London' }));
-      var day = london.getDay();
-      var hour = london.getHours();
-      var openHour = (day === 5) ? 10 : 9;
-      var isOpen = day >= 1 && day <= 5 && hour >= openHour && hour < 18;
-      badge.innerHTML = isOpen
-        ? '<span class="qw-open-dot qw-open-yes"></span>Open now'
-        : '<span class="qw-open-dot qw-open-no"></span>Closed';
-      badge.className = isOpen ? 'qw-open-badge open' : 'qw-open-badge closed';
-    } catch(e) {}
-  }
 
   /* =============================================
      PRE-FILL SYSTEM
@@ -1820,7 +1998,6 @@ window.WIZARD_CFG = {
      INIT
      ============================================= */
   wireProgDots();
-  updateOpenClosed();
   initPrefill();
 
 })();
@@ -1878,12 +2055,7 @@ window.WIZARD_CFG = {
 .qw-d-val{font-size:14px;font-weight:500;line-height:1.5;color:var(--qw-text);text-decoration:none;display:block;}
 a.qw-d-val:hover{color:var(--qw-accent);}
 .qw-hrs{display:grid;grid-template-columns:80px 1fr;gap:4px 10px;font-size:13px;}
-.qw-hrs-d{color:var(--qw-text-3);font-weight:500;}.qw-hrs-t{color:var(--qw-text);font-weight:600;}.qw-hrs-c{color:var(--qw-accent);}
-/* [1.5] Open/closed indicator */
-.qw-open-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-left:6px;}
-.qw-open-badge.open{color:var(--qw-green);}.qw-open-badge.closed{color:var(--qw-text-3);}
-.qw-open-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:3px;vertical-align:middle;}
-.qw-open-yes{background:var(--qw-green);}.qw-open-no{background:var(--qw-text-3);}
+.qw-hrs-d{color:var(--qw-text-3);font-weight:500;}.qw-hrs-t{color:var(--qw-text);font-weight:600;}
 
 /* WIZARD */
 .qw-wizard{display:flex;flex-direction:column;}
@@ -2091,6 +2263,17 @@ a.qw-d-val:hover{color:var(--qw-accent);}
 .qw-btn-book svg{width:16px;height:16px;}
 .qw-btn-q{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 24px;background:transparent;color:var(--qw-text-2);border:2px solid var(--qw-line);border-radius:var(--qw-r-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all var(--qw-ease);width:100%;}
 .qw-btn-q:hover{border-color:var(--qw-line-h);background:#fafbfc;color:var(--qw-text);}
+.qw-btn-email{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 24px;background:var(--qw-white);color:var(--qw-text);border:2px solid var(--qw-accent);border-radius:var(--qw-r-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all var(--qw-ease);width:100%;}
+.qw-btn-email:hover{background:var(--qw-accent-bg);color:var(--qw-accent);}
+.qw-eq-panel{display:none;padding:12px 0 0;}
+.qw-eq-panel.show{display:block;}
+.qw-eq-row{display:flex;gap:8px;}
+.qw-eq-input{flex:1;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid var(--qw-line);border-radius:var(--qw-r-sm);box-sizing:border-box;}
+.qw-eq-input:focus{outline:none;border-color:var(--qw-accent);box-shadow:0 0 0 2px rgba(37,99,235,0.1);}
+.qw-eq-send{padding:10px 18px;background:var(--qw-accent);color:#fff;border:none;border-radius:var(--qw-r-sm);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.qw-eq-send:disabled{opacity:0.5;cursor:not-allowed;}
+.qw-eq-ok{display:none;font-size:13px;font-weight:600;color:var(--qw-green);padding:8px 0;}
+.qw-eq-err{display:none;font-size:12px;color:#dc2626;padding:4px 0;}
 /* [4.6] Intercom chat link */
 .qw-btn-chat{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:none;border:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--qw-accent);cursor:pointer;text-decoration:none;}
 .qw-btn-chat:hover{text-decoration:underline;}
@@ -2186,6 +2369,48 @@ a.qw-d-val:hover{color:var(--qw-accent);}
       "id": "diagnostic_turnaround",
       "label": "Diagnostic turnaround label",
       "default": "2 working days"
+    },
+    {
+      "type": "text",
+      "id": "hours_mon",
+      "label": "Monday hours",
+      "default": "9am - 6pm"
+    },
+    {
+      "type": "text",
+      "id": "hours_tue",
+      "label": "Tuesday hours",
+      "default": "9am - 6pm"
+    },
+    {
+      "type": "text",
+      "id": "hours_wed",
+      "label": "Wednesday hours",
+      "default": "9am - 6pm"
+    },
+    {
+      "type": "text",
+      "id": "hours_thu",
+      "label": "Thursday hours",
+      "default": "9am - 6pm"
+    },
+    {
+      "type": "text",
+      "id": "hours_fri",
+      "label": "Friday hours",
+      "default": "10am - 6pm"
+    },
+    {
+      "type": "text",
+      "id": "hours_sat",
+      "label": "Saturday hours",
+      "default": "Closed"
+    },
+    {
+      "type": "text",
+      "id": "hours_sun",
+      "label": "Sunday hours",
+      "default": "Closed"
     }
   ],
   "presets": [{ "name": "Quote Wizard" }]
