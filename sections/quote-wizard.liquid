@@ -2008,7 +2008,7 @@ window.WIZARD_CFG = {
 
       var html = '<div class="qw-eq-panel show" id="qwEmailPanel">' +
         '<div class="qw-eq-row">' +
-          '<input type="email" class="qw-eq-input" placeholder="Your email address" id="qwEqEmail">' +
+          '<input type="email" class="qw-eq-input" placeholder="Your email address" id="qwEqEmail" required>' +
           '<button class="qw-eq-send" id="qwEqSend">Send</button>' +
         '</div>' +
         '<div class="qw-eq-ok" id="qwEqOk">Sent! Check your inbox.</div>' +
@@ -2020,7 +2020,7 @@ window.WIZARD_CFG = {
 
       document.getElementById('qwEqSend').onclick = function() {
         var email = document.getElementById('qwEqEmail').value.trim();
-        if (!email || email.indexOf('@') === -1) {
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
           document.getElementById('qwEqErr').textContent = 'Please enter a valid email address.';
           document.getElementById('qwEqErr').style.display = 'block';
           return;
