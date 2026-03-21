@@ -1925,19 +1925,18 @@ window.WIZARD_CFG = {
       /* Submit to n8n webhook (Intercom contact + Slack notification) */
       fetch('https://icorrect.app.n8n.cloud/webhook/shopify-contact-form', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({
           name: userName, email: userEmail, phone: userPhone,
           body: fullBody, device_type: DN[S.device] || S.device || '',
           device_model: S.model || '', fault_area: S.fault || ''
         })
-      }).then(function(res) {
-        if (res.ok) {
-          form.style.display = 'none';
-          var ok = document.getElementById(prefix + 'Ok');
-          if (ok) ok.classList.add('show');
-          if (window.posthog) posthog.capture('wizard_conversion', { action: source + '_submit', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
-        } else { sub.disabled = false; sub.textContent = 'Send question'; }
+      }).then(function() {
+        form.style.display = 'none';
+        var ok = document.getElementById(prefix + 'Ok');
+        if (ok) ok.classList.add('show');
+        if (window.posthog) posthog.capture('wizard_conversion', { action: source + '_submit', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
       }).catch(function() { sub.disabled = false; sub.textContent = 'Send question'; });
     };
   }
@@ -2079,14 +2078,6 @@ window.WIZARD_CFG = {
             timestamp: new Date().toISOString()
         };
 
-        var sent = false;
-        if (navigator.sendBeacon) {
-          sent = navigator.sendBeacon(
-            'https://icorrect.app.n8n.cloud/webhook/shopify-contact-form',
-            new Blob([JSON.stringify(payload)], { type: 'application/json' })
-          );
-        }
-
         function showEmailSuccess() {
           var panel = document.getElementById('qwEmailPanel');
           panel.querySelector('.qw-eq-fields').style.display = 'none';
@@ -2095,26 +2086,18 @@ window.WIZARD_CFG = {
           if (window.posthog) posthog.capture('wizard_conversion', { action: 'email_quote', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
         }
 
-        if (sent) {
+        fetch('https://icorrect.app.n8n.cloud/webhook/shopify-contact-form', {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(payload)
+        }).then(function() {
           showEmailSuccess();
-        } else {
-          fetch('https://icorrect.app.n8n.cloud/webhook/shopify-contact-form', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          }).then(function(res) {
-            if (res.ok) {
-              showEmailSuccess();
-            } else {
-              sendBtn.disabled = false; sendBtn.textContent = 'Send quote';
-              document.getElementById('qwEqErr').textContent = 'Something went wrong. Please try again.';
-              document.getElementById('qwEqErr').style.display = 'block';
-            }
-          }).catch(function() {
-            sendBtn.disabled = false; sendBtn.textContent = 'Send quote';
-            document.getElementById('qwEqErr').textContent = 'Something went wrong. Please try again.';
-            document.getElementById('qwEqErr').style.display = 'block';
-          });
+        }).catch(function() {
+          sendBtn.disabled = false; sendBtn.textContent = 'Send quote';
+          document.getElementById('qwEqErr').textContent = 'Something went wrong. Please try again.';
+          document.getElementById('qwEqErr').style.display = 'block';
+        });
         }
       };
     };
