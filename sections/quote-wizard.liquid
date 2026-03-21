@@ -1954,6 +1954,10 @@ window.WIZARD_CFG = {
         card.classList.add('sel');
         var total = base;
         resCard.querySelectorAll('.qw-opt-card.sel').forEach(function(c) { total += parseFloat(c.dataset.add || 0); });
+        /* Read selected device colour (if colour selector is present) */
+        var colorBtn = document.querySelector('#qwColorGrid .qw-color-btn.sel');
+        var deviceColor = colorBtn ? colorBtn.dataset.color : null;
+        /* Read running total */
         var totalEl = document.getElementById('qwPriceTotal');
         if (totalEl) totalEl.textContent = gbp.format(total);
         var stickyPrice = document.querySelector('.qw-sticky-price');
@@ -2107,7 +2111,8 @@ document.getElementById('qwEqErr').style.display = 'none';
             estimates: estimates.length > 0 ? JSON.stringify(estimates) : null,
             warranty: CFG.warrantyLabel || '2-year warranty',
             parts: 'Genuine Apple parts',
-                        productUrl: productHandle ? 'https://www.icorrect.co.uk/products/' + productHandle : null,
+            productUrl: productHandle ? 'https://www.icorrect.co.uk/products/' + productHandle : null,
+            deviceColor: deviceColor,
             url: window.location.href,
             timestamp: new Date().toISOString()
         };
