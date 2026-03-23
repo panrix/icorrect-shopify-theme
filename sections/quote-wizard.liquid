@@ -480,7 +480,7 @@ window.WIZARD_CFG = {
      STATE
      ============================================= */
   var S = { device: null, model: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null };
-  var _collectionCache = {}, _productCache = {}, _repairsMap = {};
+  var _collectionCache = {}, _productCache = {}, _repairsMap = {}, _collectionProducts = [];
   var _stepStartTime = Date.now();
   var _suppressScroll = false;
 
@@ -737,6 +737,56 @@ window.WIZARD_CFG = {
       if (rt) map[rt] = products[i];
     }
     return map;
+  }
+
+  function getProductsForRepairType(repairType) {
+    return (_collectionProducts || []).filter(function(product) {
+      return deriveRepairTypeFromHandle(product.handle) === repairType;
+    });
+  }
+
+  function pickProductByHandlePreference(products, patterns) {
+    for (var i = 0; i < patterns.length; i++) {
+      for (var j = 0; j < products.length; j++) {
+        if (products[j].handle.indexOf(patterns[i]) !== -1) return products[j];
+      }
+    }
+    return products[0] || null;
+  }
+
+  function resolveRepairProduct(repairType, issueLabel) {
+    var products = getProductsForRepairType(repairType);
+    if (!products.length) return null;
+    if (products.length === 1) return products[0];
+
+    var issue = (issueLabel || '').toLowerCase();
+
+    if (repairType === 'rear-glass') {
+      return pickProductByHandlePreference(products, [
+        'rear-glass-repair',
+        'housing-rear-glass-repair',
+        'housing-repair'
+      ]);
+    }
+
+    if (repairType === 'screen') {
+      if (issue.indexOf('black screen') !== -1 || issue.indexOf('no display') !== -1 || issue.indexOf('no screen') !== -1) {
+        return pickProductByHandlePreference(products, [
+          'original-lcd-screen-no-screen-message-repair',
+          'display-screen-repair',
+          'screen-repair',
+          'original-screen-repair'
+        ]);
+      }
+      return pickProductByHandlePreference(products, [
+        'original-screen-repair',
+        'display-screen-repair',
+        'screen-repair',
+        'original-lcd-screen-no-screen-message-repair'
+      ]);
+    }
+
+    return products[0];
   }
 
   async function fetchProduct(handle) {
@@ -1126,6 +1176,7 @@ window.WIZARD_CFG = {
     if (fGrid) fGrid.innerHTML = '<div class="qw-loading"><div class="qw-spinner"></div><p>Loading repairs for ' + esc(name) + '...</p></div>';
 
     var products = await fetchCollection(handle);
+    _collectionProducts = products;
     _repairsMap = buildRepairsMap(products);
 
     if (window.posthog) posthog.capture('wizard_step', { step: 3, device: S.device, model: S.model, duration: Date.now() - _stepStartTime });
@@ -1331,20 +1382,28 @@ window.WIZARD_CFG = {
       '</div></div><button class="qw-help-close">Close</button></div>';
     panel.querySelector('.qw-help-close').onclick = function() { panel.classList.remove('open'); };
 
-    /* Build a lookup: extract A-numbers from WIZARD_MODELS names */
-    var aNumToModel = {};
-    var groups = MODELS['macbook'] || [];
-    for (var g = 0; g < groups.length; g++) {
-      for (var m = 0; m < groups[g].models.length; m++) {
-        var modelName = groups[g].models[m].name;
-        var aMatches = modelName.match(/A\d{4}/g);
-        if (aMatches) {
-          for (var a = 0; a < aMatches.length; a++) {
-            aNumToModel[aMatches[a].toUpperCase()] = groups[g].models[m];
+    function findConfiguredModelByName(name) {
+      var exact = null;
+      var best = null;
+      var bestLen = 0;
+      var groups = MODELS['macbook'] || [];
+      for (var g = 0; g < groups.length; g++) {
+        for (var m = 0; m < groups[g].models.length; m++) {
+          var model = groups[g].models[m];
+          if (model.name === name) return model;
+          if (model.name.indexOf(name) !== -1 || name.indexOf(model.name) !== -1) {
+            var matchLen = Math.min(model.name.length, name.length);
+            if (matchLen > bestLen) {
+              best = model;
+              bestLen = matchLen;
+            }
           }
         }
       }
+      return exact || best;
     }
+
+    var groups = MODELS['macbook'] || [];
 
     function mbFilter() {
       var q = (document.getElementById('qwMbSearch').value || '').trim().toUpperCase();
@@ -1362,8 +1421,7 @@ window.WIZARD_CFG = {
         var d = document.createElement('div'); d.className = 'qw-help-hit';
         d.innerHTML = '<span class="qw-hn">' + n.n + '</span><span class="qw-hm">' + n.m + '</span><span class="qw-hs">Select</span>';
         d.onclick = function() {
-          /* Match by A-number extraction */
-          var model = aNumToModel[n.n.toUpperCase()];
+          var model = findConfiguredModelByName(n.m);
           if (model) {
             panel.classList.remove('open');
             pickModel(model.name, model.collectionHandle, null);
@@ -1614,33 +1672,72 @@ window.WIZARD_CFG = {
     return items;
   }
 
-  function addToCartAndCheckout() {
+  function getShopifyRoot() {
+    return (window.Shopify && window.Shopify.routes ? window.Shopify.routes.root : '/');
+  }
+
+  async function ensureCleanWizardCart() {
+    var root = getShopifyRoot();
+    var cartRes = await fetch(root + 'cart.js', { headers: { 'Accept': 'application/json' } });
+    if (!cartRes.ok) throw new Error('Could not check the current cart.');
+
+    var cart = await cartRes.json();
+    var items = cart && cart.items ? cart.items : [];
+    if (!items.length) return true;
+
+    var confirmed = window.confirm('Your cart already has items in it. Continuing with this repair booking will replace them. Do you want to continue?');
+    if (!confirmed) return false;
+
+    var clearRes = await fetch(root + 'cart/clear.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    });
+    if (!clearRes.ok) throw new Error('Could not prepare a clean checkout. Please try again.');
+    return true;
+  }
+
+  async function addToCartAndCheckout() {
     var items = buildCartItems();
     if (!items) return;
 
     var btn = document.getElementById('qwBookBtn');
     if (btn) { btn.disabled = true; btn.textContent = 'Redirecting...'; }
 
-    fetch((window.Shopify && window.Shopify.routes ? window.Shopify.routes.root : '/') + 'cart/add.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: items })
-    })
-    .then(function(res) {
-      if (!res.ok) return res.json().then(function(d) { throw new Error(d.description || d.message || 'Cart error'); });
-      return res.json();
-    })
-    .then(function() {
+    try {
+      var shouldContinue = await ensureCleanWizardCart();
+      if (!shouldContinue) {
+        if (btn) { btn.disabled = false; btn.textContent = 'Proceed to checkout'; }
+        return;
+      }
+
+      var addRes = await fetch(getShopifyRoot() + 'cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ items: items })
+      });
+
+      if (!addRes.ok) {
+        var errData = null;
+        try { errData = await addRes.json(); } catch (e) {}
+        throw new Error((errData && (errData.description || errData.message)) || 'Cart error');
+      }
+
+      await addRes.json();
       var checkoutUrl = '/checkout';
       if (window.posthog && posthog.get_distinct_id) {
         checkoutUrl += '?ph_distinct_id=' + encodeURIComponent(posthog.get_distinct_id());
       }
       window.location.href = checkoutUrl;
-    })
-    .catch(function(err) {
+    } catch (err) {
       if (btn) { btn.disabled = false; btn.textContent = 'Proceed to checkout'; }
       alert(err.message || 'Something went wrong. Please try again.');
-    });
+    }
   }
 
   /* =============================================
@@ -1662,7 +1759,7 @@ window.WIZARD_CFG = {
 
   /* ---- REPAIR CARD ---- */
   async function showRepairCard(iss, container) {
-    var product = _repairsMap[iss.repairType];
+    var product = resolveRepairProduct(iss.repairType, iss.label);
     if (!product) { showContactCard(iss, container); return; }
 
     var fullProduct = await fetchProduct(product.handle);
@@ -1876,6 +1973,48 @@ window.WIZARD_CFG = {
     '</div>';
   }
 
+  async function postQuoteWizardWebhook(payload) {
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function() { controller.abort(); }, 30000);
+
+    try {
+      var res = await fetch('https://icorrect.app.n8n.cloud/webhook/shopify-contact-form', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      var contentType = res.headers.get('content-type') || '';
+      var data = null;
+      if (contentType.indexOf('application/json') !== -1) {
+        try { data = await res.json(); } catch (e) {}
+      } else {
+        try { await res.text(); } catch (e2) {}
+      }
+
+      if (!res.ok) {
+        throw new Error((data && data.error) || 'Unable to submit right now. Please try again.');
+      }
+      if (data && data.success === false) {
+        throw new Error(data.error || 'Unable to submit right now. Please try again.');
+      }
+
+      return data || { success: true };
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error && error.name === 'AbortError') {
+        throw new Error('Request timed out. Please try again.');
+      }
+      throw error;
+    }
+  }
+
   /* [4.2] Inline validation */
   function wireContactForm(prefix, source) {
     var form = document.getElementById(prefix + 'Form');
@@ -1905,7 +2044,7 @@ window.WIZARD_CFG = {
     /* Pre-validate if pre-filled */
     if (nIn.value || eIn.value) validate();
 
-    form.onsubmit = function(e) {
+    form.onsubmit = async function(e) {
       e.preventDefault();
       if (!validate()) return;
       sub.disabled = true; sub.textContent = 'Sending...';
@@ -1922,22 +2061,25 @@ window.WIZARD_CFG = {
       var fullBody = deviceParts.length ? deviceParts.join('\n') : '';
       if (userMsg) fullBody += (fullBody ? '\n\n' : '') + 'Message:\n' + userMsg;
 
-      /* Submit to n8n webhook (Intercom contact + Slack notification) */
-      fetch('https://icorrect.app.n8n.cloud/webhook/shopify-contact-form', {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({
-          name: userName, email: userEmail, phone: userPhone,
-          body: fullBody, device_type: DN[S.device] || S.device || '',
-          device_model: S.model || '', fault_area: S.fault || ''
-        })
-      }).then(function() {
+      try {
+        await postQuoteWizardWebhook({
+          name: userName,
+          email: userEmail,
+          phone: userPhone,
+          body: fullBody,
+          device_type: DN[S.device] || S.device || '',
+          device_model: S.model || '',
+          fault_area: S.fault || ''
+        });
         form.style.display = 'none';
         var ok = document.getElementById(prefix + 'Ok');
         if (ok) ok.classList.add('show');
         if (window.posthog) posthog.capture('wizard_conversion', { action: source + '_submit', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
-      }).catch(function() { sub.disabled = false; sub.textContent = 'Send question'; });
+      } catch (error) {
+        sub.disabled = false;
+        sub.textContent = 'Send question';
+        pErr.textContent = error.message || 'Something went wrong. Please try again.';
+      }
     };
   }
 
@@ -2121,12 +2263,7 @@ document.getElementById('qwEqErr').style.display = 'none';
           if (window.posthog) posthog.capture('wizard_conversion', { action: 'email_quote', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
         }
  
-        fetch('https://icorrect.app.n8n.cloud/webhook/shopify-contact-form', {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify(payload)
-        }).then(function() {
+        postQuoteWizardWebhook(payload).then(function() {
           showEmailSuccess();
         }).catch(function() {
           sendBtn.disabled = false; sendBtn.textContent = 'Send quote';
@@ -2168,6 +2305,7 @@ document.getElementById('qwEqErr').style.display = 'none';
      ============================================= */
   function reset() {
     S.device = null; S.model = null; S.fault = null; S.issue = null; S.step = 1; S.collectionHandle = null; _repairsMap = {};
+    _collectionProducts = [];
     document.querySelectorAll('.qw-dev').forEach(function(c) { c.classList.remove('sel'); });
     var rP = document.getElementById('qw-rP');
     if (rP) { rP.style.display = 'none'; rP.innerHTML = ''; }
