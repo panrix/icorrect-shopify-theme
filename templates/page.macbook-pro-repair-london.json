@@ -1,0 +1,134 @@
+{
+  "sections": {
+    "image_with_text_p5a": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading_p5a": {
+          "type": "heading",
+          "settings": {
+            "heading": "<strong>MacBook Pro Repair London</strong>",
+            "heading_size": "h1"
+          }
+        },
+        "text_p5a": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Expert MacBook Pro repair in London. We fix everything from screen replacements and battery swaps to complex logic board failures on all MacBook Pro models — M1, M2, and M3. Component-level repairs, 2-year warranty, express same-day available.</p>",
+            "text_style": "body"
+          }
+        },
+        "button_p5a": {
+          "type": "button",
+          "settings": {
+            "button_label": "View MacBook Pro Repair Prices",
+            "button_link": "/pages/macbook-repairs",
+            "button_style_secondary": false
+          },
+          "disabled": false
+        }
+      },
+      "block_order": [
+        "heading_p5a",
+        "text_p5a",
+        "button_p5a"
+      ],
+      "name": "t:sections.image-with-text.presets.name",
+      "settings": {
+        "image": "shopify://shop_images/MacBook_Repair.png",
+        "height": "small",
+        "desktop_image_width": "medium",
+        "layout": "text_first",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "center",
+        "content_layout": "no-overlap",
+        "section_color_scheme": "scheme-1",
+        "color_scheme": "scheme-2",
+        "image_behavior": "none",
+        "mobile_content_alignment": "center",
+        "padding_top": 36,
+        "padding_bottom": 0
+      }
+    },
+    "rich_text_p5a": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_rt_p5a": {
+          "type": "heading",
+          "settings": {
+            "heading": "<strong>MacBook Pro Repair — All Models, All Faults</strong>",
+            "heading_size": "h1"
+          }
+        },
+        "text_rt_p5a": {
+          "type": "text",
+          "settings": {
+            "text": "<p>We repair MacBook Pro models from 2016 to the latest M3 Pro and Max. Whether it's a damaged Liquid Retina XDR display, a swollen battery, keyboard failure, charging fault, or a logic board with liquid damage — our London technicians carry out the repair at component level. No unnecessary part replacements, no data loss, no inflated bills.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "heading_rt_p5a",
+        "text_rt_p5a"
+      ],
+      "name": "t:sections.rich-text.presets.name",
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "",
+        "full_width": true,
+        "padding_top": 92,
+        "padding_bottom": 0
+      }
+    },
+    "custom_liquid_repairs_p5a": {
+      "type": "custom-liquid",
+      "name": "Repairs",
+      "settings": {
+        "custom_liquid": "<style>\n.repair-categories {\n  max-width: 950px;\n  margin: 0 auto 80px auto;\n}\n\n.repair-category {\n  background: #ebecf0;\n  border-radius: 12px;\n  padding: 35px;\n  margin-bottom: 30px;\n  border-left: 5px solid #111;\n}\n\n.repair-category h3 {\n  font-size: 26px;\n  margin-bottom: 14px;\n}\n\n.repair-category p,\n.repair-category li {\n  font-size: 16px;\n  line-height: 1.65;\n  color: #555;\n}\n\n.repair-link {\n  display: inline-block;\n  background:#111;\n  color:#fff !important;\n  padding: 12px 28px;\n  border-radius: 6px;\n  margin-top: 10px;\n  font-weight: 600;\n}\n\n@media (max-width: 900px) {\n  .repair-category { padding: 25px 20px; }\n}\n</style>\n\n<section id=\"repair-categories\" class=\"repair-categories\">\n\n<div class=\"repair-category\" style=\"text-align: start;\">\n<h3>MacBook Pro Screen Repair</h3>\n<p>Cracked, flickering, or dark display? We replace MacBook Pro screens on all models using genuine panels.</p>\n<a class=\"repair-link\" href=\"/collections/macbook-screen-repair-prices\">View Screen Repair Pricing →</a>\n</div>\n\n<div class=\"repair-category\">\n<h3>MacBook Pro Battery Replacement</h3>\n<p>Swollen, degraded, or failing battery? Fast replacement with quality cells matched to original specs.</p>\n<a class=\"repair-link\" href=\"/collections/macbook-battery-repair-prices\">View Battery Pricing →</a>\n</div>\n\n<div class=\"repair-category\">\n<h3>MacBook Pro Keyboard Repair</h3>\n<p>Non-responsive keys, sticky keys, or butterfly keyboard failures. Full keyboard replacement available.</p>\n<a class=\"repair-link\" href=\"/collections/macbook-keyboard-repair-prices\">View Keyboard Pricing →</a>\n</div>\n\n<div class=\"repair-category\">\n<h3>MacBook Pro Liquid Damage Repair</h3>\n<p>Logic board restoration, ultrasonic cleaning, corrosion removal and component-level recovery.</p>\n<a class=\"repair-link\" href=\"/collections/macbook-repair-prices\">View Liquid Damage Pricing →</a>\n</div>\n\n<div class=\"repair-category\">\n<h3>MacBook Diagnostic Service</h3>\n<p>Comprehensive diagnostic identifying all hardware and software faults with a full written report.</p>\n<a class=\"repair-link\" href=\"/collections/macbook-diagnostic-prices\">Book Diagnostic Service →</a>\n</div>\n\n</section>",
+        "color_scheme": "",
+        "padding_top": 52,
+        "padding_bottom": 0
+      }
+    },
+    "macbook_videos_p5a": {
+      "type": "macbook-videos",
+      "name": "MacBook Videos",
+      "settings": {
+        "heading": "See How We Repair Your MacBook",
+        "subtitle": "Watch our videos to see how we repair MacBooks, what to expect, and how we work.",
+        "video_1_title": "Repair is better than replace.",
+        "video_2_title": "Our repair approach is sustainable.",
+        "video_3_title": "Do not overpay for your repairs.",
+        "color_scheme": "scheme-4",
+        "padding_top": 40,
+        "padding_bottom": 80
+      }
+    },
+    "custom_liquid_faqs_p5a": {
+      "type": "custom-liquid",
+      "name": "FAQs",
+      "settings": {
+        "custom_liquid": "<style>\n.faq-section {\n  background:#ebecf0;\n  max-width: 950px;\n  margin: 0 auto 70px auto;\n  padding:50px 30px;\n  border-radius:14px;\n}\n\n.faq-section h2 {\n  text-align:center;\n  font-size:34px;\n  margin-bottom:40px;\n}\n\n.faq-item {\n  background:#fff;\n  padding:22px;\n  border-left:4px solid #111;\n  border-radius:8px;\n  margin-bottom:20px;\n}\n\n.faq-item h3 {\n  font-size:19px;\n  margin-bottom:10px;\n}\n\n@media (max-width: 900px) {\n  .faq-section { padding: 35px 18px; }\n}\n</style>\n\n<section class=\"faq-section\">\n<h2>MacBook Pro Repair London FAQs</h2>\n\n<div class=\"faq-item\">\n<h3><strong>Do you repair MacBook Pro M3 in London?</strong></h3>\n<p>Yes. We repair all MacBook Pro M3 models, including the 14\" and 16\" M3 Pro and M3 Max. This includes screen replacement, battery repair, and component-level logic board work.</p>\n</div>\n\n<div class=\"faq-item\">\n<h3><strong>Can you fix a MacBook Pro that won't turn on?</strong></h3>\n<p>In most cases, yes. A MacBook Pro that won't power on is often caused by a charging circuit fault, liquid damage, or a failed power management chip. We diagnose and repair at component level.</p>\n</div>\n\n<div class=\"faq-item\">\n<h3><strong>How much does MacBook Pro repair cost?</strong></h3>\n<p>Costs vary by repair type and model. We provide upfront pricing before any work begins. See our pricing pages or book a diagnostic for a firm quote.</p>\n</div>\n\n<div class=\"faq-item\">\n<h3><strong>Do you fix MacBook Pro liquid damage in London?</strong></h3>\n<p>Yes. Liquid damage repair is one of our specialist services. We carry out ultrasonic cleaning, corrosion removal, and logic board component replacement where needed.</p>\n</div>\n\n<div class=\"faq-item\">\n<h3><strong>What warranty do you offer on MacBook Pro repairs?</strong></h3>\n<p>All MacBook Pro repairs carry a 2-year warranty covering the repaired components and workmanship.</p>\n</div>\n\n</section>\n\n<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"LocalBusiness\",\n  \"name\": \"iCorrect\",\n  \"image\": \"https://cdn.shopify.com/s/files/1/0674/1952/0525/files/MacBook_Repair.png\",\n  \"url\": \"https://www.icorrect.co.uk/pages/macbook-pro-repair-london\",\n  \"telephone\": \"+442080049995\",\n  \"address\": {\n    \"@type\": \"PostalAddress\",\n    \"streetAddress\": \"12 Margaret Street\",\n    \"addressLocality\": \"London\",\n    \"postalCode\": \"W1W 8JQ\",\n    \"addressCountry\": \"GB\"\n  },\n  \"geo\": {\n    \"@type\": \"GeoCoordinates\",\n    \"latitude\": 51.5175,\n    \"longitude\": -0.1418\n  },\n  \"openingHoursSpecification\": [\n    {\n      \"@type\": \"OpeningHoursSpecification\",\n      \"dayOfWeek\": [\"Monday\",\"Tuesday\",\"Wednesday\",\"Thursday\",\"Friday\"],\n      \"opens\": \"09:00\",\n      \"closes\": \"18:00\"\n    }\n  ],\n  \"priceRange\": \"££\",\n  \"description\": \"MacBook Pro repair specialists in London. Screens, batteries, keyboards, liquid damage, logic board. All models M1–M3. 2-year warranty.\"\n}\n</script>",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 0,
+        "padding_bottom": 28
+      }
+    }
+  },
+  "order": [
+    "image_with_text_p5a",
+    "rich_text_p5a",
+    "custom_liquid_repairs_p5a",
+    "macbook_videos_p5a",
+    "custom_liquid_faqs_p5a",
+    "main"
+  ]
+}
