@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "image_with_text_p3a": {
@@ -6,30 +15,33 @@
         "heading": {
           "type": "heading",
           "settings": {
-            "heading": "<strong>MacBook Pro Screen Replacement London<\/strong>",
+            "heading": "<strong>MacBook Pro Screen Replacement London</strong>",
             "heading_size": "h1"
           }
         },
         "text": {
           "type": "text",
           "settings": {
-            "text": "<p>MacBook Pro screen replacement specialists in London. We replace cracked, damaged and faulty displays on all MacBook Pro models — M1, M2, M3, Pro and Max chips. Genuine panels, same-day slots available, 2-year warranty.<\/p>",
+            "text": "<p>MacBook Pro screen replacement specialists in London. We replace cracked, damaged and faulty displays on all MacBook Pro models — M1, M2, M3, Pro and Max chips. Genuine panels, same-day slots available, 2-year warranty.</p>",
             "text_style": "body"
           }
         },
         "button": {
           "type": "button",
-          "disabled": false,
           "settings": {
             "button_label": "View MacBook Pro Screen Prices",
-            "button_link": "\/collections\/macbook-screen-repair-prices",
+            "button_link": "/collections/macbook-screen-repair-prices",
             "button_style_secondary": false
           }
         }
       },
-      "block_order": ["heading", "text", "button"],
+      "block_order": [
+        "heading",
+        "text",
+        "button"
+      ],
       "settings": {
-        "image": "shopify:\/\/shop_images\/MacBook_Repair.png",
+        "image": "shopify://shop_images/MacBook_Repair.png",
         "height": "small",
         "desktop_image_width": "medium",
         "layout": "text_first",
@@ -50,18 +62,21 @@
         "heading": {
           "type": "heading",
           "settings": {
-            "heading": "<strong>MacBook Pro Screen Replacement — All Models<\/strong>",
+            "heading": "<strong>MacBook Pro Screen Replacement — All Models</strong>",
             "heading_size": "h1"
           }
         },
         "text": {
           "type": "text",
           "settings": {
-            "text": "<p>We replace MacBook Pro displays on all current and previous generation models. Whether you have the 14\" MacBook Pro M3 Pro, the 16\" MacBook Pro M3 Max, or an older Intel model, our London technicians carry out full screen replacements using genuine Liquid Retina XDR panels where available. Every replacement includes component-level testing and a 2-year warranty.<\/p>"
+            "text": "<p>We replace MacBook Pro displays on all current and previous generation models. Whether you have the 14\" MacBook Pro M3 Pro, the 16\" MacBook Pro M3 Max, or an older Intel model, our London technicians carry out full screen replacements using genuine Liquid Retina XDR panels where available. Every replacement includes component-level testing and a 2-year warranty.</p>"
           }
         }
       },
-      "block_order": ["heading", "text"],
+      "block_order": [
+        "heading",
+        "text"
+      ],
       "settings": {
         "desktop_content_position": "center",
         "content_alignment": "center",

@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "image_with_text": {
@@ -6,30 +15,33 @@
         "heading": {
           "type": "heading",
           "settings": {
-            "heading": "<strong>MacBook Screen Repair London<\/strong>",
+            "heading": "<strong>MacBook Screen Repair London</strong>",
             "heading_size": "h1"
           }
         },
         "text": {
           "type": "text",
           "settings": {
-            "text": "<p>Specialist MacBook screen repairs in London. We fix cracked displays, backlight failures, Flexgate, and Dustgate on all MacBook models. Most screen repairs completed same-day or next-day. 2-year warranty included.<\/p>",
+            "text": "<p>Specialist MacBook screen repairs in London. We fix cracked displays, backlight failures, Flexgate, and Dustgate on all MacBook models. Most screen repairs completed same-day or next-day. 2-year warranty included.</p>",
             "text_style": "body"
           }
         },
         "button": {
           "type": "button",
-          "disabled": false,
           "settings": {
             "button_label": "View Screen Repair Prices",
-            "button_link": "\/collections\/macbook-screen-repair-prices",
+            "button_link": "/collections/macbook-screen-repair-prices",
             "button_style_secondary": false
           }
         }
       },
-      "block_order": ["heading", "text", "button"],
+      "block_order": [
+        "heading",
+        "text",
+        "button"
+      ],
       "settings": {
-        "image": "shopify:\/\/shop_images\/MacBook_Repair.png",
+        "image": "shopify://shop_images/MacBook_Repair.png",
         "height": "small",
         "desktop_image_width": "medium",
         "layout": "text_first",
@@ -50,18 +62,21 @@
         "heading": {
           "type": "heading",
           "settings": {
-            "heading": "<strong>MacBook Screen Repair Specialists in London<\/strong>",
+            "heading": "<strong>MacBook Screen Repair Specialists in London</strong>",
             "heading_size": "h1"
           }
         },
         "text": {
           "type": "text",
           "settings": {
-            "text": "<p>Whether your display is cracked, flickering, or completely dark, our London-based technicians carry out component-level screen repairs to restore your MacBook to factory condition. We use genuine LCDs and test every display before and after repair. All MacBook screen repairs include a 2-year warranty.<\/p>"
+            "text": "<p>Whether your display is cracked, flickering, or completely dark, our London-based technicians carry out component-level screen repairs to restore your MacBook to factory condition. We use genuine LCDs and test every display before and after repair. All MacBook screen repairs include a 2-year warranty.</p>"
           }
         }
       },
-      "block_order": ["heading", "text"],
+      "block_order": [
+        "heading",
+        "text"
+      ],
       "settings": {
         "desktop_content_position": "center",
         "content_alignment": "center",

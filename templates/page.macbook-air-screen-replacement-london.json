@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "image_with_text_p4a": {
@@ -6,30 +15,33 @@
         "heading": {
           "type": "heading",
           "settings": {
-            "heading": "<strong>MacBook Air Screen Replacement London<\/strong>",
+            "heading": "<strong>MacBook Air Screen Replacement London</strong>",
             "heading_size": "h1"
           }
         },
         "text": {
           "type": "text",
           "settings": {
-            "text": "<p>MacBook Air screen replacement in London. We replace cracked and faulty displays on all MacBook Air models — M1, M2, and M3, in both 13\" and 15\" sizes. Genuine Retina panels, fast turnaround, 2-year warranty.<\/p>",
+            "text": "<p>MacBook Air screen replacement in London. We replace cracked and faulty displays on all MacBook Air models — M1, M2, and M3, in both 13\" and 15\" sizes. Genuine Retina panels, fast turnaround, 2-year warranty.</p>",
             "text_style": "body"
           }
         },
         "button": {
           "type": "button",
-          "disabled": false,
           "settings": {
             "button_label": "View MacBook Air Screen Prices",
-            "button_link": "\/collections\/macbook-screen-repair-prices",
+            "button_link": "/collections/macbook-screen-repair-prices",
             "button_style_secondary": false
           }
         }
       },
-      "block_order": ["heading", "text", "button"],
+      "block_order": [
+        "heading",
+        "text",
+        "button"
+      ],
       "settings": {
-        "image": "shopify:\/\/shop_images\/MacBook_Repair.png",
+        "image": "shopify://shop_images/MacBook_Repair.png",
         "height": "small",
         "desktop_image_width": "medium",
         "layout": "text_first",
@@ -50,18 +62,21 @@
         "heading": {
           "type": "heading",
           "settings": {
-            "heading": "<strong>MacBook Air Screen Replacement — All Models<\/strong>",
+            "heading": "<strong>MacBook Air Screen Replacement — All Models</strong>",
             "heading_size": "h1"
           }
         },
         "text": {
           "type": "text",
           "settings": {
-            "text": "<p>MacBook Air screens are thin, precise, and require specialist handling. Our London technicians replace displays on all Air models with care, using genuine panels that maintain True Tone and brightness calibration. Whether it's the 13\" MacBook Air M2, the 15\" MacBook Air M3, or an older Intel model, we have you covered with a 2-year warranty on every screen replacement.<\/p>"
+            "text": "<p>MacBook Air screens are thin, precise, and require specialist handling. Our London technicians replace displays on all Air models with care, using genuine panels that maintain True Tone and brightness calibration. Whether it's the 13\" MacBook Air M2, the 15\" MacBook Air M3, or an older Intel model, we have you covered with a 2-year warranty on every screen replacement.</p>"
           }
         }
       },
-      "block_order": ["heading", "text"],
+      "block_order": [
+        "heading",
+        "text"
+      ],
       "settings": {
         "desktop_content_position": "center",
         "content_alignment": "center",
