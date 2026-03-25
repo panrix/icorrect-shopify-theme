@@ -29,9 +29,7 @@
       {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
     </title>
 
-    {% if template == 'index' %}
-      <meta name="description" content="Expert Apple repairs across the UK. MacBook screen, logic board &amp; liquid damage. iPhone, iPad &amp; Apple Watch. Genuine parts, 2-year warranty, same-day &amp; mail-in available.">
-    {% elsif page_description %}
+    {% if page_description %}
       <meta name="description" content="{{ page_description | escape }}">
     {% endif %}
 
@@ -434,3 +432,4 @@ document.addEventListener('DOMContentLoaded',function(){
 {% render 'posthog-tracking' %}
   </body>
 </html>
+
