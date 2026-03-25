@@ -64,13 +64,13 @@ window.WIZARD_CONTEXT = {
   collectionHandle: {{ collection.handle | default: '' | json }},
   productHandle: {{ product.handle | default: '' | json }},
   {%- if product -%}
-    {%- comment -%}On product pages, find the model's repair-prices collection{%- endcomment -%}
-    {%- for col in product.collections -%}
-      {%- if col.handle contains 'repair-prices' -%}
-        modelCollection: {{ col.handle | json }},
-        {%- break -%}
-      {%- endif -%}
-    {%- endfor -%}
+    {%- comment -%}On product pages, collect ALL repair-prices collections so JS can find the model-specific one{%- endcomment -%}
+    modelCollections: [
+      {%- for col in product.collections -%}
+        {%- if col.handle contains 'repair-prices' -%}
+          {{ col.handle | json }},{%- endif -%}
+      {%- endfor -%}
+    ],
     device: {{ product.metafields.custom.wizard_device | default: '' | json }},
     fault: ""
   {%- elsif collection -%}
@@ -2343,21 +2343,24 @@ document.getElementById('qwEqErr').style.display = 'none';
 
     /* CASE 1: Product page — pre-fill device + model, derive fault from handle */
     if (ctx && ctx.productHandle) {
-      var modelCol = ctx.modelCollection || ctx.collectionHandle || '';
-      if (modelCol) {
-        var modelMatch = findModelByCollection(modelCol);
-        if (modelMatch) {
-          /* Derive repair type from product handle */
-          var rt = deriveRepairTypeFromHandle(ctx.productHandle);
-          var faultName = rt ? REPAIR_TYPE_TO_FAULT[rt] : null;
-          S.device = modelMatch.device;
-          if (faultName && faultName !== '_diagnostic') S.preFault = faultName;
-          renderDevices();
-          pickModel(modelMatch.model.name, modelMatch.model.collectionHandle, null).then(function() {
-            _suppressScroll = false;
-          });
-          return;
-        }
+      var cols = ctx.modelCollections || [];
+      if (ctx.collectionHandle) cols.push(ctx.collectionHandle);
+      var modelMatch = null;
+      for (var ci = 0; ci < cols.length; ci++) {
+        modelMatch = findModelByCollection(cols[ci]);
+        if (modelMatch) break;
+      }
+      if (modelMatch) {
+        /* Derive repair type from product handle */
+        var rt = deriveRepairTypeFromHandle(ctx.productHandle);
+        var faultName = rt ? REPAIR_TYPE_TO_FAULT[rt] : null;
+        S.device = modelMatch.device;
+        if (faultName && faultName !== '_diagnostic') S.preFault = faultName;
+        renderDevices();
+        pickModel(modelMatch.model.name, modelMatch.model.collectionHandle, null).then(function() {
+          _suppressScroll = false;
+        });
+        return;
       }
       /* Product page but can't find model — try device at least */
       if (ctx.device) {
