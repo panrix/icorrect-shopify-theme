@@ -1,3 +1,34 @@
+<script>
+  (function() {
+    var path = window.location.pathname.toLowerCase();
+
+    if (path.startsWith("/iphone-repairs/") || path.startsWith("/smartphone/iphone-repairs/")) {
+      window.location.replace("/pages/iphone-repairs"); return;
+    }
+    if (path.startsWith("/macbook-repairs/") || path.startsWith("/macbook-air-") || path.startsWith("/macbook-pro-")) {
+      window.location.replace("/pages/macbook-repairs"); return;
+    }
+    if (path.startsWith("/ipad-repairs/") || path.startsWith("/ipad-mini-") || path.startsWith("/ipad-air-") || path.startsWith("/ipad-pro-")) {
+      window.location.replace("/pages/ipad-repairs"); return;
+    }
+    if (path.startsWith("/blog/")) {
+      window.location.replace("/blogs/news"); return;
+    }
+    if (path.startsWith("/repair/")) {
+      window.location.replace("/pages/contact"); return;
+    }
+    if (path.startsWith("/ipod-repairs/")) {
+      window.location.replace("/"); return;
+    }
+    if (path.startsWith("/products/macbook") || path.startsWith("/products/bw")) {
+      window.location.replace("/pages/macbook-repairs"); return;
+    }
+    if (path.startsWith("/products/")) {
+      window.location.replace("/"); return;
+    }
+  })();
+</script>
+
 <style type="text/css">
   .template-404 .title + * {
     margin-top: 1rem;
