@@ -1,6 +1,6 @@
 # Page Speed Optimisation Brief
 **Raised by:** Marketing Jarvis  
-**Date:** 2026-03-28  
+**Date:** 2026-03-28 (updated same day)  
 **Priority:** High  
 **Repo:** panrix/icorrect-shopify-theme
 
@@ -15,72 +15,95 @@ Meta ads are running for MacBook repairs (£40/day, ~£127 spent last 7 days). W
 
 This means we're paying for clicks that never result in a page load. Every lost landing view is a lost booking opportunity. The ad spend is being wasted.
 
-Server TTFB is fast (0.2s — Shopify/Cloudflare is fine). The problem is **client-side render blocking on mobile**.
+Server TTFB is fast (0.2–0.36s — Shopify/Cloudflare is fine). The problem is **client-side render blocking and payload size on mobile**.
 
 ---
 
-## What We Found
+## Audit Results (both landing pages, mobile UA)
 
-Audit run on `https://icorrect.co.uk/pages/macbook-repairs` (mobile UA):
+### `/pages/macbook-repairs` — MacBook Repairs Cold destination
 
-| Issue | Detail |
-|-------|--------|
-| **23 external scripts** | Most deferred, but volume is high |
-| **27 stylesheets** | Extremely high — app CSS loading globally |
-| **jQuery (no defer/async)** | `https://code.jquery.com/jquery-3.7.1.min.js` — loading synchronously, **render-blocking** |
-| **HTML size: 138KB** | Heavy for a page template |
-| **CF-Cache-Status: DYNAMIC** | Page not being cached by Cloudflare — every request hits origin |
+| Metric | Value | Status |
+|--------|-------|--------|
+| HTML size | 138KB | ⚠️ Heavy |
+| Scripts | 23 | ⚠️ |
+| Stylesheets | 27 | 🚨 |
+| Images not lazy-loaded | 5 | ⚠️ |
+| jQuery | render-blocking* | 🚨 |
+| CF-Cache-Status | DYNAMIC | ⚠️ |
 
-The jQuery CDN call is the most critical issue. It's an external, synchronous script load that blocks page rendering until it resolves. On mobile 4G this alone can add 500ms–1s to paint time.
+### `/collections/macbook-screen-repair-prices` — MacBook Screen Cold destination
+
+| Metric | Value | Status |
+|--------|-------|--------|
+| HTML size | **502KB** | 🚨 Critical |
+| Scripts | 23 | ⚠️ |
+| Stylesheets | **36** | 🚨 Critical |
+| Images not lazy-loaded | **18** | 🚨 Critical |
+| jQuery | render-blocking* | 🚨 |
+
+**The Screen collection page is the worst offender.** 502KB HTML + 18 eager images + 36 stylesheets = extremely slow mobile paint. This is the page getting the most ad traffic from the Screen Cold campaign.
+
+*jQuery fix was merged (PR #21) — may need CDN propagation time.
 
 ---
 
 ## Tasks
 
-### 1. Fix jQuery — High Priority
-- **Find** where jQuery is being loaded (likely a theme snippet or app embed)
-- **Option A:** Add `defer` attribute if jQuery is required
-- **Option B:** Remove entirely if nothing in the theme actually depends on it (Shopify Dawn doesn't need it)
-- Check: `grep -r "jquery" /theme/assets/ /theme/snippets/ /theme/layout/`
+### 1. ✅ jQuery defer — DONE (PR #21 merged Mar 28)
+- jQuery now deferred in `layout/theme.liquid`
+- `video-reviews.liquid` updated to handle deferred init
+- Verify propagated to live site (check source, should show `defer` on jQuery tag)
 
-### 2. Audit Stylesheets — Medium Priority
-- 27 stylesheets is abnormally high
-- Identify which are injected by Shopify apps (app blocks, app embeds)
-- Check if any app CSS is loading on all pages when it's only needed on specific pages
-- Apps to check: anything in `layout/theme.liquid` loading unconditionally
+### 2. Image lazy loading on collection pages — HIGH PRIORITY 🚨
+- `/collections/macbook-screen-repair-prices` has **18 images loading eagerly**
+- All product images below the fold must have `loading="lazy"`
+- Check `snippets/card-product.liquid` — ensure `<img>` tags include `loading="lazy"` and `fetchpriority="low"` for non-hero images
+- Only the first 2–3 visible images (above fold) should be eager; everything else lazy
 
-### 3. Enable Cloudflare Caching — Medium Priority
-- `CF-Cache-Status: DYNAMIC` means the MacBook hub page is not being edge-cached
-- If the page has no personalisation, it should be cacheable
-- Check Shopify/Cloudflare cache rules — static content pages like `/pages/macbook-repairs` should be served from edge
+### 3. Reduce collection page HTML (502KB) — HIGH PRIORITY 🚨
+- 502KB HTML is 3.5x heavier than the hub page — likely caused by all product variant data being inline-rendered
+- Check if product JSON blobs are being rendered inline in the page HTML (common Shopify pattern)
+- Consider deferring product data fetch to JS after load rather than embedding in HTML
+- Review how many products are being rendered: paginate or reduce per-page count if over 24
 
-### 4. Reduce HTML payload — Low Priority
-- 138KB HTML suggests heavy inline content or Liquid rendering
-- Review the MacBook hub page template for unnecessary rendered sections
+### 4. Stylesheet audit — MEDIUM PRIORITY
+- Hub page: 27 stylesheets. Collection page: 36 (9 extra)
+- Identify which app CSS is loading on collection pages but not hub pages
+- Remove or scope any app CSS that isn't needed on these specific pages
+- Target: under 15 stylesheets on both pages
+
+### 5. Enable Cloudflare caching — MEDIUM PRIORITY
+- Both pages returning `CF-Cache-Status: DYNAMIC`
+- Static content pages and collection pages with no personalisation should be edge-cached
+- Check Shopify/Cloudflare cache rules and set appropriate TTL
+
+### 6. Reduce hub page HTML (138KB) — LOW PRIORITY
+- Review `pages/macbook-repairs` template for unnecessary rendered sections
 - Consider lazy-rendering below-fold content
 
 ---
 
 ## Success Criteria
 
-- jQuery removed or deferred
-- Stylesheet count reduced (target: under 15)
-- Click-to-LPV rate improves from ~34% toward 60%+
-- PageSpeed mobile score: target 70+ (currently unmeasured due to API quota)
+- jQuery deferred and confirmed on live site ✅ (verify)
+- Collection page HTML under 200KB
+- Image lazy loading on all product cards below fold
+- Stylesheet count under 15 on both pages
+- Click-to-LPV rate improves from ~35% toward 60%+
 
 ---
 
-## Pages Affected (ads sending traffic here)
+## Pages Affected
 
-- `https://icorrect.co.uk/pages/macbook-repairs` — MacBook Repairs Cold campaign
-- `https://icorrect.co.uk/collections/macbook-screen-repair-prices` — MacBook Screen Cold campaign
-
-Both pages should be checked and fixed.
+- `https://icorrect.co.uk/pages/macbook-repairs` — MacBook Repairs Cold campaign (£20/day)
+- `https://icorrect.co.uk/collections/macbook-screen-repair-prices` — MacBook Screen Cold campaign (£20/day)
 
 ---
 
 ## Notes
 
-- Do not remove scripts blindly — test in staging/preview theme before pushing to live
-- PostHog session recording is active — after fix, check if LPV rate improves in Meta Ads Manager within 48h
-- Coordinate with Marketing Jarvis when fix is live so ad performance can be re-evaluated
+- Test all changes in preview theme before pushing to live
+- PostHog session recording is active — after fixes, monitor LPV rate in Meta Ads Manager (allow 48h)
+- No add-to-cart or checkout events firing in Meta pixel yet — once LPV improves, verify pixel funnel events are firing correctly on these pages
+- Coordinate with Marketing Jarvis when fixes are live
