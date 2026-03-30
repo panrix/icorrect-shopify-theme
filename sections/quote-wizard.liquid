@@ -483,6 +483,7 @@ window.WIZARD_CFG = {
   var _collectionCache = {}, _productCache = {}, _repairsMap = {}, _collectionProducts = [];
   var _stepStartTime = Date.now();
   var _suppressScroll = false;
+  var _trackedSteps = {}; /* Dedup: only fire each wizard_step event once per forward pass */
 
   /* =============================================
      TRIAGE/ISSUE DATA (updated: Batch 2)
@@ -1027,6 +1028,8 @@ window.WIZARD_CFG = {
      NAVIGATION + BREADCRUMB + PROGRESS
      ============================================= */
   function go(n) {
+    /* Reset tracked steps for anything ahead when user navigates backward */
+    if (n < S.step) { Object.keys(_trackedSteps).forEach(function(k) { if (Number(k) > n || k === 'resolution') delete _trackedSteps[k]; }); }
     S.step = n;
     _stepStartTime = Date.now();
     history.pushState({ step: n, device: S.device, model: S.model, fault: S.fault }, '');
@@ -1094,10 +1097,10 @@ window.WIZARD_CFG = {
 
   function pickDev(id, el) {
     S.device = id; S.model = null; S.fault = null; S.issue = null;
-    S.collectionHandle = null; _repairsMap = {};
+    S.collectionHandle = null; _repairsMap = {}; _trackedSteps = {};
     document.querySelectorAll('#qw-s1 .qw-dev').forEach(function(c) { c.classList.remove('sel'); });
     if (el) el.classList.add('sel');
-    if (window.posthog) posthog.capture('wizard_step', { step: 2, device: S.device, duration: Date.now() - _stepStartTime });
+    if (window.posthog && !_trackedSteps[2]) { _trackedSteps[2] = true; posthog.capture('wizard_step', { step: 2, device: S.device, duration: Date.now() - _stepStartTime }); }
     setTimeout(function() { renderModels(id); go(2); }, 150);
   }
 
@@ -1179,10 +1182,11 @@ window.WIZARD_CFG = {
     _collectionProducts = products;
     _repairsMap = buildRepairsMap(products);
 
-    if (window.posthog) posthog.capture('wizard_step', { step: 3, device: S.device, model: S.model, duration: Date.now() - _stepStartTime });
+    if (window.posthog && !_trackedSteps[3]) { _trackedSteps[3] = true; posthog.capture('wizard_step', { step: 3, device: S.device, model: S.model, duration: Date.now() - _stepStartTime }); }
 
     if (S.preFault) {
       var pf = S.preFault; S.preFault = null; S.fault = pf;
+      if (window.posthog && !_trackedSteps[4]) { _trackedSteps[4] = true; posthog.capture('wizard_step', { step: 4, device: S.device, model: S.model, fault: S.fault, duration: Date.now() - _stepStartTime }); }
       renderFaults(S.device);
       renderIssues(S.device, pf);
       go(4);
@@ -1469,7 +1473,7 @@ window.WIZARD_CFG = {
     S.fault = v; S.issue = null;
     document.querySelectorAll('#qw-s3 .qw-f-card').forEach(function(c) { c.classList.remove('sel'); });
     if (el) el.classList.add('sel');
-    if (window.posthog) posthog.capture('wizard_step', { step: 4, device: S.device, model: S.model, fault: S.fault, duration: Date.now() - _stepStartTime });
+    if (window.posthog && !_trackedSteps[4]) { _trackedSteps[4] = true; posthog.capture('wizard_step', { step: 4, device: S.device, model: S.model, fault: S.fault, duration: Date.now() - _stepStartTime }); }
 
     /* "Other" skips issues and goes straight to contact */
     if (v === 'Other') {
@@ -1526,7 +1530,7 @@ window.WIZARD_CFG = {
     S.issue = iss.label;
     document.querySelectorAll('#qw-s4 .qw-t-card').forEach(function(c) { c.classList.remove('sel'); });
     if (el) el.classList.add('sel');
-    if (window.posthog) posthog.capture('wizard_step', { step: 'resolution', device: S.device, model: S.model, fault: S.fault });
+    if (window.posthog && !_trackedSteps['resolution']) { _trackedSteps['resolution'] = true; posthog.capture('wizard_step', { step: 'resolution', device: S.device, model: S.model, fault: S.fault, issue: S.issue, repairType: iss.repairType || null }); }
 
     /* Dustgate sub-question: if this issue has dustgateCheck and dustgate product exists */
     if (iss.dustgateCheck && _repairsMap['dustgate']) {
@@ -1753,7 +1757,7 @@ window.WIZARD_CFG = {
     else if (iss.route === 'diagnostic') await showDiagnosticCard(iss, p);
     else if (iss.route === 'dismiss') showDismissCard(iss, p);
     else showContactCard(iss, p);
-    if (window.posthog) posthog.capture('wizard_resolution', { route: iss.route, device: S.device, model: S.model, fault: S.fault, issue: S.issue });
+    if (window.posthog) posthog.capture('wizard_resolution', { route: iss.route, device: S.device, model: S.model, fault: S.fault, issue: S.issue, repairType: iss.repairType || null });
     scrollToEl(p, 300);
   }
 
