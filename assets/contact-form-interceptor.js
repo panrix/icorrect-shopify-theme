@@ -14,144 +14,130 @@
 (function() {
   'use strict';
 
-  // ============================================
-  // CONFIGURATION
-  // ============================================
-  
   const CONFIG = {
-    // n8n webhook URL - UPDATE THIS
     webhookUrl: 'https://icorrect.app.n8n.cloud/webhook/shopify-contact-form',
-    
-    // Form selectors to intercept
-    formSelectors: [
-      '#ContactForm',           // Consumer contact form
-      '#corporate-lead-form'    // Corporate landing page form
-    ],
-    
-    // Debug mode - set to false in production
+    formSelector: 'form[data-contact-intercept="true"]',
     debug: false
   };
 
-  // ============================================
-  // LOGGING
-  // ============================================
+  const SUPPORT_EMAIL = 'support@icorrect.co.uk';
+  const FALLBACK_MESSAGE = 'We could not reach our live contact system. Your message will now be sent through our standard contact form.';
 
   const log = (message, data = null) => {
     if (!CONFIG.debug) return;
     if (data) {
       console.log(`[iCorrect Form] ${message}`, data);
-    } else {
-      console.log(`[iCorrect Form] ${message}`);
+      return;
     }
+    console.log(`[iCorrect Form] ${message}`);
   };
 
-  // ============================================
-  // FORM HANDLER
-  // ============================================
-
   function initFormInterceptor() {
-    CONFIG.formSelectors.forEach(selector => {
-      const form = document.querySelector(selector);
-      if (form && !form.dataset.n8nIntercepted) {
-        form.dataset.n8nIntercepted = 'true';
-        
-        // Disable Shopify's default form action
-        form.setAttribute('action', 'javascript:void(0);');
-        form.setAttribute('data-original-action', form.action || '');
-        
-        // Attach our handler with capture to ensure we run first
-        form.addEventListener('submit', handleFormSubmit, { capture: true });
-        
-        log('Form intercepted:', selector);
-      }
+    document.querySelectorAll(CONFIG.formSelector).forEach((form) => {
+      if (form.dataset.n8nIntercepted === 'true') return;
+
+      form.dataset.n8nIntercepted = 'true';
+      form.addEventListener('submit', handleFormSubmit);
+      log('Form intercepted', {
+        id: form.id || null,
+        action: form.getAttribute('action') || form.action || null
+      });
     });
   }
 
-  async function handleFormSubmit(e) {
-    // Prevent ALL default behaviour
-    e.preventDefault();
-    e.stopPropagation();
-    e.stopImmediatePropagation();
-    
-    const form = e.target;
+  async function handleFormSubmit(event) {
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement)) return;
+
+    if (form.dataset.nativeFallbackSubmit === 'true') {
+      delete form.dataset.nativeFallbackSubmit;
+      return;
+    }
+
+    event.preventDefault();
+
     const submitButton = form.querySelector('button[type="submit"]');
     const originalButtonText = submitButton ? submitButton.innerHTML : '';
-    
+
     try {
-      // Show loading state
-      if (submitButton) {
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" style="animation:spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="31.4 31.4" stroke-linecap="round"/></svg>Sending...</span>';
-        submitButton.style.opacity = '0.8';
-      }
+      setLoadingState(submitButton);
+      ensureSpinnerStyle();
+      clearFormBanner(form);
 
-      // Add spinner animation if not exists
-      if (!document.getElementById('n8n-spinner-style')) {
-        const style = document.createElement('style');
-        style.id = 'n8n-spinner-style';
-        style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
-        document.head.appendChild(style);
-      }
-
-      // Collect and validate form data
       const formData = collectFormData(form);
-      log('Form data collected:', formData);
-      
-      // Validate required fields
       validateFormData(formData);
-      
-      // Send to n8n webhook
+
       const response = await sendToN8N(formData);
-      log('Response received:', response);
-      
-      if (response.success) {
-        showSuccessMessage(form);
-        
-        // Track successful submission (if analytics available)
-        if (typeof gtag === 'function') {
-          gtag('event', 'form_submission', {
-            'event_category': 'Contact Form',
-            'event_label': formData.company ? 'Corporate' : 'Consumer'
-          });
-        }
-      } else {
-        throw new Error(response.error || 'Failed to submit form');
+      log('Response received', response);
+
+      if (!response.success) {
+        throw createRecoverableError(response.error || 'Failed to submit form');
       }
-      
+
+      showSuccessMessage(form);
+
+      if (typeof gtag === 'function') {
+        gtag('event', 'form_submission', {
+          event_category: 'Contact Form',
+          event_label: formData.company ? 'Corporate' : 'Consumer'
+        });
+      }
     } catch (error) {
       console.error('[iCorrect Form] Submission error:', error);
-      showErrorMessage(form, error.message);
-      
-      // Restore button
-      if (submitButton) {
-        submitButton.disabled = false;
-        submitButton.innerHTML = originalButtonText;
-        submitButton.style.opacity = '1';
+
+      if (error.recoverable) {
+        showErrorMessage(form, FALLBACK_MESSAGE);
+        submitViaShopify(form, submitButton);
+        return;
       }
+
+      showErrorMessage(form, error.message || 'Unable to submit form');
+      restoreButtonState(submitButton, originalButtonText);
     }
-    
-    return false;
+  }
+
+  function setLoadingState(submitButton) {
+    if (!submitButton) return;
+
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" style="animation:spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="31.4 31.4" stroke-linecap="round"/></svg>Sending...</span>';
+    submitButton.style.opacity = '0.8';
+  }
+
+  function restoreButtonState(submitButton, originalButtonText) {
+    if (!submitButton) return;
+
+    submitButton.disabled = false;
+    submitButton.innerHTML = originalButtonText;
+    submitButton.style.opacity = '1';
+  }
+
+  function ensureSpinnerStyle() {
+    if (document.getElementById('n8n-spinner-style')) return;
+
+    const style = document.createElement('style');
+    style.id = 'n8n-spinner-style';
+    style.textContent = '@keyframes spin { to { transform: rotate(360deg); } } @keyframes contactFormSlideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }';
+    document.head.appendChild(style);
   }
 
   function collectFormData(form) {
     const data = {};
     const formData = new FormData(form);
-    
-    for (let [key, value] of formData.entries()) {
-      // Skip Shopify system fields
+
+    for (const [key, value] of formData.entries()) {
       if (['authenticity_token', 'form_type', 'utf8'].includes(key)) {
         continue;
       }
-      
-      // Extract field name from contact[fieldname] format
-      const match = key.match(/contact\[(\w+)\]/);
+
+      const match = key.match(/contact\[(.+)\]/);
       if (match) {
         data[match[1]] = value;
       } else {
         data[key] = value;
       }
     }
-    
+
     return data;
   }
 
@@ -159,12 +145,11 @@
     if (!data.name || !data.name.trim()) {
       throw new Error('Please enter your name');
     }
-    
+
     if (!data.email || !data.email.trim()) {
       throw new Error('Please enter your email address');
     }
-    
-    // Basic email validation
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(data.email.trim())) {
       throw new Error('Please enter a valid email address');
@@ -173,14 +158,14 @@
 
   async function sendToN8N(formData) {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
-    
+    const timeoutId = window.setTimeout(() => controller.abort(), 30000);
+
     try {
       const response = await fetch(CONFIG.webhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          Accept: 'application/json'
         },
         body: JSON.stringify({
           contact: formData,
@@ -192,47 +177,62 @@
         signal: controller.signal
       });
 
-      clearTimeout(timeoutId);
+      const contentType = response.headers.get('content-type') || '';
 
-      // Handle different response types
-      const contentType = response.headers.get('content-type');
-      
       if (response.ok) {
-        if (contentType && contentType.includes('application/json')) {
+        if (contentType.includes('application/json')) {
           return await response.json();
         }
+
         return { success: true };
       }
-      
-      // Handle error responses
+
       let errorMessage = 'Unable to submit form';
-      if (contentType && contentType.includes('application/json')) {
+      if (contentType.includes('application/json')) {
         const errorData = await response.json();
         errorMessage = errorData.error || errorMessage;
       }
-      
-      throw new Error(errorMessage);
-      
+
+      throw createRecoverableError(errorMessage);
     } catch (error) {
-      clearTimeout(timeoutId);
-      
       if (error.name === 'AbortError') {
-        throw new Error('Request timed out. Please try again.');
+        throw createRecoverableError('Request timed out. Please try again.');
       }
-      
-      throw error;
+
+      if (error.recoverable) {
+        throw error;
+      }
+
+      throw createRecoverableError(error.message || 'Unable to submit form');
+    } finally {
+      window.clearTimeout(timeoutId);
     }
   }
 
+  function createRecoverableError(message) {
+    const error = new Error(message);
+    error.recoverable = true;
+    return error;
+  }
+
+  function submitViaShopify(form, submitButton) {
+    if (submitButton) {
+      submitButton.innerHTML = 'Retrying via standard form...';
+    }
+
+    form.dataset.nativeFallbackSubmit = 'true';
+    window.setTimeout(() => {
+      HTMLFormElement.prototype.submit.call(form);
+    }, 150);
+  }
+
   function showSuccessMessage(form) {
-    // Hide the form with animation
     form.style.transition = 'opacity 0.3s ease';
     form.style.opacity = '0';
-    
+
     setTimeout(() => {
       form.style.display = 'none';
-      
-      // Create success message
+
       const successDiv = document.createElement('div');
       successDiv.className = 'contact-success-message';
       successDiv.style.cssText = 'opacity: 0; transition: opacity 0.3s ease;';
@@ -250,100 +250,101 @@
           <a href="/" style="display: inline-block; padding: 14px 28px; background: #1f2937; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; transition: background 0.2s;">Back to Home</a>
         </div>
       `;
-      
+
       form.parentNode.insertBefore(successDiv, form);
-      
-      // Fade in
+
       requestAnimationFrame(() => {
         successDiv.style.opacity = '1';
       });
-      
-      // Scroll to success message
+
       successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 300);
   }
 
-  function showErrorMessage(form, message) {
-    // Remove existing error
-    const existingError = form.querySelector('.contact-error-banner');
-    if (existingError) {
-      existingError.remove();
+  function clearFormBanner(form) {
+    const existingBanner = form.querySelector('.contact-error-banner');
+    if (existingBanner) {
+      existingBanner.remove();
     }
-    
-    // Create error message
+  }
+
+  function showErrorMessage(form, message) {
+    clearFormBanner(form);
+
     const errorDiv = document.createElement('div');
     errorDiv.className = 'contact-error-banner';
-    errorDiv.style.cssText = `
-      padding: 16px 20px;
-      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-      border: 1px solid #fecaca;
-      border-radius: 12px;
-      margin-bottom: 24px;
-      animation: slideIn 0.3s ease;
-    `;
-    errorDiv.innerHTML = `
-      <style>
-        @keyframes slideIn {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      </style>
-      <div style="display: flex; align-items: flex-start; gap: 12px;">
-        <div style="flex-shrink: 0; width: 24px; height: 24px; background: #fecaca; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </div>
-        <div>
-          <p style="margin: 0 0 4px 0; font-weight: 600; color: #991b1b;">Unable to send message</p>
-          <p style="margin: 0; font-size: 14px; color: #b91c1c;">${message}</p>
-          <p style="margin: 8px 0 0 0; font-size: 13px; color: #7f1d1d;">
-            You can also reach us at <a href="mailto:support@icorrect.co.uk" style="color: #b91c1c; font-weight: 500;">support@icorrect.co.uk</a>
-          </p>
-        </div>
-      </div>
-    `;
-    
+    errorDiv.style.cssText = [
+      'padding: 16px 20px',
+      'background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)',
+      'border: 1px solid #fecaca',
+      'border-radius: 12px',
+      'margin-bottom: 24px',
+      'animation: contactFormSlideIn 0.3s ease'
+    ].join(';');
+
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:flex-start;gap:12px;';
+
+    const iconWrap = document.createElement('div');
+    iconWrap.style.cssText = 'flex-shrink:0;width:24px;height:24px;background:#fecaca;border-radius:50%;display:flex;align-items:center;justify-content:center;';
+    iconWrap.setAttribute('aria-hidden', 'true');
+    iconWrap.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+
+    const copyWrap = document.createElement('div');
+
+    const title = document.createElement('p');
+    title.style.cssText = 'margin:0 0 4px 0;font-weight:600;color:#991b1b;';
+    title.textContent = 'Unable to send message';
+
+    const detail = document.createElement('p');
+    detail.style.cssText = 'margin:0;font-size:14px;color:#b91c1c;';
+    detail.textContent = message;
+
+    const support = document.createElement('p');
+    support.style.cssText = 'margin:8px 0 0 0;font-size:13px;color:#7f1d1d;';
+    support.appendChild(document.createTextNode('You can also reach us at '));
+
+    const supportLink = document.createElement('a');
+    supportLink.href = `mailto:${SUPPORT_EMAIL}`;
+    supportLink.style.cssText = 'color:#b91c1c;font-weight:500;';
+    supportLink.textContent = SUPPORT_EMAIL;
+    support.appendChild(supportLink);
+
+    copyWrap.appendChild(title);
+    copyWrap.appendChild(detail);
+    copyWrap.appendChild(support);
+
+    row.appendChild(iconWrap);
+    row.appendChild(copyWrap);
+    errorDiv.appendChild(row);
+
     form.insertBefore(errorDiv, form.firstChild);
     errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
-  // ============================================
-  // INITIALIZATION
-  // ============================================
-
-  // Initialize when DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initFormInterceptor);
   } else {
     initFormInterceptor();
   }
 
-  // Handle Shopify section reloads (theme editor)
   document.addEventListener('shopify:section:load', () => {
-    setTimeout(initFormInterceptor, 100);
+    window.setTimeout(initFormInterceptor, 100);
   });
 
-  // Watch for dynamically added forms
   const observer = new MutationObserver((mutations) => {
-    let shouldCheck = false;
-    mutations.forEach((mutation) => {
-      if (mutation.addedNodes.length) shouldCheck = true;
-    });
+    const shouldCheck = mutations.some((mutation) => mutation.addedNodes.length > 0);
     if (shouldCheck) {
-      setTimeout(initFormInterceptor, 50);
+      window.setTimeout(initFormInterceptor, 50);
     }
   });
-  
+
   observer.observe(document.body, { childList: true, subtree: true });
 
-  // Expose for debugging (only in debug mode)
   if (CONFIG.debug) {
     window.__n8nFormInterceptor = {
       config: CONFIG,
       reinit: initFormInterceptor
     };
   }
-
 })();

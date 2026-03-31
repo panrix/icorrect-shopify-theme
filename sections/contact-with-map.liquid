@@ -459,7 +459,7 @@
 
     <div class="contact-form-panel">
       <div class="contact-form-container">
-        {%- form 'contact', id: 'ContactForm' -%}
+        {%- form 'contact', id: 'ContactForm', data-contact-intercept: 'true' -%}
           {%- if form.posted_successfully? -%}
             <div class="contact-success-message">
               <h2 style="font-size:24px; font-weight:700; margin-bottom:10px;">Message Sent!</h2>

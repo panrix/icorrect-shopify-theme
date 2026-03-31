@@ -472,7 +472,7 @@
           </div>
         </div>
         <div class="ic-card ic-form" data-testid="form-lead">
-          {% form 'contact', id: 'corporate-lead-form' %}
+          {% form 'contact', id: 'corporate-lead-form', data-contact-intercept: 'true' %}
             {% if form.posted_successfully? %}
                {% comment %} === SUCCESS MESSAGE === {% endcomment %}
                <div class="ic-form-success">

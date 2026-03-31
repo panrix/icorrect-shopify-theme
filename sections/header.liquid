@@ -576,7 +576,7 @@
 
 <script type="application/ld+json">
   {
-    "@context": "http://schema.org",
+    "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "@id": "https://icorrect.co.uk/#localbusiness",
     "name": "iCorrect",
@@ -643,9 +643,36 @@
     }
   }
 </script>
+{%- liquid
+  assign social_link_values = settings.social_twitter_link
+    | append: '||'
+    | append: settings.social_facebook_link
+    | append: '||'
+    | append: settings.social_pinterest_link
+    | append: '||'
+    | append: settings.social_instagram_link
+    | append: '||'
+    | append: settings.social_tiktok_link
+    | append: '||'
+    | append: settings.social_tumblr_link
+    | append: '||'
+    | append: settings.social_snapchat_link
+    | append: '||'
+    | append: settings.social_youtube_link
+    | append: '||'
+    | append: settings.social_vimeo_link
+  assign social_links = social_link_values | split: '||'
+  assign has_social_links = false
+  for social_link in social_links
+    if social_link != blank
+      assign has_social_links = true
+      break
+    endif
+  endfor
+-%}
 <script type="application/ld+json">
   {
-    "@context": "http://schema.org",
+    "@context": "https://schema.org",
     "@type": "Organization",
     "name": {{ shop.name | json }},
     {% if settings.logo %}
@@ -653,17 +680,18 @@
     {% else %}
       "logo": "https://icorrect.co.uk/cdn/shop/files/iCorrect_Logo_1.png",
     {% endif %}
-    "sameAs": [
-      {{ settings.social_twitter_link | json }},
-      {{ settings.social_facebook_link | json }},
-      {{ settings.social_pinterest_link | json }},
-      {{ settings.social_instagram_link | json }},
-      {{ settings.social_tiktok_link | json }},
-      {{ settings.social_tumblr_link | json }},
-      {{ settings.social_snapchat_link | json }},
-      {{ settings.social_youtube_link | json }},
-      {{ settings.social_vimeo_link | json }}
-    ],
+    {% if has_social_links %}
+      "sameAs": [
+        {%- assign first_social_link = true -%}
+        {%- for social_link in social_links -%}
+          {%- if social_link != blank -%}
+            {%- unless first_social_link -%},{%- endunless -%}
+            {{ social_link | json }}
+            {%- assign first_social_link = false -%}
+          {%- endif -%}
+        {%- endfor -%}
+      ],
+    {% endif %}
     "url": {{ request.origin | append: page.url | json }}
   }
 </script>
@@ -672,7 +700,7 @@
   {% assign potential_action_target = request.origin | append: routes.search_url | append: "?q={search_term_string}" %}
   <script type="application/ld+json">
     {
-      "@context": "http://schema.org",
+      "@context": "https://schema.org",
       "@type": "WebSite",
       "name": {{ shop.name | json }},
       "potentialAction": {
