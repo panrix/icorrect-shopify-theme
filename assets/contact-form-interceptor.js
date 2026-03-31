@@ -21,7 +21,7 @@
   };
 
   const SUPPORT_EMAIL = 'support@icorrect.co.uk';
-  const FALLBACK_MESSAGE = 'We could not reach our live contact system. Your message will now be sent through our standard contact form.';
+  const FALLBACK_MESSAGE = 'We could not reach our live contact system. Please submit again using the standard contact form below. You may be asked to complete the security check.';
 
   const log = (message, data = null) => {
     if (!CONFIG.debug) return;
@@ -49,8 +49,7 @@
     const form = event.target;
     if (!(form instanceof HTMLFormElement)) return;
 
-    if (form.dataset.nativeFallbackSubmit === 'true') {
-      delete form.dataset.nativeFallbackSubmit;
+    if (form.dataset.nativeFallbackMode === 'true') {
       return;
     }
 
@@ -58,13 +57,14 @@
 
     const submitButton = form.querySelector('button[type="submit"]');
     const originalButtonText = submitButton ? submitButton.innerHTML : '';
+    let formData = null;
 
     try {
       setLoadingState(submitButton);
       ensureSpinnerStyle();
       clearFormBanner(form);
 
-      const formData = collectFormData(form);
+      formData = collectFormData(form);
       validateFormData(formData);
 
       const response = await sendToN8N(formData);
@@ -86,8 +86,7 @@
       console.error('[iCorrect Form] Submission error:', error);
 
       if (error.recoverable) {
-        showErrorMessage(form, FALLBACK_MESSAGE);
-        submitViaShopify(form, submitButton);
+        armShopifyFallback(form, submitButton, originalButtonText);
         return;
       }
 
@@ -219,16 +218,15 @@
     return error;
   }
 
-  function submitViaShopify(form, submitButton) {
+  function armShopifyFallback(form, submitButton, originalButtonText) {
+    form.dataset.nativeFallbackMode = 'true';
+
     if (submitButton) {
-      submitButton.innerHTML = 'Retrying via standard form...';
+      restoreButtonState(submitButton, originalButtonText);
+      submitButton.textContent = 'Send via standard form';
     }
 
-    form.dataset.nativeFallbackSubmit = 'true';
-    window.setTimeout(() => {
-      // Intentionally bypass this interceptor so native Shopify form handling can take over.
-      HTMLFormElement.prototype.submit.call(form);
-    }, 150);
+    showErrorMessage(form, FALLBACK_MESSAGE, 'Continue with standard form');
   }
 
   function showSuccessMessage(form) {
@@ -273,7 +271,7 @@
     }
   }
 
-  function showErrorMessage(form, message) {
+  function showErrorMessage(form, message, titleText = 'Unable to send message') {
     clearFormBanner(form);
 
     const errorDiv = document.createElement('div');
@@ -299,7 +297,7 @@
 
     const title = document.createElement('p');
     title.style.cssText = 'margin:0 0 4px 0;font-weight:600;color:#991b1b;';
-    title.textContent = 'Unable to send message';
+    title.textContent = titleText;
 
     const detail = document.createElement('p');
     detail.style.cssText = 'margin:0;font-size:14px;color:#b91c1c;';

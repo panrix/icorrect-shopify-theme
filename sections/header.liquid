@@ -643,24 +643,10 @@
     }
   }
 </script>
+{%- capture social_link_values -%}
+{{ settings.social_twitter_link }}||{{ settings.social_facebook_link }}||{{ settings.social_pinterest_link }}||{{ settings.social_instagram_link }}||{{ settings.social_tiktok_link }}||{{ settings.social_tumblr_link }}||{{ settings.social_snapchat_link }}||{{ settings.social_youtube_link }}||{{ settings.social_vimeo_link }}
+{%- endcapture -%}
 {%- liquid
-  assign social_link_values = settings.social_twitter_link
-    | append: '||'
-    | append: settings.social_facebook_link
-    | append: '||'
-    | append: settings.social_pinterest_link
-    | append: '||'
-    | append: settings.social_instagram_link
-    | append: '||'
-    | append: settings.social_tiktok_link
-    | append: '||'
-    | append: settings.social_tumblr_link
-    | append: '||'
-    | append: settings.social_snapchat_link
-    | append: '||'
-    | append: settings.social_youtube_link
-    | append: '||'
-    | append: settings.social_vimeo_link
   assign social_links = social_link_values | split: '||'
   assign has_social_links = false
   for social_link in social_links
