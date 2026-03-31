@@ -5,13 +5,25 @@
 **Scope:** Global Shopify theme audit across layout, sections, snippets, assets, config, and repo hygiene
 **Repo:** `panrix/icorrect-shopify-theme`
 **Branch reviewed:** Initial pass on `feature/trust-bar`, validation and follow-up on `main`
-**Status:** Living audit document; source inspection extended on `main`, local follow-up fixes in progress
+**Status:** Historical audit plus later QA review addendum; early sections reflect the initial pass and are superseded where the addendum or later remediation work says otherwise
+
+## Current Baseline Note
+
+This document started as an initial source audit and now also includes later QA review and remediation follow-up.
+
+For current execution decisions, treat the later **Implementation QA Review Addendum** as controlling when it conflicts with the original summary or early remediation lists. Several items from the original pass were valid at the time of review but were later fixed or re-scoped during remediation work, including:
+
+- Git remote PAT exposure
+- unsafe PostHog Liquid interpolation
+- raw HTML error-banner injection in the contact interceptor
+- global jQuery/Slick loading and duplicate font preload cleanup
+- basic JSON-LD syntax normalization
 
 ## Summary
 
 This first audit pass focused on the highest-risk areas of the current theme build: repo security, global layout behavior, analytics, contact capture flows, the custom quote wizard, third-party dependencies, structured data, and accessibility-sensitive custom sections.
 
-The main findings from this pass are:
+The main findings from the initial pass were:
 
 1. A GitHub personal access token is stored directly in the repo's configured `origin` remote.
 2. Customer data is injected into inline JavaScript without safe JSON escaping.

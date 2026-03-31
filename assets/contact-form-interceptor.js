@@ -180,11 +180,15 @@
       const contentType = response.headers.get('content-type') || '';
 
       if (response.ok) {
-        if (contentType.includes('application/json')) {
-          return await response.json();
+        if (!contentType.includes('application/json')) {
+          throw createRecoverableError('Contact webhook returned a non-JSON success response.');
         }
 
-        return { success: true };
+        try {
+          return await response.json();
+        } catch (error) {
+          throw createRecoverableError('Contact webhook returned invalid JSON.');
+        }
       }
 
       let errorMessage = 'Unable to submit form';
@@ -222,6 +226,7 @@
 
     form.dataset.nativeFallbackSubmit = 'true';
     window.setTimeout(() => {
+      // Intentionally bypass this interceptor so native Shopify form handling can take over.
       HTMLFormElement.prototype.submit.call(form);
     }, 150);
   }
