@@ -2,8 +2,19 @@
 
 **Date:** 2026-03-31
 **Branch:** `fix/theme-audit-p0-remediation`
-**Baseline commit:** `c349c2d`
+**Baseline commit:** `9dfaedf`
 **Purpose:** Pre-merge QA checklist for the global theme audit remediation branch
+
+## Execution Record
+
+- QA owner:
+- QA date:
+- Preview theme URL:
+- Product page URL:
+- Collection page URL:
+- Contact page URL:
+- Mobile device(s) used:
+- Desktop browser/version:
 
 ## Scope
 
@@ -72,6 +83,14 @@ Test all three intercepted forms:
 - Leave required fields invalid/empty.
 - Confirm browser validation prevents submission before JS interception.
 
+### Contact Form Signoff Table
+
+| Form | Success JSON | Timeout / network fallback | Non-JSON `2xx` fallback | Invalid-field browser validation | Duplicate submission check | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| `contact-form.liquid` | pass / fail | pass / fail | pass / fail | pass / fail | pass / fail | |
+| `contact-with-map.liquid` | pass / fail | pass / fail | pass / fail | pass / fail | pass / fail | |
+| `icorrect-landing.liquid` | pass / fail | pass / fail | pass / fail | pass / fail | pass / fail | |
+
 ## Video Reviews QA
 
 ### Desktop
@@ -88,6 +107,14 @@ Test all three intercepted forms:
 - Confirm card snapping feels acceptable.
 - Confirm actual playback behavior is acceptable to product/design.
 
+### Video Reviews Signoff Table
+
+| View | Layout / spacing | Controls / playback | Scroll / buttons | Console clean | Notes |
+| --- | --- | --- | --- | --- | --- |
+| Desktop Chrome | pass / fail | pass / fail | n/a | pass / fail | |
+| iPhone Safari | pass / fail | pass / fail | pass / fail | pass / fail | |
+| Android Chrome | pass / fail | pass / fail | pass / fail | pass / fail | |
+
 ## Global Dependency Removal QA
 
 Spot-check these templates after jQuery/Slick removal:
@@ -102,6 +129,15 @@ For each:
 - confirm no console errors
 - confirm no obvious layout/interaction regressions
 
+### Global Dependency Removal Signoff Table
+
+| Template | Console clean | No broken interactions | No visible layout regression | Notes |
+| --- | --- | --- | --- | --- |
+| Homepage | pass / fail | pass / fail | pass / fail | |
+| Product page | pass / fail | pass / fail | pass / fail | |
+| Collection page | pass / fail | pass / fail | pass / fail | |
+| Contact page | pass / fail | pass / fail | pass / fail | |
+
 ## Schema / Meta QA
 
 Validate on homepage and one representative collection page:
@@ -110,6 +146,13 @@ Validate on homepage and one representative collection page:
 - `sameAs` omits blank values
 - JSON-LD renders without syntax errors
 
+### Schema / Meta Signoff Table
+
+| Page | `og:image` https | `sameAs` omits blanks | JSON-LD valid | Notes |
+| --- | --- | --- | --- | --- |
+| Homepage | pass / fail | pass / fail | pass / fail | |
+| Collection page | pass / fail | pass / fail | pass / fail | |
+
 ## Signoff
 
 - Contact forms: pass / fail
@@ -117,6 +160,8 @@ Validate on homepage and one representative collection page:
 - Global dependency removal: pass / fail
 - Schema / meta output: pass / fail
 - Ready to merge: yes / no
+- QA approver:
+- Final comments:
 
 ## Notes
 
