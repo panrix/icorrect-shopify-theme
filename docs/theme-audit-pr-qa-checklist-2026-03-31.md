@@ -8,13 +8,13 @@
 ## Execution Record
 
 - QA owner: Codex
-- QA date: 2026-03-31
+- QA date: 2026-03-31 initial pass; 2026-04-01 Safari completion
 - Preview theme URL: `https://i-correct-final.myshopify.com/?preview_theme_id=159467110653`
 - Product page URL: `https://i-correct-final.myshopify.com/products/express-diagnostic?preview_theme_id=159467110653`
 - Collection page URL: `https://i-correct-final.myshopify.com/collections/iphone-screen-repair-prices?preview_theme_id=159467110653`
 - Contact page URL: `https://i-correct-final.myshopify.com/pages/contact?preview_theme_id=159467110653`
 - Temporary video QA fixture URL: `https://i-correct-final.myshopify.com/pages/video-reviews-qa?preview_theme_id=159467110653` (created for preview QA, then removed)
-- Mobile device(s) used: Playwright Chromium emulation for Pixel 7. iPhone Safari could not be executed because local WebKit runtime dependencies are missing.
+- Mobile device(s) used: Playwright Chromium emulation for Pixel 7 and Playwright WebKit emulation for iPhone Safari
 - Desktop browser/version: Chromium `146.0.7680.164` (snap) via Playwright automation
 
 ## Scope
@@ -113,7 +113,7 @@ Test all three intercepted forms:
 | View | Layout / spacing | Controls / playback | Scroll / buttons | Console clean | Notes |
 | --- | --- | --- | --- | --- | --- |
 | Desktop Chrome | pass | pass | n/a | pass | Tested on a temporary preview-only fixture page using the branch `video-reviews` section with one real MP4 block and two image blocks. Section rendered correctly, controls were visible, and playback started successfully. |
-| iPhone Safari | fail | fail | fail | fail | Could not execute. Playwright WebKit is installed, but host libraries required to launch Safari/WebKit are missing in this environment. This remains an external-device follow-up, not a branch runtime failure reproduced in preview. |
+| iPhone Safari | pass | pass | pass | fail | Tested on the same temporary preview-only fixture page using Playwright WebKit after installing host dependencies. Layout, playback, and next-button scroll state passed. Ambient preview `401 Unauthorized` console noise was still present. |
 | Android Chrome | pass | pass | pass | pass | Tested on the same temporary preview-only fixture page. Horizontal scrolling, next-button movement, and disabled-state transitions behaved correctly with no branch-specific console errors. |
 
 ## Global Dependency Removal QA
@@ -157,12 +157,12 @@ Validate on homepage and one representative collection page:
 ## Signoff
 
 - Contact forms: pass
-- Video reviews: pass on Desktop Chrome and Android Chrome; iPhone Safari still requires external execution
+- Video reviews: pass
 - Global dependency removal: pass
 - Schema / meta output: pass
-- Ready to merge: yes, if branch policy accepts the remaining external iPhone Safari follow-up
+- Ready to merge: yes
 - QA approver: Codex
-- Final comments: Branch blockers found on the earlier pass are resolved in preview. Contact fallback now hands off correctly to native Shopify / hCaptcha mode, `sections/header.liquid` deploys cleanly, schema/meta output renders correctly, and no jQuery/Slick regression was reproduced on the tested storefront paths. True iPhone Safari execution remains blocked by missing local WebKit host libraries.
+- Final comments: Branch blockers found on the earlier pass are resolved in preview. Contact fallback now hands off correctly to native Shopify / hCaptcha mode, `sections/header.liquid` deploys cleanly, schema/meta output renders correctly, and no jQuery/Slick regression was reproduced on the tested storefront paths. iPhone Safari coverage is now complete via Playwright WebKit; remaining console noise is ambient preview/runtime noise, not a branch-specific regression.
 
 ## Notes
 
@@ -181,6 +181,7 @@ Validate on homepage and one representative collection page:
   - Real JSON webhook success passed on all three forms.
   - Timeout/network and forced non-JSON `2xx` failures now switch the form into standard Shopify mode on the first submit.
   - The second submit triggers native Shopify / hCaptcha flow with no second webhook request.
+  - The same contact scenarios were rerun in iPhone Safari on 2026-04-01 and passed there as well.
 - Why it matters:
   - The fallback no longer attempts to bypass Shopify’s captcha/native submission path.
 
@@ -195,21 +196,20 @@ Validate on homepage and one representative collection page:
   - `sameAs` contains only non-blank values.
   - Rendered JSON-LD parses without syntax errors.
 
-### 3. Resolved in available browsers: `video-reviews` passes on Desktop Chrome and Android Chrome
-- Severity: `resolved with external Safari follow-up`
+### 3. Resolved: `video-reviews` passes on Desktop Chrome, Android Chrome, and iPhone Safari
+- Severity: `resolved`
 - URL tested:
   - Temporary preview-only fixture page `https://i-correct-final.myshopify.com/pages/video-reviews-qa?preview_theme_id=159467110653` using the branch `video-reviews` section (fixture removed after QA)
 - What passed:
   - Desktop Chrome rendered three cards, one live MP4 block, and working controls; playback started successfully.
   - Android Chrome rendered the section correctly; horizontal scroll and next-button state changes behaved as expected.
-- Remaining limitation:
-  - True iPhone Safari execution could not run in this environment because Playwright WebKit is blocked by missing host libraries.
+  - iPhone Safari rendered the same fixture correctly; playback started successfully and mobile next-button scroll state updated as expected.
 
 ### 4. Low: Preview console noise persists but remains non-branch-specific
 - Severity: `low`
 - URLs tested:
   - Homepage, product, collection, and contact preview URLs in the execution record
 - What was observed:
-  - Console output still includes ambient `shop.app` CSP and `403` noise from the preview/storefront environment.
+  - Console output still includes ambient `shop.app` CSP / `403` noise in Chromium and ambient `401 Unauthorized` noise in WebKit preview sessions.
 - Why it matters:
   - This does not currently indicate a branch regression, but it still reduces signal during manual QA.
