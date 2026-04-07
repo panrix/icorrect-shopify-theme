@@ -1,4 +1,4 @@
-<section class="video-reviews-{{ section.id }}">
+<section class="video-reviews-{{ section.id }}" data-video-reviews-section>
   <div class="video-reviews-wrapper page-width">
     <div class="video-reviews-top-info">
       <div class="reviews-heading">
@@ -6,31 +6,73 @@
       </div>
       <div class="reviews-social-icons">
         <div class="social-icons-row">
-          <a href="{{ section.settings.facebook }}"><img src="{{ section.settings.facebook-icon | img_url: 'master' }}"></a>
-          <a href="{{ section.settings.insta }}"><img src="{{ section.settings.insta-icon | img_url: 'master' }}"></a>
-          <a href="{{ section.settings.tiktok }}"><img src="{{ section.settings.tiktok-icon | img_url: 'master' }}"></a>
-          <a href="{{ section.settings.youtube }}"><img src="{{ section.settings.youtube-icon | img_url: 'master' }}"></a>
+          {% if section.settings.facebook != blank and section.settings.facebook-icon != blank %}
+            <a href="{{ section.settings.facebook }}" aria-label="Visit iCorrect on Facebook">
+              <img src="{{ section.settings.facebook-icon | image_url }}" alt="" loading="lazy">
+            </a>
+          {% endif %}
+          {% if section.settings.insta != blank and section.settings.insta-icon != blank %}
+            <a href="{{ section.settings.insta }}" aria-label="Visit iCorrect on Instagram">
+              <img src="{{ section.settings.insta-icon | image_url }}" alt="" loading="lazy">
+            </a>
+          {% endif %}
+          {% if section.settings.tiktok != blank and section.settings.tiktok-icon != blank %}
+            <a href="{{ section.settings.tiktok }}" aria-label="Visit iCorrect on TikTok">
+              <img src="{{ section.settings.tiktok-icon | image_url }}" alt="" loading="lazy">
+            </a>
+          {% endif %}
+          {% if section.settings.youtube != blank and section.settings.youtube-icon != blank %}
+            <a href="{{ section.settings.youtube }}" aria-label="Visit iCorrect on YouTube">
+              <img src="{{ section.settings.youtube-icon | image_url }}" alt="" loading="lazy">
+            </a>
+          {% endif %}
         </div>
       </div>
     </div>
-    <div class="video-reviews-row rev-videos-{{ section.id }}">
+    <div
+      class="video-reviews-row"
+      data-video-reviews-track
+      {% if section.blocks.size > 1 %}
+        aria-label="{{ section.settings.heading | escape }}"
+      {% endif %}
+    >
       {% for block in section.blocks %}
-        <div class="video-review-col">
+        <div class="video-review-col" {{ block.shopify_attributes }}>
           {% if block.settings.video != blank %}
-            <video class="cust_video cust_video_auto" width="100%" height="auto" autoplay="false" loop="true" controls="true" playsinline="" muted="true" data-src-all="image" 
-              src="{{ block.settings.video }}">
-             </video>
+            <video
+              class="cust_video cust_video_auto"
+              width="100%"
+              height="auto"
+              controls
+              playsinline
+              preload="metadata"
+              src="{{ block.settings.video }}"
+            ></video>
           {% else %}
-            <img src="{{ block.settings.img | img_url: 'master' }}">
+            <img
+              src="{{ block.settings.img | image_url }}"
+              alt="{{ block.settings.img.alt | default: 'Customer review preview' | escape }}"
+              loading="lazy"
+            >
           {% endif %}
         </div>
       {% endfor %}
     </div>
+    {% if section.blocks.size > 1 %}
+      <div class="video-reviews-controls" aria-label="Video review navigation">
+        <button type="button" class="video-reviews-control" data-video-reviews-prev aria-label="Show previous review">
+          Prev
+        </button>
+        <button type="button" class="video-reviews-control" data-video-reviews-next aria-label="Show next review">
+          Next
+        </button>
+      </div>
+    {% endif %}
   </div>
 </section>
 
 <style>
-  .video-reviews-{{ section.id }}{ 
+  .video-reviews-{{ section.id }}{
     padding-top: {{ section.settings.padding-top }}px;
     padding-bottom: {{ section.settings.padding-bottom }}px;
     width: 100%;
@@ -76,11 +118,13 @@ margin: 0;
   .social-icons-row a img{
     width: 100%;
     height: auto;
+    display: block;
   }
   .video-reviews-row{
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
+    gap: 3.3545%;
   }
   .video-reviews-row .video-review-col{
     flex: 31.097%;
@@ -89,6 +133,11 @@ margin: 0;
   .video-review-col img, .video-review-col video{
     width: 100%;
     height: auto;
+    display: block;
+    border-radius: 16px;
+  }
+  .video-reviews-controls{
+    display: none;
   }
   @media(max-width: 767px){
     .video-reviews-{{ section.id }}{
@@ -121,101 +170,121 @@ text-align: left;
       justify-content: flex-start;
     }
     .social-icons-row a{
-    max-width: 26px;
-  }
+      max-width: 26px;
+    }
+    .video-reviews-row{
+      justify-content: flex-start;
+      gap: 20px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding-bottom: 8px;
+    }
+    .video-reviews-row::-webkit-scrollbar{
+      display: none;
+    }
     .video-reviews-row .video-review-col{
-      margin-right: 20px;
+      flex: 0 0 calc(100% - 56px);
+      max-width: calc(100% - 56px);
+      scroll-snap-align: start;
     }
-   .video-reviews-row .slick-prev, .video-reviews-row .slick-next{
-      top: auto;
-      bottom: -50px;
-     width: 21px;
-     height: 9px;
+    .video-reviews-controls{
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 20px;
     }
-   .video-reviews-row .slick-prev{
-      left: auto;
-      right: 13%;
+    .video-reviews-control{
+      min-width: 68px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 999px;
+      background: transparent;
+      color: #ffffff;
+      font-size: 1.3rem;
+      font-weight: 600;
+      line-height: 1;
+      padding: 10px 16px;
+      cursor: pointer;
     }
-    .video-reviews-row .slick-next{
-      right: 5%;
+    .video-reviews-control[disabled]{
+      opacity: 0.35;
+      cursor: default;
     }
   }
 </style>
 
 <script>
-  function _initVideoReviews() {
-    function initSlick() {
-      var windowWidth = $(window).width();
+  (function() {
+    const section = document.querySelector('.video-reviews-{{ section.id }}');
+    if (!section) return;
 
-      // Check if screen width is desktop size or larger
-      if (windowWidth >= 767) {
-        // If Slick is initialized, unslick it for desktop
-        if ($('.rev-videos-{{ section.id }}').hasClass('slick-initialized')) {
-          $('.rev-videos-{{ section.id }}').slick('unslick');
-          
-          // Reset styles Slick may have applied
-          $('.rev-videos-{{ section.id }}').css({
-            'display': '',
-            'width': '',
-            'transform': '',
-          });
-          $('.rev-videos-{{ section.id }} .slick-track').css({
-            'width': '',
-            'transform': '',
-          });
-          $('.rev-videos-{{ section.id }} .slick-slide').css({
-            'width': '',
-          });
+    const track = section.querySelector('[data-video-reviews-track]');
+    const cards = Array.from(section.querySelectorAll('.video-review-col'));
+    const prevButton = section.querySelector('[data-video-reviews-prev]');
+    const nextButton = section.querySelector('[data-video-reviews-next]');
+
+    if (!track || cards.length < 2 || !prevButton || !nextButton) return;
+
+    const mobileQuery = window.matchMedia('(max-width: 767px)');
+    let activeIndex = 0;
+
+    const getClosestIndex = () => {
+      let closestIndex = 0;
+      let closestOffset = Number.POSITIVE_INFINITY;
+
+      cards.forEach((card, index) => {
+        const offset = Math.abs(card.offsetLeft - track.scrollLeft);
+        if (offset < closestOffset) {
+          closestOffset = offset;
+          closestIndex = index;
         }
-      } else {
-        // Initialize Slick if not already initialized for mobile
-        if (!$('.rev-videos-{{ section.id }}').hasClass('slick-initialized')) {
-          $('.rev-videos-{{ section.id }}').slick({
-            dots: false,
-            infinite: false,
-            prevArrow: '<img alt="Previous Arrow" src="https://cdn.shopify.com/s/files/1/0754/5903/5403/files/back-Arrow.png?v=1723951133" class="slick-prev">',
-            nextArrow: '<img alt="Next Arrow" src="https://cdn.shopify.com/s/files/1/0754/5903/5403/files/front-Arrow.png?v=1723951131" class="slick-next">',
-            cssEase: 'linear',
-            speed: 300,
-            slidesToShow: 1.1,
-            slidesToScroll: 1,
-            responsive: [
-              {
-                breakpoint: 767,
-                settings: {
-                  slidesToShow: 1.1,
-                  slidesToScroll: 1
-                }
-              },
-              {
-                breakpoint: 480,
-                settings: {
-                  slidesToShow: 1.1,
-                  slidesToScroll: 1
-                }
-              }
-            ]
-          });
-        }
+      });
+
+      return closestIndex;
+    };
+
+    const updateControls = () => {
+      if (!mobileQuery.matches) {
+        prevButton.disabled = true;
+        nextButton.disabled = true;
+        return;
       }
+
+      activeIndex = getClosestIndex();
+      prevButton.disabled = activeIndex <= 0;
+      nextButton.disabled = activeIndex >= cards.length - 1;
+    };
+
+    const scrollToIndex = (index) => {
+      const boundedIndex = Math.max(0, Math.min(cards.length - 1, index));
+      track.scrollTo({
+        left: cards[boundedIndex].offsetLeft,
+        behavior: 'smooth'
+      });
+    };
+
+    prevButton.addEventListener('click', () => {
+      scrollToIndex(activeIndex - 1);
+    });
+
+    nextButton.addEventListener('click', () => {
+      scrollToIndex(activeIndex + 1);
+    });
+
+    track.addEventListener('scroll', () => {
+      window.requestAnimationFrame(updateControls);
+    }, { passive: true });
+
+    if (typeof mobileQuery.addEventListener === 'function') {
+      mobileQuery.addEventListener('change', updateControls);
+    } else if (typeof mobileQuery.addListener === 'function') {
+      mobileQuery.addListener(updateControls);
     }
 
-    initSlick(); // Initialize on page load
-
-    // Re-initialize on resize
-    $(window).on('resize', function() {
-      initSlick();
-    });
-  }
-  // Wait for jQuery (deferred) before initializing
-  if (window.jQuery) {
-    jQuery(document).ready(_initVideoReviews);
-  } else {
-    document.addEventListener('DOMContentLoaded', function() {
-      // jQuery deferred script runs before DOMContentLoaded fires
-      jQuery(document).ready(_initVideoReviews);
-    });
-  }
+    window.addEventListener('resize', updateControls, { passive: true });
+    updateControls();
+  })();
 </script>
 
 
