@@ -11,14 +11,19 @@
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
     {%- endif -%}
 
+    {%- liquid
+      assign body_font_url = settings.type_body_font | font_url
+      assign header_font_url = settings.type_header_font | font_url
+    -%}
+
     {%- unless settings.type_header_font.system? and settings.type_body_font.system? -%}
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
       {%- comment -%} Preload primary fonts to eliminate flash of unstyled text (FOUT) {%- endcomment -%}
       {%- unless settings.type_body_font.system? -%}
-        <link rel="preload" as="font" href="{{ settings.type_body_font | font_url }}" type="font/woff2" crossorigin>
+        <link rel="preload" as="font" href="{{ body_font_url }}" type="font/woff2" crossorigin>
       {%- endunless -%}
-      {%- unless settings.type_header_font.system? -%}
-        <link rel="preload" as="font" href="{{ settings.type_header_font | font_url }}" type="font/woff2" crossorigin>
+      {%- unless settings.type_header_font.system? or header_font_url == body_font_url -%}
+        <link rel="preload" as="font" href="{{ header_font_url }}" type="font/woff2" crossorigin>
       {%- endunless -%}
     {%- endunless -%}
 
@@ -418,4 +423,3 @@ document.addEventListener('DOMContentLoaded',function(){
 {% render 'posthog-tracking' %}
   </body>
 </html>
-
