@@ -479,11 +479,182 @@ window.WIZARD_CFG = {
   /* =============================================
      STATE
      ============================================= */
-  var S = { device: null, model: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null };
-  var _collectionCache = {}, _productCache = {}, _repairsMap = {}, _collectionProducts = [];
+  var S = { device: null, model: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null, route: null, repairType: null, entrySource: null };
+  var _collectionCache = {}, _productCache = {}, _repairsMap = {}, _collectionProducts = [], _trackedSteps = {}, _trackedOps = {};
   var _stepStartTime = Date.now();
   var _suppressScroll = false;
-  var _trackedSteps = {}; /* Dedup: only fire each wizard_step event once per forward pass */
+  var _entryTracked = false;
+  var _resolutionSeen = false;
+  var _resolutionConverted = false;
+
+  function clearResolutionState() {
+    _resolutionSeen = false;
+    _resolutionConverted = false;
+  }
+
+  function clearTrackedStepsAfter(step) {
+    Object.keys(_trackedSteps).forEach(function(key) {
+      if (key === 'resolution') {
+        if (step <= 4) delete _trackedSteps[key];
+        return;
+      }
+      var n = parseInt(key, 10);
+      if (!isNaN(n) && n > step) delete _trackedSteps[key];
+    });
+    if (step <= 4) clearResolutionState();
+  }
+
+  function buildWizardTrackPayload(extra) {
+    var payload = {
+      device: S.device,
+      model: S.model,
+      fault: S.fault,
+      issue: S.issue,
+      route: S.route || null,
+      repairType: S.repairType || null,
+      entrySource: S.entrySource || null
+    };
+    if (extra) {
+      Object.keys(extra).forEach(function(key) {
+        if (extra[key] !== undefined) payload[key] = extra[key];
+      });
+    }
+    return payload;
+  }
+  function trackWizardGA4(eventName, extra) {
+    if (typeof window.gtag !== 'function') return;
+    window.gtag('event', eventName, buildWizardTrackPayload((function() {
+      var payload = {
+        wizard_name: 'quote_wizard',
+        page_location: window.location.href,
+        page_path: window.location.pathname,
+        page_title: document.title
+      };
+      if (extra) {
+        Object.keys(extra).forEach(function(key) {
+          if (extra[key] !== undefined) payload[key] = extra[key];
+        });
+      }
+      return payload;
+    })()));
+  }
+
+  function trackWizardGA4Once(key, eventName, extra) {
+    var ga4Key = 'ga4:' + key;
+    if (_trackedOps[ga4Key]) return;
+    _trackedOps[ga4Key] = true;
+    trackWizardGA4(eventName, extra);
+  }
+
+  function trackWizardStart(extra) {
+    trackWizardGA4Once('wizard_start', 'wizard_start', extra);
+  }
+
+  function trackWizardStepComplete(stepName, stepNumber, extra) {
+    var payload = {
+      step_name: stepName,
+      step_number: stepNumber
+    };
+    if (extra) {
+      Object.keys(extra).forEach(function(key) {
+        if (extra[key] !== undefined) payload[key] = extra[key];
+      });
+    }
+    trackWizardGA4('step_complete', payload);
+  }
+
+  function trackWizardSubmit(submissionType, extra) {
+    var payload = {
+      submission_type: submissionType
+    };
+    if (extra) {
+      Object.keys(extra).forEach(function(key) {
+        if (extra[key] !== undefined) payload[key] = extra[key];
+      });
+    }
+    trackWizardGA4('wizard_submit', payload);
+  }
+
+  function trackWizardFormStart(formName, extra) {
+    var payload = {
+      form_name: formName
+    };
+    if (extra) {
+      Object.keys(extra).forEach(function(key) {
+        if (extra[key] !== undefined) payload[key] = extra[key];
+      });
+    }
+    trackWizardGA4Once('form_start:' + formName, 'form_start', payload);
+  }
+
+  function trackWizardFormSubmit(formName, extra) {
+    var payload = {
+      form_name: formName
+    };
+    if (extra) {
+      Object.keys(extra).forEach(function(key) {
+        if (extra[key] !== undefined) payload[key] = extra[key];
+      });
+    }
+    trackWizardGA4('form_submit', payload);
+    trackWizardGA4('generate_lead', payload);
+  }
+
+  function getWizardTotalValue() {
+    var totalEl = document.getElementById('qwPriceTotal');
+    if (totalEl) {
+      var parsed = parseFloat((totalEl.textContent || '').replace(/[^0-9.]/g, ''));
+      if (!isNaN(parsed)) return parsed;
+    }
+    var resCard = document.getElementById('qwResCard');
+    if (!resCard) return 0;
+    var fallback = parseFloat(resCard.dataset.base || '0');
+    return isNaN(fallback) ? 0 : fallback;
+  }
+
+
+  function trackWizardStep(step, extra) {
+    if (!window.posthog) return;
+    var key = String(step);
+    if (_trackedSteps[key]) return;
+    _trackedSteps[key] = true;
+    var payload = {
+      step: step,
+      duration: Date.now() - _stepStartTime
+    };
+    if (extra) {
+      Object.keys(extra).forEach(function(key) {
+        if (extra[key] !== undefined) payload[key] = extra[key];
+      });
+    }
+    posthog.capture('wizard_step', buildWizardTrackPayload(payload));
+  }
+
+  function trackWizardEvent(eventName, extra) {
+    if (!window.posthog) return;
+    posthog.capture(eventName, buildWizardTrackPayload(extra));
+  }
+
+  function trackWizardEventOnce(key, eventName, extra) {
+    if (!window.posthog || _trackedOps[key]) return;
+    _trackedOps[key] = true;
+    trackWizardEvent(eventName, extra);
+  }
+
+  function trackWizardEntry(source, extra) {
+    S.entrySource = source;
+    if (_entryTracked) return;
+    _entryTracked = true;
+    trackWizardEvent('wizard_entry', (function() {
+      var payload = { entrySource: source };
+      if (extra) {
+        Object.keys(extra).forEach(function(key) {
+          if (extra[key] !== undefined) payload[key] = extra[key];
+        });
+      }
+      return payload;
+    })());
+  }
 
   /* =============================================
      TRIAGE/ISSUE DATA (updated: Batch 2)
@@ -724,11 +895,25 @@ window.WIZARD_CFG = {
     if (_collectionCache[handle]) return _collectionCache[handle];
     try {
       var res = await fetch('/collections/' + handle + '/products.json?limit=250');
-      if (!res.ok) return [];
+      if (!res.ok) {
+        trackWizardEventOnce('collection-fetch:' + handle + ':' + res.status, 'wizard_collection_fetch_failed', {
+          collectionHandle: handle,
+          status: res.status,
+          failureType: 'http'
+        });
+        return [];
+      }
       var data = await res.json();
       _collectionCache[handle] = data.products;
       return data.products;
-    } catch(e) { return []; }
+    } catch(e) {
+      trackWizardEventOnce('collection-fetch:' + handle + ':network', 'wizard_collection_fetch_failed', {
+        collectionHandle: handle,
+        failureType: 'network',
+        errorMessage: e && e.message ? e.message : null
+      });
+      return [];
+    }
   }
 
   function buildRepairsMap(products) {
@@ -794,7 +979,7 @@ window.WIZARD_CFG = {
     if (_productCache[handle]) return _productCache[handle];
     try {
       var res = await fetch('/products/' + handle + '.json');
-      if (!res.ok) throw new Error('fail');
+      if (!res.ok) throw new Error('http:' + res.status);
       var data = await res.json();
       _productCache[handle] = data.product;
       return data.product;
@@ -802,11 +987,25 @@ window.WIZARD_CFG = {
       await new Promise(function(r) { setTimeout(r, 1000); });
       try {
         var res2 = await fetch('/products/' + handle + '.json');
-        if (!res2.ok) return null;
+        if (!res2.ok) {
+          trackWizardEventOnce('product-fetch:' + handle + ':' + res2.status, 'wizard_product_fetch_failed', {
+            productHandle: handle,
+            status: res2.status,
+            failureType: 'http'
+          });
+          return null;
+        }
         var data2 = await res2.json();
         _productCache[handle] = data2.product;
         return data2.product;
-      } catch(e2) { return null; }
+      } catch(e2) {
+        trackWizardEventOnce('product-fetch:' + handle + ':network', 'wizard_product_fetch_failed', {
+          productHandle: handle,
+          failureType: 'network',
+          errorMessage: e2 && e2.message ? e2.message : (e && e.message ? e.message : null)
+        });
+        return null;
+      }
     }
   }
 
@@ -1028,8 +1227,7 @@ window.WIZARD_CFG = {
      NAVIGATION + BREADCRUMB + PROGRESS
      ============================================= */
   function go(n) {
-    /* Reset tracked steps for anything ahead when user navigates backward */
-    if (n < S.step) { Object.keys(_trackedSteps).forEach(function(k) { if (Number(k) > n || k === 'resolution') delete _trackedSteps[k]; }); }
+    if (n < S.step) clearTrackedStepsAfter(n);
     S.step = n;
     _stepStartTime = Date.now();
     history.pushState({ step: n, device: S.device, model: S.model, fault: S.fault }, '');
@@ -1096,11 +1294,20 @@ window.WIZARD_CFG = {
   }
 
   function pickDev(id, el) {
-    S.device = id; S.model = null; S.fault = null; S.issue = null;
-    S.collectionHandle = null; _repairsMap = {}; _trackedSteps = {};
+    S.device = id; S.model = null; S.fault = null; S.issue = null; S.route = null; S.repairType = null;
+    S.collectionHandle = null; _repairsMap = {};
+    clearTrackedStepsAfter(1);
     document.querySelectorAll('#qw-s1 .qw-dev').forEach(function(c) { c.classList.remove('sel'); });
     if (el) el.classList.add('sel');
-    if (window.posthog && !_trackedSteps[2]) { _trackedSteps[2] = true; posthog.capture('wizard_step', { step: 2, device: S.device, duration: Date.now() - _stepStartTime }); }
+    trackWizardStart({
+      start_step: 'device',
+      step_name: 'device',
+      step_number: 1
+    });
+    trackWizardStepComplete('device', 1, {
+      selected_device: id
+    });
+    trackWizardStep(2);
     setTimeout(function() { renderModels(id); go(2); }, 150);
   }
 
@@ -1168,7 +1375,8 @@ window.WIZARD_CFG = {
   }
 
   async function pickModel(name, handle, el) {
-    S.model = name; S.collectionHandle = handle; S.fault = null; S.issue = null;
+    S.model = name; S.collectionHandle = handle; S.fault = null; S.issue = null; S.route = null; S.repairType = null;
+    clearTrackedStepsAfter(2);
     /* [3.6] Auto-close helper */
     var hP = document.getElementById('qw-hP');
     if (hP) hP.classList.remove('open');
@@ -1181,14 +1389,22 @@ window.WIZARD_CFG = {
     var products = await fetchCollection(handle);
     _collectionProducts = products;
     _repairsMap = buildRepairsMap(products);
+    trackWizardStart({
+      start_step: 'model',
+      step_name: 'model',
+      step_number: 2
+    });
+    trackWizardStepComplete('model', 2, {
+      collection_handle: handle
+    });
 
-    if (window.posthog && !_trackedSteps[3]) { _trackedSteps[3] = true; posthog.capture('wizard_step', { step: 3, device: S.device, model: S.model, duration: Date.now() - _stepStartTime }); }
+    trackWizardStep(3);
 
     if (S.preFault) {
       var pf = S.preFault; S.preFault = null; S.fault = pf;
-      if (window.posthog && !_trackedSteps[4]) { _trackedSteps[4] = true; posthog.capture('wizard_step', { step: 4, device: S.device, model: S.model, fault: S.fault, duration: Date.now() - _stepStartTime }); }
       renderFaults(S.device);
       renderIssues(S.device, pf);
+      trackWizardStep(4);
       go(4);
       return;
     }
@@ -1470,10 +1686,19 @@ window.WIZARD_CFG = {
   }
 
   function pickFault(v, el) {
-    S.fault = v; S.issue = null;
+    S.fault = v; S.issue = null; S.route = null; S.repairType = null;
+    clearTrackedStepsAfter(3);
     document.querySelectorAll('#qw-s3 .qw-f-card').forEach(function(c) { c.classList.remove('sel'); });
     if (el) el.classList.add('sel');
-    if (window.posthog && !_trackedSteps[4]) { _trackedSteps[4] = true; posthog.capture('wizard_step', { step: 4, device: S.device, model: S.model, fault: S.fault, duration: Date.now() - _stepStartTime }); }
+    trackWizardStart({
+      start_step: 'fault',
+      step_name: 'fault',
+      step_number: 3
+    });
+    trackWizardStepComplete('fault', 3, {
+      selected_fault: v
+    });
+    trackWizardStep(4);
 
     /* "Other" skips issues and goes straight to contact */
     if (v === 'Other') {
@@ -1528,9 +1753,21 @@ window.WIZARD_CFG = {
 
   function pickIssue(iss, el) {
     S.issue = iss.label;
+    S.route = iss.route || null;
+    S.repairType = iss.repairType || null;
+    delete _trackedSteps.resolution;
     document.querySelectorAll('#qw-s4 .qw-t-card').forEach(function(c) { c.classList.remove('sel'); });
     if (el) el.classList.add('sel');
-    if (window.posthog && !_trackedSteps['resolution']) { _trackedSteps['resolution'] = true; posthog.capture('wizard_step', { step: 'resolution', device: S.device, model: S.model, fault: S.fault, issue: S.issue, repairType: iss.repairType || null }); }
+    trackWizardStart({
+      start_step: 'issue',
+      step_name: 'issue',
+      step_number: 4
+    });
+    trackWizardStepComplete('issue', 4, {
+      selected_issue: iss.label,
+      outcome_route: iss.route || null
+    });
+    trackWizardStep('resolution');
 
     /* Dustgate sub-question: if this issue has dustgateCheck and dustgate product exists */
     if (iss.dustgateCheck && _repairsMap['dustgate']) {
@@ -1690,7 +1927,16 @@ window.WIZARD_CFG = {
     if (!items.length) return true;
 
     var confirmed = window.confirm('Your cart already has items in it. Continuing with this repair booking will replace them. Do you want to continue?');
-    if (!confirmed) return false;
+    if (!confirmed) {
+      trackWizardEvent('wizard_cart_replace_cancelled', {
+        cartItemCount: items.length
+      });
+      return false;
+    }
+
+    trackWizardEvent('wizard_cart_replace_confirmed', {
+      cartItemCount: items.length
+    });
 
     var clearRes = await fetch(root + 'cart/clear.js', {
       method: 'POST',
@@ -1733,6 +1979,18 @@ window.WIZARD_CFG = {
       }
 
       await addRes.json();
+      trackWizardSubmit('checkout', {
+        route: S.route || null,
+        value: getWizardTotalValue(),
+        currency: 'GBP',
+        item_count: items.length
+      });
+      trackWizardGA4('begin_checkout', {
+        route: S.route || null,
+        value: getWizardTotalValue(),
+        currency: 'GBP',
+        item_count: items.length
+      });
       var checkoutUrl = '/checkout';
       if (window.posthog && posthog.get_distinct_id) {
         checkoutUrl += '?ph_distinct_id=' + encodeURIComponent(posthog.get_distinct_id());
@@ -1750,6 +2008,10 @@ window.WIZARD_CFG = {
   async function showResolution(iss) {
     var p = document.getElementById('qw-rP');
     if (!p) return;
+    S.route = iss.route || null;
+    S.repairType = iss.repairType || null;
+    _resolutionSeen = true;
+    _resolutionConverted = false;
     p.style.display = 'block';
     p.innerHTML = '<div class="qw-loading"><div class="qw-spinner"></div></div>';
     updateProg(4);
@@ -1757,7 +2019,10 @@ window.WIZARD_CFG = {
     else if (iss.route === 'diagnostic') await showDiagnosticCard(iss, p);
     else if (iss.route === 'dismiss') showDismissCard(iss, p);
     else showContactCard(iss, p);
-    if (window.posthog) posthog.capture('wizard_resolution', { route: iss.route, device: S.device, model: S.model, fault: S.fault, issue: S.issue, repairType: iss.repairType || null });
+    if (window.posthog) posthog.capture('wizard_resolution', buildWizardTrackPayload({
+      route: iss.route,
+      resolutionLabel: iss.label
+    }));
     scrollToEl(p, 300);
   }
 
@@ -1817,7 +2082,8 @@ window.WIZARD_CFG = {
     var bookBtn = container.querySelector('#qwBookBtn');
     if (bookBtn) {
       bookBtn.onclick = function() {
-        if (window.posthog) posthog.capture('wizard_conversion', { action: 'book_repair', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
+        _resolutionConverted = true;
+        if (window.posthog) posthog.capture('wizard_conversion', buildWizardTrackPayload({ action: 'book_repair' }));
         addToCartAndCheckout();
       };
     }
@@ -1909,7 +2175,8 @@ window.WIZARD_CFG = {
     var bookBtn = container.querySelector('#qwBookBtn');
     if (bookBtn) {
       bookBtn.onclick = function() {
-        if (window.posthog) posthog.capture('wizard_conversion', { action: 'book_diagnostic', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
+        _resolutionConverted = true;
+        if (window.posthog) posthog.capture('wizard_conversion', buildWizardTrackPayload({ action: 'book_diagnostic' }));
         addToCartAndCheckout();
       };
     }
@@ -1949,6 +2216,9 @@ window.WIZARD_CFG = {
       '</div>' +
       '<button class="qw-restart" id="qwRestart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Start over</button>';
     wireContactForm('qwCFD', 'contact');
+    trackWizardFormStart('quote_wizard_contact', {
+      form_context: 'contact'
+    });
     wireRestart(container);
   }
 
@@ -2078,7 +2348,19 @@ window.WIZARD_CFG = {
         form.style.display = 'none';
         var ok = document.getElementById(prefix + 'Ok');
         if (ok) ok.classList.add('show');
-        if (window.posthog) posthog.capture('wizard_conversion', { action: source + '_submit', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
+        _resolutionConverted = true;
+        trackWizardSubmit(source + '_submit', {
+          route: S.route || null,
+          value: getWizardTotalValue(),
+          currency: 'GBP'
+        });
+        trackWizardFormSubmit(source === 'contact' ? 'quote_wizard_contact' : 'quote_wizard_question', {
+          form_context: source,
+          route: S.route || null,
+          value: getWizardTotalValue(),
+          currency: 'GBP'
+        });
+        if (window.posthog) posthog.capture('wizard_conversion', buildWizardTrackPayload({ action: source + '_submit' }));
       } catch (error) {
         sub.disabled = false;
         sub.textContent = 'Send question';
@@ -2125,6 +2407,9 @@ window.WIZARD_CFG = {
       if (!acc) return;
       acc.classList.toggle('open');
       if (acc.classList.contains('open')) {
+        trackWizardFormStart('quote_wizard_question', {
+          form_context: 'question'
+        });
         wireContactForm('qwCFA', 'question');
         scrollToEl(acc, 200);
       }
@@ -2145,6 +2430,9 @@ window.WIZARD_CFG = {
       if (panel) {
         panel.classList.toggle('show');
         if (panel.classList.contains('show')) {
+          trackWizardFormStart('quote_wizard_email_quote', {
+            form_context: 'email_quote'
+          });
           var inp = panel.querySelector('.qw-eq-input');
           if (inp) inp.focus();
         }
@@ -2169,6 +2457,9 @@ window.WIZARD_CFG = {
       '</div>';
 
       btn.insertAdjacentHTML('afterend', html);
+      trackWizardFormStart('quote_wizard_email_quote', {
+        form_context: 'email_quote'
+      });
       document.getElementById('qwEqName').focus();
 
       document.getElementById('qwEqSend').onclick = function() {
@@ -2264,7 +2555,19 @@ document.getElementById('qwEqErr').style.display = 'none';
           panel.querySelector('.qw-eq-fields').style.display = 'none';
           sendBtn.style.display = 'none';
           document.getElementById('qwEqOk').style.display = 'flex';
-          if (window.posthog) posthog.capture('wizard_conversion', { action: 'email_quote', device: S.device, model: S.model, fault: S.fault, issue: S.issue });
+          _resolutionConverted = true;
+          trackWizardSubmit('email_quote', {
+            route: route || null,
+            value: getWizardTotalValue(),
+            currency: 'GBP'
+          });
+          trackWizardFormSubmit('quote_wizard_email_quote', {
+            form_context: 'email_quote',
+            route: route || null,
+            value: getWizardTotalValue(),
+            currency: 'GBP'
+          });
+          if (window.posthog) posthog.capture('wizard_conversion', buildWizardTrackPayload({ action: 'email_quote' }));
         }
  
         postQuoteWizardWebhook(payload).then(function() {
@@ -2308,8 +2611,10 @@ document.getElementById('qwEqErr').style.display = 'none';
      RESET
      ============================================= */
   function reset() {
-    S.device = null; S.model = null; S.fault = null; S.issue = null; S.step = 1; S.collectionHandle = null; _repairsMap = {};
+    S.device = null; S.model = null; S.fault = null; S.issue = null; S.step = 1; S.collectionHandle = null; S.route = null; S.repairType = null; _repairsMap = {};
     _collectionProducts = [];
+    _trackedSteps = {};
+    clearResolutionState();
     document.querySelectorAll('.qw-dev').forEach(function(c) { c.classList.remove('sel'); });
     var rP = document.getElementById('qw-rP');
     if (rP) { rP.style.display = 'none'; rP.innerHTML = ''; }
@@ -2359,6 +2664,10 @@ document.getElementById('qwEqErr').style.display = 'none';
         var rt = deriveRepairTypeFromHandle(ctx.productHandle);
         var faultName = rt ? REPAIR_TYPE_TO_FAULT[rt] : null;
         S.device = modelMatch.device;
+        trackWizardEntry('product', {
+          collectionHandle: modelMatch.model.collectionHandle,
+          productHandle: ctx.productHandle
+        });
         if (faultName && faultName !== '_diagnostic') S.preFault = faultName;
         renderDevices();
         pickModel(modelMatch.model.name, modelMatch.model.collectionHandle, null).then(function() {
@@ -2369,6 +2678,10 @@ document.getElementById('qwEqErr').style.display = 'none';
       /* Product page but can't find model — try device at least */
       if (ctx.device) {
         S.device = ctx.device;
+        trackWizardEntry('product', {
+          productHandle: ctx.productHandle,
+          deviceContextOnly: true
+        });
         renderDevices();
         renderModels(ctx.device);
         go(2);
@@ -2382,6 +2695,9 @@ document.getElementById('qwEqErr').style.display = 'none';
       var match = findModelByCollection(ctx.collectionHandle);
       if (match) {
         S.device = match.device;
+        trackWizardEntry('collection', {
+          collectionHandle: ctx.collectionHandle
+        });
         renderDevices();
         pickModel(match.model.name, match.model.collectionHandle, null).then(function() {
           _suppressScroll = false;
@@ -2393,6 +2709,9 @@ document.getElementById('qwEqErr').style.display = 'none';
     /* CASE 3: Device context from metafield */
     if (ctx && ctx.device) {
       S.device = ctx.device;
+      trackWizardEntry('device_context', {
+        faultPrefill: ctx.fault || null
+      });
       if (ctx.fault) S.preFault = ctx.fault;
       renderDevices();
       renderModels(ctx.device);
@@ -2402,6 +2721,7 @@ document.getElementById('qwEqErr').style.display = 'none';
     }
 
     /* CASE 4: No context — start fresh */
+    trackWizardEntry('fresh');
     renderDevices();
     go(1);
     _suppressScroll = false;
@@ -2412,10 +2732,14 @@ document.getElementById('qwEqErr').style.display = 'none';
      ============================================= */
   window.addEventListener('popstate', function(e) {
     if (e.state && typeof e.state.step === 'number') {
+      S.step = e.state.step;
       S.device = e.state.device || null;
       S.model = e.state.model || null;
       S.fault = e.state.fault || null;
       S.issue = null;
+      S.route = null;
+      S.repairType = null;
+      clearTrackedStepsAfter(e.state.step);
       document.querySelectorAll('.qw-step').forEach(function(el) { el.classList.remove('on'); });
       var stepEl = document.getElementById('qw-s' + e.state.step);
       if (stepEl) stepEl.classList.add('on');
@@ -2425,8 +2749,19 @@ document.getElementById('qwEqErr').style.display = 'none';
   });
 
   window.addEventListener('beforeunload', function() {
-    if (S.step > 1 && !S.issue && window.posthog) {
-      posthog.capture('wizard_abandoned', { step: S.step, device: S.device, model: S.model, fault: S.fault, duration: Date.now() - _stepStartTime });
+    if (!window.posthog) return;
+    if (_resolutionSeen && !_resolutionConverted) {
+      posthog.capture('wizard_resolution_abandoned', buildWizardTrackPayload({
+        step: S.step,
+        duration: Date.now() - _stepStartTime
+      }));
+      return;
+    }
+    if (S.step > 1 && !S.issue) {
+      posthog.capture('wizard_abandoned', buildWizardTrackPayload({
+        step: S.step,
+        duration: Date.now() - _stepStartTime
+      }));
     }
   });
 
