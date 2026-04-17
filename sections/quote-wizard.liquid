@@ -2336,14 +2336,24 @@ window.WIZARD_CFG = {
       if (userMsg) fullBody += (fullBody ? '\n\n' : '') + 'Message:\n' + userMsg;
 
       try {
+        /* Wrap in contact-form-interceptor shape so the intake service routes
+           this as a consumer contact-form submission (sourceType: consumer).
+           Without `source` + `contact: {...}`, the intake rejects with
+           "Unsupported source." See POST-DEPLOY-INCIDENT-2026-04-17.md. */
         await postQuoteWizardWebhook({
-          name: userName,
-          email: userEmail,
-          phone: userPhone,
-          body: fullBody,
-          device_type: DN[S.device] || S.device || '',
-          device_model: S.model || '',
-          fault_area: S.fault || ''
+          contact: {
+            name: userName,
+            email: userEmail,
+            phone: userPhone,
+            body: fullBody,
+            device_type: DN[S.device] || S.device || '',
+            device_model: S.model || '',
+            fault_area: S.fault || ''
+          },
+          source: 'shopify-website',
+          timestamp: new Date().toISOString(),
+          page_url: window.location.href,
+          referrer: document.referrer || null
         });
         form.style.display = 'none';
         var ok = document.getElementById(prefix + 'Ok');
