@@ -2252,7 +2252,7 @@ window.WIZARD_CFG = {
     var timeoutId = setTimeout(function() { controller.abort(); }, 30000);
 
     try {
-      var res = await fetch('https://icorrect.app.n8n.cloud/webhook/shopify-contact-form', {
+      var res = await fetch('https://api.icorrect.co.uk/intake/contact-form', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
