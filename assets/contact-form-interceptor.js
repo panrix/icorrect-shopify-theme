@@ -15,7 +15,7 @@
   'use strict';
 
   const CONFIG = {
-    webhookUrl: 'https://icorrect.app.n8n.cloud/webhook/shopify-contact-form',
+    webhookUrl: 'https://api.icorrect.co.uk/intake/contact-form',
     formSelector: 'form[data-contact-intercept="true"]',
     debug: false
   };
