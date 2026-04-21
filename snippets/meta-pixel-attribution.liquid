@@ -1,0 +1,92 @@
+<script>
+/**
+ * Meta pixel attribution bridge.
+ *
+ * Shopify's Meta channel loads the pixel (ID 570102806970617) via a
+ * sandboxed Web Pixel, which means it cannot reliably see fbclid if the
+ * user navigates internally before the pixel initialises, or if the
+ * landing URL is rewritten by an app / redirect.
+ *
+ * This snippet runs early in <head> and ensures that, by the time the
+ * pixel fires any event, the first-party _fbc and _fbp cookies exist
+ * on icorrect.co.uk in the canonical format Meta expects. When those
+ * cookies are present the pixel (and Meta CAPI, if configured) can
+ * attribute the event back to the original ad click.
+ *
+ * Also preserves fbclid on internal navigations and forwards it to
+ * checkout URLs so the checkout-domain pixel sees it too.
+ *
+ * Reference: https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/fbp-and-fbc
+ */
+(function () {
+  var COOKIE_DAYS = 90;
+
+  function setCookie(name, value, days) {
+    var expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = name + '=' + value + '; expires=' + expires + '; path=/; SameSite=Lax';
+  }
+
+  function getCookie(name) {
+    var m = document.cookie.match('(?:^|; )' + name + '=([^;]*)');
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+
+  function getParam(name, url) {
+    try {
+      return new URL(url || window.location.href).searchParams.get(name);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // 1. Capture fbclid → _fbc cookie (fb.1.{timestamp_ms}.{fbclid})
+  var fbclid = getParam('fbclid');
+  if (fbclid) {
+    var existing = getCookie('_fbc');
+    var existingClick = existing ? existing.split('.').slice(3).join('.') : null;
+    if (existingClick !== fbclid) {
+      setCookie('_fbc', 'fb.1.' + Date.now() + '.' + fbclid, COOKIE_DAYS);
+    }
+  }
+
+  // 2. Ensure _fbp exists (fb.1.{timestamp_ms}.{10-digit random})
+  if (!getCookie('_fbp')) {
+    var rand = Math.floor(1000000000 + Math.random() * 9000000000);
+    setCookie('_fbp', 'fb.1.' + Date.now() + '.' + rand, COOKIE_DAYS);
+  }
+
+  // 3. Preserve fbclid across internal navigations and forward to checkout.
+  // Runs after DOMContentLoaded so all links are present.
+  function patchLinks() {
+    var currentFbclid = getParam('fbclid') || (function () {
+      var fbc = getCookie('_fbc');
+      return fbc ? fbc.split('.').slice(3).join('.') : null;
+    })();
+    if (!currentFbclid) return;
+
+    document.querySelectorAll('a[href]').forEach(function (el) {
+      var href = el.getAttribute('href');
+      if (!href || href.charAt(0) === '#' || href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0) return;
+      try {
+        var u = new URL(href, window.location.origin);
+        // Only touch same-host and checkout links
+        var sameHost = u.host === window.location.host;
+        var isCheckout = u.host === 'checkout.shopify.com' || u.pathname.indexOf('/checkout') === 0;
+        if (!sameHost && !isCheckout) return;
+        if (!u.searchParams.has('fbclid')) {
+          u.searchParams.set('fbclid', currentFbclid);
+          el.setAttribute('href', u.toString());
+        }
+      } catch (e) { /* ignore malformed hrefs */ }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', patchLinks);
+  } else {
+    patchLinks();
+  }
+  // Re-run on cart updates (mini-cart drawer may inject new checkout links)
+  document.addEventListener('cart:updated', patchLinks);
+})();
+</script>
