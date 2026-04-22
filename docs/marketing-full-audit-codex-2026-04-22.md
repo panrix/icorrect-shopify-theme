@@ -7,11 +7,11 @@
 
 ## Executive summary — top 5 findings by impact
 
-1. **[P0] Facebook paid is burning budget with near-zero return.** 3,050 sessions in 28 days → 7 conversions → **£0 tracked revenue**. Compare to `google/organic`: 11,635 sessions → 210 conversions → £7,284. Either the paid Meta strategy is broken at the landing-page level or attribution isn't carrying revenue from paid to Shopify. Needs a decision this week.
-2. **[P0] 40 high-intent Google queries with 500+ impressions each are converting at <3% CTR** — combined ~30,000 wasted impressions per 28 days. Top bleeder: `iphone battery replacement` at pos 5.6, 6,478 imp, 146 clicks (2.25%). Position would predict ~15–20% CTR. That one query alone is ~900 missing clicks/mo.
-3. **[P0] Collection pages convert at 0.27–0.54% while the homepage converts at 4.17%.** MacBook Screen Repair Prices (1,472 sessions) produces 4 conversions; the homepage (1,439 sessions) produces 60. The quote wizard on `/` is working; the same journey doesn't exist on collection pages where most organic traffic lands.
-4. **[P1] Mobile Safari is the largest segment (9,715 sessions) and converts at 1.48%.** Desktop Chrome (3,991 sessions) converts at 4.23% — 2.9× better. Mobile-first optimisation is the biggest user-count lever available.
-5. **[P1] Quote wizard collapses 91% between step-answer and resolution.** 7,966 `wizard_entry` → 6,403 `wizard_step` → 592 `wizard_resolution` → 75 `Checkout Started` last 14d. 0.94% wizard-to-checkout. New per-step events shipped <24h ago (PR #33) — 7 days of data will expose the exact sub-step where users drop.
+1. **[P0] 40 high-intent Google queries with 500+ impressions each are converting at <3% CTR** — combined ~30,000 wasted impressions per 28 days. Top bleeder: `iphone battery replacement` at pos 5.6, 6,478 imp, 146 clicks (2.25%). Position would predict ~15–20% CTR. That one query alone is ~900 missing clicks/mo.
+2. **[P0] Collection pages convert at 0.27–0.54% while the homepage converts at 4.17%.** MacBook Screen Repair Prices (1,472 sessions) produces 4 conversions; the homepage (1,439 sessions) produces 60. The quote wizard on `/` is working; the same journey doesn't exist on collection pages where most organic traffic lands.
+3. **[P1] Mobile Safari is the largest segment (9,715 sessions) and converts at 1.48%.** Desktop Chrome (3,991 sessions) converts at 4.23% — 2.9× better. Mobile-first optimisation is the biggest user-count lever available.
+4. **[P1] Quote wizard collapses 91% between step-answer and resolution.** 7,966 `wizard_entry` → 6,403 `wizard_step` → 592 `wizard_resolution` → 75 `Checkout Started` last 14d. 0.94% wizard-to-checkout. New per-step events shipped <24h ago (PR #33) — 7 days of data will expose the exact sub-step where users drop.
+5. **[P2 — MEASUREMENT ONLY] Facebook paid appears to produce £0 revenue but this is the attribution gap we shipped a fix for today, not a channel failure.** See §1.
 
 ---
 
@@ -31,41 +31,36 @@ My initial pass used `GOOGLE_REFRESH_TOKEN` and `https://www.icorrect.co.uk/` as
 
 ---
 
-## 1. [P0] Facebook paid is producing no revenue
+## 1. [P2 — measurement, not a finding] Facebook paid "£0 revenue" is the attribution gap we already fixed today
 
 ### Evidence — GA4 source/medium, 28 days
 | Source / medium | Sessions | Conversions | CR | Revenue |
 |---|---|---|---|---|
 | google / organic | 11,635 | 210 | 1.80% | **£7,284** |
 | (direct) / (none) | 2,891 | 68 | 2.35% | £1,888 |
-| facebook / paid | **3,050** | **7** | **0.23%** | **£0** |
+| facebook / paid | 3,050 | 7 | 0.23% | **£0** |
 | m.facebook.com / referral | 382 | 0 | 0.00% | £0 |
 | facebook.com / referral | 248 | 1 | 0.40% | £0 |
 | chatgpt.com / (not set) | 144 | 8 | 5.56% | £49 |
-| bing / organic | 125 | 3 | 2.40% | £0 |
 
-Paid Facebook is the 3rd-largest traffic source and is producing 1 conversion per 436 sessions. Google organic converts 8× better on a per-session basis. Including unpaid Facebook referrals (382 + 248), Meta's combined channels sent 3,680 sessions and produced 8 conversions / £0 revenue.
+### Why the £0 revenue number is not what it looks like
 
-### Hypothesis
-Multiple plausible causes; we should test before assuming any one:
-1. **Landing page mismatch** — Meta ads may land users on generic `/` or a collection page that doesn't match the ad creative intent. Mobile Safari (the most likely device for FB clicks) converts at 1.48% anyway.
-2. **Revenue attribution gap** — the `facebook / paid` row shows £0 revenue despite 7 conversions. Either Shopify Enhanced E-commerce isn't passing `purchase` with value for Meta-sourced sessions, or the attribution window is missing these purchases (they later get re-bucketed to direct/organic).
-3. **In-app browser friction** — FB traffic mostly arrives via Instagram or Facebook in-app browsers; GA4 shows `Mobile Android Webview` at 396 sessions and 0 conversions, `Mobile Safari (in-app)` at 279 sessions with 2 conversions. In-app browsers break many ecommerce features (autofill, Apple Pay).
-4. **Audience/creative targeting problem** — separate from landing, the people being reached by these ads aren't in-market.
+`meta-capi-status-2026-04-21.md` documents exactly this problem: the Meta pixel's `fbc` / `fbp` match-key coverage was **0%** in the 28-day window. Without those cookies, Meta Ads can't connect a purchase back to the ad click that drove it — so purchases made by someone who clicked a Facebook ad get re-attributed (by Meta, by Shopify, and by GA4) to direct or organic traffic instead of paid.
 
-### Fix options
+Today's fixes (PR #28 `snippets/meta-pixel-attribution.liquid` + v3.2 PostHog pixel) write `_fbc` from `fbclid` and pass `_fbp`/`_fbc` to Shopify checkout so Meta CAPI now carries them server-side. The GA4 data for the 28-day window was captured *before* that fix shipped, so the £0 number is an artefact of the old attribution pipe.
 
-**Option 1 — Pause Facebook paid for 14 days and measure (recommended)**
-Hold all other spend flat. If organic + direct sessions + revenue stay flat while Facebook stops, paid Facebook was net-zero (not incremental). If revenue drops, the channel is working in ways GA4 isn't attributing and we need to rebuild the measurement.
+### Don't pause Facebook paid yet
 
-**Option 2 — Rewire attribution first**
-Confirm Meta CAPI is passing `purchase` events with `value` (it is — see `meta-capi-status-2026-04-21.md`). Check Shopify Admin → Settings → Customer Privacy → ensure `consent_given` for paid ad users is flowing to Meta. Then re-measure for 14 days before any pause.
+Prior draft of this audit recommended pausing. That was wrong — it would throw away real conversions we just can't see yet.
 
-**Option 3 — Ad audit + destination change**
-If continuing paid spend: build a dedicated landing page per ad-set (e.g. `/pages/iphone-battery-london?src=meta`) with a single-focus hero and the quote wizard front-and-centre. Ban in-app-browser destinations where possible.
+### What to do instead
+
+1. **Wait 7–14 days** after the attribution fix is live. Check GA4 source/medium again, and check Meta Events Manager → match-keys breakdown to confirm `fbc`/`fbp` coverage is now >0%.
+2. **Verify CAPI dedup rate in Events Manager** — the `event_id` deduplication between browser pixel and server CAPI needs to hold; the v3.2 pixel and our CAPI config are both fine in theory, but in Meta's actual ingestion it needs to show 90%+ dedup.
+3. **Then revisit** whether the Facebook paid channel is actually performing. Until both match-keys and dedup are healthy, paid FB revenue is unmeasurable from this side.
 
 ### Priority
-**P0.** This is real money going out the door every week. At UK FB ad CPMs the £ committed to this in a month is likely comparable to or greater than the £7k/month revenue from organic. If paid Meta can't prove incrementality in a fortnight, kill it.
+**P2 — measurement only.** No action this week beyond observing that the attribution fix is propagating. The real decision about Facebook paid happens in 2 weeks with clean data.
 
 ---
 
@@ -339,16 +334,15 @@ GA4 is counting `purchase`=56 in 28 days, Shopify shows ~45 orders in April = co
 
 Actionable, in order:
 
-1. **Decision on Facebook paid** — pause or audit (§1). This week.
-2. **Homepage snippet rewrite** targeting iPhone/iPad/MacBook battery+screen keywords (§2). 1 hour; next deploy.
-3. **Embed quote wizard on top 5 collection pages** (§3). 2–4 hours depending on template reuse. Highest single-lever uplift on organic traffic.
-4. **Add `PAGESPEED_INSIGHTS_API_KEY`** to `api-keys/.env` and schedule a weekly CWV crawl of the top 8 templates. Unblocks CWV-per-page analysis.
-5. **Watch 10 dead-click recordings on homepage + macbook-screen-repair-prices**, fix top 2 patterns (§6). 1.5 hours.
-6. **Add `capture_exceptions: true`** to `posthog.init` — 1 line, then wait 7 days for exception data.
-7. **Wait 7 days**, then re-analyse:
+1. **Homepage snippet rewrite** targeting iPhone/iPad/MacBook battery+screen keywords (§2). 1 hour; next deploy.
+2. **Embed quote wizard on top 5 collection pages** (§3). 2–4 hours depending on template reuse. Highest single-lever uplift on organic traffic.
+3. **Add `PAGESPEED_INSIGHTS_API_KEY`** to `api-keys/.env` and schedule a weekly CWV crawl of the top 8 templates. Unblocks CWV-per-page analysis.
+4. **Watch 10 dead-click recordings on homepage + macbook-screen-repair-prices**, fix top 2 patterns (§6). 1.5 hours.
+5. **Add `capture_exceptions: true`** to `posthog.init` — 1 line, then wait 7 days for exception data.
+6. **Wait 7–14 days**, then re-analyse:
    - Wizard funnel with `book_now_clicked` / `book_now_validation_failed` / `booking_form_started` now firing
    - Mobile Safari CR after images, cookie banner, and booking-form fixes have been live for a week
-   - Facebook pause impact (if done)
+   - Meta Events Manager match-keys (`fbc`/`fbp` should now be >0%) and GA4 `facebook / paid` revenue re-check — only then is a channel decision on Facebook real (§1)
 
 ---
 
