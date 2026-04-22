@@ -1,0 +1,46 @@
+<script>
+/**
+ * PostHog super properties — attached once per page load so that every
+ * subsequent capture() (from any snippet, wizard, or scroll tracker)
+ * carries these fields automatically. Satisfies audit §
+ * docs/marketing-posthog-events-2026-04-22.md requirement that every
+ * event include device_type and product_name.
+ */
+(function () {
+  function deviceType() {
+    var ua = (navigator.userAgent || '').toLowerCase();
+    var w = window.innerWidth || document.documentElement.clientWidth || 0;
+    if (/ipad|tablet|playbook|silk/.test(ua) || (/android/.test(ua) && !/mobile/.test(ua))) return 'tablet';
+    if (/mobi|iphone|ipod|phone|blackberry|opera mini|iemobile/.test(ua) || w < 768) return 'mobile';
+    return 'desktop';
+  }
+
+  var superProps = {
+    device_type: deviceType(),
+    page_path: window.location.pathname,
+    page_host: window.location.host
+  };
+
+  {%- if template contains 'product' and product -%}
+    superProps.product_name = {{ product.title | json }};
+    superProps.product_handle = {{ product.handle | json }};
+    superProps.product_price = {{ product.price | default: 0 | divided_by: 100.0 | json }};
+    superProps.product_type = {{ product.type | json }};
+  {%- elsif template contains 'collection' and collection -%}
+    superProps.collection_handle = {{ collection.handle | json }};
+    superProps.collection_title = {{ collection.title | json }};
+  {%- elsif template contains 'page' and page -%}
+    superProps.page_title = {{ page.title | json }};
+    superProps.page_handle = {{ page.handle | json }};
+  {%- endif -%}
+
+  function register() {
+    if (window.posthog && typeof posthog.register === 'function') {
+      posthog.register(superProps);
+    } else {
+      setTimeout(register, 200);
+    }
+  }
+  register();
+})();
+</script>

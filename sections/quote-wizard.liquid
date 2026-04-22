@@ -2481,11 +2481,18 @@ window.WIZARD_CFG = {
   function wireCFToggle(container) {
     var toggle = container.querySelector('#qwToggleCF');
     if (!toggle) return;
+    var _questionFormOpened = false;
     toggle.onclick = function() {
       var acc = document.getElementById('qwCAcc');
       if (!acc) return;
       acc.classList.toggle('open');
       if (acc.classList.contains('open')) {
+        if (!_questionFormOpened) {
+          _questionFormOpened = true;
+          if (window.posthog) {
+            posthog.capture('question_form_opened', buildWizardTrackPayload({}));
+          }
+        }
         trackWizardFormStart('quote_wizard_question', {
           form_context: 'question'
         });
