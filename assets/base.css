@@ -3758,3 +3758,67 @@ cart-remove-button .icon-remove path {
   fill: rgb(var(--color-foreground)) !important;
   color: rgb(var(--color-foreground)) !important;
 }
+
+/* =============================================================
+   Cookie / privacy banner overrides
+   See docs/marketing-cookie-banner-css-2026-04-22.md
+        docs/marketing-cookie-consent-2026-04-22.md
+   Shrinks Shopify's native privacy banner (and generic 3rd-party
+   cookie banners) from a full-page modal to a thin bottom bar so
+   PostHog recordings and heatmaps see the real page.
+   ============================================================= */
+
+.shopify-pc__banner__dialog,
+.shopify-pc__banner__dialog-2,
+[class*="cookie-banner"],
+[id*="cookie-banner"] {
+  position: fixed !important;
+  bottom: 0 !important;
+  top: auto !important;
+  left: 0 !important;
+  right: 0 !important;
+  max-height: 60px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  border-radius: 0 !important;
+  padding: 8px 16px !important;
+  font-size: 13px !important;
+  background: #ffffff !important;
+  border-top: 1px solid #e5e5e5 !important;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1) !important;
+  transform: none !important;
+}
+
+.shopify-pc__overlay,
+[class*="cookie-banner"] ~ [class*="overlay"],
+[id*="cookie-banner"] ~ [class*="overlay"] {
+  display: none !important;
+}
+
+.shopify-pc__banner__dialog button,
+.shopify-pc__banner__dialog-2 button,
+[class*="cookie-banner"] button,
+[id*="cookie-banner"] button {
+  padding: 6px 12px !important;
+  font-size: 12px !important;
+  line-height: 1.2 !important;
+}
+
+@media screen and (max-width: 749px) {
+  .shopify-pc__banner__dialog,
+  .shopify-pc__banner__dialog-2,
+  [class*="cookie-banner"],
+  [id*="cookie-banner"] {
+    max-height: 50px !important;
+    font-size: 11px !important;
+    padding: 6px 10px !important;
+  }
+
+  .shopify-pc__banner__dialog button,
+  .shopify-pc__banner__dialog-2 button,
+  [class*="cookie-banner"] button,
+  [id*="cookie-banner"] button {
+    padding: 4px 8px !important;
+    font-size: 11px !important;
+  }
+}
