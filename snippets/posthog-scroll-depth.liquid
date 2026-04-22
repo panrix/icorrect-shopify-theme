@@ -1,0 +1,55 @@
+<script>
+/**
+ * Scroll depth tracking — fires scroll_depth_25 / _50 / _75 at most once
+ * per page load. Uses requestAnimationFrame throttling and a passive scroll
+ * listener to avoid blocking the main thread.
+ */
+(function () {
+  function waitForPostHog(cb, attempts) {
+    attempts = attempts || 0;
+    if (typeof posthog !== 'undefined' && posthog.__loaded) return cb();
+    if (attempts < 30) setTimeout(function () { waitForPostHog(cb, attempts + 1); }, 200);
+  }
+
+  waitForPostHog(function () {
+    var fired = { 25: false, 50: false, 75: false };
+    var ticking = false;
+
+    function computeDepth() {
+      var doc = document.documentElement;
+      var scrollTop = window.scrollY || doc.scrollTop || 0;
+      var viewport = window.innerHeight || doc.clientHeight || 0;
+      var full = Math.max(
+        doc.scrollHeight, doc.offsetHeight,
+        document.body ? document.body.scrollHeight : 0,
+        document.body ? document.body.offsetHeight : 0
+      );
+      var scrollable = full - viewport;
+      if (scrollable <= 0) return 100;
+      return Math.round(((scrollTop) / scrollable) * 100);
+    }
+
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        var pct = computeDepth();
+        [25, 50, 75].forEach(function (milestone) {
+          if (!fired[milestone] && pct >= milestone) {
+            fired[milestone] = true;
+            posthog.capture('scroll_depth_' + milestone, {
+              depth_percent: pct,
+              page_path: window.location.pathname
+            });
+          }
+        });
+        ticking = false;
+      });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    // Capture initial state in case the page is already partially scrolled (back-navigation)
+    onScroll();
+  });
+})();
+</script>

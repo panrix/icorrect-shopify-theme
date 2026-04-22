@@ -1108,6 +1108,17 @@ window.WIZARD_CFG = {
     var panel = document.getElementById('qwWalkinPanel');
     if (!dateInput || !timeSelect || !panel) return;
 
+    var _bookingFormStarted = false;
+    function emitBookingFormStarted(field) {
+      if (_bookingFormStarted) return;
+      _bookingFormStarted = true;
+      if (window.posthog) {
+        posthog.capture('booking_form_started', buildWizardTrackPayload({ first_field: field }));
+      }
+    }
+    dateInput.addEventListener('focus', function() { emitBookingFormStarted('date'); }, { once: true });
+    timeSelect.addEventListener('focus', function() { emitBookingFormStarted('time'); }, { once: true });
+
     var today = new Date();
     var londonNow = new Date(today.toLocaleString('en-GB', { timeZone: 'Europe/London' }));
     var y = londonNow.getFullYear(), m = String(londonNow.getMonth() + 1).padStart(2, '0'), d = String(londonNow.getDate()).padStart(2, '0');
@@ -1169,6 +1180,46 @@ window.WIZARD_CFG = {
         timeSelect.appendChild(opt);
       }
     };
+
+    /* Pre-populate next available slot so the form is 1-click ready.
+       Audit 2026-04-21 §2: 98.8% of visitors drop before add-to-cart,
+       partly because date/time are mandatory. Autofilling removes friction
+       while still letting the user change either field. */
+    (function autofillNextSlot() {
+      var today = new Date();
+      var londonNow = new Date(today.toLocaleString('en-GB', { timeZone: 'Europe/London' }));
+      var candidate = new Date(londonNow);
+      /* If today is already past cutoff (Fri close 17:30, other weekdays 17:30),
+         or today is a weekend/holiday, roll forward until we land on a bookable day. */
+      for (var i = 0; i < 10; i++) {
+        var dow = candidate.getDay();
+        var mo = candidate.getMonth() + 1;
+        var dd = candidate.getDate();
+        var isHoliday = (mo === 12 && dd >= 24) || (mo === 1 && dd <= 4);
+        var isWeekend = dow === 0 || dow === 6;
+        if (!isHoliday && !isWeekend) {
+          var dayStartMin = (dow === 5) ? 600 : 570;
+          var endMin = 1050;
+          var sameDay = candidate.toDateString() === londonNow.toDateString();
+          var cutoff = dayStartMin;
+          if (sameDay) {
+            var nowMin = londonNow.getHours() * 60 + londonNow.getMinutes();
+            cutoff = Math.max(dayStartMin, Math.ceil(nowMin / 30) * 30 + 30);
+          }
+          if (cutoff < endMin) break;
+        }
+        candidate.setDate(candidate.getDate() + 1);
+      }
+      var yy = candidate.getFullYear();
+      var mm2 = String(candidate.getMonth() + 1).padStart(2, '0');
+      var dd2 = String(candidate.getDate()).padStart(2, '0');
+      dateInput.value = yy + '-' + mm2 + '-' + dd2;
+      dateInput.dispatchEvent(new Event('change'));
+      /* Pick first real time option (index 0 is the "Select a time" placeholder). */
+      if (timeSelect.options.length > 1) {
+        timeSelect.selectedIndex = 1;
+      }
+    })();
   }
 
   /* Turnaround cards: detected dynamically from the product page HTML.
@@ -1951,7 +2002,15 @@ window.WIZARD_CFG = {
 
   async function addToCartAndCheckout() {
     var items = buildCartItems();
-    if (!items) return;
+    if (!items) {
+      if (window.posthog) {
+        var errEl = document.getElementById('qwWalkinErr');
+        posthog.capture('book_now_validation_failed', buildWizardTrackPayload({
+          reason: errEl && errEl.textContent ? errEl.textContent : 'unknown'
+        }));
+      }
+      return;
+    }
 
     var btn = document.getElementById('qwBookBtn');
     if (btn) { btn.disabled = true; btn.textContent = 'Redirecting...'; }
@@ -2083,7 +2142,12 @@ window.WIZARD_CFG = {
     if (bookBtn) {
       bookBtn.onclick = function() {
         _resolutionConverted = true;
-        if (window.posthog) posthog.capture('wizard_conversion', buildWizardTrackPayload({ action: 'book_repair' }));
+        if (window.posthog) {
+          var payload = buildWizardTrackPayload({ action: 'book_repair', route: 'repair' });
+          posthog.capture('book_now_clicked', payload);
+          posthog.capture('proceed_to_checkout_clicked', payload);
+          posthog.capture('wizard_conversion', payload);
+        }
         addToCartAndCheckout();
       };
     }
@@ -2176,7 +2240,12 @@ window.WIZARD_CFG = {
     if (bookBtn) {
       bookBtn.onclick = function() {
         _resolutionConverted = true;
-        if (window.posthog) posthog.capture('wizard_conversion', buildWizardTrackPayload({ action: 'book_diagnostic' }));
+        if (window.posthog) {
+          var payload = buildWizardTrackPayload({ action: 'book_diagnostic', route: 'diagnostic' });
+          posthog.capture('book_now_clicked', payload);
+          posthog.capture('proceed_to_checkout_clicked', payload);
+          posthog.capture('wizard_conversion', payload);
+        }
         addToCartAndCheckout();
       };
     }
@@ -2435,7 +2504,18 @@ window.WIZARD_CFG = {
     var btn = container.querySelector('#qwEmailQuote');
     if (!btn) return;
 
+    var _emailQuoteClicked = false;
     btn.onclick = function() {
+      if (!_emailQuoteClicked) {
+        _emailQuoteClicked = true;
+        if (window.posthog) {
+          posthog.capture('email_quote_clicked', buildWizardTrackPayload({
+            product_title: productTitle,
+            price: price,
+            route: route
+          }));
+        }
+      }
       var panel = document.getElementById('qwEmailPanel');
       if (panel) {
         panel.classList.toggle('show');
