@@ -427,6 +427,8 @@ document.addEventListener('DOMContentLoaded',function(){
 
 {{ 'contact-form-interceptor.js' | asset_url | script_tag }}
 {% render 'posthog-tracking' %}
+{% render 'posthog-page-context' %}
 {% render 'posthog-scroll-depth' %}
+{% render 'posthog-faq-tracking' %}
   </body>
 </html>

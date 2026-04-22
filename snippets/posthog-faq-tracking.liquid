@@ -1,0 +1,39 @@
+<script>
+/**
+ * FAQ accordion tracking.
+ *
+ * Every FAQ section on the site (apple-watch-faqs, homepage-faqs,
+ * macbook-faqs, pdp-faqs, …) renders headings as
+ *   <h3 class="accordion-{{ section.id }}">question text</h3>
+ * with their own per-section click handler that toggles an
+ * .active-accordion class. We attach a document-level delegated
+ * listener so future FAQ sections require no additional wiring.
+ *
+ * Fires once per unique question per page load (repeated open/close
+ * of the same accordion does not re-fire).
+ */
+(function () {
+  var fired = Object.create(null);
+
+  function onClick(e) {
+    var el = e.target && e.target.closest ? e.target.closest('h3, h4, button, div, span') : null;
+    while (el && el !== document) {
+      if (el.className && typeof el.className === 'string' && /\baccordion-[a-z0-9_-]+/i.test(el.className)) {
+        break;
+      }
+      el = el.parentElement;
+    }
+    if (!el || el === document) return;
+
+    var question = (el.textContent || '').trim().slice(0, 200);
+    if (!question || fired[question]) return;
+    fired[question] = true;
+
+    if (window.posthog && typeof posthog.capture === 'function') {
+      posthog.capture('faq_expanded', { faq_question: question });
+    }
+  }
+
+  document.addEventListener('click', onClick, true);
+})();
+</script>
