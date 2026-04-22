@@ -73,17 +73,17 @@
           {%- case childlink.type -%}
             {%- when 'collection_link' -%}
               {%- if childlink.object.image -%}
-                {{ childlink.object.image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                {{ childlink.object.image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
               {%- elsif childlink.object.products.first.featured_image -%}
-                {{ childlink.object.products.first.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                {{ childlink.object.products.first.featured_image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
               {%- endif -%}
             {%- when 'product_link' -%}
               {%- if childlink.object.featured_image -%}
-                {{ childlink.object.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                {{ childlink.object.featured_image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
               {%- endif -%}
             {%- when 'page_link' -%}
               {%- if childlink.object.metafields.custom.featured_image -%}
-                {{ childlink.object.metafields.custom.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                {{ childlink.object.metafields.custom.featured_image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
               {%- endif -%}
           {%- endcase -%}
         </div>
@@ -116,17 +116,17 @@
                                   {%- case childlink.type -%}
                                     {%- when 'collection_link' -%}
                                       {%- if childlink.object.image -%}
-                                        {{ childlink.object.image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                                        {{ childlink.object.image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
                                       {%- elsif childlink.object.products.first.featured_image -%}
-                                        {{ childlink.object.products.first.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                                        {{ childlink.object.products.first.featured_image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
                                       {%- endif -%}
                                     {%- when 'product_link' -%}
                                       {%- if childlink.object.featured_image -%}
-                                        {{ childlink.object.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                                        {{ childlink.object.featured_image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
                                       {%- endif -%}
                                     {%- when 'page_link' -%}
                                       {%- if childlink.object.metafields.custom.featured_image -%}
-                                        {{ childlink.object.metafields.custom.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                                        {{ childlink.object.metafields.custom.featured_image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
                                       {%- endif -%}
                                   {%- endcase -%}
                                 </div>
@@ -176,17 +176,17 @@
               {%- case childlink.type -%}
                                     {%- when 'collection_link' -%}
                                       {%- if childlink.object.image -%}
-                                        {{ childlink.object.image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                                        {{ childlink.object.image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
                                       {%- elsif childlink.object.products.first.featured_image -%}
-                                        {{ childlink.object.products.first.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                                        {{ childlink.object.products.first.featured_image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
                                       {%- endif -%}
                                     {%- when 'product_link' -%}
                                       {%- if childlink.object.featured_image -%}
-                                        {{ childlink.object.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                                        {{ childlink.object.featured_image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
                                       {%- endif -%}
                                     {%- when 'page_link' -%}
                                       {%- if childlink.object.metafields.custom.featured_image -%}
-                                        {{ childlink.object.metafields.custom.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: childlink.title }}
+                                        {{ childlink.object.metafields.custom.featured_image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
                                       {%- endif -%}
                                   {%- endcase -%}
                                 </div>

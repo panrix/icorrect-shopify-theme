@@ -17,10 +17,13 @@
           <div class="repair-card__image-wrapper">
             <a href="{{ product.url }}">
               {% if product.featured_image %}
-                <img 
-                  src="{{ product.featured_image | img_url: 'master' }}" 
+                <img
+                  src="{{ product.featured_image | img_url: 'master' }}"
                   alt="{{ product.title | escape }}"
-                  loading="lazy"
+                  loading="{% if forloop.index0 < 6 %}eager{% else %}lazy{% endif %}"
+                  decoding="async"
+                  width="{{ product.featured_image.width }}"
+                  height="{{ product.featured_image.height }}"
                 >
               {% else %}
                 {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
