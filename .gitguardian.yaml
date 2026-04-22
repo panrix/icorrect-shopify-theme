@@ -1,0 +1,14 @@
+version: 2
+
+# GitGuardian scan configuration for this repo.
+# https://docs.gitguardian.com/ggshield-docs/reference/configuration-file
+
+secret:
+  ignored-matches:
+    # PostHog project API keys are public by design — they go into every
+    # client-side JS bundle (see layout/theme.liquid). They can only write
+    # analytics events and cannot read data, change settings, or access
+    # any other PostHog resource. Flagging them as a leaked secret is a
+    # false positive.
+    - name: PostHog project API key (public client-side key)
+      match: phc_E4K3ulD49Fth2l3WOFjPpBbdgsbJwRMrErbWGjpppLB
