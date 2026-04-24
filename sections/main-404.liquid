@@ -1,30 +1,51 @@
 <script>
+  // Legacy-URL redirect router — see docs/marketing-404-redirect-closure-2026-04-24.md
+  // Order matters: exact matches first, then pattern matches in precedence order.
   (function() {
     var path = window.location.pathname.toLowerCase();
 
-    if (path.startsWith("/iphone-repairs/") || path.startsWith("/smartphone/iphone-repairs/")) {
-      window.location.replace("/pages/iphone-repairs"); return;
+    function go(to) {
+      if (path !== to) window.location.replace(to);  // loop guard
     }
-    if (path.startsWith("/macbook-repairs/") || path.startsWith("/macbook-air-") || path.startsWith("/macbook-pro-")) {
-      window.location.replace("/pages/macbook-repairs"); return;
-    }
-    if (path.startsWith("/ipad-repairs/") || path.startsWith("/ipad-mini-") || path.startsWith("/ipad-air-") || path.startsWith("/ipad-pro-")) {
-      window.location.replace("/pages/ipad-repairs"); return;
-    }
-    if (path.startsWith("/blog/")) {
-      window.location.replace("/blogs/news"); return;
-    }
-    if (path.startsWith("/repair/")) {
-      window.location.replace("/pages/contact"); return;
-    }
-    if (path.startsWith("/ipod-repairs/")) {
-      window.location.replace("/"); return;
-    }
-    if (path.startsWith("/products/macbook") || path.startsWith("/products/bw")) {
-      window.location.replace("/pages/macbook-repairs"); return;
-    }
-    if (path.startsWith("/products/")) {
-      window.location.replace("/"); return;
+
+    // Exact-match legacy URLs with known direct replacements
+    var exact = {
+      "/brighton": "/pages/contact",
+      "/2022/03/03/iphone-face-id-not-working-try-these-tips-from-our-repair-experts":
+        "/blogs/news/iphone-face-id-not-working-try-these-tips-from-our-repair-experts",
+      "/post/apple-pencil-jitter-issue-after-screen-replacement":
+        "/blogs/news/apple-pencil-not-working-after-repair"
+    };
+    if (exact[path]) { go(exact[path]); return; }
+
+    // Pattern-based redirects (precedence order — most-specific first)
+    var patterns = [
+      // iPhone legacy
+      { re: /^\/(smartphone\/)?iphone-repairs\//, to: "/pages/iphone-repairs" },
+      // iPad legacy
+      { re: /^\/ipad-repairs\//,                  to: "/pages/ipad-repairs" },
+      { re: /^\/ipad-(mini|air|pro)-/,            to: "/pages/ipad-repairs" },
+      // MacBook legacy
+      { re: /^\/macbook-repairs\//,               to: "/pages/macbook-repairs" },
+      { re: /^\/macbook-(air|pro)-/,              to: "/pages/macbook-repairs" },
+      { re: /^\/products\/(macbook|bw)/,          to: "/pages/macbook-repairs" },
+      // Apple Watch legacy
+      { re: /^\/apple-watch-repairs\//,           to: "/pages/apple-watch-repairs" },
+      // iPod legacy (no dedicated page)
+      { re: /^\/ipod-repairs\//,                  to: "/" },
+      // Old booking / service tokens
+      { re: /^\/repair\//,                        to: "/pages/contact" },
+      { re: /^\/product\/london-courier/,         to: "/pages/contact" },
+      // Old WooCommerce-style category paths
+      { re: /^\/product-category\//,              to: "/pages/contact" },
+      // Legacy blog paths — dated, /blog/, /post/
+      { re: /^\/\d{4}\/\d{2}\/\d{2}\//,           to: "/blogs/news" },
+      { re: /^\/blog\//,                          to: "/blogs/news" },
+      { re: /^\/post\//,                          to: "/blogs/news" }
+    ];
+
+    for (var i = 0; i < patterns.length; i++) {
+      if (patterns[i].re.test(path)) { go(patterns[i].to); return; }
     }
   })();
 </script>
