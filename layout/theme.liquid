@@ -321,6 +321,25 @@
       api_host: 'https://us.i.posthog.com',
       person_profiles: 'always',
       capture_exceptions: true,
+      before_send: function(event) {
+        if (!event || event.event !== '$exception') return event;
+
+        var properties = event.properties || {};
+        var values = JSON.stringify(properties.$exception_values || '');
+        var sources = JSON.stringify(properties.$exception_sources || '');
+
+        // Browser autofill injections and Shopify/Klarna infrastructure errors are
+        // high-volume noise in PostHog error tracking. They do not come from the
+        // theme code and were obscuring first-party conversion issues.
+        if (values.indexOf('_AutofillCallbackHandler') !== -1) return null;
+        if (values.indexOf('Script error.') !== -1 && sources === '[]') return null;
+        if (sources.indexOf('/cdn/shopifycloud/privacy-banner/') !== -1) return null;
+        if (sources.indexOf('/cdn/shopifycloud/storefront/assets/shop_events_listener') !== -1) return null;
+        if (sources.indexOf('/production-klarna-il-shopify-osm/') !== -1) return null;
+        if (sources.indexOf('/cdn/shopifycloud/storefront/assets/shopify_pay/') !== -1) return null;
+
+        return event;
+      },
       session_recording: {
         record_canvas: false,
         maskTextSelector: 'script, [data-ph-no-capture], .script-placeholder'
