@@ -12,7 +12,11 @@ class PredictiveSearch extends SearchForm {
   }
 
   setupEventListeners() {
-    this.input.form.addEventListener('submit', this.onFormSubmit.bind(this));
+    if (!this.input) return;
+
+    if (this.input.form) {
+      this.input.form.addEventListener('submit', this.onFormSubmit.bind(this));
+    }
 
     this.input.addEventListener('focus', this.onFocus.bind(this));
     this.addEventListener('focusout', this.onFocusOut.bind(this));
@@ -21,7 +25,7 @@ class PredictiveSearch extends SearchForm {
   }
 
   getQuery() {
-    return this.input.value.trim();
+    return this.input ? this.input.value.trim() : '';
   }
 
   onChange() {
@@ -109,7 +113,8 @@ class PredictiveSearch extends SearchForm {
     const searchForTextElement = this.querySelector('[data-predictive-search-search-for-text]');
     const currentButtonText = searchForTextElement?.innerText;
     if (currentButtonText) {
-      if (currentButtonText.match(new RegExp(previousTerm, 'g')).length > 1) {
+      const matches = currentButtonText.match(new RegExp(previousTerm, 'g')) || [];
+      if (matches.length > 1) {
         // The new term matches part of the button text and not just the search term, do not replace to avoid mistakes
         return;
       }
@@ -143,7 +148,7 @@ class PredictiveSearch extends SearchForm {
       i++;
     }
 
-    this.statusElement.textContent = '';
+    if (this.statusElement) this.statusElement.textContent = '';
 
     if (!moveUp && selectedElement) {
       activeElementIndex = selectedElementIndex === allVisibleElements.length - 1 ? 0 : selectedElementIndex + 1;
@@ -158,7 +163,7 @@ class PredictiveSearch extends SearchForm {
     activeElement.setAttribute('aria-selected', true);
     if (selectedElement) selectedElement.setAttribute('aria-selected', false);
 
-    this.input.setAttribute('aria-activedescendant', activeElement.id);
+    if (this.input) this.input.setAttribute('aria-activedescendant', activeElement.id);
   }
 
   selectOption() {
@@ -189,9 +194,10 @@ class PredictiveSearch extends SearchForm {
         return response.text();
       })
       .then((text) => {
-        const resultsMarkup = new DOMParser()
+        const resultsSection = new DOMParser()
           .parseFromString(text, 'text/html')
-          .querySelector('#shopify-section-predictive-search').innerHTML;
+          .querySelector('#shopify-section-predictive-search');
+        const resultsMarkup = resultsSection ? resultsSection.innerHTML : '';
         // Save bandwidth keeping the cache in all instances synced
         this.allPredictiveSearchInstances.forEach((predictiveSearchInstance) => {
           predictiveSearchInstance.cachedResults[queryKey] = resultsMarkup;
@@ -217,15 +223,19 @@ class PredictiveSearch extends SearchForm {
   }
 
   setLiveRegionText(statusText) {
+    if (!this.statusElement) return;
+
     this.statusElement.setAttribute('aria-hidden', 'false');
     this.statusElement.textContent = statusText;
 
     setTimeout(() => {
-      this.statusElement.setAttribute('aria-hidden', 'true');
+      this.statusElement?.setAttribute('aria-hidden', 'true');
     }, 1000);
   }
 
   renderSearchResults(resultsMarkup) {
+    if (!this.predictiveSearchResults) return;
+
     this.predictiveSearchResults.innerHTML = resultsMarkup;
     this.setAttribute('results', true);
 
@@ -235,16 +245,19 @@ class PredictiveSearch extends SearchForm {
 
   setLiveRegionResults() {
     this.removeAttribute('loading');
-    this.setLiveRegionText(this.querySelector('[data-predictive-search-live-region-count-value]').textContent);
+    const countElement = this.querySelector('[data-predictive-search-live-region-count-value]');
+    this.setLiveRegionText(countElement ? countElement.textContent : '');
   }
 
   getResultsMaxHeight() {
-    this.resultsMaxHeight =
-      window.innerHeight - document.querySelector('.section-header')?.getBoundingClientRect().bottom;
+    const headerBottom = document.querySelector('.section-header')?.getBoundingClientRect().bottom || 0;
+    this.resultsMaxHeight = window.innerHeight - headerBottom;
     return this.resultsMaxHeight;
   }
 
   open() {
+    if (!this.input || !this.predictiveSearchResults) return;
+
     this.predictiveSearchResults.style.maxHeight = this.resultsMaxHeight || `${this.getResultsMaxHeight()}px`;
     this.setAttribute('open', true);
     this.input.setAttribute('aria-expanded', true);
@@ -265,12 +278,14 @@ class PredictiveSearch extends SearchForm {
 
     if (selected) selected.setAttribute('aria-selected', false);
 
-    this.input.setAttribute('aria-activedescendant', '');
+    if (this.input) {
+      this.input.setAttribute('aria-activedescendant', '');
+      this.input.setAttribute('aria-expanded', false);
+    }
     this.removeAttribute('loading');
     this.removeAttribute('open');
-    this.input.setAttribute('aria-expanded', false);
     this.resultsMaxHeight = false;
-    this.predictiveSearchResults.removeAttribute('style');
+    this.predictiveSearchResults?.removeAttribute('style');
   }
 }
 

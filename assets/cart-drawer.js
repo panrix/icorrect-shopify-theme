@@ -3,8 +3,15 @@ class CartDrawer extends HTMLElement {
     super();
 
     this.addEventListener('keyup', (evt) => evt.code === 'Escape' && this.close());
-    this.querySelector('#CartDrawer-Overlay').addEventListener('click', this.close.bind(this));
+    this.bindOverlayClose();
     this.setHeaderCartIconAccessibility();
+  }
+
+  bindOverlayClose() {
+    const overlay = this.querySelector('#CartDrawer-Overlay');
+    if (!overlay) return;
+
+    overlay.addEventListener('click', this.close.bind(this));
   }
 
   setHeaderCartIconAccessibility() {
@@ -84,13 +91,14 @@ class CartDrawer extends HTMLElement {
     });
 
     setTimeout(() => {
-      this.querySelector('#CartDrawer-Overlay').addEventListener('click', this.close.bind(this));
+      this.bindOverlayClose();
       this.open();
     });
   }
 
   getSectionInnerHTML(html, selector = '.shopify-section') {
-    return new DOMParser().parseFromString(html, 'text/html').querySelector(selector).innerHTML;
+    const section = new DOMParser().parseFromString(html, 'text/html').querySelector(selector);
+    return section ? section.innerHTML : '';
   }
 
   getSectionsToRender() {
