@@ -173,4 +173,162 @@ Live wizard's email-quote produces a real branded PDF with serial number request
 
 ---
 
+## Resolved spec decisions (2026-05-02 working session)
+
+The following decisions are now locked in for the wizard rebuild brief.
+
+### Step structure on collection pages → 2 steps
+
+```
+Collection page (e.g. /collections/macbook-screen-repair-prices)
+   ↓
+Step 1 — Pick your model       (this also reveals the price)
+   ↓
+Step 2 — Book / Email quote / Ask a question
+```
+
+The fault is implied by the page (we know it's a screen repair). Skip the fault step entirely on collection pages. For homepage / non-collection entries, fall back to the longer flow (device → fault → model → quote).
+
+### Contact route → first-class outcome, not dead-end
+
+Restore as a normal CTA the way the current site has it. Two surfaces:
+
+1. **Tabbed third option on Step 2** — `Book repair / Email quote / Ask a question` (matches prototype's pattern)
+2. **Persistent escape link on every step** — small "Have a question? Talk to us →" in the wizard chrome
+
+Both because the data shows the contact route is the highest-converting outcome (36.7% vs 6.4% for direct repair) and we should make it as reachable as possible.
+
+### Turnaround tiers → 2 tiers, product-level availability
+
+Only two turnaround upgrades, not three:
+
+| Tier | Add-on | Customer promise |
+|---|---|---|
+| **Standard** | Free | 2–3 working days |
+| **Fast** | +£X | Next working day |
+| **Fastest** | +£Y | Same day if booked before 12pm |
+
+Currently offered **on MacBook screen repairs only**. Expanding to other products as the team grows. The wizard must check at runtime whether the chosen product has speed-upgrade variants and show the tier picker only when they exist — silently fall back to Standard otherwise.
+
+Implementation hook: read a Shopify product metafield `custom.has_speed_upgrade` (boolean) on the resolved repair product, or rely on the existing `detectExpressFromPage` pattern. Either is fine; metafield is cleaner.
+
+### Service type → postcode-driven, zone-based pricing
+
+Replace the binary "walk-in / mail-in" with three options, postcode-aware:
+
+| Service | Cost | Who can use |
+|---|---|---|
+| **Walk-in** | Free | Anyone — they bring it to W1W 8JQ |
+| **Same-day courier** | £35 / £45 / £58 by zone | London postcodes only |
+| **Next-day courier** | £24 flat | All UK |
+
+Implementation: a `assets/courier-zones.json` config file with postcode prefixes mapped to one of 3 zones for same-day pricing. National = flat rate. Outside UK → walk-in only.
+
+```json
+{
+  "zone-a": { "prefixes": ["W1","WC1","EC1","NW1","N1","SE1","SW1"], "product_handle": "courier-same-day-zone-a", "price": 35 },
+  "zone-b": { "prefixes": ["E","N","SE","SW","W","NW"],              "product_handle": "courier-same-day-zone-b", "price": 45 },
+  "zone-c": { "prefixes": ["SW15","SW19","NW10","E18"],              "product_handle": "courier-same-day-zone-c", "price": 58 },
+  "national": { "prefixes": ["*"],                                    "product_handle": "courier-next-day-uk",     "price": 24 }
+}
+```
+
+5 Shopify products to maintain (3 same-day zones + 1 next-day + the existing walk-in £0). When the courier rate card changes, edit the JSON + the product price; nothing else.
+
+---
+
+## Customer-facing timeline UX
+
+The wizard must show the customer **a real estimated return date**, not "1–2 working days." Date strings are visual; "back on Wednesday" is meaningfully different from "back in 1–2 working days."
+
+The matrix is complex but tractable. Compute on the client from:
+- **Today's date and time** (London timezone)
+- **Selected turnaround tier** (Standard / Fast / Fastest)
+- **Selected service type** (walk-in / same-day courier / next-day courier)
+- **Workshop calendar** (closed Sat/Sun, closed bank holidays — already encoded for 2026-05-04)
+- **Same-day-courier 12pm cutoff** (orders after 12pm are next working day)
+
+### What the customer sees
+
+Three timeline patterns. Show the relevant one inline on Step 2 once they've picked their service type and turnaround tier:
+
+#### Walk-in (any tier)
+
+```
+   You drop off                      Tue 5 May, before 6pm
+   We repair                          [tier-dependent]
+✓ Ready to collect                   Wed 6 May, from 12pm
+```
+
+#### Same-day courier (London)
+
+```
+   We collect                          Tue 5 May, before 4pm
+   We repair                           same day
+✓ With you tonight                    Tue 5 May, by 8pm   (Fastest)
+✓ With you tomorrow                   Wed 6 May, by 12pm  (Standard or Fast)
+```
+
+#### Next-day courier (UK)
+
+This is the one the customer needs spelled out clearly because of the packaging-kit step:
+
+```
+   We post you a packaging kit        arrives Wed 6 May
+   You ship your MacBook back         dispatch by Fri 8 May
+   We repair                           ready Mon 11 May
+✓ With you                            Tue 12 May
+```
+
+### Why this matters for conversion
+
+Wizard end-to-end conversion is currently 1.6–1.7%. We don't have telemetry on *why* people abandon at the resolution step yet (the new events are <2 weeks old) but the strongest hypothesis from session-recording observations + the pre-step-1 drop-off pattern is that **users don't trust the price/timing** when it's expressed abstractly. A customer comparing iCorrect to Apple Store needs to know: how much, when, with what tradeoffs. "1–2 working days" doesn't answer "will I have my laptop on Friday for my flight."
+
+The timeline view turns the wizard from "calculator that emits a price" into "scheduler that tells you when you'll have your machine back." That's the difference between a £319 quote and £319 + a confident decision.
+
+### Implementation as small JS
+
+```javascript
+// scripts/wizard-timeline.js (sketch)
+function estimateTimeline(opts) {
+  // opts: { now: Date, deliveryMethod, turnaroundTier, productHasSpeedOption }
+  const tz = 'Europe/London';
+  const HOLIDAYS = ['2026-05-04', '2026-05-26', '2026-08-25', '2026-12-25', '2026-12-26'];
+  const isWorkingDay = d => {
+    const dow = d.getDay();
+    if (dow === 0 || dow === 6) return false;
+    const ymd = d.toISOString().slice(0, 10);
+    return !HOLIDAYS.includes(ymd);
+  };
+  const nextWorkingDay = d => {
+    const next = new Date(d);
+    do { next.setDate(next.getDate() + 1); } while (!isWorkingDay(next));
+    return next;
+  };
+  // ... build the steps array based on deliveryMethod + turnaroundTier
+  // returns: [{ icon, label, date, dateLabel: 'Wed 6 May' }, ...]
+}
+```
+
+Maybe 100 lines of JS. Same module powers all three timeline patterns. Renders into the wizard's Step 2 once the user has made their delivery + turnaround choices. Updates live as they change either choice.
+
+---
+
+## Updated decision log
+
+| # | Decision | Status |
+|---|---|---|
+| 1 | Collection-page wizard = 2 steps (model → book) | ✅ Locked |
+| 2 | Drop fault step on collection pages; keep on homepage flow | ✅ Locked |
+| 3 | Contact route as both a step-2 tab and a persistent escape link | ✅ Locked |
+| 4 | Postcode → 3-zone courier model (£35 / £45 / £58 London + £24 national) | ✅ Locked |
+| 5 | Turnaround = Standard / Fast / Fastest (2 paid tiers), MacBook-screen-only initially | ✅ Locked |
+| 6 | Customer-facing timeline view with real dates per booking matrix combo | ✅ Locked |
+| 7 | localStorage state persistence (from prototype) | ✅ Locked |
+| 8 | Floating mini-wizard (from prototype) | ⚠️ Implement but verify no mobile real-estate issue |
+| 9 | Mobile model picker — family screen first, or single grid | ❌ Decide via post-launch A/B |
+| 10 | Drop date/time pre-booking entirely, or keep for walk-in | ❌ Pending — leaning "drop, scheduling moves to confirmation email" |
+
+---
+
 *Captured by Claude Code — 2026-05-02. References live wizard at `sections/quote-wizard.liquid@cd3b1dd` and prototype handoff `J_KxLbKP6NVgueTU8HZlJQ` (Claude Design / claude.ai).*
