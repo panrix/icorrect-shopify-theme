@@ -298,6 +298,20 @@ python3 scripts/analysis/posthog_diff.py \
 - **Audit findings:** `docs/marketing-full-audit-codex-2026-04-22.md` — the full data context for why the homepage matters
 - **Dead-click reference:** `docs/dead-click-analysis-2026-04-23.md` — element-level breakdown of where the 194 dead clicks land
 
+## Corporate page — handled inside the rebuild, not via a separate design pass
+
+`/pages/corporate-service` is **content-complete already**. The H1, the fleet process, the manufacturer-vs-iCorrect comparison table, SLA tiers, billing & admin, security & compliance, and the device coverage section all do the right job for a B2B audience. The page does not need a fresh design brief.
+
+What it needs, applied during the homepage/wizard rebuild work:
+
+1. **Aesthetic alignment** — re-skin the existing `icorrect-landing` section blocks with the new design tokens once they're established by the homepage + wizard implementation
+2. **CTA softening** — primary CTA changes from "Start Your Corporate Repair Account" (heavy first-touch commitment) to something softer like "Talk to us about your fleet →"
+3. **Real photography** — replace any stock imagery with workshop / repair photos when those become available
+4. **Visibility from the homepage** — the homepage's specialist-work section (section 6 above) must route here directly rather than to a generic contact form
+5. **No content rewrites** unless something obviously breaks during re-skin
+
+Tracked here rather than as its own design brief because the work is derivative of the homepage system, not original design.
+
 ---
 
 *Prepared by Claude Code with Ricky — 2026-05-02. Ready for handoff to Claude Design.*
