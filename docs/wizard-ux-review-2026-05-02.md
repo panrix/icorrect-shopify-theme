@@ -314,6 +314,42 @@ Maybe 100 lines of JS. Same module powers all three timeline patterns. Renders i
 
 ---
 
+## Booking as the guarantee — reframe of date/time
+
+The earlier draft of this doc flirted with dropping the date/time picker as friction. That was wrong. Walk-in at iCorrect is **a booked appointment**, not a drop-by-whenever service. The booking step is what:
+
+- Reserves the part stock for that customer
+- Blocks the workshop time for the technician
+- Makes the turnaround promise (the timeline view we just designed) **a guarantee**
+
+Without the booking, none of those hold. Same-day courier inherits the same logic — to give "back by Tuesday 8pm" we have to block a workshop slot on Tuesday for that job.
+
+### Per-service booking requirement
+
+| Service | Customer picks | Why |
+|---|---|---|
+| Walk-in | Date + time | Reserves the drop-off slot, part, and repair window |
+| Same-day courier (London) | Date | Reserves the workshop slot and part for that day |
+| Next-day courier (national) | Nothing — kit ships immediately | Workshop slot opens up when the device physically arrives. Customer doesn't pick a date because we can't guarantee one until we have the device |
+
+### Copy reframe
+
+The wizard should not present the date picker as a scheduling step. It should present it as the moment the quote becomes a real promise. Suggested copy treatments for the booking step:
+
+- Above the date picker: **"Pick your slot. We'll reserve your part and block the workshop time so you get your MacBook back when we say."**
+- Inline next to "Book repair" button: **"Booking now reserves your part. Without a slot we can't guarantee the turnaround."**
+- After successful booking confirmation: **"Slot reserved. Your part is set aside. You'll have your MacBook back [date]."**
+
+This is a copy change, not a logic change — but it converts the date picker from "annoying form field" into "the thing that locks the guarantee in." Same friction, different mental model. The autofill we already shipped (PR #31) handles the laziness case; the copy handles the trust case.
+
+### Implementation note
+
+The current wizard already has the date picker, validation, time-slot dropdown, and the bank-holiday blackout (PR #39). Carry all of that forward. The redesign is a visual + copy treatment + tier-aware enable/disable, not a rebuild of the underlying booking logic.
+
+For the next-day courier flow specifically, the wizard should NOT show a date picker. The customer's commitment at booking time is "send me the kit + reserve me a Standard / Fast / Fastest slot." The actual repair-day date gets confirmed by email when the device arrives at the workshop.
+
+---
+
 ## Updated decision log
 
 | # | Decision | Status |
@@ -327,7 +363,7 @@ Maybe 100 lines of JS. Same module powers all three timeline patterns. Renders i
 | 7 | localStorage state persistence (from prototype) | ✅ Locked |
 | 8 | Floating mini-wizard (from prototype) | ⚠️ Implement but verify no mobile real-estate issue |
 | 9 | Mobile model picker — family screen first, or single grid | ❌ Decide via post-launch A/B |
-| 10 | Drop date/time pre-booking entirely, or keep for walk-in | ❌ Pending — leaning "drop, scheduling moves to confirmation email" |
+| 10 | Date/time pre-booking | ✅ Locked — **kept for walk-in and same-day courier**. Booking is what reserves the part + workshop slot + makes the turnaround guarantee real. Reframed as the value step, not a scheduling chore. Next-day courier doesn't need a date picker (slot opens when device physically arrives). |
 
 ---
 
