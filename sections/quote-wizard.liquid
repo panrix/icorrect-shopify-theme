@@ -1127,6 +1127,17 @@ window.WIZARD_CFG = {
     maxDate.setDate(maxDate.getDate() + 60);
     var my = maxDate.getFullYear(), mm = String(maxDate.getMonth() + 1).padStart(2, '0'), md = String(maxDate.getDate()).padStart(2, '0');
     dateInput.max = my + '-' + mm + '-' + md;
+    var oneOffBlackoutDates = {
+      '2026-05-04': 'We are closed on Monday 4 May 2026 for the UK bank holiday. Please choose another weekday.'
+    };
+
+    function formatDateValue(date) {
+      return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+    }
+
+    function getOneOffBlackoutMessage(dateValue) {
+      return oneOffBlackoutDates[dateValue] || '';
+    }
 
     dateInput.onchange = function() {
       var err = document.getElementById('qwWalkinErr');
@@ -1148,6 +1159,13 @@ window.WIZARD_CFG = {
       var holidayDay = selDate.getDate();
       if ((holidayMonth === 12 && holidayDay >= 24) || (holidayMonth === 1 && holidayDay <= 4)) {
         if (err) err.textContent = 'We are closed during the holiday period (24 Dec - 4 Jan).';
+        dateInput.value = '';
+        return;
+      }
+
+      var oneOffBlackoutMessage = getOneOffBlackoutMessage(dateInput.value);
+      if (oneOffBlackoutMessage) {
+        if (err) err.textContent = oneOffBlackoutMessage;
         dateInput.value = '';
         return;
       }
@@ -1195,9 +1213,11 @@ window.WIZARD_CFG = {
         var dow = candidate.getDay();
         var mo = candidate.getMonth() + 1;
         var dd = candidate.getDate();
+        var candidateDateValue = formatDateValue(candidate);
         var isHoliday = (mo === 12 && dd >= 24) || (mo === 1 && dd <= 4);
         var isWeekend = dow === 0 || dow === 6;
-        if (!isHoliday && !isWeekend) {
+        var isOneOffBlackout = !!getOneOffBlackoutMessage(candidateDateValue);
+        if (!isHoliday && !isWeekend && !isOneOffBlackout) {
           var dayStartMin = (dow === 5) ? 600 : 570;
           var endMin = 1050;
           var sameDay = candidate.toDateString() === londonNow.toDateString();
@@ -1210,10 +1230,7 @@ window.WIZARD_CFG = {
         }
         candidate.setDate(candidate.getDate() + 1);
       }
-      var yy = candidate.getFullYear();
-      var mm2 = String(candidate.getMonth() + 1).padStart(2, '0');
-      var dd2 = String(candidate.getDate()).padStart(2, '0');
-      dateInput.value = yy + '-' + mm2 + '-' + dd2;
+      dateInput.value = formatDateValue(candidate);
       dateInput.dispatchEvent(new Event('change'));
       /* Pick first real time option (index 0 is the "Select a time" placeholder). */
       if (timeSelect.options.length > 1) {

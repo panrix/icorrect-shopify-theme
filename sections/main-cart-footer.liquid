@@ -17,6 +17,18 @@
   }
 {%- endstyle -%}
 
+{%- liquid
+  assign one_off_walkin_blackout_date = '2026-05-04'
+  assign has_one_off_blackout_booking = false
+  for item in cart.items
+    for property in item.properties
+      if property.first == 'Preferred Date' and property.last == one_off_walkin_blackout_date
+        assign has_one_off_blackout_booking = true
+      endif
+    endfor
+  endfor
+-%}
+
 <div
   class="gradient color-{{ section.settings.color_scheme }}{% if cart == empty %} is-empty{% endif %}"
   id="main-cart-footer"
@@ -105,12 +117,17 @@
               </div>
             {%- else -%}
               <div class="cart__ctas" {{ block.shopify_attributes }}>
+                {%- if has_one_off_blackout_booking -%}
+                  <p class="cart__checkout-error" role="alert">
+                    We are closed on Monday 4 May 2026 for the UK bank holiday. Please remove this walk-in appointment and choose another weekday.
+                  </p>
+                {%- endif -%}
                 <button
                   type="submit"
                   id="checkout"
                   class="cart__checkout-button button"
                   name="checkout"
-                  {% if cart == empty %}
+                  {% if cart == empty or has_one_off_blackout_booking %}
                     disabled
                   {% endif %}
                   form="cart"
@@ -119,7 +136,7 @@
                 </button>
               </div>
 
-              {%- if additional_checkout_buttons -%}
+              {%- if additional_checkout_buttons and has_one_off_blackout_booking == false -%}
                 <div class="cart__dynamic-checkout-buttons additional-checkout-buttons">
                   {{ content_for_additional_checkout_buttons }}
                 </div>
