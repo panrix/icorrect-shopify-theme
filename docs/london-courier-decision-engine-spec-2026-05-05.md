@@ -42,6 +42,7 @@ The decision app needs:
 |---|---|
 | `postcode` | Finds outward postcode coverage and courier band. |
 | `repair_type` | Determines same-day eligibility and repair duration. |
+| `stock_available` | Prevents same-day promises for repairs where required parts are not available. |
 | `repair_price_gross` | Customer-facing repair price. |
 | `repair_price_net` | Commercial contribution calculation. |
 | `estimated_parts_cost` | Repair profitability calculation. |
@@ -138,6 +139,7 @@ postcode
 + inbound courier window
 + repair duration
 + same-day slot availability
++ required stock availability
 + outbound courier window
 = same-day possible / next-day only / manual review
 ```
@@ -146,12 +148,13 @@ Phase-one repair durations:
 
 | Repair Type | Same-Day Eligible | Duration Allowance |
 |---|---:|---:|
-| iPhone screen | Yes | 90 minutes |
-| iPhone battery | Yes | 90 minutes |
-| iPhone charging port | Yes | 150 minutes |
-| iPad repair | No by default | Manual/next-day |
-| MacBook repair | No by default | Diagnostic/manual |
+| iPhone screen | Yes, only if stock is available | 90 minutes |
+| iPhone battery | Yes, only if stock is available | 90 minutes |
+| iPhone camera module | Yes, only if stock is available | 120 minutes |
+| iPad known repair | No by default | Two working days |
+| MacBook known repair | No by default | Two working days |
 | Back glass | No by default | Manual/next-day |
+| Diagnostic | No fixed promise | Assessment wording only |
 
 ## Same-Day Capacity
 
@@ -168,10 +171,17 @@ Same-day can be shown only if:
 
 - Postcode is in a same-day eligible band.
 - Repair type is same-day eligible.
+- Required stock is available or the stock state is confidently known.
 - Current time is before cutoff.
 - A same-day slot remains.
 - Inbound and outbound courier windows can complete within the working day.
 - The repair remains profitable after two-way logistics.
+
+If stock is unknown, same-day should not be guaranteed. The UI should either hide same-day or use a softer collection-first message:
+
+```text
+We can collect today and confirm the repair timing after checking part availability.
+```
 
 If slots are gone, the UI should fall back to:
 
@@ -195,6 +205,7 @@ The quote wizard should never show internal margin language. It should translate
 - Same-day collection and return available.
 - Collection today, return tomorrow.
 - Courier not available for this repair/postcode; offer mail-in or drop-off.
+- Diagnostic collection available, with timing confirmed after assessment.
 
 Example UI metadata:
 
@@ -238,12 +249,33 @@ The decision app needs these local tables:
 | Courier decision summary | Generated decision CSV. |
 | Shopify courier variants | Manually configured variant IDs. |
 | Repair profitability | Initial static table, later metafields/admin-managed. |
+| Repair turnaround rules | Static repair-type rules for same-day, two-working-day, and diagnostic flows. |
+| Stock availability | Initial manual/static stock state, later inventory/API-backed. |
 | Same-day capacity | Date-based slot counter. |
+
+## Turnaround Messaging
+
+Known repairs can have customer-facing turnaround estimates. Diagnostics need a different promise because the repair scope is unknown until inspection.
+
+| Flow | Customer-Facing Promise |
+|---|---|
+| Eligible iPhone known repair with stock | Same-day may be offered if postcode, cutoff, capacity, and margin rules pass. |
+| Eligible iPhone known repair without confirmed stock | Do not guarantee same-day; offer collection with timing confirmed after stock check. |
+| iPad known repair | Estimated two working days after the device arrives at iCorrect. |
+| MacBook known repair | Estimated two working days after the device arrives at iCorrect. |
+| Diagnostic | Collection/assessment first; repair options and timing confirmed after diagnosis. |
+
+Suggested diagnostic copy:
+
+```text
+We will collect your device for assessment. Once our technicians have inspected it, we will confirm the repair options, cost, and expected turnaround before any repair work goes ahead.
+```
 
 ## Risks And Guardrails
 
 - Do not expose Gophr API keys or margin logic in theme JavaScript.
 - Do not promise same-day globally.
+- Do not promise same-day unless required iPhone parts are confirmed in stock.
 - Do not use one postcode product per postcode unless the decision app cannot be built.
 - Do not show free courier when two-way logistics would make the repair unprofitable.
 - Treat the `N1` one-hour motorcycle 502 as a data gap to retest before production import.
