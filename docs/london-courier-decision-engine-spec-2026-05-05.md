@@ -268,7 +268,7 @@ Known repairs can have customer-facing turnaround estimates. Diagnostics need a 
 Suggested diagnostic copy:
 
 ```text
-We will collect your device for assessment. Once our technicians have inspected it, we will confirm the repair options, cost, and expected turnaround before any repair work goes ahead.
+We will collect your device for assessment. Once our technicians have completed a full diagnostic, we will confirm the repair options, cost, and expected turnaround before any repair work goes ahead.
 ```
 
 ## Risks And Guardrails
