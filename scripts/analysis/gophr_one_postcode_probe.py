@@ -90,6 +90,14 @@ PARCEL_PROFILES = {
         "height": 5,
         "weight": 1,
     },
+    "small-500g-no-insurance": {
+        "description": "Small packaged device for repair",
+        "insurance_value": 0,
+        "length": 20,
+        "width": 15,
+        "height": 5,
+        "weight": 0.5,
+    },
 }
 
 

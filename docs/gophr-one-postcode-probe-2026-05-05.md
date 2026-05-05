@@ -1,12 +1,12 @@
 # Gophr One Postcode Probe
 
-**Generated:** 2026-05-05T03:51:47+00:00
+**Generated:** 2026-05-05T03:54:26+00:00
 **Mode:** live API call
 **Base URL:** `https://api.gophr.com/v2-commercial-api`
 **Service window:** `economy-2026-05-05`
 **Pickup after:** `2026-05-05T12:00:00+01:00`
 **Deliver before:** `2026-05-05T18:00:00+01:00`
-**Parcel profile:** `small-no-insurance`
+**Parcel profile:** `small-500g-no-insurance`
 
 ## Safety
 
@@ -87,7 +87,7 @@
             "parcel_external_id": "parcel-sw18-pushbike",
             "parcel_insurance_value": 0,
             "parcel_reference_number": "parcel-sw18-pushbike",
-            "weight": 1,
+            "weight": 0.5,
             "width": 15
           }
         ],
@@ -154,7 +154,7 @@
             "parcel_external_id": "parcel-sw18-motorcycle",
             "parcel_insurance_value": 0,
             "parcel_reference_number": "parcel-sw18-motorcycle",
-            "weight": 1,
+            "weight": 0.5,
             "width": 15
           }
         ],
@@ -221,7 +221,7 @@
             "parcel_external_id": "parcel-w1t-pushbike",
             "parcel_insurance_value": 0,
             "parcel_reference_number": "parcel-w1t-pushbike",
-            "weight": 1,
+            "weight": 0.5,
             "width": 15
           }
         ],
@@ -288,7 +288,7 @@
             "parcel_external_id": "parcel-w1t-motorcycle",
             "parcel_insurance_value": 0,
             "parcel_reference_number": "parcel-w1t-motorcycle",
-            "weight": 1,
+            "weight": 0.5,
             "width": 15
           }
         ],
