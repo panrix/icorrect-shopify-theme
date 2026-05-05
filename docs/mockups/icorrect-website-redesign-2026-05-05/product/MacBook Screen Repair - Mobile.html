@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mobile preview · Product page</title>
+  <link rel="stylesheet" href="icorrect/icorrect.css" />
+  <style>
+    html, body { margin: 0; padding: 0; background: #f5f5f5; min-height: 100vh; font-family: var(--font-sans, -apple-system, system-ui, sans-serif); }
+    .stage {
+      min-height: 100vh;
+      display: flex; align-items: flex-start; justify-content: center;
+      gap: 32px;
+      padding: 48px 24px;
+      flex-wrap: wrap;
+    }
+    .device-col {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 16px;
+    }
+    .device-meta {
+      font: 500 12px var(--font-mono, ui-monospace, monospace);
+      color: #666; letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .device-shell {
+      width: 402px; height: 874px;
+      border-radius: 48px;
+      overflow: hidden;
+      position: relative;
+      background: #fff;
+      box-shadow:
+        0 40px 80px rgba(0,0,0,0.18),
+        0 0 0 12px #1a1a1a,
+        0 0 0 13px rgba(0,0,0,0.4);
+    }
+    .device-shell.dark {
+      box-shadow:
+        0 40px 80px rgba(0,0,0,0.32),
+        0 0 0 12px #0a0a0a,
+        0 0 0 13px rgba(255,255,255,0.06);
+    }
+    .device-island {
+      position: absolute; top: 11px; left: 50%;
+      transform: translateX(-50%);
+      width: 126px; height: 37px;
+      border-radius: 24px;
+      background: #000;
+      z-index: 50;
+      pointer-events: none;
+    }
+    .device-statusbar {
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 60px;
+      z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 32px 0;
+      pointer-events: none;
+      font: 600 17px -apple-system, "SF Pro", system-ui;
+      color: #000;
+    }
+    .device-statusbar .right {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .device-home {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 34px;
+      z-index: 60;
+      display: flex; align-items: flex-end; justify-content: center;
+      padding-bottom: 8px;
+      pointer-events: none;
+    }
+    .device-home::before {
+      content: ""; width: 139px; height: 5px;
+      border-radius: 100px;
+      background: rgba(0,0,0,0.7);
+    }
+    .device-frame {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      border: 0;
+      background: #fff;
+    }
+    .header {
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 24px 0;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .header h1 {
+      font: 600 28px var(--font-sans, system-ui);
+      letter-spacing: -1px;
+      color: #171717;
+      margin: 0;
+    }
+    .header p {
+      font: 400 15px/1.55 var(--font-sans, system-ui);
+      color: #666;
+      margin: 0;
+      max-width: 640px;
+    }
+    .header .crumbs {
+      font: 500 11px var(--font-mono, ui-monospace, monospace);
+      text-transform: uppercase; letter-spacing: 0.04em;
+      color: #999;
+      margin-bottom: 8px;
+    }
+    .header .crumbs a { color: inherit; text-decoration: none; }
+    .header .crumbs a:hover { color: #171717; }
+    .top {
+      padding: 32px 24px 0;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="top">
+    <div class="header">
+      <div class="crumbs"><a href="MacBook Screen Repair - Product.html">← Back to desktop</a></div>
+      <h1>Mobile preview · Product page</h1>
+      <p>Live render of <code>MacBook Screen Repair - Product.html</code> at iPhone width (390px). Same React app, same Tweaks panel, mobile-specific media queries fire automatically. Two states shown: hero/configurator, and journey content with floating CTA.</p>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="device-col">
+      <div class="device-meta">iPhone · top of page</div>
+      <div class="device-shell">
+        <div class="device-island"></div>
+        <div class="device-statusbar">
+          <span>9:41</span>
+          <span class="right">
+            <svg width="19" height="12" viewBox="0 0 19 12"><rect x="0" y="7.5" width="3.2" height="4.5" rx="0.7" fill="#000"/><rect x="4.8" y="5" width="3.2" height="7" rx="0.7" fill="#000"/><rect x="9.6" y="2.5" width="3.2" height="9.5" rx="0.7" fill="#000"/><rect x="14.4" y="0" width="3.2" height="12" rx="0.7" fill="#000"/></svg>
+            <svg width="17" height="12" viewBox="0 0 17 12"><path d="M8.5 3.2C10.8 3.2 12.9 4.1 14.4 5.6L15.5 4.5C13.7 2.7 11.2 1.5 8.5 1.5C5.8 1.5 3.3 2.7 1.5 4.5L2.6 5.6C4.1 4.1 6.2 3.2 8.5 3.2Z" fill="#000"/><path d="M8.5 6.8C9.9 6.8 11.1 7.3 12 8.2L13.1 7.1C11.8 5.9 10.2 5.1 8.5 5.1C6.8 5.1 5.2 5.9 3.9 7.1L5 8.2C5.9 7.3 7.1 6.8 8.5 6.8Z" fill="#000"/><circle cx="8.5" cy="10.5" r="1.5" fill="#000"/></svg>
+            <svg width="27" height="13" viewBox="0 0 27 13"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#000" stroke-opacity="0.35" fill="none"/><rect x="2" y="2" width="20" height="9" rx="2" fill="#000"/></svg>
+          </span>
+        </div>
+        <iframe class="device-frame" id="frame-top" src="MacBook Screen Repair - Product.html" title="Mobile preview top"></iframe>
+        <div class="device-home"></div>
+      </div>
+    </div>
+
+    <div class="device-col">
+      <div class="device-meta">iPhone · journey + floating pill</div>
+      <div class="device-shell">
+        <div class="device-island"></div>
+        <div class="device-statusbar">
+          <span>9:41</span>
+          <span class="right">
+            <svg width="19" height="12" viewBox="0 0 19 12"><rect x="0" y="7.5" width="3.2" height="4.5" rx="0.7" fill="#000"/><rect x="4.8" y="5" width="3.2" height="7" rx="0.7" fill="#000"/><rect x="9.6" y="2.5" width="3.2" height="9.5" rx="0.7" fill="#000"/><rect x="14.4" y="0" width="3.2" height="12" rx="0.7" fill="#000"/></svg>
+            <svg width="17" height="12" viewBox="0 0 17 12"><path d="M8.5 3.2C10.8 3.2 12.9 4.1 14.4 5.6L15.5 4.5C13.7 2.7 11.2 1.5 8.5 1.5C5.8 1.5 3.3 2.7 1.5 4.5L2.6 5.6C4.1 4.1 6.2 3.2 8.5 3.2Z" fill="#000"/><path d="M8.5 6.8C9.9 6.8 11.1 7.3 12 8.2L13.1 7.1C11.8 5.9 10.2 5.1 8.5 5.1C6.8 5.1 5.2 5.9 3.9 7.1L5 8.2C5.9 7.3 7.1 6.8 8.5 6.8Z" fill="#000"/><circle cx="8.5" cy="10.5" r="1.5" fill="#000"/></svg>
+            <svg width="27" height="13" viewBox="0 0 27 13"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#000" stroke-opacity="0.35" fill="none"/><rect x="2" y="2" width="20" height="9" rx="2" fill="#000"/></svg>
+          </span>
+        </div>
+        <iframe class="device-frame" id="frame-mid" src="MacBook Screen Repair - Product.html" title="Mobile preview mid-page"></iframe>
+        <div class="device-home"></div>
+      </div>
+    </div>
+
+    <div class="device-col">
+      <div class="device-meta">iPhone · reviews wall</div>
+      <div class="device-shell">
+        <div class="device-island"></div>
+        <div class="device-statusbar">
+          <span>9:41</span>
+          <span class="right">
+            <svg width="19" height="12" viewBox="0 0 19 12"><rect x="0" y="7.5" width="3.2" height="4.5" rx="0.7" fill="#000"/><rect x="4.8" y="5" width="3.2" height="7" rx="0.7" fill="#000"/><rect x="9.6" y="2.5" width="3.2" height="9.5" rx="0.7" fill="#000"/><rect x="14.4" y="0" width="3.2" height="12" rx="0.7" fill="#000"/></svg>
+            <svg width="17" height="12" viewBox="0 0 17 12"><path d="M8.5 3.2C10.8 3.2 12.9 4.1 14.4 5.6L15.5 4.5C13.7 2.7 11.2 1.5 8.5 1.5C5.8 1.5 3.3 2.7 1.5 4.5L2.6 5.6C4.1 4.1 6.2 3.2 8.5 3.2Z" fill="#000"/><path d="M8.5 6.8C9.9 6.8 11.1 7.3 12 8.2L13.1 7.1C11.8 5.9 10.2 5.1 8.5 5.1C6.8 5.1 5.2 5.9 3.9 7.1L5 8.2C5.9 7.3 7.1 6.8 8.5 6.8Z" fill="#000"/><circle cx="8.5" cy="10.5" r="1.5" fill="#000"/></svg>
+            <svg width="27" height="13" viewBox="0 0 27 13"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#000" stroke-opacity="0.35" fill="none"/><rect x="2" y="2" width="20" height="9" rx="2" fill="#000"/></svg>
+          </span>
+        </div>
+        <iframe class="device-frame" id="frame-bot" src="MacBook Screen Repair - Product.html" title="Mobile preview bottom"></iframe>
+        <div class="device-home"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // After each frame loads, scroll it to a specific anchor so we see different states.
+    const scrollTo = (id, target) => {
+      const f = document.getElementById(id);
+      f.addEventListener("load", () => {
+        try {
+          if (typeof target === "number") {
+            f.contentWindow.scrollTo(0, target);
+          } else {
+            const el = f.contentDocument.getElementById(target);
+            if (el) f.contentWindow.scrollTo({ top: el.offsetTop - 24, behavior: "instant" });
+          }
+        } catch (e) {}
+      });
+    };
+    scrollTo("frame-top", 0);
+    scrollTo("frame-mid", "process");
+    scrollTo("frame-bot", "reviews");
+  </script>
+</body>
+</html>

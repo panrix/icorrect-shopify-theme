@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mobile Preview · iCorrect MacBook Screen Collection</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    html, body {
+      margin: 0;
+      background: #fafafa;
+      min-height: 100vh;
+      font-family: var(--font-sans, -apple-system, system-ui, sans-serif);
+      color: #171717;
+      -webkit-font-smoothing: antialiased;
+    }
+    .stage {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 24px 80px;
+      gap: 24px;
+    }
+    .stage-head {
+      max-width: 460px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .stage-eyebrow {
+      font: 500 11px/1 var(--font-mono, ui-monospace, monospace);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #666;
+    }
+    .stage-title {
+      font: 600 24px/1.15 var(--font-sans);
+      letter-spacing: -0.96px;
+      margin: 0;
+      color: #171717;
+    }
+    .stage-sub {
+      font: 400 14px/1.5 var(--font-sans);
+      color: #4d4d4d;
+      margin: 0;
+    }
+    .stage-controls {
+      display: inline-flex;
+      background: #fff;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.08), 0 2px 2px rgba(0,0,0,0.04), inset 0 0 0 1px #fafafa;
+      border-radius: 10px;
+      padding: 4px;
+      gap: 2px;
+    }
+    .stage-controls button {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      padding: 8px 14px;
+      border-radius: 7px;
+      font: 500 13px var(--font-sans);
+      color: #4d4d4d;
+      cursor: pointer;
+      transition: background 150ms ease, color 150ms ease;
+    }
+    .stage-controls button:hover { color: #171717; }
+    .stage-controls button.active {
+      background: #171717;
+      color: #fff;
+    }
+    .stage-meta {
+      font: 400 12px var(--font-mono, ui-monospace, monospace);
+      color: #808080;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .stage-meta a {
+      color: #0072f5;
+      text-decoration: none;
+    }
+    .stage-meta a:hover { text-decoration: underline; }
+
+    /* Device frame */
+    .device-shell {
+      position: relative;
+      border-radius: 56px;
+      padding: 12px;
+      background: linear-gradient(180deg, #2a2a2a 0%, #0f0f0f 100%);
+      box-shadow:
+        0 40px 80px -20px rgba(0,0,0,0.35),
+        0 12px 32px -8px rgba(0,0,0,0.18),
+        0 0 0 1px rgba(0,0,0,0.3),
+        inset 0 0 0 1px rgba(255,255,255,0.08);
+    }
+    .device-screen {
+      position: relative;
+      width: 402px;
+      height: 874px;
+      border-radius: 46px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+    }
+    /* Dynamic Island */
+    .device-island {
+      position: absolute;
+      top: 11px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 126px;
+      height: 37px;
+      border-radius: 24px;
+      background: #000;
+      z-index: 50;
+      pointer-events: none;
+    }
+    /* Home indicator */
+    .device-home {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 139px;
+      height: 5px;
+      border-radius: 100px;
+      background: rgba(0,0,0,0.25);
+      z-index: 60;
+      pointer-events: none;
+    }
+    /* iframe scaled to device width */
+    .device-iframe {
+      width: 402px;
+      height: 874px;
+      border: 0;
+      display: block;
+      background: #fff;
+    }
+
+    /* Landscape swap — make a compact iPad-ish frame for tablet preview */
+    .device-shell.tablet { border-radius: 36px; padding: 16px; }
+    .device-shell.tablet .device-screen { width: 768px; height: 1024px; border-radius: 24px; }
+    .device-shell.tablet .device-island { display: none; }
+    .device-shell.tablet .device-home { background: rgba(0,0,0,0.18); }
+    .device-shell.tablet .device-iframe { width: 768px; height: 1024px; }
+
+    @media (max-width: 460px) {
+      .stage { padding: 24px 12px 80px; }
+      .device-shell { transform: scale(0.72); transform-origin: top center; }
+      .device-shell.tablet { transform: scale(0.42); }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="stage-head">
+      <span class="stage-eyebrow">Mobile Preview</span>
+      <h1 class="stage-title">MacBook Screen Collection · iPhone</h1>
+      <p class="stage-sub">Live preview of the page at mobile viewport width. Scroll inside the frame to explore — all interactions work exactly as they will for a visitor on their phone.</p>
+    </div>
+
+    <div class="stage-controls" role="tablist" aria-label="Device">
+      <button type="button" data-device="iphone" class="active">iPhone · 402×874</button>
+      <button type="button" data-device="tablet">Tablet · 768×1024</button>
+    </div>
+
+    <div class="device-shell" id="shell">
+      <div class="device-screen">
+        <div class="device-island"></div>
+        <iframe
+          class="device-iframe"
+          id="frame"
+          src="MacBook Screen Collection.html"
+          title="iCorrect MacBook Screen Collection — mobile preview"
+          loading="eager"
+          style="--safe-area-top: 48px;"
+        ></iframe>
+        <div class="device-home"></div>
+      </div>
+    </div>
+
+    <div class="stage-meta">
+      <span>Source:</span>
+      <a href="MacBook Screen Collection.html" target="_blank" rel="noopener">MacBook Screen Collection.html ↗</a>
+    </div>
+  </div>
+
+  <script>
+    const shell = document.getElementById('shell');
+    const buttons = document.querySelectorAll('.stage-controls button');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const device = btn.dataset.device;
+        shell.classList.toggle('tablet', device === 'tablet');
+      });
+    });
+  </script>
+</body>
+</html>

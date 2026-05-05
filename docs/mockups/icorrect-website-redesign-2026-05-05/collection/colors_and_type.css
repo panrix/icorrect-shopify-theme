@@ -1,0 +1,278 @@
+/* ==========================================================================
+   Vercel / Geist Design System — Color & Type Tokens
+   Source: uploads/DESIGN-vercel.md (synthesized from vercel.com)
+   ========================================================================== */
+
+/* --- Fonts ---------------------------------------------------------------- */
+/* Geist is open-source (OFL). Self-hosted variable fonts from the official  */
+/* vercel/geist-font GitHub repo. Fallback to Arial if the font file fails.  */
+@font-face {
+  font-family: "Geist";
+  src: url("/fonts/Geist-Variable.woff2") format("woff2-variations"),
+       url("/fonts/Geist-Variable.woff2") format("woff2"),
+       url("./fonts/Geist-Variable.woff2") format("woff2"),
+       url("../fonts/Geist-Variable.woff2") format("woff2"),
+       url("../../fonts/Geist-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/fonts/GeistMono-Variable.woff2") format("woff2-variations"),
+       url("/fonts/GeistMono-Variable.woff2") format("woff2"),
+       url("./fonts/GeistMono-Variable.woff2") format("woff2"),
+       url("../fonts/GeistMono-Variable.woff2") format("woff2"),
+       url("../../fonts/GeistMono-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* ---- Color: Grayscale ------------------------------------------------- */
+  --ds-gray-1000: #171717;  /* Vercel Black — primary text, dark surfaces */
+  --ds-gray-900:  #171717;
+  --ds-gray-700:  #333333;
+  --ds-gray-600:  #4d4d4d;  /* body / secondary */
+  --ds-gray-500:  #666666;  /* tertiary / muted links */
+  --ds-gray-400:  #808080;  /* placeholder / disabled */
+  --ds-gray-300:  #a3a3a3;
+  --ds-gray-200:  #d4d4d4;
+  --ds-gray-100:  #ebebeb;  /* borders / dividers */
+  --ds-gray-50:   #fafafa;  /* subtle surface tint, inner shadow highlight */
+  --ds-background-100: #ffffff;
+  --ds-background-200: #fafafa;
+  --ds-true-black: #000000;
+
+  /* Alpha grayscale */
+  --ds-gray-alpha-1000: rgba(0, 0, 0, 1);
+  --ds-gray-alpha-800:  rgba(0, 0, 0, 0.64);
+  --ds-gray-alpha-600:  rgba(0, 0, 0, 0.40);
+  --ds-gray-alpha-400:  rgba(0, 0, 0, 0.16);
+  --ds-gray-alpha-200:  rgba(0, 0, 0, 0.08);
+  --ds-gray-alpha-100:  rgba(0, 0, 0, 0.04);
+
+  /* ---- Workflow accents (Develop → Preview → Ship) --------------------- */
+  --ds-develop-blue: #0a72ef;
+  --ds-preview-pink: #de1d8d;
+  --ds-ship-red:     #ff5b4f;
+
+  /* ---- Console / syntax ------------------------------------------------ */
+  --ds-console-blue:   #0070f3;
+  --ds-console-purple: #7928ca;
+  --ds-console-pink:   #eb367f;
+
+  /* ---- Interactive blues ---------------------------------------------- */
+  --ds-link-blue:    #0072f5;
+  --ds-focus-color:  hsla(212, 100%, 48%, 1);
+  --ds-focus-ring:   0 0 0 2px hsla(212, 100%, 48%, 0.24);
+  --ds-ring-blue:    rgba(147, 197, 253, 0.5);
+
+  --ds-badge-blue-bg:   #ebf5ff;
+  --ds-badge-blue-text: #0068d6;
+
+  /* ---- Semantic / roles ----------------------------------------------- */
+  --fg-1: var(--ds-gray-1000);    /* strongest text */
+  --fg-2: var(--ds-gray-600);     /* body */
+  --fg-3: var(--ds-gray-500);     /* tertiary */
+  --fg-4: var(--ds-gray-400);     /* placeholder */
+  --bg-1: var(--ds-background-100);
+  --bg-2: var(--ds-background-200);
+  --border-1: var(--ds-gray-100);
+  --border-shadow: rgba(0, 0, 0, 0.08);
+
+  /* ---- Shadows (multi-layer, the Vercel signature) -------------------- */
+  --shadow-border:        0 0 0 1px rgba(0, 0, 0, 0.08);
+  --shadow-border-light:  0 0 0 1px rgb(235, 235, 235);
+  --shadow-subtle:        0 0 0 1px rgba(0, 0, 0, 0.08),
+                          0 2px 2px rgba(0, 0, 0, 0.04);
+  --shadow-card:          0 0 0 1px rgba(0, 0, 0, 0.08),
+                          0 2px 2px rgba(0, 0, 0, 0.04),
+                          0 8px 8px -8px rgba(0, 0, 0, 0.04),
+                          inset 0 0 0 1px #fafafa;
+  --shadow-menu:          0 0 0 1px rgba(0, 0, 0, 0.08),
+                          0 4px 8px rgba(0, 0, 0, 0.04),
+                          0 16px 24px -8px rgba(0, 0, 0, 0.08);
+
+  /* ---- Radii ---------------------------------------------------------- */
+  --radius-micro: 2px;
+  --radius-subtle: 4px;
+  --radius-standard: 6px;   /* buttons, links */
+  --radius-comfortable: 8px; /* cards */
+  --radius-image: 12px;
+  --radius-pill-lg: 64px;
+  --radius-pill-xl: 100px;
+  --radius-full: 9999px;
+
+  /* ---- Spacing (8px base with the signature 16 → 32 jump) ------------- */
+  --space-px: 1px;
+  --space-0-5: 2px;
+  --space-1: 4px;
+  --space-1-5: 6px;
+  --space-2: 8px;
+  --space-2-5: 10px;
+  --space-3: 12px;
+  --space-3-5: 14px;
+  --space-4: 16px;
+  --space-8: 32px;
+  --space-9: 36px;
+  --space-10: 40px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  /* ---- Fonts ---------------------------------------------------------- */
+  --font-sans: "Geist", Arial, "Apple Color Emoji", "Segoe UI Emoji",
+               "Segoe UI Symbol", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, "Roboto Mono",
+               Menlo, Monaco, "Liberation Mono", "DejaVu Sans Mono",
+               "Courier New", monospace;
+}
+
+/* ==========================================================================
+   Base type / semantic tags
+   Geist Sans uses aggressively negative letter-spacing that scales with size.
+   Three weights only: 400 (read), 500 (interact), 600 (announce).
+   ========================================================================== */
+
+html, body {
+  font-family: var(--font-sans);
+  color: var(--fg-1);
+  background: var(--bg-1);
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Display hero: 48px / 600 / -2.4px — "compressed infrastructure" */
+.t-display {
+  font-family: var(--font-sans);
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -2.4px;
+  color: var(--fg-1);
+}
+.t-display-xl {
+  font-size: 64px;
+  font-weight: 600;
+  line-height: 1.0;
+  letter-spacing: -2.88px;
+  color: var(--fg-1);
+}
+
+h1, .t-h1 {
+  font-family: var(--font-sans);
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -2.4px;
+  color: var(--fg-1);
+  margin: 0;
+}
+h2, .t-h2 {
+  font-family: var(--font-sans);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -1.28px;
+  color: var(--fg-1);
+  margin: 0;
+}
+h3, .t-h3 {
+  font-family: var(--font-sans);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.33;
+  letter-spacing: -0.96px;
+  color: var(--fg-1);
+  margin: 0;
+}
+h4, .t-h4 {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.6px;
+  color: var(--fg-1);
+  margin: 0;
+}
+
+p, .t-body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--fg-2);
+  margin: 0;
+}
+.t-body-lg {
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.8;
+  color: var(--fg-2);
+}
+.t-body-md { font-size: 18px; line-height: 1.56; color: var(--fg-2); }
+.t-body-sm { font-size: 14px; line-height: 1.43; color: var(--fg-2); }
+.t-caption {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.33;
+  color: var(--fg-3);
+}
+
+.t-button {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.43;
+  letter-spacing: 0;
+}
+
+/* Mono / technical voice */
+code, kbd, samp, pre, .t-mono {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-feature-settings: "liga";
+}
+.t-mono-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fg-2);
+}
+.t-mono-caption {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.54;
+}
+
+/* Inline code snippet */
+.t-code-inline {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  padding: 2px 4px;
+  border-radius: var(--radius-micro);
+  background: var(--ds-gray-50);
+  box-shadow: var(--shadow-border);
+  color: var(--fg-1);
+}
+
+a {
+  color: var(--ds-link-blue);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+a:hover { opacity: 0.85; }
+
+::selection {
+  background: hsla(0, 0%, 95%, 1);
+  color: var(--fg-1);
+}

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MacBook Screen Repair Prices · iCorrect</title>
+  <link rel="stylesheet" href="icorrect/icorrect.css" />
+  <link rel="stylesheet" href="icorrect/wizard.css" />
+  <link rel="stylesheet" href="icorrect/shell.css" />
+  <link rel="stylesheet" href="icorrect/page.css" />
+  <link rel="stylesheet" href="icorrect/info.css" />
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body class="variant-v2">
+  <div id="root"></div>
+
+  <script type="text/babel" src="icorrect/Wizard.jsx"></script>
+  <script type="text/babel" src="icorrect/Shell.jsx"></script>
+  <script type="text/babel" src="icorrect/InfoSections.jsx"></script>
+  <script type="text/babel" src="icorrect/Heros.jsx"></script>
+
+  <script type="text/babel" data-presets="env,react">
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "variant": "v2",
+      "reviewCount": 719,
+      "rating": 4.9,
+      "headerStyle": "original",
+      "showFilters": true
+    }/*EDITMODE-END*/;
+
+    // Persist via localStorage for refresh-resilience
+    const stored = (() => {
+      try { return JSON.parse(localStorage.getItem("icorrect-tweaks") || "{}"); }
+      catch { return {}; }
+    })();
+    const initialConfig = { ...TWEAK_DEFAULTS, ...stored };
+
+    function App() {
+      const [config, setConfig] = React.useState(initialConfig);
+      const [editMode, setEditMode] = React.useState(false);
+
+      React.useEffect(() => {
+        document.body.className = "variant-" + config.variant;
+        try { localStorage.setItem("icorrect-tweaks", JSON.stringify(config)); } catch {}
+      }, [config]);
+
+      // Tweaks protocol
+      React.useEffect(() => {
+        const handler = (e) => {
+          if (!e.data || typeof e.data !== "object") return;
+          if (e.data.type === "__activate_edit_mode") setEditMode(true);
+          else if (e.data.type === "__deactivate_edit_mode") setEditMode(false);
+        };
+        window.addEventListener("message", handler);
+        window.parent.postMessage({ type: "__edit_mode_available" }, "*");
+        return () => window.removeEventListener("message", handler);
+      }, []);
+
+      const updateConfig = (patch) => {
+        setConfig(c => {
+          const next = { ...c, ...patch };
+          window.parent.postMessage({ type: "__edit_mode_set_keys", edits: patch }, "*");
+          return next;
+        });
+      };
+
+      return (
+        <>
+          <Nav />
+          <Breadcrumb />
+          <CollectionHeader variant={config.variant} headerStyle={config.headerStyle || "merged"} />
+          <TrustBand reviewCount={config.reviewCount} rating={config.rating} />
+          {config.variant === "v1" && <HeroV1 reviewCount={config.reviewCount} showFilters={config.showFilters !== false} />}
+          {config.variant === "v2" && <HeroV2 reviewCount={config.reviewCount} rating={config.rating} headerStyle={config.headerStyle || "merged"} showFilters={config.showFilters !== false} />}
+          {config.variant === "v3" && <HeroV3 reviewCount={config.reviewCount} showFilters={config.showFilters !== false} />}
+
+          <IdentifyHelper />
+          <ProcessSection />
+          <PartsSection />
+          <WarrantySection />
+          <FAQ />
+          <Location />
+          <Footer />
+
+          <FloatingWizard />
+
+          {editMode && (
+            <div className="tweaks-panel visible">
+              <h4>Tweaks</h4>
+              <div className="tweak-row">
+                <label>Hero variant</label>
+                <select value={config.variant} onChange={e => updateConfig({ variant: e.target.value })}>
+                  <option value="v1">V1 — Safest (white, inline)</option>
+                  <option value="v2">V2 — Middle (gradient, instant quote)</option>
+                  <option value="v3">V3 — Boldest (dark, heavy trust)</option>
+                </select>
+              </div>
+              <div className="tweak-row">
+                <label>Review count</label>
+                <select value={String(config.reviewCount)} onChange={e => updateConfig({ reviewCount: parseInt(e.target.value) })}>
+                  <option value="719">719 (current)</option>
+                  <option value="1000">1,000 (milestone)</option>
+                  <option value="500">500</option>
+                </select>
+              </div>
+              <div className="tweak-row">
+                <label>Rating</label>
+                <select value={String(config.rating)} onChange={e => updateConfig({ rating: parseFloat(e.target.value) })}>
+                  <option value="4.8">4.8</option>
+                  <option value="4.9">4.9</option>
+                  <option value="5">5.0</option>
+                </select>
+              </div>
+              <div className="tweak-row">
+                <label>V2 header style</label>
+                <select value={config.headerStyle || "merged"} onChange={e => updateConfig({ headerStyle: e.target.value })}>
+                  <option value="merged">Merged — breadcrumb + action H1</option>
+                  <option value="stacked">Stacked — banner H1, slim hero</option>
+                  <option value="keyword-h1">Keyword H1 — "MacBook Screen Repair" in hero</option>
+                  <option value="original">Original — both banner H1 + hero H1 (pre-change)</option>
+                </select>
+              </div>
+              <div className="tweak-row">
+                <label>Desktop model filters</label>
+                <select value={config.showFilters !== false ? "on" : "off"} onChange={e => updateConfig({ showFilters: e.target.value === "on" })}>
+                  <option value="on">On — Family + Size chips</option>
+                  <option value="off">Off — show all models</option>
+                </select>
+              </div>
+            </div>
+          )}
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

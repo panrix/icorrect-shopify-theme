@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>iCorrect — We repair what they can't.</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <link rel="stylesheet" href="icorrect/icorrect.css" />
+  <link rel="stylesheet" href="icorrect/wizard.css" />
+  <link rel="stylesheet" href="icorrect/homepage.css" />
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="icorrect/tweaks-panel.jsx"></script>
+  <script type="text/babel" src="icorrect/Wizard.jsx"></script>
+  <script type="text/babel" src="icorrect/Placeholders.jsx"></script>
+  <script type="text/babel" src="icorrect/Homepage.jsx"></script>
+  <script type="text/babel" src="icorrect/diagnose-data.jsx"></script>
+  <script type="text/babel" src="icorrect/diagnose-trees.jsx"></script>
+  <script type="text/babel" src="icorrect/HeroDiagnose.jsx"></script>
+
+  <script type="text/babel" data-presets="env,react">
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "hero": "workshop",
+      "warmth": 5,
+      "reviewCount": 719,
+      "rating": 4.9,
+      "showProof": true,
+      "showWizardSection": true,
+      "showStatusPill": true
+    }/*EDITMODE-END*/;
+
+    function App() {
+      const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+      const w = (tweaks.warmth ?? 30) / 100;
+
+      React.useEffect(() => {
+        document.documentElement.style.setProperty("--warmth", String(w));
+      }, [w]);
+
+      // Diagnose mode — hero morphs in place. Synced with #diagnose URL hash
+      // so the back button closes it and the link is shareable.
+      const [diagnoseOpen, setDiagnoseOpen] = React.useState(
+        () => window.location.hash.startsWith("#diagnose")
+      );
+
+      React.useEffect(() => {
+        const open = () => {
+          if (window.location.hash !== "#diagnose") {
+            history.pushState(null, "", "#diagnose");
+          }
+          setDiagnoseOpen(true);
+          // Scroll to top of hero so the morph is visible
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        };
+        const onHash = () => setDiagnoseOpen(window.location.hash.startsWith("#diagnose"));
+        window.addEventListener("icorrect:diagnose-open", open);
+        window.addEventListener("hashchange", onHash);
+        return () => {
+          window.removeEventListener("icorrect:diagnose-open", open);
+          window.removeEventListener("hashchange", onHash);
+        };
+      }, []);
+
+      const closeDiagnose = React.useCallback(() => {
+        if (window.location.hash === "#diagnose") {
+          history.back();
+        } else {
+          setDiagnoseOpen(false);
+        }
+      }, []);
+
+      // Hide the duplicate Wizard section if the hero already contains one
+      const heroHasWizard = tweaks.hero === "wizard";
+
+      return (
+        <>
+          <HomepageNav />
+
+          <div className={"hero-morph " + (diagnoseOpen ? "is-diagnose" : "is-marketing")}>
+            {!diagnoseOpen && (
+              <>
+                {tweaks.hero === "workshop" && <HeroWorkshop reviewCount={tweaks.reviewCount} rating={tweaks.rating} />}
+                {tweaks.hero === "proof"    && <HeroProof    reviewCount={tweaks.reviewCount} rating={tweaks.rating} />}
+                {tweaks.hero === "wizard"   && <HeroWizardInline reviewCount={tweaks.reviewCount} rating={tweaks.rating} />}
+              </>
+            )}
+            {diagnoseOpen && <HeroDiagnose onClose={closeDiagnose} />}
+          </div>
+
+          {tweaks.showProof && !diagnoseOpen && <ProofSection />}
+          {tweaks.showWizardSection && !heroHasWizard && !diagnoseOpen && <WizardSection />}
+
+          <TweaksPanel title="Homepage tweaks">
+            <TweakSection label="Hero" />
+            <TweakRadio
+              label="Hero variant"
+              value={tweaks.hero}
+              onChange={v => setTweak("hero", v)}
+              options={[
+                { value: "workshop", label: "Workshop" },
+                { value: "proof",    label: "Proof" },
+                { value: "wizard",   label: "Wizard" },
+              ]}
+            />
+
+            <TweakSection label="Brand" />
+            <TweakSlider
+              label="Warmth"
+              value={tweaks.warmth}
+              onChange={v => setTweak("warmth", v)}
+              min={0} max={100} step={5}
+              unit="%"
+            />
+
+            <TweakSection label="Trust band" />
+            <TweakNumber
+              label="Review count"
+              value={tweaks.reviewCount}
+              onChange={v => setTweak("reviewCount", v)}
+              min={100} max={5000} step={1}
+            />
+            <TweakSlider
+              label="Rating"
+              value={tweaks.rating}
+              onChange={v => setTweak("rating", v)}
+              min={4.5} max={5.0} step={0.1}
+            />
+
+            <TweakSection label="Sections" />
+            <TweakToggle
+              label="Show proof section"
+              value={tweaks.showProof}
+              onChange={v => setTweak("showProof", v)}
+            />
+            <TweakToggle
+              label="Show wizard section"
+              value={tweaks.showWizardSection}
+              onChange={v => setTweak("showWizardSection", v)}
+            />
+          </TweaksPanel>
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

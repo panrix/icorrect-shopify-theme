@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MacBook Pro 16" M3 Screen Repair · iCorrect</title>
+  <link rel="stylesheet" href="icorrect/icorrect.css" />
+  <link rel="stylesheet" href="icorrect/wizard.css" />
+  <link rel="stylesheet" href="icorrect/shell.css" />
+  <link rel="stylesheet" href="icorrect/page.css" />
+  <link rel="stylesheet" href="icorrect/info.css" />
+  <link rel="stylesheet" href="icorrect/product.css" />
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body class="config-top">
+  <div id="root"></div>
+
+  <script type="text/babel" src="icorrect/Shell.jsx"></script>
+  <script type="text/babel" src="icorrect/Configurator.jsx"></script>
+  <script type="text/babel" src="icorrect/ProductSections.jsx"></script>
+
+  <script type="text/babel" data-presets="env,react">
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "configPlacement": "rail",
+      "ctaStyle": "pill-expand",
+      "videoMode": "side",
+      "processLayout": "detailed",
+      "btsMode": "reviews",
+      "sectionOrder": [
+        "failure",
+        "parts",
+        "process",
+        "bts",
+        "warranty",
+        "faqs"
+      ]
+    }/*EDITMODE-END*/;
+
+    const stored = (() => {
+      try { return JSON.parse(localStorage.getItem("icorrect-product-tweaks") || "{}"); }
+      catch { return {}; }
+    })();
+    const initialConfig = { ...TWEAK_DEFAULTS, ...stored };
+
+    const SECTION_LABELS = {
+      failure: "Why screens fail",
+      parts: "Parts & quality",
+      process: "Behind the bench",
+      bts: "Social proof block",
+      warranty: "Warranty",
+      faqs: "FAQs",
+    };
+
+    function App() {
+      const [cfg, setCfg] = React.useState(initialConfig);
+      const [editMode, setEditMode] = React.useState(false);
+
+      React.useEffect(() => {
+        document.body.className = "config-" + (cfg.configPlacement || "top");
+        try { localStorage.setItem("icorrect-product-tweaks", JSON.stringify(cfg)); } catch {}
+      }, [cfg]);
+
+      React.useEffect(() => {
+        const handler = (e) => {
+          if (!e.data || typeof e.data !== "object") return;
+          if (e.data.type === "__activate_edit_mode") setEditMode(true);
+          else if (e.data.type === "__deactivate_edit_mode") setEditMode(false);
+        };
+        window.addEventListener("message", handler);
+        window.parent.postMessage({ type: "__edit_mode_available" }, "*");
+        return () => window.removeEventListener("message", handler);
+      }, []);
+
+      const update = (patch) => {
+        setCfg(c => {
+          const next = { ...c, ...patch };
+          window.parent.postMessage({ type: "__edit_mode_set_keys", edits: patch }, "*");
+          return next;
+        });
+      };
+
+      const moveSection = (idx, dir) => {
+        const next = [...cfg.sectionOrder];
+        const j = idx + dir;
+        if (j < 0 || j >= next.length) return;
+        [next[idx], next[j]] = [next[j], next[idx]];
+        update({ sectionOrder: next });
+      };
+
+      const sectionMap = {
+        failure: <FailureSection key="failure" />,
+        parts: <PartsSection key="parts" />,
+        process: <ProcessSection key="process" videoMode={cfg.processLayout === "compact" ? "off" : cfg.videoMode} processLayout={cfg.processLayout} />,
+        bts: <BTSReel key="bts" mode={cfg.btsMode} />,
+        warranty: <WarrantyStrip key="warranty" />,
+        faqs: <ProductFAQ key="faqs" />,
+      };
+
+      return (
+        <>
+          <Nav />
+          <ProductBreadcrumb />
+          <ProductHero placement={cfg.configPlacement} />
+          {(cfg.sectionOrder || TWEAK_DEFAULTS.sectionOrder).map(id => sectionMap[id]).filter(Boolean)}
+          {cfg.configPlacement === "bottom" && <BottomConfigurator />}
+          <Location />
+          <Footer />
+
+          {cfg.ctaStyle !== "off" && <FloatingPill />}
+
+          {editMode && (
+            <div className="tweaks-panel visible">
+              <h4>Tweaks</h4>
+
+              <div className="tweak-row">
+                <label>Configurator placement</label>
+                <select value={cfg.configPlacement} onChange={e => update({ configPlacement: e.target.value })}>
+                  <option value="top">Top — in hero (default)</option>
+                  <option value="rail">Sticky right rail</option>
+                  <option value="bottom">Bottom of page</option>
+                </select>
+              </div>
+
+              <div className="tweak-row">
+                <label>Floating CTA style</label>
+                <select value={cfg.ctaStyle} onChange={e => update({ ctaStyle: e.target.value })}>
+                  <option value="pill-expand">Pill — expands to mini-configurator</option>
+                  <option value="off">Off — no floating CTA</option>
+                </select>
+              </div>
+
+              <div className="tweak-row">
+                <label>Process section layout</label>
+                <select value={cfg.processLayout} onChange={e => update({ processLayout: e.target.value })}>
+                  <option value="detailed">Detailed — full copy + meta + video</option>
+                  <option value="compact">Compact — single-line rows, no videos</option>
+                </select>
+              </div>
+
+              <div className="tweak-row">
+                <label>Video treatment (in process)</label>
+                <select value={cfg.videoMode} onChange={e => update({ videoMode: e.target.value })} disabled={cfg.processLayout === "compact"}>
+                  <option value="inline">Inline — beneath each step</option>
+                  <option value="side">Side — vertical reel beside step</option>
+                  <option value="off">Off — text only</option>
+                </select>
+              </div>
+
+              <div className="tweak-row">
+                <label>Social proof block</label>
+                <select value={cfg.btsMode} onChange={e => update({ btsMode: e.target.value })}>
+                  <option value="reviews">Reviews wall — customer outcomes (recommended)</option>
+                  <option value="brief">Engineering brief — what we fix that others won't</option>
+                  <option value="reel">Video reel — 6 vertical clips</option>
+                  <option value="minimal">Video reel — 3 vertical clips</option>
+                  <option value="off">Off — hide section</option>
+                </select>
+              </div>
+
+              <div className="tweak-row">
+                <label>Section order</label>
+                <div className="reorder-list">
+                  {(cfg.sectionOrder || []).map((id, i) => (
+                    <div key={id} className="reorder-item">
+                      <span className="grip">{String(i+1).padStart(2,"0")}</span>
+                      <span style={{flex:1}}>{SECTION_LABELS[id]}</span>
+                      <button onClick={() => moveSection(i, -1)} disabled={i === 0}>↑</button>
+                      <button onClick={() => moveSection(i, 1)} disabled={i === cfg.sectionOrder.length - 1}>↓</button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
