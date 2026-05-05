@@ -325,6 +325,7 @@ PARCEL_PROFILE = {
 
 CSV_FIELDNAMES = [
     "quoted_at",
+    "zone_band",
     "outward_code",
     "representative_postcode",
     "address1",
@@ -381,6 +382,31 @@ def read_api_key(env_file: Path | None) -> str:
         if match:
             return match.group(2)
     return ""
+
+
+def load_csv_destinations(path: Path, zone_filter: set[str] | None = None) -> list[dict[str, str]]:
+    destinations: list[dict[str, str]] = []
+    with path.open(newline="", encoding="utf-8") as handle:
+        reader = csv.DictReader(handle)
+        for row in reader:
+            zone_band = (row.get("zone_band") or "").strip()
+            if zone_filter and zone_band not in zone_filter:
+                continue
+            destinations.append(
+                {
+                    "zone_band": zone_band,
+                    "outward_code": (row.get("outward_code") or "").strip(),
+                    "label": (row.get("label") or "").strip(),
+                    "address1": (row.get("address1") or "").strip(),
+                    "city": (row.get("city") or "London").strip(),
+                    "postcode": (row.get("postcode") or "").strip(),
+                    "country_code": "GB",
+                    "person_name": "Courier Probe",
+                    "mobile_number": PROBE_MOBILE,
+                    "source": (row.get("source") or "public representative address").strip(),
+                }
+            )
+    return destinations
 
 
 def build_payload(
@@ -641,7 +667,7 @@ def write_markdown(
     postcode_ranges = group_min_max_by_postcode(rows)
     deltas = vehicle_deltas(rows)
     source_lines = [
-        f"- {destination['outward_code']}: {destination['label']}, {destination['address1']}, "
+        f"- {destination.get('zone_band', 'n/a')} / {destination['outward_code']}: {destination['label']}, {destination['address1']}, "
         f"{destination['city']}, {destination['postcode']} ({destination['source']})"
         for destination in destinations
     ]
@@ -753,23 +779,48 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--csv-out", type=Path, default=DEFAULT_CSV_OUT)
     parser.add_argument("--env-file", type=Path, default=DEFAULT_ENV_FILE)
     parser.add_argument("--destination-set", choices=sorted(DESTINATION_SETS), default="pilot")
+    parser.add_argument("--destinations-csv", type=Path, help="optional CSV of representative addresses to quote")
+    parser.add_argument(
+        "--zone-filter",
+        action="append",
+        default=[],
+        help="optional zone_band filter for --destinations-csv; repeat for multiple bands",
+    )
+    parser.add_argument("--outward-filter", action="append", default=[], help="optional outward_code filter; repeat for multiple codes")
+    parser.add_argument("--service-window-filter", action="append", default=[], help="optional service window filter; repeat for multiple windows")
+    parser.add_argument("--vehicle-filter", action="append", default=[], help="optional vehicle label filter; repeat for multiple vehicles")
     parser.add_argument("--window-set", choices=sorted(WINDOW_SETS), default="pilot")
     parser.add_argument("--limit", type=int, default=0, help="optional row limit for smoke tests")
     parser.add_argument("--sleep", type=float, default=0.15, help="seconds to pause between live API calls")
     parser.add_argument("--max-consecutive-errors", type=int, default=20)
+    parser.add_argument("--checkpoint-every", type=int, default=50, help="write partial CSV every N rows")
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
     quote_date = dt.date.fromisoformat(args.quote_date)
-    destinations = DESTINATION_SETS[args.destination_set]
+    destinations = (
+        load_csv_destinations(args.destinations_csv, set(args.zone_filter) if args.zone_filter else None)
+        if args.destinations_csv
+        else DESTINATION_SETS[args.destination_set]
+    )
     service_windows = build_service_windows(quote_date, WINDOW_SETS[args.window_set])
     api_key = read_api_key(args.env_file)
 
     if not args.dry_run and not api_key:
         print("GOPHR_API_KEY is not set. Run with --dry-run or provide the approved local env file.", file=sys.stderr)
         return 2
+    if args.outward_filter:
+        wanted = {code.upper() for code in args.outward_filter}
+        destinations = [destination for destination in destinations if destination["outward_code"].upper() in wanted]
+    if args.service_window_filter:
+        wanted_windows = set(args.service_window_filter)
+        service_windows = {name: value for name, value in service_windows.items() if name in wanted_windows}
+    vehicles = VEHICLES
+    if args.vehicle_filter:
+        wanted_vehicles = set(args.vehicle_filter)
+        vehicles = [vehicle for vehicle in VEHICLES if vehicle["label"] in wanted_vehicles]
 
     rows: list[dict[str, Any]] = []
     quoted_at = utc_now()
@@ -778,7 +829,7 @@ def main() -> int:
 
     for destination in destinations:
         for service_window_name, service_window in service_windows.items():
-            for vehicle in VEHICLES:
+            for vehicle in vehicles:
                 payload = build_payload(destination, vehicle, service_window_name, service_window)
                 status = 0
                 quote_status = "dry_run"
@@ -808,6 +859,7 @@ def main() -> int:
                 rows.append(
                     {
                         "quoted_at": quoted_at,
+                        "zone_band": destination.get("zone_band", ""),
                         "outward_code": destination["outward_code"],
                         "representative_postcode": destination["postcode"],
                         "address1": destination["address1"],
@@ -822,6 +874,9 @@ def main() -> int:
                         **summary,
                     }
                 )
+                if args.checkpoint_every and len(rows) % args.checkpoint_every == 0:
+                    write_csv(args.csv_out, rows)
+                    print(f"Checkpoint rows: {len(rows)}", flush=True)
 
                 if args.limit and len(rows) >= args.limit:
                     stopped_early = True
