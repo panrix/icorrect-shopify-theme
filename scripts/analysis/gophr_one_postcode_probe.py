@@ -97,7 +97,7 @@ def build_payload(destination: dict[str, str], vehicle: dict[str, Any]) -> dict[
                         "height": 8,
                         "weight": 5,
                         "is_food": 0,
-                        "is_fragile": 1,
+                        "is_fragile": 0,
                         "is_liquid": 0,
                         "is_not_rotatable": 0,
                         "is_glass": 0,

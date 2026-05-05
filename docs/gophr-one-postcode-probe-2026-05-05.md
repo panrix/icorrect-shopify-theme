@@ -1,6 +1,6 @@
 # Gophr One Postcode Probe
 
-**Generated:** 2026-05-05T03:42:05+00:00
+**Generated:** 2026-05-05T03:44:40+00:00
 **Mode:** live API call
 **Base URL:** `https://api.gophr.com/v2-commercial-api`
 
@@ -71,7 +71,7 @@
             "is_beef": 0,
             "is_flower": 0,
             "is_food": 0,
-            "is_fragile": 1,
+            "is_fragile": 0,
             "is_glass": 0,
             "is_liquid": 0,
             "is_not_rotatable": 0,
@@ -136,7 +136,7 @@
             "is_beef": 0,
             "is_flower": 0,
             "is_food": 0,
-            "is_fragile": 1,
+            "is_fragile": 0,
             "is_glass": 0,
             "is_liquid": 0,
             "is_not_rotatable": 0,
@@ -201,7 +201,7 @@
             "is_beef": 0,
             "is_flower": 0,
             "is_food": 0,
-            "is_fragile": 1,
+            "is_fragile": 0,
             "is_glass": 0,
             "is_liquid": 0,
             "is_not_rotatable": 0,
@@ -266,7 +266,7 @@
             "is_beef": 0,
             "is_flower": 0,
             "is_food": 0,
-            "is_fragile": 1,
+            "is_fragile": 0,
             "is_glass": 0,
             "is_liquid": 0,
             "is_not_rotatable": 0,
@@ -300,10 +300,10 @@
 ```json
 {
   "data": {
-    "delivery_eta": "2026-05-05T05:59:16+01:00",
+    "delivery_eta": "2026-05-05T06:01:50+01:00",
     "job_priority": 0,
     "min_realistic_time": 71,
-    "pickup_eta": "2026-05-05T05:12:02+01:00",
+    "pickup_eta": "2026-05-05T05:14:36+01:00",
     "price_gross": {
       "amount": 19.27,
       "currency": "GBP"
@@ -322,10 +322,10 @@
 ```json
 {
   "data": {
-    "delivery_eta": "2026-05-05T05:47:48+01:00",
+    "delivery_eta": "2026-05-05T05:50:22+01:00",
     "job_priority": 0,
     "min_realistic_time": 64,
-    "pickup_eta": "2026-05-05T05:12:03+01:00",
+    "pickup_eta": "2026-05-05T05:14:37+01:00",
     "price_gross": {
       "amount": 21.01,
       "currency": "GBP"
@@ -344,10 +344,10 @@
 ```json
 {
   "data": {
-    "delivery_eta": "2026-05-05T05:23:25+01:00",
+    "delivery_eta": "2026-05-05T05:25:59+01:00",
     "job_priority": 0,
     "min_realistic_time": 35,
-    "pickup_eta": "2026-05-05T05:12:04+01:00",
+    "pickup_eta": "2026-05-05T05:14:38+01:00",
     "price_gross": {
       "amount": 10.55,
       "currency": "GBP"
@@ -366,10 +366,10 @@
 ```json
 {
   "data": {
-    "delivery_eta": "2026-05-05T05:22:34+01:00",
+    "delivery_eta": "2026-05-05T05:25:08+01:00",
     "job_priority": 0,
     "min_realistic_time": 38,
-    "pickup_eta": "2026-05-05T05:12:05+01:00",
+    "pickup_eta": "2026-05-05T05:14:39+01:00",
     "price_gross": {
       "amount": 10.96,
       "currency": "GBP"

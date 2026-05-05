@@ -14,12 +14,12 @@ It requests two vehicle types using Gophr's documented integer enum:
 
 The vehicle enum is documented on the create-job reference. The probe applies the same field to the quote endpoint so we can verify whether quote requests honour it, reject it, or return a different allocated vehicle.
 
-The parcel is treated as a packaged Apple device:
+The parcel is treated as a normal packaged Apple device:
 
-- `is_fragile: 1`
+- `is_fragile: 0`
 - `is_glass: 0`
 
-In an earlier probe, setting `is_glass: 1` caused a requested pushbike quote to be reallocated to a different vehicle. Use `is_glass: 0` for a safely packaged device unless operations specifically wants glass-only handling.
+In earlier probes, setting `is_glass: 1` caused a requested pushbike quote to be reallocated to a different vehicle, and `is_fragile: 1` may add unnecessary cost. Use `is_fragile: 0` and `is_glass: 0` for the baseline postcode map unless operations specifically wants special handling.
 
 Official Gophr docs used:
 
