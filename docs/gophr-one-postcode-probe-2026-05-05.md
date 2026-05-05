@@ -1,8 +1,8 @@
 # Gophr One Postcode Probe
 
-**Generated:** 2026-05-05T03:33:49+00:00
-**Mode:** dry run
-**Base URL:** `https://api-sandbox.gophr.com/v2-commercial-api`
+**Generated:** 2026-05-05T03:42:05+00:00
+**Mode:** live API call
+**Base URL:** `https://api.gophr.com/v2-commercial-api`
 
 ## Safety
 
@@ -21,10 +21,10 @@
 
 | Outward | Postcode | Requested vehicle | HTTP | Status | Net | Gross | Returned vehicle | Error |
 |---|---|---:|---:|---|---:|---:|---|---|
-| SW18 | SW18 4TF | pushbike | 0 | dry_run |  |  |  |  |
-| SW18 | SW18 4TF | motorcycle | 0 | dry_run |  |  |  |  |
-| W1T | W1T 2LY | pushbike | 0 | dry_run |  |  |  |  |
-| W1T | W1T 2LY | motorcycle | 0 | dry_run |  |  |  |  |
+| SW18 | SW18 4TF | pushbike | 200 | ok | 16.06 GBP | 19.27 GBP | 10 |  |
+| SW18 | SW18 4TF | motorcycle | 200 | ok | 17.51 GBP | 21.01 GBP | 20 |  |
+| W1T | W1T 2LY | pushbike | 200 | ok | 8.79 GBP | 10.55 GBP | 10 |  |
+| W1T | W1T 2LY | motorcycle | 200 | ok | 9.13 GBP | 10.96 GBP | 20 |  |
 
 ## Redacted Payload Shape
 
@@ -36,18 +36,12 @@
         "dropoff_address1": "Wandsworth High Street",
         "dropoff_city": "London",
         "dropoff_country_code": "GB",
-        "dropoff_mobile_number": "07123456789",
+        "dropoff_mobile_number": "[REDACTED]",
         "dropoff_person_name": "Courier Probe",
         "dropoff_postcode": "SW18 4TF",
         "parcels": [
           {
-            "description": "Apple device for repair",
-            "external_id": "parcel-sw18-pushbike",
-            "height": 8,
-            "is_not_rotatable": 0,
-            "length": 38,
-            "weight": 5,
-            "width": 28
+            "parcel_external_id": "parcel-sw18-pushbike"
           }
         ],
         "sequence_number": 1
@@ -68,10 +62,33 @@
     ],
     "pickups": [
       {
+        "parcels": [
+          {
+            "height": 8,
+            "id_check": 0,
+            "is_alcohol": 0,
+            "is_baked": 0,
+            "is_beef": 0,
+            "is_flower": 0,
+            "is_food": 0,
+            "is_fragile": 1,
+            "is_glass": 0,
+            "is_liquid": 0,
+            "is_not_rotatable": 0,
+            "is_pork": 0,
+            "length": 38,
+            "parcel_description": "Apple device for repair",
+            "parcel_external_id": "parcel-sw18-pushbike",
+            "parcel_insurance_value": 1000,
+            "parcel_reference_number": "parcel-sw18-pushbike",
+            "weight": 5,
+            "width": 28
+          }
+        ],
         "pickup_address1": "12 Margaret Street",
         "pickup_city": "London",
         "pickup_country_code": "GB",
-        "pickup_mobile_number": "07123456789",
+        "pickup_mobile_number": "[REDACTED]",
         "pickup_person_name": "iCorrect",
         "pickup_postcode": "W1W 8JQ"
       }
@@ -84,18 +101,12 @@
         "dropoff_address1": "Wandsworth High Street",
         "dropoff_city": "London",
         "dropoff_country_code": "GB",
-        "dropoff_mobile_number": "07123456789",
+        "dropoff_mobile_number": "[REDACTED]",
         "dropoff_person_name": "Courier Probe",
         "dropoff_postcode": "SW18 4TF",
         "parcels": [
           {
-            "description": "Apple device for repair",
-            "external_id": "parcel-sw18-motorcycle",
-            "height": 8,
-            "is_not_rotatable": 0,
-            "length": 38,
-            "weight": 5,
-            "width": 28
+            "parcel_external_id": "parcel-sw18-motorcycle"
           }
         ],
         "sequence_number": 1
@@ -116,10 +127,33 @@
     ],
     "pickups": [
       {
+        "parcels": [
+          {
+            "height": 8,
+            "id_check": 0,
+            "is_alcohol": 0,
+            "is_baked": 0,
+            "is_beef": 0,
+            "is_flower": 0,
+            "is_food": 0,
+            "is_fragile": 1,
+            "is_glass": 0,
+            "is_liquid": 0,
+            "is_not_rotatable": 0,
+            "is_pork": 0,
+            "length": 38,
+            "parcel_description": "Apple device for repair",
+            "parcel_external_id": "parcel-sw18-motorcycle",
+            "parcel_insurance_value": 1000,
+            "parcel_reference_number": "parcel-sw18-motorcycle",
+            "weight": 5,
+            "width": 28
+          }
+        ],
         "pickup_address1": "12 Margaret Street",
         "pickup_city": "London",
         "pickup_country_code": "GB",
-        "pickup_mobile_number": "07123456789",
+        "pickup_mobile_number": "[REDACTED]",
         "pickup_person_name": "iCorrect",
         "pickup_postcode": "W1W 8JQ"
       }
@@ -132,18 +166,12 @@
         "dropoff_address1": "16 Charlotte Street",
         "dropoff_city": "London",
         "dropoff_country_code": "GB",
-        "dropoff_mobile_number": "07123456789",
+        "dropoff_mobile_number": "[REDACTED]",
         "dropoff_person_name": "Courier Probe",
         "dropoff_postcode": "W1T 2LY",
         "parcels": [
           {
-            "description": "Apple device for repair",
-            "external_id": "parcel-w1t-pushbike",
-            "height": 8,
-            "is_not_rotatable": 0,
-            "length": 38,
-            "weight": 5,
-            "width": 28
+            "parcel_external_id": "parcel-w1t-pushbike"
           }
         ],
         "sequence_number": 1
@@ -164,10 +192,33 @@
     ],
     "pickups": [
       {
+        "parcels": [
+          {
+            "height": 8,
+            "id_check": 0,
+            "is_alcohol": 0,
+            "is_baked": 0,
+            "is_beef": 0,
+            "is_flower": 0,
+            "is_food": 0,
+            "is_fragile": 1,
+            "is_glass": 0,
+            "is_liquid": 0,
+            "is_not_rotatable": 0,
+            "is_pork": 0,
+            "length": 38,
+            "parcel_description": "Apple device for repair",
+            "parcel_external_id": "parcel-w1t-pushbike",
+            "parcel_insurance_value": 1000,
+            "parcel_reference_number": "parcel-w1t-pushbike",
+            "weight": 5,
+            "width": 28
+          }
+        ],
         "pickup_address1": "12 Margaret Street",
         "pickup_city": "London",
         "pickup_country_code": "GB",
-        "pickup_mobile_number": "07123456789",
+        "pickup_mobile_number": "[REDACTED]",
         "pickup_person_name": "iCorrect",
         "pickup_postcode": "W1W 8JQ"
       }
@@ -180,18 +231,12 @@
         "dropoff_address1": "16 Charlotte Street",
         "dropoff_city": "London",
         "dropoff_country_code": "GB",
-        "dropoff_mobile_number": "07123456789",
+        "dropoff_mobile_number": "[REDACTED]",
         "dropoff_person_name": "Courier Probe",
         "dropoff_postcode": "W1T 2LY",
         "parcels": [
           {
-            "description": "Apple device for repair",
-            "external_id": "parcel-w1t-motorcycle",
-            "height": 8,
-            "is_not_rotatable": 0,
-            "length": 38,
-            "weight": 5,
-            "width": 28
+            "parcel_external_id": "parcel-w1t-motorcycle"
           }
         ],
         "sequence_number": 1
@@ -212,10 +257,33 @@
     ],
     "pickups": [
       {
+        "parcels": [
+          {
+            "height": 8,
+            "id_check": 0,
+            "is_alcohol": 0,
+            "is_baked": 0,
+            "is_beef": 0,
+            "is_flower": 0,
+            "is_food": 0,
+            "is_fragile": 1,
+            "is_glass": 0,
+            "is_liquid": 0,
+            "is_not_rotatable": 0,
+            "is_pork": 0,
+            "length": 38,
+            "parcel_description": "Apple device for repair",
+            "parcel_external_id": "parcel-w1t-motorcycle",
+            "parcel_insurance_value": 1000,
+            "parcel_reference_number": "parcel-w1t-motorcycle",
+            "weight": 5,
+            "width": 28
+          }
+        ],
         "pickup_address1": "12 Margaret Street",
         "pickup_city": "London",
         "pickup_country_code": "GB",
-        "pickup_mobile_number": "07123456789",
+        "pickup_mobile_number": "[REDACTED]",
         "pickup_person_name": "iCorrect",
         "pickup_postcode": "W1W 8JQ"
       }
@@ -223,4 +291,94 @@
     "vehicle_type": 20
   }
 ]
+```
+
+## Response Shape Notes
+
+### SW18 / pushbike / HTTP 200
+
+```json
+{
+  "data": {
+    "delivery_eta": "2026-05-05T05:59:16+01:00",
+    "job_priority": 0,
+    "min_realistic_time": 71,
+    "pickup_eta": "2026-05-05T05:12:02+01:00",
+    "price_gross": {
+      "amount": 19.27,
+      "currency": "GBP"
+    },
+    "price_net": {
+      "amount": 16.06,
+      "currency": "GBP"
+    },
+    "vehicle_type": 10
+  }
+}
+```
+
+### SW18 / motorcycle / HTTP 200
+
+```json
+{
+  "data": {
+    "delivery_eta": "2026-05-05T05:47:48+01:00",
+    "job_priority": 0,
+    "min_realistic_time": 64,
+    "pickup_eta": "2026-05-05T05:12:03+01:00",
+    "price_gross": {
+      "amount": 21.01,
+      "currency": "GBP"
+    },
+    "price_net": {
+      "amount": 17.51,
+      "currency": "GBP"
+    },
+    "vehicle_type": 20
+  }
+}
+```
+
+### W1T / pushbike / HTTP 200
+
+```json
+{
+  "data": {
+    "delivery_eta": "2026-05-05T05:23:25+01:00",
+    "job_priority": 0,
+    "min_realistic_time": 35,
+    "pickup_eta": "2026-05-05T05:12:04+01:00",
+    "price_gross": {
+      "amount": 10.55,
+      "currency": "GBP"
+    },
+    "price_net": {
+      "amount": 8.79,
+      "currency": "GBP"
+    },
+    "vehicle_type": 10
+  }
+}
+```
+
+### W1T / motorcycle / HTTP 200
+
+```json
+{
+  "data": {
+    "delivery_eta": "2026-05-05T05:22:34+01:00",
+    "job_priority": 0,
+    "min_realistic_time": 38,
+    "pickup_eta": "2026-05-05T05:12:05+01:00",
+    "price_gross": {
+      "amount": 10.96,
+      "currency": "GBP"
+    },
+    "price_net": {
+      "amount": 9.13,
+      "currency": "GBP"
+    },
+    "vehicle_type": 20
+  }
+}
 ```

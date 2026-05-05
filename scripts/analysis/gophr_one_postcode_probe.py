@@ -71,6 +71,7 @@ def utc_now() -> str:
 
 
 def build_payload(destination: dict[str, str], vehicle: dict[str, Any]) -> dict[str, Any]:
+    parcel_external_id = f"parcel-{destination['outward_code'].lower()}-{vehicle['label']}"
     return {
         "external_id": f"icorrect-probe-{destination['outward_code'].lower()}-{vehicle['label']}",
         "vehicle_type": vehicle["vehicle_type"],
@@ -84,6 +85,29 @@ def build_payload(destination: dict[str, str], vehicle: dict[str, Any]) -> dict[
                 "pickup_country_code": ORIGIN["country_code"],
                 "pickup_person_name": ORIGIN["person_name"],
                 "pickup_mobile_number": ORIGIN["mobile_number"],
+                "parcels": [
+                    {
+                        "parcel_external_id": parcel_external_id,
+                        "parcel_reference_number": parcel_external_id,
+                        "parcel_description": "Apple device for repair",
+                        "parcel_insurance_value": 1000,
+                        "id_check": 0,
+                        "length": 38,
+                        "width": 28,
+                        "height": 8,
+                        "weight": 5,
+                        "is_food": 0,
+                        "is_fragile": 1,
+                        "is_liquid": 0,
+                        "is_not_rotatable": 0,
+                        "is_glass": 0,
+                        "is_baked": 0,
+                        "is_flower": 0,
+                        "is_alcohol": 0,
+                        "is_beef": 0,
+                        "is_pork": 0,
+                    }
+                ],
             }
         ],
         "dropoffs": [
@@ -95,17 +119,7 @@ def build_payload(destination: dict[str, str], vehicle: dict[str, Any]) -> dict[
                 "dropoff_person_name": destination["person_name"],
                 "dropoff_mobile_number": destination["mobile_number"],
                 "sequence_number": 1,
-                "parcels": [
-                    {
-                        "external_id": f"parcel-{destination['outward_code'].lower()}-{vehicle['label']}",
-                        "description": "Apple device for repair",
-                        "length": 38,
-                        "width": 28,
-                        "height": 8,
-                        "weight": 5,
-                        "is_not_rotatable": 0,
-                    }
-                ],
+                "parcels": [{"parcel_external_id": parcel_external_id}],
             }
         ],
         "meta_data": [
@@ -118,7 +132,14 @@ def build_payload(destination: dict[str, str], vehicle: dict[str, Any]) -> dict[
 def redact(value: Any) -> Any:
     if isinstance(value, dict):
         return {
-            key: ("[REDACTED]" if key.upper() in {"API-KEY", "AUTHORIZATION"} else redact(item))
+            key: (
+                "[REDACTED]"
+                if key.upper() in {"API-KEY", "AUTHORIZATION"}
+                or key.lower().endswith("_mobile_number")
+                or key.lower().endswith("_phone_number")
+                or key.lower().endswith("_email")
+                else redact(item)
+            )
             for key, item in value.items()
         }
     if isinstance(value, list):
@@ -142,6 +163,15 @@ def find_nested(data: Any, names: set[str]) -> dict[str, Any]:
 
     walk(data)
     return found
+
+
+def format_money(value: Any) -> str:
+    if isinstance(value, dict):
+        amount = value.get("amount")
+        currency = value.get("currency")
+        if amount is not None and currency:
+            return f"{amount:.2f} {currency}" if isinstance(amount, float) else f"{amount} {currency}"
+    return str(value) if value not in (None, "") else ""
 
 
 def summarise_response(status: int, body: str) -> tuple[dict[str, Any], str]:
@@ -185,8 +215,8 @@ def summarise_response(status: int, body: str) -> tuple[dict[str, Any], str]:
     summary = {
         "response_type": "json",
         "response_keys": keys,
-        "price_net": fields.get("price_net", fields.get("net_price", "")),
-        "price_gross": fields.get("price_gross", fields.get("gross_price", fields.get("price", ""))),
+        "price_net": format_money(fields.get("price_net", fields.get("net_price", ""))),
+        "price_gross": format_money(fields.get("price_gross", fields.get("gross_price", fields.get("price", "")))),
         "vehicle_returned": fields.get("vehicle_type", fields.get("vehicle", "")),
         "distance": fields.get("distance", fields.get("distance_meters", "")),
         "eta": fields.get("eta", fields.get("pickup_eta", fields.get("delivery_eta", ""))),
@@ -236,7 +266,7 @@ def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
         "error",
     ]
     with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
@@ -300,7 +330,7 @@ def write_markdown(
             lines.append(response["body_excerpt"])
             lines.append("```")
             lines.append("")
-    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
 
 
 def parse_args() -> argparse.Namespace:
