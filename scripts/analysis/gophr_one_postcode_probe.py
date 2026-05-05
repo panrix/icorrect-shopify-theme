@@ -65,63 +65,98 @@ VEHICLES = [
     {"label": "motorcycle", "vehicle_type": 20},
 ]
 
+SERVICE_WINDOWS = {
+    "asap": {},
+    "economy-2026-05-05": {
+        "pickup_after": "2026-05-05T12:00:00+01:00",
+        "deliver_before": "2026-05-05T18:00:00+01:00",
+    },
+}
+
+PARCEL_PROFILES = {
+    "macbook": {
+        "description": "Apple device for repair",
+        "insurance_value": 1000,
+        "length": 38,
+        "width": 28,
+        "height": 8,
+        "weight": 5,
+    },
+    "small-no-insurance": {
+        "description": "Small packaged device for repair",
+        "insurance_value": 0,
+        "length": 20,
+        "width": 15,
+        "height": 5,
+        "weight": 1,
+    },
+}
+
 
 def utc_now() -> str:
     return dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat()
 
 
-def build_payload(destination: dict[str, str], vehicle: dict[str, Any]) -> dict[str, Any]:
+def build_payload(
+    destination: dict[str, str],
+    vehicle: dict[str, Any],
+    service_window: dict[str, str],
+    parcel_profile: dict[str, Any],
+) -> dict[str, Any]:
     parcel_external_id = f"parcel-{destination['outward_code'].lower()}-{vehicle['label']}"
+    pickup = {
+        "pickup_address1": ORIGIN["address1"],
+        "pickup_city": ORIGIN["city"],
+        "pickup_postcode": ORIGIN["postcode"],
+        "pickup_country_code": ORIGIN["country_code"],
+        "pickup_person_name": ORIGIN["person_name"],
+        "pickup_mobile_number": ORIGIN["mobile_number"],
+        "parcels": [
+            {
+                "parcel_external_id": parcel_external_id,
+                "parcel_reference_number": parcel_external_id,
+                "parcel_description": parcel_profile["description"],
+                "parcel_insurance_value": parcel_profile["insurance_value"],
+                "id_check": 0,
+                "length": parcel_profile["length"],
+                "width": parcel_profile["width"],
+                "height": parcel_profile["height"],
+                "weight": parcel_profile["weight"],
+                "is_food": 0,
+                "is_fragile": 0,
+                "is_liquid": 0,
+                "is_not_rotatable": 0,
+                "is_glass": 0,
+                "is_baked": 0,
+                "is_flower": 0,
+                "is_alcohol": 0,
+                "is_beef": 0,
+                "is_pork": 0,
+            }
+        ],
+    }
+    dropoff = {
+        "dropoff_address1": destination["address1"],
+        "dropoff_city": destination["city"],
+        "dropoff_postcode": destination["postcode"],
+        "dropoff_country_code": destination["country_code"],
+        "dropoff_person_name": destination["person_name"],
+        "dropoff_mobile_number": destination["mobile_number"],
+        "sequence_number": 1,
+        "parcels": [{"parcel_external_id": parcel_external_id}],
+    }
+    if service_window.get("pickup_after"):
+        pickup["earliest_pickup_time"] = service_window["pickup_after"]
+    if service_window.get("deliver_before"):
+        dropoff["dropoff_deadline"] = service_window["deliver_before"]
+
     return {
         "external_id": f"icorrect-probe-{destination['outward_code'].lower()}-{vehicle['label']}",
         "vehicle_type": vehicle["vehicle_type"],
         "is_confirmed": 0,
         "is_fixed_sequence": 0,
-        "pickups": [
-            {
-                "pickup_address1": ORIGIN["address1"],
-                "pickup_city": ORIGIN["city"],
-                "pickup_postcode": ORIGIN["postcode"],
-                "pickup_country_code": ORIGIN["country_code"],
-                "pickup_person_name": ORIGIN["person_name"],
-                "pickup_mobile_number": ORIGIN["mobile_number"],
-                "parcels": [
-                    {
-                        "parcel_external_id": parcel_external_id,
-                        "parcel_reference_number": parcel_external_id,
-                        "parcel_description": "Apple device for repair",
-                        "parcel_insurance_value": 1000,
-                        "id_check": 0,
-                        "length": 38,
-                        "width": 28,
-                        "height": 8,
-                        "weight": 5,
-                        "is_food": 0,
-                        "is_fragile": 0,
-                        "is_liquid": 0,
-                        "is_not_rotatable": 0,
-                        "is_glass": 0,
-                        "is_baked": 0,
-                        "is_flower": 0,
-                        "is_alcohol": 0,
-                        "is_beef": 0,
-                        "is_pork": 0,
-                    }
-                ],
-            }
-        ],
-        "dropoffs": [
-            {
-                "dropoff_address1": destination["address1"],
-                "dropoff_city": destination["city"],
-                "dropoff_postcode": destination["postcode"],
-                "dropoff_country_code": destination["country_code"],
-                "dropoff_person_name": destination["person_name"],
-                "dropoff_mobile_number": destination["mobile_number"],
-                "sequence_number": 1,
-                "parcels": [{"parcel_external_id": parcel_external_id}],
-            }
-        ],
+        "pickups": [pickup],
+        "dropoffs": [dropoff],
         "meta_data": [
             {"key": "source", "value": "icorrect-shopify-theme probe"},
             {"key": "postcode_outward_code", "value": destination["outward_code"]},
@@ -254,6 +289,10 @@ def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
         "destination_label",
         "requested_vehicle",
         "requested_vehicle_type",
+        "service_window",
+        "pickup_after",
+        "deliver_before",
+        "parcel_profile",
         "http_status",
         "quote_status",
         "response_type",
@@ -278,6 +317,9 @@ def write_markdown(
     responses: list[dict[str, Any]],
     dry_run: bool,
     base_url: str,
+    service_window_name: str,
+    service_window: dict[str, str],
+    parcel_profile_name: str,
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     lines = [
@@ -286,6 +328,10 @@ def write_markdown(
         f"**Generated:** {utc_now()}",
         f"**Mode:** {'dry run' if dry_run else 'live API call'}",
         f"**Base URL:** `{base_url}`",
+        f"**Service window:** `{service_window_name}`",
+        f"**Pickup after:** `{service_window.get('pickup_after', 'not set')}`",
+        f"**Deliver before:** `{service_window.get('deliver_before', 'not set')}`",
+        f"**Parcel profile:** `{parcel_profile_name}`",
         "",
         "## Safety",
         "",
@@ -337,6 +383,18 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dry-run", action="store_true", help="write payload/result files without calling Gophr")
     parser.add_argument("--base-url", default=os.environ.get("GOPHR_BASE_URL", DEFAULT_BASE_URL))
+    parser.add_argument(
+        "--service-window",
+        choices=sorted(SERVICE_WINDOWS),
+        default="asap",
+        help="Quote either ASAP or the 2026-05-05 economy window from the manual Gophr UI check.",
+    )
+    parser.add_argument(
+        "--parcel-profile",
+        choices=sorted(PARCEL_PROFILES),
+        default="macbook",
+        help="Parcel assumptions to send in the quote payload.",
+    )
     parser.add_argument("--doc-out", type=Path, default=DEFAULT_DOC_OUT)
     parser.add_argument("--csv-out", type=Path, default=DEFAULT_CSV_OUT)
     return parser.parse_args()
@@ -353,11 +411,13 @@ def main() -> int:
     rows: list[dict[str, Any]] = []
     payloads: list[dict[str, Any]] = []
     responses: list[dict[str, Any]] = []
+    service_window = SERVICE_WINDOWS[args.service_window]
+    parcel_profile = PARCEL_PROFILES[args.parcel_profile]
 
     quoted_at = utc_now()
     for destination in DESTINATIONS:
         for vehicle in VEHICLES:
-            payload = build_payload(destination, vehicle)
+            payload = build_payload(destination, vehicle, service_window, parcel_profile)
             payloads.append(payload)
             status = 0
             body = ""
@@ -395,6 +455,10 @@ def main() -> int:
                     "destination_label": destination["label"],
                     "requested_vehicle": vehicle["label"],
                     "requested_vehicle_type": vehicle["vehicle_type"],
+                    "service_window": args.service_window,
+                    "pickup_after": service_window.get("pickup_after", ""),
+                    "deliver_before": service_window.get("deliver_before", ""),
+                    "parcel_profile": args.parcel_profile,
                     "http_status": status,
                     "quote_status": quote_status,
                     **summary,
@@ -402,7 +466,17 @@ def main() -> int:
             )
 
     write_csv(args.csv_out, rows)
-    write_markdown(args.doc_out, rows, payloads, responses, args.dry_run, args.base_url)
+    write_markdown(
+        args.doc_out,
+        rows,
+        payloads,
+        responses,
+        args.dry_run,
+        args.base_url,
+        args.service_window,
+        service_window,
+        args.parcel_profile,
+    )
     print(f"Wrote {args.csv_out}")
     print(f"Wrote {args.doc_out}")
     return 0

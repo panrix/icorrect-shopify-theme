@@ -1,8 +1,12 @@
 # Gophr One Postcode Probe
 
-**Generated:** 2026-05-05T03:44:40+00:00
+**Generated:** 2026-05-05T03:51:47+00:00
 **Mode:** live API call
 **Base URL:** `https://api.gophr.com/v2-commercial-api`
+**Service window:** `economy-2026-05-05`
+**Pickup after:** `2026-05-05T12:00:00+01:00`
+**Deliver before:** `2026-05-05T18:00:00+01:00`
+**Parcel profile:** `small-no-insurance`
 
 ## Safety
 
@@ -21,10 +25,10 @@
 
 | Outward | Postcode | Requested vehicle | HTTP | Status | Net | Gross | Returned vehicle | Error |
 |---|---|---:|---:|---|---:|---:|---|---|
-| SW18 | SW18 4TF | pushbike | 200 | ok | 16.06 GBP | 19.27 GBP | 10 |  |
-| SW18 | SW18 4TF | motorcycle | 200 | ok | 17.51 GBP | 21.01 GBP | 20 |  |
-| W1T | W1T 2LY | pushbike | 200 | ok | 8.79 GBP | 10.55 GBP | 10 |  |
-| W1T | W1T 2LY | motorcycle | 200 | ok | 9.13 GBP | 10.96 GBP | 20 |  |
+| SW18 | SW18 4TF | pushbike | 200 | ok | 14.39 GBP | 17.27 GBP | 10 |  |
+| SW18 | SW18 4TF | motorcycle | 200 | ok | 15.84 GBP | 19.01 GBP | 20 |  |
+| W1T | W1T 2LY | pushbike | 200 | ok | 7.12 GBP | 8.54 GBP | 10 |  |
+| W1T | W1T 2LY | motorcycle | 200 | ok | 7.46 GBP | 8.95 GBP | 20 |  |
 
 ## Redacted Payload Shape
 
@@ -36,6 +40,7 @@
         "dropoff_address1": "Wandsworth High Street",
         "dropoff_city": "London",
         "dropoff_country_code": "GB",
+        "dropoff_deadline": "2026-05-05T18:00:00+01:00",
         "dropoff_mobile_number": "[REDACTED]",
         "dropoff_person_name": "Courier Probe",
         "dropoff_postcode": "SW18 4TF",
@@ -62,9 +67,10 @@
     ],
     "pickups": [
       {
+        "earliest_pickup_time": "2026-05-05T12:00:00+01:00",
         "parcels": [
           {
-            "height": 8,
+            "height": 5,
             "id_check": 0,
             "is_alcohol": 0,
             "is_baked": 0,
@@ -76,13 +82,13 @@
             "is_liquid": 0,
             "is_not_rotatable": 0,
             "is_pork": 0,
-            "length": 38,
-            "parcel_description": "Apple device for repair",
+            "length": 20,
+            "parcel_description": "Small packaged device for repair",
             "parcel_external_id": "parcel-sw18-pushbike",
-            "parcel_insurance_value": 1000,
+            "parcel_insurance_value": 0,
             "parcel_reference_number": "parcel-sw18-pushbike",
-            "weight": 5,
-            "width": 28
+            "weight": 1,
+            "width": 15
           }
         ],
         "pickup_address1": "12 Margaret Street",
@@ -101,6 +107,7 @@
         "dropoff_address1": "Wandsworth High Street",
         "dropoff_city": "London",
         "dropoff_country_code": "GB",
+        "dropoff_deadline": "2026-05-05T18:00:00+01:00",
         "dropoff_mobile_number": "[REDACTED]",
         "dropoff_person_name": "Courier Probe",
         "dropoff_postcode": "SW18 4TF",
@@ -127,9 +134,10 @@
     ],
     "pickups": [
       {
+        "earliest_pickup_time": "2026-05-05T12:00:00+01:00",
         "parcels": [
           {
-            "height": 8,
+            "height": 5,
             "id_check": 0,
             "is_alcohol": 0,
             "is_baked": 0,
@@ -141,13 +149,13 @@
             "is_liquid": 0,
             "is_not_rotatable": 0,
             "is_pork": 0,
-            "length": 38,
-            "parcel_description": "Apple device for repair",
+            "length": 20,
+            "parcel_description": "Small packaged device for repair",
             "parcel_external_id": "parcel-sw18-motorcycle",
-            "parcel_insurance_value": 1000,
+            "parcel_insurance_value": 0,
             "parcel_reference_number": "parcel-sw18-motorcycle",
-            "weight": 5,
-            "width": 28
+            "weight": 1,
+            "width": 15
           }
         ],
         "pickup_address1": "12 Margaret Street",
@@ -166,6 +174,7 @@
         "dropoff_address1": "16 Charlotte Street",
         "dropoff_city": "London",
         "dropoff_country_code": "GB",
+        "dropoff_deadline": "2026-05-05T18:00:00+01:00",
         "dropoff_mobile_number": "[REDACTED]",
         "dropoff_person_name": "Courier Probe",
         "dropoff_postcode": "W1T 2LY",
@@ -192,9 +201,10 @@
     ],
     "pickups": [
       {
+        "earliest_pickup_time": "2026-05-05T12:00:00+01:00",
         "parcels": [
           {
-            "height": 8,
+            "height": 5,
             "id_check": 0,
             "is_alcohol": 0,
             "is_baked": 0,
@@ -206,13 +216,13 @@
             "is_liquid": 0,
             "is_not_rotatable": 0,
             "is_pork": 0,
-            "length": 38,
-            "parcel_description": "Apple device for repair",
+            "length": 20,
+            "parcel_description": "Small packaged device for repair",
             "parcel_external_id": "parcel-w1t-pushbike",
-            "parcel_insurance_value": 1000,
+            "parcel_insurance_value": 0,
             "parcel_reference_number": "parcel-w1t-pushbike",
-            "weight": 5,
-            "width": 28
+            "weight": 1,
+            "width": 15
           }
         ],
         "pickup_address1": "12 Margaret Street",
@@ -231,6 +241,7 @@
         "dropoff_address1": "16 Charlotte Street",
         "dropoff_city": "London",
         "dropoff_country_code": "GB",
+        "dropoff_deadline": "2026-05-05T18:00:00+01:00",
         "dropoff_mobile_number": "[REDACTED]",
         "dropoff_person_name": "Courier Probe",
         "dropoff_postcode": "W1T 2LY",
@@ -257,9 +268,10 @@
     ],
     "pickups": [
       {
+        "earliest_pickup_time": "2026-05-05T12:00:00+01:00",
         "parcels": [
           {
-            "height": 8,
+            "height": 5,
             "id_check": 0,
             "is_alcohol": 0,
             "is_baked": 0,
@@ -271,13 +283,13 @@
             "is_liquid": 0,
             "is_not_rotatable": 0,
             "is_pork": 0,
-            "length": 38,
-            "parcel_description": "Apple device for repair",
+            "length": 20,
+            "parcel_description": "Small packaged device for repair",
             "parcel_external_id": "parcel-w1t-motorcycle",
-            "parcel_insurance_value": 1000,
+            "parcel_insurance_value": 0,
             "parcel_reference_number": "parcel-w1t-motorcycle",
-            "weight": 5,
-            "width": 28
+            "weight": 1,
+            "width": 15
           }
         ],
         "pickup_address1": "12 Margaret Street",
@@ -300,16 +312,16 @@
 ```json
 {
   "data": {
-    "delivery_eta": "2026-05-05T06:01:50+01:00",
+    "delivery_eta": "2026-05-05T12:47:14+01:00",
     "job_priority": 0,
     "min_realistic_time": 71,
-    "pickup_eta": "2026-05-05T05:14:36+01:00",
+    "pickup_eta": "2026-05-05T12:00:00+01:00",
     "price_gross": {
-      "amount": 19.27,
+      "amount": 17.27,
       "currency": "GBP"
     },
     "price_net": {
-      "amount": 16.06,
+      "amount": 14.39,
       "currency": "GBP"
     },
     "vehicle_type": 10
@@ -322,16 +334,16 @@
 ```json
 {
   "data": {
-    "delivery_eta": "2026-05-05T05:50:22+01:00",
+    "delivery_eta": "2026-05-05T12:35:45+01:00",
     "job_priority": 0,
     "min_realistic_time": 64,
-    "pickup_eta": "2026-05-05T05:14:37+01:00",
+    "pickup_eta": "2026-05-05T12:00:00+01:00",
     "price_gross": {
-      "amount": 21.01,
+      "amount": 19.01,
       "currency": "GBP"
     },
     "price_net": {
-      "amount": 17.51,
+      "amount": 15.84,
       "currency": "GBP"
     },
     "vehicle_type": 20
@@ -344,16 +356,16 @@
 ```json
 {
   "data": {
-    "delivery_eta": "2026-05-05T05:25:59+01:00",
+    "delivery_eta": "2026-05-05T12:11:21+01:00",
     "job_priority": 0,
     "min_realistic_time": 35,
-    "pickup_eta": "2026-05-05T05:14:38+01:00",
+    "pickup_eta": "2026-05-05T12:00:00+01:00",
     "price_gross": {
-      "amount": 10.55,
+      "amount": 8.54,
       "currency": "GBP"
     },
     "price_net": {
-      "amount": 8.79,
+      "amount": 7.12,
       "currency": "GBP"
     },
     "vehicle_type": 10
@@ -366,16 +378,16 @@
 ```json
 {
   "data": {
-    "delivery_eta": "2026-05-05T05:25:08+01:00",
+    "delivery_eta": "2026-05-05T12:10:29+01:00",
     "job_priority": 0,
     "min_realistic_time": 38,
-    "pickup_eta": "2026-05-05T05:14:39+01:00",
+    "pickup_eta": "2026-05-05T12:00:00+01:00",
     "price_gross": {
-      "amount": 10.96,
+      "amount": 8.95,
       "currency": "GBP"
     },
     "price_net": {
-      "amount": 9.13,
+      "amount": 7.46,
       "currency": "GBP"
     },
     "vehicle_type": 20

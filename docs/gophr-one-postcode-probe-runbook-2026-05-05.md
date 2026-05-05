@@ -71,7 +71,9 @@ export GOPHR_PROBE_MOBILE
 Then run:
 
 ```bash
-python3 scripts/analysis/gophr_one_postcode_probe.py
+python3 scripts/analysis/gophr_one_postcode_probe.py \
+  --service-window economy-2026-05-05 \
+  --parcel-profile small-no-insurance
 ```
 
 Clear shell secrets after the probe:
@@ -86,6 +88,7 @@ If the key is stored on the VPS, copy it into the current shell without echoing 
 
 Review the generated CSV line by line:
 
+- whether the API economy window matches the manual Gophr UI economy price
 - whether SW18 pushbike is rejected or repriced
 - whether SW18 motorbike succeeds
 - whether W1T pushbike succeeds
