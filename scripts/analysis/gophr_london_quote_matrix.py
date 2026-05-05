@@ -40,7 +40,7 @@ ORIGIN = {
     "mobile_number": PROBE_MOBILE,
 }
 
-DESTINATIONS = [
+PILOT_DESTINATIONS = [
     {
         "outward_code": "W1T",
         "label": "The Fitzroy Tavern",
@@ -208,18 +208,87 @@ DESTINATIONS = [
     },
 ]
 
+CENTRAL_SHORT_DESTINATIONS = [
+    {
+        "outward_code": "W1",
+        "label": "Apple Regent Street",
+        "address1": "235 Regent Street",
+        "city": "London",
+        "postcode": "W1B 2EL",
+        "country_code": "GB",
+        "person_name": "Courier Probe",
+        "mobile_number": PROBE_MOBILE,
+        "source": "public commercial address",
+    },
+    {
+        "outward_code": "SW1",
+        "label": "Buckingham Palace",
+        "address1": "Buckingham Palace",
+        "city": "London",
+        "postcode": "SW1A 1AA",
+        "country_code": "GB",
+        "person_name": "Courier Probe",
+        "mobile_number": PROBE_MOBILE,
+        "source": "public landmark address",
+    },
+    {
+        "outward_code": "NW1",
+        "label": "The British Library",
+        "address1": "96 Euston Road",
+        "city": "London",
+        "postcode": "NW1 2DB",
+        "country_code": "GB",
+        "person_name": "Courier Probe",
+        "mobile_number": PROBE_MOBILE,
+        "source": "public landmark address",
+    },
+    {
+        "outward_code": "E1",
+        "label": "Whitechapel Gallery",
+        "address1": "77-82 Whitechapel High Street",
+        "city": "London",
+        "postcode": "E1 7QX",
+        "country_code": "GB",
+        "person_name": "Courier Probe",
+        "mobile_number": PROBE_MOBILE,
+        "source": "public venue address",
+    },
+]
+
+DESTINATION_SETS = {
+    "pilot": PILOT_DESTINATIONS,
+    "central-short": CENTRAL_SHORT_DESTINATIONS,
+}
+
 VEHICLES = [
     {"label": "pushbike", "vehicle_type": 10},
     {"label": "motorcycle", "vehicle_type": 20},
 ]
 
-WINDOW_SPECS = {
+PILOT_WINDOW_SPECS = {
     "economy_9_18": ("09:00", "18:00"),
     "economy_12_18": ("12:00", "18:00"),
     "tight_9_12": ("09:00", "12:00"),
     "tight_12_15": ("12:00", "15:00"),
     "tight_15_18": ("15:00", "18:00"),
     "direct_now_asap": (None, None),
+}
+
+SHORT_WINDOW_SPECS = {
+    "three_hour_9_12": ("09:00", "12:00"),
+    "three_hour_12_15": ("12:00", "15:00"),
+    "three_hour_15_18": ("15:00", "18:00"),
+    "two_hour_9_11": ("09:00", "11:00"),
+    "two_hour_12_14": ("12:00", "14:00"),
+    "two_hour_15_17": ("15:00", "17:00"),
+    "one_hour_9_10": ("09:00", "10:00"),
+    "one_hour_12_13": ("12:00", "13:00"),
+    "one_hour_15_16": ("15:00", "16:00"),
+}
+
+WINDOW_SETS = {
+    "pilot": PILOT_WINDOW_SPECS,
+    "short-windows": SHORT_WINDOW_SPECS,
 }
 
 WINDOW_ID_CODES = {
@@ -229,6 +298,15 @@ WINDOW_ID_CODES = {
     "tight_12_15": "t1215",
     "tight_15_18": "t1518",
     "direct_now_asap": "asap",
+    "three_hour_9_12": "3h9",
+    "three_hour_12_15": "3h12",
+    "three_hour_15_18": "3h15",
+    "two_hour_9_11": "2h9",
+    "two_hour_12_14": "2h12",
+    "two_hour_15_17": "2h15",
+    "one_hour_9_10": "1h9",
+    "one_hour_12_13": "1h12",
+    "one_hour_15_16": "1h15",
 }
 
 VEHICLE_ID_CODES = {
@@ -278,9 +356,9 @@ def london_timestamp(quote_date: dt.date, hhmm: str) -> str:
     return value.isoformat()
 
 
-def build_service_windows(quote_date: dt.date) -> dict[str, dict[str, str]]:
+def build_service_windows(quote_date: dt.date, window_specs: dict[str, tuple[str | None, str | None]]) -> dict[str, dict[str, str]]:
     windows: dict[str, dict[str, str]] = {}
-    for name, (pickup_after, deliver_before) in WINDOW_SPECS.items():
+    for name, (pickup_after, deliver_before) in window_specs.items():
         window: dict[str, str] = {}
         if pickup_after:
             window["pickup_after"] = london_timestamp(quote_date, pickup_after)
@@ -547,10 +625,14 @@ def vehicle_deltas(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def write_markdown(
     path: Path,
     rows: list[dict[str, Any]],
+    destinations: list[dict[str, str]],
+    csv_out: Path,
     dry_run: bool,
     base_url: str,
     quote_date: dt.date,
     stopped_early: bool,
+    destination_set: str,
+    window_set: str,
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     ok_rows = successful_rows(rows)
@@ -561,7 +643,7 @@ def write_markdown(
     source_lines = [
         f"- {destination['outward_code']}: {destination['label']}, {destination['address1']}, "
         f"{destination['city']}, {destination['postcode']} ({destination['source']})"
-        for destination in DESTINATIONS
+        for destination in destinations
     ]
 
     lines = [
@@ -571,6 +653,8 @@ def write_markdown(
         f"**Mode:** {'dry run' if dry_run else 'live API call'}",
         f"**Base URL:** `{base_url}`",
         f"**Quote date:** `{quote_date.isoformat()}`",
+        f"**Destination set:** `{destination_set}`",
+        f"**Window set:** `{window_set}`",
         f"**Rows written:** {len(rows)}",
         f"**Successful quotes:** {len(ok_rows)}",
         f"**Stopped early:** {'yes' if stopped_early else 'no'}",
@@ -654,7 +738,7 @@ def write_markdown(
             "",
             "## Raw Result Notes",
             "",
-            "- Full row-level output is in `data/gophr-london-quote-matrix-pilot-2026-05-05.csv`.",
+            f"- Full row-level output is in `{csv_out}`.",
         ]
     )
     path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
@@ -668,6 +752,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--doc-out", type=Path, default=DEFAULT_DOC_OUT)
     parser.add_argument("--csv-out", type=Path, default=DEFAULT_CSV_OUT)
     parser.add_argument("--env-file", type=Path, default=DEFAULT_ENV_FILE)
+    parser.add_argument("--destination-set", choices=sorted(DESTINATION_SETS), default="pilot")
+    parser.add_argument("--window-set", choices=sorted(WINDOW_SETS), default="pilot")
     parser.add_argument("--limit", type=int, default=0, help="optional row limit for smoke tests")
     parser.add_argument("--sleep", type=float, default=0.15, help="seconds to pause between live API calls")
     parser.add_argument("--max-consecutive-errors", type=int, default=20)
@@ -677,7 +763,8 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     quote_date = dt.date.fromisoformat(args.quote_date)
-    service_windows = build_service_windows(quote_date)
+    destinations = DESTINATION_SETS[args.destination_set]
+    service_windows = build_service_windows(quote_date, WINDOW_SETS[args.window_set])
     api_key = read_api_key(args.env_file)
 
     if not args.dry_run and not api_key:
@@ -689,7 +776,7 @@ def main() -> int:
     consecutive_errors = 0
     stopped_early = False
 
-    for destination in DESTINATIONS:
+    for destination in destinations:
         for service_window_name, service_window in service_windows.items():
             for vehicle in VEHICLES:
                 payload = build_payload(destination, vehicle, service_window_name, service_window)
@@ -748,7 +835,18 @@ def main() -> int:
             break
 
     write_csv(args.csv_out, rows)
-    write_markdown(args.doc_out, rows, args.dry_run, args.base_url, quote_date, stopped_early)
+    write_markdown(
+        args.doc_out,
+        rows,
+        destinations,
+        args.csv_out,
+        args.dry_run,
+        args.base_url,
+        quote_date,
+        stopped_early,
+        args.destination_set,
+        args.window_set,
+    )
     print(f"Wrote {args.csv_out}")
     print(f"Wrote {args.doc_out}")
     print(f"Rows: {len(rows)}")
