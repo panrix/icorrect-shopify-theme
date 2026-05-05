@@ -57,6 +57,7 @@ The decision app returns a list of customer-safe options:
 
 ```json
 {
+  "quote_id": "courier_quote_20260505_001",
   "postcode": "W1T",
   "postcode_band": "standard_free_candidate_priority_available",
   "same_day_slots_remaining": 2,
@@ -65,19 +66,16 @@ The decision app returns a list of customer-safe options:
       "service_level": "standard",
       "label": "Free standard courier",
       "customer_price_gross": 0,
-      "icorrect_one_way_cost_gross": 8.54,
-      "icorrect_two_way_cost_gross": 17.08,
-      "icorrect_subsidy_gross": 17.08,
-      "net_contribution_after_logistics": 52.30,
       "estimated_collection_window": "12:00-15:00",
       "estimated_return_window": "17:00-19:00",
       "same_day_return": true,
-      "shopify_variant_id": "gid://shopify/ProductVariant/...",
-      "decision_reason": "central postcode, profitable repair, same-day slot available"
+      "shopify_variant_id": "gid://shopify/ProductVariant/..."
     }
   ]
 }
 ```
+
+Internal cost, subsidy, margin band, and profitability values should be stored server-side against the `quote_id` or `decision_id`. They should not be sent to theme JavaScript or embedded in cart properties.
 
 ## Courier Service Levels
 
@@ -101,6 +99,8 @@ Suggested initial courier variants:
 - London Courier Urgent - 39.99
 - London Courier Urgent - 49.99
 - London Courier Manual Quote
+
+Free courier should be represented by a zero-price courier variant in phase one. This keeps the cart shape consistent: every courier selection has a repair variant, a courier variant, and a decision ID. Metadata-only free courier is deferred unless the zero-price variant creates operational issues in Shopify.
 
 ## Profitability Model
 
@@ -165,7 +165,10 @@ Recommended initial rule:
 ```text
 same_day_slots_total = 3 per day
 same_day_cutoff = 12:00 local London time
+quote_ttl = 15 minutes
 ```
+
+Same-day slots should not be consumed when a customer merely views service options. A slot should be reserved atomically when the customer adds a same-day courier option to cart. The reservation should expire after `quote_ttl` unless an order is created. When the order is created, the reservation is converted to a confirmed same-day slot.
 
 Same-day can be shown only if:
 
@@ -220,7 +223,7 @@ Estimated return: Today, 17:00-19:00
 When the customer selects an option, the theme should add:
 
 1. The repair product/variant.
-2. The courier product/variant, if chargeable.
+2. The courier product/variant, including the zero-price courier variant for free courier.
 3. Hidden metadata for operations and audit.
 
 Suggested private line item/cart metadata:
@@ -231,13 +234,13 @@ _courier_postcode
 _courier_outward_code
 _courier_service_level
 _courier_customer_charge_gross
-_courier_icorrect_two_way_cost_gross
-_courier_subsidy_gross
-_courier_margin_band
 _estimated_collection_window
 _estimated_return_window
 _same_day_slot_date
+_repair_flow_type
 ```
+
+Do not send internal courier cost, subsidy, margin band, profitability contribution, or Gophr raw response fields to the browser. Shopify private line item properties are useful for hiding fields from some customer-facing surfaces, but they should not be treated as secure storage because theme JavaScript and network requests are inspectable.
 
 ## Phase-One Data Tables
 
@@ -252,6 +255,7 @@ The decision app needs these local tables:
 | Repair turnaround rules | Static repair-type rules for same-day, two-working-day, and diagnostic flows. |
 | Stock availability | Initial manual/static stock state, later inventory/API-backed. |
 | Same-day capacity | Date-based slot counter. |
+| Quote reservations | Server-side quote and same-day slot reservations with 15-minute expiry. |
 
 ## Turnaround Messaging
 
@@ -274,6 +278,7 @@ We will collect your device for assessment. Once our technicians have completed 
 ## Risks And Guardrails
 
 - Do not expose Gophr API keys or margin logic in theme JavaScript.
+- Do not expose internal courier cost, subsidy, margin band, or profitability contribution in theme JavaScript or cart properties.
 - Do not promise same-day globally.
 - Do not promise same-day unless required iPhone parts are confirmed in stock.
 - Do not use one postcode product per postcode unless the decision app cannot be built.
@@ -296,6 +301,5 @@ We will collect your device for assessment. Once our technicians have completed 
 
 - Final minimum contribution threshold after logistics.
 - Exact courier variant price bands.
-- Whether `same_day_slots_total` starts at 2 or 3.
 - Whether same-day return should be hidden after 12:00 or allowed for very central postcodes until a later cutoff.
 - Whether customer-facing copy says "estimated" or "expected" for collection/return windows.
