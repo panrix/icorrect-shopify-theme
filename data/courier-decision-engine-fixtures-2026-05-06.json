@@ -1,0 +1,160 @@
+{
+  "target_contribution": "40.00",
+  "quote_ttl_minutes": 15,
+  "same_day_slots": [3, 2, 1, 0],
+  "shopify_variant_placeholders": {
+    "standard:0.00": "placeholder-standard-free",
+    "standard:9.99": "placeholder-standard-9-99",
+    "standard:14.99": "placeholder-standard-14-99",
+    "standard:19.99": "placeholder-standard-19-99",
+    "priority:24.99": "placeholder-priority-24-99",
+    "priority:34.99": "placeholder-priority-34-99",
+    "urgent:39.99": "placeholder-urgent-39-99",
+    "urgent:49.99": "placeholder-urgent-49-99",
+    "manual:0.00": "placeholder-manual-quote"
+  },
+  "postcode_fixtures": [
+    {
+      "id": "FX-01",
+      "postcode": "W1B 2EL",
+      "band": "standard_free_candidate_priority_available",
+      "note": "Central low-cost benchmark"
+    },
+    {
+      "id": "FX-02",
+      "postcode": "SW1A 1AA",
+      "band": "standard_free_candidate_priority_available",
+      "note": "Central Westminster fixture"
+    },
+    {
+      "id": "FX-03",
+      "postcode": "E1 7QX",
+      "band": "standard_paid_priority_available",
+      "note": "Inner-east paid-standard fixture"
+    },
+    {
+      "id": "FX-04",
+      "postcode": "N1 0QH",
+      "band": "standard_paid_priority_available",
+      "note": "Known one_hour_9_10 motorcycle 502 data-gap fixture"
+    },
+    {
+      "id": "FX-05",
+      "postcode": "E14 5AB",
+      "band": "standard_premium_review_priority_optional",
+      "note": "Premium-review fixture"
+    },
+    {
+      "id": "FX-06",
+      "postcode": "N4 2DH",
+      "band": "standard_premium_review_priority_optional",
+      "note": "North London premium-review fixture"
+    },
+    {
+      "id": "FX-07",
+      "postcode": "E10 5PS",
+      "band": "outer_manual_or_motorbike_only",
+      "note": "Outer manual/paid-only fixture"
+    },
+    {
+      "id": "FX-08",
+      "postcode": "W7 3SA",
+      "band": "outer_manual_or_motorbike_only",
+      "note": "Most expensive urgent candidate in the summary"
+    },
+    {
+      "id": "FX-09",
+      "postcode": "M1 1AE",
+      "band": "out_of_matrix",
+      "note": "Valid non-London postcode"
+    },
+    {
+      "id": "FX-10",
+      "postcode": "BAD POSTCODE",
+      "band": "invalid",
+      "note": "Malformed postcode validation fixture"
+    }
+  ],
+  "repair_fixtures": {
+    "iphone_screen": {
+      "label": "iPhone screen",
+      "repair_price_net": "120.00",
+      "parts": "35.00",
+      "labour": "20.00",
+      "platform": "5.00",
+      "same_day_eligible": true,
+      "flow_type": "known_repair",
+      "turnaround": null
+    },
+    "iphone_battery": {
+      "label": "iPhone battery",
+      "repair_price_net": "65.00",
+      "parts": "22.00",
+      "labour": "15.00",
+      "platform": "4.00",
+      "same_day_eligible": true,
+      "flow_type": "known_repair",
+      "turnaround": null
+    },
+    "iphone_camera_module": {
+      "label": "iPhone camera module",
+      "repair_price_net": "110.00",
+      "parts": "45.00",
+      "labour": "20.00",
+      "platform": "5.00",
+      "same_day_eligible": true,
+      "flow_type": "known_repair",
+      "turnaround": null
+    },
+    "ipad_known_repair": {
+      "label": "iPad known repair",
+      "repair_price_net": "140.00",
+      "parts": "55.00",
+      "labour": "30.00",
+      "platform": "6.00",
+      "same_day_eligible": false,
+      "flow_type": "known_repair",
+      "turnaround": "Estimated two working days after the device arrives at iCorrect."
+    },
+    "macbook_known_repair": {
+      "label": "MacBook known repair",
+      "repair_price_net": "220.00",
+      "parts": "80.00",
+      "labour": "45.00",
+      "platform": "8.00",
+      "same_day_eligible": false,
+      "flow_type": "known_repair",
+      "turnaround": "Estimated two working days after the device arrives at iCorrect."
+    },
+    "back_glass": {
+      "label": "Back glass",
+      "repair_price_net": "120.00",
+      "parts": "60.00",
+      "labour": "30.00",
+      "platform": "6.00",
+      "same_day_eligible": false,
+      "flow_type": "known_repair",
+      "turnaround": "Manual or next-day timing after review."
+    },
+    "other_known_repair": {
+      "label": "Other known repair",
+      "repair_price_net": "100.00",
+      "parts": "45.00",
+      "labour": "25.00",
+      "platform": "5.00",
+      "same_day_eligible": false,
+      "flow_type": "known_repair",
+      "turnaround": "Repair-specific timing after review."
+    },
+    "diagnostic": {
+      "label": "Diagnostic",
+      "repair_price_net": "0.00",
+      "parts": "0.00",
+      "labour": "0.00",
+      "platform": "0.00",
+      "same_day_eligible": false,
+      "flow_type": "diagnostic",
+      "turnaround": "We will collect your device for assessment. Once our technicians have completed a full diagnostic, we will confirm the repair options, cost, and expected turnaround before any repair work goes ahead."
+    }
+  }
+}

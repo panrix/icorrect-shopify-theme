@@ -14,8 +14,35 @@ Spec this implements: [`docs/marketing-recording-analysis-tool-2026-04-22.md`](.
 | `posthog_snapshot.py` | Pull current metrics from PostHog → JSON file under `snapshots/` |
 | `posthog_report.py`   | Render a single snapshot as human-readable markdown |
 | `posthog_diff.py`     | Compare two snapshots, produce a markdown diff |
+| `courier_decision_engine.py` | Prototype London courier decision engine using the committed Gophr matrix and local fixtures |
+| `courier_decision_engine_fixtures.py` | Standard-library fixture checks for the courier decision prototype |
 
 No daemons, no dashboards, no dependencies beyond Python 3.10+.
+
+## Courier decision prototype
+
+The courier prototype is local-only. It does not call Gophr live, mutate
+Shopify, or touch the theme UI. It reads:
+
+- `data/gophr-london-coverage-matrix-2026-05-05.csv`
+- `data/gophr-london-coverage-decision-summary-2026-05-05.csv`
+- `data/courier-decision-engine-fixtures-2026-05-06.json`
+
+Example:
+
+```bash
+python3 scripts/analysis/courier_decision_engine.py \
+  --postcode "W1B 2EL" \
+  --repair-type iphone_screen \
+  --stock available \
+  --now "2026-05-06T10:30:00+01:00"
+```
+
+Run fixture checks:
+
+```bash
+python3 scripts/analysis/courier_decision_engine_fixtures.py
+```
 
 ## Running
 
