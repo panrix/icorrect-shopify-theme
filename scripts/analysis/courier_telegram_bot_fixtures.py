@@ -6,7 +6,7 @@ from __future__ import annotations
 import datetime as dt
 
 from courier_decision_engine import LONDON_TZ
-from courier_telegram_bot import CourierTelegramBot, normalise_command, parse_allowed_chat_ids, parse_allowed_user_ids
+from courier_telegram_bot import BotReply, CourierTelegramBot, normalise_command, parse_allowed_chat_ids, parse_allowed_user_ids
 
 
 NOW = dt.datetime(2026, 5, 6, 10, 30, tzinfo=LONDON_TZ)
@@ -107,6 +107,20 @@ def test_command_normalisation() -> None:
     assert_true(normalise_command("/debug now please") == "debug", "command arguments should be ignored")
 
 
+def test_thread_id_payload_is_preserved() -> None:
+    payload: dict = {}
+
+    class FakeTelegram:
+        def send_reply(self, chat_id: int, reply: BotReply, message_thread_id: int | None = None) -> None:
+            payload["chat_id"] = chat_id
+            payload["text"] = reply.text
+            payload["message_thread_id"] = message_thread_id
+
+    fake = FakeTelegram()
+    fake.send_reply(-1004036696902, BotReply("hello"), message_thread_id=2)
+    assert_true(payload["message_thread_id"] == 2, "forum topic replies should preserve message_thread_id")
+
+
 TESTS = [
     test_guided_quote_flow,
     test_debug_flow_includes_calculations,
@@ -119,6 +133,7 @@ TESTS = [
     test_allowed_user_parser,
     test_allowed_chat_parser,
     test_command_normalisation,
+    test_thread_id_payload_is_preserved,
 ]
 
 

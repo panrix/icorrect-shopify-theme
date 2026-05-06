@@ -239,8 +239,10 @@ class TelegramClient:
             raise RuntimeError(f"Telegram getUpdates failed: {payload}")
         return payload.get("result", [])
 
-    def send_reply(self, chat_id: int, reply: BotReply) -> None:
+    def send_reply(self, chat_id: int, reply: BotReply, message_thread_id: int | None = None) -> None:
         payload: dict[str, Any] = {"chat_id": chat_id, "text": reply.text}
+        if message_thread_id is not None:
+            payload["message_thread_id"] = message_thread_id
         if reply.keyboard:
             payload["reply_markup"] = {
                 "keyboard": [[{"text": label} for label in row] for row in reply.keyboard],
@@ -312,8 +314,9 @@ def main() -> int:
                 user = message.get("from") or {}
                 if not text or "id" not in chat or "id" not in user:
                     continue
+                message_thread_id = message.get("message_thread_id")
                 for reply in bot.handle_message(user_id=int(user["id"]), chat_id=int(chat["id"]), text=text):
-                    telegram.send_reply(int(chat["id"]), reply)
+                    telegram.send_reply(int(chat["id"]), reply, message_thread_id=message_thread_id)
         except KeyboardInterrupt:
             print("Stopped.")
             return 0
