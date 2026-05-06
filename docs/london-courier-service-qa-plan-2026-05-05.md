@@ -142,7 +142,7 @@ It also requires eligible postcode, confirmed stock, current time before cutoff,
 | SD-04 | iPhone screen, postcode too far for same-day return. | Same-day return is hidden, even if the repair itself is simple. |
 | SD-05 | iPad known repair. | Same-day is never shown; estimated two working days is shown. |
 | SD-06 | MacBook known repair. | Same-day is never shown; estimated two working days is shown. |
-| SD-07 | Back glass or non-eligible repair. | Same-day is hidden; manual/next-day wording is used. |
+| SD-07 | Back glass repair. | Same-day is hidden; manual/next-day wording is used. |
 | SD-08 | Same-day option fails profitability threshold. | Same-day is hidden or converted to paid upgrade only if still profitable. |
 | SD-09 | Customer views same-day availability but abandons before cart add. | Same-day slot is not consumed. |
 | SD-10 | Two customers attempt to add the last same-day slot to cart at the same time. | Only one reservation succeeds; the other customer sees the next safe option. |
@@ -150,6 +150,7 @@ It also requires eligible postcode, confirmed stock, current time before cutoff,
 | SD-12 | Request is for a future date, not today. | Same-day wording is not shown; date-specific capacity and courier windows are used. |
 | SD-13 | Request time is `11:59`, `12:00`, and `12:01` London time. | Cutoff boundary behaviour is deterministic and matches the implementation rule. |
 | SD-14 | Same-day capacity is `3`, then `2`, `1`, and `0` remaining. | UI and decision output match each boundary state. |
+| SD-15 | Non-eligible known repair other than back glass. | Same-day is hidden and the repair-specific fallback wording is used. |
 
 ## Stock Check QA
 
@@ -159,7 +160,7 @@ It also requires eligible postcode, confirmed stock, current time before cutoff,
 | STOCK-02 | Required iPhone part is out of stock. | Same-day is hidden. |
 | STOCK-03 | Stock state is unknown for a known repair quote. | Same-day is hidden. |
 | STOCK-04 | Stock state is unknown and the customer chooses a collection-first path. | Wizard uses collection-first wording: timing confirmed after stock check. |
-| STOCK-05 | Stock changes between quote and checkout. | Order/admin verification flags the quote for review before courier is booked. |
+| STOCK-05 | Stock changes between quote and checkout. | Decision app revalidates stock on cart add and order creation; if the stock state no longer supports the promise, same-day is removed or the order is flagged for operations review before courier is booked. |
 | STOCK-06 | Stock is checked for an ineligible repair type. | Stock availability does not cause same-day to appear for non-eligible repairs. |
 
 ## Diagnostics QA
@@ -321,6 +322,7 @@ Run before marking the courier service ready for production:
 
 ## Open QA Decisions
 
-- Final margin threshold and repair profitability table values.
-- Exact Shopify courier variant IDs.
-- Final owner and due date for each open implementation fixture.
+| Decision | Owner | Target |
+|---|---|---|
+| Final margin threshold and repair profitability table values. | Ricky, with Codex modelling support. | 2026-05-08, before phase-one cart wiring starts. |
+| Exact Shopify courier variant IDs. | Ricky for Shopify admin setup; Codex for theme/app mapping. | 2026-05-08, before phase-one cart wiring starts. |

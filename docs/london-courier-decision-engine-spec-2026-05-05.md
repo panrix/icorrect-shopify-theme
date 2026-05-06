@@ -257,6 +257,8 @@ The decision app needs these local tables:
 | Same-day capacity | Date-based slot counter. |
 | Quote reservations | Server-side quote and same-day slot reservations with 15-minute expiry. |
 
+Stock must be revalidated when a same-day courier option is added to cart and again when an order is created. If the stock state changes after the customer saw the option, the decision app should remove the same-day promise or flag the order for operations review before courier booking.
+
 ## Turnaround Messaging
 
 Known repairs can have customer-facing turnaround estimates. Diagnostics need a different promise because the repair scope is unknown until inspection.
@@ -299,7 +301,7 @@ We will collect your device for assessment. Once our technicians have completed 
 
 ## Open Decisions
 
-- Final minimum contribution threshold after logistics.
-- Exact courier variant price bands.
+- Final minimum contribution threshold after logistics. Owner: Ricky, with Codex modelling support. Target: 2026-05-08, before phase-one cart wiring starts.
+- Exact courier variant price bands and Shopify variant IDs. Owner: Ricky for Shopify admin setup; Codex for theme/app mapping. Target: 2026-05-08, before phase-one cart wiring starts.
 - Whether same-day return should be hidden after 12:00 or allowed for very central postcodes until a later cutoff.
 - Whether customer-facing copy says "estimated" or "expected" for collection/return windows.
