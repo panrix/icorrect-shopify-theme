@@ -57,6 +57,9 @@ Run the internal Telegram prototype:
 ```bash
 export TELEGRAM_BOT_TOKEN="..."
 export TELEGRAM_ALLOWED_USER_IDS="123456789"
+# Optional group allowlist. Telegram supergroup links like t.me/c/4036696902/2
+# normally map to chat id -1004036696902.
+export TELEGRAM_ALLOWED_CHAT_IDS="-1004036696902"
 python3 scripts/analysis/courier_telegram_bot.py
 ```
 
@@ -67,8 +70,9 @@ quote -> postcode -> repair type -> stock state -> same-day slots -> courier opt
 ```
 
 Use `debug` instead of `quote` to include local calculation details. The bot
-requires `TELEGRAM_ALLOWED_USER_IDS` unless `--allow-all` is passed for local
-testing.
+also accepts group commands like `/quote@YourBotName`. The bot requires
+`TELEGRAM_ALLOWED_USER_IDS` or `TELEGRAM_ALLOWED_CHAT_IDS` unless `--allow-all`
+is passed for local testing.
 
 ## Running
 

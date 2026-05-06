@@ -6,7 +6,7 @@ from __future__ import annotations
 import datetime as dt
 
 from courier_decision_engine import LONDON_TZ
-from courier_telegram_bot import CourierTelegramBot, parse_allowed_user_ids
+from courier_telegram_bot import CourierTelegramBot, normalise_command, parse_allowed_chat_ids, parse_allowed_user_ids
 
 
 NOW = dt.datetime(2026, 5, 6, 10, 30, tzinfo=LONDON_TZ)
@@ -49,6 +49,12 @@ def test_debug_flow_includes_calculations() -> None:
     assert_true("Target contribution" in final.text, "debug flow should include contribution data")
 
 
+def test_group_command_suffix_starts_flow() -> None:
+    bot = make_bot()
+    reply = send(bot, "/quote@icorrectcourierbot")[0]
+    assert_true("postcode" in reply.text.lower(), "group command with bot suffix should start quote flow")
+
+
 def test_invalid_repair_reprompts() -> None:
     bot = make_bot()
     send(bot, "quote")
@@ -72,6 +78,12 @@ def test_unauthorized_user_blocked() -> None:
     assert_true("restricted" in reply.text.lower(), "unauthorized user should be blocked")
 
 
+def test_allowed_group_chat_can_use_bot() -> None:
+    bot = CourierTelegramBot(allowed_chat_ids={-1004036696902})
+    reply = send(bot, "/quote", chat_id=-1004036696902, user_id=999)[0]
+    assert_true("postcode" in reply.text.lower(), "allowed chat should permit users in that chat")
+
+
 def test_help_keyboard() -> None:
     bot = make_bot()
     reply = send(bot, "help")[0]
@@ -84,14 +96,29 @@ def test_allowed_user_parser() -> None:
     assert_true(parse_allowed_user_ids("") == set(), "empty allowlist should parse as empty set")
 
 
+def test_allowed_chat_parser() -> None:
+    assert_true(parse_allowed_chat_ids("-1004036696902") == {-1004036696902}, "chat allowlist parser should support supergroups")
+    assert_true(parse_allowed_chat_ids("") == set(), "empty chat allowlist should parse as empty set")
+
+
+def test_command_normalisation() -> None:
+    assert_true(normalise_command("/quote@icorrectcourierbot") == "quote", "bot suffix should be stripped")
+    assert_true(normalise_command("quote") == "quote", "plain quote should stay quote")
+    assert_true(normalise_command("/debug now please") == "debug", "command arguments should be ignored")
+
+
 TESTS = [
     test_guided_quote_flow,
     test_debug_flow_includes_calculations,
+    test_group_command_suffix_starts_flow,
     test_invalid_repair_reprompts,
     test_cancel_resets_flow,
     test_unauthorized_user_blocked,
+    test_allowed_group_chat_can_use_bot,
     test_help_keyboard,
     test_allowed_user_parser,
+    test_allowed_chat_parser,
+    test_command_normalisation,
 ]
 
 

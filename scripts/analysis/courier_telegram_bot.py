@@ -61,27 +61,28 @@ class BotReply:
 class CourierTelegramBot:
     engine: DecisionEngine = field(default_factory=DecisionEngine)
     allowed_user_ids: set[int] = field(default_factory=set)
+    allowed_chat_ids: set[int] = field(default_factory=set)
     allow_all: bool = False
     conversations: dict[int, Conversation] = field(default_factory=dict)
 
     def handle_message(self, user_id: int, chat_id: int, text: str, now: dt.datetime | None = None) -> list[BotReply]:
         now = normalise_now(now or dt.datetime.now(tz=LONDON_TZ))
         text = text.strip()
-        lower_text = text.lower()
+        command = normalise_command(text)
 
-        if not self.is_allowed(user_id):
+        if not self.is_allowed(user_id, chat_id):
             return [BotReply("This courier prototype is restricted to approved internal users.")]
 
-        if lower_text in {"/start", "help", "/help"}:
+        if command in {"start", "help"}:
             self.conversations.pop(chat_id, None)
             return [help_reply()]
 
-        if lower_text in {"cancel", "/cancel"}:
+        if command == "cancel":
             self.conversations.pop(chat_id, None)
             return [BotReply("Quote flow cancelled.", remove_keyboard=True)]
 
-        if lower_text in {"quote", "/quote", "debug", "/debug"}:
-            conversation = Conversation(step="postcode", debug=lower_text in {"debug", "/debug"})
+        if command in {"quote", "debug"}:
+            conversation = Conversation(step="postcode", debug=command == "debug")
             self.conversations[chat_id] = conversation
             return [BotReply("What postcode should we quote?", remove_keyboard=True)]
 
@@ -129,8 +130,8 @@ class CourierTelegramBot:
         self.conversations.pop(chat_id, None)
         return [BotReply("Something went out of step. Type quote to start again.", remove_keyboard=True)]
 
-    def is_allowed(self, user_id: int) -> bool:
-        return self.allow_all or user_id in self.allowed_user_ids
+    def is_allowed(self, user_id: int, chat_id: int) -> bool:
+        return self.allow_all or user_id in self.allowed_user_ids or chat_id in self.allowed_chat_ids
 
 
 def help_reply() -> BotReply:
@@ -214,6 +215,15 @@ def chunked(items: list[str], size: int) -> list[list[str]]:
     return [items[index : index + size] for index in range(0, len(items), size)]
 
 
+def normalise_command(text: str) -> str:
+    first_token = text.strip().split(maxsplit=1)[0].lower() if text.strip() else ""
+    if first_token.startswith("/"):
+        first_token = first_token[1:]
+    if "@" in first_token:
+        first_token = first_token.split("@", 1)[0]
+    return first_token
+
+
 class TelegramClient:
     def __init__(self, token: str):
         self.base_url = f"https://api.telegram.org/bot{token}"
@@ -258,10 +268,17 @@ def parse_allowed_user_ids(raw: str) -> set[int]:
     return {int(value.strip()) for value in raw.split(",") if value.strip()}
 
 
+def parse_allowed_chat_ids(raw: str) -> set[int]:
+    if not raw.strip():
+        return set()
+    return {int(value.strip()) for value in raw.split(",") if value.strip()}
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run the internal courier Telegram prototype.")
     parser.add_argument("--token", default=os.environ.get("TELEGRAM_BOT_TOKEN", ""))
     parser.add_argument("--allowed-user-ids", default=os.environ.get("TELEGRAM_ALLOWED_USER_IDS", ""))
+    parser.add_argument("--allowed-chat-ids", default=os.environ.get("TELEGRAM_ALLOWED_CHAT_IDS", ""))
     parser.add_argument("--allow-all", action="store_true", default=os.environ.get("TELEGRAM_ALLOW_ALL") == "1")
     parser.add_argument("--poll-timeout", type=int, default=30)
     return parser.parse_args()
@@ -272,11 +289,16 @@ def main() -> int:
     if not args.token:
         raise SystemExit("Set TELEGRAM_BOT_TOKEN or pass --token.")
     allowed_user_ids = parse_allowed_user_ids(args.allowed_user_ids)
-    if not allowed_user_ids and not args.allow_all:
-        raise SystemExit("Set TELEGRAM_ALLOWED_USER_IDS or pass --allow-all for local testing.")
+    allowed_chat_ids = parse_allowed_chat_ids(args.allowed_chat_ids)
+    if not allowed_user_ids and not allowed_chat_ids and not args.allow_all:
+        raise SystemExit("Set TELEGRAM_ALLOWED_USER_IDS, TELEGRAM_ALLOWED_CHAT_IDS, or pass --allow-all for local testing.")
 
     telegram = TelegramClient(args.token)
-    bot = CourierTelegramBot(allowed_user_ids=allowed_user_ids, allow_all=args.allow_all)
+    bot = CourierTelegramBot(
+        allowed_user_ids=allowed_user_ids,
+        allowed_chat_ids=allowed_chat_ids,
+        allow_all=args.allow_all,
+    )
     offset: int | None = None
     print("Courier Telegram prototype polling. Press Ctrl+C to stop.", flush=True)
     while True:
