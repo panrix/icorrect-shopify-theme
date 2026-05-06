@@ -1,0 +1,304 @@
+#!/usr/bin/env python3
+"""Telegram prototype wrapper for the local courier decision engine.
+
+This is an internal ops prototype. It uses Telegram long polling when run with
+TELEGRAM_BOT_TOKEN, keeps conversation state in memory, and never calls Gophr
+or Shopify directly.
+"""
+
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import json
+import os
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+from dataclasses import dataclass, field
+from decimal import Decimal
+from typing import Any
+
+from courier_decision_engine import DecisionEngine, LONDON_TZ, normalise_now
+
+
+REPAIR_LABELS = {
+    "iPhone screen": "iphone_screen",
+    "iPhone battery": "iphone_battery",
+    "iPhone camera module": "iphone_camera_module",
+    "iPad known repair": "ipad_known_repair",
+    "MacBook known repair": "macbook_known_repair",
+    "Back glass": "back_glass",
+    "Diagnostic": "diagnostic",
+}
+STOCK_LABELS = {
+    "Available": "available",
+    "Unknown": "unknown",
+    "Unavailable": "unavailable",
+}
+SLOT_LABELS = {"3": 3, "2": 2, "1": 1, "0": 0}
+
+
+@dataclass
+class Conversation:
+    step: str = "idle"
+    debug: bool = False
+    postcode: str = ""
+    repair_type: str = ""
+    stock: str = ""
+    same_day_slots: int = 3
+
+
+@dataclass
+class BotReply:
+    text: str
+    keyboard: list[list[str]] | None = None
+    remove_keyboard: bool = False
+
+
+@dataclass
+class CourierTelegramBot:
+    engine: DecisionEngine = field(default_factory=DecisionEngine)
+    allowed_user_ids: set[int] = field(default_factory=set)
+    allow_all: bool = False
+    conversations: dict[int, Conversation] = field(default_factory=dict)
+
+    def handle_message(self, user_id: int, chat_id: int, text: str, now: dt.datetime | None = None) -> list[BotReply]:
+        now = normalise_now(now or dt.datetime.now(tz=LONDON_TZ))
+        text = text.strip()
+        lower_text = text.lower()
+
+        if not self.is_allowed(user_id):
+            return [BotReply("This courier prototype is restricted to approved internal users.")]
+
+        if lower_text in {"/start", "help", "/help"}:
+            self.conversations.pop(chat_id, None)
+            return [help_reply()]
+
+        if lower_text in {"cancel", "/cancel"}:
+            self.conversations.pop(chat_id, None)
+            return [BotReply("Quote flow cancelled.", remove_keyboard=True)]
+
+        if lower_text in {"quote", "/quote", "debug", "/debug"}:
+            conversation = Conversation(step="postcode", debug=lower_text in {"debug", "/debug"})
+            self.conversations[chat_id] = conversation
+            return [BotReply("What postcode should we quote?", remove_keyboard=True)]
+
+        conversation = self.conversations.get(chat_id)
+        if not conversation:
+            return [BotReply("Type quote to start a courier quote, or debug to include local calculation details.")]
+
+        if conversation.step == "postcode":
+            conversation.postcode = text
+            conversation.step = "repair"
+            return [BotReply("What repair type?", keyboard=chunked(list(REPAIR_LABELS), 2))]
+
+        if conversation.step == "repair":
+            repair_type = REPAIR_LABELS.get(text)
+            if not repair_type:
+                return [BotReply("Please choose one of the repair buttons.", keyboard=chunked(list(REPAIR_LABELS), 2))]
+            conversation.repair_type = repair_type
+            conversation.step = "stock"
+            return [BotReply("Is the required part in stock?", keyboard=[list(STOCK_LABELS)])]
+
+        if conversation.step == "stock":
+            stock = STOCK_LABELS.get(text)
+            if not stock:
+                return [BotReply("Please choose a stock state.", keyboard=[list(STOCK_LABELS)])]
+            conversation.stock = stock
+            conversation.step = "slots"
+            return [BotReply("How many same-day slots are left today?", keyboard=[list(SLOT_LABELS)])]
+
+        if conversation.step == "slots":
+            if text not in SLOT_LABELS:
+                return [BotReply("Please choose the remaining same-day slots.", keyboard=[list(SLOT_LABELS)])]
+            conversation.same_day_slots = SLOT_LABELS[text]
+            result = self.engine.decide(
+                postcode=conversation.postcode,
+                repair_type=conversation.repair_type,
+                stock=conversation.stock,
+                now=now,
+                same_day_slots=conversation.same_day_slots,
+                target_contribution=self.engine.default_target_contribution,
+                debug=conversation.debug,
+            )
+            self.conversations.pop(chat_id, None)
+            return [BotReply(format_decision(result, conversation), remove_keyboard=True)]
+
+        self.conversations.pop(chat_id, None)
+        return [BotReply("Something went out of step. Type quote to start again.", remove_keyboard=True)]
+
+    def is_allowed(self, user_id: int) -> bool:
+        return self.allow_all or user_id in self.allowed_user_ids
+
+
+def help_reply() -> BotReply:
+    return BotReply(
+        "Courier prototype\n\n"
+        "Type quote to run the guided courier decision flow.\n"
+        "Type debug to run the same flow with local calculation details.\n"
+        "Type cancel to stop the current flow.",
+        keyboard=[["quote", "debug"], ["cancel"]],
+    )
+
+
+def format_decision(result: dict[str, Any], conversation: Conversation) -> str:
+    lines = [
+        "Courier quote result",
+        f"Postcode: {conversation.postcode}",
+        f"Repair: {repair_label(conversation.repair_type)}",
+        f"Stock: {conversation.stock}",
+        f"Slots: {conversation.same_day_slots}",
+        f"Status: {result.get('status')}",
+    ]
+    if result.get("postcode_band"):
+        lines.append(f"Band: {result['postcode_band']}")
+    if result.get("turnaround_message"):
+        lines.extend(["", result["turnaround_message"]])
+
+    lines.append("")
+    lines.append("Options:")
+    for option in result.get("options", []):
+        lines.append(f"- {option['label']}")
+        price = option.get("customer_price_gross")
+        if price is not None:
+            lines.append(f"  Price: £{price}")
+        if option.get("customer_message"):
+            lines.append(f"  {option['customer_message']}")
+        if option.get("estimated_collection_window"):
+            lines.append(f"  Collection: {option['estimated_collection_window']}")
+        if option.get("estimated_return_window"):
+            lines.append(f"  Return: {option['estimated_return_window']}")
+        lines.append(f"  Same-day return: {'yes' if option.get('same_day_return') else 'no'}")
+        lines.append(f"  Variant: {option.get('shopify_variant_id')}")
+
+    reservation = result.get("reservation") or {}
+    lines.extend(
+        [
+            "",
+            f"Slot reserved: {'yes' if reservation.get('slot_reserved') else 'no'}",
+            f"Quote ID: {result.get('quote_id')}",
+        ]
+    )
+
+    if conversation.debug and result.get("debug"):
+        lines.extend(["", "Debug:"])
+        debug = result["debug"]
+        lines.append(f"Target contribution: £{debug.get('target_contribution')}")
+        lines.append(f"Same-day possible: {'yes' if debug.get('same_day_possible') else 'no'}")
+        for calculation in debug.get("calculations", []):
+            lines.append(
+                f"- {calculation['service_level']}: "
+                f"one-way £{calculation['one_way_cost_gross']}, "
+                f"two-way £{calculation['two_way_cost_gross']}"
+            )
+            for attempt in calculation.get("attempts", []):
+                marker = "pass" if attempt["passes"] else "fail"
+                lines.append(
+                    f"  charge £{attempt['customer_charge_gross']} -> "
+                    f"contribution £{attempt['contribution_after_logistics']} ({marker})"
+                )
+
+    return "\n".join(lines)
+
+
+def repair_label(repair_type: str) -> str:
+    for label, value in REPAIR_LABELS.items():
+        if value == repair_type:
+            return label
+    return repair_type
+
+
+def chunked(items: list[str], size: int) -> list[list[str]]:
+    return [items[index : index + size] for index in range(0, len(items), size)]
+
+
+class TelegramClient:
+    def __init__(self, token: str):
+        self.base_url = f"https://api.telegram.org/bot{token}"
+
+    def get_updates(self, offset: int | None, timeout: int) -> list[dict[str, Any]]:
+        params = {"timeout": str(timeout)}
+        if offset is not None:
+            params["offset"] = str(offset)
+        url = f"{self.base_url}/getUpdates?{urllib.parse.urlencode(params)}"
+        with urllib.request.urlopen(url, timeout=timeout + 5) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+        if not payload.get("ok"):
+            raise RuntimeError(f"Telegram getUpdates failed: {payload}")
+        return payload.get("result", [])
+
+    def send_reply(self, chat_id: int, reply: BotReply) -> None:
+        payload: dict[str, Any] = {"chat_id": chat_id, "text": reply.text}
+        if reply.keyboard:
+            payload["reply_markup"] = {
+                "keyboard": [[{"text": label} for label in row] for row in reply.keyboard],
+                "one_time_keyboard": True,
+                "resize_keyboard": True,
+            }
+        elif reply.remove_keyboard:
+            payload["reply_markup"] = {"remove_keyboard": True}
+        data = json.dumps(payload).encode("utf-8")
+        request = urllib.request.Request(
+            f"{self.base_url}/sendMessage",
+            data=data,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urllib.request.urlopen(request, timeout=15) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+        if not payload.get("ok"):
+            raise RuntimeError(f"Telegram sendMessage failed: {payload}")
+
+
+def parse_allowed_user_ids(raw: str) -> set[int]:
+    if not raw.strip():
+        return set()
+    return {int(value.strip()) for value in raw.split(",") if value.strip()}
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run the internal courier Telegram prototype.")
+    parser.add_argument("--token", default=os.environ.get("TELEGRAM_BOT_TOKEN", ""))
+    parser.add_argument("--allowed-user-ids", default=os.environ.get("TELEGRAM_ALLOWED_USER_IDS", ""))
+    parser.add_argument("--allow-all", action="store_true", default=os.environ.get("TELEGRAM_ALLOW_ALL") == "1")
+    parser.add_argument("--poll-timeout", type=int, default=30)
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = parse_args()
+    if not args.token:
+        raise SystemExit("Set TELEGRAM_BOT_TOKEN or pass --token.")
+    allowed_user_ids = parse_allowed_user_ids(args.allowed_user_ids)
+    if not allowed_user_ids and not args.allow_all:
+        raise SystemExit("Set TELEGRAM_ALLOWED_USER_IDS or pass --allow-all for local testing.")
+
+    telegram = TelegramClient(args.token)
+    bot = CourierTelegramBot(allowed_user_ids=allowed_user_ids, allow_all=args.allow_all)
+    offset: int | None = None
+    print("Courier Telegram prototype polling. Press Ctrl+C to stop.", flush=True)
+    while True:
+        try:
+            updates = telegram.get_updates(offset=offset, timeout=args.poll_timeout)
+            for update in updates:
+                offset = update["update_id"] + 1
+                message = update.get("message") or {}
+                text = message.get("text")
+                chat = message.get("chat") or {}
+                user = message.get("from") or {}
+                if not text or "id" not in chat or "id" not in user:
+                    continue
+                for reply in bot.handle_message(user_id=int(user["id"]), chat_id=int(chat["id"]), text=text):
+                    telegram.send_reply(int(chat["id"]), reply)
+        except KeyboardInterrupt:
+            print("Stopped.")
+            return 0
+        except (urllib.error.URLError, RuntimeError) as exc:
+            print(f"Telegram polling error: {exc}", flush=True)
+            time.sleep(3)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -16,6 +16,8 @@ Spec this implements: [`docs/marketing-recording-analysis-tool-2026-04-22.md`](.
 | `posthog_diff.py`     | Compare two snapshots, produce a markdown diff |
 | `courier_decision_engine.py` | Prototype London courier decision engine using the committed Gophr matrix and local fixtures |
 | `courier_decision_engine_fixtures.py` | Standard-library fixture checks for the courier decision prototype |
+| `courier_telegram_bot.py` | Internal Telegram guided-flow wrapper for the courier decision prototype |
+| `courier_telegram_bot_fixtures.py` | No-network Telegram conversation fixture checks |
 
 No daemons, no dashboards, no dependencies beyond Python 3.10+.
 
@@ -43,6 +45,30 @@ Run fixture checks:
 ```bash
 python3 scripts/analysis/courier_decision_engine_fixtures.py
 ```
+
+Run Telegram conversation fixture checks:
+
+```bash
+python3 scripts/analysis/courier_telegram_bot_fixtures.py
+```
+
+Run the internal Telegram prototype:
+
+```bash
+export TELEGRAM_BOT_TOKEN="..."
+export TELEGRAM_ALLOWED_USER_IDS="123456789"
+python3 scripts/analysis/courier_telegram_bot.py
+```
+
+The Telegram bot supports a guided flow:
+
+```text
+quote -> postcode -> repair type -> stock state -> same-day slots -> courier options
+```
+
+Use `debug` instead of `quote` to include local calculation details. The bot
+requires `TELEGRAM_ALLOWED_USER_IDS` unless `--allow-all` is passed for local
+testing.
 
 ## Running
 
