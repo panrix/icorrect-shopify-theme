@@ -1,0 +1,44 @@
+@font-face {
+  font-family: "Geist";
+  src: url("Geist-Variable.woff2") format("woff2-variations"),
+       url("Geist-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("GeistMono-Variable.woff2") format("woff2-variations"),
+       url("GeistMono-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-body-family: "Geist", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  --font-heading-family: "Geist", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  --font-mono-family: "Geist Mono", ui-monospace, SFMono-Regular, "Roboto Mono", Menlo, monospace;
+  --font-body-style: normal;
+  --font-heading-style: normal;
+}
+
+body {
+  letter-spacing: normal;
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6,
+.h0, .h1, .h2, .h3, .h4, .h5 {
+  letter-spacing: -0.025em;
+  word-break: normal;
+}
+
+.h0, h1, .h1 { letter-spacing: -0.04em; }
+
+code, kbd, samp, pre {
+  font-family: var(--font-mono-family);
+}
