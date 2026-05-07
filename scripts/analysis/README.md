@@ -18,6 +18,8 @@ Spec this implements: [`docs/marketing-recording-analysis-tool-2026-04-22.md`](.
 | `courier_decision_engine_fixtures.py` | Standard-library fixture checks for the courier decision prototype |
 | `courier_telegram_bot.py` | Internal Telegram guided-flow wrapper for the courier decision prototype |
 | `courier_telegram_bot_fixtures.py` | No-network Telegram conversation fixture checks |
+| `courier_mini_app.py` | Local browser mini app for clicking through courier decision inputs |
+| `courier_mini_app_fixtures.py` | No-browser HTTP fixture checks for the courier mini app |
 
 No daemons, no dashboards, no dependencies beyond Python 3.10+.
 
@@ -50,6 +52,21 @@ Run Telegram conversation fixture checks:
 
 ```bash
 python3 scripts/analysis/courier_telegram_bot_fixtures.py
+```
+
+Run the local browser mini app:
+
+```bash
+python3 scripts/analysis/courier_mini_app.py --port 8765
+```
+
+Then open `http://127.0.0.1:8765`. The mini app gives clickable controls for
+postcode fixtures, repair type, stock state, same-day slots, and debug output.
+
+Run mini app checks:
+
+```bash
+python3 scripts/analysis/courier_mini_app_fixtures.py
 ```
 
 Run the internal Telegram prototype:
