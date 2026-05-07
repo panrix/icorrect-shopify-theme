@@ -54,6 +54,7 @@ class Conversation:
 class BotReply:
     text: str
     keyboard: list[list[str]] | None = None
+    inline_keyboard: list[list[dict[str, str]]] | None = None
     remove_keyboard: bool = False
 
 
@@ -84,7 +85,7 @@ class CourierTelegramBot:
         if command in {"quote", "debug"}:
             conversation = Conversation(step="postcode", debug=command == "debug")
             self.conversations[chat_id] = conversation
-            return [BotReply("What postcode should we quote?", remove_keyboard=True)]
+            return [postcode_reply(self.engine)]
 
         conversation = self.conversations.get(chat_id)
         if not conversation:
@@ -93,27 +94,27 @@ class CourierTelegramBot:
         if conversation.step == "postcode":
             conversation.postcode = text
             conversation.step = "repair"
-            return [BotReply("What repair type?", keyboard=chunked(list(REPAIR_LABELS), 2))]
+            return [repair_reply()]
 
         if conversation.step == "repair":
             repair_type = REPAIR_LABELS.get(text)
             if not repair_type:
-                return [BotReply("Please choose one of the repair buttons.", keyboard=chunked(list(REPAIR_LABELS), 2))]
+                return [BotReply("Please choose one of the repair buttons.", keyboard=chunked(list(REPAIR_LABELS), 2), inline_keyboard=repair_keyboard())]
             conversation.repair_type = repair_type
             conversation.step = "stock"
-            return [BotReply("Is the required part in stock?", keyboard=[list(STOCK_LABELS)])]
+            return [stock_reply()]
 
         if conversation.step == "stock":
             stock = STOCK_LABELS.get(text)
             if not stock:
-                return [BotReply("Please choose a stock state.", keyboard=[list(STOCK_LABELS)])]
+                return [BotReply("Please choose a stock state.", keyboard=[list(STOCK_LABELS)], inline_keyboard=stock_keyboard())]
             conversation.stock = stock
             conversation.step = "slots"
-            return [BotReply("How many same-day slots are left today?", keyboard=[list(SLOT_LABELS)])]
+            return [slots_reply()]
 
         if conversation.step == "slots":
             if text not in SLOT_LABELS:
-                return [BotReply("Please choose the remaining same-day slots.", keyboard=[list(SLOT_LABELS)])]
+                return [BotReply("Please choose the remaining same-day slots.", keyboard=[list(SLOT_LABELS)], inline_keyboard=slots_keyboard())]
             conversation.same_day_slots = SLOT_LABELS[text]
             result = self.engine.decide(
                 postcode=conversation.postcode,
@@ -125,10 +126,79 @@ class CourierTelegramBot:
                 debug=conversation.debug,
             )
             self.conversations.pop(chat_id, None)
-            return [BotReply(format_decision(result, conversation), remove_keyboard=True)]
+            return [BotReply(format_decision(result, conversation), inline_keyboard=restart_keyboard(), remove_keyboard=True)]
 
         self.conversations.pop(chat_id, None)
         return [BotReply("Something went out of step. Type quote to start again.", remove_keyboard=True)]
+
+    def handle_callback(
+        self,
+        user_id: int,
+        chat_id: int,
+        data: str,
+        now: dt.datetime | None = None,
+    ) -> list[BotReply]:
+        now = normalise_now(now or dt.datetime.now(tz=LONDON_TZ))
+        action, _, value = data.partition("|")
+
+        if not self.is_allowed(user_id, chat_id):
+            return [BotReply("This courier prototype is restricted to approved internal users.")]
+
+        if action == "quote":
+            conversation = Conversation(step="postcode", debug=value == "debug")
+            self.conversations[chat_id] = conversation
+            return [postcode_reply(self.engine)]
+
+        if action == "custom_postcode":
+            conversation = self.conversations.get(chat_id) or Conversation(step="postcode")
+            conversation.step = "postcode"
+            self.conversations[chat_id] = conversation
+            return [BotReply("Type the postcode you want to test.")]
+
+        if action == "cancel":
+            self.conversations.pop(chat_id, None)
+            return [BotReply("Quote flow cancelled.", inline_keyboard=restart_keyboard(), remove_keyboard=True)]
+
+        conversation = self.conversations.get(chat_id)
+        if not conversation:
+            return [BotReply("This quote flow has expired. Start a fresh one.", inline_keyboard=restart_keyboard())]
+
+        if action == "postcode":
+            conversation.postcode = value
+            conversation.step = "repair"
+            return [repair_reply()]
+
+        if action == "repair":
+            if value not in set(REPAIR_LABELS.values()):
+                return [repair_reply("Please choose one of the repair buttons.")]
+            conversation.repair_type = value
+            conversation.step = "stock"
+            return [stock_reply()]
+
+        if action == "stock":
+            if value not in set(STOCK_LABELS.values()):
+                return [stock_reply("Please choose a stock state.")]
+            conversation.stock = value
+            conversation.step = "slots"
+            return [slots_reply()]
+
+        if action == "slots":
+            if value not in SLOT_LABELS:
+                return [slots_reply("Please choose the remaining same-day slots.")]
+            conversation.same_day_slots = SLOT_LABELS[value]
+            result = self.engine.decide(
+                postcode=conversation.postcode,
+                repair_type=conversation.repair_type,
+                stock=conversation.stock,
+                now=now,
+                same_day_slots=conversation.same_day_slots,
+                target_contribution=self.engine.default_target_contribution,
+                debug=conversation.debug,
+            )
+            self.conversations.pop(chat_id, None)
+            return [BotReply(format_decision(result, conversation), inline_keyboard=restart_keyboard(), remove_keyboard=True)]
+
+        return [BotReply("I did not recognise that button. Start a fresh quote.", inline_keyboard=restart_keyboard())]
 
     def is_allowed(self, user_id: int, chat_id: int) -> bool:
         return self.allow_all or user_id in self.allowed_user_ids or chat_id in self.allowed_chat_ids
@@ -137,11 +207,64 @@ class CourierTelegramBot:
 def help_reply() -> BotReply:
     return BotReply(
         "Courier prototype\n\n"
-        "Type quote to run the guided courier decision flow.\n"
-        "Type debug to run the same flow with local calculation details.\n"
+        "Tap Quote to run the courier decision flow.\n"
+        "Tap Debug to include local calculation details.\n"
+        "You can still type a custom postcode when the flow asks for one.\n"
         "Type cancel to stop the current flow.",
-        keyboard=[["quote", "debug"], ["cancel"]],
+        inline_keyboard=[[inline_button("Quote", "quote|normal"), inline_button("Debug", "quote|debug")]],
     )
+
+
+def postcode_reply(engine: DecisionEngine) -> BotReply:
+    return BotReply(
+        "Choose a postcode fixture, or type a postcode manually.",
+        inline_keyboard=postcode_keyboard(engine),
+        remove_keyboard=True,
+    )
+
+
+def repair_reply(text: str = "What repair type?") -> BotReply:
+    return BotReply(text, keyboard=chunked(list(REPAIR_LABELS), 2), inline_keyboard=repair_keyboard())
+
+
+def stock_reply(text: str = "Is the required part in stock?") -> BotReply:
+    return BotReply(text, keyboard=[list(STOCK_LABELS)], inline_keyboard=stock_keyboard())
+
+
+def slots_reply(text: str = "How many same-day slots are left today?") -> BotReply:
+    return BotReply(text, keyboard=[list(SLOT_LABELS)], inline_keyboard=slots_keyboard())
+
+
+def inline_button(text: str, callback_data: str) -> dict[str, str]:
+    return {"text": text, "callback_data": callback_data}
+
+
+def postcode_keyboard(engine: DecisionEngine) -> list[list[dict[str, str]]]:
+    buttons = [
+        inline_button(f"{fixture['id']} {fixture['postcode']}", f"postcode|{fixture['postcode']}")
+        for fixture in engine.fixtures["postcode_fixtures"]
+    ]
+    buttons.append(inline_button("Type custom postcode", "custom_postcode|"))
+    buttons.append(inline_button("Cancel", "cancel|"))
+    return chunked(buttons, 2)
+
+
+def repair_keyboard() -> list[list[dict[str, str]]]:
+    buttons = [inline_button(label, f"repair|{value}") for label, value in REPAIR_LABELS.items()]
+    buttons.append(inline_button("Cancel", "cancel|"))
+    return chunked(buttons, 2)
+
+
+def stock_keyboard() -> list[list[dict[str, str]]]:
+    return [[inline_button(label, f"stock|{value}") for label, value in STOCK_LABELS.items()], [inline_button("Cancel", "cancel|")]]
+
+
+def slots_keyboard() -> list[list[dict[str, str]]]:
+    return [[inline_button(label, f"slots|{value}") for label, value in SLOT_LABELS.items()], [inline_button("Cancel", "cancel|")]]
+
+
+def restart_keyboard() -> list[list[dict[str, str]]]:
+    return [[inline_button("Quote again", "quote|normal"), inline_button("Debug quote", "quote|debug")]]
 
 
 def format_decision(result: dict[str, Any], conversation: Conversation) -> str:
@@ -240,17 +363,7 @@ class TelegramClient:
         return payload.get("result", [])
 
     def send_reply(self, chat_id: int, reply: BotReply, message_thread_id: int | None = None) -> None:
-        payload: dict[str, Any] = {"chat_id": chat_id, "text": reply.text}
-        if message_thread_id is not None:
-            payload["message_thread_id"] = message_thread_id
-        if reply.keyboard:
-            payload["reply_markup"] = {
-                "keyboard": [[{"text": label} for label in row] for row in reply.keyboard],
-                "one_time_keyboard": True,
-                "resize_keyboard": True,
-            }
-        elif reply.remove_keyboard:
-            payload["reply_markup"] = {"remove_keyboard": True}
+        payload = build_send_message_payload(chat_id, reply, message_thread_id)
         data = json.dumps(payload).encode("utf-8")
         request = urllib.request.Request(
             f"{self.base_url}/sendMessage",
@@ -262,6 +375,36 @@ class TelegramClient:
             payload = json.loads(response.read().decode("utf-8"))
         if not payload.get("ok"):
             raise RuntimeError(f"Telegram sendMessage failed: {payload}")
+
+    def answer_callback_query(self, callback_query_id: str) -> None:
+        data = json.dumps({"callback_query_id": callback_query_id}).encode("utf-8")
+        request = urllib.request.Request(
+            f"{self.base_url}/answerCallbackQuery",
+            data=data,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urllib.request.urlopen(request, timeout=15) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+        if not payload.get("ok"):
+            raise RuntimeError(f"Telegram answerCallbackQuery failed: {payload}")
+
+
+def build_send_message_payload(chat_id: int, reply: BotReply, message_thread_id: int | None = None) -> dict[str, Any]:
+    payload: dict[str, Any] = {"chat_id": chat_id, "text": reply.text}
+    if message_thread_id is not None:
+        payload["message_thread_id"] = message_thread_id
+    if reply.inline_keyboard:
+        payload["reply_markup"] = {"inline_keyboard": reply.inline_keyboard}
+    elif reply.keyboard:
+        payload["reply_markup"] = {
+            "keyboard": [[{"text": label} for label in row] for row in reply.keyboard],
+            "one_time_keyboard": True,
+            "resize_keyboard": True,
+        }
+    elif reply.remove_keyboard:
+        payload["reply_markup"] = {"remove_keyboard": True}
+    return payload
 
 
 def parse_allowed_user_ids(raw: str) -> set[int]:
@@ -308,6 +451,26 @@ def main() -> int:
             updates = telegram.get_updates(offset=offset, timeout=args.poll_timeout)
             for update in updates:
                 offset = update["update_id"] + 1
+                callback_query = update.get("callback_query") or {}
+                if callback_query:
+                    callback_id = callback_query.get("id")
+                    data = callback_query.get("data")
+                    message = callback_query.get("message") or {}
+                    chat = message.get("chat") or {}
+                    user = callback_query.get("from") or {}
+                    if callback_id:
+                        telegram.answer_callback_query(str(callback_id))
+                    if not data or "id" not in chat or "id" not in user:
+                        continue
+                    message_thread_id = message.get("message_thread_id")
+                    for reply in bot.handle_callback(
+                        user_id=int(user["id"]),
+                        chat_id=int(chat["id"]),
+                        data=str(data),
+                    ):
+                        telegram.send_reply(int(chat["id"]), reply, message_thread_id=message_thread_id)
+                    continue
+
                 message = update.get("message") or {}
                 text = message.get("text")
                 chat = message.get("chat") or {}

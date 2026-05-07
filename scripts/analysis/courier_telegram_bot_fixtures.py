@@ -6,7 +6,14 @@ from __future__ import annotations
 import datetime as dt
 
 from courier_decision_engine import LONDON_TZ
-from courier_telegram_bot import BotReply, CourierTelegramBot, normalise_command, parse_allowed_chat_ids, parse_allowed_user_ids
+from courier_telegram_bot import (
+    BotReply,
+    CourierTelegramBot,
+    build_send_message_payload,
+    normalise_command,
+    parse_allowed_chat_ids,
+    parse_allowed_user_ids,
+)
 
 
 NOW = dt.datetime(2026, 5, 6, 10, 30, tzinfo=LONDON_TZ)
@@ -36,6 +43,42 @@ def test_guided_quote_flow() -> None:
     assert_true("Free standard courier" in final.text, "central screen quote should include free standard")
     assert_true("Same-day return: yes" in final.text, "eligible flow should show same-day")
     assert_true(final.remove_keyboard is True, "final reply should remove keyboard")
+
+
+def test_inline_button_quote_flow() -> None:
+    bot = make_bot()
+    first = send(bot, "/quote")[0]
+    assert_true(first.inline_keyboard is not None, "quote should expose postcode inline buttons")
+    assert_true(first.inline_keyboard[0][0]["callback_data"].startswith("postcode|"), "postcode buttons should use callback data")
+
+    second = bot.handle_callback(user_id=123, chat_id=456, data="postcode|W1B 2EL", now=NOW)[0]
+    assert_true("repair" in second.text.lower(), "postcode callback should ask repair")
+    assert_true(second.inline_keyboard is not None, "repair step should use inline buttons")
+
+    third = bot.handle_callback(user_id=123, chat_id=456, data="repair|iphone_screen", now=NOW)[0]
+    assert_true("stock" in third.text.lower(), "repair callback should ask stock")
+
+    fourth = bot.handle_callback(user_id=123, chat_id=456, data="stock|available", now=NOW)[0]
+    assert_true("slots" in fourth.text.lower(), "stock callback should ask slots")
+
+    final = bot.handle_callback(user_id=123, chat_id=456, data="slots|3", now=NOW)[0]
+    assert_true("Courier quote result" in final.text, "slot callback should produce quote result")
+    assert_true("Free standard courier" in final.text, "inline flow should include decision options")
+    assert_true(final.inline_keyboard == [[{"text": "Quote again", "callback_data": "quote|normal"}, {"text": "Debug quote", "callback_data": "quote|debug"}]], "result should expose restart buttons")
+
+
+def test_debug_callback_starts_debug_flow() -> None:
+    bot = make_bot()
+    reply = bot.handle_callback(user_id=123, chat_id=456, data="quote|debug", now=NOW)[0]
+    assert_true("postcode" in reply.text.lower(), "debug callback should start postcode step")
+    assert_true(bot.conversations[456].debug is True, "debug callback should mark conversation as debug")
+
+
+def test_unknown_callback_reprompts() -> None:
+    bot = make_bot()
+    reply = bot.handle_callback(user_id=123, chat_id=456, data="repair|iphone_screen", now=NOW)[0]
+    assert_true("expired" in reply.text.lower(), "callback without conversation should explain expiry")
+    assert_true(reply.inline_keyboard is not None, "expired callback should offer restart buttons")
 
 
 def test_debug_flow_includes_calculations() -> None:
@@ -88,7 +131,7 @@ def test_help_keyboard() -> None:
     bot = make_bot()
     reply = send(bot, "help")[0]
     assert_true("quote" in reply.text.lower(), "help should mention quote")
-    assert_true(reply.keyboard == [["quote", "debug"], ["cancel"]], "help should expose quick commands")
+    assert_true(reply.inline_keyboard == [[{"text": "Quote", "callback_data": "quote|normal"}, {"text": "Debug", "callback_data": "quote|debug"}]], "help should expose inline quick commands")
 
 
 def test_allowed_user_parser() -> None:
@@ -121,8 +164,24 @@ def test_thread_id_payload_is_preserved() -> None:
     assert_true(payload["message_thread_id"] == 2, "forum topic replies should preserve message_thread_id")
 
 
+def test_inline_keyboard_payload_shape() -> None:
+    payload = build_send_message_payload(
+        -1004036696902,
+        BotReply("Choose", inline_keyboard=[[{"text": "W1B", "callback_data": "postcode|W1B 2EL"}]]),
+        message_thread_id=2,
+    )
+    assert_true(payload["message_thread_id"] == 2, "inline payload should preserve topic thread")
+    assert_true(
+        payload["reply_markup"] == {"inline_keyboard": [[{"text": "W1B", "callback_data": "postcode|W1B 2EL"}]]},
+        "inline payload should use Telegram inline_keyboard markup",
+    )
+
+
 TESTS = [
     test_guided_quote_flow,
+    test_inline_button_quote_flow,
+    test_debug_callback_starts_debug_flow,
+    test_unknown_callback_reprompts,
     test_debug_flow_includes_calculations,
     test_group_command_suffix_starts_flow,
     test_invalid_repair_reprompts,
@@ -134,6 +193,7 @@ TESTS = [
     test_allowed_chat_parser,
     test_command_normalisation,
     test_thread_id_payload_is_preserved,
+    test_inline_keyboard_payload_shape,
 ]
 
 

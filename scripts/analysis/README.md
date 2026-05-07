@@ -80,16 +80,16 @@ export TELEGRAM_ALLOWED_CHAT_IDS="-1004036696902"
 python3 scripts/analysis/courier_telegram_bot.py
 ```
 
-The Telegram bot supports a guided flow:
+The Telegram bot supports an inline-button guided flow:
 
 ```text
-quote -> postcode -> repair type -> stock state -> same-day slots -> courier options
+/quote -> postcode fixture button -> repair button -> stock button -> same-day slot button -> courier options
 ```
 
-Use `debug` instead of `quote` to include local calculation details. The bot
-also accepts group commands like `/quote@YourBotName`. The bot requires
-`TELEGRAM_ALLOWED_USER_IDS` or `TELEGRAM_ALLOWED_CHAT_IDS` unless `--allow-all`
-is passed for local testing.
+Use `/debug` or the `Debug quote` button to include local calculation details.
+The bot also accepts group commands like `/quote@YourBotName`. Typed fallback
+still works for custom postcodes. The bot requires `TELEGRAM_ALLOWED_USER_IDS`
+or `TELEGRAM_ALLOWED_CHAT_IDS` unless `--allow-all` is passed for local testing.
 
 ## Running
 
