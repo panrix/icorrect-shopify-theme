@@ -1,0 +1,55 @@
+{{ 'icorrect-redesign-tokens.css' | asset_url | stylesheet_tag }}
+{{ 'icorrect-collection-redesign.css' | asset_url | stylesheet_tag }}
+
+<section class="icr-design info info-warranty">
+  <div class="container">
+    <div class="info-head">
+      <div class="mono-label">{{ section.settings.eyebrow }}</div>
+      <h2>{{ section.settings.heading }}</h2>
+      <p>{{ section.settings.lede }}</p>
+    </div>
+
+    <div class="warranty-grid">
+      {%- for block in section.blocks -%}
+        <div class="warranty-card" {{ block.shopify_attributes }}>
+          <div class="warranty-num">{{ block.settings.metric }}</div>
+          <div class="warranty-label">{{ block.settings.label }}</div>
+          <div class="warranty-body">{{ block.settings.copy }}</div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "iCorrect warranty strip",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Warranty and standards" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Two years of cover." },
+    { "type": "textarea", "id": "lede", "label": "Lede", "default": "The warranty message stays visible before FAQ because it answers a major trust question for screen repairs." }
+  ],
+  "blocks": [
+    {
+      "type": "metric",
+      "name": "Metric",
+      "settings": [
+        { "type": "text", "id": "metric", "label": "Metric", "default": "24 mo" },
+        { "type": "text", "id": "label", "label": "Label", "default": "Warranty period" },
+        { "type": "textarea", "id": "copy", "label": "Copy", "default": "Cover on the display assembly and labour we supply." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "iCorrect warranty strip",
+      "blocks": [
+        { "type": "metric", "settings": { "metric": "24 mo", "label": "Warranty period", "copy": "Cover on the display assembly and labour we supply." } },
+        { "type": "metric", "settings": { "metric": "0", "label": "Re-work excess", "copy": "No diagnostic fee if the covered repair needs re-work." } },
+        { "type": "metric", "settings": { "metric": "48 h", "label": "Warranty priority", "copy": "Priority bench slot for covered failures." } },
+        { "type": "metric", "settings": { "metric": "QA", "label": "Final checks", "copy": "Repair log and functional test before return." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

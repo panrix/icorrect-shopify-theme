@@ -1,0 +1,400 @@
+{{ 'icorrect-redesign-tokens.css' | asset_url | stylesheet_tag }}
+{{ 'icorrect-collection-redesign.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'icorrect-collection-redesign.js' | asset_url }}" defer="defer"></script>
+
+{%- assign repair_collection = collections[section.settings.collection] | default: collection -%}
+
+<div class="icr-design variant-v2">
+  <nav class="icnav">
+    <div class="container icnav-inner">
+      <a class="icnav-logo" href="{{ routes.root_url }}">iCorrect</a>
+      <div class="icnav-links">
+        <a href="/collections/all-devices">Repairs</a>
+        <a href="/pages/corporate-service">Corporate</a>
+        <a href="/pages/our-warranty">Why us</a>
+        <a href="/pages/how-it-works">How it works</a>
+        <a href="/pages/about">About</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="crumbs">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span class="sep">/</span>
+      <a href="/collections/all-devices">Repairs</a>
+      <span class="sep">/</span>
+      <span>MacBook Screen</span>
+    </div>
+  </div>
+
+  <header class="collection-header">
+    <div class="container">
+      <div class="mono-label collection-mono">Collection · MacBook · Screen</div>
+      <div class="coll-head-title">
+        <h1 class="display">{{ section.settings.collection_heading }}</h1>
+        <div class="coll-head-lede">{{ section.settings.collection_lede }}</div>
+      </div>
+    </div>
+  </header>
+
+  <section class="trust-band">
+    <div class="container">
+      <ul class="trust-band-inner" role="list">
+        <li class="trust-item trust-item-rating">
+          <div class="trust-rating-num">{{ section.settings.rating }}</div>
+          <div class="trust-rating-meta">
+            <div class="stars" aria-label="{{ section.settings.rating }} out of 5">
+              {%- for i in (1..5) -%}
+                <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+                  <path d="M7 1l1.8 3.8 4.2.6-3 2.9.7 4.1L7 10.5 3.3 12.4l.7-4.1-3-2.9 4.2-.6z" fill="#f5a623" stroke="#f5a623"/>
+                </svg>
+              {%- endfor -%}
+            </div>
+            <span>{{ section.settings.review_count }} Google reviews</span>
+          </div>
+        </li>
+        <li class="trust-item">
+          <div class="trust-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="3.5" width="17" height="11" rx="1.5"/><path d="M8 18.5h6M11 14.5v4"/></svg>
+          </div>
+          <div class="trust-label"><strong>Apple parts</strong><span>Calibrated in-house</span></div>
+        </li>
+        <li class="trust-item">
+          <div class="trust-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="6" y="6" width="10" height="10" rx="1.5"/><path d="M8.5 4.5V2M11 4.5V2M13.5 4.5V2M8.5 20V17.5M11 20V17.5M13.5 20V17.5M4.5 8.5H2M4.5 11H2M4.5 13.5H2M20 8.5H17.5M20 11H17.5M20 13.5H17.5"/></svg>
+          </div>
+          <div class="trust-label"><strong>Microsoldering</strong><span>Board-level repairs</span></div>
+        </li>
+        <li class="trust-item">
+          <div class="trust-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M11 2.5l7 2.5v6c0 4.2-3 7.5-7 9-4-1.5-7-4.8-7-9v-6l7-2.5z"/><path d="M8 11l2.2 2.2L14.5 9"/></svg>
+          </div>
+          <div class="trust-label"><strong>2-yr warranty</strong><span>Double the standard</span></div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="hero-v2 hero-v2-hs-original">
+    <div class="hero-gradient-bg"></div>
+    <div class="container">
+      <div class="hero-v2-headline">
+        <div class="hero-v2-eyebrow"><span class="dot"></span> {{ section.settings.eyebrow }}</div>
+        <h2>{{ section.settings.heading }}</h2>
+        <p>{{ section.settings.lede }}</p>
+      </div>
+
+      <div class="hero-v2-wizard" id="wizard">
+        <div class="wiz wiz-v2" id="wizard-root" data-icr-collection-wizard>
+          <div class="wiz-progress">
+            <div class="mono-label wiz-step-count">Step 1 of 3</div>
+            <div class="wiz-dots" aria-label="Quote progress">
+              <button class="wiz-dot" type="button" data-icr-progress="1">
+                <span class="wiz-dot-num">1</span>
+                <span class="wiz-dot-label">Model</span>
+              </button>
+              <button class="wiz-dot" type="button" data-icr-progress="2">
+                <span class="wiz-dot-num">2</span>
+                <span class="wiz-dot-label">Issue</span>
+              </button>
+              <button class="wiz-dot" type="button" data-icr-progress="3">
+                <span class="wiz-dot-num">3</span>
+                <span class="wiz-dot-label">Quote</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="wiz-step" data-icr-step-panel="1">
+            <h3 class="wiz-step-title">{{ section.settings.step_1_heading }}</h3>
+            <p class="wiz-step-sub">
+              <span class="wiz-sub-desktop">{{ section.settings.step_1_subheading }}</span>
+              <span class="wiz-sub-mobile">Pick your family first — we'll narrow it down.</span>
+            </p>
+
+            <div class="wiz-family-grid" data-icr-family-grid>
+              <button type="button" class="wiz-family-btn" data-icr-mobile-family="pro">
+                <svg width="48" height="32" viewBox="0 0 48 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="4" y="3" width="40" height="24" rx="1.5"/><rect x="0" y="27" width="48" height="3" rx="0.5"/><line x1="20" y1="29" x2="28" y2="29"/></svg>
+                <span class="wiz-family-text"><span class="wiz-family-name">MacBook Pro</span><span class="wiz-family-detail">13" · 14" · 16"</span></span>
+                <span class="wiz-arrow">→</span>
+              </button>
+              <button type="button" class="wiz-family-btn" data-icr-mobile-family="air">
+                <svg width="48" height="32" viewBox="0 0 48 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="6" y="5" width="36" height="20" rx="1.5"/><rect x="2" y="25" width="44" height="3" rx="0.5"/><line x1="21" y1="27" x2="27" y2="27"/></svg>
+                <span class="wiz-family-text"><span class="wiz-family-name">MacBook Air</span><span class="wiz-family-detail">13" · 15"</span></span>
+                <span class="wiz-arrow">→</span>
+              </button>
+              <button type="button" class="wiz-family-btn" data-icr-mobile-family="old">
+                <svg width="48" height="32" viewBox="0 0 48 32" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="5" y="4" width="38" height="22" rx="1.5"/><line x1="5" y1="8" x2="43" y2="8"/><rect x="0" y="26" width="48" height="3" rx="0.5"/></svg>
+                <span class="wiz-family-text"><span class="wiz-family-name">Older / Unsure</span><span class="wiz-family-detail">Pre-2018 or not listed</span></span>
+                <span class="wiz-arrow">→</span>
+              </button>
+            </div>
+
+            <div class="wiz-model-picker" data-icr-model-picker>
+              <button class="wiz-back wiz-mobile-family-back" type="button" data-icr-mobile-family-back>← All families</button>
+              <div class="wiz-filters">
+                <div class="wiz-filter-group" role="group" aria-label="Filter by family">
+                  <span class="wiz-filter-label">Family</span>
+                  <button type="button" class="wiz-chip active" data-icr-filter="family" data-filter-value="all">All</button>
+                  <button type="button" class="wiz-chip" data-icr-filter="family" data-filter-value="pro">Pro</button>
+                  <button type="button" class="wiz-chip" data-icr-filter="family" data-filter-value="air">Air</button>
+                </div>
+                <div class="wiz-filter-group" role="group" aria-label="Filter by screen size">
+                  <span class="wiz-filter-label">Size</span>
+                  <button type="button" class="wiz-chip active" data-icr-filter="size" data-filter-value="all">All</button>
+                  <button type="button" class="wiz-chip" data-icr-filter="size" data-filter-value="13">13"</button>
+                  <button type="button" class="wiz-chip" data-icr-filter="size" data-filter-value="14">14"</button>
+                  <button type="button" class="wiz-chip" data-icr-filter="size" data-filter-value="15">15"</button>
+                  <button type="button" class="wiz-chip" data-icr-filter="size" data-filter-value="16">16"</button>
+                </div>
+                <button type="button" class="wiz-filter-clear" data-icr-filter-clear>Clear</button>
+              </div>
+
+              <div class="wiz-grid">
+                {%- for product in repair_collection.products -%}
+                  {%- assign variant = product.selected_or_first_available_variant -%}
+                  {%- assign title_downcase = product.title | downcase -%}
+                  {%- assign family = 'pro' -%}
+                  {%- if title_downcase contains 'macbook air' -%}{%- assign family = 'air' -%}{%- endif -%}
+                  {%- assign size = '' -%}
+                  {%- if title_downcase contains '16' -%}{%- assign size = '16' -%}
+                  {%- elsif title_downcase contains '15' -%}{%- assign size = '15' -%}
+                  {%- elsif title_downcase contains '14' -%}{%- assign size = '14' -%}
+                  {%- elsif title_downcase contains '13' -%}{%- assign size = '13' -%}
+                  {%- endif -%}
+                  {%- assign display_title = product.title | replace: ' Screen Repair', '' | replace: ' screen repair', '' | replace: ' (Genuine Display)', '' | replace: 'MacBook Pro 16-inch', 'MacBook Pro 16"' | replace: 'MacBook Pro 15-inch', 'MacBook Pro 15"' | replace: 'MacBook Pro 14-inch', 'MacBook Pro 14"' | replace: 'MacBook Pro 13-inch', 'MacBook Pro 13"' | replace: 'MacBook Air 15-inch', 'MacBook Air 15"' | replace: 'MacBook Air 13-inch', 'MacBook Air 13"' | split: ' A' | first | strip -%}
+                  <button
+                    class="wiz-option"
+                    type="button"
+                    data-icr-model-option
+                    data-product-title="{{ product.title | escape }}"
+                    data-product-url="{{ product.url | escape }}"
+                    data-variant-id="{{ variant.id }}"
+                    data-price-cents="{{ product.price }}"
+                    data-model-diagnosis="false"
+                    data-family="{{ family }}"
+                    data-size="{{ size }}"
+                  >
+                    <span class="wiz-option-main">
+                      <span class="wiz-option-name">{{ display_title }}</span>
+                      <span class="wiz-option-detail">{{ product.vendor | default: 'MacBook screen repair' }}</span>
+                    </span>
+                    <span class="wiz-option-price">from <span>{{ product.price | money_without_trailing_zeros }}</span></span>
+                  </button>
+                {%- endfor -%}
+                <button
+                  class="wiz-option"
+                  type="button"
+                  data-icr-model-option
+                  data-product-title="Older or unknown MacBook"
+                  data-product-url="/pages/contact"
+                  data-variant-id=""
+                  data-price-cents="0"
+                  data-model-diagnosis="true"
+                  data-family="old"
+                  data-size=""
+                >
+                  <span class="wiz-option-main">
+                    <span class="wiz-option-name">Older MacBook</span>
+                    <span class="wiz-option-detail">Pre-2018 · requires diagnosis</span>
+                  </span>
+                  <span class="wiz-option-price"><span class="wiz-option-diag">Requires diagnosis</span></span>
+                </button>
+                <div class="wiz-empty" data-icr-empty hidden>No models match. <button type="button" data-icr-filter-clear>Clear filters</button></div>
+              </div>
+            </div>
+
+            <div class="wiz-help-cta">
+              <div class="wiz-help-cta-icon" aria-hidden="true">A2442</div>
+              <div class="wiz-help-cta-text">
+                <strong>Don't know which MacBook you have?</strong>
+                <span>Type the model code from the underside — or jump to the visual guide.</span>
+              </div>
+              <form class="wiz-help-cta-form" data-icr-identify-form>
+                <label class="icr-visually-hidden" for="wiz-help-code-{{ section.id }}">MacBook model code</label>
+                <input id="wiz-help-code-{{ section.id }}" placeholder="e.g. A2442" data-icr-identify-input>
+                <button type="submit">Identify</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="wiz-step" data-icr-step-panel="2" hidden>
+            <button class="wiz-back" type="button" data-icr-back="1">← Back</button>
+            <h3 class="wiz-step-title">{{ section.settings.step_2_heading }}</h3>
+            <p class="wiz-step-sub">{{ section.settings.step_2_subheading }}</p>
+            <div class="wiz-list">
+              <button class="wiz-option-row" type="button" data-icr-issue-option data-issue-label="Cracked glass" data-diagnosis="false">
+                <span><span class="wiz-option-name">Cracked glass</span><span class="wiz-option-detail">Visible cracks or shatter</span></span>
+                <span class="wiz-arrow">→</span>
+              </button>
+              <button class="wiz-option-row" type="button" data-icr-issue-option data-issue-label="Dead / black screen" data-diagnosis="false">
+                <span><span class="wiz-option-name">Dead / black screen</span><span class="wiz-option-detail">No backlight or won't wake</span></span>
+                <span class="wiz-arrow">→</span>
+              </button>
+              <button class="wiz-option-row" type="button" data-icr-issue-option data-issue-label="Flickering" data-diagnosis="false">
+                <span><span class="wiz-option-name">Flickering</span><span class="wiz-option-detail">Lines, artifacts, or flashing</span></span>
+                <span class="wiz-arrow">→</span>
+              </button>
+              <button class="wiz-option-row" type="button" data-icr-issue-option data-issue-label="Stage light effect" data-diagnosis="false">
+                <span><span class="wiz-option-name">Stage light effect</span><span class="wiz-option-detail">Vertical bars (MBP 13/14/16)</span></span>
+                <span class="wiz-arrow">→</span>
+              </button>
+              <button class="wiz-option-row" type="button" data-icr-issue-option data-issue-label="Hinge / lid damage" data-diagnosis="true">
+                <span><span class="wiz-option-name">Hinge / lid damage</span><span class="wiz-option-detail">Lid won't close or stuck</span></span>
+                <span class="badge badge-ring">Diagnosis</span>
+              </button>
+              <button class="wiz-option-row" type="button" data-icr-issue-option data-issue-label="Something else" data-diagnosis="true">
+                <span><span class="wiz-option-name">Something else</span><span class="wiz-option-detail">Diagnosis required</span></span>
+                <span class="badge badge-ring">Diagnosis</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="wiz-step wiz-quote" data-icr-step-panel="3" hidden>
+            <button class="wiz-back" type="button" data-icr-back="2">← Back</button>
+
+            <div class="wiz-summary" aria-live="polite">
+              <div class="mono-label">Your quote</div>
+              <div class="wiz-summary-line"><span>Device</span><span data-icr-summary-model>Selected MacBook</span></div>
+              <div class="wiz-summary-line"><span>Issue</span><span data-icr-summary-issue>Screen issue</span></div>
+              <div class="wiz-summary-line"><span>Turnaround</span><span>1–2 working days</span></div>
+              <div class="wiz-summary-line"><span>Warranty</span><span>{{ section.settings.warranty_label }}</span></div>
+              <div class="wiz-price-row">
+                <div><div class="mono-label">Repair</div></div>
+                <div class="wiz-price" data-icr-summary-price></div>
+              </div>
+              <div class="wiz-diagnosis-note" data-icr-diagnostic-result hidden>
+                <strong>Free diagnosis first.</strong> {{ section.settings.diagnostic_copy }}
+                <div class="wiz-diagnosis-actions"><a class="btn btn-light" href="{{ section.settings.diagnostic_link }}">Request diagnosis</a></div>
+              </div>
+            </div>
+
+            <form class="wiz-contact" method="post" action="{{ routes.cart_add_url }}" data-icr-cart-form data-icr-booking-result>
+              <input type="hidden" name="id" value="" data-icr-variant-id>
+              <input type="hidden" name="quantity" value="1">
+              <input type="hidden" name="properties[Selected model]" value="" data-icr-property-model>
+              <input type="hidden" name="properties[Selected issue]" value="" data-icr-property-issue>
+              <input type="hidden" name="properties[Service method]" value="walk_in" data-icr-property-service>
+              <input type="hidden" name="properties[Quote source]" value="MacBook screen collection wizard">
+
+              <div class="wiz-postcode-card">
+                <label class="wiz-postcode-label" for="wiz-postcode-{{ section.id }}">
+                  Enter your postcode
+                  <span class="wiz-postcode-hint">We'll show you what's available in your area.</span>
+                </label>
+                <div class="wiz-postcode-row">
+                  <input id="wiz-postcode-{{ section.id }}" class="wiz-postcode-input" placeholder="e.g. W1W 8JQ" name="properties[Collection postcode]" autocomplete="postal-code">
+                </div>
+              </div>
+
+              <div class="wiz-delivery-grid" role="radiogroup" aria-label="Service method">
+                <label class="wiz-delivery-card active">
+                  <input class="icr-hidden-radio" type="radio" name="icr-service" value="walk_in" checked data-icr-service-radio>
+                  <span class="wiz-delivery-radio" aria-hidden="true"><span></span></span>
+                  <span class="wiz-delivery-body"><span class="wiz-delivery-title">Walk in</span><span class="wiz-delivery-sub">12 Margaret St, Fitzrovia W1W 8JQ</span></span>
+                  <span class="wiz-delivery-price">Free</span>
+                </label>
+                <label class="wiz-delivery-card">
+                  <span class="wiz-delivery-badge">Popular</span>
+                  <input class="icr-hidden-radio" type="radio" name="icr-service" value="london_courier" data-icr-service-radio>
+                  <span class="wiz-delivery-radio" aria-hidden="true"><span></span></span>
+                  <span class="wiz-delivery-body"><span class="wiz-delivery-title">Same-day courier</span><span class="wiz-delivery-sub">London only · request a slot</span></span>
+                  <span class="wiz-delivery-price">Confirm</span>
+                </label>
+                <label class="wiz-delivery-card">
+                  <input class="icr-hidden-radio" type="radio" name="icr-service" value="national_mail_in" data-icr-service-radio>
+                  <span class="wiz-delivery-radio" aria-hidden="true"><span></span></span>
+                  <span class="wiz-delivery-body"><span class="wiz-delivery-title">Next-day courier</span><span class="wiz-delivery-sub">Pre-paid kit · UK-wide</span></span>
+                  <span class="wiz-delivery-price">UK</span>
+                </label>
+              </div>
+
+              <div class="wiz-delivery-detail" data-icr-courier-fields hidden>
+                <div class="wiz-courier-confirm">✓ London courier requests are captured now. We'll confirm the slot before collection.</div>
+                <div class="wiz-section-label">Collection details</div>
+                <div class="icr-courier-grid">
+                  <input name="properties[Collection address]" placeholder="Collection address" autocomplete="street-address">
+                  <input name="properties[Contact phone]" placeholder="Phone number" autocomplete="tel">
+                  <input name="properties[Preferred collection date]" type="date" aria-label="Preferred collection date">
+                  <select name="properties[Preferred collection window]" aria-label="Preferred collection window">
+                    <option value="">Choose a window</option>
+                    <option>9:00 – 12:00</option>
+                    <option>12:00 – 15:00</option>
+                    <option>15:00 – 18:00</option>
+                  </select>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-lg btn-dark icr-checkout-btn">{{ section.settings.checkout_label }}</button>
+              <p class="wiz-fineprint">{{ section.settings.checkout_fineprint }}</p>
+            </form>
+
+            <div class="wiz-secondary-actions">
+              <span>Not ready?</span>
+              <button type="button" class="wiz-secondary-link">Email me this quote</button>
+              <span class="wiz-secondary-sep">·</span>
+              <button type="button" class="wiz-secondary-link">Ask a question</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="fwiz" data-icr-floating-wizard hidden>
+    <div class="fwiz-bar">
+      <div class="fwiz-bar-main">
+        <div class="fwiz-bar-chips">
+          <button type="button" class="fwiz-chip fwiz-chip-btn" data-icr-floating-jump="1" aria-label="Pick model">
+            <span class="fwiz-chip-label">Model</span>
+            <span class="fwiz-chip-value" data-icr-floating-model>Not set</span>
+            <span class="fwiz-chip-edit" aria-hidden="true">↺</span>
+          </button>
+          <button type="button" class="fwiz-chip fwiz-chip-btn" data-icr-floating-jump="2" aria-label="Pick issue">
+            <span class="fwiz-chip-label">Issue</span>
+            <span class="fwiz-chip-value" data-icr-floating-issue>Not set</span>
+            <span class="fwiz-chip-edit" aria-hidden="true">↺</span>
+          </button>
+          <div class="fwiz-chip fwiz-chip-turnaround filled" aria-label="Turnaround: 1–2 days typical">
+            <span class="fwiz-chip-label">Turnaround</span>
+            <span class="fwiz-chip-value" data-icr-floating-turnaround>1–2 days typical</span>
+          </div>
+        </div>
+        <div class="fwiz-bar-actions">
+          <button type="button" class="fwiz-btn fwiz-btn-primary fwiz-btn-cta" data-icr-floating-cta>
+            Start your quote
+            <span class="fwiz-btn-arrow" aria-hidden="true">→</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "iCorrect hero wizard",
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "Repair collection" },
+    { "type": "text", "id": "collection_heading", "label": "Collection heading", "default": "MacBook Screen Repair" },
+    { "type": "textarea", "id": "collection_lede", "label": "Collection lede", "default": "Cracked, dead, flickering, or stuck on Stage Light? We replace the display only — never the full lid — using genuine Apple parts, at prices that make sense." },
+    { "type": "text", "id": "rating", "label": "Rating", "default": "4.9" },
+    { "type": "text", "id": "review_count", "label": "Review count", "default": "719" },
+    { "type": "text", "id": "eyebrow", "label": "Hero eyebrow", "default": "Fitzrovia workshop · in stock today" },
+    { "type": "text", "id": "heading", "label": "Hero heading", "default": "Get an instant MacBook screen quote." },
+    { "type": "textarea", "id": "lede", "label": "Hero lede", "default": "Tell us your model. See your price. Book in 60 seconds — with a 2-year warranty and genuine Apple parts." },
+    { "type": "text", "id": "step_1_heading", "label": "Step 1 heading", "default": "Which MacBook?" },
+    { "type": "text", "id": "step_1_subheading", "label": "Step 1 subheading", "default": "We've identified the repair — just select your model." },
+    { "type": "text", "id": "step_2_heading", "label": "Step 2 heading", "default": "What's happening?" },
+    { "type": "text", "id": "step_2_subheading", "label": "Step 2 subheading", "default": "Most screen issues have a fixed price. Some require diagnosis." },
+    { "type": "text", "id": "warranty_label", "label": "Warranty label", "default": "2 years" },
+    { "type": "textarea", "id": "diagnostic_copy", "label": "Diagnosis copy", "default": "We'll inspect your device and send an exact quote within 24 hours before any work begins." },
+    { "type": "url", "id": "diagnostic_link", "label": "Diagnosis link" },
+    { "type": "text", "id": "checkout_label", "label": "Checkout label", "default": "Continue to checkout" },
+    { "type": "text", "id": "checkout_fineprint", "label": "Checkout fineprint", "default": "You'll add your details and pay securely on the next step. London courier requests are confirmed before collection." }
+  ],
+  "presets": [
+    { "name": "iCorrect hero wizard" }
+  ]
+}
+{% endschema %}

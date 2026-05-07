@@ -1,0 +1,49 @@
+{{ 'icorrect-redesign-tokens.css' | asset_url | stylesheet_tag }}
+{{ 'icorrect-collection-redesign.css' | asset_url | stylesheet_tag }}
+
+<footer class="icr-design icfooter">
+  <div class="container icfooter-inner">
+    <div>
+      <a class="icnav-logo icfooter-logo" href="{{ routes.root_url }}">iCorrect</a>
+      <div class="icfooter-tag">{{ section.settings.tagline }}</div>
+    </div>
+    <div class="icfooter-cols">
+      <div>
+        <div class="mono-label icfooter-label">Repairs</div>
+        <a href="/collections/macbook-repair-collection">MacBook</a>
+        <a href="/collections/iphone-collection-prices">iPhone</a>
+        <a href="/collections/ipad-collection-prices">iPad</a>
+        <a href="/collections/watch-collection-prices">Apple Watch</a>
+      </div>
+      <div>
+        <div class="mono-label icfooter-label">Company</div>
+        <a href="/pages/our-warranty">Why us</a>
+        <a href="/pages/corporate-service">Corporate</a>
+        <a href="/pages/how-it-works">How it works</a>
+        <a href="/pages/contact">Contact</a>
+      </div>
+      <div>
+        <div class="mono-label icfooter-label">Legal</div>
+        <a href="/pages/our-warranty">Warranty</a>
+        <a href="/policies/privacy-policy">Privacy</a>
+        <a href="/policies/terms-of-service">Terms</a>
+      </div>
+    </div>
+  </div>
+  <div class="container icfooter-base">
+    <span>© {{ 'now' | date: '%Y' }} iCorrect Ltd. Not affiliated with Apple Inc.</span>
+    <span>Company No. 09392844 · VAT GB 203495788</span>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "iCorrect redesign footer",
+  "settings": [
+    { "type": "text", "id": "tagline", "label": "Tagline", "default": "Apple repair specialists · Fitzrovia, London" }
+  ],
+  "presets": [
+    { "name": "iCorrect redesign footer" }
+  ]
+}
+{% endschema %}

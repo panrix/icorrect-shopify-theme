@@ -9,7 +9,280 @@
  */
 {
   "sections": {
-    "banner": {
+    "icorrect_hero_wizard": {
+      "type": "icorrect-collection-hero-wizard",
+      "settings": {
+        "collection": "macbook-screen-repair-prices",
+        "collection_heading": "MacBook Screen Repair",
+        "collection_lede": "Cracked, dead, flickering, or stuck on Stage Light? We replace the display only — never the full lid — using genuine Apple parts, at prices that make sense.",
+        "rating": "4.9",
+        "review_count": "719",
+        "eyebrow": "Fitzrovia workshop · in stock today",
+        "heading": "Get an instant MacBook screen quote.",
+        "lede": "Tell us your model. See your price. Book in 60 seconds — with a 2-year warranty and genuine Apple parts.",
+        "step_1_heading": "Which MacBook?",
+        "step_1_subheading": "We've identified the repair — just select your model.",
+        "step_2_heading": "What's happening?",
+        "step_2_subheading": "Most screen issues have a fixed price. Some require diagnosis.",
+        "warranty_label": "2 years",
+        "diagnostic_copy": "We'll inspect your device and send an exact quote within 24 hours before any work begins.",
+        "diagnostic_link": "shopify://pages/contact",
+        "checkout_label": "Continue to checkout",
+        "checkout_fineprint": "You'll add your details and pay securely on the next step. London courier requests are confirmed before collection."
+      }
+    },
+    "icorrect_identify": {
+      "type": "icorrect-identify-helper",
+      "settings": {
+        "eyebrow": "Not sure which model you have?",
+        "heading": "Find your model number in 5 seconds.",
+        "copy": "Flip your MacBook over and look for a four-character code starting with A. Enter it here and we will try to match the repair below.",
+        "example_code": "A2442",
+        "placeholder": "e.g. A2442",
+        "button_label": "Identify"
+      }
+    },
+    "icorrect_product_grid": {
+      "type": "icorrect-repair-product-grid",
+      "disabled": true,
+      "settings": {
+        "collection": "macbook-screen-repair-prices",
+        "eyebrow": "All repairs",
+        "heading": "Browse every MacBook screen repair we offer.",
+        "lede": "The wizard is the fastest route, but every product remains browsable with its live Shopify price and URL."
+      }
+    },
+    "icorrect_process": {
+      "type": "icorrect-process-proof",
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "step_label": "01",
+            "time_label": "30 min",
+            "heading": "Free Pre-diagnosis",
+            "copy": "Walk in or ship your MacBook. We inspect the display, test backlight channels on the scope, and check for related damage — hinge flex, logic board shorts, Stage Light. You get a written quote before anything is opened."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "step_label": "02",
+            "time_label": "1–2 days",
+            "heading": "Repair on the bench",
+            "copy": "Work happens in our Fitzrovia workshop — never sent out. Screen assemblies are replaced with the hinge and antenna transferred to the new unit; backlight IC replacements are done under a stereo microscope with lead-free solder."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "step_label": "03",
+            "time_label": "45 min",
+            "heading": "Calibration & QA",
+            "copy": "Every repair is True-Tone calibrated against a reference sensor, colour-profile matched, and run through a 30-point QA pass — brightness uniformity, touch-bar response, keyboard, speakers, camera, Wi-Fi throughput."
+          }
+        },
+        "step_4": {
+          "type": "step",
+          "settings": {
+            "step_label": "04",
+            "time_label": "Same day",
+            "heading": "Collection or courier",
+            "copy": "Collect in person (Mon–Fri) or opt for insured next-day courier back to you. Every repair ships with a printed QA report, the 2-year warranty card, and the original (or recycled) parts if you want them returned."
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3",
+        "step_4"
+      ],
+      "settings": {
+        "eyebrow": "Our process",
+        "heading": "What happens between \"drop-off\" and \"fixed\".",
+        "lede": "Four stages. No grey area. You'll know where your Mac is at every step — we send timestamped photos from the bench when the display comes off."
+      }
+    },
+    "icorrect_parts": {
+      "type": "icorrect-parts-proof",
+      "blocks": {
+        "fact_1": {
+          "type": "fact",
+          "settings": {
+            "key": "Source",
+            "value": "Genuine Apple LCD & OLED assemblies — reclaimed from first-party stock, not aftermarket."
+          }
+        },
+        "fact_2": {
+          "type": "fact",
+          "settings": {
+            "key": "Calibration",
+            "value": "Every display factory-matched for colour temperature, gamma, and True Tone before it leaves the bench."
+          }
+        },
+        "fact_3": {
+          "type": "fact",
+          "settings": {
+            "key": "What's new",
+            "value": "LCD panel, backlight driver, digitizer cable, hinge covers, adhesive perimeter. Camera and antenna transferred."
+          }
+        },
+        "fact_4": {
+          "type": "fact",
+          "settings": {
+            "key": "What's recycled",
+            "value": "Your original LCD is stripped for recoverable components. You can request the carcass back at collection."
+          }
+        }
+      },
+      "block_order": [
+        "fact_1",
+        "fact_2",
+        "fact_3",
+        "fact_4"
+      ],
+      "settings": {
+        "eyebrow": "Parts & materials",
+        "heading": "Apple OEM displays, recalibrated in-house.",
+        "lede": "Aftermarket \"compatible\" screens cost less up front and fail inside 18 months — lower brightness, off-white point, dead True Tone. We don't fit them. Every screen we install is a genuine Apple assembly, tested against a reference panel, and warrantied for two years.",
+        "panel_eyebrow": "Supply chain",
+        "node_1_title": "Apple authorised stock",
+        "node_1_copy": "First-party LCD / mini-LED assemblies, sealed.",
+        "node_2_title": "Recalibration bench",
+        "node_2_copy": "White-point, gamma, True Tone profile flashed.",
+        "node_3_title": "Your MacBook",
+        "node_3_copy": "Fitted, QA'd, returned with a 2-year warranty."
+      }
+    },
+    "icorrect_warranty": {
+      "type": "icorrect-warranty-strip",
+      "blocks": {
+        "metric_1": {
+          "type": "metric",
+          "settings": {
+            "metric": "24 mo",
+            "label": "Warranty period",
+            "copy": "Against functional defect of the display assembly we fitted. Covers parts, labour, and return shipping."
+          }
+        },
+        "metric_2": {
+          "type": "metric",
+          "settings": {
+            "metric": "0",
+            "label": "Excess on re-work",
+            "copy": "If anything we touched fails inside warranty, we fix it free. No diagnostic fee, no \"goodwill\" bargaining."
+          }
+        },
+        "metric_3": {
+          "type": "metric",
+          "settings": {
+            "metric": "48 h",
+            "label": "Warranty turnaround",
+            "copy": "Priority bench slot if a warrantied repair fails. Drop in or use our pre-paid courier label."
+          }
+        },
+        "metric_4": {
+          "type": "metric",
+          "settings": {
+            "metric": "ISO 9001",
+            "label": "Workshop standard",
+            "copy": "Repair log, torque spec, calibration reference for every job. Corporate clients get the audit trail on request."
+          }
+        }
+      },
+      "block_order": [
+        "metric_1",
+        "metric_2",
+        "metric_3",
+        "metric_4"
+      ],
+      "settings": {
+        "eyebrow": "Warranty & standards",
+        "heading": "Two years of cover. No asterisks.",
+        "lede": "Apple's own out-of-warranty screen repair runs 90 days. Most London repair shops offer 6 or 12 months. We warrant every MacBook screen we fit for 24 months — parts, labour, and any re-work."
+      }
+    },
+    "icorrect_faq": {
+      "type": "icorrect-redesign-faq",
+      "blocks": {
+        "faq_1": {
+          "type": "faq",
+          "settings": {
+            "question": "How long does a MacBook screen repair take?",
+            "answer": "<p>Most screen repairs are completed in 1–2 working days. If you drop in before 11am and we have the part in stock, same-day turnaround is often possible. Walk-ins welcome at our Fitzrovia workshop — no appointment needed for diagnosis.</p>"
+          }
+        },
+        "faq_2": {
+          "type": "faq",
+          "settings": {
+            "question": "Are the replacement screens genuine Apple parts?",
+            "answer": "<p>Yes. We source original Apple displays, reclaim them where possible, and recalibrate every unit in-house to original factory standards. That means True Tone, full brightness, and colour accuracy are preserved — no downgrade in quality versus an Apple Store repair.</p>"
+          }
+        },
+        "faq_3": {
+          "type": "faq",
+          "settings": {
+            "question": "Is my data safe during the repair?",
+            "answer": "<p>Completely. Screen repairs don't touch your drive, but we run a GDPR-compliant workshop and sign an NDA on request for corporate clients. We never ask for your passcode unless post-repair testing requires it — and you can be present for that step.</p>"
+          }
+        },
+        "faq_4": {
+          "type": "faq",
+          "settings": {
+            "question": "What does the 2-year warranty cover?",
+            "answer": "<p>Every MacBook screen repair carries a full 2-year warranty against functional defects — double what most shops offer. The warranty covers the replaced display, the labour, and any re-work needed during that period. Accidental damage isn't covered, but we'll always quote fairly for re-repairs.</p>"
+          }
+        },
+        "faq_5": {
+          "type": "faq",
+          "settings": {
+            "question": "Do I need to book, or can I just walk in?",
+            "answer": "<p>Either works. Walk in Mon–Fri 9am–6pm (Fri until 6pm, closed weekends) for a free diagnosis and written quote before any work starts. Booking ahead via the wizard reserves a workshop slot and is usually faster — particularly for Stage Light repairs or logic-board work.</p>"
+          }
+        },
+        "faq_6": {
+          "type": "faq",
+          "settings": {
+            "question": "You're microsoldering specialists — what does that mean?",
+            "answer": "<p>Most repair shops swap whole components. We work at the board level: individual chips, resistors, and solder joints under a microscope. That's why other repair shops (and insurers) send their tougher cases to us — backlight IC replacements, liquid damage recovery, and the infamous MBP Stage Light fix are routine for our team.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4",
+        "faq_5",
+        "faq_6"
+      ],
+      "settings": {
+        "eyebrow": "Frequently asked",
+        "heading": "Questions, answered honestly.",
+        "lede": "If you want to speak to a human first, call +44 (0)207 099 8517 or drop in — we're opposite The London Palladium."
+      }
+    },
+    "icorrect_location": {
+      "type": "icorrect-workshop-location",
+      "settings": {
+        "eyebrow": "Visit the workshop",
+        "heading": "Fitzrovia, London.",
+        "lede": "Opposite The London Palladium. Drop-in diagnosis, no appointment needed.",
+        "address": "<p>12 Margaret Street<br>Audley House<br>London W1W 8JQ</p>",
+        "phone": "+44 (0)207 099 8517",
+        "email": "support@icorrect.co.uk",
+        "hours": "<p>Mon–Thu 9am–6pm<br>Fri 10am–6pm · Sat/Sun closed</p>",
+        "pin_copy": "12 Margaret St, London W1W 8JQ"
+      }
+    },
+    "icorrect_footer": {
+      "type": "icorrect-redesign-footer",
+      "settings": {
+        "tagline": "Apple repair specialists · Fitzrovia, London"
+      }
+    },
+    "legacy_banner": {
       "type": "main-collection-banner",
       "disabled": true,
       "settings": {
@@ -18,7 +291,7 @@
         "color_scheme": "scheme-1"
       }
     },
-    "product-grid": {
+    "legacy_product_grid": {
       "type": "main-collection-product-grid",
       "disabled": true,
       "settings": {
@@ -39,70 +312,15 @@
         "padding_bottom": 36
       }
     },
-    "main_banner_and_video_HjbmW9": {
-      "type": "main-banner-and-video",
-      "disabled": true,
-      "settings": {
-        "padding_top": 0,
-        "padding_bottom": 0,
-        "mob_padding_top": 0,
-        "mob_padding_bottom": 0,
-        "bg": "#ffffff",
-        "video_url": "",
-        "img": "shopify://shop_images/Website-Banner.jpg"
-      }
-    },
-    "about_info_RWbQxj": {
-      "type": "about-info",
-      "name": "About Info",
-      "settings": {
-        "padding_top": 50,
-        "padding_bottom": 50,
-        "mob_padding_top": 40,
-        "mob_padding_bottom": 40,
-        "bg": "#fafafa",
-        "heading": "MacBook Screen Repair Prices",
-        "details": "<p>If your MacBook screen is cracked, flickering, dim, or completely dead, this is the right place. We’re iCorrect, and we specialise in professional, original screen repairs for MacBook Air and MacBook Pro.</p><p><br/>Unlike most repair shops, we don’t replace the full lid unless we have to. We replace just the broken display using genuine Apple screens that we reclaim, restore, and recalibrate in-house to original factory standards. That means your MacBook keeps features like True Tone, full brightness, and colour accuracy with no downgrade in quality.</p><p><br/>This isn’t a patch job. It’s a proper screen repair carried out by specialists in microelectronics. It’s also why other repair shops come to us when they’re out of their depth, and why insurers and business clients trust us with high-spec MacBook repairs every day.</p>",
-        "btn": "",
-        "link": "",
-        "btn_2": "",
-        "link_2": "",
-        "heading_size_desktop": 38,
-        "heading_size_mobile": 24,
-        "heading_line_height_desktop": 46,
-        "heading_line_height_mobile": 36
-      }
-    },
-    "model_number_search_nCwYGN": {
+    "legacy_model_number_search": {
       "type": "model-number-search",
-      "blocks": {
-        "heading_n3MfyV": {
-          "type": "heading",
-          "settings": {
-            "heading": "Need help identifying your MacBook?",
-            "heading_size": "h1"
-          }
-        },
-        "text_MnPYpU": {
-          "type": "text",
-          "settings": {
-            "text": "<p>Check the model number printed on the underside of your MacBook. It starts with the letter “A” followed by four digits. Use this number to quickly identify your exact model and ensure you select the correct repair or service.</p>",
-            "text_style": "body"
-          }
-        }
-      },
-      "block_order": [
-        "heading_n3MfyV",
-        "text_MnPYpU"
-      ],
-      "name": "Model Number Search",
+      "disabled": true,
       "settings": {
         "enable_model_search": true,
         "model_search_placeholder": "Enter model number, e.g. A1989",
         "model_search_button_label": "Search",
         "model_search_mode": "scroll",
         "model_search_scope_selector": "#shopify-section-featured-collection, .featured-collection, .collection",
-        "image": "shopify://shop_images/MacBook_Model_Number.png",
         "height": "adapt",
         "desktop_image_width": "small_medium",
         "layout": "image_first",
@@ -117,9 +335,9 @@
         "padding_bottom": 36
       }
     },
-    "featured_collection_AfhUDd": {
+    "legacy_featured_collection": {
       "type": "featured-collection",
-      "name": "t:sections.featured-collection.presets.name",
+      "disabled": true,
       "settings": {
         "title": "",
         "heading_size": "h1",
@@ -146,81 +364,9 @@
         "padding_bottom": 36
       }
     },
-    "about_info_XAqnaH": {
-      "type": "about-info",
-      "name": "About Info",
-      "settings": {
-        "padding_top": 50,
-        "padding_bottom": 50,
-        "mob_padding_top": 40,
-        "mob_padding_bottom": 40,
-        "bg": "#fafafa",
-        "heading": "Our Process",
-        "details": "<p>We don’t believe in unnecessary replacements. Where possible, we retain your MacBook’s original housing, webcam, hinge, and lid structure. We replace only the part that’s actually damaged: the display panel.</p><p><br/>Using genuine Apple displays sourced from donor devices, we restore the screen with a perfect fit and recalibrate every display to match factory colour, brightness, and tone. This saves money, preserves your MacBook’s feel and finish, and keeps working components out of landfill.</p><p><br/>Other shops often install full aftermarket lids. We do better. Our approach is cleaner, more sustainable, and simply more Apple-like. Your MacBook deserves that level of care.</p>",
-        "btn": "",
-        "link": "",
-        "btn_2": "",
-        "link_2": "",
-        "heading_size_desktop": 38,
-        "heading_size_mobile": 24,
-        "heading_line_height_desktop": 46,
-        "heading_line_height_mobile": 36
-      }
-    },
-    "macbook_videos_zE9TPz": {
-      "type": "macbook-videos",
-      "name": "MacBook Videos",
-      "settings": {
-        "heading": "See How We Repair Your MacBook",
-        "subtitle": "Watch our videos to see how we repair MacBooks, what to expect, and how we work.",
-        "video_1_title": "MacBook Video 1",
-        "video_2_title": "MacBook Video 2",
-        "video_3_title": "MacBook Video 3",
-        "color_scheme": "scheme-4",
-        "padding_top": 44,
-        "padding_bottom": 80
-      }
-    },
-    "repair_services_nQkwFT": {
+    "legacy_repair_services": {
       "type": "repair-services",
-      "blocks": {
-        "service_PEi9BF": {
-          "type": "service",
-          "settings": {
-            "icon": "shopify://shop_images/Service_icon_Walk-in.png",
-            "heading": "Walk-In Service",
-            "details": "For clients based in Central London who wish to visit us, we operate a  walk-in drop-off service by appointment. Simply book your repair via our  website booking page to confirm your appointment time before heading to us.",
-            "btn": "Learn more",
-            "link": "shopify://pages/our-services"
-          }
-        },
-        "service_RaggTi": {
-          "type": "service",
-          "disabled": true,
-          "settings": {
-            "icon": "shopify://shop_images/Service_icon_Courier.png",
-            "heading": "London Courier",
-            "details": "We operate a convenient collection, repair & delivery service for  clients based within Zones 1 & 2 in London. Our couriers are fully  tracked and insured throughout the journey. Book your iPhone repair  before 1pm for a same day return.",
-            "btn": "Learn more",
-            "link": ""
-          }
-        },
-        "service_enBGWD": {
-          "type": "service",
-          "settings": {
-            "icon": "shopify://shop_images/Service_icon_Delivery.png",
-            "heading": "National Courier",
-            "details": "We collect from anywhere in the UK. Book online and we send secure packaging to your door. Your device is returned fully repaired and tested.",
-            "btn": "Learn more",
-            "link": "shopify://pages/our-services"
-          }
-        }
-      },
-      "block_order": [
-        "service_PEi9BF",
-        "service_RaggTi",
-        "service_enBGWD"
-      ],
+      "disabled": true,
       "settings": {
         "padding-top": 50,
         "padding-bottom": 50,
@@ -231,102 +377,9 @@
         "details": "Choose the most convenient service for you"
       }
     },
-    "icorrect_faqs_RVk3VL": {
+    "legacy_faqs": {
       "type": "icorrect-faqs",
-      "blocks": {
-        "accordion_mCCjdt": {
-          "type": "accordion",
-          "settings": {
-            "heading": "How much does a MacBook screen repair cost compared to the Apple Store? ",
-            "sub_head": "<p>Apple charges between £500 and £900 for a MacBook screen repair because they replace the entire lid assembly. That includes the display, casing, hinges, camera, and wireless antenna, even if none of those parts are damaged.</p><p>We take a different approach. We replace only the damaged display, using an original Apple screen recovered from a donor device. This lets us retain your MacBook's original lid, camera, and housing. Our repairs cost 30 to 50 percent less than Apple and are completed faster.</p><p>You may see cheaper prices online, but those typically involve aftermarket parts. These parts often cause True Tone and brightness issues, and the housing rarely fits properly. Our repairs avoid those problems and deliver the same quality as Apple, without the Apple tax.</p>",
-            "alignment": "left"
-          }
-        },
-        "accordion_dgGrWD": {
-          "type": "accordion",
-          "settings": {
-            "heading": "Do you use Apple screens in your MacBook repairs?",
-            "sub_head": "<p>Yes. We use original Apple displays reclaimed from genuine MacBooks. Every screen is tested and recalibrated to match Apple factory specifications.</p><p>We never use aftermarket panels. The colour, brightness, and tone of an Apple display are built into the hardware and software working together. That is why we only use parts that retain full compatibility with Apple firmware.</p>",
-            "alignment": "left"
-          }
-        },
-        "accordion_jNEQxe": {
-          "type": "accordion",
-          "settings": {
-            "heading": "Will my screen repair with iCorrect void my Apple warranty?",
-            "sub_head": "<p>If your screen is already damaged, your Apple warranty is technically void. Apple does not repair MacBook screens. They only replace full lids or offer full device swaps.</p><p>Our repairs restore your MacBook with an original screen and do not cause software conflicts. But Apple may still decline future warranty service simply because a third party has handled the device. This is out of our control.</p><p>That said, you are getting the same screen, fitted to a higher standard, in less time, at significantly less cost. And your repair is covered by our own two-year warranty.</p>",
-            "alignment": "left"
-          }
-        },
-        "accordion_wzPFwd": {
-          "type": "accordion",
-          "settings": {
-            "heading": "Will I keep True Tone and other features after the screen is replaced?",
-            "sub_head": "<p>Yes. We only use Apple displays, so your MacBook will retain True Tone, full brightness, native resolution, colour calibration, and ambient light features.</p><p>Every screen we install is tested and calibrated to preserve all visual features and system-level functions. We also verify performance during our final quality control inspection.</p>",
-            "alignment": "left"
-          }
-        },
-        "accordion_iPyPC6": {
-          "type": "accordion",
-          "settings": {
-            "heading": "Will it be obvious that my MacBook screen has been repaired?",
-            "sub_head": "<p>Not at all. If we’ve done our job right, and we do, your MacBook will look exactly like it did before it broke.</p><p>There will be no scratches, no marks, no strange colours, no signs of tampering. Just a clean, sharp, perfectly aligned display. We use Apple screens and precision tools to make sure the fit and finish are flawless.</p>",
-            "alignment": "left"
-          }
-        },
-        "accordion_PLgEhN": {
-          "type": "accordion",
-          "settings": {
-            "heading": "How long does a MacBook screen repair take?",
-            "sub_head": "<p>Standard screen repairs take two to three working days. That includes intake checks, disassembly, display prep, fitting, calibration, post-repair testing, and final QC.</p><p>Need it faster? Book our express service. It reduces turnaround to one working day when scheduled in advance.</p><p>We can offer this because we’ve built an assembly-line workflow. Each stage is handled by a dedicated technician, which speeds up the process without sacrificing quality.</p>",
-            "alignment": "left"
-          }
-        },
-        "accordion_wMHNen": {
-          "type": "accordion",
-          "settings": {
-            "heading": "What if the screen isn’t the only issue, will you check for other damage?",
-            "sub_head": "<p>Yes. We always check for deeper faults before we begin any screen repair. If your MacBook does not power on or show a display, we upgrade the job to a full diagnostic first.</p><p>This lets us identify power issues, logic board damage, or other faults that may not be visible at first glance. We’ll tell you exactly what’s wrong before proceeding, with a clear quote and no surprises.</p>",
-            "alignment": "left"
-          }
-        },
-        "accordion_heFyRm": {
-          "type": "accordion",
-          "settings": {
-            "heading": "Can you repair Liquid Retina XDR or other high-spec MacBook screens?",
-            "sub_head": "<p>Yes. We handle all screen types including Liquid Retina XDR on 14-inch and 16-inch MacBook Pros.</p><p>These displays require greater precision due to their mini-LED structure and calibration demands. Our team is trained in handling them correctly and restoring them with genuine Apple parts.</p>",
-            "alignment": "left"
-          }
-        },
-        "accordion_7WpxcT": {
-          "type": "accordion",
-          "settings": {
-            "heading": "How is your MacBook screen repair sustainable? How do you reuse parts?",
-            "sub_head": "<p>We recover and refurbish original Apple displays from genuine MacBooks. These displays are fully tested, cleaned, recalibrated, and reused when they meet factory performance standards.</p><p>Instead of replacing the whole lid, we preserve the casing, webcam, and hinge, cutting down on e-waste. Every part that can be kept in use is kept in use.</p><p>This approach reduces environmental impact and makes each repair more affordable. It is sustainability without compromise.</p>",
-            "alignment": "left"
-          }
-        },
-        "accordion_7BMWPU": {
-          "type": "accordion",
-          "settings": {
-            "heading": "What if I’ve already had my MacBook screen repaired elsewhere and it’s still faulty?",
-            "sub_head": "<p>We deal with these cases often. Poor third-party repairs often use full lids with non-original screens, leading to dim displays, missing features, and poor fit.</p><p>If we detect aftermarket parts or incompatible assemblies, we’ll let you know. In many cases, we can replace the faulty screen with an original one and restore your MacBook to full health.</p><p>We’ll explain what went wrong with your previous repair and what can be done to fix it properly. If a housing or internal parts need to be replaced too, we’ll give you the full picture and a clear quote before we begin.</p>",
-            "alignment": "left"
-          }
-        }
-      },
-      "block_order": [
-        "accordion_mCCjdt",
-        "accordion_dgGrWD",
-        "accordion_jNEQxe",
-        "accordion_wzPFwd",
-        "accordion_iPyPC6",
-        "accordion_PLgEhN",
-        "accordion_wMHNen",
-        "accordion_heFyRm",
-        "accordion_7WpxcT",
-        "accordion_7BMWPU"
-      ],
+      "disabled": true,
       "settings": {
         "padding-top": 50,
         "padding-bottom": 75,
@@ -338,32 +391,35 @@
         "txt-clr": "#ffffff"
       }
     },
-    "contact_with_map_dXbbDU": {
+    "legacy_contact_map": {
       "type": "contact-with-map",
+      "disabled": true,
       "settings": {
         "padding-top": 0,
         "padding-bottom": 0,
         "mob-padding-top": 0,
         "mob-padding-bottom": 0,
         "bg": "#fafafa",
-        "map": "shopify://shop_images/map-img.webp",
-        "heading": "Get In Touch",
-        "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>",
-        "hours": "<h3>Hours</h3><p>Mon–Thur: 9am–6pm </p><p>Fri: 10am–6pm </p><p>Sat: Closed </p><p>Sun: Closed</p>"
+        "heading": "Get In Touch"
       }
     }
   },
   "order": [
-    "banner",
-    "product-grid",
-    "main_banner_and_video_HjbmW9",
-    "about_info_RWbQxj",
-    "model_number_search_nCwYGN",
-    "featured_collection_AfhUDd",
-    "about_info_XAqnaH",
-    "macbook_videos_zE9TPz",
-    "repair_services_nQkwFT",
-    "icorrect_faqs_RVk3VL",
-    "contact_with_map_dXbbDU"
+    "icorrect_hero_wizard",
+    "icorrect_identify",
+    "icorrect_product_grid",
+    "icorrect_process",
+    "icorrect_parts",
+    "icorrect_warranty",
+    "icorrect_faq",
+    "icorrect_location",
+    "icorrect_footer",
+    "legacy_banner",
+    "legacy_product_grid",
+    "legacy_model_number_search",
+    "legacy_featured_collection",
+    "legacy_repair_services",
+    "legacy_faqs",
+    "legacy_contact_map"
   ]
 }
