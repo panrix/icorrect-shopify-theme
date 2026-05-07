@@ -79,7 +79,14 @@ def test_decision_endpoint_returns_customer_safe_options() -> None:
     assert_true(data["status"] == "ok", "central screen quote should be ok")
     assert_true(any(option["label"] == "Free standard courier" for option in data["options"]), "should include free standard")
     rendered = json.dumps(data).lower()
-    for token in ("gophr_api_key", "gophr_raw_response", "net_contribution", "courier_subsidy", "courier_margin"):
+    for token in (
+        "_repair_flow_type",
+        "gophr_api_key",
+        "gophr_raw_response",
+        "net_contribution",
+        "courier_subsidy",
+        "courier_margin",
+    ):
         assert_true(token not in rendered, f"decision response leaked {token}")
 
 

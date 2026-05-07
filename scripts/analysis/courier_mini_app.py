@@ -474,7 +474,8 @@ def build_fixture_payload(engine: DecisionEngine) -> dict[str, Any]:
 def run_decision(engine: DecisionEngine, payload: dict[str, Any]) -> dict[str, Any]:
     now_raw = payload.get("now") or dt.datetime.now(tz=engine_now_tz()).isoformat()
     now = normalise_now(dt.datetime.fromisoformat(str(now_raw)))
-    return engine.decide(
+    debug = bool(payload.get("debug", False))
+    result = engine.decide(
         postcode=str(payload.get("postcode", "")),
         repair_type=str(payload.get("repair_type", "iphone_screen")),
         stock=str(payload.get("stock", "unknown")),
@@ -482,8 +483,23 @@ def run_decision(engine: DecisionEngine, payload: dict[str, Any]) -> dict[str, A
         same_day_slots=int(payload.get("same_day_slots", 3)),
         action=str(payload.get("action", "quote")),
         target_contribution=engine.default_target_contribution,
-        debug=bool(payload.get("debug", False)),
+        debug=debug,
     )
+    if debug:
+        return result
+    return strip_private_fields(result)
+
+
+def strip_private_fields(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {
+            key: strip_private_fields(item)
+            for key, item in value.items()
+            if not str(key).startswith("_") and key != "debug"
+        }
+    if isinstance(value, list):
+        return [strip_private_fields(item) for item in value]
+    return value
 
 
 def engine_now_tz() -> dt.tzinfo:
