@@ -16,6 +16,8 @@ Spec this implements: [`docs/marketing-recording-analysis-tool-2026-04-22.md`](.
 | `posthog_diff.py`     | Compare two snapshots, produce a markdown diff |
 | `courier_decision_engine.py` | Prototype London courier decision engine using the committed Gophr matrix and local fixtures |
 | `courier_decision_engine_fixtures.py` | Standard-library fixture checks for the courier decision prototype |
+| `courier_decision_contract.py` | Website-facing courier decision contract wrapper for quote-wizard integration |
+| `courier_decision_contract_fixtures.py` | Standard-library fixture checks for the courier decision contract |
 | `courier_telegram_bot.py` | Internal Telegram guided-flow wrapper for the courier decision prototype |
 | `courier_telegram_bot_fixtures.py` | No-network Telegram conversation fixture checks |
 | `courier_mini_app.py` | Local browser mini app for clicking through courier decision inputs |
@@ -46,6 +48,22 @@ Run fixture checks:
 
 ```bash
 python3 scripts/analysis/courier_decision_engine_fixtures.py
+```
+
+Emit the quote-wizard contract payload:
+
+```bash
+python3 scripts/analysis/courier_decision_contract.py \
+  --postcode "W1B 2EL" \
+  --repair-type iphone_screen \
+  --stock available \
+  --now "2026-05-06T10:30:00+01:00"
+```
+
+Run contract fixture checks:
+
+```bash
+python3 scripts/analysis/courier_decision_contract_fixtures.py
 ```
 
 Run Telegram conversation fixture checks:

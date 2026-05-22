@@ -19,6 +19,7 @@ Canonical reference: theme changelog, marketing implementation notes, analytics-
 | `meta-capi-status-2026-04-21.md` | Meta CAPI status |
 | `posthog-web-pixel.js` | PostHog web-pixel snippet |
 | `quote-wizard-preview-qa-checklist-2026-03-23.md` | Quote-wizard preview QA checklist |
+| `london-courier-decision-contract-2026-05-22.md` | Quote-wizard-safe courier decision contract |
 | `walk-in-bank-holiday-blackout-2026-05-04.md` | Walk-in bank-holiday blackout note |
 
 Subfolder: [`audits/`](audits/INDEX.md) — 12 historical audits.
