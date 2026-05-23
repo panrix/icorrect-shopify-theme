@@ -17,6 +17,7 @@ Canonical reference: theme changelog, marketing implementation notes, analytics-
 | `marketing-posthog-heatmap-2026-04-22.md` | PostHog heatmap notes |
 | `marketing-status-2026-04-22.md` | Marketing status snapshot |
 | `meta-capi-status-2026-04-21.md` | Meta CAPI status |
+| `ops-courier-quote-lab-2026-05-23.md` | Internal ops courier quote lab deployment notes |
 | `posthog-web-pixel.js` | PostHog web-pixel snippet |
 | `quote-wizard-preview-qa-checklist-2026-03-23.md` | Quote-wizard preview QA checklist |
 | `london-courier-decision-contract-2026-05-22.md` | Quote-wizard-safe courier decision contract |

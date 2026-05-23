@@ -18,6 +18,8 @@ Spec this implements: [`docs/marketing-recording-analysis-tool-2026-04-22.md`](.
 | `courier_decision_engine_fixtures.py` | Standard-library fixture checks for the courier decision prototype |
 | `courier_decision_contract.py` | Website-facing courier decision contract wrapper for quote-wizard integration |
 | `courier_decision_contract_fixtures.py` | Standard-library fixture checks for the courier decision contract |
+| `courier_quote_lab_server.py` | Internal quote-wizard/courier lab server for `ops.icorrect.co.uk/courier` |
+| `courier_quote_lab_fixtures.py` | Standard-library fixture checks for the hosted quote lab |
 | `courier_telegram_bot.py` | Internal Telegram guided-flow wrapper for the courier decision prototype |
 | `courier_telegram_bot_fixtures.py` | No-network Telegram conversation fixture checks |
 | `courier_mini_app.py` | Local browser mini app for clicking through courier decision inputs |
@@ -64,6 +66,21 @@ Run contract fixture checks:
 
 ```bash
 python3 scripts/analysis/courier_decision_contract_fixtures.py
+```
+
+Run the courier quote lab locally:
+
+```bash
+python3 scripts/analysis/courier_quote_lab_server.py --port 8055
+```
+
+Then open `http://127.0.0.1:8055/courier/`. The deployed internal sandbox is
+served behind basic auth at `https://ops.icorrect.co.uk/courier/`.
+
+Run quote lab checks:
+
+```bash
+python3 scripts/analysis/courier_quote_lab_fixtures.py
 ```
 
 Run Telegram conversation fixture checks:
