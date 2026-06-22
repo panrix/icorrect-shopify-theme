@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>iCorrect - Get Your Free Quote</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+/* ========================================
+   RESET & VARIABLES
+   ======================================== */
+:root {
+  --dark: #0f0f14;
+  --text: #1d1d2b;
+  --text-2: #4a4a5c;
+  --text-3: #8c8c9e;
+  --accent: #2563eb;
+  --accent-h: #1d4ed8;
+  --accent-bg: #eff4ff;
+  --bg: #f6f7f9;
+  --white: #ffffff;
+  --line: #e4e6ec;
+  --line-h: #cdd0da;
+  --blue: #2563eb;
+  --blue-bg: #eff4ff;
+  --green: #059669;
+  --green-bg: #ecfdf5;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --sh-1: 0 1px 2px rgba(15,15,20,0.04);
+  --sh-2: 0 4px 12px rgba(15,15,20,0.07);
+  --sh-3: 0 8px 30px rgba(15,15,20,0.10);
+  --sh-focus: 0 0 0 3px rgba(37,99,235,0.12);
+  --ease: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;letter-spacing:-0.015em;line-height:1.5;}
+
+/* ========================================
+   LAYOUT
+   ======================================== */
+.section{width:100%;padding:40px 16px;}
+.wrap{max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:32px;}
+@media(min-width:1024px){
+  .section{padding:56px 24px;}
+  .wrap{flex-direction:row;align-items:flex-start;gap:52px;}
+  .info{width:44%;flex-shrink:0;position:sticky;top:28px;}
+  .wizard{width:56%;}
+}
+
+/* ========================================
+   LEFT: MAP + DETAILS
+   ======================================== */
+.info{display:flex;flex-direction:column;gap:16px;}
+.map{width:100%;height:240px;border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--line);box-shadow:var(--sh-1);}
+@media(min-width:1024px){.map{height:auto;aspect-ratio:4/3;}}
+.map iframe{width:100%;height:100%;border:0;display:block;}
+
+.card{background:var(--white);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;}
+.card-grid{display:grid;grid-template-columns:1fr;}
+@media(min-width:560px){.card-grid{grid-template-columns:1fr 1fr;}.card-left{border-right:1px solid var(--line);border-bottom:none;}}
+.card-left{border-bottom:1px solid var(--line);}
+.card-col{padding:20px;display:flex;flex-direction:column;gap:14px;}
+.d-group{display:flex;flex-direction:column;gap:5px;}
+.d-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-3);display:flex;align-items:center;gap:5px;}
+.d-label svg{width:14px;height:14px;color:var(--accent);flex-shrink:0;}
+.d-val{font-size:14px;font-weight:500;line-height:1.5;color:var(--text);text-decoration:none;display:block;}
+a.d-val:hover{color:var(--accent);}
+.hrs{display:grid;grid-template-columns:80px 1fr;gap:4px 10px;font-size:13px;}
+.hrs-d{color:var(--text-3);font-weight:500;}
+.hrs-t{color:var(--text);font-weight:600;}
+.hrs-c{color:var(--accent);}
+
+/* ========================================
+   RIGHT: WIZARD
+   ======================================== */
+.wizard{display:flex;flex-direction:column;}
+.w-head{margin-bottom:28px;}
+.w-title{font-size:clamp(28px,4.5vw,48px);font-weight:700;line-height:1.08;letter-spacing:-0.035em;color:var(--dark);margin-bottom:8px;}
+.w-sub{font-size:clamp(14px,1.1vw,16px);font-weight:400;line-height:1.55;color:var(--text-2);}
+
+/* Progress */
+.prog{display:flex;align-items:center;margin-bottom:32px;}
+.prog-s{display:flex;align-items:center;gap:6px;flex:1;}
+.prog-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all var(--ease);border:2px solid var(--line);background:var(--white);color:var(--text-3);}
+.prog-s.on .prog-dot{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,0.2);}
+.prog-s.done .prog-dot{background:var(--dark);border-color:var(--dark);color:#fff;}
+.prog-lbl{font-size:11px;font-weight:600;color:var(--text-3);display:none;white-space:nowrap;}
+.prog-s.on .prog-lbl{color:var(--accent);display:block;}
+.prog-s.done .prog-lbl{color:var(--dark);display:block;}
+@media(min-width:560px){.prog-lbl{display:block;}}
+.prog-line{flex:1;height:2px;background:var(--line);margin:0 6px;border-radius:1px;transition:background var(--ease);}
+.prog-s.done .prog-line{background:var(--dark);}
+.prog-s:last-child .prog-line{display:none;}
+
+/* Steps */
+.step{display:none;animation:fadeUp .28s ease-out;}
+.step.on{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.s-title{font-size:clamp(18px,2.2vw,26px);font-weight:700;letter-spacing:-0.025em;line-height:1.12;margin-bottom:4px;}
+.s-sub{font-size:14px;color:var(--text-2);margin-bottom:20px;line-height:1.5;}
+.back{display:inline-flex;align-items:center;gap:5px;background:none;border:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--text-3);cursor:pointer;padding:6px 0;margin-bottom:14px;transition:color var(--ease);}
+.back:hover{color:var(--text);}
+.back svg{width:15px;height:15px;}
+
+/* ========================================
+   DEVICE CARDS
+   ======================================== */
+.dev-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+@media(min-width:480px){.dev-grid{grid-template-columns:repeat(3,1fr);}}
+@media(min-width:680px){.dev-grid{grid-template-columns:repeat(4,1fr);}}
+.dev{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px 10px;background:var(--white);border:2px solid var(--line);border-radius:var(--r-md);cursor:pointer;transition:all var(--ease);min-height:100px;text-align:center;-webkit-tap-highlight-color:transparent;}
+.dev:hover{border-color:var(--line-h);box-shadow:var(--sh-2);transform:translateY(-2px);}
+.dev:active{transform:scale(0.97);}
+.dev.sel{border-color:var(--accent);background:var(--accent-bg);box-shadow:var(--sh-focus);}
+.dev:focus-visible{outline:none;box-shadow:var(--sh-focus);}
+.dev .ico{width:32px;height:32px;display:flex;align-items:center;justify-content:center;}
+.dev .ico svg{width:100%;height:100%;color:var(--text);}
+.dev.sel .ico svg{color:var(--accent);}
+.dev .lbl{font-size:13px;font-weight:600;}
+
+/* ========================================
+   MODEL GROUPS (all collapsed, full list)
+   ======================================== */
+.m-groups{display:flex;flex-direction:column;gap:6px;}
+.m-group{border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;background:var(--white);}
+.m-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;user-select:none;transition:background var(--ease);-webkit-tap-highlight-color:transparent;}
+.m-head:hover{background:#fafbfc;}
+.m-head:active{background:#f4f5f7;}
+.m-name{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-0.02em;}
+.m-count{font-size:12px;color:var(--text-3);font-weight:500;margin-top:1px;}
+.m-chev{width:18px;height:18px;color:var(--text-3);transition:transform .25s ease;flex-shrink:0;}
+.m-group.open .m-chev{transform:rotate(180deg);}
+.m-body{max-height:0;overflow:hidden;transition:max-height .35s ease;}
+.m-group.open .m-body{max-height:3000px;}
+.m-list{padding:0 14px 14px;display:flex;flex-direction:column;gap:2px;}
+.m-item{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:var(--r-sm);cursor:pointer;transition:all var(--ease);-webkit-tap-highlight-color:transparent;}
+.m-item:hover{background:#f5f6fa;}
+.m-item:active{background:#eef0f5;}
+.m-item.sel{background:var(--accent-bg);outline:1.5px solid var(--accent);}
+.m-item .mn{font-size:14px;font-weight:600;color:var(--text);line-height:1.3;flex:1;min-width:0;}
+.m-item .my{font-size:12px;color:var(--text-3);font-weight:500;margin-left:12px;white-space:nowrap;flex-shrink:0;}
+
+/* Helper trigger + panel */
+.help-trig{display:flex;align-items:center;gap:7px;padding:10px 0;margin-top:14px;background:none;border:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--blue);cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.help-trig:hover{text-decoration:underline;}
+.help-trig svg{width:16px;height:16px;flex-shrink:0;}
+
+.help-panel{max-height:0;overflow:hidden;transition:max-height .4s ease,opacity .3s ease;opacity:0;margin-top:6px;}
+.help-panel.open{max-height:800px;opacity:1;}
+.help-card{background:var(--white);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;}
+
+/* Visual guide wizard inside helper */
+.vg-step{display:none;padding:20px;animation:fadeUp .25s ease-out;}
+.vg-step.on{display:block;}
+.vg-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:2px;text-align:center;}
+.vg-sub{font-size:13px;color:var(--text-3);margin-bottom:16px;text-align:center;}
+.vg-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;}
+.vg-opt{background:var(--white);border:2px solid var(--line);border-radius:var(--r-md);padding:14px 10px;cursor:pointer;text-align:center;transition:all var(--ease);width:120px;display:flex;flex-direction:column;align-items:center;gap:8px;-webkit-tap-highlight-color:transparent;}
+.vg-opt:hover{border-color:var(--blue);transform:scale(1.03);}
+.vg-opt:active{transform:scale(0.97);}
+.vg-opt img{max-width:80px;max-height:70px;object-fit:contain;}
+.vg-opt .vg-lbl{font-size:12px;font-weight:600;color:var(--text);line-height:1.3;}
+.vg-back{display:inline-flex;align-items:center;gap:4px;background:none;border:none;font-family:inherit;font-size:12px;font-weight:600;color:var(--text-3);cursor:pointer;margin-bottom:12px;}
+.vg-back:hover{color:var(--text);}
+.vg-result{text-align:center;padding:20px;}
+.vg-result img{max-width:200px;max-height:160px;object-fit:contain;margin-bottom:12px;}
+.vg-result-name{font-size:18px;font-weight:700;margin-bottom:14px;}
+.vg-btn{padding:10px 20px;border-radius:20px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;margin:0 4px;}
+.vg-btn-p{background:var(--blue);color:#fff;}
+.vg-btn-s{background:#f0f1f5;color:var(--text-2);}
+
+.help-close{display:flex;align-items:center;justify-content:center;padding:10px;background:#f5f6fa;border:none;font-family:inherit;font-size:12px;font-weight:600;color:var(--text-3);cursor:pointer;width:100%;transition:all var(--ease);}
+.help-close:hover{background:#eef0f4;color:var(--text);}
+
+/* Model number search tab inside helper */
+.help-tabs{display:flex;border-bottom:1px solid var(--line);}
+.help-tab{flex:1;padding:10px;text-align:center;font-size:12px;font-weight:700;color:var(--text-3);cursor:pointer;border:none;background:none;font-family:inherit;border-bottom:2px solid transparent;transition:all var(--ease);}
+.help-tab.on{color:var(--blue);border-bottom-color:var(--blue);background:var(--blue-bg);}
+.help-body{display:none;padding:18px;}
+.help-body.on{display:block;}
+.help-inst{font-size:13px;color:var(--text-2);line-height:1.55;margin-bottom:14px;}
+.help-inst code{background:#f0f1f5;padding:2px 5px;border-radius:3px;font-size:12px;font-weight:600;color:var(--text);}
+.help-row{display:flex;gap:8px;margin-bottom:10px;}
+.help-input{flex:1;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-sm);font-size:14px;font-family:inherit;}
+.help-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 2px rgba(37,99,235,0.1);}
+.help-results{max-height:180px;overflow-y:auto;}
+.help-hit{display:flex;align-items:center;justify-content:space-between;padding:9px 10px;border-bottom:1px solid #f0f1f5;cursor:pointer;transition:background var(--ease);font-size:13px;}
+.help-hit:hover{background:var(--blue-bg);}
+.help-hit:last-child{border-bottom:none;}
+.help-hit .hn{font-weight:700;color:var(--text);font-family:monospace;font-size:12px;}
+.help-hit .hm{color:var(--text-2);font-weight:500;}
+.help-hit .hs{font-size:11px;font-weight:700;color:var(--blue);}
+
+/* ========================================
+   FAULT CARDS
+   ======================================== */
+.f-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+@media(min-width:560px){.f-grid{grid-template-columns:repeat(3,1fr);}}
+@media(min-width:720px){.f-grid{grid-template-columns:repeat(4,1fr);}}
+.f-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:18px 8px;background:var(--white);border:2px solid var(--line);border-radius:var(--r-md);cursor:pointer;transition:all var(--ease);text-align:center;min-height:90px;-webkit-tap-highlight-color:transparent;}
+.f-card:hover{border-color:var(--line-h);box-shadow:var(--sh-2);transform:translateY(-1px);}
+.f-card:active{transform:scale(0.97);}
+.f-card.sel{border-color:var(--accent);background:var(--accent-bg);box-shadow:var(--sh-focus);}
+.f-card .ico{width:24px;height:24px;color:var(--text-2);transition:color var(--ease);}
+.f-card.sel .ico{color:var(--accent);}
+.f-card .lbl{font-size:12px;font-weight:600;line-height:1.3;}
+
+/* ========================================
+   TROUBLESHOOT CARDS
+   ======================================== */
+.t-grid{display:grid;grid-template-columns:1fr;gap:8px;}
+@media(min-width:560px){.t-grid{grid-template-columns:repeat(2,1fr);}}
+.t-card{display:flex;align-items:center;gap:12px;padding:16px 18px;background:var(--white);border:2px solid var(--line);border-radius:var(--r-md);cursor:pointer;transition:all var(--ease);-webkit-tap-highlight-color:transparent;}
+.t-card:hover{border-color:var(--line-h);box-shadow:var(--sh-1);}
+.t-card:active{transform:scale(0.98);}
+.t-card.sel{border-color:var(--accent);background:var(--accent-bg);}
+.t-card .tw{width:36px;height:36px;border-radius:8px;background:#f0f1f5;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.t-card.sel .tw{background:rgba(37,99,235,0.08);}
+.t-card .tw svg{width:18px;height:18px;color:var(--text-2);}
+.t-card.sel .tw svg{color:var(--accent);}
+.t-card .tt{font-size:14px;font-weight:600;line-height:1.3;}
+
+/* ========================================
+   RESOLUTION
+   ======================================== */
+.res{background:var(--white);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;}
+.res-top{padding:24px 24px 0;}
+.res-badge{display:inline-flex;align-items:center;gap:5px;background:var(--green-bg);color:var(--green);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;padding:5px 10px;border-radius:100px;margin-bottom:14px;}
+.res-badge svg{width:13px;height:13px;}
+.res-h{font-size:20px;font-weight:700;letter-spacing:-0.025em;line-height:1.2;margin-bottom:6px;}
+.res-p{font-size:14px;color:var(--text-2);line-height:1.55;margin-bottom:20px;max-width:480px;}
+
+/* Pricing section */
+.price-from{font-size:13px;color:var(--text-3);font-weight:500;margin-bottom:4px;}
+.price-big{font-size:36px;font-weight:700;letter-spacing:-0.03em;line-height:1;color:var(--dark);margin-bottom:20px;}
+.price-big .price-note{font-size:14px;font-weight:500;color:var(--text-3);margin-left:4px;}
+
+.opt-section{margin-bottom:18px;}
+.opt-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-3);margin-bottom:8px;padding:0 2px;}
+.opt-row{display:flex;gap:8px;flex-wrap:wrap;}
+
+.opt-card{flex:1;min-width:0;padding:14px;background:var(--white);border:2px solid var(--line);border-radius:var(--r-md);cursor:pointer;transition:all var(--ease);-webkit-tap-highlight-color:transparent;position:relative;}
+.opt-card:hover{border-color:var(--line-h);}
+.opt-card.sel{border-color:var(--accent);background:var(--accent-bg);}
+.opt-card .opt-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.opt-card .opt-meta{font-size:12px;color:var(--text-3);font-weight:500;}
+.opt-card .opt-price{font-size:14px;font-weight:700;color:var(--text);margin-top:6px;}
+.opt-card .opt-price.free{color:var(--green);}
+.opt-card .pop-tag{position:absolute;top:-8px;right:10px;background:var(--dark);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:0.03em;}
+
+.price-total{display:flex;align-items:baseline;justify-content:space-between;padding:16px 0;margin:0 24px;border-top:1px solid var(--line);}
+.price-total-label{font-size:14px;font-weight:600;color:var(--text-2);}
+.price-total-val{font-size:28px;font-weight:700;letter-spacing:-0.02em;color:var(--dark);}
+
+.warranty-note{display:flex;align-items:center;gap:6px;padding:10px 24px 0;font-size:12px;font-weight:600;color:var(--green);}
+.warranty-note svg{width:14px;height:14px;flex-shrink:0;}
+
+.svc{padding:0 24px;margin-bottom:2px;}
+.svc-r{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid #f0f1f5;}
+.svc-r:last-child{border-bottom:none;}
+.svc-i{width:18px;height:18px;color:var(--accent);margin-right:10px;flex-shrink:0;}
+.svc-i svg{width:100%;height:100%;}
+.svc-l{width:90px;font-size:12px;font-weight:500;color:var(--text-3);flex-shrink:0;}
+.svc-v{font-size:13px;font-weight:600;}
+
+
+
+/* CTAs */
+.res-cta{padding:16px 24px 24px;display:flex;flex-direction:column;gap:10px;}
+.btn-book{display:flex;align-items:center;justify-content:center;gap:7px;padding:14px 28px;background:var(--accent);color:#fff;border:none;border-radius:var(--r-sm);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:all var(--ease);text-decoration:none;letter-spacing:-0.01em;width:100%;}
+.btn-book:hover{background:var(--accent-h);box-shadow:0 4px 16px rgba(37,99,235,0.2);transform:translateY(-1px);}
+.btn-book:active{transform:scale(0.98);}
+.btn-book svg{width:16px;height:16px;}
+.btn-q{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 24px;background:transparent;color:var(--text-2);border:2px solid var(--line);border-radius:var(--r-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all var(--ease);width:100%;}
+.btn-q:hover{border-color:var(--line-h);background:#fafbfc;color:var(--text);}
+.btn-q:active{transform:scale(0.98);}
+
+/* Contact accordion */
+.c-acc{max-height:0;overflow:hidden;transition:max-height .4s ease,opacity .3s ease;opacity:0;}
+.c-acc.open{max-height:700px;opacity:1;}
+.c-inner{padding:20px 24px 24px;border-top:1px solid var(--line);}
+.c-sum{background:#f5f6fa;border-radius:var(--r-sm);padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--text-2);line-height:1.5;}
+.c-sum strong{color:var(--text);font-weight:600;}
+.f-row{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:14px;}
+@media(min-width:560px){.f-row.two{grid-template-columns:1fr 1fr;}}
+.f-grp{display:flex;flex-direction:column;gap:5px;}
+.f-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-3);}
+.f-lbl .req{color:var(--accent);margin-left:2px;}
+.f-inp,.f-ta{width:100%;padding:11px 14px;font-size:14px;font-family:inherit;color:var(--text);background:var(--white);border:1px solid var(--line);border-radius:var(--r-sm);transition:all var(--ease);}
+.f-inp:focus,.f-ta:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(37,99,235,0.1);}
+.f-inp::placeholder,.f-ta::placeholder{color:var(--text-3);}
+.f-ta{min-height:90px;resize:vertical;line-height:1.5;}
+.f-sub{display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 24px;background:var(--dark);color:#fff;border:none;border-radius:var(--r-sm);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;}
+.f-sub:hover{background:#0a0a0f;}
+.f-ok{display:none;text-align:center;padding:28px 20px;}
+.f-ok.show{display:block;}
+.f-ok h3{font-size:18px;font-weight:700;color:var(--green);margin-bottom:4px;}
+.f-ok p{font-size:14px;color:var(--text-2);}
+
+.restart{display:flex;align-items:center;justify-content:center;gap:5px;padding:10px;margin-top:16px;background:none;border:none;font-family:inherit;font-size:13px;font-weight:500;color:var(--text-3);cursor:pointer;}
+.restart:hover{color:var(--accent);}
+
+[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+</style>
+</head>
+<body>
+<section class="section">
+<div class="wrap">
+
+<!-- ================================ -->
+<!-- LEFT: MAP + DETAILS              -->
+<!-- ================================ -->
+<div class="info">
+  <div class="map"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.7925117760165!2d-0.1422392230845079!3d51.51702250999988!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2c5aabf83b%3A0x2abbd489a9d66382!2siCorrect!5e0!3m2!1sen!2sit!4v1766495755523!5m2!1sen!2sit" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="iCorrect London"></iframe></div>
+  <div class="card card-grid">
+    <div class="card-col card-left">
+      <div class="d-group">
+        <p class="d-label"><svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>Address</p>
+        <a href="https://maps.google.com/?q=iCorrect+12+Margaret+Street+London+W1W+8JQ" target="_blank" rel="noopener" class="d-val">iCorrect<br>12 Margaret Street<br>Audley House<br>London W1W 8JQ</a>
+      </div>
+      <div class="d-group">
+        <p class="d-label"><svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>Phone</p>
+        <a href="tel:+442070998517" class="d-val">+44 (0)207 099 8517</a>
+      </div>
+      <div class="d-group">
+        <p class="d-label"><svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email</p>
+        <a href="mailto:support@icorrect.co.uk" class="d-val">support@icorrect.co.uk</a>
+      </div>
+    </div>
+    <div class="card-col">
+      <div class="d-group">
+        <p class="d-label"><svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Opening Hours</p>
+        <div class="hrs">
+          <span class="hrs-d">Mon</span><span class="hrs-t">9am - 6pm</span>
+          <span class="hrs-d">Tue</span><span class="hrs-t">9am - 6pm</span>
+          <span class="hrs-d">Wed</span><span class="hrs-t">9am - 6pm</span>
+          <span class="hrs-d">Thu</span><span class="hrs-t">9am - 6pm</span>
+          <span class="hrs-d">Fri</span><span class="hrs-t">10am - 6pm</span>
+          <span class="hrs-d">Sat</span><span class="hrs-t hrs-c">Closed</span>
+          <span class="hrs-d">Sun</span><span class="hrs-t hrs-c">Closed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================ -->
+<!-- RIGHT: WIZARD                    -->
+<!-- ================================ -->
+<div class="wizard">
+  <div class="w-head">
+    <h2 class="w-title">Get your free quote</h2>
+    <p class="w-sub">Pick your device and we'll point you to the right repair.</p>
+  </div>
+
+  <div class="prog" role="navigation" aria-label="Progress">
+    <div class="prog-s on" data-s="1"><div class="prog-dot">1</div><span class="prog-lbl">Device</span><div class="prog-line"></div></div>
+    <div class="prog-s" data-s="2"><div class="prog-dot">2</div><span class="prog-lbl">Model</span><div class="prog-line"></div></div>
+    <div class="prog-s" data-s="3"><div class="prog-dot">3</div><span class="prog-lbl">Fault</span><div class="prog-line"></div></div>
+    <div class="prog-s" data-s="4"><div class="prog-dot">4</div><span class="prog-lbl">Result</span></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step on" id="s1">
+    <h3 class="s-title">What needs fixing?</h3>
+    <p class="s-sub">Pick your device to get started.</p>
+    <div class="dev-grid" id="devGrid"></div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step" id="s2">
+    <button class="back" onclick="go(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+    <h3 class="s-title" id="s2t"></h3>
+    <p class="s-sub">Pick your exact model for accurate pricing.</p>
+    <div id="mC"></div>
+    <button class="help-trig" id="hT" onclick="toggleHelp()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      Not sure which model? We'll help you find it.
+    </button>
+    <div class="help-panel" id="hP"></div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step" id="s3">
+    <button class="back" onclick="go(2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+    <h3 class="s-title" id="s3t"></h3>
+    <p class="s-sub">Pick the category that fits best.</p>
+    <div class="f-grid" id="fC"></div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step" id="s4">
+    <button class="back" onclick="go(3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+    <h3 class="s-title" id="s4t"></h3>
+    <p class="s-sub" id="s4s"></p>
+    <div class="t-grid" id="tC"></div>
+    <div id="rP" style="display:none;margin-top:20px;"></div>
+  </div>
+</div>
+
+</div>
+</section>
+
+<script>
+/* =============================================
+   STATE
+   ============================================= */
+var S={device:null,model:null,fault:null,issue:null,step:1};
+var DN={iphone:'iPhone',macbook:'MacBook',ipad:'iPad',watch:'Apple Watch',other:'Other'};
+
+/* =============================================
+   DEVICES
+   ============================================= */
+var DEVS=[
+  {id:'iphone',n:'iPhone',svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="1" width="12" height="22" rx="2.5"/><path d="M10 19h4"/></svg>'},
+  {id:'macbook',n:'MacBook',svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M2 17h20M8 21h8M12 17v4"/></svg>'},
+  {id:'ipad',n:'iPad',svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M10 18h4"/></svg>'},
+  {id:'watch',n:'Watch',svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="4" width="12" height="16" rx="6"/><path d="M9 1h6M9 23h6"/></svg>'}
+];
+
+/* =============================================
+   MODEL DATA - grouped, all visible on expand
+   ============================================= */
+var MD={
+  macbook:[
+    {g:"MacBook Pro 16\"",m:[
+      {n:"MacBook Pro 16-inch 'M4 Pro/Max' A3186/A3403 (2024)",y:"2024"},
+      {n:"MacBook Pro 16-inch 'M3 Pro/Max' A2991 (2023)",y:"2023"},
+      {n:"MacBook Pro 16-inch 'M2 Pro/Max' A2780 (2023)",y:"2023"},
+      {n:"MacBook Pro 16-inch 'M1 Pro/Max' A2485 (2021)",y:"2021"},
+      {n:"MacBook Pro 16-inch A2141 (2019)",y:"2019"},
+      {n:"MacBook Pro 15-inch A1990 (2018-2019)",y:"2018"},
+      {n:"MacBook Pro 15-inch A1707 (2016-2017)",y:"2016"}
+    ]},
+    {g:"MacBook Pro 14\"",m:[
+      {n:"MacBook Pro 14-inch 'M4 Pro/Max' A3112/A3185/A3401 (2024)",y:"2024"},
+      {n:"MacBook Pro 14-inch 'M3 Pro/Max' A2918/A2992 (2023)",y:"2023"},
+      {n:"MacBook Pro 14-inch 'M2 Pro/Max' A2779 (2023)",y:"2023"},
+      {n:"MacBook Pro 14-inch 'M1 Pro/Max' A2442 (2021)",y:"2021"}
+    ]},
+    {g:"MacBook Pro 13\"",m:[
+      {n:"MacBook Pro 13-inch 'M2' A2338 (2022)",y:"2022"},
+      {n:"MacBook Pro 13-inch 'M1' A2338 (2020)",y:"2020"},
+      {n:"MacBook Pro 13-inch A2251 (2020)",y:"2020"},
+      {n:"MacBook Pro 13-inch A2289 (2020)",y:"2020"},
+      {n:"MacBook Pro 13-inch A2159 (2019)",y:"2019"},
+      {n:"MacBook Pro 13-inch A1989 (2018-2019)",y:"2018"}
+    ]},
+    {g:"MacBook Air 15\"",m:[
+      {n:"MacBook Air 15-inch 'M4' A3241 (2025)",y:"2025"},
+      {n:"MacBook Air 15-inch 'M3' A3114 (2024)",y:"2024"},
+      {n:"MacBook Air 15-inch 'M2' A2941 (2023)",y:"2023"}
+    ]},
+    {g:"MacBook Air 13\"",m:[
+      {n:"MacBook Air 13-inch 'M4' A3240 (2025)",y:"2025"},
+      {n:"MacBook Air 13-inch 'M3' A3113 (2024)",y:"2024"},
+      {n:"MacBook Air 13-inch 'M2' A2681 (2022)",y:"2022"},
+      {n:"MacBook Air 13-inch 'M1' A2337 (2020)",y:"2020"},
+      {n:"MacBook Air 13-inch A2179 (2020)",y:"2020"},
+      {n:"MacBook Air 13-inch A1932 (2018-2019)",y:"2018"}
+    ]}
+  ],
+  iphone:[
+    {g:"iPhone 16 series",m:[{n:"iPhone 16 Pro Max",y:"2024"},{n:"iPhone 16 Pro",y:"2024"},{n:"iPhone 16 Plus",y:"2024"},{n:"iPhone 16",y:"2024"},{n:"iPhone 16e",y:"2025"}]},
+    {g:"iPhone 15 series",m:[{n:"iPhone 15 Pro Max",y:"2023"},{n:"iPhone 15 Pro",y:"2023"},{n:"iPhone 15 Plus",y:"2023"},{n:"iPhone 15",y:"2023"}]},
+    {g:"iPhone 14 series",m:[{n:"iPhone 14 Pro Max",y:"2022"},{n:"iPhone 14 Pro",y:"2022"},{n:"iPhone 14 Plus",y:"2022"},{n:"iPhone 14",y:"2022"}]},
+    {g:"iPhone 13 series",m:[{n:"iPhone 13 Pro Max",y:"2021"},{n:"iPhone 13 Pro",y:"2021"},{n:"iPhone 13",y:"2021"},{n:"iPhone 13 Mini",y:"2021"}]},
+    {g:"Older iPhones",m:[{n:"iPhone SE 3rd Gen (2022)",y:"2022"},{n:"iPhone 12 Pro Max",y:"2020"},{n:"iPhone 12 Pro",y:"2020"},{n:"iPhone 12",y:"2020"},{n:"iPhone 12 Mini",y:"2020"},{n:"iPhone SE 2nd Gen (2020)",y:"2020"},{n:"iPhone 11 Pro Max",y:"2019"},{n:"iPhone 11 Pro",y:"2019"},{n:"iPhone 11",y:"2019"}]}
+  ],
+  ipad:[
+    {g:"iPad Pro",m:[{n:"iPad Pro 13 M4 (2024)",y:"2024"},{n:"iPad Pro 12.9 6th Gen M2 (2022)",y:"2022"},{n:"iPad Pro 12.9 5th Gen M1 (2021)",y:"2021"},{n:"iPad Pro 12.9 4th Gen (2020)",y:"2020"},{n:"iPad Pro 12.9 3rd Gen (2018)",y:"2018"},{n:"iPad Pro 11 M4 (2024)",y:"2024"},{n:"iPad Pro 11 4th Gen M2 (2022)",y:"2022"},{n:"iPad Pro 11 3rd Gen M1 (2021)",y:"2021"},{n:"iPad Pro 11 2nd Gen (2020)",y:"2020"},{n:"iPad Pro 11 1st Gen (2018)",y:"2018"}]},
+    {g:"iPad Air",m:[{n:"iPad Air 13 7th Gen 'M3' (2025)",y:"2025"},{n:"iPad Air 11 7th Gen 'M3' (2025)",y:"2025"},{n:"iPad Air 13 M2 (2024)",y:"2024"},{n:"iPad Air 11 M2 (2024)",y:"2024"},{n:"iPad Air 5th Gen (2022)",y:"2022"},{n:"iPad Air 4th Gen (2020)",y:"2020"}]},
+    {g:"iPad + iPad Mini",m:[{n:"iPad 11th Gen (2025)",y:"2025"},{n:"iPad 10th Gen (2022)",y:"2022"},{n:"iPad 9th Gen (2021)",y:"2021"},{n:"iPad 8th Gen (2020)",y:"2020"},{n:"iPad 7th Gen (2019)",y:"2019"},{n:"iPad Mini 7 (2024)",y:"2024"},{n:"iPad Mini 6 (2021)",y:"2021"},{n:"iPad Mini 5 (2019)",y:"2019"}]}
+  ],
+  watch:[
+    {g:"Apple Watch Ultra",m:[{n:"Apple Watch Ultra 2",y:"2023"},{n:"Apple Watch Ultra",y:"2022"}]},
+    {g:"Apple Watch Series",m:[{n:"Apple Watch Series 10 46MM",y:"2024"},{n:"Apple Watch Series 10 42MM",y:"2024"},{n:"Apple Watch Series 9 45MM",y:"2023"},{n:"Apple Watch Series 9 41MM",y:"2023"},{n:"Apple Watch Series 8 45MM",y:"2022"},{n:"Apple Watch Series 8 41MM",y:"2022"},{n:"Apple Watch Series 7 45MM",y:"2021"},{n:"Apple Watch Series 7 41MM",y:"2021"},{n:"Apple Watch Series 6 44MM",y:"2020"},{n:"Apple Watch Series 6 40MM",y:"2020"},{n:"Apple Watch Series 5 44MM",y:"2019"},{n:"Apple Watch Series 5 40MM",y:"2019"}]},
+    {g:"Apple Watch SE",m:[{n:"Apple Watch SE 2nd Gen 44MM",y:"2022"},{n:"Apple Watch SE 2nd Gen 40MM",y:"2022"},{n:"Apple Watch SE 1st Gen 44MM",y:"2020"},{n:"Apple Watch SE 1st Gen 40MM",y:"2020"}]}
+  ]
+};
+
+/* Fault, troubleshoot, icons, collection map, service config - kept compact */
+var FO={macbook:[{v:"Screen / Display",i:"screen"},{v:"Power / Battery / Charging",i:"battery"},{v:"Trackpad / Keyboard",i:"keyboard"},{v:"Audio / Mic / Speaker",i:"audio"},{v:"Connectivity",i:"wifi"},{v:"Water Damage",i:"water"},{v:"Data Recovery",i:"data"},{v:"Other",i:"other"}],iphone:[{v:"Screen / Display",i:"screen"},{v:"Rear Glass",i:"glass"},{v:"Camera",i:"camera"},{v:"Power / Battery / Charging",i:"battery"},{v:"Audio / Mic / Speaker",i:"audio"},{v:"Connectivity",i:"wifi"},{v:"Water Damage",i:"water"},{v:"Data Recovery",i:"data"},{v:"Other",i:"other"}],ipad:[{v:"Screen / Display",i:"screen"},{v:"Power / Battery / Charging",i:"battery"},{v:"Audio / Mic / Speaker",i:"audio"},{v:"Connectivity",i:"wifi"},{v:"Water Damage",i:"water"},{v:"Data Recovery",i:"data"},{v:"Other",i:"other"}],watch:[{v:"Screen / Display",i:"screen"},{v:"Rear Glass",i:"glass"},{v:"Power / Battery / Charging",i:"battery"},{v:"Connectivity",i:"wifi"},{v:"Water Damage",i:"water"},{v:"Other",i:"other"}]};
+
+var FI={screen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',glass:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="6" r="1.5"/><path d="M10 18h4"/></svg>',camera:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>',battery:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',keyboard:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 16h8"/></svg>',audio:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/></svg>',wifi:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></svg>',water:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>',data:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>',other:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>'};
+
+var TS={macbook:{"Screen / Display":[{l:"Lines or artifacts",d:"Display cable or LCD panel issue."},{l:"Dead pixels",d:"Pixel failure, may need panel replacement."},{l:"Black screen",d:"Could be display, GPU, or logic board."},{l:"Backlight fading (Flexgate)",d:"Known flex cable issue on certain Pro models."},{l:"Cracked or shattered glass",d:"Full display assembly replacement."},{l:"Dust under glass",d:"Delamination or debris, display replacement."}],"Power / Battery / Charging":[{l:"Won't turn on",d:"Could be battery, logic board, or charging circuit."},{l:"Won't charge past a certain %",d:"Degraded battery, replacement needed."},{l:"Battery swollen",d:"Stop using immediately. Battery replacement."},{l:"Random shutdowns",d:"Failing battery or thermal issue."},{l:"Charger not recognised",d:"Charging port or logic board."}],"Trackpad / Keyboard":[{l:"Keys not responding",d:"Common on butterfly keyboards, may need top case."},{l:"Sticky or stuck keys",d:"Debris or mechanism failure."},{l:"Trackpad not clicking",d:"Could be swollen battery or trackpad failure."},{l:"Ghost typing",d:"Liquid damage or flex cable."}],"Audio / Mic / Speaker":[{l:"No sound",d:"Speaker or audio circuit."},{l:"Crackling audio",d:"Speaker cone damage or software."},{l:"Mic not working",d:"Mic module or flex cable."}],"Connectivity":[{l:"WiFi dropping",d:"Antenna cable or WiFi module."},{l:"Bluetooth issues",d:"Module or antenna."},{l:"USB-C ports dead",d:"Port damage or logic board."}],"Water Damage":[{l:"Spilled liquid",d:"Needs professional diagnostic."},{l:"Won't turn on after spill",d:"Corrosion likely, ultrasonic cleaning."},{l:"Partial failure after spill",d:"Diagnostic needed."}],"Data Recovery":[{l:"Drive not mounting",d:"SSD or logic board."},{l:"Accidental deletion",d:"Recovery depends on drive type."},{l:"Drive failing",d:"Specialist recovery."}],"Other":[{l:"Overheating",d:"Fan, thermal paste, or airflow."},{l:"Slow performance",d:"Software, RAM, or storage."},{l:"Something else",d:"Tell us more below."}]},iphone:{"Screen / Display":[{l:"Cracked glass (touch works)",d:"Screen replacement with genuine parts."},{l:"Touch not responding",d:"Digitiser failure, screen replacement."},{l:"Lines or discolouration",d:"Panel damage, display replacement."},{l:"Black screen (still vibrates)",d:"Display connection or panel."},{l:"Green line",d:"Known OLED fault, display replacement."}],"Rear Glass":[{l:"Cracked back glass",d:"Rear glass replacement."},{l:"Camera lens cracked",d:"Lens cover replacement."}],"Camera":[{l:"Blurry photos",d:"OIS failure or lens damage."},{l:"Camera black",d:"Camera module or flex cable."},{l:"Front camera / Face ID",d:"Front module repair."}],"Power / Battery / Charging":[{l:"Drains fast",d:"Battery degraded, replacement recommended."},{l:"Won't charge",d:"Port, cable, or battery."},{l:"Random shutoffs",d:"Battery or power management."},{l:"Swollen battery",d:"Stop using. Battery replacement."}],"Audio / Mic / Speaker":[{l:"No sound",d:"Speaker module replacement."},{l:"Mic not working",d:"Mic or flex cable."},{l:"Earpiece quiet",d:"Earpiece replacement."}],"Connectivity":[{l:"No signal",d:"Antenna or baseband."},{l:"WiFi greyed out",d:"WiFi IC or antenna."},{l:"Bluetooth issues",d:"Module or antenna."}],"Water Damage":[{l:"Dropped in liquid",d:"Professional diagnostic needed."},{l:"Partial failure after water",d:"Diagnostic required."}],"Data Recovery":[{l:"Phone dead, need data",d:"Board-level repair may be needed."},{l:"Forgotten passcode",d:"Limited options, we can advise."}],"Other":[{l:"Vibration not working",d:"Taptic engine replacement."},{l:"SIM issues",d:"Tray or software."},{l:"Something else",d:"Tell us more."}]},ipad:{"Screen / Display":[{l:"Cracked glass",d:"Digitiser or display replacement."},{l:"Touch not responding",d:"Screen replacement."},{l:"Lines or dead areas",d:"Panel damage."},{l:"Black screen",d:"Display or logic board."}],"Power / Battery / Charging":[{l:"Won't charge",d:"Port or battery."},{l:"Drains fast",d:"Battery replacement."},{l:"Won't turn on",d:"Battery or logic board."}],"Audio / Mic / Speaker":[{l:"No sound",d:"Speaker module."},{l:"Mic dead",d:"Flex cable or module."}],"Connectivity":[{l:"WiFi issues",d:"Antenna or module."},{l:"Bluetooth issues",d:"Antenna or chip."}],"Water Damage":[{l:"Liquid exposure",d:"Diagnostic required."}],"Data Recovery":[{l:"Need data from broken iPad",d:"Diagnostic needed."}],"Other":[{l:"Home button / Touch ID",d:"Button or flex cable."},{l:"Something else",d:"Tell us more."}]},watch:{"Screen / Display":[{l:"Cracked screen",d:"Display replacement."},{l:"Display dead",d:"Screen or connection."}],"Rear Glass":[{l:"Cracked back crystal",d:"Sensor crystal replacement."}],"Power / Battery / Charging":[{l:"Won't charge",d:"Coil or battery."},{l:"Drains fast",d:"Battery replacement."},{l:"Won't turn on",d:"Battery or logic board."}],"Connectivity":[{l:"Bluetooth issues",d:"Module or antenna."},{l:"WiFi issues",d:"Antenna."}],"Water Damage":[{l:"Water ingress",d:"Seal failure, diagnostic needed."}],"Other":[{l:"Digital Crown stuck",d:"Cleaning or replacement."},{l:"Something else",d:"Tell us more."}]}};
+
+/*
+  PRODUCT DATA
+  
+  PRODUCTION: On icorrect.co.uk, this fetches live from /products/{handle}.json
+  The fetch is same-origin so no CORS issues.
+  
+  PREVIEW: Hard-coded sample data for 3 products so the demo works from file://
+  
+  Structure: PRODUCTS[modelName][faultCategory] = {
+    handle: Shopify product handle (for URL),
+    title: Display name,
+    base: Base price in pence (divided by 100 for display),
+    turnaround: [{ name, time, add }],  // add = price added to base
+    service: [{ name, desc, add, popular }]
+  }
+*/
+
+var PRODUCTS = {
+  /* ---- MacBook Air 13" M1 ---- */
+  "MacBook Air 13-inch 'M1' A2337 (2020)": {
+    "Screen / Display": {
+      handle: "macbook-air-13-m1-2020-a2337-screen-repair",
+      title: "MacBook Air 13\" M1 (2020) Screen Repair",
+      subtitle: "Genuine display, True Tone preserved",
+      base: 339,
+      badges: {
+        warranty: "2-year warranty",
+        turnaround: "2-3 working days",
+        express: "Same-day / next-day (pre-book required)",
+        parts: "Genuine Apple parts",
+        service: "Walk-in, Collection & Delivery"
+      },
+      speedTiers: [
+        { name:"Standard", time:"2-3 working days", add:0 },
+        { name:"Fast", time:"1 working day", add:79 },
+        { name:"Fastest", time:"4 hours", add:149 }
+      ],
+      collectionFee: 20
+    },
+    "Power / Battery / Charging": {
+      handle: "macbook-air-13-m1-2020-a2337-battery-repair",
+      title: "MacBook Air 13\" M1 (2020) Battery Replacement",
+      subtitle: "Genuine battery, health monitoring preserved",
+      base: 219,
+      badges: {
+        warranty: "2-year warranty",
+        turnaround: "2-3 working days",
+        express: "Same-day / next-day (pre-book required)",
+        parts: "Genuine Apple parts",
+        service: "Walk-in, Collection & Delivery"
+      },
+      speedTiers: [
+        { name:"Standard", time:"2-3 working days", add:0 },
+        { name:"Fast", time:"1 working day", add:79 }
+      ],
+      collectionFee: 20
+    }
+  },
+  /* ---- iPhone 15 Pro Max ---- */
+  "iPhone 15 Pro Max": {
+    "Screen / Display": {
+      handle: "iphone-15-pro-max-display-screen-repair",
+      title: "iPhone 15 Pro Max Screen Repair",
+      subtitle: "Genuine OLED, verified in iOS 18 Settings",
+      base: 329,
+      badges: {
+        warranty: "2-year warranty",
+        turnaround: "2-4 hours",
+        parts: "Genuine Apple parts",
+        service: "Walk-in, Collection & Delivery"
+      },
+      speedTiers: null,
+      collectionFee: 20
+    },
+    "Rear Glass": {
+      handle: "iphone-15-pro-max-rear-glass-repair",
+      title: "iPhone 15 Pro Max Back Glass Repair",
+      subtitle: "Genuine housing, all colours available",
+      base: 349,
+      badges: {
+        warranty: "2-year warranty",
+        turnaround: "2-4 hours",
+        parts: "Genuine Apple parts",
+        service: "Walk-in, Collection & Delivery"
+      },
+      speedTiers: null,
+      collectionFee: 20
+    }
+  },
+  /* ---- iPhone 14 Pro ---- */
+  "iPhone 14 Pro": {
+    "Screen / Display": {
+      handle: "iphone-14-pro-display-screen-repair",
+      title: "iPhone 14 Pro Screen Repair",
+      subtitle: "Genuine OLED, verified in iOS 18 Settings",
+      base: 289,
+      badges: {
+        warranty: "2-year warranty",
+        turnaround: "2-4 hours",
+        parts: "Genuine Apple parts",
+        service: "Walk-in, Collection & Delivery"
+      },
+      speedTiers: null,
+      collectionFee: 20
+    }
+  }
+};
+
+/*
+  PRODUCTION FETCH (uncomment on Shopify, delete PRODUCTS above):
+  
+  async function fetchProduct(handle) {
+    try {
+      const res = await fetch('/products/' + handle + '.json');
+      const data = await res.json();
+      const product = data.product;
+      // Extract variants, prices, options from product.variants[]
+      // Each variant has: variant.price, variant.option1, variant.option2, variant.option3
+      return product;
+    } catch(e) {
+      console.error('Failed to fetch product:', handle, e);
+      return null;
+    }
+  }
+*/
+
+function getProductUrl(model, fault) {
+  var p = PRODUCTS[model] && PRODUCTS[model][fault];
+  if (p) return 'https://icorrect.co.uk/products/' + p.handle;
+  /* Fallback: generate slug for products not in demo data */
+  var slug = (model + ' ' + fault).toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-');
+  return 'https://icorrect.co.uk/products/' + slug;
+}
+
+function getProductData(model, fault) {
+  return (PRODUCTS[model] && PRODUCTS[model][fault]) || null;
+}
+
+/* =============================================
+   iPhone Visual Guide DB (from Document 6)
+   ============================================= */
+var VG_DB=[
+  {n:"iPhone 17 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/17_pro_max_colours.png?v=1766237419",cams:"tri_plat",edges:"curved",screen:"island",size:"max"},
+  {n:"iPhone 17 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/17_pro_max_colours.png?v=1766237419",cams:"tri_plat",edges:"curved",screen:"island",size:"pro"},
+  {n:"iPhone 17",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/17_colours.png?v=1766237419",cams:"vert",edges:"flat",screen:"island",size:"std"},
+  {n:"iPhone Air",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/air_colours.png?v=1766237418",cams:"single_plat",edges:"flat",screen:"island",size:"max"},
+  {n:"iPhone 16 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"island",size:"max"},
+  {n:"iPhone 16 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"island",size:"pro"},
+  {n:"iPhone 16 Plus",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16_colours.png?v=1766237419",cams:"vert",edges:"flat",screen:"island",size:"max"},
+  {n:"iPhone 16",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16_colours.png?v=1766237419",cams:"vert",edges:"flat",screen:"island",size:"std"},
+  {n:"iPhone 16e",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16e_colours.png?v=1766237418",cams:"single_std",edges:"flat",screen:"notch",size:"std"},
+  {n:"iPhone 15 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/15_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"island",size:"max"},
+  {n:"iPhone 15 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/15_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"island",size:"pro"},
+  {n:"iPhone 15 Plus",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/15_colours.png?v=1766237419",cams:"diag",edges:"flat",screen:"island",size:"max"},
+  {n:"iPhone 15",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/15_colours.png?v=1766237419",cams:"diag",edges:"flat",screen:"island",size:"std"},
+  {n:"iPhone 14 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/14_pro_max_colours.png?v=1766237418",cams:"tri_std",edges:"flat",screen:"island",size:"max"},
+  {n:"iPhone 14 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/14_pro_max_colours.png?v=1766237418",cams:"tri_std",edges:"flat",screen:"island",size:"pro"},
+  {n:"iPhone 14 Plus",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/14_colours.png?v=1766237419",cams:"diag",edges:"flat",screen:"notch",size:"max"},
+  {n:"iPhone 14",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/14_colours.png?v=1766237419",cams:"diag",edges:"flat",screen:"notch",size:"std"},
+  {n:"iPhone 13 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/13_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"notch",size:"max"},
+  {n:"iPhone 13 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/13_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"notch",size:"pro"},
+  {n:"iPhone 13 Mini",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/13_colours.png?v=1766237419",cams:"diag",edges:"flat",screen:"notch",size:"mini"},
+  {n:"iPhone 13",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/13_colours.png?v=1766237419",cams:"diag",edges:"flat",screen:"notch",size:"std"},
+  {n:"iPhone 12 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/12_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"notch",size:"max"},
+  {n:"iPhone 12 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/12_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"notch",size:"pro"},
+  {n:"iPhone 12 Mini",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/12_colours.png?v=1766237419",cams:"vert",edges:"flat",screen:"notch",size:"mini"},
+  {n:"iPhone 12",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/12_colours.png?v=1766237419",cams:"vert",edges:"flat",screen:"notch",size:"std"},
+  {n:"iPhone 11 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/11_pro_max.png?v=1766237419",cams:"tri_std",edges:"curved",screen:"notch",size:"max"},
+  {n:"iPhone 11 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/11_pro_max.png?v=1766237419",cams:"tri_std",edges:"curved",screen:"notch",size:"pro"},
+  {n:"iPhone 11",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/11_colours.png?v=1766237419",cams:"vert",edges:"curved",screen:"notch",size:"std"},
+  {n:"iPhone SE (3rd Gen)",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/se3_colours.png?v=1766237418",cams:"single_std",edges:"curved",screen:"home",size:"std"},
+  {n:"iPhone SE (2nd Gen)",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/se2_colours.png?v=1766237418",cams:"single_std",edges:"curved",screen:"home",size:"std"}
+];
+
+/* =============================================
+   INIT
+   ============================================= */
+(function(){
+  var g=document.getElementById('devGrid');
+  DEVS.forEach(function(d){
+    var c=document.createElement('div');c.className='dev';c.tabIndex=0;c.setAttribute('role','button');
+    c.innerHTML='<div class="ico">'+d.svg+'</div><span class="lbl">'+d.n+'</span>';
+    c.onclick=function(){pickDev(d.id,c);};c.onkeydown=function(e){if(e.key==='Enter')pickDev(d.id,c);};
+    g.appendChild(c);
+  });
+})();
+
+/* =============================================
+   NAV
+   ============================================= */
+function go(n){
+  S.step=n;
+  document.querySelectorAll('.step').forEach(function(el){el.classList.remove('on');});
+  document.getElementById('s'+n).classList.add('on');
+  document.querySelectorAll('.prog-s').forEach(function(el){
+    var s=parseInt(el.dataset.s);el.classList.remove('on','done');
+    if(s<n)el.classList.add('done');else if(s===n)el.classList.add('on');
+  });
+  document.querySelector('.wizard').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* =============================================
+   STEP 1
+   ============================================= */
+function pickDev(id,el){
+  S.device=id;S.model=null;S.fault=null;S.issue=null;
+  document.querySelectorAll('#s1 .dev').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');
+  setTimeout(function(){renderModels(id);go(2);},150);
+}
+
+/* =============================================
+   STEP 2 - Models
+   ============================================= */
+function renderModels(dev){
+  var c=document.getElementById('mC');c.innerHTML='';
+  document.getElementById('s2t').textContent='Pick your '+DN[dev]+' model';
+  document.getElementById('hP').classList.remove('open');
+
+  var groups=MD[dev]||[];
+  var w=document.createElement('div');w.className='m-groups';
+  groups.forEach(function(g){
+    var ge=document.createElement('div');ge.className='m-group';
+    var h=document.createElement('div');h.className='m-head';
+    h.innerHTML='<div><span class="m-name">'+g.g+'</span><span class="m-count" style="display:block;">'+g.m.length+' models</span></div><svg class="m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>';
+    h.onclick=function(){ge.classList.toggle('open');};
+    ge.appendChild(h);
+
+    var b=document.createElement('div');b.className='m-body';
+    var l=document.createElement('div');l.className='m-list';
+    g.m.forEach(function(m){
+      var it=document.createElement('div');it.className='m-item';it.tabIndex=0;it.setAttribute('role','button');
+      it.innerHTML='<span class="mn">'+m.n+'</span><span class="my">'+m.y+'</span>';
+      it.onclick=function(){pickModel(m.n,it);};
+      it.onkeydown=function(e){if(e.key==='Enter')pickModel(m.n,it);};
+      l.appendChild(it);
+    });
+    b.appendChild(l);ge.appendChild(b);w.appendChild(ge);
+  });
+  c.appendChild(w);
+  renderHelper(dev);
+}
+
+function pickModel(n,el){
+  S.model=n;
+  document.querySelectorAll('.m-item').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');
+  setTimeout(function(){renderFaults(S.device);go(3);},150);
+}
+
+/* =============================================
+   HELPER - iPhone visual guide / MacBook model lookup
+   ============================================= */
+function toggleHelp(){document.getElementById('hP').classList.toggle('open');}
+
+function renderHelper(dev){
+  var p=document.getElementById('hP');
+  if(dev==='iphone'){
+    renderIphoneVisualGuide(p);
+  } else if(dev==='macbook'){
+    renderMacbookHelper(p);
+  } else {
+    // Generic model number helper for iPad/Watch
+    renderGenericHelper(p, dev);
+  }
+}
+
+/* iPhone Visual Guide - full wizard from Document 6 */
+function renderIphoneVisualGuide(panel){
+  var vgState={};
+  var KEYS={1:'cams',2:'edges',3:'screen',4:'size'};
+  var CDN='https://cdn.shopify.com/s/files/1/0728/7111/7053/files/';
+
+  var html='<div class="help-card"><div id="vgWiz">';
+  // Step 1: Cameras
+  html+='<div class="vg-step on" data-vs="1"><div class="vg-title">Rear cameras</div><div class="vg-sub">What does the back look like?</div><div class="vg-grid">';
+  html+=vgOpt('tri_plat',CDN+'17pm.png?v=1766083751','3 Cameras<br>(Plateau)');
+  html+=vgOpt('tri_std',CDN+'16pm.png?v=1766083961','3 Cameras<br>(Standard)');
+  html+=vgOpt('diag',CDN+'15.png?v=1766083751','2 Cameras<br>(Diagonal)');
+  html+=vgOpt('vert',CDN+'16.png?v=1766083751','2 Cameras<br>(Vertical)');
+  html+=vgOpt('single_plat',CDN+'air.png?v=1766083751','1 Camera<br>(Plateau)');
+  html+=vgOpt('single_std',CDN+'16e.png?v=1766083751','1 Camera<br>(Standard)');
+  html+='</div></div>';
+  // Step 2: Edges
+  html+='<div class="vg-step" data-vs="2"><button class="vg-back" onclick="vgBack(2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back</button><div class="vg-title">Frame shape</div><div class="vg-sub">Check the metal edge</div><div class="vg-grid">';
+  html+=vgOpt('flat',CDN+'squared.png?v=1766085750','Flat (Square)');
+  html+=vgOpt('curved',CDN+'round.png?v=1766085749','Curved (Round)');
+  html+='</div></div>';
+  // Step 3: Screen
+  html+='<div class="vg-step" data-vs="3"><button class="vg-back" onclick="vgBack(3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back</button><div class="vg-title">Screen type</div><div class="vg-sub">Look at the top of the display</div><div class="vg-grid">';
+  html+=vgOpt('island',CDN+'dynamic_island.png?v=1766085749','Dynamic Island');
+  html+=vgOpt('notch',CDN+'notch.png?v=1766085750','Notch');
+  html+='</div></div>';
+  // Step 4: Size
+  html+='<div class="vg-step" data-vs="4"><button class="vg-back" onclick="vgBack(4)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back</button><div class="vg-title">Size</div><div class="vg-sub">How big is it?</div><div class="vg-grid">';
+  html+=vgSizeOpt('max','Pro Max / Plus','6.5" - 6.9"');
+  html+=vgSizeOpt('pro','Pro','5.8" - 6.3"');
+  html+=vgSizeOpt('std','Standard','4.7" - 6.1"');
+  html+=vgSizeOpt('mini','Mini','5.4"');
+  html+='</div></div>';
+  // Result
+  html+='<div class="vg-step" data-vs="result"><div class="vg-result" id="vgResult"></div></div>';
+  html+='</div><button class="help-close" onclick="toggleHelp()">Close</button></div>';
+  panel.innerHTML=html;
+
+  // Wire up clicks
+  panel.querySelectorAll('.vg-opt').forEach(function(o){
+    o.onclick=function(){
+      var vs=parseInt(o.closest('.vg-step').dataset.vs);
+      vgState[KEYS[vs]]=o.dataset.v;
+      // Shortcuts
+      if(vs===1&&o.dataset.v==='single_plat'){vgShowResult(vgState);return;}
+      if(vs===1&&o.dataset.v==='tri_plat'){vgState.edges='curved';vgState.screen='island';vgGoTo(4);return;}
+      if(vs===2&&vgState.cams==='single_std'&&o.dataset.v==='flat'){vgState.screen='notch';vgGoTo(4);return;}
+      if(vs===2&&vgState.cams==='single_std'&&o.dataset.v==='curved'){vgState.screen='home';vgGoTo(4);return;}
+      if(vs>=4){vgShowResult(vgState);return;}
+      vgGoTo(vs+1);
+    };
+  });
+
+  window._vgState=vgState;
+  window._vgKeys=KEYS;
+
+  function vgGoTo(n){
+    panel.querySelectorAll('.vg-step').forEach(function(s){s.classList.remove('on');});
+    panel.querySelector('.vg-step[data-vs="'+n+'"]').classList.add('on');
+  }
+  window.vgBack=function(fromStep){
+    var k=KEYS[fromStep];if(k)delete vgState[k];
+    vgGoTo(fromStep-1);
+  };
+
+  function vgShowResult(st){
+    var matches=VG_DB.filter(function(m){
+      if(st.cams&&m.cams!==st.cams)return false;
+      if(st.edges&&m.edges!==st.edges)return false;
+      if(st.screen&&m.screen!==st.screen)return false;
+      if(st.size&&m.size!==st.size)return false;
+      return true;
+    });
+    var rc=document.getElementById('vgResult');
+    if(matches.length===0){
+      rc.innerHTML='<div class="vg-title">No match found</div><button class="vg-btn vg-btn-s" onclick="vgReset()">Try again</button>';
+    } else if(matches.length===1){
+      var m=matches[0];
+      rc.innerHTML='<img src="'+m.img+'" style="max-width:180px;max-height:140px;object-fit:contain;margin-bottom:12px;"><div class="vg-result-name">'+m.n+'</div><button class="vg-btn vg-btn-p" onclick="vgSelect(\''+m.n.replace(/'/g,"\\'")+'\')">Select this model</button> <button class="vg-btn vg-btn-s" onclick="vgReset()">Try again</button>';
+    } else {
+      var h='<div class="vg-title" style="margin-bottom:14px;">Which one?</div><div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;">';
+      matches.forEach(function(m){
+        h+='<div style="background:var(--white);border:2px solid var(--line);border-radius:12px;padding:12px;width:130px;cursor:pointer;text-align:center;" onclick="vgSelect(\''+m.n.replace(/'/g,"\\'")+'\')" onmouseover="this.style.borderColor=\'var(--blue)\'" onmouseout="this.style.borderColor=\'var(--line)\'">';
+        h+='<img src="'+m.img+'" style="max-width:90px;max-height:70px;object-fit:contain;margin-bottom:6px;">';
+        h+='<div style="font-size:12px;font-weight:600;">'+m.n+'</div></div>';
+      });
+      h+='</div><div style="margin-top:12px;"><button class="vg-btn vg-btn-s" onclick="vgReset()">Start over</button></div>';
+      rc.innerHTML=h;
+    }
+    panel.querySelectorAll('.vg-step').forEach(function(s){s.classList.remove('on');});
+    panel.querySelector('.vg-step[data-vs="result"]').classList.add('on');
+  }
+
+  window.vgReset=function(){
+    for(var k in vgState)delete vgState[k];
+    vgGoTo(1);
+  };
+
+  window.vgSelect=function(name){
+    // Map visual guide name to model list name
+    var nameMap={"iPhone SE (3rd Gen)":"iPhone SE 3rd Gen (2022)","iPhone SE (2nd Gen)":"iPhone SE 2nd Gen (2020)"};
+    var mapped=nameMap[name]||name;
+    S.model=mapped;
+    document.getElementById('hP').classList.remove('open');
+    renderFaults(S.device);
+    go(3);
+  };
+}
+
+function vgOpt(val,img,label){
+  return '<div class="vg-opt" data-v="'+val+'"><img src="'+img+'" class="ic-opt-img"><div class="vg-lbl">'+label+'</div></div>';
+}
+function vgSizeOpt(val,label,detail){
+  return '<div class="vg-opt" data-v="'+val+'"><div style="font-size:22px;font-weight:700;height:70px;display:flex;align-items:center;justify-content:center;">'+label.charAt(0)+'</div><div class="vg-lbl">'+label+'<br><span style="font-weight:400;color:var(--text-3);font-size:11px;">'+detail+'</span></div></div>';
+}
+
+/* MacBook model number lookup */
+function renderMacbookHelper(panel){
+  var nums=[
+    {n:"A3403",m:"MacBook Pro 16-inch 'M4 Pro/Max' A3186/A3403 (2024)"},{n:"A3186",m:"MacBook Pro 16-inch 'M4 Pro/Max' A3186/A3403 (2024)"},
+    {n:"A2991",m:"MacBook Pro 16-inch 'M3 Pro/Max' A2991 (2023)"},{n:"A2780",m:"MacBook Pro 16-inch 'M2 Pro/Max' A2780 (2023)"},
+    {n:"A2485",m:"MacBook Pro 16-inch 'M1 Pro/Max' A2485 (2021)"},{n:"A2141",m:"MacBook Pro 16-inch A2141 (2019)"},
+    {n:"A1990",m:"MacBook Pro 15-inch A1990 (2018-2019)"},{n:"A1707",m:"MacBook Pro 15-inch A1707 (2016-2017)"},
+    {n:"A3401",m:"MacBook Pro 14-inch 'M4 Pro/Max' A3112/A3185/A3401 (2024)"},{n:"A2918",m:"MacBook Pro 14-inch 'M3 Pro/Max' A2918/A2992 (2023)"},
+    {n:"A2779",m:"MacBook Pro 14-inch 'M2 Pro/Max' A2779 (2023)"},{n:"A2442",m:"MacBook Pro 14-inch 'M1 Pro/Max' A2442 (2021)"},
+    {n:"A2338",m:"MacBook Pro 13-inch 'M1' A2338 (2020)"},{n:"A2251",m:"MacBook Pro 13-inch A2251 (2020)"},
+    {n:"A2289",m:"MacBook Pro 13-inch A2289 (2020)"},{n:"A2159",m:"MacBook Pro 13-inch A2159 (2019)"},
+    {n:"A1989",m:"MacBook Pro 13-inch A1989 (2018-2019)"},{n:"A3241",m:"MacBook Air 15-inch 'M4' A3241 (2025)"},
+    {n:"A3114",m:"MacBook Air 15-inch 'M3' A3114 (2024)"},{n:"A2941",m:"MacBook Air 15-inch 'M2' A2941 (2023)"},
+    {n:"A3240",m:"MacBook Air 13-inch 'M4' A3240 (2025)"},{n:"A3113",m:"MacBook Air 13-inch 'M3' A3113 (2024)"},
+    {n:"A2681",m:"MacBook Air 13-inch 'M2' A2681 (2022)"},{n:"A2337",m:"MacBook Air 13-inch 'M1' A2337 (2020)"},
+    {n:"A2179",m:"MacBook Air 13-inch A2179 (2020)"},{n:"A1932",m:"MacBook Air 13-inch A1932 (2018-2019)"}
+  ];
+  panel.innerHTML=
+    '<div class="help-card"><div class="help-body on"><p class="help-inst">Flip your MacBook over. The model number (e.g. <code>A1989</code>) is printed on the bottom case near the hinge.</p><div class="help-row"><input class="help-input" type="text" id="mbSearch" placeholder="Type model number, e.g. A1989" oninput="mbFilter()"></div><div class="help-results" id="mbRes"></div></div><button class="help-close" onclick="toggleHelp()">Close</button></div>';
+  window._mbNums=nums;
+  mbFilter();
+}
+
+window.mbFilter=function(){
+  var q=(document.getElementById('mbSearch').value||'').trim().toUpperCase();
+  var r=document.getElementById('mbRes');r.innerHTML='';
+  var nums=window._mbNums||[];
+  var f=q?nums.filter(function(n){return n.n.toUpperCase().indexOf(q)!==-1||n.m.toUpperCase().indexOf(q)!==-1;}):nums.slice(0,8);
+  if(!f.length){r.innerHTML='<div style="padding:10px;font-size:13px;color:var(--text-3);">No match. Check the number and try again.</div>';return;}
+  f.forEach(function(n){
+    var d=document.createElement('div');d.className='help-hit';
+    d.innerHTML='<span class="hn">'+n.n+'</span><span class="hm">'+n.m+'</span><span class="hs">Select</span>';
+    d.onclick=function(){S.model=n.m;document.getElementById('hP').classList.remove('open');renderFaults(S.device);go(3);};
+    r.appendChild(d);
+  });
+};
+
+function renderGenericHelper(panel, dev){
+  panel.innerHTML='<div class="help-card"><div style="padding:20px;"><p class="help-inst">Go to <code>Settings > General > About</code> on your device. The model number is listed there. If you can\'t find it, just pick the closest match from the list above.</p></div><button class="help-close" onclick="toggleHelp()">Close</button></div>';
+}
+
+/* =============================================
+   STEP 3 - Faults
+   ============================================= */
+function renderFaults(dev){
+  var c=document.getElementById('fC');c.innerHTML='';
+  document.getElementById('s3t').textContent="What's wrong with your "+DN[dev]+"?";
+  (FO[dev]||[]).forEach(function(f){
+    var card=document.createElement('div');card.className='f-card';card.tabIndex=0;card.setAttribute('role','button');
+    card.innerHTML='<div class="ico">'+(FI[f.i]||FI.other)+'</div><span class="lbl">'+f.v+'</span>';
+    card.onclick=function(){pickFault(f.v,card);};card.onkeydown=function(e){if(e.key==='Enter')pickFault(f.v,card);};
+    c.appendChild(card);
+  });
+}
+function pickFault(v,el){
+  S.fault=v;S.issue=null;
+  document.querySelectorAll('#s3 .f-card').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');
+  setTimeout(function(){renderTS(S.device,v);go(4);},150);
+}
+
+/* =============================================
+   STEP 4 - Troubleshoot + Resolution
+   ============================================= */
+function renderTS(dev,fault){
+  var c=document.getElementById('tC');c.innerHTML='';
+  document.getElementById('rP').style.display='none';document.getElementById('rP').innerHTML='';
+  var issues=(TS[dev]&&TS[dev][fault])||[{l:'General issue',d:'Tell us more below.'}];
+  document.getElementById('s4t').textContent=fault;
+  document.getElementById('s4s').textContent='Which best describes the problem?';
+  var fi=FI[(FO[dev]||[]).find(function(f){return f.v===fault;})?.i]||FI.other;
+  issues.forEach(function(iss){
+    var card=document.createElement('div');card.className='t-card';card.tabIndex=0;card.setAttribute('role','button');
+    card.innerHTML='<div class="tw">'+fi+'</div><span class="tt">'+iss.l+'</span>';
+    card.onclick=function(){pickIssue(iss,card);};card.onkeydown=function(e){if(e.key==='Enter')pickIssue(iss,card);};
+    c.appendChild(card);
+  });
+}
+
+function pickIssue(iss,el){
+  S.issue=iss.l;
+  document.querySelectorAll('#s4 .t-card').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');
+  showRes(iss);
+}
+
+function showRes(iss){
+  var p=document.getElementById('rP');p.style.display='block';
+  var url=getProductUrl(S.model, S.fault);
+  var prod=getProductData(S.model, S.fault);
+
+  /* Badge icons */
+  var BI={
+    warranty:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+    turnaround:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
+    express:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
+    parts:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>',
+    service:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>'
+  };
+  var BL={warranty:'Warranty',turnaround:'Turnaround',express:'Express',parts:'Parts',service:'Service'};
+
+  function badge(k,v){ return '<div class="svc-r"><div class="svc-i">'+BI[k]+'</div><span class="svc-l">'+BL[k]+'</span><span class="svc-v">'+v+'</span></div>'; }
+
+  if(prod){
+    /* Build static trust badges */
+    var badges='';
+    var b=prod.badges;
+    if(b.warranty) badges+=badge('warranty',b.warranty);
+    if(b.turnaround) badges+=badge('turnaround',b.turnaround);
+    if(b.express) badges+=badge('express',b.express);
+    if(b.parts) badges+=badge('parts',b.parts);
+    if(b.service) badges+=badge('service',b.service);
+
+    /* Speed tier cards (only for MacBooks with multiple options) */
+    var speedHtml='';
+    if(prod.speedTiers && prod.speedTiers.length > 1){
+      var tOpts='';
+      prod.speedTiers.forEach(function(t,i){
+        tOpts+='<div class="opt-card'+(i===0?' sel':'')+'" data-opt="speed" data-add="'+t.add+'" onclick="updatePrice(this)" tabindex="0">';
+        tOpts+='<div class="opt-name">'+t.name+'</div>';
+        tOpts+='<div class="opt-meta">'+t.time+'</div>';
+        tOpts+='<div class="opt-price'+(t.add===0?' free':'')+'">'+( t.add===0?'Included':'+\u00A3'+t.add)+'</div>';
+        tOpts+='</div>';
+      });
+      speedHtml='<div class="opt-section"><div class="opt-label">Repair turnaround</div><div class="opt-row">'+tOpts+'</div></div>';
+    }
+
+    /* Service choice: Walk-in vs Collection & Delivery */
+    var svcHtml=
+      '<div class="opt-section"><div class="opt-label">How to get the device to us</div><div class="opt-row">'+
+        '<div class="opt-card sel" data-opt="svc" data-add="0" onclick="updatePrice(this)" tabindex="0"><span class="pop-tag">Popular</span><div class="opt-name">Walk-in</div><div class="opt-meta">12 Margaret St, W1W 8JQ</div><div class="opt-price free">Included</div></div>'+
+        '<div class="opt-card" data-opt="svc" data-add="'+prod.collectionFee+'" onclick="updatePrice(this)" tabindex="0"><div class="opt-name">Collection & Delivery</div><div class="opt-meta">We collect and return your device</div><div class="opt-price">+\u00A3'+prod.collectionFee+'</div></div>'+
+      '</div></div>';
+
+    p.innerHTML=
+      '<div class="res" id="resCard" data-base="'+prod.base+'">'+
+        '<div class="res-top">'+
+          '<div class="res-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>We can fix this</div>'+
+          '<h3 class="res-h">'+prod.title+'</h3>'+
+          '<p class="res-p">'+prod.subtitle+'</p>'+
+          '<div class="price-from">From</div>'+
+          '<div class="price-big">\u00A3'+prod.base+'</div>'+
+        '</div>'+
+
+        /* Static trust badges */
+        '<div class="svc">'+badges+'</div>'+
+
+        /* Interactive options */
+        '<div style="padding:0 24px 8px;">'+speedHtml+svcHtml+'</div>'+
+
+        '<div class="price-total"><span class="price-total-label">Total</span><span class="price-total-val" id="priceTotal">\u00A3'+prod.base+'</span></div>'+
+
+        '<div class="res-cta">'+
+          '<a href="'+url+'" class="btn-book" target="_blank" rel="noopener">Book this repair <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>'+
+          '<button class="btn-q" onclick="toggleCF()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>I have a question first</button>'+
+        '</div>'+
+
+        '<div class="c-acc" id="cAcc">'+
+          '<div class="c-inner" id="cWrap">'+
+            '<div class="c-sum"><strong>Device:</strong> '+DN[S.device]+' &bull; <strong>Model:</strong> '+(S.model||'N/A')+' &bull; <strong>Fault:</strong> '+(S.fault||'N/A')+' &bull; <strong>Issue:</strong> '+(S.issue||'N/A')+'</div>'+
+            '<div class="f-row two"><div class="f-grp"><label class="f-lbl" for="cn">Name<span class="req">*</span></label><input class="f-inp" type="text" id="cn" placeholder="Full name" required></div><div class="f-grp"><label class="f-lbl" for="ce">Email<span class="req">*</span></label><input class="f-inp" type="email" id="ce" placeholder="you@email.com" required></div></div>'+
+            '<div class="f-row"><div class="f-grp"><label class="f-lbl" for="cp">Phone<span class="req">*</span></label><input class="f-inp" type="tel" id="cp" placeholder="+44 7000 000000" required></div></div>'+
+            '<div class="f-row"><div class="f-grp"><label class="f-lbl" for="cm">Your question</label><textarea class="f-ta" id="cm" placeholder="What do you need help with?"></textarea></div></div>'+
+            '<button class="f-sub" onclick="subCF()">Send question</button>'+
+          '</div>'+
+          '<div class="f-ok" id="fOk"><h3>Sent!</h3><p>We\'ll be in touch shortly.</p></div>'+
+        '</div>'+
+      '</div>'+
+      '<button class="restart" onclick="reset()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 105.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg> Start over</button>';
+
+  } else {
+    /* No product data: fallback with link + contact form */
+    p.innerHTML=
+      '<div class="res">'+
+        '<div class="res-top">'+
+          '<div class="res-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>We can fix this</div>'+
+          '<h3 class="res-h">'+iss.l+'</h3>'+
+          '<p class="res-p">'+iss.d+'</p>'+
+        '</div>'+
+        '<div class="svc">'+
+          badge('warranty','2-year warranty')+
+          badge('parts','Genuine Apple parts')+
+          badge('service','Walk-in, Collection & Delivery')+
+        '</div>'+
+        '<div class="res-cta" style="padding-top:20px;">'+
+          '<a href="'+url+'" class="btn-book" target="_blank" rel="noopener">View repair pricing <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>'+
+          '<button class="btn-q" onclick="toggleCF()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>I have a question first</button>'+
+        '</div>'+
+        '<div class="c-acc" id="cAcc">'+
+          '<div class="c-inner" id="cWrap">'+
+            '<div class="c-sum"><strong>Device:</strong> '+DN[S.device]+' &bull; <strong>Model:</strong> '+(S.model||'N/A')+' &bull; <strong>Fault:</strong> '+(S.fault||'N/A')+' &bull; <strong>Issue:</strong> '+(S.issue||'N/A')+'</div>'+
+            '<div class="f-row two"><div class="f-grp"><label class="f-lbl" for="cn">Name<span class="req">*</span></label><input class="f-inp" type="text" id="cn" placeholder="Full name" required></div><div class="f-grp"><label class="f-lbl" for="ce">Email<span class="req">*</span></label><input class="f-inp" type="email" id="ce" placeholder="you@email.com" required></div></div>'+
+            '<div class="f-row"><div class="f-grp"><label class="f-lbl" for="cp">Phone<span class="req">*</span></label><input class="f-inp" type="tel" id="cp" placeholder="+44 7000 000000" required></div></div>'+
+            '<div class="f-row"><div class="f-grp"><label class="f-lbl" for="cm">Your question</label><textarea class="f-ta" id="cm" placeholder="What do you need help with?"></textarea></div></div>'+
+            '<button class="f-sub" onclick="subCF()">Send question</button>'+
+          '</div>'+
+          '<div class="f-ok" id="fOk"><h3>Sent!</h3><p>We\'ll be in touch shortly.</p></div>'+
+        '</div>'+
+      '</div>'+
+      '<button class="restart" onclick="reset()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 105.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg> Start over</button>';
+  }
+
+  document.querySelectorAll('.prog-s').forEach(function(el){
+    var s=parseInt(el.dataset.s);el.classList.remove('on','done');
+    if(s<4)el.classList.add('done');else if(s===4)el.classList.add('on');
+  });
+  setTimeout(function(){p.scrollIntoView({behavior:'smooth',block:'nearest'});},80);
+}
+
+/* Price update: deselect siblings, recalculate total */
+function updatePrice(el) {
+  var card = document.getElementById('resCard');
+  if (!card) return;
+  var base = parseInt(card.dataset.base, 10);
+  
+  /* Deselect siblings with same data-opt */
+  var group = el.dataset.opt;
+  el.parentNode.querySelectorAll('.opt-card[data-opt="'+group+'"]').forEach(function(c){ c.classList.remove('sel'); });
+  el.classList.add('sel');
+
+  /* Sum all selected add-ons */
+  var total = base;
+  card.querySelectorAll('.opt-card.sel').forEach(function(c){
+    total += parseInt(c.dataset.add || 0, 10);
+  });
+
+  document.getElementById('priceTotal').textContent = '\u00A3' + total;
+}
+
+function toggleCF(){var a=document.getElementById('cAcc');a.classList.toggle('open');if(a.classList.contains('open'))setTimeout(function(){a.scrollIntoView({behavior:'smooth',block:'nearest'});},180);}
+function subCF(){
+  if(!document.getElementById('cn').value||!document.getElementById('ce').value||!document.getElementById('cp').value){alert('Fill in the required fields.');return;}
+  console.log('Contact:',{device:DN[S.device],model:S.model,fault:S.fault,issue:S.issue,name:document.getElementById('cn').value,email:document.getElementById('ce').value,phone:document.getElementById('cp').value,msg:document.getElementById('cm').value});
+  document.getElementById('cWrap').style.display='none';document.getElementById('fOk').classList.add('show');
+}
+function reset(){
+  S={device:null,model:null,fault:null,issue:null,step:1};
+  document.querySelectorAll('.dev').forEach(function(c){c.classList.remove('sel');});
+  document.getElementById('rP').style.display='none';document.getElementById('rP').innerHTML='';
+  go(1);
+}
+</script>
+</body>
+</html>
