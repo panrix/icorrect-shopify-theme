@@ -1,0 +1,36 @@
+/* Collection header (shown above V1 and V2 only) */
+.collection-header { padding: 0 0 16px; }
+.coll-head-title { max-width: 820px; margin: 16px 0 0; }
+.coll-head-title .display { margin: 0 0 16px; letter-spacing: -2.4px; }
+.coll-head-lede { font: 400 18px/1.6 var(--font-sans); color: #4d4d4d; max-width: 680px; text-wrap: pretty; }
+
+/* Slim header — breadcrumb only, used when H1 lives in the hero */
+.collection-header-slim { padding: 20px 0 0; }
+.coll-breadcrumb {
+  display: flex; align-items: center; gap: 8px;
+  font: 500 13px var(--font-sans); color: #666;
+}
+.coll-breadcrumb a { color: #666; text-decoration: none; }
+.coll-breadcrumb a:hover { color: #171717; }
+.coll-breadcrumb [aria-current] { color: #171717; }
+.coll-breadcrumb-sep { color: #c4c4c4; font-family: var(--font-mono); }
+
+/* Slim hero headline (stacked mode) — no H1, just a lede */
+.hero-v2-headline-slim { margin-bottom: 24px; }
+.hero-v2-headline-slim p { font-size: 17px; }
+
+/* Give V2 less padding from top since it's got its own hero */
+.hero-v2 .container { padding-top: 0; }
+
+/* V3 needs breathing room above (dark) */
+.hero-v3 { margin-top: 24px; border-radius: 0; }
+@media (min-width: 901px) {
+  body.variant-v3 .collection-header { display: none; }
+}
+
+body.variant-v1 .hero-v2, body.variant-v1 .hero-v3 { display: none; }
+body.variant-v2 .hero-v1, body.variant-v2 .hero-v3 { display: none; }
+body.variant-v3 .hero-v1, body.variant-v3 .hero-v2 { display: none; }
+body.variant-v3 .collection-header { display: none; }
+
+/* Hide secondary content on V3 a little differently */
