@@ -105,16 +105,6 @@ input:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid 
 .faq-a { padding: 0 0 20px; font: 400 15px/1.6 var(--font-sans); color: #4d4d4d; max-width: 680px; display: none; }
 .faq-item.open .faq-a { display: block; }
 
-/* Product grid (SEO muted) */
-.pg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-@media (max-width: 768px) { .pg { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 480px) { .pg { grid-template-columns: 1fr; } }
-.pg-item { background: #fff; border-radius: 8px; padding: 16px; box-shadow: 0 0 0 1px rgba(0,0,0,0.08); text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 8px; transition: box-shadow 150ms; }
-.pg-item:hover { box-shadow: 0 0 0 1px rgba(0,0,0,0.2); }
-.pg-thumb { aspect-ratio: 4 / 3; background: #fafafa; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #808080; }
-.pg-name { font: 500 14px/1.3 var(--font-sans); letter-spacing: -0.32px; color: #171717; }
-.pg-price { font-family: var(--font-mono); font-size: 13px; color: #4d4d4d; }
-
 /* Responsive type scale */
 .display { font-size: clamp(32px, 5.5vw, 56px); font-weight: 600; line-height: 1.05; letter-spacing: -2.2px; }
 @media (max-width: 640px) { .display { letter-spacing: -1.4px; } }
@@ -214,12 +204,6 @@ input:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid 
 .identify-form input:focus { outline: none; box-shadow: 0 0 0 2px #171717; }
 .identify-foot { margin-top: 12px; font: 400 13px var(--font-sans); color: #666; }
 .identify-foot a { color: #38598C; text-decoration: none; }
-
-/* Product grid */
-.product-grid { padding: 64px 0; box-shadow: inset 0 1px 0 rgba(0,0,0,0.08); }
-.pg-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; gap: 16px; flex-wrap: wrap; }
-.pg-head h2 { font: 600 28px/1.15 var(--font-sans); letter-spacing: -1.12px; margin: 6px 0 0; color: #171717; max-width: 600px; }
-.pg-foot-note { font: 400 13px var(--font-mono); color: #666; }
 
 /* FAQ */
 .faq { padding: 80px 0; }
@@ -2866,19 +2850,6 @@ body:has(.icorrect-collection-page) {
 .icorrect-collection-page .hp-floating-quote:hover span { transform: translateX(3px); }
 @media (max-width: 640px) {
   .icorrect-collection-page .hp-floating-quote { right: 16px; bottom: 16px; padding: 12px 18px; }
-}
-.icorrect-collection-page .pg-price strong {
-  color: #171717;
-  font-weight: 600;
-}
-.icorrect-collection-page .pg-empty {
-  grid-column: 1 / -1;
-  padding: 24px;
-  border-radius: 8px;
-  background: #fafafa;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
-  color: #4d4d4d;
-  font: 400 15px/1.5 var(--font-sans);
 }
 @media (prefers-reduced-motion: reduce) {
   .icorrect-collection-page *, .icorrect-collection-page *::before, .icorrect-collection-page *::after {
