@@ -1,0 +1,319 @@
+{%- comment -%}
+  Static Liquid port of the rendered product mould.
+  Source DOM: /tmp/claude-1000/-home-ricky-kb/4c95732c-a335-41c9-9af3-e6e34af8a59f/scratchpad/mould-port/mould-product-rendered.html
+{%- endcomment -%}
+
+{{ 'icorrect-product.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign selected_variant = product.selected_or_first_available_variant
+  assign product_price = selected_variant.price | money
+  assign product_type = product.type | default: 'Repair'
+  assign description_text = product.description | strip_html | strip_newlines | strip
+  assign title_downcase = product.title | downcase
+  assign part_quality = 'Matched display'
+  if title_downcase contains 'genuine'
+    assign part_quality = 'Genuine display'
+  elsif title_downcase contains 'display'
+    assign part_quality = 'Display assembly'
+  endif
+-%}
+
+{%- capture check_icon -%}<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-7"></path></svg>{%- endcapture -%}
+{%- capture display_icon -%}<svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="2.5" y="3.5" width="17" height="11" rx="1.5"></rect><path d="M8 18.5h6M11 14.5v4"></path></svg>{%- endcapture -%}
+{%- capture chip_icon -%}<svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="6" width="10" height="10" rx="1.5"></rect><path d="M8.5 4.5V2M11 4.5V2M13.5 4.5V2M8.5 20V17.5M11 20V17.5M13.5 20V17.5M4.5 8.5H2M4.5 11H2M4.5 13.5H2M20 8.5H17.5M20 11H17.5M20 13.5H17.5"></path></svg>{%- endcapture -%}
+{%- capture shield_icon -%}<svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M11 2.5l7 2.5v6c0 4.2-3 7.5-7 9-4-1.5-7-4.8-7-9v-6l7-2.5z"></path><path d="M8 11l2.2 2.2L14.5 9"></path></svg>{%- endcapture -%}
+
+<div class="icorrect-product-page icorrect-homepage" data-product-id="{{ product.id }}">
+  <nav class="icnav" data-hp-nav>
+    <div class="container icnav-inner">
+      <a class="icnav-logo" href="{{ routes.root_url }}">iCorrect</a>
+      <div class="icnav-links">
+        <a href="/pages/macbook-repairs">Repairs</a>
+        <a href="/pages/corporate-service">Corporate</a>
+        <a href="/pages/about">Why us</a>
+        <a href="/pages/how-it-works">How it works</a>
+        <a href="/pages/contact">Contact</a>
+      </div>
+      <span class="icnav-status"><span class="icnav-status-dot"></span> Open · Fitzrovia</span>
+      <a href="#ProductBooking-{{ section.id }}" class="icnav-cta">Book this repair <span aria-hidden="true">→</span></a>
+      <button type="button" class="icnav-burger" aria-label="Open menu" aria-expanded="false" data-hp-menu-toggle><span class="icnav-burger-bar"></span><span class="icnav-burger-bar"></span><span class="icnav-burger-bar"></span></button>
+    </div>
+    <div class="icnav-mobile" hidden data-hp-mobile-menu>
+      <div class="container">
+        <a href="/pages/macbook-repairs">Repairs</a>
+        <a href="/pages/corporate-service">Corporate</a>
+        <a href="/pages/about">Why us</a>
+        <a href="/pages/how-it-works">How it works</a>
+        <a href="/pages/contact">Contact</a>
+        <a href="#ProductBooking-{{ section.id }}" class="icnav-mobile-cta">Book this repair <span aria-hidden="true">→</span></a>
+        <div class="icnav-mobile-foot"><span class="icnav-status-dot"></span> Open · Fitzrovia<a href="tel:+442070998517">+44 (0)207 099 8517</a></div>
+      </div>
+    </div>
+    <div class="icnav-scrim" hidden data-hp-menu-scrim></div>
+  </nav>
+
+  <div class="container">
+    <div class="crumbs">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span class="sep">/</span>
+      <a href="/pages/macbook-repairs">Repairs</a>
+      <span class="sep">/</span>
+      <span>{{ product_type }}</span>
+    </div>
+  </div>
+
+  <section class="product-hero" id="product-hero">
+    <div class="container">
+      <div class="product-hero-grid">
+        <div class="product-hero-left">
+          <div class="product-hero-eyebrow"><span class="dot"></span>{{ product_type | escape }}</div>
+          <h1>{{ product.title | escape }}</h1>
+          <p class="product-hero-lede">
+            {%- if description_text != blank -%}
+              {{ description_text | truncate: 220 }}
+            {%- else -%}
+              Fixed-price repair for {{ product.title | escape }}. Parts, labour, calibration, quality assurance, and a two-year warranty are handled by the Fitzrovia workshop.
+            {%- endif -%}
+          </p>
+          <div class="product-hero-anchors">
+            <a href="#symptoms" class="product-hero-anchor"><span class="anchor-num">01</span>Is this you?</a>
+            <a href="#price" class="product-hero-anchor"><span class="anchor-num">02</span>What's in your price</a>
+            <a href="#process" class="product-hero-anchor"><span class="anchor-num">03</span>Behind the bench</a>
+            <a href="#warranty" class="product-hero-anchor"><span class="anchor-num">04</span>Warranty</a>
+            <a href="#faqs" class="product-hero-anchor"><span class="anchor-num">05</span>FAQs</a>
+          </div>
+        </div>
+
+        <div class="product-hero-right" id="ProductBooking-{{ section.id }}">
+          <div class="ph-trustcard">
+            <ul class="trust-band-inner" role="list">
+              <li class="trust-item trust-item-rating"><div class="trust-rating-num">4.9</div><div class="trust-rating-meta"><div class="stars">{% for i in (1..5) %}<svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1l1.8 3.8 4.2.6-3 2.9.7 4.1L7 10.5 3.3 12.4l.7-4.1-3-2.9 4.2-.6z" style="fill: var(--ic-star, #333);"></path></svg>{% endfor %}</div><span>719+ Google reviews</span></div></li>
+              <li class="trust-item"><div class="trust-icon">{{ display_icon }}</div><div class="trust-label"><strong>{{ part_quality }}</strong><span>Calibrated in-house</span></div></li>
+              <li class="trust-item"><div class="trust-icon">{{ chip_icon }}</div><div class="trust-label"><strong>Microsoldering</strong><span>Board-level repairs</span></div></li>
+              <li class="trust-item"><div class="trust-icon">{{ shield_icon }}</div><div class="trust-label"><strong>2-yr warranty</strong><span>Double the standard</span></div></li>
+            </ul>
+          </div>
+
+          <div class="ppq-card">
+            {%- form 'product', product, class: 'ppq-card-form' -%}
+              <div class="ppq-card-label">{{ product_type | escape }}</div>
+              <div class="ppq-card-price">{{ product_price }}</div>
+              <div class="ppq-card-from">Fixed price · delivery &amp; turnaround chosen at booking</div>
+              <ul class="ppq-card-list">
+                <li><span class="yes">✓</span> {{ part_quality }} fitted to the exact product spec</li>
+                <li><span class="yes">✓</span> 2-year warranty on parts &amp; labour</li>
+                <li><span class="yes">✓</span> {{ 4900 | money_without_trailing_zeros }}, paid at booking, covers bench diagnosis; your repair is quoted separately for approval.</li>
+              </ul>
+
+              {%- unless product.has_only_default_variant -%}
+                <div class="ppq-option-summary" aria-label="Product options">
+                  {%- for option in product.options_with_values -%}
+                    <span class="ppq-option-pill"><strong>{{ option.name | escape }}</strong>{%- for value in option.values limit: 3 -%}{% if forloop.first %} {% else %}, {% endif %}{{ value | escape }}{%- endfor -%}</span>
+                  {%- endfor -%}
+                </div>
+                <div class="ppq-variant-select">
+                  <label class="ppq-variant-label" for="ProductVariant-{{ section.id }}">Repair option</label>
+                  <select id="ProductVariant-{{ section.id }}" name="id">
+                    {%- for variant in product.variants -%}
+                      <option value="{{ variant.id }}" {% if variant.id == selected_variant.id %}selected{% endif %} {% unless variant.available %}disabled{% endunless %}>
+                        {{ variant.title | escape }} · {{ variant.price | money }}{% unless variant.available %} · Sold out{% endunless %}
+                      </option>
+                    {%- endfor -%}
+                  </select>
+                </div>
+              {%- else -%}
+                <input type="hidden" name="id" value="{{ selected_variant.id }}">
+              {%- endunless -%}
+
+              <input type="hidden" name="quantity" value="1">
+              <button class="ppq-card-cta" type="submit" {% unless selected_variant.available %}disabled{% endunless %}>Book this repair <span aria-hidden="true">→</span></button>
+              <p class="ppq-card-note">No affiliation implied · independent specialist workshop</p>
+            {%- endform -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="product-data-gallery" aria-hidden="true">
+    {%- if product.images.size > 0 -%}
+      {%- for image in product.images -%}
+        {%- assign image_alt = image.alt | default: product.title -%}
+        {{ image | image_url: width: 1200 | image_tag: loading: 'lazy', alt: image_alt }}
+      {%- endfor -%}
+    {%- else -%}
+      <div class="product-placeholder-media" role="img" aria-label="{{ product.title | escape }}"></div>
+    {%- endif -%}
+  </div>
+
+  <div class="hp-trust-belowhero">
+    <section class="trust-band">
+      <div class="container">
+        <ul class="trust-band-inner" role="list">
+          <li class="trust-item trust-item-rating"><div class="trust-rating-num">4.9</div><div class="trust-rating-meta"><div class="stars" aria-label="4.9 out of 5">{% for i in (1..5) %}<svg width="14" height="14" viewBox="0 0 14 14" style="flex-shrink: 0; fill: rgb(245, 166, 35); stroke: rgb(245, 166, 35);"><path d="M7 1l1.8 3.8 4.2.6-3 2.9.7 4.1L7 10.5 3.3 12.4l.7-4.1-3-2.9 4.2-.6z"></path></svg>{% endfor %}</div><span>719+ Google reviews</span></div></li>
+          <li class="trust-item"><div class="trust-icon">{{ display_icon }}</div><div class="trust-label"><strong>{{ part_quality }}</strong><span>Calibrated in-house</span></div></li>
+          <li class="trust-item"><div class="trust-icon">{{ chip_icon }}</div><div class="trust-label"><strong>Microsoldering</strong><span>Board-level repairs</span></div></li>
+          <li class="trust-item"><div class="trust-icon">{{ shield_icon }}</div><div class="trust-label"><strong>2-yr warranty</strong><span>Double the standard</span></div></li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <section class="journey symptom" id="symptoms">
+    <div class="container">
+      <div class="journey-stage"><span class="journey-stage-num">01</span> Is this you?</div>
+      <div class="symptom-grid">
+        <div class="symptom-text">
+          <h2>Cracked, dark, or lines on the display? That's this repair.</h2>
+          <p class="journey-lede">If your device is showing any of these symptoms, you're on the right page. One fixed product price, the correct part specification, and most machines back with you inside 48 hours.</p>
+          <div class="symptom-verdict">
+            <div class="symptom-verdict-key">Your repair</div>
+            <div class="symptom-verdict-val">{{ product.title | escape }} · <strong>{{ product_price }}</strong></div>
+            <div class="symptom-verdict-foot">{{ 4900 | money_without_trailing_zeros }}, paid at booking, covers bench diagnosis; your repair is quoted separately for approval.</div>
+          </div>
+        </div>
+        <ul class="symptom-list">
+          <li><span class="symptom-tick">{{ check_icon }}</span>Cracked or shattered glass</li>
+          <li><span class="symptom-tick">{{ check_icon }}</span>Lines, bars, or flickering across the display</li>
+          <li><span class="symptom-tick">{{ check_icon }}</span>Black patches or clusters of dead pixels</li>
+          <li><span class="symptom-tick">{{ check_icon }}</span>Dim, patchy, or uneven backlight</li>
+          <li><span class="symptom-tick">{{ check_icon }}</span>Colour bleeding, ghosting, or burn-in</li>
+          <li><span class="symptom-tick">{{ check_icon }}</span>Glass lifting or no longer sitting flush</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="journey reviews-wall" id="reviews" style="background-color: rgb(229, 229, 229);">
+    <div class="container">
+      <div class="reviews-wall-head">
+        <div class="reviews-wall-head-text"><div class="journey-stage"><span class="journey-stage-num">·</span> Customer outcomes</div><h2>The hard cases. Real customers.</h2></div>
+        <div class="reviews-wall-stat"><div class="reviews-wall-stat-row"><div class="reviews-wall-stat-num">4.9</div><div class="reviews-wall-stat-stars">{% for i in (1..5) %}<svg viewBox="0 0 14 14" width="16" height="16"><path d="M7 1l1.8 3.8 4.2.6-3 2.9.7 4.1L7 10.5 3.3 12.4l.7-4.1-3-2.9 4.2-.6z" fill="#f5a623"></path></svg>{% endfor %}</div></div><div class="reviews-wall-stat-meta"><strong>719+</strong> Google reviews</div></div>
+      </div>
+      <div class="reviews-wall-grid">
+        <article class="review-card"><div class="review-card-top"><span class="review-card-tag">Saved time</span><div class="review-card-stars">{% for i in (1..5) %}<svg viewBox="0 0 14 14" width="11" height="11"><path d="M7 1l1.8 3.8 4.2.6-3 2.9.7 4.1L7 10.5 3.3 12.4l.7-4.1-3-2.9 4.2-.6z" fill="#f5a623"></path></svg>{% endfor %}</div></div><h3>The quote matched the repair.</h3><p>Clear diagnosis, written approval, and the device came back exactly when promised.</p><footer class="review-card-foot"><strong>Daniel R.</strong><span>Google</span></footer></article>
+        <article class="review-card"><div class="review-card-top"><span class="review-card-tag">Board-level</span><div class="review-card-stars">{% for i in (1..5) %}<svg viewBox="0 0 14 14" width="11" height="11"><path d="M7 1l1.8 3.8 4.2.6-3 2.9.7 4.1L7 10.5 3.3 12.4l.7-4.1-3-2.9 4.2-.6z" fill="#f5a623"></path></svg>{% endfor %}</div></div><h3>Fixed what another shop could not.</h3><p>Microscope diagnosis found the actual fault and kept the repair contained to the failed part.</p><footer class="review-card-foot"><strong>Priya S.</strong><span>Google</span></footer></article>
+        <article class="review-card"><div class="review-card-top"><span class="review-card-tag">Warranty</span><div class="review-card-stars">{% for i in (1..5) %}<svg viewBox="0 0 14 14" width="11" height="11"><path d="M7 1l1.8 3.8 4.2.6-3 2.9.7 4.1L7 10.5 3.3 12.4l.7-4.1-3-2.9 4.2-.6z" fill="#f5a623"></path></svg>{% endfor %}</div></div><h3>Warranty honoured without fuss.</h3><p>Rechecked under the warranty period, repaired promptly, and returned with the same standard of QA.</p><footer class="review-card-foot"><strong>Marcus L.</strong><span>Google</span></footer></article>
+        <article class="review-card"><div class="review-card-top"><span class="review-card-tag">Recovery</span><div class="review-card-stars">{% for i in (1..5) %}<svg viewBox="0 0 14 14" width="11" height="11"><path d="M7 1l1.8 3.8 4.2.6-3 2.9.7 4.1L7 10.5 3.3 12.4l.7-4.1-3-2.9 4.2-.6z" fill="#f5a623"></path></svg>{% endfor %}</div></div><h3>They returned my data.</h3><p>The repair was handled on the bench, with no unnecessary resets or software work.</p><footer class="review-card-foot"><strong>Henrietta W.</strong><span>Google</span></footer></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="journey journey-tight pricebreak" id="price">
+    <div class="container">
+      <div class="pb-grid">
+        <div class="pb-text">
+          <div class="journey-stage"><span class="journey-stage-num">02</span> What's in your price</div>
+          <h2>{{ product_price }}. And that's the price.</h2>
+          <p>No hidden fee bolted on at the end. The figure shown for the selected Shopify variant is the figure used for booking.</p>
+          <p style="color: #171717; font-weight: 500;">If bench diagnosis shows the work should change, you'll hear from us before we proceed.</p>
+        </div>
+        <div class="pb-card">
+          <div class="pb-card-head"><span class="pb-card-head-label">{{ product_type | escape }} · {{ product.title | escape }}</span></div>
+          <div class="pb-row"><div class="pb-row-main"><span class="pb-row-label">{{ part_quality }} assembly</span><span class="pb-row-note">Matched to the product specification</span></div><span class="pb-row-inc"><span class="pb-row-inc-tick">{{ check_icon }}</span>Included</span></div>
+          <div class="pb-row"><div class="pb-row-main"><span class="pb-row-label">Calibration &amp; quality assurance</span><span class="pb-row-note">Brightness, camera, Wi-Fi, ports, and post-repair checks</span></div><span class="pb-row-inc"><span class="pb-row-inc-tick">{{ check_icon }}</span>Included</span></div>
+          <div class="pb-row"><div class="pb-row-main"><span class="pb-row-label">2-year warranty</span><span class="pb-row-note">Parts, labour, and any re-work</span></div><span class="pb-row-inc"><span class="pb-row-inc-tick">{{ check_icon }}</span>Included</span></div>
+          <div class="pb-row"><div class="pb-row-main"><span class="pb-row-label">Collection or return options</span><span class="pb-row-note">Walk-in, courier, or mail-in handled at booking</span></div><span class="pb-row-inc"><span class="pb-row-inc-tick">{{ check_icon }}</span>Included</span></div>
+          <div class="pb-total"><span class="pb-total-label">Total, fixed</span><span class="pb-total-val">{{ product_price }}</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="journey genuine" id="parts">
+    <div class="container">
+      <div class="gp-grid">
+        <div class="gp-text"><div class="journey-stage"><span class="journey-stage-num">·</span> Parts &amp; calibration</div><h2>Correct parts, calibrated properly. So it just works.</h2><p>{{ product.title | escape }} is handled to the specification sold on this product page. Where the catalogue identifies genuine display stock, that wording comes from the product itself.</p></div>
+        <div class="gp-points">
+          <div class="gp-point"><div class="gp-point-icon">{{ display_icon }}</div><div class="gp-point-body"><h3>{{ part_quality }}</h3><p>Matched to your exact model and checked before fitting.</p></div></div>
+          <div class="gp-point"><div class="gp-point-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"></path></svg></div><div class="gp-point-body"><h3>Calibrated in-house</h3><p>Checked against bench references so brightness, colour, camera, and sensor behaviour are verified before return.</p></div></div>
+          <div class="gp-point"><div class="gp-point-icon">{{ shield_icon }}</div><div class="gp-point-body"><h3>No nasty surprises later</h3><p>The repair is logged, QA checked, and covered by a 2-year warranty on the work we perform.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="journey" id="process">
+    <div class="container">
+      <div class="journey-stage"><span class="journey-stage-num">03</span>Behind the bench</div>
+      <h2>Drop-off to "fixed".</h2>
+      <ol class="process-compact">
+        <li class="process-compact-row"><span class="process-compact-num">01</span><div class="process-compact-body"><span class="process-compact-title">Bench diagnosis.</span><span class="process-compact-desc"> Written quote before anything is opened.</span></div><span class="process-compact-meta">30 min</span></li>
+        <li class="process-compact-row"><span class="process-compact-num">02</span><div class="process-compact-body"><span class="process-compact-title">Repair in Fitzrovia.</span><span class="process-compact-desc"> Handled in-house by the workshop team.</span></div><span class="process-compact-meta">1-2 days</span></li>
+        <li class="process-compact-row"><span class="process-compact-num">03</span><div class="process-compact-body"><span class="process-compact-title">Calibration &amp; QA.</span><span class="process-compact-desc"> Functional checks completed before return.</span></div><span class="process-compact-meta">30 points</span></li>
+        <li class="process-compact-row"><span class="process-compact-num">04</span><div class="process-compact-body"><span class="process-compact-title">Collection or courier.</span><span class="process-compact-desc"> Collect in person or use insured return options.</span></div><span class="process-compact-meta">Same/next day</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="journey threeways" id="access">
+    <div class="container">
+      <div class="journey-stage"><span class="journey-stage-num">·</span> Getting it to us</div>
+      <h2>Three ways in. One standard of repair.</h2>
+      <p class="journey-lede">However your device reaches the bench, it receives the same diagnosis, repair log, QA, and warranty.</p>
+      <div class="twi-grid">
+        <div class="twi-card"><div class="twi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V9l8-5 8 5v12"></path><path d="M9 21v-6h6v6"></path></svg></div><div class="twi-title">Walk in</div><div class="twi-meta">Free · Mon-Fri · No appointment</div><div class="twi-body">12 Margaret Street, Fitzrovia W1W 8JQ. Bench diagnosis and written quote while you wait where possible.</div></div>
+        <div class="twi-card"><div class="twi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6h11v9H1zM12 9h5l4 3v3h-9"></path><circle cx="6" cy="18" r="1.6"></circle><circle cx="17" cy="18" r="1.6"></circle></svg></div><div class="twi-title">Same-day courier</div><div class="twi-meta">{{ 2000 | money_without_trailing_zeros }} · London · Insured</div><div class="twi-body">We collect from your home or office and return it fully insured.</div></div>
+        <div class="twi-card"><div class="twi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1.5"></rect><path d="M3 7l9 6 9-6"></path></svg></div><div class="twi-title">Mail-in</div><div class="twi-meta">UK-wide · Tracked</div><div class="twi-body">Post it from anywhere in the UK and track your device the whole way.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="journey warranty-strip" id="warranty">
+    <div class="container">
+      <div class="journey-stage"><span class="journey-stage-num">04</span>Warranty &amp; standards</div>
+      <h2>Two years of cover. No asterisks.</h2>
+      <p class="journey-lede">Every qualifying repair we complete is logged, QA checked, and covered for functional defects in the parts and labour we supplied.</p>
+      <div class="warranty-cards">
+        <div class="warranty-card-pp"><div class="warranty-card-pp-num">24<small>mo</small></div><div class="warranty-card-pp-label">Warranty period</div><div class="warranty-card-pp-body">Against functional defects of the assembly we fitted. Parts and labour included.</div></div>
+        <div class="warranty-card-pp"><div class="warranty-card-pp-num">0<small></small></div><div class="warranty-card-pp-label">Excess on re-work</div><div class="warranty-card-pp-body">If anything we touched fails inside warranty, we fix it without a second diagnostic fee.</div></div>
+        <div class="warranty-card-pp"><div class="warranty-card-pp-num">48<small>h</small></div><div class="warranty-card-pp-label">Warranty turnaround</div><div class="warranty-card-pp-body">Priority bench slot if a warrantied repair needs rechecking.</div></div>
+        <div class="warranty-card-pp"><div class="warranty-card-pp-num">QA<small></small></div><div class="warranty-card-pp-label">Workshop standard</div><div class="warranty-card-pp-body">Repair log, calibration reference, and quality checks for every job.</div></div>
+      </div>
+      <div class="warranty-compare"><strong>For comparison:</strong> iCorrect = 24 months on the work we complete.</div>
+    </div>
+  </section>
+
+  <section class="journey faq-journey" id="faqs">
+    <div class="container faq-grid">
+      <div class="faq-left"><div class="journey-stage"><span class="journey-stage-num">·</span>Frequently asked</div><h2>Questions, answered honestly.</h2><p class="journey-lede">Specific to {{ product.title | escape }}. Speak to a human first? Call <a href="tel:+442070998517">+44 (0)207 099 8517</a> or drop into Fitzrovia.</p></div>
+      <div class="faq-right">
+        <div class="faq-item open"><div class="faq-q">How long does this repair take?<span class="icon">+</span></div><div class="faq-a">Most display and assembly repairs are completed in 1-2 working days once the part and diagnosis are confirmed.</div></div>
+        <div class="faq-item"><div class="faq-q">Are the parts correct for my product?<span class="icon">+</span></div><div class="faq-a">Yes. We match the part to the product and variant being booked. If the catalogue title specifies a genuine display, that is the specification used.</div></div>
+        <div class="faq-item"><div class="faq-q">Will my data be safe during the repair?<span class="icon">+</span></div><div class="faq-a">Yes. Hardware repairs do not require drive imaging or cloud access. We only request passcodes if post-repair testing needs them.</div></div>
+        <div class="faq-item"><div class="faq-q">What does the 2-year warranty cover?<span class="icon">+</span></div><div class="faq-a">Functional defects in the parts and labour we supplied. Accidental damage is not covered.</div></div>
+        <div class="faq-item"><div class="faq-q">Do I need an appointment, or can I walk in?<span class="icon">+</span></div><div class="faq-a">Either works. Walk in Mon-Fri at 12 Margaret Street, W1W 8JQ, or book the repair from this page.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="location">
+    <div class="container location-grid">
+      <div><div class="mono-label">Visit the workshop</div><h2>Fitzrovia, London.</h2><p>Opposite The London Palladium. Drop-in diagnosis, no appointment needed.</p><dl class="location-dl"><dt>Address</dt><dd>12 Margaret Street<br>Audley House<br>London W1W 8JQ</dd><dt>Phone</dt><dd><a href="tel:+442070998517">+44 (0)207 099 8517</a></dd><dt>Email</dt><dd><a href="mailto:support@icorrect.co.uk">support@icorrect.co.uk</a></dd><dt>Hours</dt><dd>Mon-Thu 9am-6pm<br>Fri 10am-6pm · Sat/Sun closed</dd></dl></div>
+      <div class="location-map"><div class="location-map-pin"><div class="location-map-pin-card"><strong>iCorrect</strong><span>12 Margaret St, London W1W 8JQ</span><div class="location-map-pin-rating">4.9 · 719+ Google</div></div><div class="location-map-marker">•</div></div><div class="location-map-bg">{% for i in (0..19) %}<div class="map-street" style="top: {{ i | times: 11 | modulo: 100 }}%; left: {{ i | times: 17 | modulo: 100 }}%; width: {{ i | times: 13 | modulo: 58 | plus: 40 }}%; transform: rotate({{ i | times: 31 | modulo: 180 }}deg);"></div>{% endfor %}</div></div>
+    </div>
+  </section>
+
+  <footer class="icfooter">
+    <div class="container icfooter-inner">
+      <div><div class="icnav-logo" style="color: rgb(255, 255, 255);">iCorrect</div><div class="icfooter-tag">Apple repair specialists · Fitzrovia, London</div><div class="icfooter-tag">12 Margaret Street, London W1W 8JQ · <a href="mailto:support@icorrect.co.uk">support@icorrect.co.uk</a> · <a href="tel:+442070998517">020 7099 8517</a></div><div class="icfooter-tag">Independent repair specialist. Not affiliated with Apple Inc.</div></div>
+      <div class="icfooter-cols"><div><div class="mono-label" style="color: rgb(128, 128, 128);">Repairs</div><a href="/pages/macbook-repairs">MacBook</a><a href="{{ routes.collections_url }}/macbook-screen-repair">MacBook Screen</a><a href="/pages/liquid-damage-process">Liquid damage</a><a href="/pages/advanced-diagnostics">Board-level</a><a href="#">iPhone</a><a href="#">iPad</a></div><div><div class="mono-label" style="color: rgb(128, 128, 128);">Company</div><a href="/pages/about">Why us</a><a href="/pages/corporate-service">Corporate</a><a href="/pages/how-it-works">How it works</a><a href="/pages/repair-case-study">Case study</a><a href="/pages/careers">Careers</a><a href="/pages/contact">Contact</a></div><div><div class="mono-label" style="color: rgb(128, 128, 128);">Legal</div><a href="#">Warranty</a><a href="#">Privacy</a><a href="#">Terms</a></div></div>
+    </div>
+    <div class="container icfooter-base"><span>© 2026 iCorrect Ltd. Not affiliated with Apple Inc.</span><span>Company No. 09392844 · VAT GB 203495788</span></div>
+  </footer>
+
+  <a class="ppq-floating" href="#ProductBooking-{{ section.id }}">Book this repair <span aria-hidden="true">→</span></a>
+</div>
+
+{% schema %}
+{
+  "name": "Product mould",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Product mould"
+    }
+  ]
+}
+{% endschema %}
