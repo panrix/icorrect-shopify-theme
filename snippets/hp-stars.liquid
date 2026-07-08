@@ -1,0 +1,6 @@
+{%- assign star_size = size | default: 14 -%}
+{%- for i in (1..5) -%}
+  <svg width="{{ star_size }}" height="{{ star_size }}" viewBox="0 0 14 14" aria-hidden="true">
+    <path d="M7 1l1.8 3.8 4.2.6-3 2.9.7 4.1L7 10.5 3.3 12.4l.7-4.1-3-2.9 4.2-.6z" fill="var(--ic-star, #f59e0b)"/>
+  </svg>
+{%- endfor -%}

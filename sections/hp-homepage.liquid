@@ -1,0 +1,414 @@
+{%- liquid
+  assign review_copy = '719+ Google reviews · 4.8'
+  assign rating = '4.8'
+  assign review_count = '719+'
+
+  assign diagnostic_price_cents = 4900
+  if section.settings.diagnostic_product != blank and section.settings.diagnostic_product.selected_or_first_available_variant != blank
+    assign diagnostic_price_cents = section.settings.diagnostic_product.selected_or_first_available_variant.price
+  endif
+  assign backlight_price_cents = 38000
+  if section.settings.backlight_product != blank and section.settings.backlight_product.selected_or_first_available_variant != blank
+    assign backlight_price_cents = section.settings.backlight_product.selected_or_first_available_variant.price
+  endif
+  assign macbook_screen_price_cents = 44900
+  if section.settings.macbook_screen_product != blank and section.settings.macbook_screen_product.selected_or_first_available_variant != blank
+    assign macbook_screen_price_cents = section.settings.macbook_screen_product.selected_or_first_available_variant.price
+  endif
+
+  assign apple_board_quote = 140000 | money_without_trailing_zeros
+  assign apple_screen_quote = 66900 | money_without_trailing_zeros
+  assign diagnostic_fee = diagnostic_price_cents | money_without_trailing_zeros
+  assign backlight_price = backlight_price_cents | money_without_trailing_zeros
+  assign macbook_screen_price = macbook_screen_price_cents | money_without_trailing_zeros
+  assign backlight_saving_cents = 140000 | minus: backlight_price_cents
+  assign backlight_saving = backlight_saving_cents | money_without_trailing_zeros
+  assign courier_fee = 2000 | money_without_trailing_zeros
+  assign mail_fee = 2400 | money_without_trailing_zeros
+-%}
+
+<div class="icorrect-homepage" data-section-id="{{ section.id }}">
+  <nav class="icnav" data-hp-nav>
+    <div class="container icnav-inner">
+      <a class="icnav-logo" href="{{ routes.root_url }}">iCorrect</a>
+      <div class="icnav-links">
+        <a href="/pages/our-services">Repairs</a>
+        <a href="/pages/corporate-service">Corporate</a>
+        <a href="/pages/about">Why us</a>
+        <a href="/pages/how-it-works">How it works</a>
+        <a href="/pages/contact">Contact</a>
+      </div>
+      <span class="icnav-status"><span class="icnav-status-dot"></span> Open · Fitzrovia</span>
+      <a href="#wizard" class="icnav-cta">Get a quote <span aria-hidden="true">&rarr;</span></a>
+      <button type="button" class="icnav-burger" aria-label="Open menu" aria-expanded="false" data-hp-menu-toggle>
+        <span class="icnav-burger-bar"></span>
+        <span class="icnav-burger-bar"></span>
+        <span class="icnav-burger-bar"></span>
+      </button>
+    </div>
+    <div class="icnav-mobile" hidden data-hp-mobile-menu>
+      <div class="container">
+        <a href="/pages/our-services">Repairs</a>
+        <a href="/pages/corporate-service">Corporate</a>
+        <a href="/pages/about">Why us</a>
+        <a href="/pages/how-it-works">How it works</a>
+        <a href="/pages/contact">Contact</a>
+        <a href="#wizard" class="icnav-mobile-cta">Get a quote <span aria-hidden="true">&rarr;</span></a>
+        <div class="icnav-mobile-foot">
+          <span class="icnav-status-dot"></span> Open · Fitzrovia
+          <a href="tel:+442070998517">+44 (0)207 099 8517</a>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="icnav-scrim" hidden aria-label="Close menu" data-hp-menu-scrim></button>
+  </nav>
+
+  <div class="hero-morph is-marketing">
+    <section class="hp-hero hp-hero-v3 hv-hero-c">
+      <div class="container hp-hero-grid hv-hero-c-grid">
+        <div class="hv-left">
+          <div class="hp-hero-eyebrow"><span class="dot"></span> Quote · 60 seconds</div>
+          <h1>We repair what they can't.</h1>
+          <p class="hp-hero-sub">
+            Tell us your model and the symptom — see your price in 60 seconds.
+            <span class="hv-sub-more">Genuine parts, two-year warranty, no obligation.</span>
+          </p>
+          <div class="hv-trustline">
+            <span class="hv-stars" aria-hidden="true">{% render 'hp-stars' %}</span>
+            <strong>{{ rating }}</strong>
+            <span class="hv-trust-sep" aria-hidden="true">·</span>
+            <span>{{ review_count }} Google reviews</span>
+            <span class="hv-trust-sep" aria-hidden="true">·</span>
+            <span>2-year warranty</span>
+          </div>
+          <div class="hv-c-apple">
+            When Apple says "logic board, <span class="strike">{{ apple_board_quote }}</span>" we say "backlight IC, <strong>{{ backlight_price }}</strong>."
+          </div>
+        </div>
+
+        <div class="hv-c-trustcard">
+          {% render 'hp-trust-card', rating: rating, review_count: review_count %}
+        </div>
+
+        <div class="hv-c-wizard" id="wizard" data-hp-wizard>
+          <div class="hv-c-wizard-head">
+            <span class="hv-c-wizard-kicker">Instant quote</span>
+            <span class="hv-c-wizard-meta">↳ 60 sec · no obligation</span>
+          </div>
+          <div class="qw-page">
+            <div class="qw-progress">
+              <div class="qw-progress-top"><div class="qw-mono">Step <span data-hp-step-num>1</span> of 6</div></div>
+              <div class="qw-dots">
+                {%- assign steps = 'Device,Model,Fault,Issue,Postcode,Quote' | split: ',' -%}
+                {%- for step in steps -%}
+                  <button type="button" class="qw-dot{% if forloop.first %} current{% endif %}" data-hp-step-dot="{{ forloop.index0 }}" {% unless forloop.first %}disabled{% endunless %}>
+                    <span class="qw-dot-num">{{ forloop.index }}</span>
+                    <span class="qw-dot-label">{{ step }}</span>
+                  </button>
+                {%- endfor -%}
+              </div>
+            </div>
+
+            <div class="qw-step" data-hp-step="0">
+              <h3 class="qw-step-title">What needs fixing?</h3>
+              <p class="qw-step-sub">Pick your device to get started.</p>
+              <div class="qw-device-grid">
+                <button type="button" class="qw-device-card" data-hp-next>
+                  <span class="qw-device-icon">{% render 'hp-icon-phone' %}</span>
+                  <span class="qw-device-name">iPhone</span>
+                </button>
+                <button type="button" class="qw-device-card" data-hp-next>
+                  <span class="qw-device-icon">{% render 'hp-icon-monitor' %}</span>
+                  <span class="qw-device-name">MacBook</span>
+                </button>
+                <button type="button" class="qw-device-card" data-hp-next>
+                  <span class="qw-device-icon">{% render 'hp-icon-tablet' %}</span>
+                  <span class="qw-device-name">iPad</span>
+                </button>
+                <button type="button" class="qw-device-card" data-hp-next>
+                  <span class="qw-device-icon">{% render 'hp-icon-watch' %}</span>
+                  <span class="qw-device-name">Watch</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="qw-step" data-hp-step="1" hidden>
+              <button class="qw-btn-back" type="button" data-hp-back>&larr; Back</button>
+              <h3 class="qw-step-title">Which model?</h3>
+              <p class="qw-step-sub">Pick the closest model group.</p>
+              <div class="qw-model-groups">
+                <button type="button" class="qw-model-group-head qw-model-group" data-hp-next>
+                  <span><span class="qw-model-group-name">Current models</span><span class="qw-model-group-count">M-series and recent devices</span></span>
+                  <span class="qw-model-chev">⌄</span>
+                </button>
+                <button type="button" class="qw-model-group-head qw-model-group" data-hp-next>
+                  <span><span class="qw-model-group-name">Older models</span><span class="qw-model-group-count">Intel and legacy devices</span></span>
+                  <span class="qw-model-chev">⌄</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="qw-step" data-hp-step="2" hidden>
+              <button class="qw-btn-back" type="button" data-hp-back>&larr; Back</button>
+              <h3 class="qw-step-title">What's the issue?</h3>
+              <p class="qw-step-sub">Pick the category that best describes the problem.</p>
+              <div class="qw-fault-grid">
+                <button type="button" class="qw-fault-card" data-hp-next><span class="qw-fault-icon">{% render 'hp-icon-monitor' %}</span><span class="qw-fault-name">Screen</span></button>
+                <button type="button" class="qw-fault-card" data-hp-next><span class="qw-fault-icon">{% render 'hp-icon-battery' %}</span><span class="qw-fault-name">Battery</span></button>
+                <button type="button" class="qw-fault-card" data-hp-next><span class="qw-fault-icon">{% render 'hp-icon-chip' %}</span><span class="qw-fault-name">Logic board</span></button>
+                <button type="button" class="qw-fault-card" data-hp-next><span class="qw-fault-icon">{% render 'hp-icon-droplet' %}</span><span class="qw-fault-name">Liquid damage</span></button>
+              </div>
+            </div>
+
+            <div class="qw-step" data-hp-step="3" hidden>
+              <button class="qw-btn-back" type="button" data-hp-back>&larr; Back</button>
+              <h3 class="qw-step-title">Tell us the symptom.</h3>
+              <p class="qw-step-sub">This decides whether it is a fixed repair or a bench diagnosis first.</p>
+              <div class="qw-issue-list">
+                <button type="button" class="qw-issue-card" data-hp-next><span class="qw-issue-icon-wrap">{% render 'hp-icon-check' %}</span><span class="qw-issue-text"><span class="qw-issue-label">Cracked or failed part</span><span class="qw-issue-hint">Usually fixed-price once the model is known.</span></span></button>
+                <button type="button" class="qw-issue-card" data-hp-next><span class="qw-issue-icon-wrap">{% render 'hp-icon-chip' %}</span><span class="qw-issue-text"><span class="qw-issue-label">Won't turn on</span><span class="qw-issue-hint">{{ diagnostic_fee }}, paid at booking, covers bench diagnosis; your repair is quoted separately for approval.</span></span></button>
+              </div>
+            </div>
+
+            <div class="qw-step" data-hp-step="4" hidden>
+              <button class="qw-btn-back" type="button" data-hp-back>&larr; Back</button>
+              <h3 class="qw-step-title">Plan your repair</h3>
+              <div class="qw-cfg">
+                <div class="qw-cfg-prompt">Enter your postcode to see how soon you can have it back</div>
+                <form class="qw-cfg-form" data-hp-next-form>
+                  <input class="qw-cfg-input" placeholder="e.g. W1W 8JQ" autocomplete="postal-code" aria-label="Postcode">
+                  <button type="submit" class="qw-cfg-btn ready">Show my dates &rarr;</button>
+                </form>
+                <div class="qw-cfg-hint"><span class="qw-cfg-hint-muted">Try W1W 8JQ (London) or EH1 1AA (Edinburgh)</span></div>
+              </div>
+            </div>
+
+            <div class="qw-step" data-hp-step="5" hidden>
+              <button class="qw-btn-back" type="button" data-hp-back>&larr; Back</button>
+              <div class="qw-diag-card">
+                <div class="qw-diag-price">
+                  <span class="qw-diag-price-num">{{ diagnostic_fee }}</span>
+                  <span class="qw-diag-price-label">paid at booking · repair quoted separately</span>
+                </div>
+                <ol class="qw-diag-steps">
+                  <li><span class="qw-diag-step-n">01</span> Bench diagnosis confirms the exact fault.</li>
+                  <li><span class="qw-diag-step-n">02</span> You approve the repair quote before work starts.</li>
+                  <li><span class="qw-diag-step-n">03</span> Walk-in, courier and UK mail-in are available.</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="hp-trust-belowhero">
+    <section class="trust-band">
+      <div class="container">
+        {% render 'hp-trust-card', rating: rating, review_count: review_count %}
+      </div>
+    </section>
+  </div>
+
+  <section class="hp-reviews" id="reviews" data-screen-label="Reviews wall">
+    <div class="container">
+      <div class="hp-reviews-head">
+        <div>
+          <div class="hp-section-eyebrow">Customer outcomes</div>
+          <h2 class="hp-section-title">The hard cases. Real customers.</h2>
+        </div>
+        <div class="reviews-wall-stat" aria-label="{{ review_copy }}">
+          <div class="reviews-wall-stat-row">
+            <div class="reviews-wall-stat-num">{{ rating }}</div>
+            <div class="reviews-wall-stat-stars">{% render 'hp-stars', size: 16 %}</div>
+          </div>
+          <div class="reviews-wall-stat-meta"><strong>{{ review_count }}</strong> Google reviews</div>
+        </div>
+      </div>
+      <div class="reviews-wall-grid">
+        <article class="review-card hp-reveal">
+          <div class="review-card-top"><span class="review-card-tag">Saved {{ backlight_saving }}</span><div class="review-card-stars">{% render 'hp-stars', size: 11 %}</div></div>
+          <h3>Apple said new logic board. It was one chip.</h3>
+          <p>Quoted {{ apple_board_quote }} for a board swap. iCorrect traced it to the backlight IC and repaired it under the microscope. Same Mac, my data untouched.</p>
+          <footer class="review-card-foot"><strong>Daniel R.</strong><span>MBP 16&quot; M1 Max · Google</span></footer>
+        </article>
+        <article class="review-card hp-reveal">
+          <div class="review-card-top"><span class="review-card-tag">Recovery</span><div class="review-card-stars">{% render 'hp-stars', size: 11 %}</div></div>
+          <h3>Liquid damage. They returned my data.</h3>
+          <p>Apple wrote it off after a wine spill. Cleaned the board, replaced the flex, recovered every file.</p>
+          <footer class="review-card-foot"><strong>Henrietta W.</strong><span>MBA 13&quot; M2 · Google</span></footer>
+        </article>
+        <article class="review-card hp-reveal">
+          <div class="review-card-top"><span class="review-card-tag">Warranty</span><div class="review-card-stars">{% render 'hp-stars', size: 11 %}</div></div>
+          <h3>Stage Light gone. Warranty honoured.</h3>
+          <p>Classic flex-cable failure. Re-did the work under warranty 9 months later. No quibbles.</p>
+          <footer class="review-card-foot"><strong>Marcus T.</strong><span>MBP 16&quot; M1 Max · Google</span></footer>
+        </article>
+        <article class="review-card hp-reveal">
+          <div class="review-card-top"><span class="review-card-tag">Same day</span><div class="review-card-stars">{% render 'hp-stars', size: 11 %}</div></div>
+          <h3>Walked in at 9. Working screen by lunch.</h3>
+          <p>Genuine display fitted while I worked across the road. The price I was quoted online was the price I paid.</p>
+          <footer class="review-card-foot"><strong>Priya S.</strong><span>iPhone 15 Pro · Google</span></footer>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="hp-section hp-datasafety">
+    <div class="container">
+      <div class="hp-section-head">
+        <div>
+          <div class="hp-section-eyebrow">Data &amp; privacy</div>
+          <h2 class="hp-section-title">Your data stays on your device.</h2>
+        </div>
+        <p class="hp-section-lede">We're board-level hardware specialists, not IT support. We don't need your passwords, we don't image your drive, and we don't plug your Mac into our network.</p>
+      </div>
+      <div class="hp-datasafety-grid">
+        <div class="hp-datasafety-card hp-reveal"><span class="hp-datasafety-num">01</span><h3>Screen repairs never touch your drive</h3><p>The display is a separate assembly. We replace it without powering on — your data doesn't enter the equation.</p></div>
+        <div class="hp-datasafety-card hp-reveal"><span class="hp-datasafety-num">02</span><h3>GDPR-compliant workshop</h3><p>No passcodes requested unless post-repair testing requires it — and you can be present for that step. NDA on request for corporate clients.</p></div>
+        <div class="hp-datasafety-card hp-reveal"><span class="hp-datasafety-num">03</span><h3>No cloud, no sync</h3><p>Your device doesn't connect to our network. Diagnosis happens on an isolated bench with board-level tools, not software.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="hp-section hp-priceconf">
+    <div class="container">
+      <div class="hp-section-head">
+        <div>
+          <div class="hp-section-eyebrow">Pricing</div>
+          <h2 class="hp-section-title">The quote is the price. No surprises.</h2>
+        </div>
+        <p class="hp-section-lede">We don't lowball to get you through the door and then discover "additional damage." If diagnosis reveals something we didn't expect, we call you with an updated quote before touching anything.</p>
+      </div>
+      <div class="hp-priceconf-grid">
+        <div class="hp-priceconf-card hp-priceconf-card-main">
+          <div class="hp-priceconf-row"><span class="hp-priceconf-label">Fixed-price repairs</span><span class="hp-priceconf-value">Screen, battery, rear glass — priced by model, not by mood.</span></div>
+          <div class="hp-priceconf-row"><span class="hp-priceconf-label">Bench diagnosis</span><span class="hp-priceconf-value">{{ diagnostic_fee }}, paid at booking, covers bench diagnosis; your repair is quoted separately for approval.</span></div>
+          <div class="hp-priceconf-row"><span class="hp-priceconf-label">No hidden fees</span><span class="hp-priceconf-value">The price includes parts, labour, calibration, QA, and a 2-year warranty. Collection and return are the only add-on.</span></div>
+        </div>
+        <div class="hp-priceconf-compare">
+          <div class="hp-priceconf-compare-head"><span>Why we're different from Apple</span></div>
+          <div class="hp-priceconf-row-compare"><span class="hp-priceconf-compare-label">Backlight IC failure</span><div class="hp-priceconf-compare-prices"><span class="hp-priceconf-compare-theirs">Apple: <strong>{{ apple_board_quote }}</strong> <em>(full board swap)</em></span><span class="hp-priceconf-compare-ours">iCorrect: <strong>{{ backlight_price }}</strong> <em>(chip replacement)</em></span></div></div>
+          <div class="hp-priceconf-row-compare"><span class="hp-priceconf-compare-label">MacBook Pro 14&quot; screen</span><div class="hp-priceconf-compare-prices"><span class="hp-priceconf-compare-theirs">Apple: <strong>{{ apple_screen_quote }}</strong></span><span class="hp-priceconf-compare-ours">iCorrect: <strong>{{ macbook_screen_price }}</strong></span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="hp-section hp-access">
+    <div class="container">
+      <div class="hp-section-head">
+        <div>
+          <div class="hp-section-eyebrow">Getting your device to us</div>
+          <h2 class="hp-section-title">Three ways in. One standard of repair.</h2>
+        </div>
+        <p class="hp-section-lede">Walk in from Oxford Circus, send a London courier, or post it from anywhere in the UK. Every repair uses the same bench, the same parts, the same warranty.</p>
+      </div>
+      <div class="hp-access-grid">
+        <div class="hp-access-card hp-reveal"><div class="hp-access-icon">{% render 'hp-icon-arrow-enter' %}</div><h3 class="hp-access-title">Walk in</h3><div class="hp-access-detail">12 Margaret Street, Fitzrovia W1W 8JQ</div><div class="hp-access-meta">Mon-Fri · no appointment needed</div><p class="hp-access-body">Opposite The London Palladium. Diagnosis while you wait. Most screen and battery repairs returned same-day or next-day.</p></div>
+        <div class="hp-access-card hp-reveal"><div class="hp-access-icon">{% render 'hp-icon-briefcase' %}</div><h3 class="hp-access-title">Same-day courier</h3><div class="hp-access-detail">London postcodes only</div><div class="hp-access-meta">+ {{ courier_fee }} · collected within 3 hours</div><p class="hp-access-body">We send a tracked courier to your door. Your device is on the bench the same day, returned as soon as the repair's done.</p></div>
+        <div class="hp-access-card hp-reveal"><div class="hp-access-icon">{% render 'hp-icon-calendar' %}</div><h3 class="hp-access-title">UK-wide mail-in</h3><div class="hp-access-detail">Pre-paid tracked shipping</div><div class="hp-access-meta">+ {{ mail_fee }} · next-day collection kit</div><p class="hp-access-body">We send you a pre-paid, insured shipping kit. Post it, we repair it, we courier it back. Same warranty, same quality.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="hp-section hp-corporate">
+    <div class="container hp-corporate-inner">
+      <div class="hp-corporate-text">
+        <div class="hp-section-eyebrow" style="color:#a3a3a3">Specialist &amp; Corporate</div>
+        <h2 class="hp-corporate-title">When it's business-critical,<br>skip the queue.</h2>
+        <p class="hp-corporate-body">Time-sensitive data recovery. Fleet repairs on retainer. The device Apple said was a write-off that your board presentation lives on. We handle the cases other shops won't touch — and we don't route you through a chatbot to get there.</p>
+        <ul class="hp-corporate-list">
+          <li>Priority bench slot — same-day or next-day turnaround</li>
+          <li>Dedicated technician, not a call centre</li>
+          <li>NDA, audit trail, GDPR-compliant handling</li>
+          <li>Fleet pricing for 5+ devices</li>
+        </ul>
+        <a href="/pages/corporate-service" class="hp-corporate-cta">Talk to a specialist &rarr;</a>
+      </div>
+      <div class="hp-corporate-aside">
+        <div class="hp-corporate-stat hp-reveal"><span class="hp-corporate-stat-num">94%</span><span class="hp-corporate-stat-label">Data recovered from "dead" Macs in 2025</span></div>
+        <div class="hp-corporate-stat hp-reveal"><span class="hp-corporate-stat-num">4 h</span><span class="hp-corporate-stat-label">Average turnaround on priority bench repairs</span></div>
+        <div class="hp-corporate-stat hp-reveal"><span class="hp-corporate-stat-num">NDA</span><span class="hp-corporate-stat-label">Signed on request for every corporate job</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="hp-section hp-faq" id="faq">
+    <div class="container hp-faq-grid">
+      <div class="hp-faq-left">
+        <div class="hp-section-eyebrow">Frequently asked</div>
+        <h2 class="hp-section-title">Questions, answered honestly.</h2>
+        <p class="hp-faq-copy">If your question isn't here, call <a href="tel:+442070998517">+44 (0)207 099 8517</a> or drop in — we're opposite The London Palladium.</p>
+      </div>
+      <div class="hp-faq-right">
+        {%- assign faq_questions = 'How long does a repair take?|Are the parts genuine Apple?|Is my data safe?|What does the 2-year warranty cover?|Do I need to book, or can I walk in?|What if Apple says it is unfixable?' | split: '|' -%}
+        {%- assign faq_answers = "Most screen and battery repairs are done in 1-2 working days. Walk in before 11am with a common repair and same-day turnaround is usually possible. Board-level work takes 3-5 days because we need to scope, repair, and QA under the microscope.|Yes. We source original Apple displays and batteries where available, calibrate screens in-house, and explain the part option before fitting it.|Completely. Screen and battery repairs do not touch your storage. For board-level work, your device stays on an isolated bench and never connects to our network.|Every part we fit and the labour to install it. If anything we touched fails inside 24 months, we fix it under warranty. Accidental damage is not covered.|Either. Walk in Mon-Fri for diagnosis and a written quote. Booking via the wizard reserves a bench slot and is usually faster, particularly for board-level work or courier collection.|That is what we specialise in. Apple comparison here is about repair approach only: they often replace modules; we repair at component level where it is technically and financially sensible." | split: '|' -%}
+        {%- for question in faq_questions -%}
+          <div class="hp-faq-item{% if forloop.first %} is-open{% endif %}" data-hp-faq>
+            <button type="button" class="hp-faq-q" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"><span>{{ question }}</span><span class="hp-faq-icon" aria-hidden="true">+</span></button>
+            <div class="hp-faq-a" {% unless forloop.first %}hidden{% endunless %}>{{ faq_answers[forloop.index0] }}</div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+
+  <section class="hp-finalcta">
+    <div class="container hp-finalcta-inner">
+      <h2>Ready to get it fixed?</h2>
+      <p>Tell us your device and the symptom. See your price in 60 seconds — or let us diagnose it properly first.</p>
+      <div class="hp-finalcta-row"><a href="#wizard" class="hp-cta hp-cta-primary hp-cta-lg">Get a quote <span class="arrow">&rarr;</span></a></div>
+    </div>
+  </section>
+
+  <footer class="hp-footer">
+    <div class="container hp-footer-inner">
+      <div class="hp-footer-brand">
+        <span class="hp-logo" style="color:#fff;pointer-events:none"><span class="hp-logo-mark" style="background:#fff;color:#171717">iC</span> iCorrect</span>
+        <span class="hp-footer-tag">Apple repair specialists · Fitzrovia, London</span>
+        <span class="hp-footer-tag">12 Margaret Street, London W1W 8JQ · <a href="mailto:support@icorrect.co.uk">support@icorrect.co.uk</a> · <a href="tel:+442070998517">020 7099 8517</a></span>
+        <span class="hp-footer-tag">iCorrect is independent and is not affiliated with Apple Inc.</span>
+      </div>
+      <div class="hp-footer-cols">
+        <div><span class="hp-footer-col-title">Repairs</span><a href="/pages/macbook-repairs">MacBook</a><a href="{{ routes.collections_url }}/macbook-screen-repair">MacBook Screen</a><a href="{{ routes.collections_url }}/iphone-collections">iPhone</a><a href="{{ routes.collections_url }}/ipad-collections">iPad</a></div>
+        <div><span class="hp-footer-col-title">Company</span><a href="/pages/about">Why us</a><a href="/pages/corporate-service">Corporate</a><a href="/pages/how-it-works">How it works</a><a href="/pages/contact">Contact</a></div>
+        <div><span class="hp-footer-col-title">Legal</span><a href="/pages/our-warranty">Warranty</a><a href="/policies/privacy-policy">Privacy</a><a href="/policies/terms-of-service">Terms</a></div>
+      </div>
+    </div>
+    <div class="container hp-footer-base"><span>© 2026 iCorrect Ltd. Not affiliated with Apple Inc.</span><span>Company No. 09392844 · VAT GB 203495788</span></div>
+  </footer>
+
+  <a class="hp-floating-quote" href="#wizard">Get a quote <span aria-hidden="true">&rarr;</span></a>
+</div>
+
+<script src="{{ 'icorrect-homepage.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "Homepage mould",
+  "settings": [
+    {
+      "type": "product",
+      "id": "diagnostic_product",
+      "label": "Diagnostic product"
+    },
+    {
+      "type": "product",
+      "id": "backlight_product",
+      "label": "Backlight repair product"
+    },
+    {
+      "type": "product",
+      "id": "macbook_screen_product",
+      "label": "MacBook screen product"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Homepage mould"
+    }
+  ]
+}
+{% endschema %}
