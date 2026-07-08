@@ -1,0 +1,150 @@
+{%- comment -%}
+  Static Liquid port of the rendered MacBook screen collection mould.
+  Source DOM: /tmp/claude-1000/-home-ricky-kb/4c95732c-a335-41c9-9af3-e6e34af8a59f/scratchpad/mould-port/mould-collection-rendered.html
+{%- endcomment -%}
+
+{{ 'icorrect-collection.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign collection_title = collection.title | default: 'MacBook Screen Repair'
+-%}
+
+{%- capture star_icon -%}<svg width="14" height="14" viewBox="0 0 14 14" style="flex-shrink: 0; fill: rgb(245, 166, 35); stroke: rgb(245, 166, 35);"><path d="M7 1l1.8 3.8 4.2.6-3 2.9.7 4.1L7 10.5 3.3 12.4l.7-4.1-3-2.9 4.2-.6z" style="fill: rgb(245, 166, 35); stroke: rgb(245, 166, 35);"></path></svg>{%- endcapture -%}
+{%- capture display_icon -%}<svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="2.5" y="3.5" width="17" height="11" rx="1.5"></rect><path d="M8 18.5h6M11 14.5v4"></path></svg>{%- endcapture -%}
+{%- capture chip_icon -%}<svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="6" width="10" height="10" rx="1.5"></rect><path d="M8.5 4.5V2M11 4.5V2M13.5 4.5V2M8.5 20V17.5M11 20V17.5M13.5 20V17.5M4.5 8.5H2M4.5 11H2M4.5 13.5H2M20 8.5H17.5M20 11H17.5M20 13.5H17.5"></path></svg>{%- endcapture -%}
+{%- capture shield_icon -%}<svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M11 2.5l7 2.5v6c0 4.2-3 7.5-7 9-4-1.5-7-4.75-7-9v-6l7-2.5z"></path><path d="M8 11l2.2 2.2L14.5 9"></path></svg>{%- endcapture -%}
+
+<div class="icorrect-collection-page">
+  <nav class="icnav">
+    <div class="container icnav-inner">
+      <a class="icnav-logo" href="{{ routes.root_url }}">iCorrect</a>
+      <div class="icnav-links">
+        <a href="/pages/macbook-repairs">Repairs</a>
+        <a href="/pages/corporate-service">Corporate</a>
+        <a href="/pages/about">Why us</a>
+        <a href="/pages/how-it-works">How it works</a>
+        <a href="/pages/contact">Contact</a>
+      </div>
+      <span class="icnav-status"><span class="icnav-status-dot"></span> Open &middot; Fitzrovia</span>
+      <a href="#wizard" class="icnav-cta">Get your quote <span aria-hidden="true">&rarr;</span></a>
+      <button type="button" class="icnav-burger" aria-label="Open menu" aria-expanded="false"><span class="icnav-burger-bar"></span><span class="icnav-burger-bar"></span><span class="icnav-burger-bar"></span></button>
+    </div>
+    <div class="icnav-mobile" hidden="">
+      <div class="container">
+        <a href="/pages/macbook-repairs">Repairs</a><a href="/pages/corporate-service">Corporate</a><a href="/pages/about">Why us</a><a href="/pages/how-it-works">How it works</a><a href="/pages/contact">Contact</a><a href="#wizard" class="icnav-mobile-cta">Get your quote <span aria-hidden="true">&rarr;</span></a>
+        <div class="icnav-mobile-foot"><span class="icnav-status-dot"></span> Open &middot; Fitzrovia<a href="tel:+442070998517">+44 (0)207 099 8517</a></div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="crumbs"><a href="{{ routes.root_url }}">Home</a><span class="sep">/</span><a href="/pages/macbook-repairs">Repairs</a><span class="sep">/</span><span>MacBook Screen</span></div>
+  </div>
+
+  <header class="collection-header">
+    <div class="container">
+      <div class="mono-label" style="margin-top: 32px;">Collection &middot; MacBook &middot; Screen</div>
+      <div class="coll-head-title">
+        <h1 class="display">{{ collection_title | escape }}</h1>
+        <div class="coll-head-lede">Cracked, dead, flickering, or stuck on Stage Light? We replace the display only &mdash; never the full lid &mdash; using genuine Apple parts, at prices that make sense.</div>
+      </div>
+    </div>
+  </header>
+
+  <section class="trust-band">
+    <div class="container">
+      <ul class="trust-band-inner" role="list">
+        <li class="trust-item trust-item-rating"><div class="trust-rating-num">4.9</div><div class="trust-rating-meta"><div class="stars" aria-label="719+ Google, 4.9 out of 5">{% for i in (1..5) %}{{ star_icon }}{% endfor %}</div><span>719+ Google &middot; 4.9</span></div></li>
+        <li class="trust-item"><div class="trust-icon">{{ display_icon }}</div><div class="trust-label"><strong>Apple parts</strong><span>Calibrated in-house</span></div></li>
+        <li class="trust-item"><div class="trust-icon">{{ chip_icon }}</div><div class="trust-label"><strong>Microsoldering</strong><span>Board-level repairs</span></div></li>
+        <li class="trust-item"><div class="trust-icon">{{ shield_icon }}</div><div class="trust-label"><strong>2-yr warranty</strong><span>Double the standard</span></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="hero-v2 hero-v2-hs-original">
+    <div class="hero-gradient-bg"></div>
+    <div class="container">
+      <div class="hero-v2-headline">
+        <div class="hero-v2-eyebrow"><span class="dot"></span> Fitzrovia workshop &middot; in stock today</div>
+        <h1>Get an instant MacBook screen quote.</h1>
+        <p>Tell us your model. See your price. Book in 60 seconds &mdash; with a 2-year warranty and genuine Apple parts.</p>
+      </div>
+      <div class="hero-v2-wizard" id="wizard">
+        <div class="qw-page">
+          <div class="qw-progress"><div class="qw-progress-top"><div class="qw-mono">Step 1 of 4</div></div><div class="qw-dots"><button type="button" class="qw-dot current"><div class="qw-dot-num">1</div><div class="qw-dot-label">Model</div></button><button type="button" disabled="" class="qw-dot"><div class="qw-dot-num">2</div><div class="qw-dot-label">Issue</div></button><button type="button" disabled="" class="qw-dot"><div class="qw-dot-num">3</div><div class="qw-dot-label">Postcode</div></button><button type="button" disabled="" class="qw-dot"><div class="qw-dot-num">4</div><div class="qw-dot-label">Quote</div></button></div></div>
+          <div class="qw-step"><h3 class="qw-step-title">Which MacBook?</h3><p class="qw-step-sub">Pick your exact model for accurate pricing.</p><div class="qw-model-groups"><div class="qw-model-group"><button type="button" class="qw-model-group-head"><div><div class="qw-model-group-name">MacBook Pro 16&quot;</div><div class="qw-model-group-count">6 models</div></div><svg class="qw-model-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg></button></div><div class="qw-model-group"><button type="button" class="qw-model-group-head"><div><div class="qw-model-group-name">MacBook Pro 14&quot;</div><div class="qw-model-group-count">4 models</div></div><svg class="qw-model-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg></button></div><div class="qw-model-group"><button type="button" class="qw-model-group-head"><div><div class="qw-model-group-name">MacBook Pro 13&quot;</div><div class="qw-model-group-count">6 models</div></div><svg class="qw-model-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg></button></div><div class="qw-model-group"><button type="button" class="qw-model-group-head"><div><div class="qw-model-group-name">MacBook Air 15&quot;</div><div class="qw-model-group-count">3 models</div></div><svg class="qw-model-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg></button></div><div class="qw-model-group"><button type="button" class="qw-model-group-head"><div><div class="qw-model-group-name">MacBook Air 13&quot;</div><div class="qw-model-group-count">6 models</div></div><svg class="qw-model-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg></button></div></div><button type="button" class="qw-model-unknown"><span>I don't know my model</span><span class="qw-model-unknown-hint">Find it in 5 seconds &darr;</span></button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="identify" class="identify">
+    <div class="container identify-grid">
+      <div class="identify-visual"><div class="identify-visual-inner"><div class="identify-plate"><div class="identify-plate-line">Designed by Apple in California.</div><div class="identify-plate-line muted">Assembled in China</div><div class="identify-plate-line highlight">Model <span class="hl">A2442</span></div><div class="identify-plate-line muted small">EMC 3650 &middot; 61W USB-C</div></div><div class="mono-label identify-hint">&larr; Look on the underside</div></div></div>
+      <div class="identify-text"><div class="mono-label">Not sure which model you have?</div><h2>Find your model number in 5 seconds.</h2><p>Flip your MacBook over and look for the four-character code starting with &quot;A&quot; near the hinge &mdash; or read the longer serial number from the same line. Enter either and we'll match the repair exactly.</p><form class="identify-form" action="#wizard"><input name="model" placeholder="Model code (A2442) or serial number"><button type="submit" class="btn btn-dark">Identify</button></form><div class="identify-foot">Or <a href="#wizard">browse models in the wizard &rarr;</a></div></div>
+    </div>
+  </section>
+
+  <section class="info info-process">
+    <div class="container">
+      <div class="info-head"><div class="mono-label">Our process</div><h2>What happens between &quot;drop-off&quot; and &quot;fixed&quot;.</h2><p>Four stages. No grey area. You'll know where your Mac is at every step &mdash; we send timestamped photos from the bench when the display comes off.</p></div>
+      <ol class="process-grid">
+        <li class="process-step"><div class="process-step-head"><span class="process-step-num">01</span><span class="process-step-time">30 MIN</span></div><h3>Free Pre-diagnosis</h3><p>Walk in or ship your MacBook. We inspect the display, test backlight channels on the scope, and check for related damage &mdash; hinge flex, logic board shorts, Stage Light. You get a written quote before anything is opened.</p></li>
+        <li class="process-step"><div class="process-step-head"><span class="process-step-num">02</span><span class="process-step-time">1&ndash;2 DAYS</span></div><h3>Repair on the bench</h3><p>Work happens in our Fitzrovia workshop &mdash; never sent out. Screen assemblies are replaced with the hinge and antenna transferred to the new unit; backlight IC replacements are done under a stereo microscope with lead-free solder.</p></li>
+        <li class="process-step"><div class="process-step-head"><span class="process-step-num">03</span><span class="process-step-time">45 MIN</span></div><h3>Calibration &amp; QA</h3><p>Every repair is True-Tone calibrated against a reference sensor, colour-profile matched, and run through a 30-point QA pass &mdash; brightness uniformity, touch-bar response, keyboard, speakers, camera, Wi-Fi throughput.</p></li>
+        <li class="process-step"><div class="process-step-head"><span class="process-step-num">04</span><span class="process-step-time">SAME DAY</span></div><h3>Collection or courier</h3><p>Collect in person (Mon&ndash;Fri) or opt for insured next-day courier back to you. Every repair ships with a printed QA report, the 2-year warranty card, and the original (or recycled) parts if you want them returned.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="info info-parts">
+    <div class="container info-parts-grid">
+      <div class="info-parts-text"><div class="mono-label">Parts &amp; materials</div><h2>Apple OEM displays, recalibrated in-house.</h2><p>Aftermarket &quot;compatible&quot; screens cost less up front and fail inside 18 months &mdash; lower brightness, off-white point, dead True Tone. We don't fit them. Every screen we install is a genuine Apple assembly, tested against a reference panel, and warrantied for two years.</p><dl class="info-parts-dl"><dt>Source</dt><dd>Genuine Apple LCD &amp; OLED assemblies &mdash; reclaimed from original stock, not aftermarket.</dd><dt>Calibration</dt><dd>Every display factory-matched for colour temperature, gamma, and True Tone before it leaves the bench.</dd><dt>What's new</dt><dd>LCD panel, backlight driver, digitizer cable, hinge covers, adhesive perimeter. Camera and antenna transferred.</dd><dt>What's recycled</dt><dd>Your original LCD is stripped for recoverable components. You can request the carcass back at collection.</dd></dl></div>
+      <div class="info-parts-card"><div class="info-parts-card-top"><span class="mono-label" style="color: rgb(102, 102, 102);">Supply chain</span><span class="info-badge">Verified</span></div><div class="info-parts-chain"><div class="info-parts-node"><div class="info-parts-node-title">Original Apple display stock</div><div class="info-parts-node-body">Original LCD / mini-LED assemblies, sealed.</div></div><div class="info-parts-arrow" aria-hidden="true">&darr;</div><div class="info-parts-node"><div class="info-parts-node-title">Recalibration bench</div><div class="info-parts-node-body">White-point, gamma, True Tone profile flashed.</div></div><div class="info-parts-arrow" aria-hidden="true">&darr;</div><div class="info-parts-node"><div class="info-parts-node-title">Your MacBook</div><div class="info-parts-node-body">Fitted, QA'd, returned with a 2-year warranty.</div></div></div></div>
+    </div>
+  </section>
+
+  <section class="info info-warranty">
+    <div class="container">
+      <div class="info-head"><div class="mono-label">Warranty &amp; standards</div><h2>Two years of cover. No asterisks.</h2><p>Apple's own out-of-warranty screen repair runs 90 days. Most London repair shops offer 6 or 12 months. We warrant every MacBook screen we fit for 24 months &mdash; parts, labour, and any re-work.</p></div>
+      <div class="warranty-grid"><div class="warranty-card"><div class="warranty-num">24 mo</div><div class="warranty-label">Warranty period</div><div class="warranty-body">Against functional defect of the display assembly we fitted. Covers parts, labour, and return shipping.</div></div><div class="warranty-card"><div class="warranty-num">0</div><div class="warranty-label">Excess on re-work</div><div class="warranty-body">If anything we touched fails inside warranty, we fix it free. No diagnostic fee, no &quot;goodwill&quot; bargaining.</div></div><div class="warranty-card"><div class="warranty-num">48 h</div><div class="warranty-label">Warranty turnaround</div><div class="warranty-body">Priority bench slot if a warrantied repair fails. Drop in or use our pre-paid courier label.</div></div><div class="warranty-card"><div class="warranty-num">ISO 9001</div><div class="warranty-label">Workshop standard</div><div class="warranty-body">Repair log, torque spec, calibration reference for every job. Corporate clients get the audit trail on request.</div></div></div>
+    </div>
+  </section>
+
+  <section class="faq">
+    <div class="container faq-grid">
+      <div class="faq-left"><div class="mono-label">Frequently asked</div><h2>Questions, answered honestly.</h2><p>If you want to speak to a human first, call <a href="tel:+442070998517">+44 (0)207 099 8517</a> or drop in &mdash; we're opposite The London Palladium.</p></div>
+      <div class="faq-right"><div class="faq-item open"><div class="faq-q">How long does a MacBook screen repair take?<span class="icon">+</span></div><div class="faq-a">Most screen repairs are completed in 1-2 working days. If you drop in before 11am and we have the part in stock, same-day turnaround is often possible. Walk-ins welcome at our Fitzrovia workshop &mdash; no appointment needed for diagnosis.</div></div><div class="faq-item"><div class="faq-q">Are the replacement screens genuine Apple parts?<span class="icon">+</span></div><div class="faq-a">Yes. We source original Apple displays, reclaim them where possible, and recalibrate every unit in-house to original factory standards. That means True Tone, full brightness, and colour accuracy are preserved.</div></div><div class="faq-item"><div class="faq-q">Is my data safe during the repair?<span class="icon">+</span></div><div class="faq-a">Completely. Screen repairs don't touch your drive, but we run a GDPR-compliant workshop and sign an NDA on request for corporate clients. We never ask for your passcode unless post-repair testing requires it &mdash; and you can be present for that step.</div></div><div class="faq-item"><div class="faq-q">What does the 2-year warranty cover?<span class="icon">+</span></div><div class="faq-a">Every MacBook screen repair carries a full 2-year warranty against functional defects. The warranty covers the replaced display, the labour, and any re-work needed during that period. Accidental damage isn't covered, but we'll always quote fairly for re-repairs.</div></div><div class="faq-item"><div class="faq-q">Do I need to book, or can I just walk in?<span class="icon">+</span></div><div class="faq-a">Either works. Walk in Mon-Fri 9am-6pm (Fri until 6pm, closed weekends) for a free diagnosis and written quote before any work starts. Booking ahead reserves a workshop slot and is usually faster.</div></div><div class="faq-item"><div class="faq-q">You're microsoldering specialists. What does that mean?<span class="icon">+</span></div><div class="faq-a">Most repair shops swap whole components. We work at the board level: individual chips, resistors, and solder joints under a microscope. That's why other repair shops and insurers send their tougher cases to us.</div></div></div>
+    </div>
+  </section>
+
+  <section class="location">
+    <div class="container location-grid">
+      <div><div class="mono-label">Visit the workshop</div><h2>Fitzrovia, London.</h2><p>Opposite The London Palladium. Drop-in diagnosis, no appointment needed.</p><dl class="location-dl"><dt>Address</dt><dd>12 Margaret Street<br>Audley House<br>London W1W 8JQ</dd><dt>Phone</dt><dd><a href="tel:+442070998517">+44 (0)207 099 8517</a></dd><dt>Email</dt><dd><a href="mailto:support@icorrect.co.uk">support@icorrect.co.uk</a></dd><dt>Hours</dt><dd>Mon-Thu 9am-6pm<br>Fri 10am-6pm &middot; Sat/Sun closed</dd></dl></div>
+      <div class="location-map"><div class="location-map-pin"><div class="location-map-pin-card"><strong>iCorrect</strong><span>12 Margaret St, London W1W 8JQ</span><div class="location-map-pin-rating">719+ Google &middot; 4.9</div></div><div class="location-map-marker">&bull;</div></div><div class="location-map-bg">{% for i in (0..19) %}<div class="map-street" style="top: {{ i | times: 11 | modulo: 100 }}%; left: {{ i | times: 17 | modulo: 100 }}%; width: {{ i | times: 13 | modulo: 58 | plus: 40 }}%; transform: rotate({{ i | times: 31 | modulo: 180 }}deg);"></div>{% endfor %}</div></div>
+    </div>
+  </section>
+
+  <footer class="icfooter">
+    <div class="container icfooter-inner">
+      <div><div class="icnav-logo" style="color: rgb(255, 255, 255);">iCorrect</div><div class="icfooter-tag">Apple repair specialists &middot; Fitzrovia, London</div><div class="icfooter-tag">12 Margaret Street, London W1W 8JQ &middot; <a href="mailto:support@icorrect.co.uk">support@icorrect.co.uk</a> &middot; <a href="tel:02070998517">020 7099 8517</a></div><div class="icfooter-tag">Independent repair specialist. Not affiliated with Apple Inc.</div></div>
+      <div class="icfooter-cols"><div><div class="mono-label" style="color: rgb(128, 128, 128);">Repairs</div><a href="/pages/macbook-repairs">MacBook</a><a href="{{ collection.url | default: '/collections/macbook-screen-repair-prices' }}">MacBook Screen</a><a href="/pages/liquid-damage-process">Liquid damage</a><a href="/pages/advanced-diagnostics">Board-level</a><a href="#">iPhone</a><a href="#">iPad</a></div><div><div class="mono-label" style="color: rgb(128, 128, 128);">Company</div><a href="/pages/about">Why us</a><a href="/pages/corporate-service">Corporate</a><a href="/pages/how-it-works">How it works</a><a href="/pages/repair-case-study">Case study</a><a href="/pages/careers">Careers</a><a href="/pages/contact">Contact</a></div><div><div class="mono-label" style="color: rgb(128, 128, 128);">Legal</div><a href="#">Warranty</a><a href="#">Privacy</a><a href="#">Terms</a></div></div>
+    </div>
+    <div class="container icfooter-base"><span>&copy; 2026 iCorrect Ltd. Not affiliated with Apple Inc.</span><span>Company No. 09392844 &middot; VAT GB 203495788</span></div>
+  </footer>
+
+  <a class="hp-floating-quote" href="#wizard">Get your quote <span aria-hidden="true">&rarr;</span></a>
+</div>
+
+{% schema %}
+{
+  "name": "Collection mould",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Collection mould"
+    }
+  ]
+}
+{% endschema %}

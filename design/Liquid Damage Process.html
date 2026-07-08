@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Liquid Damage Repair — How It Works · iCorrect · Fitzrovia London</title>
+  <link rel="stylesheet" href="icorrect/icorrect.css" />
+  <link rel="stylesheet" href="icorrect/shell.css" />
+  <link rel="stylesheet" href="icorrect/info.css" />
+  <link rel="stylesheet" href="icorrect/howitworks.css" />
+  <link rel="stylesheet" href="icorrect/liquid-damage.css" />
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <template id="__bundler_thumbnail">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="18" fill="#EAF0F8"/><text x="50" y="58" text-anchor="middle" font-family="ui-monospace,monospace" font-weight="700" font-size="26" fill="#38598C">iC</text></svg>
+  </template>
+  <div id="root"></div>
+
+  <!-- Static preloads so the offline bundler embeds JSX-referenced photos;
+       the shim remaps runtime <img> srcs to the embedded blobs. Inert normally. -->
+  <div id="__asset-preload" hidden aria-hidden="true">
+    <img src="assets/repair-scope.jpg" data-path="assets/repair-scope.jpg" alt="" />
+    <img src="assets/repair-rework.jpg" data-path="assets/repair-rework.jpg" alt="" />
+    <img src="assets/repair-teardown.jpg" data-path="assets/repair-teardown.jpg" alt="" />
+  </div>
+  <script>
+    (function () {
+      var pre = document.getElementById("__asset-preload");
+      if (!pre) return;
+      var map = {};
+      pre.querySelectorAll("img[data-path]").forEach(function (im) {
+        var cur = im.getAttribute("src");
+        if (cur && cur !== im.getAttribute("data-path")) map[im.getAttribute("data-path")] = cur;
+      });
+      if (!Object.keys(map).length) return;
+      // Swap at set-time so the browser never requests the raw path.
+      var osa = Element.prototype.setAttribute;
+      Element.prototype.setAttribute = function (n, v) {
+        if (n === "src" && typeof v === "string" && map[v]) v = map[v];
+        return osa.call(this, n, v);
+      };
+      var d = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, "src");
+      if (d && d.set) Object.defineProperty(HTMLImageElement.prototype, "src", {
+        get: d.get, configurable: true,
+        set: function (v) { d.set.call(this, (typeof v === "string" && map[v]) || v); }
+      });
+      function fix(root) {
+        if (!root || !root.querySelectorAll) return;
+        root.querySelectorAll("img").forEach(function (im) {
+          var s = im.getAttribute("src");
+          if (s && map[s]) im.setAttribute("src", map[s]);
+        });
+      }
+      new MutationObserver(function (muts) {
+        muts.forEach(function (m) { m.addedNodes.forEach(fix); });
+      }).observe(document.documentElement, { childList: true, subtree: true });
+      fix(document);
+    })();
+  </script>
+
+  <script type="text/babel" src="icorrect/Shell.jsx"></script>
+  <script type="text/babel" src="icorrect/LiquidDamage.jsx"></script>
+
+  <script type="text/babel" data-presets="env,react">
+    function App() {
+      return (
+        <>
+          <Nav />
+          <LDBreadcrumb />
+          <LDHero />
+          <LDUrgent />
+          <LDProcess />
+          <LDWhy />
+          <LDPhotos />
+          <LDCTA />
+          <Location />
+          <Footer />
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

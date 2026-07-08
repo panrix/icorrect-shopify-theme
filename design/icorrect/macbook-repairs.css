@@ -1,0 +1,643 @@
+/* MacBook Repairs pillar page — section styles */
+
+/* ── Hero ──────────────────────────────────────────────────────────────── */
+.mbr-hero {
+  padding: 64px 0 80px;
+  position: relative;
+  overflow: hidden;
+}
+.mbr-hero::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(140,140,140,0.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 40%, rgba(160,160,160,0.03) 0%, transparent 50%);
+  pointer-events: none;
+}
+.mbr-hero-inner { position: relative; max-width: 720px; }
+.mbr-hero .mono-label { margin-bottom: 16px; }
+.mbr-hero h1 {
+  font: 600 clamp(36px,5vw,56px)/1.04 var(--font-sans);
+  letter-spacing: -2.4px; color: #171717;
+  margin: 0 0 20px; text-wrap: balance;
+}
+.mbr-hero-inner > p {
+  font: 400 18px/1.6 var(--font-sans);
+  color: #4d4d4d; margin: 0 0 36px;
+  max-width: 600px; text-wrap: pretty;
+}
+.mbr-hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.mbr-hero-stats {
+  display: flex; gap: 32px; margin-top: 56px; flex-wrap: wrap;
+}
+.mbr-hero-stat { display: flex; flex-direction: column; gap: 2px; }
+.mbr-hero-stat .num {
+  font: 600 28px/1 var(--font-sans);
+  letter-spacing: -1px; color: #171717;
+  font-feature-settings: "tnum";
+}
+.mbr-hero-stat .label {
+  font: 500 11px var(--font-mono);
+  text-transform: uppercase; letter-spacing: 0.06em; color: #808080;
+}
+@media (max-width: 640px) {
+  .mbr-hero { padding: 48px 0 56px; }
+  .mbr-hero-stats { gap: 24px; }
+}
+
+/* ── Repair types grid ─────────────────────────────────────────────────── */
+.mbr-types {
+  padding: 96px 0;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.08);
+}
+.mbr-types-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 48px;
+}
+.mbr-type-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px 24px;
+  box-shadow: var(--shadow-card);
+  display: flex; flex-direction: column; gap: 12px;
+  transition: box-shadow 0.2s;
+}
+.mbr-type-card:hover {
+  box-shadow: 0 0 0 2px #171717, 0 4px 8px rgba(0,0,0,0.06), 0 16px 32px -8px rgba(0,0,0,0.1);
+}
+.mbr-type-icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  background: #fafafa;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+  display: flex; align-items: center; justify-content: center;
+  color: #171717;
+}
+.mbr-type-card h3 {
+  font: 600 20px/1.25 var(--font-sans);
+  letter-spacing: -0.6px; color: #171717; margin: 0;
+}
+.mbr-type-card > p {
+  font: 400 14px/1.55 var(--font-sans);
+  color: #4d4d4d; margin: 0; text-wrap: pretty;
+  flex: 1;
+}
+.mbr-type-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-top: auto; padding-top: 12px;
+  box-shadow: inset 0 1px 0 rgba(0,0,0,0.06);
+}
+.mbr-type-price {
+  font: 600 18px/1 var(--font-sans);
+  letter-spacing: -0.54px; color: #171717;
+  font-feature-settings: "tnum";
+}
+.mbr-type-price span { font-weight: 400; font-size: 13px; color: #808080; }
+.mbr-type-cta {
+  font: 500 14px var(--font-sans);
+  color: #171717; text-decoration: none;
+  padding: 6px 14px; border-radius: 8px;
+  background: #f5f5f5;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.mbr-type-cta:hover { background: #171717; color: #fff; }
+/* Repair-type cards are now buttons that launch the quote for that repair */
+.mbr-type-card { border: 0; width: 100%; text-align: left; font-family: inherit; cursor: pointer; -webkit-appearance: none; appearance: none; }
+.mbr-type-card:hover .mbr-type-cta { background: #171717; color: #fff; box-shadow: none; }
+@media (max-width: 900px) { .mbr-types-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) {
+  .mbr-types-grid { grid-template-columns: 1fr; }
+  .mbr-types { padding: 56px 0; }
+}
+
+/* ── Specialist section (narrative) ─────────────────────────────────────── */
+.mbr-specialist {
+  padding: 96px 0;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.08);
+}
+.mbr-spec-story {
+  margin-top: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.mbr-spec-scenario {
+  background: #fafafa;
+  border-radius: 14px;
+  padding: 32px 28px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06);
+}
+.mbr-spec-scenario-label {
+  font: 500 11px var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #808080;
+  margin-bottom: 16px;
+}
+.mbr-spec-scenario-text {
+  font: 400 16px/1.65 var(--font-sans);
+  color: #4d4d4d;
+  margin: 0 0 16px;
+  max-width: 720px;
+  text-wrap: pretty;
+}
+.mbr-spec-scenario-text:last-child { margin-bottom: 0; }
+.mbr-spec-scenario-text strong { color: #171717; }
+.mbr-spec-why {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.mbr-spec-why-item {
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px 24px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.mbr-spec-why-num {
+  font: 600 32px/1 var(--font-sans);
+  letter-spacing: -1.2px;
+  color: #171717;
+  font-feature-settings: "tnum";
+}
+.mbr-spec-why-label {
+  font: 500 11px var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #808080;
+  margin-bottom: 4px;
+}
+.mbr-spec-why-item p {
+  font: 400 14px/1.55 var(--font-sans);
+  color: #4d4d4d;
+  margin: 0;
+  text-wrap: pretty;
+}
+@media (max-width: 768px) {
+  .mbr-spec-why { grid-template-columns: 1fr; }
+  .mbr-specialist { padding: 56px 0; }
+}
+
+/* ── Case study ────────────────────────────────────────────────────────── */
+.mbr-case {
+  padding: 96px 0;
+  background: #fafafa;
+  box-shadow: inset 0 1px 0 rgba(0,0,0,0.08), inset 0 -1px 0 rgba(0,0,0,0.08);
+}
+.mbr-case-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+.mbr-case-story {}
+.mbr-case-story .mono-label { margin-bottom: 12px; }
+/* Recovery accent (orange) — toggleable. Orange is the brand's recovery colour. */
+.mbr-case-story .mbr-case-kicker { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.mbr-case-story .mbr-case-kicker .mono-label { margin-bottom: 0; }
+.mbr-case-recovered {
+  display: inline-flex; align-items: center; gap: 7px;
+  font: 600 10px var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em;
+  color: #8F4E1C; background: #F6EADD; padding: 4px 11px 4px 9px; border-radius: 999px;
+}
+.mbr-case-recovered-dot { width: 6px; height: 6px; border-radius: 50%; background: #BC6A2C; box-shadow: 0 0 0 3px rgba(188,106,44,0.18); }
+.mbr-case--recovery .mbr-case-urgency { background: #F6EADD; box-shadow: 0 0 0 1px rgba(188,106,44,0.22); }
+.mbr-case--recovery .mbr-case-urgency-icon { background: #BC6A2C; color: #fff; }
+.mbr-case--recovery .mbr-case-urgency-text { color: #7a4a22; }
+.mbr-case--recovery .mbr-case-urgency-text strong { color: #8F4E1C; }
+.mbr-case-story h2 {
+  font: 600 32px/1.1 var(--font-sans);
+  letter-spacing: -1.28px; color: #171717;
+  margin: 0 0 20px; text-wrap: balance;
+}
+.mbr-case-story > p {
+  font: 400 15px/1.65 var(--font-sans);
+  color: #4d4d4d; margin: 0 0 16px;
+  text-wrap: pretty;
+}
+.mbr-case-story > p:last-of-type { margin-bottom: 0; }
+.mbr-case-story strong { color: #171717; }
+.mbr-case-urgency {
+  margin-top: 24px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px 20px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.mbr-case-urgency-icon {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: #171717; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font: 600 13px var(--font-mono);
+}
+.mbr-case-urgency-text {
+  font: 400 14px/1.55 var(--font-sans); color: #4d4d4d;
+}
+.mbr-case-urgency-text strong { color: #171717; }
+.mbr-case-proof {
+  display: flex; flex-direction: column; gap: 16px;
+}
+.mbr-case-review {
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px 24px;
+  box-shadow: var(--shadow-card);
+  display: flex; flex-direction: column; gap: 12px;
+}
+.mbr-case-review-stars {
+  display: flex; gap: 2px;
+  color: #f5a623;
+  font-size: 16px;
+}
+.mbr-case-review blockquote {
+  font: 400 15px/1.6 var(--font-sans);
+  color: #4d4d4d; margin: 0;
+  font-style: italic;
+}
+.mbr-case-review-author {
+  font: 500 13px var(--font-sans);
+  color: #808080;
+}
+.mbr-case-review-source {
+  display: flex; align-items: center; gap: 6px;
+  font: 500 11px var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #808080;
+}
+.mbr-case-breakdown {
+  background: #fff;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  display: flex; flex-direction: column; gap: 12px;
+}
+.mbr-case-breakdown .mono-label { margin-bottom: 0; }
+.mbr-case-breakdown-row {
+  display: flex; justify-content: space-between;
+  align-items: center; gap: 8px;
+  padding: 8px 0;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.04);
+}
+.mbr-case-breakdown-row:last-child {
+  box-shadow: none;
+  padding-top: 12px;
+  margin-top: 4px;
+  border-top: 2px solid #171717;
+}
+.mbr-case-breakdown-label {
+  font: 400 14px var(--font-sans); color: #4d4d4d;
+}
+.mbr-case-breakdown-value {
+  font: 600 14px var(--font-sans); color: #171717;
+  font-feature-settings: "tnum";
+}
+.mbr-case-breakdown-row:last-child .mbr-case-breakdown-label {
+  font-weight: 600; color: #171717;
+}
+.mbr-case-breakdown-row:last-child .mbr-case-breakdown-value {
+  font-size: 18px;
+}
+.mbr-case-cta {
+  margin-top: 8px;
+}
+@media (max-width: 768px) {
+  .mbr-case-inner { grid-template-columns: 1fr; gap: 32px; }
+  .mbr-case { padding: 56px 0; }
+}
+
+/* ── Fault guides (expandable) ─────────────────────────────────────────── */
+.mbr-faults {
+  padding: 96px 0;
+  background: #fafafa;
+  box-shadow: inset 0 1px 0 rgba(0,0,0,0.08), inset 0 -1px 0 rgba(0,0,0,0.08);
+}
+.mbr-faults-list {
+  display: flex; flex-direction: column; gap: 12px;
+  margin-top: 48px;
+}
+.mbr-fault-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.mbr-fault-header {
+  padding: 24px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; cursor: pointer; user-select: none;
+  transition: background 0.15s;
+}
+.mbr-fault-header:hover { background: #fafafa; }
+.mbr-fault-header-left { display: flex; flex-direction: column; gap: 4px; }
+.mbr-fault-header h3 {
+  font: 600 20px/1.25 var(--font-sans);
+  letter-spacing: -0.6px; color: #171717; margin: 0;
+}
+.mbr-fault-header .mbr-fault-sub {
+  font: 400 14px/1.4 var(--font-sans); color: #808080;
+}
+.mbr-fault-chevron {
+  flex-shrink: 0; width: 32px; height: 32px;
+  border-radius: 8px; background: #fafafa;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.25s ease, background 0.15s;
+}
+.mbr-fault-card.open .mbr-fault-chevron {
+  transform: rotate(180deg);
+  background: #171717; color: #fff; box-shadow: none;
+}
+.mbr-fault-body {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+.mbr-fault-card.open .mbr-fault-body { max-height: 1200px; }
+.mbr-fault-body-inner {
+  padding: 0 28px 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+.mbr-fault-section h4 {
+  font: 600 11px var(--font-mono);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: #171717; margin: 0 0 12px;
+}
+.mbr-fault-section p {
+  font: 400 14px/1.6 var(--font-sans);
+  color: #4d4d4d; margin: 0 0 12px; text-wrap: pretty;
+}
+.mbr-fault-section p:last-child { margin-bottom: 0; }
+.mbr-fault-section ul {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.mbr-fault-section li {
+  font: 400 14px/1.5 var(--font-sans); color: #4d4d4d;
+  padding-left: 16px; position: relative;
+}
+.mbr-fault-section li::before {
+  content: "–"; position: absolute; left: 0; color: #ccc;
+}
+.mbr-fault-cta {
+  display: inline-flex; align-items: center; gap: 6px;
+  font: 500 14px var(--font-sans); color: #171717;
+  text-decoration: none; margin-top: 16px;
+  padding: 8px 16px; border-radius: 8px;
+  background: #f5f5f5;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+  transition: background 0.15s;
+}
+.mbr-fault-cta:hover { background: #171717; color: #fff; }
+@media (max-width: 768px) {
+  .mbr-fault-body-inner { grid-template-columns: 1fr; gap: 20px; }
+  .mbr-faults { padding: 56px 0; }
+}
+
+/* ── Video placeholders ────────────────────────────────────────────────── */
+.mbr-videos {
+  padding: 96px 0;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.08);
+}
+.mbr-videos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px; margin-top: 48px;
+}
+.mbr-video-card {
+  border-radius: 14px; overflow: hidden;
+  background: #171717;
+  aspect-ratio: 16/9;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; cursor: pointer;
+  transition: opacity 0.15s;
+}
+.mbr-video-card:hover { opacity: 0.85; }
+.mbr-video-play {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+}
+.mbr-video-label {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 16px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+}
+.mbr-video-label span {
+  font: 500 14px var(--font-sans); color: #fff;
+}
+@media (max-width: 768px) { .mbr-videos-grid { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .mbr-videos { padding: 56px 0; } }
+
+/* ── Dual-path CTA + compact wizard ─────────────────────────────────────── */
+.mbr-wizard-mount { margin-top: 8px; }
+/* Quote wizard sits inside this section's container + heading already, so
+   strip its own oversized wrapper padding and narrow it down. */
+.mbr-wizard-section .qw-page { max-width: 660px; padding: 4px 0 0; }
+.mbr-wizard-alt {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 8px; margin-top: 22px;
+  font: 400 14px var(--font-sans); color: #4d4d4d;
+}
+.mbr-wizard-alt button {
+  background: none; border: 0; padding: 0; cursor: pointer;
+  font: 500 14px var(--font-sans); color: #171717;
+  text-decoration: underline; text-underline-offset: 2px;
+}
+.mbr-wizard-alt button:hover { color: #666; }
+.mbr-wizard-section {
+  padding: 64px 0;
+  background: #fafafa;  box-shadow: inset 0 1px 0 rgba(0,0,0,0.08), inset 0 -1px 0 rgba(0,0,0,0.08);
+}
+.mbr-dual-cta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 48px;
+}
+.mbr-path-card {
+  background: #fff;
+  border: 0;
+  border-radius: 14px;
+  padding: 32px 28px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+  font-family: var(--font-sans);
+}
+.mbr-path-card:hover {
+  box-shadow: 0 0 0 2px #171717, 0 4px 8px rgba(0,0,0,0.06), 0 16px 32px -8px rgba(0,0,0,0.1);
+}
+.mbr-path-icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  background: #171717; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font: 600 18px var(--font-mono);
+}
+.mbr-path-card h3 {
+  font: 600 22px/1.2 var(--font-sans);
+  letter-spacing: -0.66px; color: #171717; margin: 0;
+}
+.mbr-path-card p {
+  font: 400 14px/1.55 var(--font-sans);
+  color: #4d4d4d; margin: 0; text-wrap: pretty;
+  flex: 1;
+}
+.mbr-path-action {
+  font: 500 14px var(--font-sans);
+  color: #171717;
+  margin-top: auto;
+  padding-top: 12px;
+  box-shadow: inset 0 1px 0 rgba(0,0,0,0.06);
+}
+/* Compact wizard */
+.mbr-wizard-compact {}
+.mbr-wizard-compact-head { margin-bottom: 24px; }
+.mbr-wizard-back {
+  background: none; border: 0; padding: 0;
+  font: 500 14px var(--font-sans);
+  color: #808080; cursor: pointer;
+  margin-bottom: 8px;
+}
+.mbr-wizard-back:hover { color: #171717; }
+/* Diagnose flow */
+.mbr-diagnose-compact {}
+.mbr-diagnose-flow {}
+.mbr-diag-label {
+  font: 600 16px/1.3 var(--font-sans);
+  letter-spacing: -0.32px; color: #171717;
+  margin-bottom: 16px;
+}
+.mbr-diag-grid {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.mbr-diag-fault {
+  background: #fff;
+  border: 0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+  display: flex; gap: 16px; align-items: center;
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow 0.15s, background 0.15s;
+  font-family: var(--font-sans);
+}
+.mbr-diag-fault:hover { background: #f5f5f5; }
+.mbr-diag-fault.active {
+  box-shadow: 0 0 0 2px #171717;
+  background: #fff;
+}
+.mbr-diag-fault-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: #fafafa;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; color: #171717;
+}
+.mbr-diag-fault.active .mbr-diag-fault-icon {
+  background: #171717; color: #fff;
+  box-shadow: none;
+}
+.mbr-diag-fault-text {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.mbr-diag-fault-text strong {
+  font: 600 15px/1.3 var(--font-sans);
+  color: #171717;
+}
+.mbr-diag-fault-text span {
+  font: 400 13px/1.4 var(--font-sans);
+  color: #808080;
+}
+/* Diagnose result */
+.mbr-diag-result {
+  text-align: center;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 32px 0;
+}
+.mbr-diag-result-icon {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: #171717; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font: 600 24px var(--font-sans);
+  margin: 0 auto 20px;
+}
+.mbr-diag-result h3 {
+  font: 600 24px/1.2 var(--font-sans);
+  letter-spacing: -0.72px; color: #171717;
+  margin: 0 0 12px;
+}
+.mbr-diag-result > p {
+  font: 400 15px/1.6 var(--font-sans);
+  color: #4d4d4d; margin: 0 0 24px;
+  text-wrap: pretty;
+}
+.mbr-diag-result-actions {
+  display: flex; gap: 10px;
+  justify-content: center; flex-wrap: wrap;
+}
+.mbr-diag-result-note {
+  font: 400 13px/1.5 var(--font-sans);
+  color: #808080; margin-top: 16px;
+}
+@media (max-width: 768px) {
+  .mbr-dual-cta { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) { .mbr-wizard-section { padding: 56px 0; } }
+
+/* ── Process strip (compact) ───────────────────────────────────────────── */
+.mbr-process {
+  padding: 96px 0;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.08);
+}
+.mbr-process-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px; margin-top: 48px;
+}
+.mbr-process-card {
+  background: #fafafa;
+  border-radius: 14px; padding: 28px 24px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.mbr-process-num {
+  font: 600 13px var(--font-mono);
+  letter-spacing: 0.04em; color: #93c5f7;
+}
+.mbr-process-card h3 {
+  font: 600 18px/1.25 var(--font-sans);
+  letter-spacing: -0.54px; color: #171717; margin: 0;
+}
+.mbr-process-card p {
+  font: 400 14px/1.55 var(--font-sans);
+  color: #4d4d4d; margin: 0; text-wrap: pretty;
+}
+@media (max-width: 900px) { .mbr-process-steps { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) {
+  .mbr-process-steps { grid-template-columns: 1fr; }
+  .mbr-process { padding: 56px 0; }
+}

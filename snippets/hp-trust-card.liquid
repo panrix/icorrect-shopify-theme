@@ -1,0 +1,30 @@
+<ul class="trust-band-inner" role="list" aria-label="{{ review_count }} Google reviews · {{ rating }}">
+  <li class="trust-item trust-item-rating">
+    <div class="trust-rating-num">{{ rating }}</div>
+    <div class="trust-rating-meta">
+      <div class="stars">{% render 'hp-stars' %}</div>
+      <span>{{ review_count }} Google reviews</span>
+    </div>
+  </li>
+  <li class="trust-item">
+    <div class="trust-icon">{% render 'hp-icon-monitor' %}</div>
+    <div class="trust-label">
+      <strong>Apple parts</strong>
+      <span>Calibrated in-house</span>
+    </div>
+  </li>
+  <li class="trust-item">
+    <div class="trust-icon">{% render 'hp-icon-chip' %}</div>
+    <div class="trust-label">
+      <strong>Microsoldering</strong>
+      <span>Board-level repairs</span>
+    </div>
+  </li>
+  <li class="trust-item">
+    <div class="trust-icon">{% render 'hp-icon-shield' %}</div>
+    <div class="trust-label">
+      <strong>2-yr warranty</strong>
+      <span>Double the standard</span>
+    </div>
+  </li>
+</ul>
