@@ -3724,10 +3724,12 @@ a.visit-button:hover,
     justify-content: center !important;
   }
 }
-/* v5 Typography Fixes - Improved readability */
+/* v5 Typography Fixes - Improved readability
+   NOTE: excluded from rebuilt pages (template-index) which carry their own
+   pixel-exact type scale from the design mould (fablewebsite/os2-rebuild). */
 .rte p,
 .rte li,
-body p,
+body:not(.template-index) p,
 .accordion__content p,
 .product__description p,
 .collection-description p {
@@ -3738,13 +3740,17 @@ body p,
 @media screen and (min-width: 750px) {
   .rte p,
   .rte li,
-  body p,
+  body:not(.template-index) p,
   .accordion__content p,
   .product__description p,
   .collection-description p {
     font-size: 17px !important;
   }
 }
+
+/* Homepage rebuild: neutralise inherited base-theme letter-spacing so the
+   mould's own per-element type (letter-spacing only where set) applies 1:1. */
+body.template-index { letter-spacing: normal; line-height: normal; }
 
 .faq-answer p,
 .accordion__content p {
