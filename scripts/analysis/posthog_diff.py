@@ -87,10 +87,17 @@ def diff_funnel_rates(before, after):
     return table("Wizard / checkout funnel rates", rows)
 
 
-def diff_frustration(before, after, top=15):
+def _matches_filter(path, filt):
+    """If filt is None, match everything; otherwise require path == filt or path startswith filt+'/'."""
+    if not filt:
+        return True
+    return path == filt or path.startswith(filt + "/")
+
+
+def diff_frustration(before, after, top=15, filter_path=None):
     """Top-N frustration pages, show dead/rage changes."""
-    b_map = {x["path"]: x for x in before.get("frustration", [])}
-    a_map = {x["path"]: x for x in after.get("frustration", [])}
+    b_map = {x["path"]: x for x in before.get("frustration", []) if _matches_filter(x["path"], filter_path)}
+    a_map = {x["path"]: x for x in after.get("frustration", []) if _matches_filter(x["path"], filter_path)}
     paths = sorted(set(b_map) | set(a_map), key=lambda p: -(
         (b_map.get(p, {}).get("dead_clicks", 0) + b_map.get(p, {}).get("rage_clicks", 0)) +
         (a_map.get(p, {}).get("dead_clicks", 0) + a_map.get(p, {}).get("rage_clicks", 0))
@@ -101,12 +108,13 @@ def diff_frustration(before, after, top=15):
         b_total = b.get("dead_clicks", 0) + b.get("rage_clicks", 0)
         a_total = a.get("dead_clicks", 0) + a.get("rage_clicks", 0)
         rows.append(fmt_row(f"`{p[:55]}`", b_total, a_total))
-    return table("Dead + rage clicks per page (top 15)", rows)
+    title = f"Dead + rage clicks ({'filter ' + filter_path if filter_path else 'top 15 pages'})"
+    return table(title, rows) if rows else ""
 
 
-def diff_bounce(before, after, top=15):
-    b_map = {x["path"]: x for x in before.get("pages_bounce", [])}
-    a_map = {x["path"]: x for x in after.get("pages_bounce", [])}
+def diff_bounce(before, after, top=15, filter_path=None):
+    b_map = {x["path"]: x for x in before.get("pages_bounce", []) if _matches_filter(x["path"], filter_path)}
+    a_map = {x["path"]: x for x in after.get("pages_bounce", []) if _matches_filter(x["path"], filter_path)}
     paths = sorted(set(b_map) | set(a_map), key=lambda p: -(
         b_map.get(p, {}).get("sessions", 0) + a_map.get(p, {}).get("sessions", 0)
     ))[:top]
@@ -114,12 +122,13 @@ def diff_bounce(before, after, top=15):
     for p in paths:
         b = b_map.get(p, {}); a = a_map.get(p, {})
         rows.append(fmt_row(f"`{p[:55]}` (bounce%)", b.get("bounce_pct"), a.get("bounce_pct")))
-    return table("Bounce rate per landing page (top 15 by sessions)", rows)
+    title = f"Bounce rate ({'filter ' + filter_path if filter_path else 'top 15 by sessions'})"
+    return table(title, rows) if rows else ""
 
 
-def diff_duration(before, after, top=15):
-    b_map = {x["path"]: x for x in before.get("pages_duration", [])}
-    a_map = {x["path"]: x for x in after.get("pages_duration", [])}
+def diff_duration(before, after, top=15, filter_path=None):
+    b_map = {x["path"]: x for x in before.get("pages_duration", []) if _matches_filter(x["path"], filter_path)}
+    a_map = {x["path"]: x for x in after.get("pages_duration", []) if _matches_filter(x["path"], filter_path)}
     paths = sorted(set(b_map) | set(a_map), key=lambda p: -(
         b_map.get(p, {}).get("sessions", 0) + a_map.get(p, {}).get("sessions", 0)
     ))[:top]
@@ -127,12 +136,13 @@ def diff_duration(before, after, top=15):
     for p in paths:
         b = b_map.get(p, {}); a = a_map.get(p, {})
         rows.append(fmt_row(f"`{p[:55]}` (median s)", b.get("median_dur_s"), a.get("median_dur_s")))
-    return table("Median session duration per landing page (top 15)", rows)
+    title = f"Median session duration ({'filter ' + filter_path if filter_path else 'top 15'})"
+    return table(title, rows) if rows else ""
 
 
-def diff_scroll(before, after, top=15):
-    b_map = {x["path"]: x for x in before.get("scroll_reach", [])}
-    a_map = {x["path"]: x for x in after.get("scroll_reach", [])}
+def diff_scroll(before, after, top=15, filter_path=None):
+    b_map = {x["path"]: x for x in before.get("scroll_reach", []) if _matches_filter(x["path"], filter_path)}
+    a_map = {x["path"]: x for x in after.get("scroll_reach", []) if _matches_filter(x["path"], filter_path)}
     paths = sorted(set(b_map) | set(a_map))[:top]
     rows = []
     for p in paths:
@@ -141,7 +151,8 @@ def diff_scroll(before, after, top=15):
                             b.get("scroll_depth_75"), a.get("scroll_depth_75")))
     if not paths:
         return ""
-    return table("Scroll-to-75% reach per page (top 15)", rows)
+    title = f"Scroll-to-75% reach ({'filter ' + filter_path if filter_path else 'top 15'})"
+    return table(title, rows)
 
 
 def diff_session_duration(before, after):
@@ -160,28 +171,40 @@ def diff_session_duration(before, after):
     return table("Session duration distribution", rows)
 
 
-def render_diff(before_snap, after_snap, window):
+def render_diff(before_snap, after_snap, window, filter_path=None):
     b = before_snap["windows"].get(str(window), {})
     a = after_snap["windows"].get(str(window), {})
     if not b or not a:
         raise SystemExit(f"Window {window}d missing in one of the snapshots")
 
+    title = f"# PostHog behaviour diff — {window}-day windows"
+    if filter_path:
+        title += f" — scoped to `{filter_path}`"
+
     lines = [
-        f"# PostHog behaviour diff — {window}-day windows",
+        title,
         "",
         f"- **Before:** `{before_snap['captured_at']}` (window_start {b.get('window_start_utc')})",
         f"- **After:**  `{after_snap['captured_at']}` (window_start {a.get('window_start_utc')})",
+    ]
+    if filter_path:
+        match_desc = f"`{filter_path}` only" if filter_path == "/" else f"`{filter_path}` and any sub-paths"
+        lines.append(f"- **Filter:** {match_desc}")
+        lines.append("- **Note:** wizard funnel + session-duration are site-wide, not page-scoped.")
+    lines.extend([
         "",
         "Markers: `▲` up  `▼` down  `📈` +20%+  `📉` -20%+  `✨` new data  `·` flat",
         "",
-        diff_session_duration(b, a),
-        diff_wizard(b, a),
-        diff_funnel_rates(b, a),
-        diff_frustration(b, a),
-        diff_bounce(b, a),
-        diff_duration(b, a),
-        diff_scroll(b, a),
-    ]
+    ])
+
+    if not filter_path:
+        lines.append(diff_session_duration(b, a))
+        lines.append(diff_wizard(b, a))
+        lines.append(diff_funnel_rates(b, a))
+    lines.append(diff_frustration(b, a, filter_path=filter_path))
+    lines.append(diff_bounce(b, a, filter_path=filter_path))
+    lines.append(diff_duration(b, a, filter_path=filter_path))
+    lines.append(diff_scroll(b, a, filter_path=filter_path))
     return "\n".join(lines)
 
 
@@ -203,13 +226,17 @@ def main():
     ap.add_argument("before", help="baseline snapshot .json")
     ap.add_argument("after", help="current snapshot .json")
     ap.add_argument("--window", type=int, help="Window in days (defaults to smallest common)")
+    ap.add_argument("--filter-path", default=None,
+                    help="Scope page-level tables to a single path (e.g. '/' or '/collections/macbook-screen-repair-prices'). "
+                         "Matches the path itself and any sub-paths. Wizard funnel + session-duration sections are omitted "
+                         "when filtering since they're site-wide signals.")
     ap.add_argument("--out", help="Write markdown to this path (default stdout)")
     args = ap.parse_args()
 
     before = json.loads(pathlib.Path(args.before).read_text())
     after = json.loads(pathlib.Path(args.after).read_text())
     window = pick_window(before, after, args.window)
-    md = render_diff(before, after, window)
+    md = render_diff(before, after, window, filter_path=args.filter_path)
 
     if args.out:
         pathlib.Path(args.out).parent.mkdir(parents=True, exist_ok=True)
