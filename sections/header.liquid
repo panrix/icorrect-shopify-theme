@@ -574,75 +574,7 @@
   customElements.define('sticky-header', StickyHeader);
 {% endjavascript %}
 
-<script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "@id": "https://icorrect.co.uk/#localbusiness",
-    "name": "iCorrect",
-    "description": "London Apple repair specialists offering logic board repairs, liquid damage recovery, and component-level fixes for MacBooks, iPhones, iPads, and Apple Watches.",
-    "url": "https://icorrect.co.uk",
-    "telephone": "+44 20 7580 0028",
-    "email": "info@icorrect.co.uk",
-    "priceRange": "££",
-    "image": "https://icorrect.co.uk/cdn/shop/files/iCorrect_Logo_1.png",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "12 Margaret Street, Audley House",
-      "addressLocality": "London",
-      "addressRegion": "Greater London",
-      "postalCode": "W1W 8JQ",
-      "addressCountry": "GB"
-    },
-    "geo": {
-      "@type": "GeoCoordinates",
-      "latitude": 51.5170225,
-      "longitude": -0.1422392
-    },
-    "openingHoursSpecification": [
-      {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday"],
-        "opens": "09:00",
-        "closes": "18:00"
-      },
-      {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": "Friday",
-        "opens": "10:00",
-        "closes": "18:00"
-      }
-    ],
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.8",
-      "reviewCount": "700",
-      "bestRating": "5"
-    },
-    "areaServed": [
-      {
-        "@type": "City",
-        "name": "London"
-      },
-      {
-        "@type": "Country",
-        "name": "United Kingdom"
-      }
-    ],
-    "hasOfferCatalog": {
-      "@type": "OfferCatalog",
-      "name": "Apple Device Repairs",
-      "itemListElement": [
-        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "MacBook Repair"}},
-        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "iPhone Repair"}},
-        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "iPad Repair"}},
-        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Apple Watch Repair"}},
-        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Logic Board Repair"}},
-        {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Liquid Damage Recovery"}}
-      ]
-    }
-  }
-</script>
+{% render 'icorrect-localbusiness-schema' %}
 {%- capture social_link_values -%}
 {{ settings.social_twitter_link }}||{{ settings.social_facebook_link }}||{{ settings.social_pinterest_link }}||{{ settings.social_instagram_link }}||{{ settings.social_tiktok_link }}||{{ settings.social_tumblr_link }}||{{ settings.social_snapchat_link }}||{{ settings.social_youtube_link }}||{{ settings.social_vimeo_link }}
 {%- endcapture -%}

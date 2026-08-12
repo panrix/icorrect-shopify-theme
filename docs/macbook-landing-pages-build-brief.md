@@ -124,39 +124,7 @@ Include 3 cards:
 4. Do you use genuine MacBook screens? — Yes. Approximately 90% of the screens we use are original Apple panels, professionally recovered from genuine devices. This preserves True Tone, brightness consistency, and long-term reliability.
 5. Is there a warranty on MacBook screen repairs? — All screen repairs include a 2-year warranty covering the repaired display and associated components.
 
-**JSON-LD Schema (inject in custom-liquid):**
-```json
-{
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "name": "iCorrect",
-  "image": "https://cdn.shopify.com/s/files/1/0674/1952/0525/files/MacBook_Repair.png",
-  "url": "https://www.icorrect.co.uk/pages/macbook-screen-repair-london",
-  "telephone": "+442080049995",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "12 Margaret Street",
-    "addressLocality": "London",
-    "postalCode": "W1W 8JQ",
-    "addressCountry": "GB"
-  },
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": 51.5175,
-    "longitude": -0.1418
-  },
-  "openingHoursSpecification": [
-    {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
-      "opens": "09:00",
-      "closes": "18:00"
-    }
-  ],
-  "priceRange": "££",
-  "description": "Expert MacBook screen repair in London. Cracked display, backlight failure, Flexgate. Same-day service available. 2-year warranty."
-}
-```
+**JSON-LD Schema:** Do **not** inject a page-level `LocalBusiness` block. Sitewide NAP/schema comes from `snippets/icorrect-localbusiness-schema.liquid` (rendered in the header). Canonical phone: `+44 20 7099 8517`.
 
 ---
 
@@ -183,7 +151,7 @@ Include 3 cards:
 4. Can you repair MacBook logic boards in London? — Yes — this is one of our core specialisms. We carry out component-level microchip repair on MacBook logic boards, including power circuit failures, liquid damage corrosion, and charging IC faults.
 5. What MacBook models do you repair? — We repair all MacBook models from 2016 onwards, including MacBook Air, MacBook Pro 13", 14", 15", and 16". We can also assist older models for battery and data recovery work.
 
-**JSON-LD Schema:** Same LocalBusiness schema as Page 1 but with updated URL (`/pages/macbook-repair-london`) and description.
+**JSON-LD Schema:** Rely on sitewide `icorrect-localbusiness-schema` only — do not add a page-level LocalBusiness block.
 
 ---
 
@@ -213,7 +181,7 @@ Include 3 cards:
 4. Can you replace a MacBook Pro Liquid Retina XDR display? — Yes. We replace the Liquid Retina XDR displays found in 14" and 16" MacBook Pro M1/M2/M3 models using genuine Apple panels.
 5. How long does MacBook Pro screen replacement take? — Most MacBook Pro screen replacements are completed within 24 hours. Same-day service is available when pre-booked.
 
-**JSON-LD Schema:** Same LocalBusiness schema with updated URL and description.
+**JSON-LD Schema:** Rely on sitewide `icorrect-localbusiness-schema` only — do not add a page-level LocalBusiness block.
 
 ---
 
@@ -243,7 +211,7 @@ Include 3 cards:
 4. Do you use genuine MacBook Air display panels? — Yes. We use genuine Apple Retina display panels wherever available, preserving True Tone and the original display quality.
 5. Is there a warranty on the screen replacement? — Yes — all MacBook Air screen replacements include a 2-year warranty covering the display and installation.
 
-**JSON-LD Schema:** Same LocalBusiness schema with updated URL and description.
+**JSON-LD Schema:** Rely on sitewide `icorrect-localbusiness-schema` only — do not add a page-level LocalBusiness block.
 
 ---
 
@@ -270,7 +238,7 @@ Include 3 cards:
 4. Do you fix MacBook Pro liquid damage in London? — Yes. Liquid damage repair is one of our specialist services. We carry out ultrasonic cleaning, corrosion removal, and logic board component replacement where needed.
 5. What warranty do you offer on MacBook Pro repairs? — All MacBook Pro repairs carry a 2-year warranty covering the repaired components and workmanship.
 
-**JSON-LD Schema:** Same LocalBusiness schema with updated URL and description.
+**JSON-LD Schema:** Rely on sitewide `icorrect-localbusiness-schema` only — do not add a page-level LocalBusiness block.
 
 ---
 
@@ -319,7 +287,7 @@ Each page must link to:
 - ⚡ Express same-day available
 
 ### Schema Markup
-Inject LocalBusiness JSON-LD in a `custom-liquid` section on each page. Use the schema template from Page 1 above, updating `url` and `description` per page.
+Do **not** inject per-page LocalBusiness JSON-LD. Sitewide NAP/schema is owned by `snippets/icorrect-localbusiness-schema.liquid` (canonical phone `+44 20 7099 8517`).
 
 ---
 
@@ -330,7 +298,7 @@ Before publishing each page:
 - [ ] H1 matches the target keyword exactly
 - [ ] SEO title and meta description set via metafields
 - [ ] CTA button links to correct collection
-- [ ] LocalBusiness JSON-LD present and valid
+- [ ] No page-level LocalBusiness JSON-LD (sitewide snippet only); View Source shows one telephone: +44 20 7099 8517
 - [ ] Page published and accessible at `www.icorrect.co.uk/pages/<handle>`
 - [ ] Mobile rendering tested (no broken layouts)
 
