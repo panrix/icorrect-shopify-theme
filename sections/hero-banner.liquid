@@ -368,12 +368,16 @@
 
 <section class="hero-banner-{{ section.id }}" data-section-id="{{ section.id }}">
   {% if section.settings.background_image %}
-    <img 
-      class="hero-background" 
-      src="{{ section.settings.background_image | img_url: '2000x' }}" 
-      alt="Background"
-      loading="eager"
-    >
+    {{
+      section.settings.background_image
+      | image_url: width: 2000
+      | image_tag:
+        class: 'hero-background',
+        alt: 'Background',
+        sizes: '100vw',
+        widths: '750, 1100, 1500, 2000',
+        loading: 'eager'
+    }}
   {% endif %}
   
   <div class="hero-overlay"></div>
@@ -442,17 +446,49 @@
     </div>
     
     <div class="media-container">
+      {%- liquid
+        assign hero_widths = '375, 550, 750, 1000, 1200, 1500'
+        assign hero_sizes = '(min-width: 769px) min(50vw, 700px), 100vw'
+      -%}
       {% if section.settings.media_mode == 'carousel' %}
         {% assign carousel_blocks = section.blocks | where: "type", "carousel_slide" %}
         {% if carousel_blocks.size > 0 %}
           <div class="carousel-wrapper">
             {% for block in carousel_blocks %}
               <div class="carousel-slide{% if forloop.first %} active{% endif %}" data-slide-index="{{ forloop.index0 }}">
-                <img 
-                  src="{{ block.settings.image | img_url: '1000x' }}" 
-                  alt="{{ block.settings.alt_text | default: 'Carousel slide' }}"
-                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
-                >
+                {%- if block.settings.image != blank -%}
+                  {%- liquid
+                    assign slide_alt = block.settings.alt_text | default: 'Carousel slide'
+                    assign slide_height = block.settings.image.width | divided_by: block.settings.image.aspect_ratio | round
+                  -%}
+                  {%- if forloop.first -%}
+                    {{
+                      block.settings.image
+                      | image_url: width: 1500
+                      | image_tag:
+                        widths: hero_widths,
+                        sizes: hero_sizes,
+                        width: block.settings.image.width,
+                        height: slide_height,
+                        alt: slide_alt,
+                        loading: 'eager',
+                        fetchpriority: 'high',
+                        preload: true
+                    }}
+                  {%- else -%}
+                    {{
+                      block.settings.image
+                      | image_url: width: 1500
+                      | image_tag:
+                        widths: hero_widths,
+                        sizes: hero_sizes,
+                        width: block.settings.image.width,
+                        height: slide_height,
+                        alt: slide_alt,
+                        loading: 'lazy'
+                    }}
+                  {%- endif -%}
+                {%- endif -%}
               </div>
             {% endfor %}
             
@@ -471,11 +507,23 @@
         {% endif %}
         
       {% elsif section.settings.media_mode == 'image' and section.settings.single_image %}
-        <img 
-          src="{{ section.settings.single_image | img_url: '1000x' }}" 
-          alt="{{ section.settings.single_image_alt | default: 'Hero image' }}"
-          loading="eager"
-        >
+        {%- liquid
+          assign single_alt = section.settings.single_image_alt | default: 'Hero image'
+          assign single_height = section.settings.single_image.width | divided_by: section.settings.single_image.aspect_ratio | round
+        -%}
+        {{
+          section.settings.single_image
+          | image_url: width: 1500
+          | image_tag:
+            widths: hero_widths,
+            sizes: hero_sizes,
+            width: section.settings.single_image.width,
+            height: single_height,
+            alt: single_alt,
+            loading: 'eager',
+            fetchpriority: 'high',
+            preload: true
+        }}
         
       {% elsif section.settings.media_mode == 'video' and section.settings.video_url != blank %}
         <video 
@@ -483,18 +531,30 @@
           muted 
           loop 
           playsinline
-          {% if section.settings.video_poster %}poster="{{ section.settings.video_poster | img_url: '1000x' }}"{% endif %}
+          {% if section.settings.video_poster %}poster="{{ section.settings.video_poster | image_url: width: 1500 }}"{% endif %}
         >
           <source src="{{ section.settings.video_url }}" type="video/mp4">
           Your browser does not support the video tag.
         </video>
         
       {% elsif section.settings.media_mode == 'gif' and section.settings.gif_image %}
-        <img 
-          src="{{ section.settings.gif_image | img_url: '1000x' }}" 
-          alt="{{ section.settings.gif_alt | default: 'Animated GIF' }}"
-          loading="eager"
-        >
+        {%- liquid
+          assign gif_alt = section.settings.gif_alt | default: 'Animated GIF'
+          assign gif_height = section.settings.gif_image.width | divided_by: section.settings.gif_image.aspect_ratio | round
+        -%}
+        {{
+          section.settings.gif_image
+          | image_url: width: 1500
+          | image_tag:
+            widths: hero_widths,
+            sizes: hero_sizes,
+            width: section.settings.gif_image.width,
+            height: gif_height,
+            alt: gif_alt,
+            loading: 'eager',
+            fetchpriority: 'high',
+            preload: true
+        }}
       {% endif %}
     </div>
   </div>

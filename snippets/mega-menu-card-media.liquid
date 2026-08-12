@@ -1,0 +1,30 @@
+{% doc %}
+  Resolves the best image for a mega-menu child link and renders it deferred.
+
+  @param {link} childlink - Menu child link (collection / product / page)
+
+  @example
+  {% render 'mega-menu-card-media', childlink: childlink %}
+{% enddoc %}
+{%- liquid
+  assign card_image = nil
+  case childlink.type
+    when 'collection_link'
+      if childlink.object.image
+        assign card_image = childlink.object.image
+      elsif childlink.object.products.first.featured_image
+        assign card_image = childlink.object.products.first.featured_image
+      endif
+    when 'product_link'
+      if childlink.object.featured_image
+        assign card_image = childlink.object.featured_image
+      endif
+    when 'page_link'
+      if childlink.object.metafields.custom.featured_image
+        assign card_image = childlink.object.metafields.custom.featured_image
+      endif
+  endcase
+-%}
+{%- if card_image != blank -%}
+  {% render 'mega-menu-card-image', image: card_image, alt: childlink.title %}
+{%- endif -%}

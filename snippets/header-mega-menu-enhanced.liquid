@@ -70,22 +70,7 @@
       {%- assign category_found = true -%}
       <a href="{{ childlink.url }}" class="mega-menu-enhanced__card">
         <div class="mega-menu-enhanced__card-image">
-          {%- case childlink.type -%}
-            {%- when 'collection_link' -%}
-              {%- if childlink.object.image -%}
-                {{ childlink.object.image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
-              {%- elsif childlink.object.products.first.featured_image -%}
-                {{ childlink.object.products.first.featured_image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
-              {%- endif -%}
-            {%- when 'product_link' -%}
-              {%- if childlink.object.featured_image -%}
-                {{ childlink.object.featured_image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
-              {%- endif -%}
-            {%- when 'page_link' -%}
-              {%- if childlink.object.metafields.custom.featured_image -%}
-                {{ childlink.object.metafields.custom.featured_image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
-              {%- endif -%}
-          {%- endcase -%}
+          {% render 'mega-menu-card-media', childlink: childlink %}
         </div>
         <span class="mega-menu-enhanced__card-title">{{ childlink.title | escape }}</span>
       </a>
@@ -113,22 +98,7 @@
                               {%- assign repair_found = true -%}
                               <a href="{{ childlink.url }}" class="mega-menu-enhanced__card">
                                 <div class="mega-menu-enhanced__card-image">
-                                  {%- case childlink.type -%}
-                                    {%- when 'collection_link' -%}
-                                      {%- if childlink.object.image -%}
-                                        {{ childlink.object.image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
-                                      {%- elsif childlink.object.products.first.featured_image -%}
-                                        {{ childlink.object.products.first.featured_image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
-                                      {%- endif -%}
-                                    {%- when 'product_link' -%}
-                                      {%- if childlink.object.featured_image -%}
-                                        {{ childlink.object.featured_image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
-                                      {%- endif -%}
-                                    {%- when 'page_link' -%}
-                                      {%- if childlink.object.metafields.custom.featured_image -%}
-                                        {{ childlink.object.metafields.custom.featured_image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
-                                      {%- endif -%}
-                                  {%- endcase -%}
+                                  {% render 'mega-menu-card-media', childlink: childlink %}
                                 </div>
                                 <span class="mega-menu-enhanced__card-title">{{ childlink.title | escape }}</span>
                               </a>
@@ -173,25 +143,10 @@
           {%- assign category_found = true -%}
           <a href="{{ childlink.url }}" class="mega-menu-enhanced__card">
             <div class="mega-menu-enhanced__card-image">
-              {%- case childlink.type -%}
-                                    {%- when 'collection_link' -%}
-                                      {%- if childlink.object.image -%}
-                                        {{ childlink.object.image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
-                                      {%- elsif childlink.object.products.first.featured_image -%}
-                                        {{ childlink.object.products.first.featured_image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
-                                      {%- endif -%}
-                                    {%- when 'product_link' -%}
-                                      {%- if childlink.object.featured_image -%}
-                                        {{ childlink.object.featured_image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
-                                      {%- endif -%}
-                                    {%- when 'page_link' -%}
-                                      {%- if childlink.object.metafields.custom.featured_image -%}
-                                        {{ childlink.object.metafields.custom.featured_image | image_url: width: 400 | image_tag: loading: 'eager', alt: childlink.title }}
-                                      {%- endif -%}
-                                  {%- endcase -%}
-                                </div>
-                                <span class="mega-menu-enhanced__card-title">{{ childlink.title | escape }}</span>
-                              </a>
+              {% render 'mega-menu-card-media', childlink: childlink %}
+            </div>
+            <span class="mega-menu-enhanced__card-title">{{ childlink.title | escape }}</span>
+          </a>
                             {%- endif -%}
                           {%- endfor -%}
                           {%- unless category_found -%}
@@ -293,6 +248,9 @@ document.addEventListener('DOMContentLoaded', function() {
       const targetContent = document.querySelector('.mega-menu-enhanced__tab-content[data-tab-content="' + targetTab + '"][data-menu-index="' + menuIndex + '"]');
       if (targetContent) {
         targetContent.classList.add('mega-menu-enhanced__tab-content--active');
+        if (typeof window.loadMegaMenuDeferredImages === 'function') {
+          window.loadMegaMenuDeferredImages(targetContent);
+        }
       }
     });
   });

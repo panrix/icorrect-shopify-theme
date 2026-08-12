@@ -1,0 +1,35 @@
+{% doc %}
+  Renders a mega-menu card image with intrinsic width/height (never 0×0).
+  Serves a tiny Shopify CDN placeholder until HeaderMenu promotes data-src on
+  menu-open — avoids homepage LCP contention and the PR #31 visibility:hidden /
+  0×0 native-lazy failure.
+
+  @param {image} image - Shopify image to render
+  @param {string} alt - Accessible alt text
+
+  @example
+  {% render 'mega-menu-card-image', image: collection.image, alt: collection.title %}
+{% enddoc %}
+{%- if image != blank -%}
+  {%- liquid
+    assign img_width = image.width | default: 400
+    assign img_height = img_width | divided_by: image.aspect_ratio | round
+    if img_height < 1
+      assign img_height = 400
+    endif
+    assign src_full = image | image_url: width: 400
+    assign src_half = image | image_url: width: 200
+    assign src_placeholder = image | image_url: width: 20
+  -%}
+  <img
+    src="{{ src_placeholder }}"
+    data-src="{{ src_full }}"
+    data-srcset="{{ src_half }} 200w, {{ src_full }} 400w"
+    data-sizes="(min-width: 990px) 220px, 40vw"
+    width="{{ img_width }}"
+    height="{{ img_height }}"
+    alt="{{ alt | escape }}"
+    decoding="async"
+    data-mega-menu-deferred
+  >
+{%- endif -%}
