@@ -3,6 +3,35 @@
   Enhanced with carousel, flexible media modes, and granular text styling
 {% endcomment %}
 
+{%- liquid
+  assign hero_lcp_image = nil
+  if section.index == 1 and section.settings.media_mode == 'carousel'
+    assign hero_lcp_slide = section.blocks | where: 'type', 'carousel_slide' | first
+    if hero_lcp_slide and hero_lcp_slide.settings.image != blank
+      assign hero_lcp_image = hero_lcp_slide.settings.image
+    endif
+  elsif section.index == 1 and section.settings.media_mode == 'image' and section.settings.single_image != blank
+    assign hero_lcp_image = section.settings.single_image
+  endif
+-%}
+{%- if hero_lcp_image != blank -%}
+  <link
+    rel="preload"
+    as="image"
+    href="{{ hero_lcp_image | image_url: width: 750 }}"
+    imagesrcset="
+      {%- if hero_lcp_image.width >= 375 -%}{{ hero_lcp_image | image_url: width: 375 }} 375w,{%- endif -%}
+      {%- if hero_lcp_image.width >= 550 -%}{{ hero_lcp_image | image_url: width: 550 }} 550w,{%- endif -%}
+      {%- if hero_lcp_image.width >= 750 -%}{{ hero_lcp_image | image_url: width: 750 }} 750w,{%- endif -%}
+      {%- if hero_lcp_image.width >= 1000 -%}{{ hero_lcp_image | image_url: width: 1000 }} 1000w,{%- endif -%}
+      {%- if hero_lcp_image.width >= 1200 -%}{{ hero_lcp_image | image_url: width: 1200 }} 1200w,{%- endif -%}
+      {{ hero_lcp_image | image_url: width: 1500 }} 1500w
+    "
+    imagesizes="(min-width: 769px) min(50vw, 700px), 100vw"
+    fetchpriority="high"
+  >
+{%- endif -%}
+
 <style>
   .hero-banner-{{ section.id }} {
     position: relative;
@@ -472,8 +501,7 @@
                         height: slide_height,
                         alt: slide_alt,
                         loading: 'eager',
-                        fetchpriority: 'high',
-                        preload: true
+                        fetchpriority: 'high'
                     }}
                   {%- else -%}
                     {{
@@ -521,8 +549,7 @@
             height: single_height,
             alt: single_alt,
             loading: 'eager',
-            fetchpriority: 'high',
-            preload: true
+            fetchpriority: 'high'
         }}
         
       {% elsif section.settings.media_mode == 'video' and section.settings.video_url != blank %}

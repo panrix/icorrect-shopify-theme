@@ -274,11 +274,19 @@
     <link rel="stylesheet" href="{{ 'component-cart-items.css' | asset_url }}" media="print" onload="this.media='all'">
 
     {%- if settings.cart_type == 'drawer' -%}
-      {{ 'component-cart-drawer.css' | asset_url | stylesheet_tag }}
-      {{ 'component-cart.css' | asset_url | stylesheet_tag }}
-      {{ 'component-totals.css' | asset_url | stylesheet_tag }}
-      {{ 'component-price.css' | asset_url | stylesheet_tag }}
-      {{ 'component-discounts.css' | asset_url | stylesheet_tag }}
+      {% comment %} Non-blocking: drawer is closed at first paint; keep LCP path clearer. {% endcomment %}
+      <link rel="stylesheet" href="{{ 'component-cart-drawer.css' | asset_url }}" media="print" onload="this.media='all'">
+      <link rel="stylesheet" href="{{ 'component-cart.css' | asset_url }}" media="print" onload="this.media='all'">
+      <link rel="stylesheet" href="{{ 'component-totals.css' | asset_url }}" media="print" onload="this.media='all'">
+      <link rel="stylesheet" href="{{ 'component-price.css' | asset_url }}" media="print" onload="this.media='all'">
+      <link rel="stylesheet" href="{{ 'component-discounts.css' | asset_url }}" media="print" onload="this.media='all'">
+      <noscript>
+        {{ 'component-cart-drawer.css' | asset_url | stylesheet_tag }}
+        {{ 'component-cart.css' | asset_url | stylesheet_tag }}
+        {{ 'component-totals.css' | asset_url | stylesheet_tag }}
+        {{ 'component-price.css' | asset_url | stylesheet_tag }}
+        {{ 'component-discounts.css' | asset_url | stylesheet_tag }}
+      </noscript>
     {%- endif -%}
 
     {%- if localization.available_countries.size > 1 or localization.available_languages.size > 1 -%}
@@ -300,57 +308,74 @@
         document.documentElement.classList.add('shopify-design-mode');
       }
     </script>
-    
-  <!-- Google Analytics 4 -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YHN7YHZNM8"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-YHN7YHZNM8');
-  </script>
 
   {% render 'icorrect-seo-schema' %}
 
+  {% comment %} Keep Meta attribution early (tiny, first-party cookies only). {% endcomment %}
   {% render 'meta-pixel-attribution' %}
 
-  <!-- PostHog Analytics -->
+  {% comment %}
+    Defer GA4 + PostHog until idle/load so their network fetch does not compete with
+    the homepage LCP image (PSI: ~890ms resource load delay on MacBook_Repair hero).
+  {% endcomment %}
   <script>
-    !function(t,e){var o,n,p,r;e.__SV||(window.posthog && window.posthog.__loaded)||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture identify".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-    posthog.init('phc_E4K3ulD49Fth2l3WOFjPpBbdgsbJwRMrErbWGjpppLB', {
-      api_host: 'https://us.i.posthog.com',
-      person_profiles: 'always',
-      capture_exceptions: true,
-      before_send: function(event) {
-        if (!event || event.event !== '$exception') return event;
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
 
-        var properties = event.properties || {};
-        var values = JSON.stringify(properties.$exception_values || '');
-        var sources = JSON.stringify(properties.$exception_sources || '');
+    function loadDeferredThirdPartyAnalytics() {
+      if (window.__icorrectAnalyticsLoaded) return;
+      window.__icorrectAnalyticsLoaded = true;
 
-        // Browser autofill injections and Shopify/Klarna infrastructure errors are
-        // high-volume noise in PostHog error tracking. They do not come from the
-        // theme code and were obscuring first-party conversion issues.
-        if (values.indexOf('_AutofillCallbackHandler') !== -1) return null;
-        if (values.indexOf('Script error.') !== -1 && sources === '[]') return null;
-        if (sources.indexOf('/cdn/shopifycloud/privacy-banner/') !== -1) return null;
-        if (sources.indexOf('/cdn/shopifycloud/storefront/assets/shop_events_listener') !== -1) return null;
-        if (sources.indexOf('/production-klarna-il-shopify-osm/') !== -1) return null;
-        if (sources.indexOf('/cdn/shopifycloud/storefront/assets/shopify_pay/') !== -1) return null;
+      var ga = document.createElement('script');
+      ga.async = true;
+      ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-YHN7YHZNM8';
+      ga.onload = function () {
+        gtag('js', new Date());
+        gtag('config', 'G-YHN7YHZNM8');
+      };
+      document.head.appendChild(ga);
 
-        return event;
-      },
-      session_recording: {
-        record_canvas: false,
-        maskTextSelector: 'script, [data-ph-no-capture], .script-placeholder'
-      }
-    });
-    {% if customer %}
-    posthog.identify({{ customer.email | json }}, {
-      name: {{ customer.name | json }},
-      shopify_customer_id: {{ customer.id | json }}
-    });
-    {% endif %}
+      !function(t,e){var o,n,p,r;e.__SV||(window.posthog && window.posthog.__loaded)||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture identify".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+      posthog.init('phc_E4K3ulD49Fth2l3WOFjPpBbdgsbJwRMrErbWGjpppLB', {
+        api_host: 'https://us.i.posthog.com',
+        person_profiles: 'always',
+        capture_exceptions: true,
+        before_send: function(event) {
+          if (!event || event.event !== '$exception') return event;
+
+          var properties = event.properties || {};
+          var values = JSON.stringify(properties.$exception_values || '');
+          var sources = JSON.stringify(properties.$exception_sources || '');
+
+          if (values.indexOf('_AutofillCallbackHandler') !== -1) return null;
+          if (values.indexOf('Script error.') !== -1 && sources === '[]') return null;
+          if (sources.indexOf('/cdn/shopifycloud/privacy-banner/') !== -1) return null;
+          if (sources.indexOf('/cdn/shopifycloud/storefront/assets/shop_events_listener') !== -1) return null;
+          if (sources.indexOf('/production-klarna-il-shopify-osm/') !== -1) return null;
+          if (sources.indexOf('/cdn/shopifycloud/storefront/assets/shopify_pay/') !== -1) return null;
+
+          return event;
+        },
+        session_recording: {
+          record_canvas: false,
+          maskTextSelector: 'script, [data-ph-no-capture], .script-placeholder'
+        }
+      });
+      {% if customer %}
+      posthog.identify({{ customer.email | json }}, {
+        name: {{ customer.name | json }},
+        shopify_customer_id: {{ customer.id | json }}
+      });
+      {% endif %}
+    }
+
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(loadDeferredThirdPartyAnalytics, { timeout: 3500 });
+    } else {
+      window.addEventListener('load', function () {
+        setTimeout(loadDeferredThirdPartyAnalytics, 1);
+      });
+    }
   </script>
   </head>
 
@@ -445,7 +470,7 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 </script>
 
-{{ 'contact-form-interceptor.js' | asset_url | script_tag }}
+<script src="{{ 'contact-form-interceptor.js' | asset_url }}" defer="defer"></script>
 {% render 'posthog-tracking' %}
 {% render 'posthog-page-context' %}
 {% render 'posthog-scroll-depth' %}
