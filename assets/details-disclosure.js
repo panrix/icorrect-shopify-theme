@@ -1,3 +1,22 @@
+function loadMegaMenuDeferredImages(root) {
+  if (!root) return;
+  root.querySelectorAll('img[data-mega-menu-deferred]:not([data-mega-menu-loaded])').forEach((img) => {
+    const src = img.getAttribute('data-src');
+    if (!src) return;
+    // Promote real CDN URLs only once the menu/tab is visible — keeps width/height
+    // reserved (CSS + attrs) so we never reintroduce the PR #31 0×0 lazy bug.
+    const srcset = img.getAttribute('data-srcset');
+    const sizes = img.getAttribute('data-sizes');
+    if (srcset) img.setAttribute('srcset', srcset);
+    if (sizes) img.setAttribute('sizes', sizes);
+    img.setAttribute('src', src);
+    img.setAttribute('loading', 'eager');
+    img.setAttribute('data-mega-menu-loaded', '');
+  });
+}
+
+window.loadMegaMenuDeferredImages = loadMegaMenuDeferredImages;
+
 class DetailsDisclosure extends HTMLElement {
   constructor() {
     super();
@@ -39,6 +58,10 @@ class HeaderMenu extends DetailsDisclosure {
   }
 
   onToggle() {
+    if (this.mainDetailsToggle.open) {
+      loadMegaMenuDeferredImages(this.mainDetailsToggle);
+    }
+
     if (!this.header) return;
     this.header.preventHide = this.mainDetailsToggle.open;
 
