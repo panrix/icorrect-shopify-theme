@@ -1,0 +1,739 @@
+{% comment %}
+  Route-scoped FAQPage JSON-LD for pages whose visible FAQ copy lives in JSON templates.
+  Keep each schema entry identical to its rendered question and answer.
+{% endcomment %}
+{%- if request.page_type == 'index' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Do I need an appointment?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You do not need an appointment to contact us, get a quote, or book in for a repair. For walk ins, we can normally accept devices during opening hours, but availability can vary depending on workload and the type of repair. If you want the quickest turnaround, booking in advance is best. It allows us to reserve bench time, confirm parts availability, and prioritise your repair. This is especially important for same day repairs and for any express service requests. If you are sending your device in, you can place an order online and follow the shipping instructions. We will confirm receipt, run intake checks, and then proceed according to the booked service or agreed quote."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need to back up my data before my repair?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, you should back up your data whenever possible. Most repairs do not affect data, but storage can never be guaranteed if a device has underlying faults, liquid damage, or an unstable power issue. If your device is still usable, back up before bringing it in. For phones and tablets, an iCloud backup is usually the fastest option. For computers, use Time Machine or another full backup method. If the device is not turning on or is too unstable to back up, we can advise on the safest next step after inspection. In many cases we can repair the device enough to allow a backup, but that depends on the fault and the condition of the hardware."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How long does it take to diagnose an unknown fault?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most diagnostics are completed within two to three working days. During that time we test for common issues such as battery failure, charging faults, liquid damage, and internal short circuits, and we also check for signs of previous repairs or missing parts. If the issue is not obvious, we go deeper. That can include detailed functional testing, internal inspection, and where relevant, board level investigation to isolate the area causing the fault. The goal is to provide a clear answer, not guesswork. Once diagnostics are complete, we send you a report explaining what we found and what the recommended repair path is. You stay in control, nothing proceeds beyond diagnostics without your approval."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can you repair a damaged logic board?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Logic board repair is one of the main reasons clients choose us. Many repair centres and manufacturers will write off a faulty board and quote a full replacement. We take a repair first approach where it makes technical and financial sense. Board faults can present as no power, charging issues, random shutdowns, boot loops, or missing functions like audio, cameras, or connectivity. In many cases the board can be restored by repairing the affected circuit area rather than replacing the entire device. These repairs require proper diagnostics and specialist equipment. If we find that a board repair would not be reliable or would not represent good value, we will explain the situation clearly and recommend the most practical alternative."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do your prices include parts and labour?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Pricing is quoted as a complete service, including parts, labour, and the testing required to return the device in stable working condition. For jobs where the fault is not confirmed upfront, diagnostics may be required first. In that case, we will confirm the diagnostic fee and timeline, then provide a full quote once the fault is identified. We do not add hidden charges at the end. If anything changes during testing, for example we find additional damage that affects the repair outcome, we stop and contact you before doing anything further."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What warranty do you offer?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We provide a two year warranty on repairs, covering faults related to the work completed and the parts supplied. This applies across our repair categories, from common repairs to more advanced work where appropriate. The warranty does not cover accidental damage, liquid exposure after repair, or new faults unrelated to the original repair. It also does not cover general wear and tear, for example normal battery ageing over time. If you ever have an issue after a repair, we will inspect the device and explain exactly what is going on. If it is related to the original repair, we will resolve it under warranty."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you use original parts?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Wherever possible, yes. Most of the parts we use are genuine parts reclaimed from original devices, then tested and, where required, refurbished back to a high standard before being fitted. This approach helps preserve key features and overall device performance. It also reduces compatibility issues that can happen with low quality aftermarket parts, and it is a more sustainable way to repair electronics. For older models where original parts are no longer realistically available in good condition, we use high quality OEM alternatives. We will always be transparent about what part option is being used and why."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you need my passcode for testing?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, we ask for your passcode so we can complete proper pre repair and post repair testing. This allows us to verify functions like cameras, microphones, speakers, sensors, charging behaviour, display and touch performance, and general stability before returning the device. We do not access personal content, banking apps, or private data. The passcode is used only to reach the testing screens needed to confirm the device is working correctly. If you prefer not to share a passcode, we can still complete many repairs. In that case we cannot fully validate every function, and warranty coverage may be limited because full testing was not possible."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you offer payment plans?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. We offer payment options that allow you to spread the cost, such as Klarna, subject to eligibility and availability at checkout. For straightforward repairs booked online, you can choose a payment option during checkout. For diagnostic led repairs, we will provide a quote after inspection, and you can then proceed using the available payment methods once the repair plan is confirmed. If you are not sure which route to take, start with diagnostics or contact us with the device model and symptoms. We will point you to the correct booking path."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Will my Apple Pencil still work after an iPad repair?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. After the repair your Apple Pencil will still work as normal. We complete the repair in a way that preserves pairing and day to day functionality, including writing accuracy and responsiveness. We also check compatibility and basic Pencil behaviour during testing where possible. If your device has additional faults that affect touch input, display performance, or charging, we will flag that during diagnostics and explain what would need to be addressed to restore full functionality."
+      }
+    }
+  ]
+}
+</script>
+{%- elsif request.page_type == 'page' -%}
+{%- case page.handle -%}
+  {%- when 'iphone-repairs' -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How long does an iPhone repair take?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most common iPhone repairs, such as screen replacements and battery changes, are completed within 2 hours. Diagnostics can take up to 2 working days. We always provide an estimated completion time when you book your repair, and we'll notify you immediately if we discover any additional issues that might extend the repair time."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you offer same-day iPhone repair services?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes! We offer same-day repair services for most iPhone issues at our London office. For screen repairs, battery replacements, and charging port fixes, we typically complete repairs the same day you bring your device in—often within two hours. For more complex repairs or mail-in services, we aim to complete and return your iPhone within 2-4 working days. Contact us to check availability for your specific repair and location."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will my iPhone repair come with a warranty?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Absolutely. All our iPhone repairs include a comprehensive warranty covering both parts and labour. All our repairs, from modular component replacements to logic board repairs, come with a 2-year warranty. If you experience any issues with your repair during the warranty period, we'll fix it free of charge. Our warranty demonstrates our confidence in the quality of our workmanship and the premium parts we use."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you use genuine Apple parts for iPhone repairs?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "While we're not an Apple Authorised Service Provider, over 90% of our parts is genuine and sourced from trusted suppliers to confirm perfect functionality and originality. All parts come with warranties and are thoroughly tested before installation."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you repair liquid-damaged iPhones?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, we specialise in liquid damage restoration for iPhones. Our process includes ultrasonic cleaning of the logic board, corrosion removal, component-level diagnostics, and replacement of any damaged parts. Success rates vary depending on how quickly you bring in your device and the severity of the damage. We recommend not attempting to charge or power on a water-damaged iPhone—bring it to us as soon as possible for the best chance of recovery."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What iPhone models do you repair?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Our technicians are trained on all generations of iPhones and we maintain a comprehensive parts inventory for both current and legacy models. Whether you have an iPhone 11, iPhone 13 Pro, an iPhone 16 Pro Max or any other model, we have the expertise and parts to complete your repair professionally."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does iPhone screen repair cost?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "iPhone screen repair costs vary depending on your specific model. Older models typically cost less to repair (~£100), while newer models with OLED displays cost more (£250-£400). We provide transparent, upfront pricing with no hidden fees. Visit our screen repair pricing page or contact us with your iPhone model for an exact quote. All screen repairs include a 2-year warranty."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will I lose my data during the iPhone repair?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "In most cases, no. Repairs like screen replacements, battery changes, and charging port fixes don't affect your data at all. However, we always recommend backing up your iPhone before any repair as a precautionary measure. For logic board repairs or more complex issues, there's a possibility of data loss, which we'll discuss with you upfront. We never intentionally erase or access your data—your privacy and security are our top priorities."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you fix my iPhone if the screen is completely black?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Black screens with the device still running are often caused by a failed display, but they can also stem from battery faults or connection issues. Our diagnostic assessment isolates the exact cause. If the display is at fault, we replace it; if the issue is power-related or due to a loose connection, we address that instead. Once assessed, we confirm the findings and the most effective repair to bring the iPhone back to normal operation."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need to book an appointment for iPhone repair?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "While walk-ins are welcome at our London office, we recommend booking an appointment to ensure minimal waiting time and guaranteed same-day service. Booking ahead allows us to allocate a technician and reserve the necessary parts for your specific iPhone model. You can book online through our website, call us directly, or message us on WhatsApp and Instagram/Facebook. For urgent repairs, contact us and we'll do our best to accommodate you as quickly as possible, even without an appointment."
+          }
+        }
+      ]
+    }
+    </script>
+  {%- when 'ipad-repairs' -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How long do iPad repairs take?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most iPad repairs are completed within three working days. This includes screen repairs, battery replacements, and internal faults. If you need your iPad repaired faster, we offer an express service for selected models. When booked in advance, express repairs can often be completed within one working day, depending on the fault and part availability."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What warranty do you offer on iPad repairs?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "All of our iPad repairs come with a two-year warranty that covers any fault related to the repair. Whether it’s a screen replacement, battery issue, or logic board repair, we stand by the quality of our work. The warranty does not cover accidental damage or natural wear and tear, but if anything goes wrong because of the original fault, we’ll sort it."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do iPad repairs void my Apple warranty?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Technically, yes. As soon as the screen is broken or the housing is damaged, your iPad is already considered out of warranty by Apple. Apple does not offer repairs for iPads. Instead, they replace the entire device with a reconditioned unit and charge you for it. That’s why many clients choose to repair with us. We restore your original iPad using original parts, often for less than half the cost of Apple's replacement quote. Because we use original parts, Apple may still choose to service the device later at their discretion. But to be clear, once it’s damaged, the warranty is no longer valid either way."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does it cost to repair an iPad compared to Apple?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Apple doesn’t actually repair iPads. Instead, they offer a full-device replacement with a reconditioned unit, which often costs in the region of £500 (or more), even for older models. At iCorrect, we repair your original iPad using genuine parts wherever possible. That means if you’ve only damaged the screen or battery, we can fix just that part, without replacing the whole device. Our average iPad screen repair is around half the cost of Apple’s replacement service. It’s better for your device, better for the environment, and better for your wallet."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you repair just the glass on an iPad screen?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, in many cases we can repair just the glass on your iPad — but it depends on the model. Standard iPads have a separate glass and LCD, which makes glass-only repairs more straightforward. For iPad Pro and Air models, the glass and display are fused together, which makes the process more complex but still possible. We offer both options depending on the damage and the model. If you’re unsure which type of screen your iPad has, we’ll confirm once we assess the device and talk you through the repair options."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you use original parts for iPad repairs?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, we use original Apple parts for all current iPad models wherever they are available. Most of our parts are reclaimed from genuine Apple devices and tested in-house before being used in any repair. For older models where original parts are no longer available, we use the highest quality OEM replacements. These are carefully sourced, fully tested, and chosen to match Apple’s performance standards as closely as possible. We’ll always tell you what part is being used, and why. No surprises, no cutting corners."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you fix Touch ID or Face ID on an iPad?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Unfortunately, we do not offer repairs for Touch ID or Face ID on iPads. Apple have not released replacement parts for these components, and both features are serialised to the original logic board for security reasons. If either has stopped working, we can run diagnostics to confirm the cause, but if the sensor itself is damaged, it cannot be replaced or restored without Apple’s internal tools. We’ll always be honest about what's possible and help you explore your options if these features are no longer functioning."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will my Apple Pencil still work after a repair?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, your Apple Pencil will continue to work exactly as it should after the repair. Because we use original parts and complete the repair to factory standards, features like Pencil pairing and pressure sensitivity remain fully functional. We also test Apple Pencil functionality before completing the repair to make sure everything is working as expected. In fact, we were one of the first companies to solve serialisation issues with Apple Pencil pairing, so you’re in safe hands."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do you open iPads if they don’t have screws?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "iPads are sealed using a strong adhesive around the edge of the screen, which is why there are no visible screws. To open the device, we use a controlled heating process to soften the adhesive, followed by precision tools to lift the screen without damaging the internal components. Once the repair is complete, we reseal the screen using an adhesive that matches the strength of the original maintaining the structure, fit, and finish Apple intended. It’s a delicate process, but we’ve perfected it over years of working with every iPad model."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you repair logic board issues or water damage on an iPad?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, we can. Our team specialises in microchip-level iPad repairs, including complex logic board faults and water damage, the kind of issues that Apple and most shops will simply write off. We carry out a full diagnostic to assess the extent of the damage. From there, we’ll either repair the affected circuits directly or rebuild sections of the board if needed. These are delicate repairs done under a microscope, but they’re often the difference between saving your iPad and replacing it entirely."
+          }
+        }
+      ]
+    }
+    </script>
+  {%- when 'macbook-repairs' -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How long do MacBook repairs take?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most MacBook repairs, including screen replacements, battery replacements, and keyboard repairs, take around 3 working days. If you need it sooner, we offer an Express MacBook Repair service, allowing next-day or same-day repairs if booked in advance."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What warranty do you offer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We provide a two-year warranty on all MacBook repairs, covering issues related to the repair. Whether it’s a screen replacement, battery repair, or logic board fix, our warranty ensures long-term reliability. Accidental damage isn’t covered, but we’re happy to help if new issues arise."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you repair damaged MacBook logic boards?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. This is the advanced work we’re known for. While most repair centres, including Apple, will quote you for a full logic board replacement, we repair boards properly at microchip level. Our technicians diagnose faults under a microscope, repairing power circuits, charging issues, liquid damage, and component failures. We revive boards others declare unfixable while keeping your data intact and massively reducing electronic waste."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you use original parts?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, around 90% of the parts we use are original Apple parts, professionally disassembled from genuine devices. This allows us to maintain Apple-level quality without unnecessary waste. For older models where original batteries aren’t available, we use the best OEM alternatives. This approach preserves features such as True Tone, battery health monitoring, and ensures long-term reliability."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What if my MacBook repair doesn’t resolve the issue?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "If a repair doesn’t fully resolve the issue, we won’t charge you for it. Our no-fix, no-fee policy applies to all standard MacBook repairs. For logic board diagnostics, if repair is not possible, we’ll recommend an alternative such as board replacement or data recovery."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I get my MacBook repaired quicker?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Express MacBook Repair Service is available for urgent cases. When pre-booked, most express repairs are completed within one working day, sometimes even the same day. This includes screen, battery, and logic board repairs."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is your diagnostic process for MacBook repairs?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We run a deep, component-level diagnostic using microscopes and electrical testing equipment. This includes checking the power rails, charging circuits, SSD health, liquid damage, and internal communication lines. You receive a full breakdown before work begins."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you offer payment plans?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. We offer flexible payment options including Klarna and PayPal Pay in 3. These allow you to split the cost of your repair while keeping your MacBook running without delay."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you repair older MacBook models?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We primarily repair MacBook models from 2016 onward, but we can still assist with older models, especially batteries and data recovery. If a repair isn’t financially sensible, we’ll recommend better alternatives upfront."
+          }
+        }
+      ]
+    }
+    </script>
+  {%- when 'apple-watch-repairs' -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How long does an Apple Watch repair take?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most Apple Watch repairs are completed within three working days. If you need your device back sooner, we offer a next-day turnaround for selected repairs through our Express Service. Same-day repair is not possible, as we use a curing process to reseal the watch and retain its liquid resistance. That adhesive takes time to set properly and we don’t cut corners."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What warranty do you provide on Apple Watch repairs?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "All of our Apple Watch repairs come with a two-year warranty covering any fault related to the repair. That includes issues with the glass, touch response, and display. We reseal every watch using liquid-resistant adhesive to match the original seal. This helps protect against day-to-day exposure to water, like washing hands or wearing the watch in the shower. However, like Apple, we do not cover accidental water damage. If the watch is not locked properly before swimming or diving, water can still get in and this kind of misuse wouldn’t be covered under warranty."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between a glass-only repair and a full display replacement?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "If your Apple Watch still shows a clear display underneath the cracked glass, and the touch is working properly, we can usually complete a glass-only repair. This retains your original display and helps keep costs down. If the display has stopped working, shows lines, or the touch response is lost, you’ll need a full display replacement. This includes both the glass and the OLED screen beneath it. Not sure which one you need? We’ll confirm as soon as we’ve inspected your watch."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will my Apple Watch be water resistant after repair?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, we reseal every Apple Watch using liquid-resistant adhesive that’s equivalent to Apple’s original seal. This helps maintain the same level of water resistance your device had before the damage. Your watch will be protected for everyday use including hand washing, light rain, or wearing it in the shower. However, no Apple Watch is fully waterproof. Activities like swimming, especially in the sea or at depth, can still allow water in if the watch is not locked properly. For best results, we always recommend enabling Water Lock before using your watch in water."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "My glass is broken and the touch is not working. Which repair do I need?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "If the glass is cracked and the touch is no longer responding, you’ll need a full display replacement. This repair includes both the front glass and the OLED display beneath it. It’s the best option when the screen is damaged beyond just the surface layer, and it ensures your Apple Watch is fully functional again. We’ll test everything during our intake checks and confirm the exact fault before starting any work."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will Apple Pay still work after repair?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, absolutely. We retain the original NFC chip during both glass-only and full display repairs, which means Apple Pay will continue to work exactly as it did before. Your Apple Watch will still pair, sync, and tap-to-pay without any issues."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you use original parts for Apple Watch repairs?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Wherever possible, we use original Apple Watch parts that have been carefully disassembled from genuine devices. This approach allows us to retain the original quality and functionality, from touch sensitivity to Apple Pay and waterproofing. Every part is inspected, tested, and cleaned before use, so you get the same performance as you would from a brand new component. It also helps reduce waste by giving high-quality parts a second life, rather than letting them end up in landfill."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why are your Watch repair costs cheaper than Apple?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Because at iCorrect we repair. Apple replace. At the Apple Store, even for a small fault like cracked glass on an Apple Watch, they’ll replace the entire device with a reconditioned unit and charge you for it. That’s their default process. At iCorrect, we fix the actual fault. Whether it’s just the glass or a full display, we repair what’s needed and nothing more. That’s why our prices are often significantly lower, without compromising on quality."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will my ECG and heart rate monitor still work after the repair?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, both features will continue to work as normal after your repair. We use original parts and follow Apple’s design standards, which means sensors like ECG and the heart rate monitor remain fully functional. We also test these features during our final quality checks to make sure everything is working before we return your watch."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you repair Apple Watch logic boards or water damage?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Unfortunately, no. We don’t repair Apple Watch logic boards or water-damaged internal components. These types of faults require full board-level replacement, and the cost to complete that type of repair would often outweigh the value of the watch itself. In cases like this, we’ll always be upfront and help you decide whether it’s worth repairing or replacing the device."
+          }
+        }
+      ]
+    }
+    </script>
+  {%- when 'macbook-screen-repair-london' -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How long does a MacBook screen repair take in London?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most MacBook screen repairs are completed same-day or within 24 hours at our London repair centre. Exact turnaround depends on model and part availability. Express same-day slots are available when pre-booked."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you fix MacBook Flexgate in London?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Flexgate (the stage-light backlight effect on 2016–2019 MacBook Pro models) is a repair we specialise in. We replace the damaged display cable at component level rather than replacing the entire display unnecessarily."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does MacBook screen repair cost in London?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Prices vary by model. Visit our screen repair pricing page for an exact quote by MacBook model. We're transparent about costs upfront - no hidden fees."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you use genuine MacBook screens?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Approximately 90% of the screens we use are original Apple panels, professionally recovered from genuine devices. This preserves True Tone, brightness consistency, and long-term reliability."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is there a warranty on MacBook screen repairs?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "All screen repairs include a 2-year warranty covering the repaired display and associated components."
+          }
+        }
+      ]
+    }
+    </script>
+  {%- when 'macbook-repair-london' -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Where is iCorrect located in London?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We're based at 12 Margaret Street, London W1W 8JQ - a short walk from Oxford Circus and Regent Street. Walk-ins are welcome. Mail-in repair is also available across the UK."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How long does MacBook repair take?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most repairs are completed within 48 hours. Screen replacements and battery swaps are often same-day. Logic board diagnostics and liquid damage repairs typically take 3–5 working days. Express slots are available."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you offer a no-fix no-fee guarantee?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. If we can't fix your MacBook, you don't pay for the repair. Diagnostic fees may apply for logic board assessments if the board cannot be repaired."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you repair MacBook logic boards in London?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes - this is one of our core specialisms. We carry out component-level microchip repair on MacBook logic boards, including power circuit failures, liquid damage corrosion, and charging IC faults."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What MacBook models do you repair?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We repair all MacBook models from 2016 onwards, including MacBook Air, MacBook Pro 13\", 14\", 15\", and 16\". We can also assist older models for battery and data recovery work."
+          }
+        }
+      ]
+    }
+    </script>
+  {%- when 'macbook-pro-screen-replacement-london' -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Which MacBook Pro screen sizes do you replace?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We replace screens on all MacBook Pro sizes: 13\", 14\", 15\", and 16\". This includes all chip generations: Intel, M1, M1 Pro/Max, M2, M2 Pro/Max, M3, M3 Pro/Max."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does MacBook Pro screen replacement cost?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Prices vary by model. See our screen repair pricing page for exact costs per MacBook Pro model. We're upfront about pricing before any work begins."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you fix MacBook Pro Flexgate in London?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Flexgate (backlight stage-light effect on 2016–2019 MacBook Pro 13\" and 15\") is a common repair we handle regularly. We fix the display cable at component level."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you replace a MacBook Pro Liquid Retina XDR display?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. We replace the Liquid Retina XDR displays found in 14\" and 16\" MacBook Pro M1/M2/M3 models using genuine Apple panels."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How long does MacBook Pro screen replacement take?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most MacBook Pro screen replacements are completed within 24 hours. Same-day service is available when pre-booked."
+          }
+        }
+      ]
+    }
+    </script>
+  {%- when 'macbook-air-screen-replacement-london' -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Which MacBook Air models do you replace screens on?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We replace screens on all MacBook Air models: 13\" and 15\", Intel and Apple Silicon (M1, M2, M3). Bring your MacBook Air to our London centre or send it via mail-in."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How long does MacBook Air screen replacement take?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most MacBook Air screen replacements are completed within 24 hours. Express same-day slots are available."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does MacBook Air screen replacement cost in London?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "See our screen pricing page for exact costs per model. Prices are fixed upfront - no surprises."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you use genuine MacBook Air display panels?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. We use genuine Apple Retina display panels wherever available, preserving True Tone and the original display quality."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is there a warranty on the screen replacement?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes - all MacBook Air screen replacements include a 2-year warranty covering the display and installation."
+          }
+        }
+      ]
+    }
+    </script>
+  {%- when 'macbook-pro-repair-london' -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Do you repair MacBook Pro M3 in London?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. We repair all MacBook Pro M3 models, including the 14\" and 16\" M3 Pro and M3 Max. This includes screen replacement, battery repair, and component-level logic board work."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you fix a MacBook Pro that won't turn on?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "In most cases, yes. A MacBook Pro that won't power on is often caused by a charging circuit fault, liquid damage, or a failed power management chip. We diagnose and repair at component level."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does MacBook Pro repair cost?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Costs vary by repair type and model. We provide upfront pricing before any work begins. See our pricing pages or book a diagnostic for a firm quote."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you fix MacBook Pro liquid damage in London?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Liquid damage repair is one of our specialist services. We carry out ultrasonic cleaning, corrosion removal, and logic board component replacement where needed."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What warranty do you offer on MacBook Pro repairs?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "All MacBook Pro repairs carry a 2-year warranty covering the repaired components and workmanship."
+          }
+        }
+      ]
+    }
+    </script>
+  {%- when 'macbook-air-repair-london' -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Which MacBook Air models do you repair in London?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We repair all MacBook Air models: 13\" and 15\", Intel and Apple Silicon (M1, M2, M3). Walk-in at our London centre or use our UK mail-in service."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you fix a MacBook Air that won’t charge?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Charging failures on MacBook Air are usually caused by a faulty USB-C port, charging IC, or liquid damage. We diagnose and repair at component level - not by replacing the entire board."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How long does MacBook Air repair take?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most standard repairs (screens, batteries) are completed within 24 hours. Logic board and liquid damage repairs typically take 3–5 working days. Express same-day is available for common faults."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you offer no-fix no-fee on MacBook Air repairs?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. For standard repairs, if we can’t fix it, you don’t pay. A diagnostic fee applies for logic board assessments where repair isn’t possible."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is there a warranty on MacBook Air repairs?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "All MacBook Air repairs include a 2-year warranty covering the repaired components and associated workmanship."
+          }
+        }
+      ]
+    }
+    </script>
+{%- endcase -%}
+{%- endif -%}

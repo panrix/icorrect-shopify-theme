@@ -12,7 +12,13 @@
             <h3>{{ block.settings.heading }}</h3>
           </div>
           <div class="repair-details">
-            <p>{{ block.settings.details }}</p>
+            {%- liquid
+              assign repair_details = block.settings.details
+              if repair_details contains 'walk-in drop-off service by appointment'
+                assign repair_details = 'Walk-ins are welcome at our Central London office during opening hours, Monday to Friday. Booking ahead is recommended to confirm availability and minimise waiting.'
+              endif
+            -%}
+            <p>{{ repair_details }}</p>
           </div>
           <div class="repair-service-btn">
             <a href="{{ block.settings.link }}">

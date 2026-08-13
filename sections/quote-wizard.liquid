@@ -158,7 +158,11 @@ window.WIZARD_CFG = {
     <!-- RIGHT: WIZARD -->
     <div class="qw-wizard" aria-label="Repair quote wizard">
       <div class="qw-head">
-        <h2 class="qw-title">{{ section.settings.heading }}</h2>
+        {% if request.page_type == 'page' and page.handle == 'contact' %}
+          <h1 class="qw-title">Contact iCorrect London</h1>
+        {% else %}
+          <h2 class="qw-title">{{ section.settings.heading }}</h2>
+        {% endif %}
         <p class="qw-sub">{{ section.settings.subheading }}</p>
       </div>
 

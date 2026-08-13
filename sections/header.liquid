@@ -576,10 +576,10 @@
 
 {% render 'icorrect-localbusiness-schema' %}
 {%- capture social_link_values -%}
-{{ settings.social_twitter_link }}||{{ settings.social_facebook_link }}||{{ settings.social_pinterest_link }}||{{ settings.social_instagram_link }}||{{ settings.social_tiktok_link }}||{{ settings.social_tumblr_link }}||{{ settings.social_snapchat_link }}||{{ settings.social_youtube_link }}||{{ settings.social_vimeo_link }}
+{{ settings.social_twitter_link }}||{{ settings.social_facebook_link }}||{{ settings.social_pinterest_link }}||{{ settings.social_instagram_link }}||{{ settings.social_tiktok_link }}||{{ settings.social_tumblr_link }}||{{ settings.social_snapchat_link }}||{{ settings.social_youtube_link }}||{{ settings.social_vimeo_link }}||https://www.instagram.com/icorrect_/||https://www.youtube.com/@iCorrect||https://www.tiktok.com/@icorrect_?lang=en||https://maps.google.com/?q=iCorrect+12+Margaret+Street+London+W1W+8JQ
 {%- endcapture -%}
 {%- liquid
-  assign social_links = social_link_values | split: '||'
+  assign social_links = social_link_values | split: '||' | uniq
   assign has_social_links = false
   for social_link in social_links
     if social_link != blank
