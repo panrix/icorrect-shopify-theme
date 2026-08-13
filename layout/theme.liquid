@@ -29,7 +29,9 @@
 
     <title>
       {%- if template == 'index' -%}
-        iCorrect: MacBook, iPhone &amp; iPad Repair Specialists
+        iCorrect: MacBook &amp; iPhone Repair Specialists in London
+      {%- elsif request.page_type == 'blog' -%}
+        iCorrect Repair Guides | MacBook, iPhone &amp; iPad News
       {%- else -%}
         {{ page_title }}
         {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
@@ -38,9 +40,13 @@
       {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
     </title>
 
-    {% if page_description %}
+    {%- if template == 'index' -%}
+      <meta name="description" content="Board-level MacBook and iPhone repair in Fitzrovia, London. Original parts and a 2-year warranty. We repair devices the Apple Store say are not repairable.">
+    {%- elsif request.page_type == 'blog' -%}
+      <meta name="description" content="Repair guides and news from iCorrect in Fitzrovia, London — MacBook, iPhone, iPad and Apple Watch specialists. Original parts, 2-year warranty, walk-ins welcome Monday to Friday.">
+    {%- elsif page_description -%}
       <meta name="description" content="{{ page_description | escape }}">
-    {% endif %}
+    {%- endif -%}
 
     {% render 'meta-tags' %}
 

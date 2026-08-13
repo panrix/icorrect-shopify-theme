@@ -1,0 +1,53 @@
+{% comment %}
+  FAQPage JSON-LD for visible FAQ accordion blocks only.
+  Expects section.blocks with heading + sub_head (richtext/text).
+  Skips blank questions and placeholder lorem ipsum answers.
+  Does not emit an empty FAQPage.
+{% endcomment %}
+{%- liquid
+  assign faq_count = 0
+  for block in section.blocks
+    assign faq_question = block.settings.heading | strip_html | strip
+    assign faq_answer_plain = block.settings.sub_head | strip_html | strip | downcase
+    if faq_question != blank and faq_answer_plain != blank
+      unless faq_answer_plain contains 'lorem ipsum'
+        assign faq_count = faq_count | plus: 1
+      endunless
+    endif
+  endfor
+-%}
+{%- if faq_count > 0 -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {%- assign faq_first = true -%}
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign faq_question = block.settings.heading | strip_html | strip
+        assign faq_answer_plain = block.settings.sub_head | strip_html | strip | downcase
+        assign faq_include = false
+        if faq_question != blank and faq_answer_plain != blank
+          unless faq_answer_plain contains 'lorem ipsum'
+            assign faq_include = true
+          endunless
+        endif
+      -%}
+      {%- if faq_include -%}
+        {%- unless faq_first -%},{%- endunless -%}
+        {
+          "@type": "Question",
+          "name": {{ block.settings.heading | strip_html | json }},
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": {{ block.settings.sub_head | strip_html | json }}
+          }
+        }
+        {%- assign faq_first = false -%}
+      {%- endif -%}
+    {%- endfor -%}
+  ]
+}
+</script>
+{%- endif -%}

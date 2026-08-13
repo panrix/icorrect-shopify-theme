@@ -32,9 +32,15 @@
   >
     {%- unless section.settings.title == blank -%}
       <div class="title-wrapper-with-link title-wrapper--self-padded-mobile title-wrapper--no-top-margin multicolumn__title">
-        <h2 class="title inline-richtext {{ section.settings.heading_size }}">
+        {%- liquid
+          assign multicolumn_heading_tag = 'h2'
+          if section.settings.heading_size == 'h1' or section.settings.heading_size == 'h0'
+            assign multicolumn_heading_tag = 'h1'
+          endif
+        -%}
+        <{{ multicolumn_heading_tag }} class="title inline-richtext {{ section.settings.heading_size }}">
           {{ section.settings.title }}
-        </h2>
+        </{{ multicolumn_heading_tag }}>
         {%- if section.settings.button_label != blank and show_mobile_slider -%}
           <a href="{{ section.settings.button_link }}" class="link underlined-link large-up-hide">
             {{- section.settings.button_label | escape -}}

@@ -1,7 +1,11 @@
 <section class="about-info-{{ section.id }}">
   <div class="about-info-wrapper page-width">
     <div class="about-info-row">
-      <h2>{{ section.settings.heading }}</h2>
+      {%- if section.settings.heading_is_h1 -%}
+        <h1>{{ section.settings.heading }}</h1>
+      {%- else -%}
+        <h2>{{ section.settings.heading }}</h2>
+      {%- endif -%}
 
       <div class="about-details">
         {{ section.settings.details }}
@@ -35,6 +39,7 @@
     margin: 0 auto;
   }
 
+  .about-info-{{ section.id }} .about-info-row h1,
   .about-info-{{ section.id }} .about-info-row h2{
     color: #1D1D1F;
     font-size: {{ section.settings.heading_size_desktop }}px;
@@ -92,6 +97,7 @@
       padding-bottom: {{ section.settings.mob_padding_bottom }}px;
     }
 
+    .about-info-{{ section.id }} .about-info-row h1,
     .about-info-{{ section.id }} .about-info-row h2{
       font-size: {{ section.settings.heading_size_mobile }}px;
       line-height: {{ section.settings.heading_line_height_mobile }}px;
@@ -182,6 +188,12 @@
       "id": "heading",
       "label": "Heading",
       "default": "About Us"
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_is_h1",
+      "label": "Use H1 for this heading (one per page)",
+      "default": false
     },
     {
       "type": "richtext",

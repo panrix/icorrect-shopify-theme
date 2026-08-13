@@ -54,7 +54,7 @@
     },
     "parent_categories_F74hA8": {
       "type": "parent-categories",
-      "settings": {
+      "settings": {"heading_is_h1": true, 
         "column_per_row": 3,
         "padding_top": 0,
         "padding_bottom": 0,
@@ -381,7 +381,7 @@
           "settings": {
             "icon": "shopify://shop_images/Service_icon_Walk-in.png",
             "heading": "Walk-In Service",
-            "details": "For clients based in Central London who wish to visit us, we operate a  walk-in drop-off service by appointment. Simply book your repair via our  website booking page to confirm your appointment time before heading to us.",
+            "details": "Walk-ins are welcome during opening hours at our Central London workshop (Monday to Friday; Saturday closed). Booking ahead is optional if you want to reserve a time, but you do not need an appointment to visit.",
             "btn": "Learn more",
             "link": ""
           }

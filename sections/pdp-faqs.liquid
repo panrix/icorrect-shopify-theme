@@ -24,6 +24,35 @@
     </div>
   </div>
 </section>
+{%- if faq_metaobject != blank -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {%- assign faq_first = true -%}
+    {%- for faq in faq_metaobject -%}
+      {%- assign faq_question = faq.title | strip_html | strip -%}
+      {%- assign faq_answer_plain = faq.description | strip_html | strip | downcase -%}
+      {%- if faq_question != blank and faq_answer_plain != blank -%}
+        {%- unless faq_answer_plain contains 'lorem ipsum' -%}
+          {%- unless faq_first -%},{%- endunless -%}
+          {
+            "@type": "Question",
+            "name": {{ faq.title | strip_html | json }},
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": {{ faq.description | strip_html | json }}
+            }
+          }
+          {%- assign faq_first = false -%}
+        {%- endunless -%}
+      {%- endif -%}
+    {%- endfor -%}
+  ]
+}
+</script>
+{%- endif -%}
 
 <style>
   .lp-faqs-{{ section.id }}{

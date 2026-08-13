@@ -9,6 +9,16 @@
  */
 {
   "sections": {
+    "contact_heading": {
+      "type": "custom-liquid",
+      "name": "Contact H1",
+      "settings": {
+        "custom_liquid": "<div class=\"page-width\" style=\"padding: 2.5rem 1.25rem 0; text-align: center;\"><h1 style=\"margin: 0; font-size: clamp(1.75rem, 3vw, 2.5rem); line-height: 1.2;\">Contact iCorrect in London</h1></div>",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
     "main": {
       "type": "main-page",
       "disabled": true,
@@ -45,6 +55,7 @@
     }
   },
   "order": [
+    "contact_heading",
     "main",
     "form",
     "contact_with_map_g4am9k"
