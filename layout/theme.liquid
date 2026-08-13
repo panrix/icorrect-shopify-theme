@@ -32,8 +32,8 @@
       assign seo_page_description = page_description
 
       if request.page_type == 'index'
-        assign seo_page_title = 'iCorrect: MacBook, iPhone & iPad Repair London'
-        assign seo_page_description = 'London MacBook, iPhone and iPad repair specialists. Original parts, advanced diagnostics and component-level repairs, backed by a 2-year warranty.'
+        assign seo_page_title = 'iCorrect: MacBook, iPhone & iPad Repair Specialists'
+        assign seo_page_description = 'UK MacBook, iPhone and iPad repair specialists. Original parts, advanced diagnostics and component-level repairs, backed by a 2-year warranty.'
       elsif request.page_type == 'blog' and blog.handle == 'news'
         assign seo_page_title = 'Apple Repair Advice & News | iCorrect London'
         assign seo_page_description = 'Apple repair advice and news from iCorrect London, covering MacBook, iPhone and iPad faults, diagnostics, parts, maintenance and repair options.'
