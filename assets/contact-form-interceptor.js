@@ -15,7 +15,7 @@
   'use strict';
 
   const CONFIG = {
-    webhookUrl: 'https://api.icorrect.co.uk/intake/contact-form',
+    webhookUrl: 'https://api.icorrect.co.uk/intake/corporate-enquiry',
     formSelector: 'form[data-contact-intercept="true"]',
     debug: false
   };
