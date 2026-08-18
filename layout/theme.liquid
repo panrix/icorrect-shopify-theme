@@ -27,22 +27,31 @@
       {%- endunless -%}
     {%- endunless -%}
 
+    {%- liquid
+      assign seo_page_title = page_title
+      assign seo_page_description = page_description
+
+      if request.page_type == 'index'
+        assign seo_page_title = 'iCorrect: MacBook, iPhone & iPad Repair Specialists'
+        assign seo_page_description = 'UK MacBook, iPhone and iPad repair specialists. Original parts, advanced diagnostics and component-level repairs, backed by a 2-year warranty.'
+      elsif request.page_type == 'blog' and blog.handle == 'news'
+        assign seo_page_title = 'Apple Repair Advice & News | iCorrect London'
+        assign seo_page_description = 'Apple repair advice and news from iCorrect London, covering MacBook, iPhone and iPad faults, diagnostics, parts, maintenance and repair options.'
+      endif
+    -%}
+
     <title>
-      {%- if template == 'index' -%}
-        iCorrect: MacBook, iPhone &amp; iPad Repair Specialists
-      {%- else -%}
-        {{ page_title }}
-        {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
-      {%- endif -%}
+      {{- seo_page_title | escape -}}
+      {%- unless seo_page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
       {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
       {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
     </title>
 
-    {% if page_description %}
-      <meta name="description" content="{{ page_description | escape }}">
+    {% if seo_page_description %}
+      <meta name="description" content="{{ seo_page_description | escape }}">
     {% endif %}
 
-    {% render 'meta-tags' %}
+    {% render 'meta-tags', seo_page_title: seo_page_title, seo_page_description: seo_page_description %}
 
     <script src="{{ 'constants.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'pubsub.js' | asset_url }}" defer="defer"></script>
@@ -310,6 +319,7 @@
     </script>
 
   {% render 'icorrect-seo-schema' %}
+  {% render 'icorrect-faq-page-schema' %}
 
   {% comment %} Keep Meta attribution early (tiny, first-party cookies only). {% endcomment %}
   {% render 'meta-pixel-attribution' %}
