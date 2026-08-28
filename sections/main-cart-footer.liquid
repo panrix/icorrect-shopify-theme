@@ -18,12 +18,18 @@
 {%- endstyle -%}
 
 {%- liquid
-  assign one_off_walkin_blackout_date = '2026-05-04'
   assign has_one_off_blackout_booking = false
+  assign one_off_blackout_cart_message = ''
   for item in cart.items
     for property in item.properties
-      if property.first == 'Preferred Date' and property.last == one_off_walkin_blackout_date
-        assign has_one_off_blackout_booking = true
+      if property.first == 'Preferred Date'
+        if property.last == '2026-08-31'
+          assign has_one_off_blackout_booking = true
+          assign one_off_blackout_cart_message = 'We are closed on Monday 31 August 2026 for the UK bank holiday. Please remove this walk-in appointment and choose another weekday.'
+        elsif property.last == '2026-05-04'
+          assign has_one_off_blackout_booking = true
+          assign one_off_blackout_cart_message = 'We are closed on Monday 4 May 2026 for the UK bank holiday. Please remove this walk-in appointment and choose another weekday.'
+        endif
       endif
     endfor
   endfor
@@ -119,7 +125,7 @@
               <div class="cart__ctas" {{ block.shopify_attributes }}>
                 {%- if has_one_off_blackout_booking -%}
                   <p class="cart__checkout-error" role="alert">
-                    We are closed on Monday 4 May 2026 for the UK bank holiday. Please remove this walk-in appointment and choose another weekday.
+                    {{ one_off_blackout_cart_message }}
                   </p>
                 {%- endif -%}
                 <button
