@@ -1132,7 +1132,8 @@ window.WIZARD_CFG = {
     var my = maxDate.getFullYear(), mm = String(maxDate.getMonth() + 1).padStart(2, '0'), md = String(maxDate.getDate()).padStart(2, '0');
     dateInput.max = my + '-' + mm + '-' + md;
     var oneOffBlackoutDates = {
-      '2026-05-04': 'We are closed on Monday 4 May 2026 for the UK bank holiday. Please choose another weekday.'
+      '2026-05-04': 'We are closed on Monday 4 May 2026 for the UK bank holiday. Please choose another weekday.',
+      '2026-08-31': 'We are closed on Monday 31 August 2026 for the UK bank holiday. Please choose another weekday.'
     };
 
     function formatDateValue(date) {
