@@ -20,6 +20,10 @@ This follows the same one-off blackout map as Early May (`docs/walk-in-bank-holi
   - Adds a defensive cart checkout guard for stale carts that already contain a walk-in line item with `Preferred Date` of `2026-08-31` or `2026-05-04`.
   - Disables the cart checkout button and hides accelerated checkout buttons until the invalid walk-in appointment is removed.
 
+- `snippets/cart-drawer.liquid`
+  - Same stale-cart checkout guard on the live bag-icon drawer (`cart_type` is `drawer` in theme settings).
+  - Disables `#CartDrawer-Checkout` and shows the date-specific closed message until the invalid walk-in appointment is removed.
+
 ## Customer-facing message
 
 > We are closed on Monday 31 August 2026 for the UK bank holiday. Please choose another weekday.
