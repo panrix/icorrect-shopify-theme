@@ -128,6 +128,33 @@ Total walk-in demand today = website £9.5k + counter SumUp £10.8k ≈ **£20.3
 
 **The honest summary:** survival needs ~56% blended keep + October corporate. The £6.5k + growth version needs that PLUS one more engine (AdWords, trade-in, or a new corporate account). Two engines and January is a genuinely good business. The £5–10k sellable stock is the valley buffer — sell it in Sep–Oct, don't build it into run-rate.
 
+## 8. Scenario C — NO corporate, trade-in lane instead (Ricky 2026-09-11 06:12)
+
+**Premises:** corporate never lands. Trade-in/buy-sell (own channel, Back Market-style but ours) ramps to **£5k/mo sales**. Trade-in contribution ASSUMPTION: ~40–50% on own-channel refurb sales (no BM fees; donor stock + parts; existing £5–10k stock seeds it) ≈ **£2–2.5k/mo contribution** at £5k sales. Trade-in COGS adds ~£1.5k to cost base after ramp.
+
+| Month | Income | Costs | Net |
+|---|---:|---:|---:|
+| Sep | ~£31k (courier keep) | £30.4k | +£0.6k |
+| Oct–Nov — Nancy £10k + card £5k, trade-in ramping ~£2k sales | ~£33k | £45.4k | **−£12.4k/mo** |
+| Oct–Nov — if Nancy stretched to £5k/mo | ~£33k | £40.4k | **−£7.4k/mo** |
+| Dec–Jan — Nancy done, trade-in at £5k | ~£36k | ~£31.9k | **+£4.1k/mo** |
+
+**Bridge needed, no-corporate: ~£20k+** (vs £15k staged with corporate). And the December shape is +£4.1k/mo — **which does not cover Ricky's £6.5k**. No-corporate = survival, but owner pay waits for trade-in >£5k or diagnostics trend to compound (~2 quarters).
+
+**Scenario comparison, December–January steady state:**
+
+| | B: corporate £7–10k | C: no corporate + trade-in £5k |
+|---|---:|---:|
+| Income | £38–41k | ~£36k |
+| Net/mo | **+£8–11k** | **+£4.1k** |
+| Bridge required | £15k staged | £20k+ |
+| Ricky £6.5k | from Jan | not yet — partial only |
+| Bridge payback | ~2 months | ~5–6 months |
+
+**Verdict on the raise-vs-return question:** the £15k raise looks "humongous vs return" only in Scenario C. In Scenario B the same £15k buys +£8–11k/mo by January — ~2-month payback, which is an exceptional return on a bridge. **Corporate is not a nice-to-have in this model; it IS the difference between a grind and a business.** The five handshake calls this week are therefore the highest-value hours available — they decide which scenario you're raising against.
+
+**Trade-in synergy worth naming:** the courier module shipping this weekend IS the trade-in collection rail — free collection + fast payout + MacBook-first is exactly the tier-1 courier offer with a buy price instead of a repair price. Building courier-first now means the trade-in lane launches with its logistics already done.
+
 ## 5. Open items for Ricky
 
 1. ~~Corporate return path~~ → **answered 04:38: £0 modelled until Oct, then £7–10k. Residual: get written billing-confirmation per account in September.**
