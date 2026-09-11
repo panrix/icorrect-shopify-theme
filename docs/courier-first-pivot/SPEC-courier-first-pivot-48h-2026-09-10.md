@@ -6,6 +6,8 @@ _Date: 2026-09-10 · Initiative: **courier-first-pivot** · Code repo: `panrix/i
 
 **Explicitly OUT OF SCOPE:** live Gophr quoting in the browser, real capacity/slot API (D-09 system), payment-link-at-intake, trade-in module (parked by Ricky 2026-09-10), new website build, national DHL journey (copy mention only), warehouse move.
 
+**RULING 2026-09-11 08:53 UTC (Ricky): PURE collection & delivery.** No drop-off at all — no booked slots, no walk-in, no exceptions on the website. The wizard offers exactly two paths: London courier collection or free mail-in pack. UI reference = Ricky's May prototype (`panrix/workshop-os` courier-quote-lab 2026-05-23, ServiceMapper.jsx) with the `walkin` branch deleted — NOT the orchestrator mockups (superseded). Ops note: reception iPad flow (PR #405, drop-off-only) now contradicts the door policy — walk-ups must be redirected to "book a collection"; separate workshop-os change, not this repo.
+
 ---
 
 ## 1. End-to-end flow (the map)
@@ -42,11 +44,9 @@ Customer lands on site
 - Wizard maths: `customer_price = band_price × tier_modifier` (free=0, subsidised≈0.5, full=1).
 - Tier assignment follows Ricky's ruling: high-value repairs + silicon-level diagnostics = free; mid = subsidised; low-margin (iPhone battery class) = full. **This explicitly overrules parked ruling D-08** (no subsidy until margin evidence) — Ricky ruled 2026-09-10.
 
-### C. Quote wizard changes (`sections/quote-wizard.liquid`)
-- Replace Walk-in-first service step with three options above.
-- Postcode field (outward-code validation only) when courier selected.
-- Collection window copy from static table (cutoff-based, not live capacity).
-- Walk-in date/time picker survives ONLY inside "Booked drop-off", with static daily cap (e.g. 4 slots/day, fixed day-parts) — no backend, just config + copy "limited slots".
+### C. Quote wizard changes (`sections/quote-wizard.liquid`) — v2 per PURE C&D ruling
+- **Remove walk-in entirely** (4 zones: product config L92–101, service card + picker panel L1072–1108, picker wiring L1109–1160, cart branch L1912–1960).
+- Service step = Ricky's May prototype design (ServiceMapper.jsx) ported to Liquid: courier (postcode → band × tier price + window copy) or mail-in. No third option.
 - Same change in `snippets/additional-repair.liquid` (product-page booker).
 
 ### D. Walk-in retraction copy sweep
