@@ -322,9 +322,20 @@
     "iphone_repair_link_BsQNw": {
       "type": "iphone-repair-link",
       "settings": {}
+    },
+    "quote_wizard_top": {
+      "type": "quote-wizard",
+      "settings": {
+        "heading": "Get a repair quote",
+        "subheading": "Courier collection across London, or free tracked mail-in nationwide.",
+        "show_map": false,
+        "prefill_mode": "auto",
+        "skip_to_service": false
+      }
     }
   },
   "order": [
+    "quote_wizard_top",
     "banner",
     "product-grid",
     "iphone_repair_link_BsQNw",

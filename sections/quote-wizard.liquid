@@ -3,10 +3,8 @@
      All 37 improvements from unified plan
      ============================================ -->
 
-<!-- [1.1] DM Sans font -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<!-- [1.1] May prototype visual system — Geist + quote-wizard.css (#53 slice 3) -->
+{{ 'quote-wizard.css' | asset_url | stylesheet_tag }}
 
 <!-- LIQUID DATA LAYER -->
 <script>
@@ -63,22 +61,28 @@ window.WIZARD_CONTEXT = {
   pageType: "{{ template.name }}",
   collectionHandle: {{ collection.handle | default: '' | json }},
   productHandle: {{ product.handle | default: '' | json }},
+  productVariantId: {% if product %}{{ product.selected_or_first_available_variant.id | json }}{% else %}null{% endif %},
+  productPrice: {% if product %}{{ product.price | money_without_currency | replace: ',', '' | json }}{% else %}null{% endif %},
+  productTags: {% if product %}{{ product.tags | json }}{% else %}[]{% endif %},
+  prefillDevice: {{ section.settings.prefill_device | default: '' | json }},
+  prefillFault: {{ section.settings.prefill_fault | default: '' | json }},
+  prefillMode: {{ section.settings.prefill_mode | default: 'auto' | json }},
+  skipToService: {{ section.settings.skip_to_service | default: false | json }},
   {%- if product -%}
-    {%- comment -%}On product pages, collect ALL repair-prices collections so JS can find the model-specific one{%- endcomment -%}
     modelCollections: [
       {%- for col in product.collections -%}
         {%- if col.handle contains 'repair-prices' -%}
           {{ col.handle | json }},{%- endif -%}
       {%- endfor -%}
     ],
-    device: {{ product.metafields.custom.wizard_device | default: '' | json }},
-    fault: ""
+    device: {{ product.metafields.custom.wizard_device | default: section.settings.prefill_device | default: '' | json }},
+    fault: {{ section.settings.prefill_fault | default: '' | json }}
   {%- elsif collection -%}
-    device: {{ collection.metafields.custom.wizard_device | default: '' | json }},
-    fault: {{ collection.metafields.custom.wizard_fault | default: '' | json }}
+    device: {{ collection.metafields.custom.wizard_device | default: section.settings.prefill_device | default: '' | json }},
+    fault: {{ collection.metafields.custom.wizard_fault | default: section.settings.prefill_fault | default: '' | json }}
   {%- else -%}
-    device: "",
-    fault: ""
+    device: {{ section.settings.prefill_device | default: '' | json }},
+    fault: {{ section.settings.prefill_fault | default: '' | json }}
   {%- endif -%}
 };
 </script>
@@ -90,14 +94,17 @@ window.WIZARD_CONTEXT = {
 
 <!-- Service products + courier assets (#53) — PURE collection & delivery, no walk-in -->
 {%- assign mail_in_prod = all_products['mail-in-service'] -%}
-<script src="{{ 'courier-pricing.js' | asset_url }}" defer></script>
-<script src="{{ 'repair-catalogue.js' | asset_url }}" defer></script>
+<script src="{{ 'courier-pricing.js' | asset_url }}"></script>
+<script src="{{ 'courier-slots.js' | asset_url }}"></script>
+<script src="{{ 'wizard-prefill.js' | asset_url }}"></script>
+<script src="{{ 'repair-catalogue.js' | asset_url }}"></script>
 <script>
 window.WIZARD_CFG = {
   warrantyLabel: {{ section.settings.warranty_label | default: '2-year warranty' | json }},
   diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: '2 working days' | json }},
   bandsUrl: {{ 'courier-london-bands.json' | asset_url | json }},
   catalogueUrl: {{ 'repair-catalogue-map.json' | asset_url | json }},
+  collectionPrefillUrl: {{ 'wizard-collection-prefill.json' | asset_url | json }},
   serviceAdjustmentsUrl: {{ 'service-adjustment-variants.json' | asset_url | json }},
   /* Inline IDs so checkout never waits on a fetch for money-path (#53) */
   serviceAdjustments: {
@@ -174,11 +181,14 @@ window.__QW_CATALOGUE = null;
       </div>
 
       <!-- Step indicator -->
-      <div class="qw-prog" role="navigation" aria-label="Progress">
-        <div class="qw-prog-s on" data-s="1"><div class="qw-prog-dot">1</div><span class="qw-prog-lbl">Device</span><div class="qw-prog-line"></div></div>
-        <div class="qw-prog-s" data-s="2"><div class="qw-prog-dot">2</div><span class="qw-prog-lbl">Model</span><div class="qw-prog-line"></div></div>
-        <div class="qw-prog-s" data-s="3"><div class="qw-prog-dot">3</div><span class="qw-prog-lbl">Fault</span><div class="qw-prog-line"></div></div>
-        <div class="qw-prog-s" data-s="4"><div class="qw-prog-dot">4</div><span class="qw-prog-lbl">Result</span></div>
+      <div class="qw-progress qw-prog" role="navigation" aria-label="Progress">
+        <div class="qw-progress-top"><span class="qw-mono" id="qwProgMono">Step 1 of 4</span></div>
+        <div class="qw-dots">
+          <button type="button" class="qw-dot qw-prog-s current on" data-s="1"><span class="qw-dot-num qw-prog-dot">1</span><span class="qw-dot-label qw-prog-lbl">Device</span></button>
+          <button type="button" class="qw-dot qw-prog-s" data-s="2" disabled><span class="qw-dot-num qw-prog-dot">2</span><span class="qw-dot-label qw-prog-lbl">Model</span></button>
+          <button type="button" class="qw-dot qw-prog-s" data-s="3" disabled><span class="qw-dot-num qw-prog-dot">3</span><span class="qw-dot-label qw-prog-lbl">Fault</span></button>
+          <button type="button" class="qw-dot qw-prog-s" data-s="4" disabled><span class="qw-dot-num qw-prog-dot">4</span><span class="qw-dot-label qw-prog-lbl">Service</span></button>
+        </div>
       </div>
 
       <!-- [4.3] Breadcrumb -->
@@ -186,16 +196,16 @@ window.__QW_CATALOGUE = null;
 
       <!-- Step 1: Devices -->
       <div class="qw-step on" id="qw-s1">
-        <h3 class="qw-s-title">What needs fixing?</h3>
-        <p class="qw-s-sub">Pick your device to get started.</p>
-        <div class="qw-dev-grid" id="qw-devGrid"></div>
+        <h3 class="qw-step-title qw-s-title">What needs fixing?</h3>
+        <p class="qw-step-sub qw-s-sub">Pick your device to get started.</p>
+        <div class="qw-device-grid qw-dev-grid" id="qw-devGrid"></div>
       </div>
 
       <!-- Step 2: Models -->
       <div class="qw-step" id="qw-s2">
-        <button class="qw-back" id="qw-back2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
-        <h3 class="qw-s-title" id="qw-s2t"></h3>
-        <p class="qw-s-sub">Pick your exact model for accurate pricing.</p>
+        <button class="qw-btn-back qw-back" id="qw-back2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+        <h3 class="qw-step-title qw-s-title" id="qw-s2t"></h3>
+        <p class="qw-step-sub qw-s-sub">Pick your exact model for accurate pricing.</p>
         <div id="qw-mC"></div>
         <button class="qw-help-trig" id="qw-hT">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
@@ -206,18 +216,18 @@ window.__QW_CATALOGUE = null;
 
       <!-- Step 3: Faults -->
       <div class="qw-step" id="qw-s3">
-        <button class="qw-back" id="qw-back3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
-        <h3 class="qw-s-title" id="qw-s3t"></h3>
-        <p class="qw-s-sub">Pick the category that fits best.</p>
-        <div class="qw-f-grid" id="qw-fC"></div>
+        <button class="qw-btn-back qw-back" id="qw-back3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+        <h3 class="qw-step-title qw-s-title" id="qw-s3t"></h3>
+        <p class="qw-step-sub qw-s-sub">Pick the category that fits best.</p>
+        <div class="qw-fault-grid qw-f-grid" id="qw-fC"></div>
       </div>
 
       <!-- Step 4: Issues + Result -->
       <div class="qw-step" id="qw-s4">
-        <button class="qw-back" id="qw-back4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
-        <h3 class="qw-s-title" id="qw-s4t"></h3>
-        <p class="qw-s-sub" id="qw-s4s"></p>
-        <div class="qw-t-grid" id="qw-tC"></div>
+        <button class="qw-btn-back qw-back" id="qw-back4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+        <h3 class="qw-step-title qw-s-title" id="qw-s4t"></h3>
+        <p class="qw-step-sub qw-s-sub" id="qw-s4s"></p>
+        <div class="qw-issue-list qw-t-grid" id="qw-tC"></div>
         <div id="qw-rP" style="display:none;margin-top:20px;"></div>
       </div>
     </div>
@@ -490,7 +500,7 @@ window.__QW_CATALOGUE = null;
   /* =============================================
      STATE
      ============================================= */
-  var S = { device: null, model: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null, route: null, repairType: null, entrySource: null };
+  var S = { device: null, model: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null, route: null, repairType: null, entrySource: null , preVariantId: null, preRepairType: null };
   var _collectionCache = {}, _productCache = {}, _repairsMap = {}, _collectionProducts = [], _trackedSteps = {}, _trackedOps = {};
   var _stepStartTime = Date.now();
   var _suppressScroll = false;
@@ -953,7 +963,20 @@ window.__QW_CATALOGUE = null;
 
   function resolveRepairProduct(repairType, issueLabel) {
     /* Prefer catalogue map entry (#53) — no HTML scrape for price/variant. */
-    if (_repairsMap && _repairsMap[repairType]) return _repairsMap[repairType];
+    if (_repairsMap && _repairsMap[repairType]) {
+      var mapped = _repairsMap[repairType];
+      /* Product-page prefill: lock to the exact variant when known */
+      if (S.preVariantId && mapped && mapped.variants && mapped.variants.length) {
+        var locked = null;
+        for (var vi = 0; vi < mapped.variants.length; vi++) {
+          if (String(mapped.variants[vi].id) === String(S.preVariantId)) { locked = mapped.variants[vi]; break; }
+        }
+        if (locked) {
+          return Object.assign({}, mapped, { variants: [locked] });
+        }
+      }
+      return mapped;
+    }
     var products = getProductsForRepairType(repairType);
     if (!products.length) return null;
     if (products.length === 1) return products[0];
@@ -1105,6 +1128,9 @@ window.__QW_CATALOGUE = null;
         if (j && j.variants) CFG.serviceAdjustments = Object.assign({}, CFG.serviceAdjustments || {}, j.variants);
       }).catch(function(){ /* inline CFG IDs remain */ }));
     }
+        if (!window.__QW_COLLECTION_PREFILL && CFG.collectionPrefillUrl) {
+      jobs.push(fetch(CFG.collectionPrefillUrl).then(function(r){ return r.json(); }).then(function(j){ window.__QW_COLLECTION_PREFILL = j; }));
+    }
     return Promise.all(jobs);
   }
 
@@ -1180,39 +1206,106 @@ window.__QW_CATALOGUE = null;
     if (totalEl) totalEl.textContent = gbp.format(total);
   }
 
+  var _collectionSlot = { date: null, part: null };
+
   function buildServiceCards() {
     var courierHint = formatServiceCardHint(_courierQuote, 'courier');
     var mailHint = formatServiceCardHint(_courierQuote, 'mailin');
-    return '<div class="qw-opt-section">' +
-      '<div class="qw-opt-label">How do you want to get it to us?</div>' +
-      '<div class="qw-opt-row qw-svc-row">' +
-        '<div class="qw-opt-card sel" data-opt="svc" data-svc="courier" data-add="0" tabindex="0">' +
-          '<div class="qw-opt-name">Courier collection</div>' +
-          '<div class="qw-opt-meta">We collect from your door across London</div>' +
-          '<div class="qw-opt-price" id="qwCourierPriceLbl">' + courierHint + '</div>' +
+    return '<div class="qw-opt-section qw-service-mapper">' +
+      '<div class="qw-section-label">How do you want to get it to us?</div>' +
+      '<div class="qw-postcode-card" id="qwPostcodeCard">' +
+        '<label class="qw-postcode-label" for="qwPostcode">Collection postcode' +
+          '<span class="qw-postcode-hint">London postcodes unlock courier windows. Outside London we use tracked mail-in.</span>' +
+        '</label>' +
+        '<div class="qw-postcode-row">' +
+          '<input type="text" id="qwPostcode" class="qw-postcode-input qw-courier-inp" placeholder="e.g. SW11 8BJ" autocomplete="postal-code">' +
         '</div>' +
-        '<div class="qw-opt-card" data-opt="svc" data-svc="mailin" data-add="0" tabindex="0">' +
-          '<span class="qw-pop-tag" style="background:#0a72ef">Nationwide</span>' +
-          '<div class="qw-opt-name">Post it — mail-in pack</div>' +
-          '<div class="qw-opt-meta">Tracked, insured pack within 24h</div>' +
-          '<div class="qw-opt-price" id="qwMailinPriceLbl">' + mailHint + '</div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="qw-courier-panel" id="qwCourierPanel">' +
-        '<label class="qw-courier-lbl" for="qwPostcode">Collection postcode</label>' +
-        '<input type="text" id="qwPostcode" class="qw-courier-inp" placeholder="e.g. SW11 8BJ" autocomplete="postal-code">' +
         '<div class="qw-courier-result" id="qwCourierResult" hidden></div>' +
-        '<div class="qw-courier-note">Enter your postcode — your Total updates to the all-in price. Outside London we use tracked mail-in.</div>' +
+      '</div>' +
+      '<div class="qw-delivery-grid qw-opt-row qw-svc-row" id="qwDeliveryGrid">' +
+        '<button type="button" class="qw-delivery-card qw-opt-card sel active" data-opt="svc" data-svc="courier" data-add="0">' +
+          '<span class="qw-delivery-badge">Popular</span>' +
+          '<span class="qw-delivery-radio" aria-hidden="true"><span></span></span>' +
+          '<span class="qw-delivery-body">' +
+            '<span class="qw-delivery-title qw-opt-name">Courier collection</span>' +
+            '<span class="qw-delivery-sub qw-opt-meta">We collect from your door across London</span>' +
+          '</span>' +
+          '<span class="qw-delivery-price qw-opt-price" id="qwCourierPriceLbl">' + courierHint + '</span>' +
+        '</button>' +
+        '<button type="button" class="qw-delivery-card qw-opt-card" data-opt="svc" data-svc="mailin" data-add="0">' +
+          '<span class="qw-delivery-radio" aria-hidden="true"><span></span></span>' +
+          '<span class="qw-delivery-body">' +
+            '<span class="qw-delivery-title qw-opt-name">Post it — mail-in pack</span>' +
+            '<span class="qw-delivery-sub qw-opt-meta">Tracked, insured pack within 24h</span>' +
+          '</span>' +
+          '<span class="qw-delivery-price qw-opt-price" id="qwMailinPriceLbl">' + mailHint + '</span>' +
+        '</button>' +
+      '</div>' +
+      '<div class="qw-slot-panel" id="qwSlotPanel" hidden>' +
+        '<div class="qw-section-label">Pick a collection window</div>' +
+        '<div class="qw-date-grid" id="qwSlotDates"></div>' +
+        '<div class="qw-window-grid" id="qwSlotParts" style="margin-top:10px"></div>' +
+        '<div class="qw-fineprint" id="qwSlotHint"></div>' +
       '</div>' +
       '<div class="qw-mailin-panel" id="qwMailinPanel" style="display:none">' +
-        '<div class="qw-courier-note">We post a tracked, insured pack. Your Total above is the all-in price for this repair.</div>' +
+        '<div class="qw-fineprint">We post a tracked, insured pack. Your Total above is the all-in price for this repair.</div>' +
       '</div>' +
       '<div class="qw-courier-err" id="qwServiceErr"></div>' +
     '</div>';
   }
 
+  function renderCollectionSlots(band) {
+    var panel = document.getElementById('qwSlotPanel');
+    var datesEl = document.getElementById('qwSlotDates');
+    var partsEl = document.getElementById('qwSlotParts');
+    var hintEl = document.getElementById('qwSlotHint');
+    if (!panel || !datesEl || !partsEl || !window.ICorrectCourierSlots) {
+      if (panel) panel.hidden = true;
+      return;
+    }
+    var listed = window.ICorrectCourierSlots.listCollectionDates(band, { count: 8, includeWeekends: false });
+    if (hintEl) hintEl.textContent = listed.gate.reason || '';
+    datesEl.innerHTML = listed.dates.map(function(d, i) {
+      var label = d.headline || (d.labelDow + ' ' + d.labelDay);
+      return '<button type="button" class="qw-date-btn' + (i === 0 ? ' active' : '') + '" data-iso="' + d.iso + '" data-idx="' + i + '">' +
+        '<span class="qw-date-dow">' + (d.headline || d.labelDow) + '</span>' +
+        '<span class="qw-date-day">' + d.labelDay + '</span>' +
+        '<span class="qw-date-mon">' + d.labelMon + '</span></button>';
+    }).join('');
+    var parts = window.ICorrectCourierSlots.dayParts();
+    partsEl.innerHTML = parts.map(function(p, i) {
+      return '<button type="button" class="qw-window-btn' + (i === 0 ? ' active' : '') + '" data-part="' + p.id + '">' +
+        p.label + '<br><span style="font-weight:400;font-size:11px">' + p.detail + '</span></button>';
+    }).join('');
+    _collectionSlot.date = listed.dates[0] || null;
+    _collectionSlot.part = parts[0] || null;
+    panel.hidden = false;
+
+    datesEl.querySelectorAll('.qw-date-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        datesEl.querySelectorAll('.qw-date-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        var idx = parseInt(btn.getAttribute('data-idx'), 10);
+        _collectionSlot.date = listed.dates[idx] || null;
+      });
+    });
+    partsEl.querySelectorAll('.qw-window-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        partsEl.querySelectorAll('.qw-window-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        var id = btn.getAttribute('data-part');
+        _collectionSlot.part = parts.filter(function(p) { return p.id === id; })[0] || null;
+      });
+    });
+  }
+
   function applyCourierQuoteToUI(quote) {
     _courierQuote = quote;
+    var slotPanel = document.getElementById('qwSlotPanel');
+    if (slotPanel && !(quote && quote.service === 'courier')) {
+      slotPanel.hidden = true;
+      _collectionSlot = { date: null, part: null };
+    }
     var priceLbl = document.getElementById('qwCourierPriceLbl');
     var mailLbl = document.getElementById('qwMailinPriceLbl');
     var result = document.getElementById('qwCourierResult');
@@ -1238,9 +1331,11 @@ window.__QW_CATALOGUE = null;
       var win = collectionWindowCopy(quote.band);
       result.hidden = false;
       result.innerHTML =
-        '<div class="qw-courier-why">Band ' + quote.band + ' · ' + win.headline + '</div>' +
-        '<div class="qw-courier-win">' + win.detail + '</div>' +
-        '<div class="qw-courier-note">Price shown in Total includes collection &amp; return.</div>';
+        '<div class="qw-courier-confirm"><strong>Band ' + quote.band + '</strong> · ' + win.headline +
+        '<br>' + win.detail + '</div>';
+      var pcCard = document.getElementById('qwPostcodeCard');
+      if (pcCard) pcCard.classList.add('qw-postcode-card-resolved');
+      renderCollectionSlots(quote.band);
     } else if (quote && quote.forcedMailIn) {
       result.hidden = false;
       result.innerHTML = '<div class="qw-courier-why">Courier isn\'t available for this repair in your area.</div>' +
@@ -1553,10 +1648,36 @@ window.__QW_CATALOGUE = null;
       renderIssues(S.device, pf);
       trackWizardStep(4);
       go(4);
+      /* Product / skip_to_service: auto-pick matching issue → service resolution (#53) */
+      if (CONTEXT.skipToService || S.preVariantId) {
+        autoPickIssueForPrefill(pf);
+      }
       return;
     }
     renderFaults(S.device);
     go(3);
+  }
+
+
+  function autoPickIssueForPrefill(faultKey) {
+    var issues = getAvailableIssues(S.device, faultKey, _repairsMap);
+    if (!issues || !issues.length) return;
+    var wantType = S.preRepairType || null;
+    S.preRepairType = null;
+    var match = null;
+    var i;
+    if (wantType) {
+      for (i = 0; i < issues.length; i++) {
+        if (issues[i].repairType === wantType && issues[i].route === 'repair') { match = issues[i]; break; }
+      }
+    }
+    if (!match) {
+      for (i = 0; i < issues.length; i++) {
+        if (issues[i].route === 'repair' && _repairsMap[issues[i].repairType]) { match = issues[i]; break; }
+      }
+    }
+    if (!match) match = issues[0];
+    if (match) pickIssue(match, null);
   }
 
   /* =============================================
@@ -2034,11 +2155,23 @@ window.__QW_CATALOGUE = null;
         if (errBox) errBox.textContent = 'Courier isn\'t available for that postcode — choose mail-in instead.';
         return null;
       }
-      var win = collectionWindowCopy(_courierQuote.band);
+      if (!_collectionSlot.date || !_collectionSlot.part) {
+        if (errBox) errBox.textContent = 'Pick a collection date and window.';
+        return null;
+      }
+      var slotProps = window.ICorrectCourierSlots
+        ? window.ICorrectCourierSlots.slotCartProperties(_collectionSlot.date, _collectionSlot.part)
+        : null;
       items[0].properties['Service Type'] = 'Courier collection';
       items[0].properties['Postcode'] = postcode.toUpperCase();
       items[0].properties['Band'] = _courierQuote.band || '';
-      items[0].properties['Collection Window'] = win.headline;
+      if (slotProps) {
+        items[0].properties['Collection Date'] = slotProps['Collection Date'];
+        items[0].properties['Collection Window'] = slotProps['Collection Window'];
+      } else {
+        var win = collectionWindowCopy(_courierQuote.band);
+        items[0].properties['Collection Window'] = win.headline;
+      }
     } else {
       items[0].properties['Service Type'] = 'Mail-in';
       var postcodeInputMi = document.getElementById('qwPostcode');
@@ -2876,6 +3009,51 @@ document.getElementById('qwEqErr').style.display = 'none';
     var ctx = CONTEXT;
     _suppressScroll = true; /* Don't scroll during init - page should load from top */
 
+    /* Section setting overrides */
+    if (ctx && ctx.prefillDevice) ctx.device = ctx.device || ctx.prefillDevice;
+    if (ctx && ctx.prefillFault) ctx.fault = ctx.fault || ctx.prefillFault;
+
+    /* Collection handle → device/fault via data rules (#53 slice 3) */
+    if (ctx && ctx.collectionHandle && window.ICorrectWizardPrefill && window.__QW_COLLECTION_PREFILL) {
+      var cp = window.ICorrectWizardPrefill.resolveCollectionPrefill(ctx.collectionHandle, window.__QW_COLLECTION_PREFILL);
+      if (cp.device && !ctx.device) ctx.device = cp.device;
+      if (cp.fault && !ctx.fault) ctx.fault = cp.fault;
+    }
+
+    /* CASE 0: Product page — catalogue map reverse lookup lands on service step */
+    if (ctx && ctx.productHandle && window.ICorrectWizardPrefill && window.__QW_CATALOGUE) {
+      var hit = window.ICorrectWizardPrefill.resolveProductPrefill(window.__QW_CATALOGUE, {
+        handle: ctx.productHandle,
+        variantId: ctx.productVariantId
+      });
+      if (hit) {
+        S.device = hit.device;
+        S.preRepairType = hit.fault;
+        S.preFault = REPAIR_TYPE_TO_FAULT[hit.fault] || hit.fault;
+        S.preVariantId = hit.variantId || null;
+        if (S.preFault === '_diagnostic') S.preFault = null;
+        trackWizardEntry('product_catalogue', { productHandle: ctx.productHandle, fault: hit.fault });
+        renderDevices();
+        /* Prefer linklist model match; fall back to device+fault */
+        var cols = ctx.modelCollections || [];
+        var modelMatch = null;
+        for (var ci = 0; ci < cols.length; ci++) {
+          modelMatch = findModelByCollection(cols[ci]);
+          if (modelMatch) break;
+        }
+        if (modelMatch) {
+          pickModel(modelMatch.model.name, modelMatch.model.collectionHandle, null).then(function() {
+            _suppressScroll = false;
+          });
+        } else {
+          renderModels(hit.device);
+          go(2);
+          _suppressScroll = false;
+        }
+        return;
+      }
+    }
+
     /* CASE 1: Product page — pre-fill device + model, derive fault from handle */
     if (ctx && ctx.productHandle) {
       var cols = ctx.modelCollections || [];
@@ -2995,365 +3173,31 @@ document.getElementById('qwEqErr').style.display = 'none';
      INIT
      ============================================= */
   wireProgDots();
-  initPrefill();
+  function bootPrefill() {
+    ensureCourierAssets().then(function() {
+      initPrefill();
+    }).catch(function() {
+      initPrefill();
+    });
+  }
+  if (window.ICorrectWizardPrefill && window.ICorrectCourierSlots && window.ICorrectCatalogue) {
+    bootPrefill();
+  } else if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootPrefill);
+  } else {
+    bootPrefill();
+  }
 
 })();
 </script>
 
 <!-- CSS -->
 <style>
-/* ========================================
-   VARIABLES & BASE
-   ======================================== */
-.qw-section {
-  --qw-dark:#0f0f14;--qw-text:#1d1d2b;--qw-text-2:#4a4a5c;--qw-text-3:#8c8c9e;
-  --qw-accent:#2563eb;--qw-accent-h:#1d4ed8;--qw-accent-bg:#eff4ff;
-  --qw-bg:#f6f7f9;--qw-white:#ffffff;--qw-line:#e4e6ec;--qw-line-h:#cdd0da;
-  --qw-green:#059669;--qw-green-bg:#ecfdf5;--qw-amber:#D97706;--qw-amber-bg:#fffbeb;
-  --qw-blue:#2563eb;--qw-blue-bg:#eff4ff;
-  --qw-r-sm:8px;--qw-r-md:12px;--qw-r-lg:16px;
-  --qw-sh-1:0 1px 2px rgba(15,15,20,0.04);--qw-sh-2:0 4px 12px rgba(15,15,20,0.07);
-  --qw-sh-focus:0 0 0 3px rgba(37,99,235,0.12);--qw-ease:0.2s cubic-bezier(0.4,0,0.2,1);
-  font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  color:var(--qw-text);-webkit-font-smoothing:antialiased;letter-spacing:-0.015em;line-height:1.5;
-  width:100%;padding:40px 16px;
-}
-@media(min-width:1024px){.qw-section{padding:56px 24px;}}
-
-/* Scroll clearance for sticky header */
-.qw-section .qw-prog,
-.qw-section .qw-res,
-.qw-section .qw-res-badge,
-.qw-section .qw-res-h,
-.qw-section .qw-c-acc,
-.qw-section .qw-step,
-.qw-section .qw-s-title,
-.qw-section #qw-rP{scroll-margin-top:120px;}
-
-/* LAYOUT */
-.qw-wrap{max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:32px;}
-@media(min-width:1024px){.qw-wrap{flex-direction:row;align-items:flex-start;gap:52px;}.qw-info{width:44%;flex-shrink:0;position:sticky;top:28px;}.qw-wizard{width:56%;}}
-/* [1.2] Mobile: wizard above map */
-@media(max-width:1023px){.qw-info{order:2;}.qw-wizard{order:1;}}
-
-/* LEFT: MAP + DETAILS */
-.qw-info{display:flex;flex-direction:column;gap:16px;}
-.qw-map{width:100%;height:240px;border-radius:var(--qw-r-lg);overflow:hidden;border:1px solid var(--qw-line);box-shadow:var(--qw-sh-1);}
-@media(min-width:1024px){.qw-map{height:auto;aspect-ratio:4/3;}}
-.qw-map iframe{width:100%;height:100%;border:0;display:block;}
-.qw-card{background:var(--qw-white);border:1px solid var(--qw-line);border-radius:var(--qw-r-lg);overflow:hidden;}
-.qw-card-grid{display:grid;grid-template-columns:1fr;}
-@media(min-width:560px){.qw-card-grid{grid-template-columns:1fr 1fr;}.qw-card-left{border-right:1px solid var(--qw-line);border-bottom:none;}}
-.qw-card-left{border-bottom:1px solid var(--qw-line);}
-.qw-card-col{padding:20px;display:flex;flex-direction:column;gap:14px;}
-.qw-d-group{display:flex;flex-direction:column;gap:5px;}
-.qw-d-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--qw-text-3);display:flex;align-items:center;gap:5px;margin:0;}
-.qw-d-label svg{width:14px;height:14px;color:var(--qw-accent);flex-shrink:0;}
-.qw-d-val{font-size:14px;font-weight:500;line-height:1.5;color:var(--qw-text);text-decoration:none;display:block;}
-a.qw-d-val:hover{color:var(--qw-accent);}
-.qw-hrs{display:grid;grid-template-columns:80px 1fr;gap:4px 10px;font-size:13px;}
-.qw-hrs-d{color:var(--qw-text-3);font-weight:500;}.qw-hrs-t{color:var(--qw-text);font-weight:600;}
-
-/* WIZARD */
-.qw-wizard{display:flex;flex-direction:column;}
-.qw-head{margin-bottom:28px;}
-.qw-title{font-size:clamp(28px,4.5vw,48px);font-weight:700;line-height:1.08;letter-spacing:-0.035em;color:var(--qw-dark);margin:0 0 8px;}
-.qw-sub{font-size:clamp(14px,1.1vw,16px);font-weight:400;line-height:1.55;color:var(--qw-text-2);margin:0;}
-/* STEP INDICATOR */
-.qw-prog{display:flex;align-items:center;margin-bottom:24px;}
-.qw-prog-s{display:flex;align-items:center;gap:6px;flex:1;cursor:pointer;}
-.qw-prog-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all var(--qw-ease);border:2px solid var(--qw-line);background:var(--qw-white);color:var(--qw-text-3);}
-.qw-prog-s.on .qw-prog-dot{background:var(--qw-accent);border-color:var(--qw-accent);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,0.2);}
-.qw-prog-s.done .qw-prog-dot{background:var(--qw-dark);border-color:var(--qw-dark);color:#fff;}
-.qw-prog-lbl{font-size:11px;font-weight:600;color:var(--qw-text-3);display:none;white-space:nowrap;}
-.qw-prog-s.on .qw-prog-lbl{color:var(--qw-accent);display:block;}
-.qw-prog-s.done .qw-prog-lbl{color:var(--qw-dark);display:block;}
-@media(min-width:560px){.qw-prog-lbl{display:block;}}
-.qw-prog-line{flex:1 1 auto !important;height:2px;background:var(--qw-line-h);margin:0 6px;border-radius:1px;transition:background var(--qw-ease);min-width:16px !important;display:block !important;}
-.qw-prog-s.done .qw-prog-line{background:var(--qw-dark);}
-.qw-prog-s:last-child .qw-prog-line{display:none !important;}
-
-/* [4.3] Breadcrumb */
-.qw-crumb{display:flex;align-items:center;flex-wrap:wrap;gap:2px;margin-bottom:16px;min-height:20px;}
-.qw-crumb:empty{margin-bottom:0;min-height:0;}
-.qw-crumb-btn{background:none;border:none;font-family:inherit;font-size:12px;font-weight:500;color:var(--qw-accent);cursor:pointer;padding:2px 4px;border-radius:4px;transition:background var(--qw-ease);}
-.qw-crumb-btn:hover{background:var(--qw-accent-bg);}
-.qw-crumb-sep{color:var(--qw-text-3);font-size:12px;margin:0 1px;}
-
-/* STEPS */
-.qw-step{display:none;animation:qwFadeUp .28s ease-out;}
-.qw-step.on{display:block;}
-@keyframes qwFadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-.qw-s-title{font-size:clamp(18px,2.2vw,26px);font-weight:700;letter-spacing:-0.025em;line-height:1.12;margin:0 0 4px;color:var(--qw-dark);}
-.qw-s-sub{font-size:14px;color:var(--qw-text-2);margin:0 0 20px;line-height:1.5;}
-.qw-back{display:inline-flex;align-items:center;gap:5px;background:none;border:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--qw-text-3);cursor:pointer;padding:6px 0;margin-bottom:14px;transition:color var(--qw-ease);}
-.qw-back:hover{color:var(--qw-text);}
-.qw-back svg{width:15px;height:15px;}
-
-/* DEVICE GRID */
-.qw-dev-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
-@media(min-width:480px){.qw-dev-grid{grid-template-columns:repeat(3,1fr);}}
-@media(min-width:680px){.qw-dev-grid{grid-template-columns:repeat(4,1fr);}}
-.qw-dev{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px 10px;background:var(--qw-white);border:2px solid var(--qw-line);border-radius:var(--qw-r-md);cursor:pointer;transition:all var(--qw-ease);min-height:100px;text-align:center;-webkit-tap-highlight-color:transparent;}
-.qw-dev:hover{border-color:var(--qw-line-h);box-shadow:var(--qw-sh-2);transform:translateY(-2px);}
-.qw-dev:active{transform:scale(0.97);}
-/* [5.3] Selection animation */
-.qw-dev.sel,.qw-f-card.sel,.qw-t-card.sel,.qw-opt-card.sel{animation:qwPulse 0.2s ease-out;}
-@keyframes qwPulse{0%{transform:scale(1);}50%{transform:scale(0.96);}100%{transform:scale(1);}}
-.qw-dev.sel{border-color:var(--qw-accent);background:var(--qw-accent-bg);box-shadow:var(--qw-sh-focus);}
-.qw-dev:focus-visible{outline:none;box-shadow:var(--qw-sh-focus);}
-.qw-dev-ico{width:32px;height:32px;display:flex;align-items:center;justify-content:center;}
-.qw-dev-ico svg{width:100%;height:100%;color:var(--qw-text);}
-.qw-dev.sel .qw-dev-ico svg{color:var(--qw-accent);}
-.qw-dev-lbl{font-size:13px;font-weight:600;}
-
-/* MODEL GROUPS */
-.qw-m-groups{display:flex;flex-direction:column;gap:6px;}
-.qw-m-group{border:1px solid var(--qw-line);border-radius:var(--qw-r-md);overflow:hidden;background:var(--qw-white);}
-.qw-m-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;user-select:none;transition:background var(--qw-ease);-webkit-tap-highlight-color:transparent;}
-.qw-m-head:hover{background:#fafbfc;}.qw-m-head:active{background:#f4f5f7;}
-.qw-m-name{font-size:15px;font-weight:700;color:var(--qw-text);letter-spacing:-0.02em;}
-.qw-m-count{font-size:12px;color:var(--qw-text-3);font-weight:500;margin-top:1px;display:block;}
-.qw-m-chev{width:18px;height:18px;color:var(--qw-text-3);transition:transform .25s ease;flex-shrink:0;}
-.qw-m-group.open .qw-m-chev{transform:rotate(180deg);}
-.qw-m-body{max-height:0;overflow:hidden;transition:max-height .35s ease;}
-.qw-m-group.open .qw-m-body{max-height:3000px;}
-.qw-m-list{padding:6px 14px 14px;display:flex;flex-direction:column;gap:2px;}
-.qw-m-item{display:flex;align-items:center;padding:12px 14px;border-radius:var(--qw-r-sm);cursor:pointer;transition:all var(--qw-ease);-webkit-tap-highlight-color:transparent;}
-.qw-m-item:hover{background:#f5f6fa;}.qw-m-item:active{background:#eef0f5;}
-.qw-m-item.sel{background:var(--qw-accent-bg);box-shadow:inset 0 0 0 1.5px var(--qw-accent);}
-.qw-mn{font-size:14px;font-weight:600;color:var(--qw-text);line-height:1.3;flex:1;min-width:0;}
-
-/* HELPER */
-.qw-help-trig{display:flex;align-items:center;gap:7px;padding:10px 0;margin-top:14px;background:none;border:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--qw-blue);cursor:pointer;-webkit-tap-highlight-color:transparent;}
-.qw-help-trig:hover{text-decoration:underline;}
-.qw-help-trig svg{width:16px;height:16px;flex-shrink:0;}
-.qw-help-panel{max-height:0;overflow:hidden;transition:max-height .4s ease,opacity .3s ease;opacity:0;margin-top:6px;}
-.qw-help-panel.open{max-height:900px;opacity:1;}
-.qw-help-card{background:var(--qw-white);border:1px solid var(--qw-line);border-radius:var(--qw-r-md);overflow:hidden;}
-.qw-help-body{padding:18px;}
-.qw-help-split{display:flex;flex-direction:column;gap:16px;}
-@media(min-width:560px){.qw-help-split{flex-direction:row;align-items:flex-start;}}
-.qw-help-left{flex-shrink:0;}
-@media(min-width:560px){.qw-help-left{width:45%;}}
-.qw-help-right{flex:1;min-width:0;}
-.qw-help-img{width:100%;border-radius:var(--qw-r-sm);object-fit:contain;}
-.qw-help-inst{font-size:13px;color:var(--qw-text-2);line-height:1.55;margin-bottom:14px;}
-.qw-help-inst code{background:#f0f1f5;padding:2px 5px;border-radius:3px;font-size:12px;font-weight:600;color:var(--qw-text);}
-.qw-help-row{display:flex;gap:8px;margin-bottom:10px;}
-.qw-help-input{flex:1;padding:10px 12px;border:1px solid var(--qw-line);border-radius:var(--qw-r-sm);font-size:14px;font-family:inherit;}
-.qw-help-input:focus{outline:none;border-color:var(--qw-blue);box-shadow:0 0 0 2px rgba(37,99,235,0.1);}
-.qw-help-results{max-height:180px;overflow-y:auto;}
-.qw-help-hit{display:flex;align-items:center;justify-content:space-between;padding:9px 10px;border-bottom:1px solid #f0f1f5;cursor:pointer;transition:background var(--qw-ease);font-size:13px;}
-.qw-help-hit:hover{background:var(--qw-blue-bg);}.qw-help-hit:last-child{border-bottom:none;}
-.qw-hn{font-weight:700;color:var(--qw-text);font-family:monospace;font-size:12px;}
-.qw-hm{color:var(--qw-text-2);font-weight:500;flex:1;margin:0 8px;}
-.qw-hs{font-size:11px;font-weight:700;color:var(--qw-blue);flex-shrink:0;}
-.qw-help-close{display:flex;align-items:center;justify-content:center;padding:10px;background:#f5f6fa;border:none;font-family:inherit;font-size:12px;font-weight:600;color:var(--qw-text-3);cursor:pointer;width:100%;transition:all var(--qw-ease);}
-.qw-help-close:hover{background:#eef0f4;color:var(--qw-text);}
-
-/* VG WIZARD */
-.qw-vg-step{display:none;padding:20px;animation:qwFadeUp .25s ease-out;}.qw-vg-step.on{display:block;}
-.qw-vg-title{font-size:16px;font-weight:700;color:var(--qw-text);margin-bottom:2px;text-align:center;}
-.qw-vg-sub{font-size:13px;color:var(--qw-text-3);margin-bottom:16px;text-align:center;}
-.qw-vg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;justify-items:center;max-width:480px;margin:0 auto;}
-@media(max-width:479px){.qw-vg-grid{grid-template-columns:repeat(2,1fr);max-width:100%;}}
-.qw-vg-opt{background:var(--qw-white);border:2px solid var(--qw-line);border-radius:var(--qw-r-md);padding:14px 10px;cursor:pointer;text-align:center;transition:all var(--qw-ease);width:100%;display:flex;flex-direction:column;align-items:center;gap:8px;-webkit-tap-highlight-color:transparent;box-sizing:border-box;}
-.qw-vg-opt:hover{border-color:var(--qw-blue);transform:scale(1.03);}
-.qw-vg-opt:active{transform:scale(0.97);}
-.qw-vg-opt img,.qw-vg-img{max-width:80px;max-height:70px;object-fit:contain;}
-.qw-vg-lbl{font-size:12px;font-weight:600;color:var(--qw-text);line-height:1.3;}
-.qw-vg-back{display:inline-flex;align-items:center;gap:4px;background:none;border:none;font-family:inherit;font-size:12px;font-weight:600;color:var(--qw-text-3);cursor:pointer;margin-bottom:12px;}
-.qw-vg-back:hover{color:var(--qw-text);}
-.qw-vg-result{text-align:center;padding:20px;}
-.qw-vg-result-name{font-size:18px;font-weight:700;margin-bottom:14px;}
-.qw-vg-btn{padding:10px 20px;border-radius:20px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;margin:0 4px;}
-.qw-vg-btn-p{background:var(--qw-blue);color:#fff;}.qw-vg-btn-s{background:#f0f1f5;color:var(--qw-text-2);}
-
-/* FAULT CARDS */
-.qw-f-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
-@media(min-width:560px){.qw-f-grid{grid-template-columns:repeat(3,1fr);}}
-@media(min-width:720px){.qw-f-grid{grid-template-columns:repeat(4,1fr);}}
-.qw-f-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:18px 8px;background:var(--qw-white);border:2px solid var(--qw-line);border-radius:var(--qw-r-md);cursor:pointer;transition:all var(--qw-ease);text-align:center;min-height:90px;-webkit-tap-highlight-color:transparent;}
-.qw-f-card:hover{border-color:var(--qw-line-h);box-shadow:var(--qw-sh-2);transform:translateY(-1px);}
-.qw-f-card:active{transform:scale(0.97);}
-.qw-f-card.sel{border-color:var(--qw-accent);background:var(--qw-accent-bg);box-shadow:var(--qw-sh-focus);}
-.qw-f-ico{width:24px;height:24px;color:var(--qw-text-2);transition:color var(--qw-ease);}
-.qw-f-ico svg{width:100%;height:100%;}
-.qw-f-card.sel .qw-f-ico{color:var(--qw-accent);}
-.qw-f-lbl{font-size:12px;font-weight:600;line-height:1.3;}
-
-/* ISSUE CARDS */
-.qw-t-grid{display:grid;grid-template-columns:1fr;gap:8px;}
-@media(min-width:560px){.qw-t-grid{grid-template-columns:repeat(2,1fr);}}
-.qw-t-card{display:flex;align-items:center;gap:12px;padding:16px 18px;background:var(--qw-white);border:2px solid var(--qw-line);border-radius:var(--qw-r-md);cursor:pointer;transition:all var(--qw-ease);-webkit-tap-highlight-color:transparent;}
-.qw-t-card:hover{border-color:var(--qw-line-h);box-shadow:var(--qw-sh-1);}
-.qw-t-card:active{transform:scale(0.98);}
-.qw-t-card.sel{border-color:var(--qw-accent);background:var(--qw-accent-bg);}
-.qw-tw{width:36px;height:36px;border-radius:8px;background:#f0f1f5;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.qw-t-card.sel .qw-tw{background:rgba(37,99,235,0.08);}
-.qw-tw svg{width:18px;height:18px;color:var(--qw-text-2);}
-.qw-t-card.sel .qw-tw svg{color:var(--qw-accent);}
-.qw-tt{font-size:14px;font-weight:600;line-height:1.3;}
-
-/* RESOLUTION CARD */
-.qw-res{background:var(--qw-white);border:1px solid var(--qw-line);border-radius:var(--qw-r-lg);overflow:hidden;}
-.qw-res-top{padding:24px 24px 0;}
-/* [5.5] Staggered entrance */
-.qw-res-top > *{opacity:0;animation:qwFadeUp 0.3s ease-out forwards;}
-.qw-res-top > *:nth-child(1){animation-delay:0s;}.qw-res-top > *:nth-child(2){animation-delay:0.06s;}
-.qw-res-top > *:nth-child(3){animation-delay:0.12s;}.qw-res-top > *:nth-child(4){animation-delay:0.18s;}
-.qw-res-top > *:nth-child(5){animation-delay:0.24s;}.qw-res-top > *:nth-child(6){animation-delay:0.3s;}
-.qw-res-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;padding:5px 10px;border-radius:100px;margin-bottom:14px;}
-.qw-res-badge svg{width:13px;height:13px;}
-.qw-badge-green{background:var(--qw-green-bg);color:var(--qw-green);}
-.qw-badge-amber{background:var(--qw-amber-bg);color:var(--qw-amber);}
-.qw-badge-blue{background:var(--qw-blue-bg);color:var(--qw-blue);}
-.qw-res-h{font-size:20px;font-weight:700;letter-spacing:-0.025em;line-height:1.2;margin:0 0 6px;color:var(--qw-dark);}
-.qw-res-p{font-size:14px;color:var(--qw-text-2);line-height:1.55;margin:0 0 20px;max-width:480px;}
-
-/* Dustgate images */
-.qw-dustgate-imgs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
-.qw-dustgate-imgs img{width:100%;aspect-ratio:4/3;object-fit:cover;object-position:center;border-radius:var(--qw-r-sm);border:1px solid var(--qw-line);}
-
-/* Pricing */
-.qw-price-from{font-size:13px;color:var(--qw-text-3);font-weight:500;margin-bottom:4px;}
-.qw-price-big{font-size:36px;font-weight:700;letter-spacing:-0.03em;line-height:1;color:var(--qw-dark);margin-bottom:20px;}
-
-/* [6.1] Diagnostic estimate */
-.qw-estimate{background:#f8f9fb;border-radius:var(--qw-r-sm);padding:14px 16px;margin-bottom:20px;border:1px solid var(--qw-line);}
-.qw-estimate-row{display:flex;justify-content:space-between;font-size:13px;color:var(--qw-text-2);padding:4px 0;}
-
-/* Service badges */
-.qw-svc{padding:0 24px;margin-bottom:2px;}
-.qw-svc-r{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid #f0f1f5;}
-.qw-svc-r:last-child{border-bottom:none;}
-.qw-svc-i{width:18px;height:18px;color:var(--qw-accent);margin-right:10px;flex-shrink:0;}.qw-svc-i svg{width:100%;height:100%;}
-.qw-svc-l{width:90px;font-size:12px;font-weight:500;color:var(--qw-text-3);flex-shrink:0;}
-.qw-svc-v{font-size:13px;font-weight:600;}
-
-/* Option cards */
-.qw-opt-section{margin-bottom:18px;}
-.qw-opt-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--qw-text-3);margin-bottom:8px;padding:0 2px;}
-.qw-opt-row{display:flex;gap:8px;flex-wrap:wrap;}
-/* [5.2] Stack on narrow screens */
-@media(max-width:479px){.qw-opt-row{flex-direction:column;}.qw-opt-card{min-width:100% !important;}}
-.qw-opt-card{flex:1;min-width:0;padding:14px;background:var(--qw-white);border:2px solid var(--qw-line);border-radius:var(--qw-r-md);cursor:pointer;transition:all var(--qw-ease);-webkit-tap-highlight-color:transparent;position:relative;}
-.qw-opt-card:hover{border-color:var(--qw-line-h);}
-.qw-opt-card.sel{border-color:var(--qw-accent);background:var(--qw-accent-bg);}
-.qw-opt-name{font-size:13px;font-weight:700;color:var(--qw-text);margin-bottom:2px;}
-.qw-opt-meta{font-size:12px;color:var(--qw-text-3);font-weight:500;}
-.qw-opt-price{font-size:14px;font-weight:700;color:var(--qw-text);margin-top:6px;}
-.qw-opt-price.free{color:var(--qw-green);}
-.qw-pop-tag{position:absolute;top:-8px;right:10px;background:var(--qw-dark);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:0.03em;}
-
-/* Courier / mail-in panels (#53) */
-.qw-courier-panel,.qw-mailin-panel{display:block;padding:14px 0 0;}
-.qw-courier-lbl{display:block;font-size:12px;font-weight:600;color:var(--qw-text-2);margin-bottom:6px;}
-.qw-courier-inp{width:100%;padding:12px 14px;font-size:15px;font-family:inherit;color:var(--qw-text);background:var(--qw-white);border:1.5px solid var(--qw-line);border-radius:var(--qw-r-sm);transition:all var(--qw-ease);box-sizing:border-box;}
-.qw-courier-inp:focus{outline:none;border-color:var(--qw-accent);box-shadow:0 0 0 2px rgba(37,99,235,0.1);}
-.qw-courier-result{margin-top:10px;padding:12px 14px;border:1.5px solid var(--qw-text);border-radius:var(--qw-r-sm);}
-.qw-courier-price{font-size:16px;font-weight:800;letter-spacing:-0.02em;}
-.qw-courier-price .free{color:var(--qw-green);}
-.qw-courier-why,.qw-courier-win,.qw-courier-note{font-size:12.5px;color:var(--qw-text-3);margin-top:4px;line-height:1.45;}
-.qw-courier-err{font-size:12px;color:#dc2626;padding:6px 0;min-height:0;}
-.qw-svc-row{align-items:stretch;}
-
-/* Colour selector */
-.qw-color-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;}
-.qw-color-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px 6px;background:var(--qw-white);border:2px solid var(--qw-line);border-radius:var(--qw-r-sm);cursor:pointer;transition:all var(--qw-ease);text-align:center;-webkit-tap-highlight-color:transparent;min-height:64px;}
-.qw-color-btn:hover{border-color:var(--qw-line-h);box-shadow:var(--qw-sh-1);}
-.qw-color-btn.sel{border-color:var(--qw-dark);background:#f8f8fa;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
-.qw-color-swatch{width:24px !important;height:24px !important;min-width:24px !important;min-height:24px !important;border-radius:50% !important;border:1px solid rgba(0,0,0,0.12) !important;flex-shrink:0;display:block !important;box-shadow:inset 0 1px 3px rgba(0,0,0,0.1);}
-.qw-color-name{font-size:11px;font-weight:600;color:var(--qw-text);line-height:1.2;}
-
-/* Price total */
-.qw-price-total{display:flex;align-items:baseline;justify-content:space-between;padding:16px 0;margin:0 24px;border-top:1px solid var(--qw-line);}
-.qw-price-total-label{font-size:14px;font-weight:600;color:var(--qw-text-2);}
-.qw-price-total-val{font-size:28px;font-weight:700;letter-spacing:-0.02em;color:var(--qw-dark);}
-
-/* CTAs */
-.qw-res-cta{padding:16px 24px 24px;display:flex;flex-direction:column;gap:10px;}
-.qw-btn-book{display:flex;align-items:center;justify-content:center;gap:7px;padding:14px 28px;background:var(--qw-accent);color:#fff;border:none;border-radius:var(--qw-r-sm);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:all var(--qw-ease);text-decoration:none;letter-spacing:-0.01em;width:100%;}
-.qw-btn-book:hover{background:var(--qw-accent-h);box-shadow:0 4px 16px rgba(37,99,235,0.2);transform:translateY(-1px);}
-.qw-btn-book:active{transform:scale(0.98);}
-.qw-btn-book svg{width:16px;height:16px;}
-.qw-btn-q{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 24px;background:transparent;color:var(--qw-text-2);border:2px solid var(--qw-line);border-radius:var(--qw-r-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all var(--qw-ease);width:100%;}
-.qw-btn-q:hover{border-color:var(--qw-line-h);background:#fafbfc;color:var(--qw-text);}
-.qw-btn-email{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 24px;background:var(--qw-white);color:var(--qw-text);border:2px solid var(--qw-accent);border-radius:var(--qw-r-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all var(--qw-ease);width:100%;}
-.qw-btn-email:hover{background:var(--qw-accent-bg);color:var(--qw-accent);}
-.qw-eq-panel{display:none;margin-top:12px;padding:16px;background:var(--qw-bg);border:1px solid var(--qw-line);border-radius:var(--qw-r-sm);animation:qwEqSlide .2s ease-out;}
-.qw-eq-panel.show{display:block;}
-@keyframes qwEqSlide{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
-.qw-eq-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-@media(max-width:480px){.qw-eq-fields{grid-template-columns:1fr;}}
-.qw-eq-field{display:flex;flex-direction:column;gap:4px;}
-.qw-eq-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--qw-text-3);padding-left:2px;}
-.qw-eq-input{width:100%;padding:10px 12px;font-size:14px;font-family:inherit;border:1px solid var(--qw-line);border-radius:var(--qw-r-sm);box-sizing:border-box;background:var(--qw-white);color:var(--qw-text);transition:border-color var(--qw-ease),box-shadow var(--qw-ease);}
-.qw-eq-input:focus{outline:none;border-color:var(--qw-accent);box-shadow:0 0 0 3px rgba(37,99,235,0.08);}
-.qw-eq-send{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:12px;padding:12px 24px;background:var(--qw-accent);color:#fff;border:none;border-radius:var(--qw-r-sm);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all var(--qw-ease);}
-.qw-eq-send:hover{background:var(--qw-accent-h);}
-.qw-eq-send:disabled{opacity:0.5;cursor:not-allowed;}
-.qw-eq-send svg{flex-shrink:0;}
-.qw-eq-ok{display:none;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--qw-green);padding:10px 0 2px;}
-.qw-eq-ok svg{flex-shrink:0;stroke:var(--qw-green);}
-.qw-eq-err{display:none;font-size:12px;color:#dc2626;padding:6px 0 0;}
-/* [4.6] Intercom chat link */
-.qw-btn-chat{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:none;border:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--qw-accent);cursor:pointer;text-decoration:none;}
-.qw-btn-chat:hover{text-decoration:underline;}
-
-/* Contact accordion */
-.qw-c-acc{max-height:0;overflow:hidden;transition:max-height .4s ease,opacity .3s ease;opacity:0;}
-.qw-c-acc.open{max-height:1200px;opacity:1;}
-.qw-c-inner{padding:20px 24px 24px;border-top:1px solid var(--qw-line);}
-.qw-c-inner-open{padding:20px 24px 24px;}
-.qw-c-sum{background:#f5f6fa;border-radius:var(--qw-r-sm);padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--qw-text-2);line-height:1.5;}
-.qw-c-sum strong{color:var(--qw-text);font-weight:600;}
-
-/* Forms */
-.qw-f-row{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:14px;}
-@media(min-width:560px){.qw-f-row.two{grid-template-columns:1fr 1fr;}}
-.qw-f-grp{display:flex;flex-direction:column;gap:5px;}
-.qw-f-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--qw-text-3);}
-.qw-req{color:var(--qw-accent);margin-left:2px;}
-.qw-f-inp,.qw-f-ta{width:100%;padding:11px 14px;font-size:14px;font-family:inherit;color:var(--qw-text);background:var(--qw-white);border:1px solid var(--qw-line);border-radius:var(--qw-r-sm);transition:all var(--qw-ease);box-sizing:border-box;}
-.qw-f-inp:focus,.qw-f-ta:focus{outline:none;border-color:var(--qw-accent);box-shadow:0 0 0 2px rgba(37,99,235,0.1);}
-.qw-f-inp::placeholder,.qw-f-ta::placeholder{color:var(--qw-text-3);}
-.qw-f-ta{min-height:90px;resize:vertical;line-height:1.5;}
-/* [4.2] Inline validation errors */
-.qw-f-err{display:block;font-size:12px;color:#dc2626;min-height:16px;margin-top:2px;}
-.qw-f-sub{display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 24px;background:var(--qw-dark);color:#fff;border:none;border-radius:var(--qw-r-sm);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;width:100%;}
-.qw-f-sub:hover{background:#0a0a0f;}
-.qw-f-sub:disabled{opacity:0.5;cursor:not-allowed;}
-.qw-f-ok{display:none;text-align:center;padding:28px 20px;}
-.qw-f-ok.show{display:block;}
-.qw-f-ok h3{font-size:18px;font-weight:700;color:var(--qw-green);margin:0 0 4px;}
-.qw-f-ok p{font-size:14px;color:var(--qw-text-2);margin:0;}
-
-/* Restart */
-.qw-restart{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;margin:16px auto 0;background:none;border:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--qw-text-3);cursor:pointer;letter-spacing:-0.01em;transition:color var(--qw-ease);}
-.qw-restart svg{flex-shrink:0;}
-.qw-restart:hover{color:var(--qw-accent);}
-/* Urgent */
-.qw-urgent{background:#FEF3C7;border-left:4px solid #F59E0B;padding:12px 16px;border-radius:0 var(--qw-r-sm) var(--qw-r-sm) 0;margin-bottom:16px;font-size:14px;font-weight:600;color:#92400E;}
-/* Loading */
-.qw-loading{text-align:center;padding:48px 16px;}
-.qw-loading p{font-size:14px;color:var(--qw-text-2);margin-top:16px;}
-.qw-spinner{width:32px;height:32px;border:3px solid var(--qw-line);border-top-color:var(--qw-accent);border-radius:50%;animation:qwSpin 0.7s linear infinite;margin:0 auto;}
-@keyframes qwSpin{to{transform:rotate(360deg);}}
-/* Empty */
-.qw-empty{text-align:center;padding:40px 16px;}
-.qw-empty p{font-size:15px;color:var(--qw-text-2);margin-bottom:16px;}
-
-/* [5.1] Sticky CTA */
-.qw-sticky-cta{position:fixed;bottom:0;left:0;right:0;background:var(--qw-white);border-top:1px solid var(--qw-line);padding:12px 16px;display:none;align-items:center;justify-content:space-between;z-index:999;box-shadow:0 -2px 8px rgba(0,0,0,0.08);}
-.qw-sticky-cta.show{display:flex;}
-.qw-sticky-price{font-size:20px;font-weight:700;color:var(--qw-dark);}
-.qw-sticky-book{padding:10px 24px;background:var(--qw-accent);color:#fff;border:none;border-radius:var(--qw-r-sm);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;}
-@media(min-width:1024px){.qw-sticky-cta{display:none !important;}}
-
-/* Focus visible */
-.qw-wizard [tabindex]:focus-visible{outline:2px solid var(--qw-accent);outline-offset:2px;}
+/* Residual layout bridges — visual system lives in assets/quote-wizard.css (May prototype port). */
+.quote-wizard-section .qw-section { font-family: "Geist", Arial, sans-serif; }
+.qw-slot-panel[hidden] { display: none !important; }
+.qw-delivery-card { width: 100%; }
+.qw-opt-disabled, .qw-card-disabled { opacity: 0.45; pointer-events: none; }
 </style>
 
 {% schema %}
@@ -3439,6 +3283,45 @@ a.qw-d-val:hover{color:var(--qw-accent);}
       "id": "hours_sun",
       "label": "Sunday hours",
       "default": "Closed"
+    },
+    {
+      "type": "header",
+      "content": "Prefill (slice 3)"
+    },
+    {
+      "type": "select",
+      "id": "prefill_mode",
+      "label": "Prefill mode",
+      "default": "auto",
+      "options": [
+        { "value": "auto", "label": "Auto from page context" },
+        { "value": "manual", "label": "Manual device/fault below" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "prefill_device",
+      "label": "Prefill device",
+      "default": "",
+      "options": [
+        { "value": "", "label": "— none —" },
+        { "value": "macbook", "label": "MacBook" },
+        { "value": "iphone", "label": "iPhone" },
+        { "value": "ipad", "label": "iPad" },
+        { "value": "watch", "label": "Apple Watch" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "prefill_fault",
+      "label": "Prefill fault key",
+      "info": "e.g. screen, battery — used with collection handle rules"
+    },
+    {
+      "type": "checkbox",
+      "id": "skip_to_service",
+      "label": "Skip to service step when product is fully resolved",
+      "default": true
     }
   ],
   "presets": [{ "name": "Quote Wizard" }]

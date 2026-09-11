@@ -398,9 +398,20 @@
         "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>",
         "hours": "<h3>Hours</h3><p>Mon–Thur: 9am–6pm </p><p>Fri: 10am–6pm </p><p>Sat: Closed </p><p>Sun: Closed</p>"
       }
+    },
+    "quote_wizard_top": {
+      "type": "quote-wizard",
+      "settings": {
+        "heading": "Get a repair quote",
+        "subheading": "Courier collection across London, or free tracked mail-in nationwide.",
+        "show_map": false,
+        "prefill_mode": "auto",
+        "skip_to_service": false
+      }
     }
   },
   "order": [
+    "quote_wizard_top",
     "banner",
     "product-grid",
     "main_banner_and_video_HjbmW9",

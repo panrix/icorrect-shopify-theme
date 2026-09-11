@@ -350,9 +350,20 @@
         "input_bg": "#ffffff",
         "input_border": "#e5e7eb"
       }
+    },
+    "quote_wizard_top": {
+      "type": "quote-wizard",
+      "settings": {
+        "heading": "Get a repair quote",
+        "subheading": "Courier collection across London, or free tracked mail-in nationwide.",
+        "show_map": false,
+        "prefill_mode": "auto",
+        "skip_to_service": false
+      }
     }
   },
   "order": [
+    "quote_wizard_top",
     "banner",
     "product-grid",
     "main_banner_and_video_HjbmW9",

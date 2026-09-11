@@ -295,10 +295,14 @@
     },
     "contact_with_map_dXbbDU": {
       "type": "quote-wizard",
-      "settings": {}
+      "settings": {
+        "show_map": false,
+        "prefill_mode": "auto"
+      }
     }
   },
   "order": [
+    "contact_with_map_dXbbDU",
     "banner",
     "product-grid",
     "main_banner_and_video_HjbmW9",
@@ -307,7 +311,6 @@
     "about_info_XAqnaH",
     "apple_watch_videos_8ammm4",
     "repair_services_nQkwFT",
-    "icorrect_faqs_RVk3VL",
-    "contact_with_map_dXbbDU"
+    "icorrect_faqs_RVk3VL"
   ]
 }

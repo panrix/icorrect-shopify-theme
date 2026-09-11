@@ -338,10 +338,14 @@
     },
     "contact_with_map_dXbbDU": {
       "type": "quote-wizard",
-      "settings": {}
+      "settings": {
+        "show_map": false,
+        "prefill_mode": "auto"
+      }
     }
   },
   "order": [
+    "contact_with_map_dXbbDU",
     "banner",
     "product-grid",
     "main_banner_and_video_HjbmW9",
@@ -351,7 +355,6 @@
     "about_info_XAqnaH",
     "macbook_videos_e88WFU",
     "repair_services_nQkwFT",
-    "icorrect_faqs_RVk3VL",
-    "contact_with_map_dXbbDU"
+    "icorrect_faqs_RVk3VL"
   ]
 }

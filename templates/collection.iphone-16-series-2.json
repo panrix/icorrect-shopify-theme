@@ -579,7 +579,9 @@
     "contact_with_map_dXbbDU": {
       "type": "quote-wizard",
       "settings": {
-        "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>"
+        "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>",
+        "show_map": false,
+        "prefill_mode": "auto"
       }
     },
     "iphone_repair_link_L2Fmo": {
@@ -588,6 +590,7 @@
     }
   },
   "order": [
+    "contact_with_map_dXbbDU",
     "banner",
     "product-grid",
     "iphone_repair_link_L2Fmo",
@@ -599,7 +602,6 @@
     "parent_categories_pxCKXR",
     "repair_services_nQkwFT",
     "video_reviews_83ReMa",
-    "icorrect_faqs_RVk3VL",
-    "contact_with_map_dXbbDU"
+    "icorrect_faqs_RVk3VL"
   ]
 }

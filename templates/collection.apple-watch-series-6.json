@@ -269,18 +269,20 @@
     "contact_with_map_dXbbDU": {
       "type": "quote-wizard",
       "settings": {
-        "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>"
+        "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>",
+        "show_map": false,
+        "prefill_mode": "auto"
       }
     }
   },
   "order": [
+    "contact_with_map_dXbbDU",
     "banner",
     "product-grid",
     "main_banner_and_video_HjbmW9",
     "parent_categories_eV4hcJ",
     "apple_watch_videos_JC3Kpd",
     "repair_services_nQkwFT",
-    "icorrect_faqs_RVk3VL",
-    "contact_with_map_dXbbDU"
+    "icorrect_faqs_RVk3VL"
   ]
 }

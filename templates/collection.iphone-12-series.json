@@ -276,7 +276,7 @@
     "contact_with_map_dXbbDU": {
       "type": "quote-wizard",
       "settings": {
-        "show_map": true,
+        "show_map": false,
         "map_html": "",
         "heading": "Get your free quote",
         "subheading": "Pick your device and we'll point you to the right repair.",
@@ -288,11 +288,13 @@
         "hours_thu": "9am - 6pm",
         "hours_fri": "10am - 6pm",
         "hours_sat": "Closed",
-        "hours_sun": "Closed"
+        "hours_sun": "Closed",
+        "prefill_mode": "auto"
       }
     }
   },
   "order": [
+    "contact_with_map_dXbbDU",
     "banner",
     "product-grid",
     "iphone_repair_link_vIzd7",
@@ -300,7 +302,6 @@
     "parent_categories_nWCAYw",
     "iphone_videos_rVN47D",
     "repair_services_nQkwFT",
-    "icorrect_faqs_RVk3VL",
-    "contact_with_map_dXbbDU"
+    "icorrect_faqs_RVk3VL"
   ]
 }

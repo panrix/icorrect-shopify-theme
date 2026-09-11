@@ -225,16 +225,19 @@
     },
     "contact_with_map_dXbbDU": {
       "type": "quote-wizard",
-      "settings": {}
+      "settings": {
+        "show_map": false,
+        "prefill_mode": "auto"
+      }
     }
   },
   "order": [
+    "contact_with_map_dXbbDU",
     "banner",
     "product-grid",
     "icorrect_product_grid_AAVQCj",
     "apple_watch_videos_DeUzGH",
     "repair_services_nQkwFT",
-    "apple_watch_faqs_B4HDcR",
-    "contact_with_map_dXbbDU"
+    "apple_watch_faqs_B4HDcR"
   ]
 }

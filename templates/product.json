@@ -35,10 +35,6 @@
           "disabled": true,
           "settings": {}
         },
-        "repair_product_YHEQJr": {
-          "type": "repair_product",
-          "settings": {}
-        },
         "variant_picker": {
           "type": "variant_picker",
           "settings": {
@@ -71,7 +67,6 @@
         "title",
         "description",
         "price",
-        "repair_product_YHEQJr",
         "variant_picker",
         "quantity_selector",
         "buy_buttons",
@@ -278,16 +273,20 @@
     },
     "contact_with_map_dXbbDU": {
       "type": "quote-wizard",
-      "settings": {}
+      "settings": {
+        "show_map": false,
+        "skip_to_service": true,
+        "prefill_mode": "auto"
+      }
     }
   },
   "order": [
     "main",
+    "contact_with_map_dXbbDU",
     "related-products",
     "pdp_sustain_repair_info_9EePrK",
     "about_info_A8a6YY",
     "video_reviews_83ReMa",
-    "icorrect_faqs_RVk3VL",
-    "contact_with_map_dXbbDU"
+    "icorrect_faqs_RVk3VL"
   ]
 }
