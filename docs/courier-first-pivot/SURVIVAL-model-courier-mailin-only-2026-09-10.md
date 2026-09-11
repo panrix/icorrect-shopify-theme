@@ -186,6 +186,38 @@ Total walk-in demand today = website £9.5k + counter SumUp £10.8k ≈ **£20.3
 2. **Nancy:** £10k → £5k/mo instalments (she fronts £20–30k; stretching repayment is the smaller ask).
 3. **Corporates:** the five handshakes in writing — even if they can't pay until your VAT number lands, written confirmation de-risks the bridge.
 
+## 10. The full requirement stack (Ricky 2026-09-11 07:02) — bridge + CVL buyout + the move
+
+**Total cash calls through Q1 2027:**
+
+| Call | £ | When |
+|---|---:|---|
+| Operating valley (Sep–Nov, Scenario D, Nancy stretched) | ~£8–10k | Sep–Nov |
+| CVL buyout of oldco assets | £7–10k (deal: £5k now + balance into 2027, maybe with premium) | £5k now |
+| Office move + new equipment | ~£10k | Q1 2027 |
+| Bridge repayment (people close) | £15k | 2027 |
+| **Total calls** | **~£32–35k** | |
+
+**⚠️ LEGAL SEQUENCING FLAG — the stock:** the £5–10k repaired stock (and the equipment, and arguably the brand/website) are **oldco assets inside the CVL estate until the buyout completes.** Selling stock before the liquidator's asset-sale agreement is signed risks the sale being voidable. **The buyout negotiation is therefore not just a cost — it's the unlock for the entire device-sales lane. Do it THIS week, not after the bridge lands.** Ask the liquidator for exactly what Ricky floated: £5k now, balance staged into 2027.
+
+**The monthly path (Scenario D, Nancy £5k/mo, devices £5k/mo sales ≈ £2–2.5k contribution, Christmas £3–4k):**
+
+| Month | Operating net | One-offs | Cumulative position |
+|---|---:|---:|---|
+| Sep | ≈ breakeven | CVL £5k | −£5k |
+| Oct | −£7.4k | — | −£12.4k |
+| Nov | −£1.4k | — | −£13.8k ← valley bottom |
+| Dec | +£3–5k | — | −£9k |
+| Jan | +£10–13k | — | ≈ breakeven-to-positive |
+| Feb | +£10–13k | move −£10k | +£1–4k |
+| Mar | +£10–13k | — | +£11–17k |
+
+**Bridge £15k covers the valley + CVL deposit (−£13.8k bottom).** The move, the bridge repayment, and Ricky's £6.5k are all funded by the Dec–Mar engine (+£10–13k/mo) — **the business self-funds everything from January IF the lanes hold.**
+
+**Honest answer to "profit from now until year-end": not available.** October is a loss month in every scenario (Nancy + card bill + no corporate). The best achievable Q4 is roughly **breakeven cumulatively by end-December** (−£5k Q4 total), then Q1 pays for everything. Anyone promising profitable-October is inventing numbers. What moves Q4 toward profit: Misha decision (+£3.6k/mo), bigger device flips (Ricky knows this market), corporate prepayment if the VAT workaround exists.
+
+**What kills it:** corporate slipping past January; device sales under £3k/mo; Nancy refusing the stretch; liquidator demanding £10k upfront. Each is a this-week conversation.
+
 ## 5. Open items for Ricky
 
 1. ~~Corporate return path~~ → **answered 04:38: £0 modelled until Oct, then £7–10k. Residual: get written billing-confirmation per account in September.**
