@@ -218,6 +218,35 @@ Total walk-in demand today = website £9.5k + counter SumUp £10.8k ≈ **£20.3
 
 **What kills it:** corporate slipping past January; device sales under £3k/mo; Nancy refusing the stretch; liquidator demanding £10k upfront. Each is a this-week conversation.
 
+## 11. Repairs growth plan — can net repairs rise Oct–Dec? (Ricky 2026-09-11 07:18)
+
+**Baseline:** Shopify+Stripe repairs £26.5k/mo verified (Jul £29.6k / Aug £23.3k — note: **declining**, so some growth just claws back the slide). Diagnostics within that: £7.3k Jan → £14.7k May → £17.8k Jun — the organic riser.
+
+**The levers, sized and dated:**
+
+| Lever | £/mo by Dec | Effort / cost | Achievable? |
+|---|---:|---|---|
+| **Courier keep-rate** (defence, not growth) | holds £4.5–6.2k | this weekend's build | Base case yes — the whole pivot |
+| **Price rise 3–5%** on repairs | +£1.0–1.3k | Free, immediate. Sep 8 model explicitly didn't count it | **Yes — do it with the relaunch** ("new service, new prices" is the natural moment) |
+| **AdWords: "we collect" + damage keywords** | +£1.2–1.8k | ~£300–600/mo (Facebook cut freed £307); aged account; S-POC landing plan exists | Yes — 2–4 wks to effect; needs the courier module live first |
+| **Diagnostics organic trend** | +£2–3k/quarter | Nothing — demand-led, evidenced Jan–Jun | Likely continues; accelerate later with board-level content/SEO |
+| **National DHL end-to-end journey** | +£0.5–1k | Copy + band table extension once courier module exists | Yes, cheap follow-on |
+| **Enquiry→booking conversion (Alex/Intercom)** | unmodelled | Already-built automation | Unknown baseline — measure first |
+| **Device sales lane** (separate from repairs) | £5k sales ≈ £2–2.5k contribution | Stock + listings; CVL buyout must complete first | Yes — Q4 is the buying season |
+
+**Repairs income path (repairs only, excl devices/corporate):**
+
+| Month | Repairs £/mo | Driver |
+|---|---:|---|
+| Sep | ~31k | courier keep landing mid-month |
+| Oct | ~32–33k | price rise + AdWords ramping |
+| Nov | ~33–35k | AdWords full + diagnostics trend |
+| Dec | ~35–37k | Christmas + all levers |
+
+**Is it achievable?** Yes for +£4–6k/mo by December — every lever above is either free, already built, or evidenced. **No for anything bigger from repairs alone** — the ceiling near-term is ~£35–37k/mo. The jump beyond that needs corporate (Dec/Jan) or devices scaled past £5k. Also honest: the walk-in transition dip could eat October's gains — the keep-rate number in the first two weeks tells you which.
+
+**Nancy sensitivity (Ricky's £5k vs £7.5k question):** at £7.5k/mo the valley bottom is **−£21.8k** (over the £15k bridge); at £5k/mo it's **−£13.8k** (inside it). The stretch to £5k is not optional in Scenario D — it's the difference between funded and not.
+
 ## 5. Open items for Ricky
 
 1. ~~Corporate return path~~ → **answered 04:38: £0 modelled until Oct, then £7–10k. Residual: get written billing-confirmation per account in September.**
