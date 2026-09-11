@@ -608,8 +608,8 @@
           <p>Courier collection</p>
           <small>We collect from your door</small> </div>
       <div class="collect-device-btn" data-svc="mailin" id="mailin-choice-btn">
-          <p>Post it — free pack</p>
-          <small>Nationwide mail-in</small> </div>
+          <p>Post it — mail-in pack</p>
+          <small>Nationwide tracked mail-in</small> </div>
   </div>
 
   <div class="walk-in-service-content">
@@ -691,10 +691,79 @@
   </div>
 </div>
 
+<script src="{{ 'courier-pricing.js' | asset_url }}" defer></script>
+<script>
+window.__ADDITIONAL_REPAIR_COURIER = {
+  bandsUrl: {{ 'courier-london-bands.json' | asset_url | json }},
+  productTags: {{ product.tags | json }},
+  repairPrice: {{ product.price | money_without_trailing_zeros | remove: cart.currency.symbol | json }},
+  serviceAdjustments: {
+    "15": 71280436379901,
+    "20": 71280436412669,
+    "25": 71280436445437
+  }
+};
+</script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const currency_symbol = "{{ cart.currency.symbol }}";
   let selectedTurnaroundPrice = 0;
+  let _courierQuote = null;
+  let _serviceAdjustment = 0;
+  const COURIER_CFG = window.__ADDITIONAL_REPAIR_COURIER || {};
+  let __bands = null;
+
+  function collectionWindowForBand(band) {
+    if (band === 'B1' || band === 'B2') {
+      return { headline: 'Book by 2pm, collect today', detail: 'Same-day collection window when booked before 2pm.' };
+    }
+    return { headline: 'Next-day collection', detail: 'Outer London — we confirm a collection window after booking.' };
+  }
+
+  function ensureBands() {
+    if (__bands) return Promise.resolve(__bands);
+    if (!COURIER_CFG.bandsUrl) return Promise.resolve(null);
+    return fetch(COURIER_CFG.bandsUrl).then(function(r){ return r.json(); }).then(function(j){ __bands = j; return j; });
+  }
+
+  function quoteCurrentService() {
+    if (!window.ICorrectCourier || !__bands) return null;
+    const courierActive = visitBtn && visitBtn.classList.contains('active');
+    const postcodeEl = document.getElementById('courier-postcode');
+    const pc = postcodeEl ? String(postcodeEl.value || '').trim() : '';
+    const repairPrice = parseFloat(COURIER_CFG.repairPrice) || 0;
+    return window.ICorrectCourier.quoteServiceAdjustment({
+      postcode: pc,
+      productTags: COURIER_CFG.productTags || [],
+      bands: __bands,
+      service: courierActive ? 'courier' : 'mail-in',
+      repairPrice: repairPrice,
+      variants: { variants: COURIER_CFG.serviceAdjustments || {} }
+    });
+  }
+
+  function applyServiceQuote(quote) {
+    _courierQuote = quote;
+    _serviceAdjustment = quote && quote.adjustment != null ? Number(quote.adjustment) : 0;
+    const info = document.querySelector('.walk-in-service-content .walk-in-prod-info');
+    if (info && quote && quote.service === 'courier' && quote.band) {
+      const win = collectionWindowForBand(quote.band);
+      info.innerHTML = '<strong>Courier collection</strong><br>Band ' + quote.band + ' · ' + win.headline +
+        '<br>Your Total is all-in — collection &amp; return included in the price shown.';
+    }
+    if (quote && quote.forcedMailIn && visitBtn && collectDeviceBtn) {
+      collectDeviceBtn.click();
+    }
+    calculateTotalPrice();
+  }
+
+  function refreshCourierQuote() {
+    ensureBands().then(function(){
+      const quote = quoteCurrentService();
+      applyServiceQuote(quote);
+    }).catch(function(){ applyServiceQuote(null); });
+  }
+
   let selectedDeviceColor = "";
 
   const addToCartButton = document.querySelector('.custom-add-to-cart button');
@@ -1133,7 +1202,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const productPriceElement = document.querySelector('.walk-in-book-row .repair-total-price');
     const productPrice = parseFloat(productPriceElement.getAttribute('data-productprice')) || 0;
 
-    const finalTotal = checkboxTotal + productPrice + selectedTurnaroundPrice + batteryPrice + serviceFee;
+    const finalTotal = checkboxTotal + productPrice + selectedTurnaroundPrice + batteryPrice + serviceFee + (_serviceAdjustment || 0);
 
     const repairPriceElement = document.querySelector('.walk-in-book-row .total-price');
     productPriceElement.dataset.productpricefinal = String(finalTotal.toFixed(2));
@@ -1195,6 +1264,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if(collectDeviceContent) collectDeviceContent.style.display = 'block';
     }
     calculateTotalPrice();
+    refreshCourierQuote();
   }
 
   if (collectDeviceBtn) collectDeviceBtn.addEventListener('click', () => toggleServiceType('collect'));
@@ -1206,6 +1276,18 @@ document.addEventListener("DOMContentLoaded", () => {
   } else if (collectDeviceBtn && collectDeviceBtn.classList.contains('active')) {
       toggleServiceType('collect');
   }
+
+
+  const courierPostcodeInput = document.getElementById('courier-postcode');
+  if (courierPostcodeInput) {
+    let _pcTimer = null;
+    courierPostcodeInput.addEventListener('input', () => {
+      clearTimeout(_pcTimer);
+      _pcTimer = setTimeout(refreshCourierQuote, 200);
+    });
+    courierPostcodeInput.addEventListener('blur', refreshCourierQuote);
+  }
+  ensureBands().then(() => refreshCourierQuote()).catch(() => {});
 
   // Add to cart
   addToCartButton.addEventListener('click', async (event) => {
@@ -1240,14 +1322,29 @@ document.addEventListener("DOMContentLoaded", () => {
     const items = [];
     const mainProps = {};
     if (selectedDeviceColor) mainProps['Device Color'] = selectedDeviceColor;
-    if (courierActive) {
+    // Refresh quote so Band / adjustment match the postcode (#53 policy v2)
+    if (!__bands) {
+      try { __bands = await ensureBands(); } catch (e) {}
+    }
+    _courierQuote = quoteCurrentService();
+    if (_courierQuote && _courierQuote.forcedMailIn) {
+      // Null-variant or unavailable courier → mail-in path
+    }
+    const effectiveCourier = courierActive && _courierQuote && _courierQuote.service === 'courier';
+    const effectiveMail = !effectiveCourier;
+
+    if (effectiveCourier) {
       const pc = postcodeEl ? String(postcodeEl.value || '').trim().toUpperCase() : '';
+      const win = collectionWindowForBand(_courierQuote.band);
       mainProps['Service Type'] = 'Courier collection';
       mainProps['Postcode'] = pc;
-      mainProps['Band'] = '';
-      mainProps['Collection Window'] = 'Book by 2pm for same-day in most of London';
-    } else if (mailActive) {
+      mainProps['Band'] = _courierQuote.band || '';
+      mainProps['Collection Window'] = win.headline;
+    } else if (mailActive || effectiveMail) {
       mainProps['Service Type'] = 'Mail-in';
+      const pc = postcodeEl ? String(postcodeEl.value || '').trim().toUpperCase() : '';
+      if (pc) mainProps['Postcode'] = pc;
+      if (_courierQuote && _courierQuote.band) mainProps['Band'] = _courierQuote.band;
     }
     items.push({ id: mainVariantId, quantity: 1, properties: mainProps });
 
@@ -1297,6 +1394,22 @@ document.addEventListener("DOMContentLoaded", () => {
       if (batteryReplace && batteryReplace.checked) {
         const id = parseInt(batteryReplace.dataset.variantId, 10);
         if (id && !Number.isNaN(id)) items.push({ id, quantity: 1 });
+      }
+
+      // Service adjustment variant (null-safe — never add £0 for a quoted adjustment)
+      if (_courierQuote && _courierQuote.adjustment > 0 && _courierQuote.variantId && _courierQuote.variantMode === 'ok') {
+        items.push({
+          id: parseInt(_courierQuote.variantId, 10),
+          quantity: 1,
+          properties: {
+            'Service Type': mainProps['Service Type'] || '',
+            'Postcode': mainProps['Postcode'] || '',
+            'Band': mainProps['Band'] || ''
+          }
+        });
+      } else if (_courierQuote && _courierQuote.adjustment > 0 && _courierQuote.variantMode === 'fallback-free-mail-in') {
+        mainProps['Service Type'] = 'Mail-in';
+        items[0].properties = mainProps;
       }
 
       const res = await fetch(window.Shopify.routes.root + 'cart/add.js', {

@@ -63,34 +63,43 @@ describe('repair catalogue map', () => {
   });
 });
 
-describe('SW11 courier price (done-when)', () => {
-  it('SW11 + free tier → £0 courier', () => {
+describe('SW11 all-in adjustment (done-when, policy v2)', () => {
+  it('SW11 + free tier → £0 adjustment (all-in)', () => {
     const q = quoteCourierCollection({
       postcode: 'SW11 8BJ',
       productTags: ['courier:free'],
       bands,
+      repairPrice: 299,
     });
     assert.equal(q.service, 'courier');
     assert.equal(q.band, 'B2');
+    assert.equal(q.adjustment, 0);
     assert.equal(q.customer_price, 0);
+    assert.equal(q.total, 299);
   });
 
-  it('SW11 + full tier → band RT', () => {
+  it('SW11 + untagged/<£200 → +£25 courier adjustment', () => {
     const q = quoteCourierCollection({
       postcode: 'SW11 8BJ',
-      productTags: ['courier:full'],
+      productTags: [],
       bands,
+      repairPrice: 89,
     });
-    assert.equal(q.customer_price, 24.28);
+    assert.equal(q.service, 'courier');
+    assert.equal(q.adjustment, 25);
+    assert.equal(q.customer_price, 25);
+    assert.equal(q.total, 114);
   });
 
   it('unknown postcode → mail-in, never throws', () => {
     const q = quoteCourierCollection({
       postcode: 'M1 1AE',
-      productTags: ['courier:full'],
+      productTags: ['courier:free'],
       bands,
+      repairPrice: 299,
     });
     assert.equal(q.service, 'mail-in');
-    assert.equal(q.customer_price, null);
+    assert.equal(q.adjustment, 0);
+    assert.equal(q.total, 299);
   });
 });

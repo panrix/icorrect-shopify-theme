@@ -127,10 +127,10 @@ function slugify(s) {
 /** Ricky tier rule until products are tagged in Admin. */
 function inferCourierTier(price) {
   const n = Number(price);
-  if (!Number.isFinite(n)) return 'full';
-  if (n >= 250) return 'free';
-  if (n >= 150) return 'subsidised';
-  return 'full';
+  if (!Number.isFinite(n)) return 'paid';
+  /* Policy v2 (#53): ≥£200 → free (B1–B2), else paid. Tags in Admin beat this. */
+  if (n >= 200) return 'free';
+  return 'paid';
 }
 
 function courierTagForTier(tier) {
@@ -169,11 +169,18 @@ function main() {
     const modelKey = `${device}::${slugify(modelName)}`;
     const price = Number(variant.price);
     const tier = inferCourierTier(price);
-    const tags = String(p.tags || '')
+    let tags = String(p.tags || '')
       .split(',')
       .map((t) => t.trim())
       .filter(Boolean);
-    if (!tags.includes(courierTagForTier(tier))) tags.push(courierTagForTier(tier));
+    /* Policy v2: only stamp courier:free (≥£200). Untagged = paid. */
+    if (tier === 'free') {
+      const freeTag = courierTagForTier('free');
+      if (!tags.includes(freeTag)) tags.push(freeTag);
+      tags = tags.filter((t) => !/^courier:(full|subsidised|paid)$/i.test(t));
+    } else {
+      tags = tags.filter((t) => !/^courier:(full|subsidised|paid)$/i.test(t));
+    }
 
     if (!models[modelKey]) {
       models[modelKey] = {

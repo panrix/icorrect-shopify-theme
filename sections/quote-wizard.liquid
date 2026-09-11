@@ -98,6 +98,13 @@ window.WIZARD_CFG = {
   diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: '2 working days' | json }},
   bandsUrl: {{ 'courier-london-bands.json' | asset_url | json }},
   catalogueUrl: {{ 'repair-catalogue-map.json' | asset_url | json }},
+  serviceAdjustmentsUrl: {{ 'service-adjustment-variants.json' | asset_url | json }},
+  /* Inline IDs so checkout never waits on a fetch for money-path (#53) */
+  serviceAdjustments: {
+    "15": 71280436379901,
+    "20": 71280436412669,
+    "25": 71280436445437
+  },
   mailIn: {
     title: {{ mail_in_prod.title | default: 'Mail-in pack' | json }},
     price: 0,
@@ -1092,6 +1099,12 @@ window.__QW_CATALOGUE = null;
     if (!window.__QW_CATALOGUE && CFG.catalogueUrl) {
       jobs.push(fetch(CFG.catalogueUrl).then(function(r){ return r.json(); }).then(function(j){ window.__QW_CATALOGUE = j; }));
     }
+    if (!window.__QW_SERVICE_ADJUSTMENTS && CFG.serviceAdjustmentsUrl) {
+      jobs.push(fetch(CFG.serviceAdjustmentsUrl).then(function(r){ return r.json(); }).then(function(j){
+        window.__QW_SERVICE_ADJUSTMENTS = j;
+        if (j && j.variants) CFG.serviceAdjustments = Object.assign({}, CFG.serviceAdjustments || {}, j.variants);
+      }).catch(function(){ /* inline CFG IDs remain */ }));
+    }
     return Promise.all(jobs);
   }
 
@@ -1104,47 +1117,95 @@ window.__QW_CATALOGUE = null;
       var t = _repairsMap[S.repairType].tags;
       return Array.isArray(t) ? t : String(t).split(',').map(function(x){ return x.trim(); });
     }
-    return ['courier:full'];
+    return [];
   }
 
-  function formatCourierPriceLabel(quote) {
-    if (!quote || quote.service !== 'courier') return 'From postcode';
-    if (quote.customer_price === 0) return 'FREE';
-    return gbp.format(quote.customer_price);
+  function currentRepairPrice() {
+    var card = document.getElementById('qwResCard');
+    if (card && card.dataset.base) {
+      var n = parseFloat(card.dataset.base);
+      if (!isNaN(n)) return n;
+    }
+    return 0;
+  }
+
+  function selectedServiceKind() {
+    var card = document.querySelector('.qw-opt-card.sel[data-opt="svc"]');
+    return card ? (card.getAttribute('data-svc') || 'courier') : 'courier';
+  }
+
+  function serviceVariantsAsset() {
+    if (window.__QW_SERVICE_ADJUSTMENTS) return window.__QW_SERVICE_ADJUSTMENTS;
+    return { variants: CFG.serviceAdjustments || {} };
+  }
+
+  function quoteForService(serviceKind, postcode) {
+    if (!window.ICorrectCourier || !window.__QW_BANDS) return null;
+    return window.ICorrectCourier.quoteServiceAdjustment({
+      postcode: postcode || '',
+      productTags: currentRepairTags(),
+      bands: window.__QW_BANDS,
+      service: serviceKind === 'mailin' ? 'mail-in' : 'courier',
+      repairPrice: currentRepairPrice(),
+      variants: serviceVariantsAsset()
+    });
+  }
+
+  /* All-in total only — never show courier as a separate line (#53 policy v2). */
+  function formatServiceCardHint(quote, kind) {
+    if (!quote) return kind === 'mailin' ? 'Nationwide' : 'Enter postcode';
+    if (kind === 'mailin') {
+      return quote.tier === 'paid' ? 'Tracked pack' : 'Free pack';
+    }
+    if (!quote.courierAvailable && quote.forcedMailIn) return 'Mail-in in your area';
+    if (quote.service === 'courier' && quote.adjustment === 0) return 'Included';
+    if (quote.service === 'courier') return 'Available';
+    return 'Enter postcode';
+  }
+
+  function refreshAllInTotal() {
+    var resCard = document.getElementById('qwResCard');
+    if (!resCard) return;
+    var base = parseFloat(resCard.dataset.base || 0);
+    var total = base;
+    resCard.querySelectorAll('.qw-opt-card.sel').forEach(function(c) {
+      /* svc cards carry no separate add — adjustment applied once via quote */
+      if (c.getAttribute('data-opt') === 'svc') return;
+      total += parseFloat(c.dataset.add || 0);
+    });
+    if (_courierQuote && _courierQuote.adjustment) {
+      total += Number(_courierQuote.adjustment) || 0;
+    }
+    var totalEl = document.getElementById('qwPriceTotal');
+    if (totalEl) totalEl.textContent = gbp.format(total);
   }
 
   function buildServiceCards() {
-    var price = formatCourierPriceLabel(_courierQuote);
-    var pill = '';
-    if (_courierQuote && _courierQuote.service === 'courier' && _courierQuote.tier === 'free') {
-      pill = '<span class="qw-pop-tag">Free for this repair</span>';
-    } else if (_courierQuote && _courierQuote.service === 'courier' && _courierQuote.tier === 'subsidised') {
-      pill = '<span class="qw-pop-tag">Subsidised</span>';
-    }
+    var courierHint = formatServiceCardHint(_courierQuote, 'courier');
+    var mailHint = formatServiceCardHint(_courierQuote, 'mailin');
     return '<div class="qw-opt-section">' +
       '<div class="qw-opt-label">How do you want to get it to us?</div>' +
       '<div class="qw-opt-row qw-svc-row">' +
         '<div class="qw-opt-card sel" data-opt="svc" data-svc="courier" data-add="0" tabindex="0">' +
-          pill +
           '<div class="qw-opt-name">Courier collection</div>' +
           '<div class="qw-opt-meta">We collect from your door across London</div>' +
-          '<div class="qw-opt-price" id="qwCourierPriceLbl">' + price + '</div>' +
+          '<div class="qw-opt-price" id="qwCourierPriceLbl">' + courierHint + '</div>' +
         '</div>' +
         '<div class="qw-opt-card" data-opt="svc" data-svc="mailin" data-add="0" tabindex="0">' +
           '<span class="qw-pop-tag" style="background:#0a72ef">Nationwide</span>' +
-          '<div class="qw-opt-name">Post it — free pack</div>' +
-          '<div class="qw-opt-meta">Tracked, insured mail-in pack within 24h</div>' +
-          '<div class="qw-opt-price free">FREE</div>' +
+          '<div class="qw-opt-name">Post it — mail-in pack</div>' +
+          '<div class="qw-opt-meta">Tracked, insured pack within 24h</div>' +
+          '<div class="qw-opt-price" id="qwMailinPriceLbl">' + mailHint + '</div>' +
         '</div>' +
       '</div>' +
       '<div class="qw-courier-panel" id="qwCourierPanel">' +
         '<label class="qw-courier-lbl" for="qwPostcode">Collection postcode</label>' +
         '<input type="text" id="qwPostcode" class="qw-courier-inp" placeholder="e.g. SW11 8BJ" autocomplete="postal-code">' +
         '<div class="qw-courier-result" id="qwCourierResult" hidden></div>' +
-        '<div class="qw-courier-note">London postcodes get an instant collection price. Outside London we offer the free mail-in pack — never an error.</div>' +
+        '<div class="qw-courier-note">Enter your postcode — your Total updates to the all-in price. Outside London we use tracked mail-in.</div>' +
       '</div>' +
       '<div class="qw-mailin-panel" id="qwMailinPanel" style="display:none">' +
-        '<div class="qw-courier-note">We post a free, tracked, insured pack. Send the device when it arrives.</div>' +
+        '<div class="qw-courier-note">We post a tracked, insured pack. Your Total above is the all-in price for this repair.</div>' +
       '</div>' +
       '<div class="qw-courier-err" id="qwServiceErr"></div>' +
     '</div>';
@@ -1153,42 +1214,47 @@ window.__QW_CATALOGUE = null;
   function applyCourierQuoteToUI(quote) {
     _courierQuote = quote;
     var priceLbl = document.getElementById('qwCourierPriceLbl');
+    var mailLbl = document.getElementById('qwMailinPriceLbl');
     var result = document.getElementById('qwCourierResult');
     var courierCard = document.querySelector('.qw-opt-card[data-svc="courier"]');
-    if (priceLbl) priceLbl.textContent = formatCourierPriceLabel(quote);
+    var mailCard = document.querySelector('.qw-opt-card[data-svc="mailin"]');
+
+    if (priceLbl) priceLbl.textContent = formatServiceCardHint(quote, 'courier');
+    if (mailLbl) mailLbl.textContent = formatServiceCardHint(quote, 'mailin');
+
     if (courierCard) {
-      courierCard.dataset.add = (quote && quote.service === 'courier' && quote.customer_price != null)
-        ? String(quote.customer_price) : '0';
+      courierCard.dataset.add = '0';
+      if (quote && quote.courierAvailable === false) {
+        courierCard.classList.add('qw-opt-disabled');
+        courierCard.setAttribute('aria-disabled', 'true');
+      } else if (courierCard) {
+        courierCard.classList.remove('qw-opt-disabled');
+        courierCard.removeAttribute('aria-disabled');
+      }
     }
-    if (!result) return;
+
+    if (!result) { refreshAllInTotal(); return; }
     if (quote && quote.service === 'courier') {
       var win = collectionWindowCopy(quote.band);
       result.hidden = false;
-      result.innerHTML = (quote.customer_price === 0
-          ? '<div class="qw-courier-price">Collection: <span class="free">FREE</span></div>'
-          : '<div class="qw-courier-price">Collection: ' + gbp.format(quote.customer_price) + '</div>') +
+      result.innerHTML =
         '<div class="qw-courier-why">Band ' + quote.band + ' · ' + win.headline + '</div>' +
-        '<div class="qw-courier-win">' + win.detail + '</div>';
+        '<div class="qw-courier-win">' + win.detail + '</div>' +
+        '<div class="qw-courier-note">Price shown in Total includes collection &amp; return.</div>';
+    } else if (quote && quote.forcedMailIn) {
+      result.hidden = false;
+      result.innerHTML = '<div class="qw-courier-why">Courier isn\'t available for this repair in your area.</div>' +
+        '<div class="qw-courier-win">We\'ve switched you to tracked mail-in — Total is all-in.</div>';
+      if (mailCard && selectedServiceKind() === 'courier') mailCard.click();
     } else if (quote && quote.service === 'mail-in') {
       result.hidden = false;
-      result.innerHTML = '<div class="qw-courier-price">Outside our London courier area</div>' +
-        '<div class="qw-courier-why">We will send a free mail-in pack instead.</div>';
-      var mailCard = document.querySelector('.qw-opt-card[data-svc="mailin"]');
-      if (mailCard) mailCard.click();
+      result.innerHTML = '<div class="qw-courier-why">Mail-in pack for your postcode.</div>' +
+        '<div class="qw-courier-win">Total above is the all-in price.</div>';
     } else {
       result.hidden = true;
       result.innerHTML = '';
     }
-    var resCard = document.getElementById('qwResCard');
-    if (resCard) {
-      var base = parseFloat(resCard.dataset.base || 0);
-      var total = base;
-      resCard.querySelectorAll('.qw-opt-card.sel').forEach(function(c) {
-        total += parseFloat(c.dataset.add || 0);
-      });
-      var totalEl = document.getElementById('qwPriceTotal');
-      if (totalEl) totalEl.textContent = gbp.format(total);
-    }
+    refreshAllInTotal();
   }
 
   function wireCourierService(container) {
@@ -1205,24 +1271,40 @@ window.__QW_CATALOGUE = null;
       if (mailPanel) mailPanel.style.display = svc === 'mailin' ? 'block' : 'none';
       var err = document.getElementById('qwServiceErr');
       if (err) err.textContent = '';
+      runLookup();
     }
     container.querySelectorAll('.qw-opt-card[data-opt="svc"]').forEach(function(card) {
-      card.addEventListener('click', function(){ setTimeout(syncPanels, 0); });
+      card.addEventListener('click', function(){
+        if (card.classList.contains('qw-opt-disabled')) return;
+        setTimeout(syncPanels, 0);
+      });
     });
     syncPanels();
 
     var timer = null;
     function runLookup() {
       var pc = input.value || '';
-      if (!String(pc).trim()) { applyCourierQuoteToUI(null); return; }
+      var kind = selectedServiceKind();
+      if (kind === 'courier' && !String(pc).trim()) {
+        applyCourierQuoteToUI(null);
+        return;
+      }
       if (!window.ICorrectCourier || !window.__QW_BANDS) {
         ensureCourierAssets().then(runLookup); return;
       }
-      var quote = window.ICorrectCourier.quoteCourierCollection({
-        postcode: pc,
-        productTags: currentRepairTags(),
-        bands: window.__QW_BANDS
-      });
+      /* For mail-in without postcode, still quote mail-in adjustment from tags/price */
+      var quote = quoteForService(kind, pc || 'SW1A 1AA');
+      if (kind === 'mailin' && !String(pc).trim()) {
+        /* National mail-in — ignore sample postcode band for display */
+        quote = window.ICorrectCourier.quoteServiceAdjustment({
+          postcode: '',
+          productTags: currentRepairTags(),
+          bands: window.__QW_BANDS,
+          service: 'mail-in',
+          repairPrice: currentRepairPrice(),
+          variants: serviceVariantsAsset()
+        });
+      }
       applyCourierQuoteToUI(quote);
     }
     input.addEventListener('input', function(){ clearTimeout(timer); timer = setTimeout(runLookup, 200); });
@@ -1949,17 +2031,20 @@ window.__QW_CATALOGUE = null;
         return null;
       }
       if (!_courierQuote || _courierQuote.service !== 'courier') {
-        if (errBox) errBox.textContent = 'That postcode is outside our London courier area — choose the free mail-in pack instead.';
+        if (errBox) errBox.textContent = 'Courier isn\'t available for that postcode — choose mail-in instead.';
         return null;
       }
       var win = collectionWindowCopy(_courierQuote.band);
       items[0].properties['Service Type'] = 'Courier collection';
       items[0].properties['Postcode'] = postcode.toUpperCase();
-      items[0].properties['Band'] = _courierQuote.band;
+      items[0].properties['Band'] = _courierQuote.band || '';
       items[0].properties['Collection Window'] = win.headline;
-      items[0].properties['Courier Fee'] = String(_courierQuote.customer_price != null ? _courierQuote.customer_price : '');
     } else {
       items[0].properties['Service Type'] = 'Mail-in';
+      var postcodeInputMi = document.getElementById('qwPostcode');
+      var postcodeMi = postcodeInputMi ? String(postcodeInputMi.value || '').trim() : '';
+      if (postcodeMi) items[0].properties['Postcode'] = postcodeMi.toUpperCase();
+      if (_courierQuote && _courierQuote.band) items[0].properties['Band'] = _courierQuote.band;
       var miVid = CFG.mailIn ? CFG.mailIn.variantId : null;
       if (miVid && miVid !== 'null' && miVid !== null) {
         items.push({
@@ -1967,6 +2052,26 @@ window.__QW_CATALOGUE = null;
           quantity: 1,
           properties: { 'Service Type': 'Mail-in' }
         });
+      }
+    }
+
+    /* Service adjustment variant — null-safe: missing ID already forced free mail-in in quote */
+    if (_courierQuote && _courierQuote.adjustment > 0) {
+      if (_courierQuote.variantMode === 'fallback-free-mail-in') {
+        items[0].properties['Service Type'] = 'Mail-in';
+        delete items[0].properties['Collection Window'];
+      } else if (_courierQuote.variantId) {
+        items.push({
+          id: parseInt(_courierQuote.variantId, 10),
+          quantity: 1,
+          properties: {
+            'Service Type': items[0].properties['Service Type'] || '',
+            'Postcode': items[0].properties['Postcode'] || '',
+            'Band': items[0].properties['Band'] || ''
+          }
+        });
+      } else {
+        console.warn('[quote-wizard] quoted adjustment £' + _courierQuote.adjustment + ' without variantId — not adding a £0 line');
       }
     }
 
