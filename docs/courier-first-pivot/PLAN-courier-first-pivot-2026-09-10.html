@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>iCorrect — Courier-First Pivot · Plan & Service Map · 2026-09-10</title>
+<style>
+  :root{
+    --g1000:#171717; --g700:#333; --g600:#4d4d4d; --g500:#666; --g400:#808080;
+    --g300:#a3a3a3; --g200:#d4d4d4; --g100:#ebebeb; --g50:#fafafa;
+    --blue:#0a72ef; --blue-bg:#f0f6ff; --red:#ff5b4f; --red-bg:#fff3f2;
+    --pink:#de1d8d; --green:#0d7a4f; --green-bg:#effaf4; --amber:#9a6a00; --amber-bg:#fdf6e7;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{
+    font-family:"Geist",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    color:var(--g1000); background:#fff; line-height:1.55;
+    padding:40px 24px 80px;
+  }
+  .wrap{max-width:1080px; margin:0 auto}
+  .mono{font-family:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+  header{border-bottom:2px solid var(--g1000); padding-bottom:20px; margin-bottom:28px}
+  .kicker{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--g500); font-weight:600}
+  h1{font-size:30px; font-weight:700; letter-spacing:-.02em; margin:6px 0 4px}
+  .sub{color:var(--g600); font-size:14px}
+  .badge{display:inline-block; font-size:11px; font-weight:600; padding:3px 10px; border-radius:999px; letter-spacing:.04em; text-transform:uppercase}
+  .b-blue{background:var(--blue-bg); color:var(--blue); border:1px solid #c9e0fd}
+  .b-red{background:var(--red-bg); color:var(--red); border:1px solid #ffd4d0}
+  .b-green{background:var(--green-bg); color:var(--green); border:1px solid #c4ead6}
+  .b-amber{background:var(--amber-bg); color:var(--amber); border:1px solid #f0dfb8}
+  .b-gray{background:var(--g50); color:var(--g600); border:1px solid var(--g200)}
+  h2{font-size:19px; font-weight:700; letter-spacing:-.01em; margin:40px 0 6px; display:flex; align-items:center; gap:10px}
+  h2 .num{font-family:"Geist Mono",monospace; font-size:12px; color:#fff; background:var(--g1000); border-radius:6px; padding:3px 8px}
+  .lede{color:var(--g600); font-size:14px; margin-bottom:18px; max-width:760px}
+  /* cards */
+  .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:18px 0}
+  .card{border:1px solid var(--g200); border-radius:12px; padding:16px 18px; background:#fff}
+  .card h3{font-size:14px; font-weight:700; margin:8px 0 4px}
+  .card p{font-size:13px; color:var(--g600)}
+  /* flow diagram */
+  .flow{display:flex; align-items:stretch; gap:0; margin:14px 0 6px; flex-wrap:wrap}
+  .node{border:1.5px solid var(--g300); border-radius:10px; padding:10px 14px; font-size:13px; background:#fff; display:flex; flex-direction:column; justify-content:center; min-width:130px}
+  .node .t{font-weight:700; font-size:13px}
+  .node .d{font-size:11.5px; color:var(--g500); margin-top:2px}
+  .node.blue{border-color:var(--blue); background:var(--blue-bg)}
+  .node.blue .t{color:var(--blue)}
+  .node.red{border-color:var(--red); background:var(--red-bg)}
+  .node.red .t{color:var(--red); text-decoration:line-through}
+  .node.green{border-color:var(--green); background:var(--green-bg)}
+  .node.green .t{color:var(--green)}
+  .node.dark{border-color:var(--g1000); background:var(--g1000); color:#fff}
+  .node.dark .d{color:var(--g300)}
+  .arr{display:flex; align-items:center; padding:0 8px; color:var(--g400); font-size:18px; font-weight:700}
+  .arr.red{color:var(--red)}
+  .lane-label{font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--g500); margin:22px 0 8px}
+  /* tables */
+  table{width:100%; border-collapse:collapse; font-size:13px; margin:12px 0}
+  th{text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--g500); border-bottom:1.5px solid var(--g1000); padding:8px 10px}
+  td{padding:8px 10px; border-bottom:1px solid var(--g100); vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  td.r,th.r{text-align:right; font-family:"Geist Mono",monospace; font-size:12.5px}
+  .hl{background:var(--blue-bg)}
+  .neg{color:var(--red); font-weight:600}
+  .pos{color:var(--green); font-weight:600}
+  /* timeline */
+  .tl{display:grid; grid-template-columns:110px 1fr; gap:0; margin:14px 0; border:1px solid var(--g200); border-radius:12px; overflow:hidden}
+  .tl .when{padding:14px; background:var(--g50); border-right:1px solid var(--g200); font-family:"Geist Mono",monospace; font-size:12px; font-weight:600; display:flex; align-items:flex-start}
+  .tl .what{padding:14px 18px; font-size:13.5px}
+  .tl .what b{display:block; margin-bottom:2px}
+  .tl > div{border-bottom:1px solid var(--g100)}
+  .tl > div:nth-last-child(-n+2){border-bottom:none}
+  .callout{border:1px solid var(--g200); border-left:4px solid var(--blue); border-radius:8px; background:var(--g50); padding:14px 18px; font-size:13.5px; margin:14px 0}
+  .callout.warn{border-left-color:var(--red); background:var(--red-bg)}
+  .callout.future{border-left-color:var(--pink); background:#fdf2f9}
+  ul.tight{margin:8px 0 8px 20px; font-size:13.5px; color:var(--g700)}
+  ul.tight li{margin:4px 0}
+  .foot{margin-top:48px; padding-top:16px; border-top:1px solid var(--g200); font-size:12px; color:var(--g500)}
+  @media (max-width:820px){ .cards{grid-template-columns:1fr} .tl{grid-template-columns:1fr} .tl .when{border-right:none; border-bottom:1px solid var(--g200)} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">iCorrect · Business pivot · Research &amp; build plan</div>
+  <h1>Courier-First: killing the walk-in, launching collection</h1>
+  <div class="sub">Thursday 10 September 2026 · Prepared by Kimi from VPS evidence + the Sep 8 numbers pack ·
+    <span class="badge b-amber">Awaiting Ricky sign-off</span>
+    <span class="badge b-blue">48-hour build scoped</span>
+  </div>
+</header>
+
+<!-- 1. AT A GLANCE -->
+<h2><span class="num">1</span> The pivot at a glance</h2>
+<p class="lede">Walk-ins are breaking the team — ~17 unbooked drop-ins a week (21–27 in August) with no front-of-house since Naheed left. The fix: the website stops offering walk-in, sells courier collection across London with tiered pricing, keeps mail-in, and converts the people who still show up into booked drop-off slots — a path that already handles half our door traffic today.</p>
+<div class="cards">
+  <div class="card">
+    <span class="badge b-red">Kill</span>
+    <h3>Unbooked walk-in drop-off</h3>
+    <p>~17/wk unbooked arrivals, each burning 10–20 min of a team that has no English-fluent front-of-house. Removed from the website, Typeform, and reception script.</p>
+  </div>
+  <div class="card">
+    <span class="badge b-blue">Launch</span>
+    <h3>London courier collection</h3>
+    <p>Postcode → static price band → tier by repair value: free for high-value, half for mid, full price for low-margin. Booked automatically as a reviewed draft.</p>
+  </div>
+  <div class="card">
+    <span class="badge b-green">Keep &amp; formalise</span>
+    <h3>Booked drop-off slots</h3>
+    <p>Already 16.8/wk — equal to unbooked. Becomes the only way to come to us in person: small capped slots, same/next day, team knows what's coming.</p>
+  </div>
+</div>
+
+<!-- 2. SERVICE MAP -->
+<h2><span class="num">2</span> Service map — how it changes</h2>
+<p class="lede">Today every path ends in someone going upstairs to talk to a stranger. After the pivot, every path is known in advance: the device is expected, the job is on Monday, the team just receives.</p>
+
+<div class="lane-label">Today — reactive</div>
+<div class="flow">
+  <div class="node red"><span class="t">Walk-in (unbooked)</span><span class="d">~17/wk · interrupts the bench</span></div>
+  <div class="arr red">→</div>
+  <div class="node"><span class="t">Reception iPad</span><span class="d">Typeform, no appointment</span></div>
+  <div class="arr">→</div>
+  <div class="node"><span class="t">Someone goes upstairs</span><span class="d">broken-English intake chat</span></div>
+  <div class="arr">→</div>
+  <div class="node dark"><span class="t">Workshop</span><span class="d">Monday card created on the spot</span></div>
+</div>
+<div class="flow">
+  <div class="node"><span class="t">Website quote</span><span class="d">walk-in date/time picker</span></div>
+  <div class="arr">→</div>
+  <div class="node"><span class="t">"Preferred" time</span><span class="d">soft, no capacity check</span></div>
+  <div class="arr">→</div>
+  <div class="node dark"><span class="t">Workshop</span></div>
+</div>
+
+<div class="lane-label">After — every device expected</div>
+<div class="flow">
+  <div class="node blue"><span class="t">Courier collection</span><span class="d">postcode → band → tier price</span></div>
+  <div class="arr">→</div>
+  <div class="node blue"><span class="t">Auto draft booking</span><span class="d">Gophr draft → Slack → 1-click confirm</span></div>
+  <div class="arr">→</div>
+  <div class="node dark"><span class="t">Workshop</span><span class="d">device expected, job pre-built</span></div>
+</div>
+<div class="flow">
+  <div class="node"><span class="t">Mail-in</span><span class="d">national · pack posted out</span></div>
+  <div class="arr">→</div>
+  <div class="node"><span class="t">Royal Mail / DHL</span><span class="d">tracked inbound</span></div>
+  <div class="arr">→</div>
+  <div class="node dark"><span class="t">Workshop</span></div>
+</div>
+<div class="flow">
+  <div class="node green"><span class="t">Booked drop-off</span><span class="d">capped slots · the only door path</span></div>
+  <div class="arr">→</div>
+  <div class="node green"><span class="t">iPad check-in</span><span class="d">matches existing booking (PR #391)</span></div>
+  <div class="arr">→</div>
+  <div class="node dark"><span class="t">Workshop</span></div>
+</div>
+<div class="flow">
+  <div class="node red"><span class="t">Unbooked walk-up</span><span class="d">still happens — people don't read</span></div>
+  <div class="arr red">→</div>
+  <div class="node"><span class="t">iPad redirect</span><span class="d">"next slot: today 15:30 — or we collect"</span></div>
+  <div class="arr">→</div>
+  <div class="node green"><span class="t">Converted to a booking</span><span class="d">no ad-hoc bench interruption</span></div>
+</div>
+
+<!-- 3. CUSTOMER JOURNEY -->
+<h2><span class="num">3</span> The courier quote module — what the customer sees</h2>
+<p class="lede">Static prices per postcode band — no live API in the browser, nothing commercially sensitive in the theme. The same module later carries the national courier and trade-in offers.</p>
+<div class="flow">
+  <div class="node"><span class="t">1 · Device &amp; fault</span><span class="d">existing wizard</span></div>
+  <div class="arr">→</div>
+  <div class="node"><span class="t">2 · Price shown</span><span class="d">existing</span></div>
+  <div class="arr">→</div>
+  <div class="node blue"><span class="t">3 · Postcode</span><span class="d">"SW11 8…" → band B2</span></div>
+  <div class="arr">→</div>
+  <div class="node blue"><span class="t">4 · Collection price</span><span class="d">free / £10 / £20 by tier</span></div>
+  <div class="arr">→</div>
+  <div class="node blue"><span class="t">5 · Window</span><span class="d">"book by 2pm → collect today"</span></div>
+  <div class="arr">→</div>
+  <div class="node"><span class="t">6 · Checkout</span><span class="d">existing Shopify</span></div>
+  <div class="arr">→</div>
+  <div class="node"><span class="t">7 · Tracking</span><span class="d">branded message + live link</span></div>
+</div>
+
+<h3 style="font-size:15px; margin:26px 0 4px">The three tiers — validated against real jobs (last 30 days, parts-costed)</h3>
+<table>
+  <tr><th>Tier</th><th>Rule</th><th>Real example</th><th class="r">Ticket</th><th class="r">After parts</th><th class="r">After free RT £38</th><th>Verdict</th></tr>
+  <tr class="hl"><td><b>Free collection</b></td><td>High-value repairs ≥£250</td><td>MacBook Air M2 screen</td><td class="r">£399</td><td class="r">£281</td><td class="r">£243</td><td><span class="badge b-green">Afford</span></td></tr>
+  <tr class="hl"><td></td><td></td><td>MacBook Pro 16" screen</td><td class="r">£599</td><td class="r">£352</td><td class="r">£314</td><td><span class="badge b-green">Afford</span></td></tr>
+  <tr><td><b>Subsidised</b></td><td>Mid £150–249 · customer ~half</td><td>MacBook battery</td><td class="r">£199</td><td class="r">£165</td><td class="r">£127</td><td><span class="badge b-green">Afford</span></td></tr>
+  <tr><td><b>Full price</b></td><td>Low-margin &lt;£150 · customer pays RT</td><td>iPhone 13 battery</td><td class="r">£89</td><td class="r">£68</td><td class="r">£30</td><td><span class="badge b-amber">Business we don't mind losing</span></td></tr>
+  <tr><td><b>Diagnostics</b></td><td>£49 fee <b>cannot carry free RT</b> (£15 left). Offer free <i>collect-only</i> (£17) on silicon MacBooks, or fund as a capped conversion experiment</td><td>MacBook no-power diag</td><td class="r">£49</td><td class="r">£49</td><td class="r">£15</td><td><span class="badge b-red">Can't subsidise RT</span></td></tr>
+</table>
+
+<!-- 4. BANDS -->
+<h2><span class="num">4</span> Postcode bands — from live Gophr quotes today</h2>
+<p class="lede">Full London coverage pulled live this morning: <b>396/396 quotes OK</b>, all 99 representative outward codes, W1 origin, quoted for tomorrow. May prices unchanged at the core (£8.54 floor) — the model's subsidy maths holds. Machine-ready table saved for the build: <span class="mono">gophr-london-bands-2026-09-10.json</span>.</p>
+<table>
+  <tr><th>Band</th><th class="r">Codes</th><th class="r">RT cost (economy bike)</th><th>Examples</th><th>Policy</th></tr>
+  <tr class="hl"><td><b>B1 · Core</b></td><td class="r">38</td><td class="r">£17–24</td><td>All W1/WC, EC1–4, SW1, SE1, NW1, N1, W2, W8, SW3, SW7, SW8, E1, N5, N7…</td><td>Free RT on high-value is cheap here</td></tr>
+  <tr><td><b>B2 · Inner ring</b></td><td class="r">25</td><td class="r">£24–32</td><td>SW11, SW4–6, W6, W12, W14, E2, E8, E14, N4, N16, SE5, SE14–16…</td><td>Free RT fine on ≥£250</td></tr>
+  <tr><td><b>B3 · Mid ring</b></td><td class="r">19</td><td class="r">£32–42</td><td>SW15, SW18, W3, W4, E15, N2, N8, N15, SE4, SE8, SE10, SE22, NW10–11…</td><td>Free RT only on top tier</td></tr>
+  <tr><td><b>B4 · Outer</b></td><td class="r">17</td><td class="r">£45–66</td><td>W5, W7, W13, E6, E7, E11, E12, E16, E17, SE6, SE13, SE19, SE23, SW16–19</td><td>Half-subsidy max — evening-tight RT hits £100 (W7)</td></tr>
+  <tr><td><b>Beyond</b></td><td class="r">—</td><td class="r">—</td><td>Outside GL coverage</td><td>Mail-in offer (DHL national later)</td></tr>
+</table>
+
+<!-- 5. NUMBERS -->
+<h2><span class="num">5</span> What it costs — the honest board</h2>
+<p class="lede">From the Sep 8 model (Shopify orders, May–Aug window). Website walk-in at risk: <b>£9,472/mo</b>. Mail-in safe: £6,091/mo. Rent saving stays <b>off</b> this board until the building move actually happens — the 4-month interim absorbs the full hit.</p>
+<table>
+  <tr><th>Scenario</th><th class="r">Walk-in £ kept</th><th class="r">Subsidy cost</th><th class="r">New demand</th><th class="r">Net vs today</th></tr>
+  <tr><td>Pessimistic keep · no new demand</td><td class="r">£4,691</td><td class="r">−£185</td><td class="r">£0</td><td class="r neg">−£4,966 /mo</td></tr>
+  <tr class="hl"><td><b>Base keep · no new demand</b></td><td class="r">£6,427</td><td class="r">−£228</td><td class="r">£0</td><td class="r neg"><b>−£3,272 /mo</b></td></tr>
+  <tr><td>Base · +20% mail-in growth</td><td class="r">£6,427</td><td class="r">−£228</td><td class="r">+£1,218</td><td class="r neg">−£2,054 /mo</td></tr>
+  <tr><td>Optimistic · +30% mail-in growth</td><td class="r">£7,691</td><td class="r">−£257</td><td class="r">+£1,827</td><td class="r neg">−£211 /mo</td></tr>
+</table>
+<div class="callout"><b>Read:</b> even the best corner is slightly negative on demand alone — this pivot is a <b>team-survival and positioning play</b>, not a revenue play. What closes the gap: AdWords on "we collect" keywords, the trade-in module (parked), and eventually the rent save (~£2.3–2.6k/mo) when the warehouse move lands.</div>
+
+<!-- 6. 48H PLAN -->
+<h2><span class="num">6</span> The 48-hour build (Thu–Fri)</h2>
+<div class="tl">
+  <div class="when">THU AM</div><div class="what"><b>W3 · Gophr window-field probe</b>Fix the "deliver by midnight" bug: find the API field that makes a draft job show the correct collection window in the Gophr dashboard. Done-when: screenshot proof on a test draft. <span class="badge b-amber">Only real schedule risk</span></div>
+  <div class="when">THU</div><div class="what"><b>W1 · Theme logic</b>Postcode field → static band JSON → tier tags (<span class="mono">courier:free / :subsidised / :full</span>) → price + window copy in the quote wizard. Walk-in branch becomes capped booked-drop-off slots.</div>
+  <div class="when">THU–FRI</div><div class="what"><b>W2 · Copy sweep</b>Scripted pass over ~78 cloned "Walk-In Service" blocks + homepage + FAQ/LocalBusiness schema (SEO-sensitive) + retire the walk-in product.</div>
+  <div class="when">FRI</div><div class="what"><b>W3 · Auto draft booking</b>Order-paid webhook → Gophr draft (never auto-dispatches) → Slack card → staff one-click confirm → customer gets tracking link.</div>
+  <div class="when">FRI</div><div class="what"><b>W4 · Non-code (you + Ferrari)</b>Google Business Profile "no walk-ins", Intercom/Alex macros, phone script, reception signage.</div>
+  <div class="when">FRI EVE</div><div class="what"><b>Gate + ship</b>Terra QA on the PR, test order end-to-end (band price, tier price, slot cap, draft job with correct window), theme push. Weekend: everything points at no-walk-in.</div>
+</div>
+<div class="callout warn"><b>Deliberately NOT in the 48h:</b> live courier API in the browser · real capacity/slot system · payment-link-at-intake · branded tracking page (v1 — your design session) · trade-in module (parked) · new website. If the window probe fails Friday, we ship the site anyway and staff book from pre-filled links for week one.</div>
+
+<!-- 7. SAME-DAY 2027 -->
+<h2><span class="num">7</span> Same-day courier repair — 2027 research note</h2>
+<p class="lede">Your old courier-service playbook (same-day iPhone repair + return) is the right 2027 expansion — as an express MacBook-class product, once the team grows. All four of these must be true per job, and none exist as systems today:</p>
+<div class="cards" style="grid-template-columns:repeat(4,1fr)">
+  <div class="card"><h3>① Parts in stock</h3><p>Live stock truth gates the same-day promise. No stock → offer never shown.</p></div>
+  <div class="card"><h3>② Engineer free</h3><p>A named engineer with a real free block — capacity data, not vibes.</p></div>
+  <div class="card"><h3>③ Slot booked</h3><p>The repair is scheduled into the day — needs the D-09 capacity system.</p></div>
+  <div class="card"><h3>④ Time proven</h3><p>Average repair time per family, where even the slow tail fits the window.</p></div>
+</div>
+<div class="callout future"><b>Sequence:</b> courier-first pivot → capacity/slot system → parts-stock truth → same-day pilot on one MacBook family (A2337/A2681 screens — price matrix and parts data already exist). Gophr priority-3 (~2× price) is the express-leg cost basis.</div>
+
+<!-- 8. DECISIONS -->
+<h2><span class="num">8</span> Decisions waiting on you</h2>
+<table>
+  <tr><th>#</th><th>Decision</th><th>Options</th><th>Status</th></tr>
+  <tr><td>1</td><td>Dispatch the 48h build</td><td>Now / London morning / after you read this</td><td><span class="badge b-amber">You held — reading</span></td></tr>
+  <tr><td>2</td><td>Subsidy tiers overrule parked ruling D-08</td><td>Your three-tier model wins — needs one explicit line from you</td><td><span class="badge b-amber">Open</span></td></tr>
+  <tr><td>3</td><td>Diagnostics courier offer</td><td>Free collect-only (£17) on silicon MacBooks <b>or</b> free RT as capped experiment <b>or</b> full price</td><td><span class="badge b-amber">Open</span></td></tr>
+  <tr><td>4</td><td>Band prices from full-coverage data</td><td>Running now — I'll bring you the final table</td><td><span class="badge b-blue">In progress</span></td></tr>
+  <tr><td>5</td><td>Soft vs hard launch</td><td>Live Friday, ads Monday — or ads same day</td><td><span class="badge b-gray">Friday call</span></td></tr>
+</table>
+
+<div class="foot">
+  Sources: courier-only-relaunch-model-20260908 · top-repairs-courier-afford-20260908 · true-dropins-20260826 · live Gophr matrix 2026-09-10 (180 quotes) · SPEC-courier-first-pivot-48h-2026-09-10.md · RESEARCH-kill-walk-in-courier-pivot-2026-09-10.md — all in /home/ricky/deliverables + /home/ricky/business/analysis/2026-09-10-walkin-courier-pivot
+</div>
+
+</div>
+</body>
+</html>
