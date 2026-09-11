@@ -155,6 +155,37 @@ Total walk-in demand today = website £9.5k + counter SumUp £10.8k ≈ **£20.3
 
 **Trade-in synergy worth naming:** the courier module shipping this weekend IS the trade-in collection rail — free collection + fast payout + MacBook-first is exactly the tier-1 courier offer with a buy price instead of a repair price. Building courier-first now means the trade-in lane launches with its logistics already done.
 
+## 9. Scenario D — the real one: corporate lands Dec/Jan, device sales bridge Q4 (Ricky 2026-09-11 06:20)
+
+**New rulings:**
+- **Corporate £0 until Nov/Dec.** Newco needs a VAT number; processing takes 30–40 days; corporate supplier onboarding waits on it. → **File the VAT application THIS WEEK — every day of delay is a day of corporate income pushed further out.** (Also ask the accountant whether newco can invoice below the £90k threshold without charging VAT while registration processes — some corporates can onboard non-VAT suppliers; if yes, October is back in play.)
+- **Device-sales lane:** sell existing repaired stock (£5–10k, sunk cost = pure cash-in) + buy small supplier stock and flip through Q4/Christmas peak. Not a trade-in module — straightforward resale. Net contribution ASSUMPTION: existing stock ~100% cash-in; bought stock ~25–35% net margin.
+
+**The monthly board (v7):**
+
+| Month | Income | Costs | Net |
+|---|---:|---:|---:|
+| **Sep** — courier keep + first stock sales | ~£31–33k | £30.4k | **≈ breakeven** |
+| **Oct** — Nancy £10k + card £5k; device net ~£3k | ~£34k | £45.4k | **−£11.4k** |
+| **Oct** — with Nancy stretched £5k/mo | ~£34k | £40.4k | **−£6.4k** |
+| **Nov** — same shape, Christmas device ramp ~£4–5k net | ~£35–36k | £40.4k (Nancy stretched) | **−£4.4 to −5.4k** |
+| **Dec** — corporate starts + Christmas peak + Nancy nearly done | ~£42–46k | £35–37k | **+£5–9k** |
+| **Jan** — full shape: corporate + courier + devices + diagnostics | ~£43–48k | ~£31.9k | **+£11–16k/mo** |
+
+**Bridge required (Scenario D):**
+| Path | Sep–Nov cumulative | Bridge |
+|---|---:|---:|
+| Nancy at £10k/mo | −£3k −£11.4k −£11.4k ≈ −£26k | **£25k+ — beyond raiseable range** |
+| **Nancy stretched £5k/mo** | −£3k −£6.4k −£5.4k ≈ −£15k | **£15k — exactly the raiseable range** |
+| Nancy stretched + Misha decision | ≈ −£8k | **£8–10k** |
+
+**Verdict:** with corporate at December, survival is still inside the £15k raise — **but only if Nancy stretches to £5k/mo AND the device lane nets £3–5k/mo through the Christmas quarter.** The Misha decision is the difference between "£15k exactly" and "comfortable." January is the prize: +£11–16k/mo is the best shape this business has ever modelled.
+
+**The three conversations that price the bridge, all this week:**
+1. **Accountant:** VAT application filed + can newco invoice corporates pre-VAT-number?
+2. **Nancy:** £10k → £5k/mo instalments (she fronts £20–30k; stretching repayment is the smaller ask).
+3. **Corporates:** the five handshakes in writing — even if they can't pay until your VAT number lands, written confirmation de-risks the bridge.
+
 ## 5. Open items for Ricky
 
 1. ~~Corporate return path~~ → **answered 04:38: £0 modelled until Oct, then £7–10k. Residual: get written billing-confirmation per account in September.**
