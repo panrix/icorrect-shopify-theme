@@ -13,6 +13,8 @@
     module.exports = factory();
   } else {
     root.ICorrectCourier = factory();
+    /* wizard aliases */
+
   }
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';

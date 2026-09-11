@@ -1,6 +1,7 @@
 {% assign repair_products = product.metafields.custom.additional_repair.value %}
 {% assign walk_in = all_products['walk-in-service'] %}
 {% assign mail_in = all_products['mail-in-service'] %}
+{% comment %} walk-in product may be retired — all references must be null-safe (#53) {% endcomment %}
 {% assign main_variant = product.selected_or_first_available_variant %}
 
 <style>
@@ -599,26 +600,16 @@
 {% endif %}
 
 <div class="stuart-integration-wrapper">
-  <h3 class="pickup-method-heading">How {{ device_collection_setting }} do you want to get the device to us?</h3>
+  <h3 class="pickup-method-heading">How do you want to get the device to us?</h3>
 
   <div class="choice-btn-row">
-    {% if device_collection_setting %}
-      <div class="visit-btn">
-          <p>I will visit you</p>
-          <small>Drop off in store</small> </div>
-      <div class="collect-device-btn active">
+      <div class="visit-btn active" data-svc="courier" id="courier-choice-btn">
           <span class="popular-badge">Popular</span>
-          <p>Please collect and deliver</p>
-          <small>+{{ mail_in.price | money }}</small> </div>
-    {% else %}
-      <div class="visit-btn active">
-          <p>I will visit you</p>
-          <small>Drop off in store</small> </div>
-      <div class="collect-device-btn">
-          <span class="popular-badge">Popular</span>
-          <p>Please collect and deliver</p>
-          <small>+{{ mail_in.price | money }}</small> </div>
-    {% endif %}
+          <p>Courier collection</p>
+          <small>We collect from your door</small> </div>
+      <div class="collect-device-btn" data-svc="mailin" id="mailin-choice-btn">
+          <p>Post it — free pack</p>
+          <small>Nationwide mail-in</small> </div>
   </div>
 
   <div class="walk-in-service-content">
@@ -626,53 +617,52 @@
         <input
           type="checkbox"
           id="walk-in-checkbox"
-          value="{{ walk_in.selected_or_first_available_variant.id }}"
+          value="{% if walk_in != blank %}{{ walk_in.selected_or_first_available_variant.id }}{% endif %}"
           data-price="0"
           checked
         >
       </label>
     </div>
-    
+
     <div class="walk-in-prod-info">
-      <strong>{{ walk_in.title }}</strong><br>
-      {{ walk_in.description }}
+      <strong>Courier collection</strong><br>
+      We collect from your door across London and return the device when the repair is done. Same-day in most areas when booked before 2pm.
     </div>
 
     <div class="walk-in-schedule-heading" style="margin-top:20px;">
-      <h3>When would you like to come and visit us?</h3>
+      <h3>Collection postcode</h3>
     </div>
 
     <div class="walk-in-schedule">
-      <div class="walk-in-date-col">
-        <label for="walk-in-date">Date:</label>
-        <input type="date" id="walk-in-date" name="walk_in_date">
-      </div>
-      <div class="walk-in-time-col">
-        <label for="walk-in-time">Time:</label>
-        <select id="walk-in-time" name="walk_in_time"></select>
+      <div class="walk-in-date-col" style="flex:1">
+        <label for="courier-postcode">Postcode:</label>
+        <input type="text" id="courier-postcode" name="courier_postcode" placeholder="e.g. SW11 8BJ" autocomplete="postal-code">
       </div>
     </div>
+    {%- comment -%} Keep hidden date/time nodes so legacy JS null-checks stay safe; not shown. {%- endcomment -%}
+    <input type="hidden" id="walk-in-date" name="walk_in_date" value="">
+    <select id="walk-in-time" name="walk_in_time" style="display:none" aria-hidden="true"></select>
 
     <div id="walkin-inline-error" class="walkin-error"></div>
   </div>
 
-  <div class="collect-device-content">
+  <div class="collect-device-content" style="display:none">
     <div class="additional-walk-in-product" style="display:none;"> <label>
         <input
           type="checkbox"
           id="mail-in-checkbox"
-          value="{{ mail_in.selected_or_first_available_variant.id }}"
-          data-price="{{ mail_in.price | money_without_trailing_zeros | remove:cart.currency.symbol }}"
+          value="{% if mail_in != blank %}{{ mail_in.selected_or_first_available_variant.id }}{% endif %}"
+          data-price="0"
         >
       </label>
     </div>
-    
+
     <div class="walk-in-prod-info">
-      <strong>MAIL-IN SERVICE</strong>
+      <strong>MAIL-IN — FREE PACK</strong>
       <ul>
-        <li>We will ship you our packaging</li>
-        <li>Pack up the device and attach the return label</li>
-        <li>Either drop off to a post office or request a collection</li>
+        <li>We post a tracked, insured pack within 24h</li>
+        <li>Pack the device and attach the return label</li>
+        <li>Drop at a post office or request a collection</li>
       </ul>
     </div>
   </div>
@@ -1236,51 +1226,30 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // If walk-in is checked, enforce date/time
-    if (visitBtn && visitBtn.classList.contains('active') && walkInCheckbox && walkInCheckbox.checked) {
-      if (!walkInDate.value) {
-        showWalkinError('Please select a date and time for your visit.');
+    // Courier path: require postcode only (#53) — no walk-in slots
+    const courierActive = visitBtn && visitBtn.classList.contains('active');
+    const mailActive = collectDeviceBtn && collectDeviceBtn.classList.contains('active');
+    const postcodeEl = document.getElementById('courier-postcode');
+    if (courierActive) {
+      if (!postcodeEl || !String(postcodeEl.value || '').trim()) {
+        showWalkinError('Please enter your collection postcode.');
         return;
-      }
-
-      // Rebuild slots for that date in case user changed system time or came back later
-      // FIX: Save selected time before repopulating (prevents reset to first slot)
-      const savedTimeValue = walkInTime ? walkInTime.value : '';
-      populateSlotsForSelectedDate();
-      // FIX: Restore selected time if still valid
-      if (savedTimeValue && walkInTime) {
-        const stillExists = [...walkInTime.options].some(opt => opt.value === savedTimeValue);
-        if (stillExists) walkInTime.value = savedTimeValue;
-      }
-
-      if (!walkInTime.value) {
-        showWalkinError('Please select a date and time for your visit.');
-        return;
-      }
-
-      // Final same-day guard
-      const selected = parseYMDToLocalDate(walkInDate.value);
-      const today = localTodayMidnight();
-      if (selected.getTime() === today.getTime()) {
-        const chosenMin = parse12HourToMinutes(walkInTime.value);
-        const nextSlotMin = ceilNowToNextHalfHourMinutes();
-        if (chosenMin === null || chosenMin < nextSlotMin) {
-          showWalkinError('No appointments are available for today at the selected time. Please choose another time or date.');
-          return;
-        }
       }
     }
 
-    addToCartButton.classList.add('loading');
-    addToCartButton.disabled = true;
-
-    try {
-      const items = [];
-
-      // MAIN PRODUCT
-      const mainProps = {};
-      if (selectedDeviceColor) mainProps['Device Color'] = selectedDeviceColor;
-      items.push({ id: mainVariantId, quantity: 1, properties: mainProps });
+    const items = [];
+    const mainProps = {};
+    if (selectedDeviceColor) mainProps['Device Color'] = selectedDeviceColor;
+    if (courierActive) {
+      const pc = postcodeEl ? String(postcodeEl.value || '').trim().toUpperCase() : '';
+      mainProps['Service Type'] = 'Courier collection';
+      mainProps['Postcode'] = pc;
+      mainProps['Band'] = '';
+      mainProps['Collection Window'] = 'Book by 2pm for same-day in most of London';
+    } else if (mailActive) {
+      mainProps['Service Type'] = 'Mail-in';
+    }
+    items.push({ id: mainVariantId, quantity: 1, properties: mainProps });
 
       // ADDITIONAL REPAIRS
       document.querySelectorAll('.additional-repair-container input[type="checkbox"]:checked').forEach(cb => {
@@ -1288,31 +1257,30 @@ document.addEventListener("DOMContentLoaded", () => {
         if (id && !Number.isNaN(id)) items.push({ id, quantity: 1 });
       });
 
-      // WALK-IN
-      if (walkInCheckbox && walkInCheckbox.checked) {
-        const id = parseInt(walkInCheckbox.value, 10);
+      // Optional legacy walk-in SKU if still present in catalogue (null-safe)
+      if (courierActive) {
+        const id = walkInCheckbox ? parseInt(walkInCheckbox.value, 10) : 0;
         if (id && !Number.isNaN(id)) {
           items.push({
             id,
             quantity: 1,
             properties: {
-              'Service Type': 'Walk-in',
-              'Preferred Date': walkInDate ? walkInDate.value : '',
-              'Preferred Time': walkInTime ? walkInTime.value : '',
-              'Point of Collection': pointOfCollec ? pointOfCollec.value : ''
+              'Service Type': 'Courier collection',
+              'Postcode': mainProps['Postcode'] || '',
+              'Collection Window': mainProps['Collection Window'] || ''
             }
           });
         }
       }
 
-      // MAIL-IN
-      if (mailInCheckbox && mailInCheckbox.checked) {
-        const id = parseInt(mailInCheckbox.value, 10);
+      // MAIL-IN pack SKU (null-safe if product absent)
+      if (mailActive || (mailInCheckbox && mailInCheckbox.checked)) {
+        const id = mailInCheckbox ? parseInt(mailInCheckbox.value, 10) : 0;
         if (id && !Number.isNaN(id)) {
           items.push({
             id,
             quantity: 1,
-            properties: { 'Service Type': 'Mail-in Service' }
+            properties: { 'Service Type': 'Mail-in' }
           });
         }
       }

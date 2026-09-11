@@ -508,9 +508,9 @@
         "service_PEi9BF": {
           "type": "service",
           "settings": {
-            "icon": "shopify://shop_images/Service_icon_Walk-in.png",
-            "heading": "Walk-In Service",
-            "details": "For clients based in Central London who wish to visit us, we operate a  walk-in drop-off service by appointment. Simply book your repair via our  website booking page to confirm your appointment time before heading to us.",
+            "icon": "shopify://shop_images/Service_icon_Courier.png",
+            "heading": "London Collection",
+            "details": "We collect from your door — same-day in most of London. Book online and we arrange tracked, insured collection and return. Outside London, use our free mail-in pack.",
             "btn": "Learn more",
             "link": ""
           }
@@ -608,8 +608,8 @@
         "accordion_H3eeMX": {
           "type": "accordion",
           "settings": {
-            "heading": "Do I need an appointment?",
-            "sub_head": "<p>You do not need an appointment to contact us, get a quote, or book in for a repair. For walk ins, we can normally accept devices during opening hours, but availability can vary depending on workload and the type of repair.</p><p>If you want the quickest turnaround, booking in advance is best. It allows us to reserve bench time, confirm parts availability, and prioritise your repair. This is especially important for same day repairs and for any express service requests.</p><p>If you are sending your device in, you can place an order online and follow the shipping instructions. We will confirm receipt, run intake checks, and then proceed according to the booked service or agreed quote.</p>",
+            "heading": "Do I need to book in advance?",
+            "sub_head": "<p>You do not need an appointment to contact us, get a quote, or book a repair. We collect from your door — same-day in most of London — or you can use our free mail-in pack as the nationwide alternative.</p><p>Book online and we arrange collection or send packaging. Booking ahead helps us reserve bench time, confirm parts availability, and prioritise your repair — especially for same-day London collections and express requests.</p><p>Once your device arrives, we confirm receipt, run intake checks, and proceed according to the booked service or agreed quote.</p>",
             "alignment": "left"
           }
         },
@@ -617,7 +617,7 @@
           "type": "accordion",
           "settings": {
             "heading": "Do I need to back up my data before my repair?",
-            "sub_head": "<p>Yes, you should back up your data whenever possible. Most repairs do not affect data, but storage can never be guaranteed if a device has underlying faults, liquid damage, or an unstable power issue.</p><p>If your device is still usable, back up before bringing it in. For phones and tablets, an iCloud backup is usually the fastest option. For computers, use Time Machine or another full backup method.</p><p>If the device is not turning on or is too unstable to back up, we can advise on the safest next step after inspection. In many cases we can repair the device enough to allow a backup, but that depends on the fault and the condition of the hardware.</p>",
+            "sub_head": "<p>Yes, you should back up your data whenever possible. Most repairs do not affect data, but storage can never be guaranteed if a device has underlying faults, liquid damage, or an unstable power issue.</p><p>If your device is still usable, back up before we collect it or before you post the free mail-in pack. For phones and tablets, an iCloud backup is usually the fastest option. For computers, use Time Machine or another full backup method.</p><p>If the device is not turning on or is too unstable to back up, we can advise on the safest next step after inspection. In many cases we can repair the device enough to allow a backup, but that depends on the fault and the condition of the hardware.</p>",
             "alignment": "left"
           }
         },
