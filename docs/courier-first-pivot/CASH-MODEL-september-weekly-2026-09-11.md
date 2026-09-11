@@ -23,8 +23,8 @@ _Companion to: SURVIVAL-model-courier-mailin-only-2026-09-10.md (v6)_
 - **Rent:** £4,008 DD on the **15th**
 - **Stripe: gone** — all payments now route through Shopify (one rail)
 - **Account:** new newco Shopify account; the delay was a payment hold, now cleared — but payout timing stays longer
-- **Card spend so far:** ~£1,000–1,500 (stock + Royal Mail) on credit card
-- **Fronted cash:** available — amount was the unknown. **Answer below: £6k minimum, £8–10k safe.**
+- **Card spend so far (Ricky 2026-09-11 06:06):** **£2,194 actual** on the M&S card (UK parts + shipping) — will grow through the month
+- **Fronted cash:** available — amount was the unknown. **Answer below: £6k minimum, £8–10k safe (Sep only — see §4b for the October stack).**
 
 ## 3. September full-month cash (bank account only; card spend parked)
 
@@ -50,6 +50,21 @@ _Companion to: SURVIVAL-model-courier-mailin-only-2026-09-10.md (v6)_
 | Comfort + October insurance | £12k+ | covers October's Nancy £10k instalment starting before corporate lands |
 
 **Sensitivity:** every £2k September sales dip (walk-in transition) adds £2k to the need. The courier push defends this — it's why the build can't slip.
+
+## 4b. The October stack (added 2026-09-11 06:06 — card actual £2,194)
+
+September's card spend becomes October's bill, on top of Nancy:
+
+| October out | £ |
+|---|---:|
+| Base run-rate | 30.4k |
+| Nancy instalment 1 | 10.0k |
+| M&S card bill (Sep parts+shipping, est. £2.2k now → £4–6k by month end) | 4–6k |
+| **October total out** | **44.4–46.4k** |
+| October in (incl corporate £7–10k) | 38–41k |
+| **October net** | **−£3.4k to −£8.4k** |
+
+**Revised total bridge (Sep + Oct): £10–12k best case, £15–20k if corporate pays late in the month.** Ricky's stated raiseable range (£15–20k) covers even the pessimistic case. Recommendation stands: **raise £15k staged — £8k now, £7k at the October gate** (corporate written confirmations + keep-rate ≥50%). Card discipline: only parts/postage on the card, nothing else — it's the October bill.
 
 ## 5. Week of 15–21 Sep — the immediate week
 
