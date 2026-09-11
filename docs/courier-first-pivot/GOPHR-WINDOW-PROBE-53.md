@@ -14,7 +14,7 @@
 4. **Bonus finding:** the job response includes `public_tracker_url` (`app.gophr.com/tracking/...`) — this is the customer tracking link for the webhook flow (tracking v0 solved at API level).
 5. **Midnight-bug hypothesis to verify:** if window fields are omitted, Gophr defaults deliver-by to end-of-day (midnight). The fix candidate is `earliest_pickup_time` + `latest_pickup_time` + `dropoff_deadline` on the nested pickup/dropoff objects (variant B/D shape).
 
-## PENDING HUMAN VERIFICATION (Ricky)
+## VERIFIED (Ricky, dashboard, 2026-09-11 ~08:42 UTC)
 
 One draft left deliberately UNCONFIRMED for dashboard inspection:
 
@@ -22,7 +22,7 @@ One draft left deliberately UNCONFIRMED for dashboard inspection:
 - job_id `93150b3f-73e8-495d-8349-3b78c39ae36b` · external_id `probe53-VERIFY-DO-NOT-CONFIRM`
 - Sent with: collect Mon 14 Sep **14:00–16:00**, deliver by **17:30** (variant D fields)
 
-**Check:** does the dashboard show collect 14:00–16:00 / deliver-by 17:30? Or "deliver by midnight"?
+**Result:** dashboard shows the correct window. Fields CONFIRMED: earliest_pickup_time + latest_pickup_time (pickup) + dropoff_deadline (dropoff). Midnight root cause: omitting them defaults deliver-by to end-of-day. Verify draft cancelled via API.
 - If correct → fields confirmed; webhook uses variant D shape. **Then cancel the draft in the dashboard.**
 - If midnight → reply here and we probe further (Gophr support docs / their support line on window fields).
 
