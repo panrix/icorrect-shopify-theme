@@ -1781,3 +1781,149 @@ a.qw-d-val:hover { text-decoration: underline; text-underline-offset: 2px; }
   margin-top: 0;
 }
 
+
+/* ── Progress pills: consistent alignment (Device / Model / Fault / Service) ── */
+.qw-progress .qw-dots,
+.qw-prog .qw-dots {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+.qw-progress .qw-dot,
+.qw-prog .qw-prog-s,
+button.qw-dot.qw-prog-s {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  height: 28px;
+  margin: 0;
+  padding: 0 10px 0 4px;
+  border: 0;
+  border-radius: 999px;
+  box-sizing: border-box;
+  line-height: 1;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.qw-progress .qw-dot-num,
+.qw-prog .qw-prog-dot,
+button.qw-dot.qw-prog-s .qw-dot-num,
+button.qw-dot.qw-prog-s .qw-prog-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+  line-height: 1;
+  font: 600 10px/1 var(--font-mono);
+  border-radius: 50%;
+}
+.qw-progress .qw-dot-label,
+.qw-prog .qw-prog-lbl,
+button.qw-dot.qw-prog-s .qw-dot-label,
+button.qw-dot.qw-prog-s .qw-prog-lbl {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+  font: 500 12px/1 var(--font-sans);
+}
+
+/* ── Service journey strip (Option B + estimated return) ── */
+.qw-journey-host {
+  margin-top: 14px;
+}
+.qw-journey {
+  padding: 14px;
+  border-radius: 12px;
+  background: #fafafa;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+}
+.qw-journey-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  align-items: start;
+}
+.qw-journey[data-kind="mailin"] .qw-journey-steps {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.qw-journey-step {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+  position: relative;
+}
+.qw-journey-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #171717;
+  color: #fff;
+  font: 600 11px/1 var(--font-mono);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.qw-journey-copy { min-width: 0; }
+.qw-journey-title {
+  font: 600 12px/1.25 var(--font-sans);
+  color: #171717;
+  letter-spacing: -0.2px;
+}
+.qw-journey-meta {
+  font: 500 11px/1.3 var(--font-mono);
+  color: #525252;
+  margin-top: 2px;
+}
+.qw-journey-eta {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 10px;
+}
+.qw-journey-eta-label {
+  font: 500 10px/1 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #808080;
+  width: 100%;
+}
+.qw-journey-eta-date {
+  font: 600 16px/1.2 var(--font-sans);
+  letter-spacing: -0.3px;
+  color: #171717;
+}
+.qw-journey-eta-note {
+  font: 400 12px/1.3 var(--font-sans);
+  color: #6b6b6b;
+}
+.qw-journey-eta--pending {
+  background: transparent;
+  box-shadow: none;
+  padding: 8px 0 0;
+}
+@media (max-width: 520px) {
+  .qw-journey-steps,
+  .qw-journey[data-kind="mailin"] .qw-journey-steps {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 10px;
+  }
+}
