@@ -1173,12 +1173,14 @@ window.__QW_CATALOGUE = null;
       svcBadge('diagnostic', 'Full report and quote sent via email');
   }
 
-  /* Compact trust row flanking the price (reviews · price · warranty + parts). */
+  /* Trust badges (boxed) on the left · big price on the right. */
   function buildPriceTrustBlock(device, model, opts) {
     opts = opts || {};
     var parts = partsClaimLabel(device, model);
     var starSvg = '<svg width="11" height="11" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1l1.8 3.8 4.2.6-3 2.9.7 4.1L7 10.5 3.3 12.4l.7-4.1-3-2.9 4.2-.6z" fill="currentColor"/></svg>';
     var stars = starSvg + starSvg + starSvg + starSvg + starSvg;
+    var monitorSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>';
+    var shieldSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>';
     var gateCopy = opts.gateCopy || 'Enter your postcode above';
     var priceInner = opts.gate
       ? '<div class="qw-price-gate qw-price-gate--inline" id="qwPriceGate">' + esc(gateCopy) + '</div>' +
@@ -1189,19 +1191,33 @@ window.__QW_CATALOGUE = null;
       : '<div class="qw-price-from">All-in total</div>' +
         '<div class="qw-price-big" id="qwPriceBig">' + (opts.priceHtml || '') + '</div>';
     return '<div class="qw-price-trust" id="qwPriceTrust">' +
-      '<div class="qw-price-trust-side qw-price-trust-reviews" aria-label="4.9 out of 5 from 719 Google reviews">' +
-        '<div class="qw-price-trust-score">4.9</div>' +
-        '<div class="qw-price-trust-stars" aria-hidden="true">' + stars + '</div>' +
-        '<div class="qw-price-trust-meta">719 Google reviews</div>' +
+      '<div class="qw-trust-card" aria-label="Trust signals">' +
+        '<div class="qw-trust-cell qw-trust-reviews" aria-label="4.9 out of 5 from 719 Google reviews">' +
+          '<div class="qw-trust-reviews-row">' +
+            '<span class="qw-trust-score">4.9</span>' +
+            '<span class="qw-trust-stars" aria-hidden="true">' + stars + '</span>' +
+          '</div>' +
+          '<div class="qw-trust-sub">719 Google reviews</div>' +
+        '</div>' +
+        '<div class="qw-trust-cell qw-trust-parts">' +
+          '<span class="qw-trust-ico" aria-hidden="true">' + monitorSvg + '</span>' +
+          '<span class="qw-trust-copy">' +
+            '<span class="qw-trust-title">' + esc(parts) + '</span>' +
+            '<span class="qw-trust-sub">Calibrated in-house</span>' +
+          '</span>' +
+        '</div>' +
+        '<div class="qw-trust-cell qw-trust-warranty" aria-label="2-year warranty">' +
+          '<span class="qw-trust-ico" aria-hidden="true">' + shieldSvg + '</span>' +
+          '<span class="qw-trust-copy">' +
+            '<span class="qw-trust-title">2-yr warranty</span>' +
+            '<span class="qw-trust-sub">Double the standard</span>' +
+          '</span>' +
+        '</div>' +
       '</div>' +
-      '<div class="qw-price-trust-center">' + priceInner + '</div>' +
-      '<div class="qw-price-trust-side qw-price-trust-warranty" aria-label="2-year warranty">' +
-        '<div class="qw-price-trust-kicker">2-yr</div>' +
-        '<div class="qw-price-trust-meta">Warranty</div>' +
-      '</div>' +
-      '<div class="qw-price-trust-parts">' + esc(parts) + '</div>' +
+      '<div class="qw-price-trust-price">' + priceInner + '</div>' +
     '</div>';
   }
+
 
   /* =============================================
      SERVICE STEP — courier OR mail-in only (#53)

@@ -2179,71 +2179,112 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 }
 
 /* ============================================================
-   PRICE TRUST ROW — reviews · big price · warranty + parts (#53)
+   PRICE TRUST — boxed badges left · big price right (#53)
    ============================================================ */
 .qw-res-price {
-  margin: 8px 0 4px;
+  margin: 10px 0 6px;
   padding: 4px 0 8px;
 }
 .qw-price-trust {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  padding: 8px 0 4px;
+}
+.qw-trust-card {
   display: grid;
-  grid-template-columns: minmax(72px, 1fr) auto minmax(72px, 1fr);
+  grid-template-columns: 1fr 1fr;
   grid-template-areas:
-    "reviews price warranty"
-    "parts parts parts";
+    "reviews reviews"
+    "parts warranty";
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px #e6e6e6;
+  overflow: hidden;
+}
+.qw-trust-cell {
+  display: flex;
   align-items: center;
-  column-gap: 10px;
-  row-gap: 8px;
-  padding: 12px 4px 4px;
-  text-align: center;
+  gap: 10px;
+  padding: 12px 14px;
+  min-width: 0;
 }
-.qw-price-trust-reviews { grid-area: reviews; justify-self: start; text-align: left; }
-.qw-price-trust-center { grid-area: price; justify-self: center; min-width: 0; }
-.qw-price-trust-warranty { grid-area: warranty; justify-self: end; text-align: right; }
-.qw-price-trust-parts {
+.qw-trust-reviews {
+  grid-area: reviews;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  border-bottom: 1px solid #e6e6e6;
+}
+.qw-trust-parts {
   grid-area: parts;
-  font: 500 12.5px/1.35 var(--font-sans);
-  color: #666;
-  letter-spacing: -0.1px;
+  border-right: 1px solid #e6e6e6;
 }
-.qw-price-trust-score {
+.qw-trust-warranty { grid-area: warranty; }
+.qw-trust-reviews-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.qw-trust-score {
   font: 700 22px/1 var(--font-sans);
   letter-spacing: -0.6px;
   color: #171717;
 }
-.qw-price-trust-stars {
+.qw-trust-stars {
   display: flex;
   gap: 1px;
-  margin: 3px 0 2px;
   color: #d4a017;
 }
-.qw-price-trust-warranty .qw-price-trust-stars { justify-content: flex-end; }
-.qw-price-trust-reviews .qw-price-trust-stars { justify-content: flex-start; }
-.qw-price-trust-kicker {
-  font: 700 20px/1 var(--font-sans);
-  letter-spacing: -0.5px;
+.qw-trust-ico {
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px #e0e0e0;
   color: #171717;
 }
-.qw-price-trust-meta {
-  font: 500 11px/1.3 var(--font-sans);
+.qw-trust-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.qw-trust-title {
+  font: 600 13px/1.25 var(--font-sans);
+  color: #171717;
+  letter-spacing: -0.15px;
+}
+.qw-trust-sub {
+  font: 400 12px/1.3 var(--font-sans);
   color: #808080;
 }
-.qw-price-trust-center .qw-price-from {
+.qw-price-trust-price {
+  text-align: center;
+}
+.qw-price-trust-price .qw-price-from {
   margin-bottom: 2px;
   font: 500 12px var(--font-sans);
   color: #808080;
 }
-.qw-price-trust-center .qw-price-big {
+.qw-price-trust-price .qw-price-big {
   margin-bottom: 0;
   font-weight: 700;
-  font-size: 42px;
+  font-size: 40px;
   letter-spacing: -1.4px;
   line-height: 1;
+  color: #171717;
+  font-feature-settings: "tnum";
 }
 .qw-price-gate--inline {
-  margin: 0;
+  margin: 0 auto;
   padding: 10px 12px;
-  max-width: 160px;
+  max-width: 180px;
   font: 500 12.5px/1.35 var(--font-sans);
   text-align: center;
 }
@@ -2251,26 +2292,40 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 .qw-opt-card[hidden] {
   display: none !important;
 }
-/* When trust price is showing the all-in figure, keep the duplicate Total row quiet on small screens. */
-@media (max-width: 720px) {
+@media (min-width: 720px) {
+  .qw-price-trust {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 12px 0 6px;
+  }
+  .qw-trust-card {
+    flex: 0 1 340px;
+    max-width: 360px;
+  }
+  .qw-price-trust-price {
+    flex: 1 1 auto;
+    text-align: right;
+  }
+  .qw-price-trust-price .qw-price-big {
+    font-size: 48px;
+    letter-spacing: -1.6px;
+  }
+  .qw-price-gate--inline {
+    margin-left: auto;
+    margin-right: 0;
+  }
+}
+@media (max-width: 719px) {
   .qw-res-price .qw-price-total-wrap {
     display: none !important;
   }
-  .qw-price-trust {
-    padding: 10px 0 2px;
-    column-gap: 8px;
-  }
-  .qw-price-trust-center .qw-price-big {
-    font-size: 40px;
-  }
-  .qw-price-trust-score,
-  .qw-price-trust-kicker {
-    font-size: 18px;
-  }
-  .qw-price-trust-meta {
-    font-size: 10.5px;
-  }
-  /* Compact resolved postcode so collection + price fit one viewport. */
+  .qw-trust-cell { padding: 10px 12px; }
+  .qw-trust-score { font-size: 20px; }
+  .qw-trust-title { font-size: 12.5px; }
+  .qw-trust-sub { font-size: 11px; }
+  .qw-price-trust-price .qw-price-big { font-size: 36px; }
   .qw-postcode-card.qw-postcode-card-resolved {
     padding: 10px 12px;
     margin-bottom: 8px;
