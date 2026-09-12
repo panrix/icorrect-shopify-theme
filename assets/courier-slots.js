@@ -93,7 +93,8 @@
     var out = [];
 
     var guard = 0;
-    while (out.length < count && guard < 40) {
+    var maxGuard = Math.max(60, count * 3);
+    while (out.length < count && guard < maxGuard) {
       guard += 1;
       if (!includeWeekends && isWeekend(cursor)) {
         cursor = addDays(cursor, 1);

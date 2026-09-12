@@ -1111,6 +1111,9 @@ window.__QW_CATALOGUE = null;
   var _courierQuote = null;
   var _postcodeResolved = false;
   var _collectionSlot = { date: null, part: null };
+  var _collectionSlotDates = [];
+  var SLOT_STRIP_COUNT = 5;
+  var SLOT_CALENDAR_COUNT = 28;
 
   /* ---------- Service journey / estimated return (#53) ---------- */
   var PACK_CUTOFF_HOUR = 14; /* before 2pm → pack ships same working day */
@@ -1344,6 +1347,37 @@ window.__QW_CATALOGUE = null;
     return '—';
   }
 
+  /* Hide mail-in when courier is free or strictly cheaper — no reason to offer it. */
+  function shouldHideMailInOption(quote, postcode) {
+    if (!quote || quote.courierAvailable === false) return false;
+    var pc = postcode || '';
+    var courierQ = quote.service === 'courier' && !quote.forcedMailIn
+      ? quote
+      : quoteForService('courier', pc);
+    if (!courierQ || courierQ.courierAvailable === false || courierQ.forcedMailIn) return false;
+    var courierAdj = Number(courierQ.adjustment);
+    if (!isFinite(courierAdj)) courierAdj = 0;
+    if (courierAdj === 0) return true;
+    var mailQuote = quoteForService('mailin', pc);
+    if (!mailQuote) return false;
+    var mailAdj = Number(mailQuote.adjustment);
+    if (!isFinite(mailAdj)) mailAdj = 0;
+    return courierAdj < mailAdj;
+  }
+
+  function setMailInOptionVisible(show) {
+    var mailCard = document.querySelector('.qw-opt-card[data-svc="mailin"]');
+    var grid = document.getElementById('qwDeliveryGrid');
+    if (mailCard) {
+      mailCard.hidden = !show;
+      mailCard.setAttribute('aria-hidden', show ? 'false' : 'true');
+      if (!show) {
+        mailCard.classList.remove('sel', 'active');
+      }
+    }
+    if (grid) grid.classList.toggle('qw-delivery-grid-solo', !show);
+  }
+
   function setPriceVisibility(show) {
     var gate = document.getElementById('qwPriceGate');
     var total = document.getElementById('qwPriceTotalWrap');
@@ -1425,8 +1459,23 @@ window.__QW_CATALOGUE = null;
         '</div>' +
         '<div class="qw-slot-panel" id="qwSlotPanel" hidden>' +
           '<div class="qw-section-label">Pick a collection window</div>' +
-          '<div class="qw-date-grid" id="qwSlotDates"></div>' +
-          '<div class="qw-window-grid" id="qwSlotParts"></div>' +
+          '<div class="qw-date-row">' +
+            '<div class="qw-date-strip" id="qwSlotDates" role="listbox" aria-label="Collection dates"></div>' +
+            '<button type="button" class="qw-date-more" id="qwDateMore" aria-label="Open calendar for more dates" title="More dates">' +
+              '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+            '</button>' +
+          '</div>' +
+          '<div class="qw-window-strip" id="qwSlotParts" role="listbox" aria-label="Collection times"></div>' +
+        '</div>' +
+        '<div class="qw-cal-modal" id="qwCalModal" hidden>' +
+          '<div class="qw-cal-backdrop" data-cal-close="1"></div>' +
+          '<div class="qw-cal-sheet" role="dialog" aria-modal="true" aria-labelledby="qwCalTitle">' +
+            '<div class="qw-cal-head">' +
+              '<div class="qw-cal-title" id="qwCalTitle">Choose a date</div>' +
+              '<button type="button" class="qw-cal-close" data-cal-close="1" aria-label="Close calendar">×</button>' +
+            '</div>' +
+            '<div class="qw-cal-grid" id="qwCalGrid"></div>' +
+          '</div>' +
         '</div>' +
         '<div class="qw-mailin-panel" id="qwMailinPanel" hidden></div>' +
         '<div class="qw-journey-host" id="qwJourney" hidden></div>' +
@@ -1435,52 +1484,145 @@ window.__QW_CATALOGUE = null;
     '</div>';
   }
 
+  function dateButtonHtml(d, active) {
+    return '<button type="button" class="qw-date-btn' + (active ? ' active' : '') + '" data-iso="' + d.iso + '" role="option" aria-selected="' + (active ? 'true' : 'false') + '">' +
+      '<span class="qw-date-dow">' + (d.headline || d.labelDow) + '</span>' +
+      '<span class="qw-date-day">' + d.labelDay + '</span>' +
+      '<span class="qw-date-mon">' + d.labelMon + '</span></button>';
+  }
+
+  function stripDatesAround(allDates, selectedIso, count) {
+    if (!allDates || !allDates.length) return [];
+    var n = Math.min(count || SLOT_STRIP_COUNT, allDates.length);
+    var idx = 0;
+    for (var i = 0; i < allDates.length; i++) {
+      if (allDates[i].iso === selectedIso) { idx = i; break; }
+    }
+    var start = Math.max(0, Math.min(idx - Math.floor((n - 1) / 2), allDates.length - n));
+    return allDates.slice(start, start + n);
+  }
+
+  function findSlotDate(iso) {
+    for (var i = 0; i < _collectionSlotDates.length; i++) {
+      if (_collectionSlotDates[i].iso === iso) return _collectionSlotDates[i];
+    }
+    return null;
+  }
+
+  function closeCollectionCalendar() {
+    var modal = document.getElementById('qwCalModal');
+    if (modal) modal.hidden = true;
+  }
+
+  function openCollectionCalendar() {
+    var modal = document.getElementById('qwCalModal');
+    var grid = document.getElementById('qwCalGrid');
+    if (!modal || !grid || !_collectionSlotDates.length) return;
+    var selectedIso = _collectionSlot.date && _collectionSlot.date.iso;
+    grid.innerHTML = _collectionSlotDates.map(function(d) {
+      var on = d.iso === selectedIso;
+      return '<button type="button" class="qw-cal-day' + (on ? ' active' : '') + '" data-iso="' + d.iso + '">' +
+        '<span class="qw-cal-dow">' + d.labelDow + '</span>' +
+        '<span class="qw-cal-num">' + d.labelDay + '</span>' +
+        '<span class="qw-cal-mon">' + d.labelMon + '</span></button>';
+    }).join('');
+    grid.querySelectorAll('.qw-cal-day').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        selectCollectionDate(btn.getAttribute('data-iso'));
+        closeCollectionCalendar();
+      });
+    });
+    modal.hidden = false;
+  }
+
+  function paintDateStrip() {
+    var datesEl = document.getElementById('qwSlotDates');
+    if (!datesEl || !_collectionSlotDates.length) return;
+    var selectedIso = (_collectionSlot.date && _collectionSlot.date.iso) || _collectionSlotDates[0].iso;
+    var strip = stripDatesAround(_collectionSlotDates, selectedIso, SLOT_STRIP_COUNT);
+    datesEl.innerHTML = strip.map(function(d) {
+      return dateButtonHtml(d, d.iso === selectedIso);
+    }).join('');
+    datesEl.querySelectorAll('.qw-date-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        selectCollectionDate(btn.getAttribute('data-iso'));
+      });
+    });
+  }
+
+  function selectCollectionDate(iso) {
+    var found = findSlotDate(iso);
+    if (!found) return;
+    _collectionSlot.date = found;
+    paintDateStrip();
+    refreshServiceJourney();
+  }
+
   function renderCollectionSlots(band) {
     var panel = document.getElementById('qwSlotPanel');
     var datesEl = document.getElementById('qwSlotDates');
     var partsEl = document.getElementById('qwSlotParts');
+    var moreBtn = document.getElementById('qwDateMore');
+    var modal = document.getElementById('qwCalModal');
     if (!panel || !datesEl || !partsEl || !window.ICorrectCourierSlots) {
       if (panel) panel.hidden = true;
       return;
     }
-    var listed = window.ICorrectCourierSlots.listCollectionDates(band, { count: 8, includeWeekends: false });
-    datesEl.innerHTML = listed.dates.map(function(d, i) {
-      return '<button type="button" class="qw-date-btn' + (i === 0 ? ' active' : '') + '" data-iso="' + d.iso + '" data-idx="' + i + '">' +
-        '<span class="qw-date-dow">' + (d.headline || d.labelDow) + '</span>' +
-        '<span class="qw-date-day">' + d.labelDay + '</span>' +
-        '<span class="qw-date-mon">' + d.labelMon + '</span></button>';
-    }).join('');
+    var listed = window.ICorrectCourierSlots.listCollectionDates(band, {
+      count: SLOT_CALENDAR_COUNT,
+      includeWeekends: false
+    });
+    _collectionSlotDates = listed.dates || [];
+    if (!_collectionSlotDates.length) {
+      panel.hidden = true;
+      return;
+    }
+
+    var keepIso = _collectionSlot.date && _collectionSlot.date.iso;
+    _collectionSlot.date = (keepIso && findSlotDate(keepIso)) || _collectionSlotDates[0];
+    paintDateStrip();
+
     var parts = window.ICorrectCourierSlots.dayParts();
-    partsEl.innerHTML = parts.map(function(p, i) {
-      return '<button type="button" class="qw-window-btn' + (i === 0 ? ' active' : '') + '" data-part="' + p.id + '">' +
+    var keepPart = _collectionSlot.part && _collectionSlot.part.id;
+    var activePart = parts.filter(function(p) { return p.id === keepPart; })[0] || parts[0] || null;
+    _collectionSlot.part = activePart;
+    partsEl.innerHTML = parts.map(function(p) {
+      var on = activePart && p.id === activePart.id;
+      return '<button type="button" class="qw-window-btn' + (on ? ' active' : '') + '" data-part="' + p.id + '" role="option" aria-selected="' + (on ? 'true' : 'false') + '">' +
         '<span class="qw-window-label">' + p.label + '</span>' +
         '<span class="qw-window-detail">' + p.detail + '</span></button>';
     }).join('');
-    _collectionSlot.date = listed.dates[0] || null;
-    _collectionSlot.part = parts[0] || null;
-    panel.hidden = false;
-    refreshServiceJourney();
-
-    datesEl.querySelectorAll('.qw-date-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        datesEl.querySelectorAll('.qw-date-btn').forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        var idx = parseInt(btn.getAttribute('data-idx'), 10);
-        _collectionSlot.date = listed.dates[idx] || null;
-        refreshServiceJourney();
-      });
-    });
     partsEl.querySelectorAll('.qw-window-btn').forEach(function(btn) {
       btn.addEventListener('click', function() {
-        partsEl.querySelectorAll('.qw-window-btn').forEach(function(b) { b.classList.remove('active'); });
+        partsEl.querySelectorAll('.qw-window-btn').forEach(function(b) {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
         btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
         var id = btn.getAttribute('data-part');
         _collectionSlot.part = parts.filter(function(p) { return p.id === id; })[0] || null;
         refreshServiceJourney();
       });
     });
 
-    /* Bring the band/slot area into view after postcode resolves */
+    if (moreBtn && !moreBtn._qwWired) {
+      moreBtn._qwWired = true;
+      moreBtn.addEventListener('click', openCollectionCalendar);
+    }
+    if (modal && !modal._qwWired) {
+      modal._qwWired = true;
+      modal.addEventListener('click', function(e) {
+        var t = e.target;
+        if (t && t.getAttribute && t.getAttribute('data-cal-close')) closeCollectionCalendar();
+      });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal && !modal.hidden) closeCollectionCalendar();
+      });
+    }
+
+    panel.hidden = false;
+    refreshServiceJourney();
     try { panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) {}
   }
 
@@ -1495,18 +1637,22 @@ window.__QW_CATALOGUE = null;
     var courierCard = document.querySelector('.qw-opt-card[data-svc="courier"]');
     var mailCard = document.querySelector('.qw-opt-card[data-svc="mailin"]');
     var pcCard = document.getElementById('qwPostcodeCard');
+    var pcInput = document.getElementById('qwPostcode');
+    var postcode = pcInput ? String(pcInput.value || '').trim() : '';
 
     if (!quote) {
       _postcodeResolved = false;
       if (reveal) reveal.hidden = true;
-      if (slotPanel) { slotPanel.hidden = true; _collectionSlot = { date: null, part: null }; }
+      if (slotPanel) { slotPanel.hidden = true; _collectionSlot = { date: null, part: null }; _collectionSlotDates = []; }
       if (mailPanel) mailPanel.hidden = true;
       if (result) { result.hidden = true; result.innerHTML = ''; }
       if (pcCard) pcCard.classList.remove('qw-postcode-card-resolved');
       if (priceLbl) priceLbl.textContent = '—';
       if (mailLbl) mailLbl.textContent = '—';
+      setMailInOptionVisible(true);
       setPriceVisibility(false);
       hideServiceJourney();
+      closeCollectionCalendar();
       return;
     }
 
@@ -1527,20 +1673,28 @@ window.__QW_CATALOGUE = null;
       }
     }
 
+    var hideMail = shouldHideMailInOption(quote, postcode);
+    setMailInOptionVisible(!hideMail);
+    if (hideMail && quote.courierAvailable !== false && !quote.forcedMailIn) {
+      /* Prefer courier when mail-in is pointless; re-quote if UI had mail-in selected. */
+      if (quote.service !== 'courier') {
+        var courierOnly = quoteForService('courier', postcode);
+        if (courierOnly && courierOnly.service === 'courier') quote = courierOnly;
+        _courierQuote = quote;
+        if (priceLbl) priceLbl.textContent = formatServiceCardHint(quote, 'courier');
+      }
+    }
+
     if (quote.service === 'courier') {
       selectServiceCard('courier');
-      var win = collectionWindowCopy(quote.band);
-      if (result) {
-        result.hidden = false;
-        result.innerHTML =
-          '<div class="qw-courier-confirm"><strong>Band ' + esc(quote.band || '') + '</strong> · ' + esc(win.headline) +
-          '<div class="qw-courier-confirm-detail">' + esc(win.detail) + '</div></div>';
-      }
+      /* No band badge — postcode already implies the area; jump straight to slots. */
+      if (result) { result.hidden = true; result.innerHTML = ''; }
       if (mailPanel) mailPanel.hidden = true;
       renderCollectionSlots(quote.band);
     } else if (quote.forcedMailIn || quote.service === 'mail-in') {
       selectServiceCard('mailin');
-      if (slotPanel) { slotPanel.hidden = true; _collectionSlot = { date: null, part: null }; }
+      setMailInOptionVisible(true);
+      if (slotPanel) { slotPanel.hidden = true; _collectionSlot = { date: null, part: null }; _collectionSlotDates = []; }
       if (mailPanel) mailPanel.hidden = false;
       if (result) {
         result.hidden = false;
