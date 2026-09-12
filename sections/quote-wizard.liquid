@@ -3693,16 +3693,23 @@ document.getElementById('qwEqErr').style.display = 'none';
     var want = normalizeModelKey(name);
     if (!want) return null;
     var exact = null;
-    var soft = null;
+    var contained = null; /* page/title contains the model name — prefer longest */
+    var weak = null;      /* model name contains the query — last resort */
     eachWizardModel(function(device, group, model) {
       var key = normalizeModelKey(model.name);
       if (!key) return;
       if (key === want) { exact = { device: device, model: model, group: group }; return false; }
-      if (!soft && (key.indexOf(want) !== -1 || want.indexOf(key) !== -1)) {
-        soft = { device: device, model: model, group: group };
+      if (want.indexOf(key) !== -1) {
+        if (!contained || key.length > normalizeModelKey(contained.model.name).length) {
+          contained = { device: device, model: model, group: group };
+        }
+        return;
+      }
+      if (!weak && key.indexOf(want) !== -1) {
+        weak = { device: device, model: model, group: group };
       }
     });
-    return exact || soft;
+    return exact || contained || weak;
   }
 
   function contextHaystack(ctx) {
