@@ -60,7 +60,9 @@ window.WIZARD_MODELS = {
 window.WIZARD_CONTEXT = {
   pageType: "{{ template.name }}",
   collectionHandle: {{ collection.handle | default: '' | json }},
+  collectionTitle: {{ collection.title | default: '' | json }},
   productHandle: {{ product.handle | default: '' | json }},
+  productTitle: {{ product.title | default: '' | json }},
   productVariantId: {% if product %}{{ product.selected_or_first_available_variant.id | json }}{% else %}null{% endif %},
   productPrice: {% if product %}{{ product.price | money_without_currency | replace: ',', '' | json }}{% else %}null{% endif %},
   productTags: {% if product %}{{ product.tags | json }}{% else %}[]{% endif %},
@@ -75,12 +77,20 @@ window.WIZARD_CONTEXT = {
           {{ col.handle | json }},{%- endif -%}
       {%- endfor -%}
     ],
+    allCollections: [
+      {%- for col in product.collections -%}
+        {{ col.handle | json }},{%- endfor -%}
+    ],
     device: {{ product.metafields.custom.wizard_device | default: section.settings.prefill_device | default: '' | json }},
     fault: {{ section.settings.prefill_fault | default: '' | json }}
   {%- elsif collection -%}
+    modelCollections: [],
+    allCollections: [{{ collection.handle | json }}],
     device: {{ collection.metafields.custom.wizard_device | default: section.settings.prefill_device | default: '' | json }},
     fault: {{ collection.metafields.custom.wizard_fault | default: section.settings.prefill_fault | default: '' | json }}
   {%- else -%}
+    modelCollections: [],
+    allCollections: [],
     device: {{ section.settings.prefill_device | default: '' | json }},
     fault: {{ section.settings.prefill_fault | default: '' | json }}
   {%- endif -%}
@@ -2150,6 +2160,27 @@ window.__QW_CATALOGUE = null;
     renderModelList(dev, group);
   }
 
+  /* Leave a prefilled / selected model and return to the model selector. */
+  function changeModelSelection() {
+    S.model = null;
+    S.collectionHandle = null;
+    S.modelGroup = null;
+    S.fault = null;
+    S.issue = null;
+    S.route = null;
+    S.repairType = null;
+    S.preFault = null;
+    S.preRepairType = null;
+    _repairsMap = {};
+    clearTrackedStepsAfter(1);
+    if (!S.device) {
+      go(1);
+      return;
+    }
+    renderModelGroups(S.device);
+    go(2);
+  }
+
   function buildMacBookModelHint() {
     var url = CFG.macbookModelHintUrl;
     if (!url) return null;
@@ -2196,18 +2227,15 @@ window.__QW_CATALOGUE = null;
       list.appendChild(it);
     });
 
-    /* Intake-parity: unsure option at the end (uses newest model for an indicative quote). */
+    /* Wrong-model escape: go back to series/model picker (essential on PDP prefill). */
     if (sorted.length > 0) {
-      var unsure = document.createElement('button');
-      unsure.type = 'button';
-      unsure.className = 'qw-m-item qw-choice-btn qw-m-item--unsure';
-      unsure.innerHTML = '<span class="qw-mn">I am not sure</span>';
-      wireA11y(unsure, 'I am not sure which model');
-      unsure.onclick = function() {
-        var newest = sorted[0];
-        pickModel(newest.name, newest.collectionHandle, unsure);
-      };
-      list.appendChild(unsure);
+      var change = document.createElement('button');
+      change.type = 'button';
+      change.className = 'qw-m-item qw-choice-btn qw-m-item--change-model';
+      change.innerHTML = '<span class="qw-mn">Choose a different model</span>';
+      wireA11y(change, 'Choose a different model');
+      change.onclick = function() { changeModelSelection(); };
+      list.appendChild(change);
     }
 
     c.appendChild(list);
@@ -3621,18 +3649,145 @@ document.getElementById('qwEqErr').style.display = 'none';
   /* =============================================
      PRE-FILL SYSTEM
      ============================================= */
-  function findModelByCollection(handle) {
+  function normalizeModelKey(str) {
+    return String(str || '').toLowerCase()
+      .replace(/[""\'\'′]/g, '')
+      .replace(/&/g, 'and')
+      .replace(/inch(?:es)?/g, '')
+      .replace(/[^a-z0-9]+/g, '');
+  }
+
+  function eachWizardModel(cb) {
     var devices = ['macbook', 'iphone', 'ipad', 'watch'];
     for (var d = 0; d < devices.length; d++) {
-      var groups = MODELS[devices[d]];
-      if (!groups) continue;
+      var groups = MODELS[devices[d]] || [];
       for (var g = 0; g < groups.length; g++) {
-        for (var m = 0; m < groups[g].models.length; m++) {
-          if (groups[g].models[m].collectionHandle === handle) return { device: devices[d], model: groups[g].models[m] };
+        var models = groups[g].models || [];
+        for (var m = 0; m < models.length; m++) {
+          if (cb(devices[d], groups[g], models[m]) === false) return;
         }
       }
     }
+  }
+
+  function findModelByCollection(handle) {
+    if (!handle) return null;
+    var want = String(handle).toLowerCase();
+    var exact = null;
+    var fuzzy = [];
+    eachWizardModel(function(device, group, model) {
+      var ch = String(model.collectionHandle || '').toLowerCase();
+      if (!ch) return;
+      if (ch === want) { exact = { device: device, model: model, group: group }; return false; }
+      /* Hub handles like macbook-pro-16 match many models — only fuzzy-pick when unique. */
+      if (ch.indexOf(want) !== -1 || want.indexOf(ch) !== -1) {
+        fuzzy.push({ device: device, model: model, group: group });
+      }
+    });
+    if (exact) return exact;
+    return fuzzy.length === 1 ? fuzzy[0] : null;
+  }
+
+  function findModelByName(name) {
+    if (!name) return null;
+    var want = normalizeModelKey(name);
+    if (!want) return null;
+    var exact = null;
+    var soft = null;
+    eachWizardModel(function(device, group, model) {
+      var key = normalizeModelKey(model.name);
+      if (!key) return;
+      if (key === want) { exact = { device: device, model: model, group: group }; return false; }
+      if (!soft && (key.indexOf(want) !== -1 || want.indexOf(key) !== -1)) {
+        soft = { device: device, model: model, group: group };
+      }
+    });
+    return exact || soft;
+  }
+
+  function contextHaystack(ctx) {
+    ctx = ctx || {};
+    var parts = [
+      ctx.productHandle,
+      ctx.productTitle,
+      ctx.collectionHandle,
+      ctx.collectionTitle
+    ];
+    var tags = ctx.productTags || [];
+    for (var i = 0; i < tags.length; i++) parts.push(tags[i]);
+    var cols = [].concat(ctx.modelCollections || [], ctx.allCollections || []);
+    for (var c = 0; c < cols.length; c++) parts.push(cols[c]);
+    return parts.filter(Boolean).join(' ').toLowerCase();
+  }
+
+  /* Infer MacBook/iPhone series group from page copy (e.g. 16-inch, iPhone 12). */
+  function findModelGroupFromContext(device, ctx) {
+    var groups = MODELS[device] || [];
+    if (!groups.length) return null;
+    if (groups.length === 1) return groups[0];
+    var hay = contextHaystack(ctx);
+    if (!hay) return null;
+    var best = null;
+    var bestScore = 0;
+    for (var i = 0; i < groups.length; i++) {
+      var g = groups[i];
+      var label = String(g.group || '');
+      var score = 0;
+      var normLabel = normalizeModelKey(label);
+      if (normLabel && normalizeModelKey(hay).indexOf(normLabel) !== -1) score += 8;
+      var inch = label.match(/(\d{2})\s*["”]|(\d{2})\s*-?\s*inch/i);
+      if (inch) {
+        var n = inch[1] || inch[2];
+        if (new RegExp('(?:^|[^0-9])' + n + '(?:\\s|-)?(?:inch|in\\b|["”])').test(hay) || hay.indexOf(n + '-inch') !== -1 || hay.indexOf('pro-' + n) !== -1 || hay.indexOf(n + 'inch') !== -1) {
+          score += 10;
+        }
+      }
+      /* iPhone group titles like "iPhone 12" */
+      var iphoneGen = label.match(/iphone\s*(\d{1,2})/i);
+      if (iphoneGen && new RegExp('iphone[\\s-]*' + iphoneGen[1] + '(?![0-9])').test(hay)) score += 10;
+      if (score > bestScore) { bestScore = score; best = g; }
+    }
+    return bestScore > 0 ? best : null;
+  }
+
+  function resolveModelFromContext(ctx, opts) {
+    opts = opts || {};
+    var cols = [].concat(ctx.modelCollections || []);
+    if (ctx.collectionHandle) cols.push(ctx.collectionHandle);
+    if (opts.includeAllCollections) cols = cols.concat(ctx.allCollections || []);
+    var seen = {};
+    var match = null;
+    for (var i = 0; i < cols.length; i++) {
+      var h = cols[i];
+      if (!h || seen[h]) continue;
+      seen[h] = true;
+      match = findModelByCollection(h);
+      if (match) return match;
+    }
+    if (opts.modelName) {
+      match = findModelByName(opts.modelName);
+      if (match) return match;
+    }
+    if (opts.modelSlug) {
+      match = findModelByName(String(opts.modelSlug).replace(/-/g, ' '));
+      if (match) return match;
+    }
+    /* Last resort: match page title / handle against wizard model names. */
+    match = findModelByName(ctx.productTitle) || findModelByName(ctx.collectionTitle);
+    if (match) return match;
     return null;
+  }
+
+  function openDeviceModels(device, ctx) {
+    S.device = device;
+    renderDevices();
+    var group = findModelGroupFromContext(device, ctx || CONTEXT);
+    if (group) {
+      pickModelGroup(device, group);
+    } else {
+      renderModels(device);
+    }
+    go(2);
   }
 
   function initPrefill() {
@@ -3649,6 +3804,16 @@ document.getElementById('qwEqErr').style.display = 'none';
       if (cp.device && !ctx.device) ctx.device = cp.device;
       if (cp.fault && !ctx.fault) ctx.fault = cp.fault;
     }
+    /* Product / title handles also carry device + fault hints (e.g. macbook-pro-16-screen). */
+    if (ctx && window.ICorrectWizardPrefill && window.__QW_COLLECTION_PREFILL) {
+      var hintHandles = [ctx.productHandle, ctx.productTitle, ctx.collectionTitle].concat(ctx.allCollections || []);
+      for (var hi = 0; hi < hintHandles.length; hi++) {
+        if (!hintHandles[hi]) continue;
+        var hp = window.ICorrectWizardPrefill.resolveCollectionPrefill(hintHandles[hi], window.__QW_COLLECTION_PREFILL);
+        if (hp.device && !ctx.device) ctx.device = hp.device;
+        if (hp.fault && !ctx.fault) ctx.fault = hp.fault;
+      }
+    }
 
     /* CASE 0: Product page — catalogue map reverse lookup lands on service step */
     if (ctx && ctx.productHandle && window.ICorrectWizardPrefill && window.__QW_CATALOGUE) {
@@ -3662,22 +3827,19 @@ document.getElementById('qwEqErr').style.display = 'none';
         S.preFault = REPAIR_TYPE_TO_FAULT[hit.fault] || hit.fault;
         S.preVariantId = hit.variantId || null;
         if (S.preFault === '_diagnostic') S.preFault = null;
-        trackWizardEntry('product_catalogue', { productHandle: ctx.productHandle, fault: hit.fault });
+        trackWizardEntry('product_catalogue', { productHandle: ctx.productHandle, fault: hit.fault, modelName: hit.modelName || null });
         renderDevices();
-        /* Prefer linklist model match; fall back to device+fault */
-        var cols = ctx.modelCollections || [];
-        var modelMatch = null;
-        for (var ci = 0; ci < cols.length; ci++) {
-          modelMatch = findModelByCollection(cols[ci]);
-          if (modelMatch) break;
-        }
+        var modelMatch = resolveModelFromContext(ctx, {
+          includeAllCollections: true,
+          modelName: hit.modelName,
+          modelSlug: hit.modelSlug
+        });
         if (modelMatch) {
           pickModel(modelMatch.model.name, modelMatch.model.collectionHandle, null).then(function() {
             _suppressScroll = false;
           });
         } else {
-          renderModels(hit.device);
-          go(2);
+          openDeviceModels(hit.device, ctx);
           _suppressScroll = false;
         }
         return;
@@ -3686,15 +3848,8 @@ document.getElementById('qwEqErr').style.display = 'none';
 
     /* CASE 1: Product page — pre-fill device + model, derive fault from handle */
     if (ctx && ctx.productHandle) {
-      var cols = ctx.modelCollections || [];
-      if (ctx.collectionHandle) cols.push(ctx.collectionHandle);
-      var modelMatch = null;
-      for (var ci = 0; ci < cols.length; ci++) {
-        modelMatch = findModelByCollection(cols[ci]);
-        if (modelMatch) break;
-      }
+      var modelMatch = resolveModelFromContext(ctx, { includeAllCollections: true });
       if (modelMatch) {
-        /* Derive repair type from product handle */
         var rt = deriveRepairTypeFromHandle(ctx.productHandle);
         var faultName = rt ? REPAIR_TYPE_TO_FAULT[rt] : null;
         S.device = modelMatch.device;
@@ -3709,24 +3864,21 @@ document.getElementById('qwEqErr').style.display = 'none';
         });
         return;
       }
-      /* Product page but can't find model — try device at least */
+      /* Product page but can't find exact model — device + best series (e.g. MacBook 16"). */
       if (ctx.device) {
-        S.device = ctx.device;
         trackWizardEntry('product', {
           productHandle: ctx.productHandle,
           deviceContextOnly: true
         });
-        renderDevices();
-        renderModels(ctx.device);
-        go(2);
+        openDeviceModels(ctx.device, ctx);
         _suppressScroll = false;
         return;
       }
     }
 
-    /* CASE 2: Collection page — pre-fill device + model */
+    /* CASE 2: Collection page — pre-fill device + model / series */
     if (ctx && ctx.collectionHandle) {
-      var match = findModelByCollection(ctx.collectionHandle);
+      var match = resolveModelFromContext(ctx, { includeAllCollections: true });
       if (match) {
         S.device = match.device;
         trackWizardEntry('collection', {
@@ -3738,18 +3890,25 @@ document.getElementById('qwEqErr').style.display = 'none';
         });
         return;
       }
+      if (ctx.device) {
+        trackWizardEntry('collection', {
+          collectionHandle: ctx.collectionHandle,
+          deviceContextOnly: true
+        });
+        if (ctx.fault) S.preFault = ctx.fault;
+        openDeviceModels(ctx.device, ctx);
+        _suppressScroll = false;
+        return;
+      }
     }
 
     /* CASE 3: Device context from metafield */
     if (ctx && ctx.device) {
-      S.device = ctx.device;
       trackWizardEntry('device_context', {
         faultPrefill: ctx.fault || null
       });
       if (ctx.fault) S.preFault = ctx.fault;
-      renderDevices();
-      renderModels(ctx.device);
-      go(2);
+      openDeviceModels(ctx.device, ctx);
       _suppressScroll = false;
       return;
     }
