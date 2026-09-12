@@ -23,7 +23,7 @@
         "title": {
           "type": "title",
           "settings": {
-            "enable-price": true
+            "enable-price": false
           }
         },
         "description": {
@@ -50,15 +50,22 @@
         "buy_buttons": {
           "type": "buy_buttons",
           "settings": {
-            "show_dynamic_checkout": true,
+            "show_dynamic_checkout": false,
             "show_gift_card_recipient": true
-          }
+          },
+          "disabled": true
         },
         "share": {
           "type": "share",
           "disabled": true,
           "settings": {
             "share_label": "Share"
+          }
+        },
+        "quote_cta": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "<a class=\"button button--primary qw-pdp-quote-cta\" href=\"#get-free-quote\" style=\"display:inline-flex;width:100%;justify-content:center;margin-top:8px;\">Get a free quote</a><p class=\"qw-pdp-quote-note\" style=\"margin:10px 0 0;font-size:14px;line-height:1.4;color:#6b6b6b;\">Enter your postcode in the quote below for your all-in collection &amp; repair price.</p>"
           }
         }
       },
@@ -68,6 +75,7 @@
         "description",
         "price",
         "variant_picker",
+        "quote_cta",
         "quantity_selector",
         "buy_buttons",
         "share"
