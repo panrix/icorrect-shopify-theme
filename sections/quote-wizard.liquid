@@ -260,18 +260,51 @@ window.__QW_CATALOGUE = null;
   function esc(str) { var d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
 
   /* Centralized scroll: precise, firm, no clunkiness.
-     Scrolls so the target element sits 20px below the viewport top.
-     Uses requestAnimationFrame to ensure DOM has settled. */
+     Uses requestAnimationFrame so the DOM has settled. */
   var _scrollLock = false;
-  function scrollToEl(el, delay) {
+  function scrollToEl(el, delay, block) {
     if (!el || _scrollLock) return;
     _scrollLock = true;
     setTimeout(function() {
       requestAnimationFrame(function() {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        try {
+          el.scrollIntoView({ behavior: 'smooth', block: block || 'start' });
+        } catch (e) {}
         _scrollLock = false;
       });
     }, delay || 80);
+  }
+
+  function isMobileQuoteLayout() {
+    return !!(window.matchMedia && window.matchMedia('(max-width: 720px)').matches);
+  }
+
+  /* After fault → land on postcode / quote, not the progress pills. */
+  function focusQuoteEntry() {
+    var target = document.getElementById('qwPostcodeCard') ||
+      document.getElementById('qw-rP') ||
+      document.getElementById('qwResCard');
+    scrollToEl(target, 180, isMobileQuoteLayout() ? 'start' : 'nearest');
+  }
+
+  /* After postcode → land on collection + journey + price as one screen. */
+  function focusCollectionPanel() {
+    var slot = document.getElementById('qwSlotPanel');
+    var reveal = document.getElementById('qwDeliveryReveal');
+    var price = document.getElementById('qwResPrice');
+    var target = (slot && !slot.hidden) ? slot : reveal;
+    if (!target || target.hidden) return;
+    scrollToEl(target, 140, isMobileQuoteLayout() ? 'start' : 'nearest');
+    if (price && isMobileQuoteLayout()) {
+      setTimeout(function() {
+        try {
+          var rect = price.getBoundingClientRect();
+          if (rect.bottom > (window.innerHeight || 0) - 12) {
+            price.scrollIntoView({ behavior: 'smooth', block: 'end' });
+          }
+        } catch (e) {}
+      }, 320);
+    }
   }
 
   /* [4.7] Shared a11y helper */
@@ -1130,6 +1163,36 @@ window.__QW_CATALOGUE = null;
       svcBadge('diagnostic', 'Full report and quote sent via email');
   }
 
+  /* Compact trust row flanking the price (reviews · price · warranty + parts). */
+  function buildPriceTrustBlock(device, model, opts) {
+    opts = opts || {};
+    var parts = partsClaimLabel(device, model);
+    var starSvg = '<svg width="11" height="11" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1l1.8 3.8 4.2.6-3 2.9.7 4.1L7 10.5 3.3 12.4l.7-4.1-3-2.9 4.2-.6z" fill="currentColor"/></svg>';
+    var stars = starSvg + starSvg + starSvg + starSvg + starSvg;
+    var gateCopy = opts.gateCopy || 'Enter your postcode above';
+    var priceInner = opts.gate
+      ? '<div class="qw-price-gate qw-price-gate--inline" id="qwPriceGate">' + esc(gateCopy) + '</div>' +
+        '<div class="qw-price-big-wrap" id="qwPriceBigWrap" hidden>' +
+          '<div class="qw-price-from">All-in total</div>' +
+          '<div class="qw-price-big" id="qwPriceBig">' + (opts.priceHtml || '') + '</div>' +
+        '</div>'
+      : '<div class="qw-price-from">All-in total</div>' +
+        '<div class="qw-price-big" id="qwPriceBig">' + (opts.priceHtml || '') + '</div>';
+    return '<div class="qw-price-trust" id="qwPriceTrust">' +
+      '<div class="qw-price-trust-side qw-price-trust-reviews" aria-label="4.9 out of 5 from 719 Google reviews">' +
+        '<div class="qw-price-trust-score">4.9</div>' +
+        '<div class="qw-price-trust-stars" aria-hidden="true">' + stars + '</div>' +
+        '<div class="qw-price-trust-meta">719 Google reviews</div>' +
+      '</div>' +
+      '<div class="qw-price-trust-center">' + priceInner + '</div>' +
+      '<div class="qw-price-trust-side qw-price-trust-warranty" aria-label="2-year warranty">' +
+        '<div class="qw-price-trust-kicker">2-yr</div>' +
+        '<div class="qw-price-trust-meta">Warranty</div>' +
+      '</div>' +
+      '<div class="qw-price-trust-parts">' + esc(parts) + '</div>' +
+    '</div>';
+  }
+
   /* =============================================
      SERVICE STEP — courier OR mail-in only (#53)
      Postcode gates price; valid postcode auto-reveals band + slots.
@@ -1374,7 +1437,8 @@ window.__QW_CATALOGUE = null;
     return '—';
   }
 
-  /* Hide mail-in when courier is free or strictly cheaper — no reason to offer it. */
+  /* Hide mail-in when courier is free or strictly cheaper — no reason to offer it.
+     On mobile, hide mail-in whenever courier is available so collection + price fit one screen. */
   function shouldHideMailInOption(quote, postcode) {
     if (!quote || quote.courierAvailable === false) return false;
     var pc = postcode || '';
@@ -1382,6 +1446,7 @@ window.__QW_CATALOGUE = null;
       ? quote
       : quoteForService('courier', pc);
     if (!courierQ || courierQ.courierAvailable === false || courierQ.forcedMailIn) return false;
+    if (isMobileQuoteLayout()) return true;
     var courierAdj = Number(courierQ.adjustment);
     if (!isFinite(courierAdj)) courierAdj = 0;
     if (courierAdj === 0) return true;
@@ -1394,7 +1459,10 @@ window.__QW_CATALOGUE = null;
 
   function setMailInOptionVisible(show) {
     var mailCard = document.querySelector('.qw-opt-card[data-svc="mailin"]');
+    var courierCard = document.querySelector('.qw-opt-card[data-svc="courier"]');
     var grid = document.getElementById('qwDeliveryGrid');
+    var choice = document.getElementById('qwDeliveryChoice');
+    var choiceLabel = document.getElementById('qwDeliveryChoiceLabel');
     if (mailCard) {
       mailCard.hidden = !show;
       mailCard.setAttribute('aria-hidden', show ? 'false' : 'true');
@@ -1403,6 +1471,15 @@ window.__QW_CATALOGUE = null;
       }
     }
     if (grid) grid.classList.toggle('qw-delivery-grid-solo', !show);
+    /* Solo courier on mobile: drop choice chrome so slots + journey + price fit. */
+    if (!show && isMobileQuoteLayout()) {
+      if (choice) choice.hidden = true;
+      if (courierCard) courierCard.hidden = true;
+      return;
+    }
+    if (choice) choice.hidden = false;
+    if (courierCard) courierCard.hidden = false;
+    if (choiceLabel) choiceLabel.hidden = !show;
   }
 
   function setPriceVisibility(show) {
@@ -1452,6 +1529,16 @@ window.__QW_CATALOGUE = null;
     });
   }
 
+  /* Price slot after collection/journey so one mobile screen can show slots + ETA + price. */
+  var QW_PRICE_SLOT = '<!--QW_PRICE_SLOT-->';
+
+  function injectServicePrice(serviceHtml, priceHtml) {
+    var block = priceHtml
+      ? ('<div class="qw-res-price" id="qwResPrice">' + priceHtml + '</div>')
+      : '';
+    return String(serviceHtml || '').split(QW_PRICE_SLOT).join(block);
+  }
+
   function buildServiceCards() {
     return '<div class="qw-opt-section qw-service-mapper">' +
       '<div class="qw-section-label">Where should we collect from?</div>' +
@@ -1465,24 +1552,26 @@ window.__QW_CATALOGUE = null;
         '<div class="qw-courier-result" id="qwCourierResult" hidden></div>' +
       '</div>' +
       '<div class="qw-delivery-reveal" id="qwDeliveryReveal" hidden>' +
-        '<div class="qw-section-label">How do you want to get it to us?</div>' +
-        '<div class="qw-delivery-grid qw-opt-row qw-svc-row" id="qwDeliveryGrid">' +
-          '<button type="button" class="qw-delivery-card qw-opt-card sel active" data-opt="svc" data-svc="courier" data-add="0">' +
-            '<span class="qw-delivery-radio" aria-hidden="true"><span></span></span>' +
-            '<span class="qw-delivery-body">' +
-              '<span class="qw-delivery-title qw-opt-name">Courier collection</span>' +
-              '<span class="qw-delivery-sub qw-opt-meta">We collect from your door across London</span>' +
-            '</span>' +
-            '<span class="qw-delivery-price qw-opt-price" id="qwCourierPriceLbl">—</span>' +
-          '</button>' +
-          '<button type="button" class="qw-delivery-card qw-opt-card" data-opt="svc" data-svc="mailin" data-add="0">' +
-            '<span class="qw-delivery-radio" aria-hidden="true"><span></span></span>' +
-            '<span class="qw-delivery-body">' +
-              '<span class="qw-delivery-title qw-opt-name">Post it — mail-in pack</span>' +
-              '<span class="qw-delivery-sub qw-opt-meta">Tracked, insured pack within 24h</span>' +
-            '</span>' +
-            '<span class="qw-delivery-price qw-opt-price" id="qwMailinPriceLbl">—</span>' +
-          '</button>' +
+        '<div class="qw-delivery-choice" id="qwDeliveryChoice">' +
+          '<div class="qw-section-label" id="qwDeliveryChoiceLabel">How do you want to get it to us?</div>' +
+          '<div class="qw-delivery-grid qw-opt-row qw-svc-row" id="qwDeliveryGrid">' +
+            '<button type="button" class="qw-delivery-card qw-opt-card sel active" data-opt="svc" data-svc="courier" data-add="0">' +
+              '<span class="qw-delivery-radio" aria-hidden="true"><span></span></span>' +
+              '<span class="qw-delivery-body">' +
+                '<span class="qw-delivery-title qw-opt-name">Courier collection</span>' +
+                '<span class="qw-delivery-sub qw-opt-meta">We collect from your door across London</span>' +
+              '</span>' +
+              '<span class="qw-delivery-price qw-opt-price" id="qwCourierPriceLbl">—</span>' +
+            '</button>' +
+            '<button type="button" class="qw-delivery-card qw-opt-card" data-opt="svc" data-svc="mailin" data-add="0">' +
+              '<span class="qw-delivery-radio" aria-hidden="true"><span></span></span>' +
+              '<span class="qw-delivery-body">' +
+                '<span class="qw-delivery-title qw-opt-name">Post it — mail-in pack</span>' +
+                '<span class="qw-delivery-sub qw-opt-meta">Tracked, insured pack within 24h</span>' +
+              '</span>' +
+              '<span class="qw-delivery-price qw-opt-price" id="qwMailinPriceLbl">—</span>' +
+            '</button>' +
+          '</div>' +
         '</div>' +
         '<div class="qw-slot-panel" id="qwSlotPanel" hidden>' +
           '<div class="qw-section-label">Pick a collection window</div>' +
@@ -1507,6 +1596,7 @@ window.__QW_CATALOGUE = null;
         '<div class="qw-mailin-panel" id="qwMailinPanel" hidden></div>' +
         '<div class="qw-journey-host" id="qwJourney" hidden></div>' +
       '</div>' +
+      QW_PRICE_SLOT +
       '<div class="qw-courier-err" id="qwServiceErr"></div>' +
     '</div>';
   }
@@ -1650,7 +1740,6 @@ window.__QW_CATALOGUE = null;
 
     panel.hidden = false;
     refreshServiceJourney();
-    try { panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) {}
   }
 
   function applyCourierQuoteToUI(quote) {
@@ -1718,6 +1807,7 @@ window.__QW_CATALOGUE = null;
       if (result) { result.hidden = true; result.innerHTML = ''; }
       if (mailPanel) mailPanel.hidden = true;
       renderCollectionSlots(quote.band);
+      if (!_suppressScroll) focusCollectionPanel();
     } else if (quote.forcedMailIn || quote.service === 'mail-in') {
       selectServiceCard('mailin');
       setMailInOptionVisible(true);
@@ -1734,6 +1824,10 @@ window.__QW_CATALOGUE = null;
         }
       }
       refreshServiceJourney();
+      if (!_suppressScroll) {
+        var mailTarget = document.getElementById('qwMailinPanel') || document.getElementById('qwDeliveryReveal');
+        scrollToEl(mailTarget, 140, isMobileQuoteLayout() ? 'start' : 'nearest');
+      }
     }
 
     refreshAllInTotal();
@@ -1893,7 +1987,7 @@ window.__QW_CATALOGUE = null;
     var subEl = document.getElementById('qw-s4s');
     if (subEl && sub !== undefined) subEl.textContent = sub;
     updateProg(4);
-    if (!_suppressScroll) scrollToEl(document.querySelector('.qw-prog') || document.querySelector('.qw-wizard'), 120);
+    /* Don't scroll to progress pills — focusQuoteEntry runs after the card renders. */
   }
 
   function hideResolutionPanel() {
@@ -2843,6 +2937,7 @@ window.__QW_CATALOGUE = null;
     else if (iss.route === 'diagnostic') await showDiagnosticCard(iss, p);
     else if (iss.route === 'dismiss') showDismissCard(iss, p);
     else showContactCard(iss, p);
+    if (!_suppressScroll) focusQuoteEntry();
     if (window.posthog) posthog.capture('wizard_resolution', buildWizardTrackPayload({
       route: iss.route,
       resolutionLabel: iss.label
@@ -2866,31 +2961,22 @@ window.__QW_CATALOGUE = null;
 
     var urgentHtml = iss.urgent ? '<div class="qw-urgent" role="alert"><span>\u26A0\uFE0F Safety concern: stop using the device and don\'t charge it.</span></div>' : '';
 
-    /* Price gated behind postcode — show prompt until postcode resolves (#53 UX). */
-    var priceHtml = basePrice
-      ? ('<div class="qw-price-gate" id="qwPriceGate">Enter your postcode below to see your all-in price</div>' +
-         '<div class="qw-price-big-wrap" id="qwPriceBigWrap" hidden>' +
-           '<div class="qw-price-from">All-in total</div>' +
-           '<div class="qw-price-big" id="qwPriceBig">' + gbp.format(basePrice) + '</div>' +
-         '</div>')
-      : '';
-
-    var badges = buildRepairBadges(S.device, S.model);
-
-    /* Turnaround + Service + Colour cards */
+    /* Postcode first; price trust sits after collection so mobile can see slots + ETA + price together. */
     var expressData = await detectExpressFromPage(product.handle);
     var turnaroundHtml = buildTurnaroundCards(expressData);
-    var serviceHtml = buildServiceCards();
     var deviceColors = getDeviceColors(S.device, S.model, iss.repairType);
     var colorHtml = buildColorSelector(deviceColors);
 
+    var priceTrustHtml = basePrice
+      ? buildPriceTrustBlock(S.device, S.model, { gate: true, priceHtml: gbp.format(basePrice) })
+      : '';
     var totalHtml = basePrice
       ? ('<div class="qw-price-total-wrap" id="qwPriceTotalWrap" hidden>' +
            '<div class="qw-price-total"><span class="qw-price-total-label">Total</span>' +
            '<span class="qw-price-total-val" id="qwPriceTotal">' + gbp.format(basePrice) + '</span></div>' +
          '</div>')
       : '';
-
+    var serviceHtml = injectServicePrice(buildServiceCards(), priceTrustHtml + totalHtml);
 
     container.innerHTML = urgentHtml +
       '<div class="qw-res" id="qwResCard" data-base="' + basePrice + '" data-vid="' + mainVariantId + '" data-needs-color="' + (deviceColors ? '1' : '0') + '">' +
@@ -2899,11 +2985,9 @@ window.__QW_CATALOGUE = null;
           '<h3 class="qw-res-h">' + esc(product.title) + '</h3>' +
           '<p class="qw-res-p">' + esc(iss.copy) + '</p>' +
           (iss.refImages ? '<div class="qw-dustgate-imgs">' + iss.refImages.map(function(src,i){ return '<img src="' + src + '" alt="Reference image ' + (i+1) + '">'; }).join('') + '</div>' : '') +
-          priceHtml +
         '</div>' +
-        '<div class="qw-svc">' + badges + '</div>' +
-        '<div style="padding:0 24px 8px;">' + colorHtml + turnaroundHtml + serviceHtml + '</div>' +
-        totalHtml +
+        '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
+        '<div class="qw-res-extras" style="padding:0 24px 8px;">' + colorHtml + turnaroundHtml + '</div>' +
         '<div class="qw-res-cta">' +
           '<button class="qw-btn-book" id="qwBookBtn" disabled>Proceed to checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
           '<button class="qw-btn-email" id="qwEmailQuote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email me this quote</button>' +
@@ -2956,13 +3040,7 @@ window.__QW_CATALOGUE = null;
 
     var urgentHtml = iss.urgent ? '<div class="qw-urgent" role="alert"><span>\u26A0\uFE0F Safety concern: stop using the device and don\'t charge it.</span></div>' : '';
 
-    var priceHtml = diagPrice
-      ? ('<div class="qw-price-gate" id="qwPriceGate">Enter your postcode below to see your all-in price</div>' +
-         '<div class="qw-price-big-wrap" id="qwPriceBigWrap" hidden>' +
-           '<div class="qw-price-from">All-in total</div>' +
-           '<div class="qw-price-big" id="qwPriceBig">' + gbp.format(diagPrice) + '</div>' +
-         '</div>')
-      : '';
+    var priceHtml = ''; /* price moved into service via trust block */
 
     /* Build estimate rows: diagnostic + likely repair + logic board (where relevant) */
     var estimateRows = '';
@@ -2992,15 +3070,16 @@ window.__QW_CATALOGUE = null;
 
     var likelyHtml = estimateRows ? '<div class="qw-estimate">' + estimateRows + '</div>' : '';
 
-    var serviceHtml = buildServiceCards();
+    var priceTrustHtml = diagPrice
+      ? buildPriceTrustBlock(S.device, S.model, { gate: true, priceHtml: gbp.format(diagPrice) })
+      : '';
     var totalHtml = diagPrice
       ? ('<div class="qw-price-total-wrap" id="qwPriceTotalWrap" hidden>' +
            '<div class="qw-price-total"><span class="qw-price-total-label">Total</span>' +
            '<span class="qw-price-total-val" id="qwPriceTotal">' + gbp.format(diagPrice) + '</span></div>' +
          '</div>')
       : '';
-
-    var badges = buildDiagnosticBadges(S.device);
+    var serviceHtml = injectServicePrice(buildServiceCards(), priceTrustHtml + totalHtml);
 
     var diagVariantId = fullDiag ? fullDiag.variants[0].id : 0;
 
@@ -3010,12 +3089,9 @@ window.__QW_CATALOGUE = null;
           '<div class="qw-res-badge qw-badge-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>We need to take a look</div>' +
           '<h3 class="qw-res-h">Book a Diagnostic</h3>' +
           '<p class="qw-res-p">' + esc(iss.copy) + '</p>' +
-          priceHtml +
           likelyHtml +
         '</div>' +
-        '<div class="qw-svc">' + badges + '</div>' +
-        '<div style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
-        totalHtml +
+        '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
         '<div class="qw-res-cta">' +
           '<button class="qw-btn-book" id="qwBookBtn" disabled>Proceed to checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
           '<button class="qw-btn-email" id="qwEmailQuote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email me this quote</button>' +

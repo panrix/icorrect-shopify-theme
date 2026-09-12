@@ -2111,3 +2111,105 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
     width: calc(100% - 28px);
   }
 }
+
+/* ============================================================
+   PRICE TRUST ROW — reviews · big price · warranty + parts (#53)
+   ============================================================ */
+.qw-res-price {
+  margin: 8px 0 4px;
+  padding: 4px 0 8px;
+}
+.qw-price-trust {
+  display: grid;
+  grid-template-columns: minmax(72px, 1fr) auto minmax(72px, 1fr);
+  grid-template-areas:
+    "reviews price warranty"
+    "parts parts parts";
+  align-items: center;
+  column-gap: 10px;
+  row-gap: 8px;
+  padding: 12px 4px 4px;
+  text-align: center;
+}
+.qw-price-trust-reviews { grid-area: reviews; justify-self: start; text-align: left; }
+.qw-price-trust-center { grid-area: price; justify-self: center; min-width: 0; }
+.qw-price-trust-warranty { grid-area: warranty; justify-self: end; text-align: right; }
+.qw-price-trust-parts {
+  grid-area: parts;
+  font: 500 12.5px/1.35 var(--font-sans);
+  color: #666;
+  letter-spacing: -0.1px;
+}
+.qw-price-trust-score {
+  font: 700 22px/1 var(--font-sans);
+  letter-spacing: -0.6px;
+  color: #171717;
+}
+.qw-price-trust-stars {
+  display: flex;
+  gap: 1px;
+  margin: 3px 0 2px;
+  color: #d4a017;
+}
+.qw-price-trust-warranty .qw-price-trust-stars { justify-content: flex-end; }
+.qw-price-trust-reviews .qw-price-trust-stars { justify-content: flex-start; }
+.qw-price-trust-kicker {
+  font: 700 20px/1 var(--font-sans);
+  letter-spacing: -0.5px;
+  color: #171717;
+}
+.qw-price-trust-meta {
+  font: 500 11px/1.3 var(--font-sans);
+  color: #808080;
+}
+.qw-price-trust-center .qw-price-from {
+  margin-bottom: 2px;
+  font: 500 12px var(--font-sans);
+  color: #808080;
+}
+.qw-price-trust-center .qw-price-big {
+  margin-bottom: 0;
+  font-weight: 700;
+  font-size: 42px;
+  letter-spacing: -1.4px;
+  line-height: 1;
+}
+.qw-price-gate--inline {
+  margin: 0;
+  padding: 10px 12px;
+  max-width: 160px;
+  font: 500 12.5px/1.35 var(--font-sans);
+  text-align: center;
+}
+.qw-delivery-choice[hidden],
+.qw-opt-card[hidden] {
+  display: none !important;
+}
+/* When trust price is showing the all-in figure, keep the duplicate Total row quiet on small screens. */
+@media (max-width: 720px) {
+  .qw-res-price .qw-price-total-wrap {
+    display: none !important;
+  }
+  .qw-price-trust {
+    padding: 10px 0 2px;
+    column-gap: 8px;
+  }
+  .qw-price-trust-center .qw-price-big {
+    font-size: 40px;
+  }
+  .qw-price-trust-score,
+  .qw-price-trust-kicker {
+    font-size: 18px;
+  }
+  .qw-price-trust-meta {
+    font-size: 10.5px;
+  }
+  /* Compact resolved postcode so collection + price fit one viewport. */
+  .qw-postcode-card.qw-postcode-card-resolved {
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+  .qw-postcode-card.qw-postcode-card-resolved .qw-postcode-hint {
+    display: none;
+  }
+}
