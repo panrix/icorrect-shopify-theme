@@ -569,7 +569,8 @@ a.qw-d-val:hover { text-decoration: underline; text-underline-offset: 2px; }
   margin-right: 0;
   transition: box-shadow var(--qw-ease), background var(--qw-ease), color var(--qw-ease);
 }
-.qw-prog-s:hover { box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.24); }
+.qw-prog-s:not(:disabled):hover { box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.24); }
+.qw-prog-s:disabled { cursor: default; opacity: 0.55; }
 .qw-prog-s.on {
   box-shadow: 0 0 0 2px #171717;
 }
