@@ -106,6 +106,7 @@ window.WIZARD_CFG = {
   catalogueUrl: {{ 'repair-catalogue-map.json' | asset_url | json }},
   collectionPrefillUrl: {{ 'wizard-collection-prefill.json' | asset_url | json }},
   serviceAdjustmentsUrl: {{ 'service-adjustment-variants.json' | asset_url | json }},
+  macbookModelHintUrl: {{ 'macbook-model-number.svg' | asset_url | json }},
   /* Inline IDs so checkout never waits on a fetch for money-path (#53) */
   serviceAdjustments: {
     "15": 71280436379901,
@@ -205,7 +206,7 @@ window.__QW_CATALOGUE = null;
       <div class="qw-step" id="qw-s2">
         <button class="qw-btn-back qw-back" id="qw-back2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
         <h3 class="qw-step-title qw-s-title" id="qw-s2t"></h3>
-        <p class="qw-step-sub qw-s-sub">Pick your exact model for accurate pricing.</p>
+        <p class="qw-step-sub qw-s-sub" id="qw-s2s">Pick your exact model for accurate pricing.</p>
         <div id="qw-mC"></div>
         <button class="qw-help-trig" id="qw-hT">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
@@ -228,7 +229,7 @@ window.__QW_CATALOGUE = null;
         <h3 class="qw-step-title qw-s-title" id="qw-s4t"></h3>
         <p class="qw-step-sub qw-s-sub" id="qw-s4s"></p>
         <div class="qw-issue-list qw-t-grid" id="qw-tC"></div>
-        <div id="qw-rP" style="display:none;margin-top:20px;"></div>
+        <div class="qw-resolution-panel" id="qw-rP" hidden></div>
       </div>
     </div>
 
@@ -1543,6 +1544,37 @@ window.__QW_CATALOGUE = null;
     if (!_suppressScroll) scrollToEl(document.querySelector('.qw-prog') || document.querySelector('.qw-wizard'), 100);
   }
 
+  /* Issue → service/pricing is a full-screen transition (same feel as device → model). */
+  function openResolutionScreen(title, sub) {
+    var tC = document.getElementById('qw-tC');
+    if (tC) tC.hidden = true;
+    var rP = document.getElementById('qw-rP');
+    if (rP) {
+      rP.hidden = false;
+      rP.removeAttribute('style');
+    }
+    var titleEl = document.getElementById('qw-s4t');
+    if (titleEl && title) titleEl.textContent = title;
+    var subEl = document.getElementById('qw-s4s');
+    if (subEl && sub !== undefined) subEl.textContent = sub;
+    updateProg(4);
+    if (!_suppressScroll) scrollToEl(document.querySelector('.qw-prog') || document.querySelector('.qw-wizard'), 120);
+  }
+
+  function hideResolutionPanel() {
+    var rP = document.getElementById('qw-rP');
+    if (rP) {
+      rP.hidden = true;
+      rP.innerHTML = '';
+      rP.removeAttribute('style');
+    }
+  }
+
+  function resolutionScreenOpen() {
+    var rP = document.getElementById('qw-rP');
+    return !!(rP && !rP.hidden && rP.innerHTML);
+  }
+
   function updateProg(step) {
     document.querySelectorAll('.qw-prog-s').forEach(function(el) {
       var s = parseInt(el.dataset.s);
@@ -1648,7 +1680,7 @@ window.__QW_CATALOGUE = null;
     c.innerHTML = '';
     var titleEl = document.getElementById('qw-s2t');
     if (titleEl) titleEl.textContent = 'Which ' + DN[dev] + ' is it?';
-    var subEl = document.querySelector('#qw-s2 .qw-s-sub');
+    var subEl = document.getElementById('qw-s2s') || document.querySelector('#qw-s2 .qw-s-sub');
     if (subEl) subEl.textContent = 'Choose the series first, then we’ll show the exact models.';
     var hP = document.getElementById('qw-hP');
     if (hP) { hP.classList.remove('open'); hP.innerHTML = ''; }
@@ -1689,30 +1721,66 @@ window.__QW_CATALOGUE = null;
     renderModelList(dev, group);
   }
 
+  function buildMacBookModelHint() {
+    var url = CFG.macbookModelHintUrl;
+    if (!url) return null;
+    var wrap = document.createElement('div');
+    wrap.className = 'qw-macbook-hint';
+    wrap.innerHTML =
+      '<div class="qw-macbook-hint-media">' +
+        '<img src="' + esc(url) + '" alt="MacBook underside with model number near the hinge highlighted" width="640" height="360" loading="lazy">' +
+      '</div>' +
+      '<p class="qw-macbook-hint-caption">Turn the MacBook over. The model number starts with A and is printed near the hinge.</p>';
+    return wrap;
+  }
+
   function renderModelList(dev, group) {
     var c = document.getElementById('qw-mC');
     if (!c) return;
     c.innerHTML = '';
+    var seriesLabel = group.group || DN[dev];
     var titleEl = document.getElementById('qw-s2t');
-    if (titleEl) titleEl.textContent = 'Pick your ' + (group.group || DN[dev]) + ' model';
-    var subEl = document.querySelector('#qw-s2 .qw-s-sub');
-    if (subEl) subEl.textContent = 'Choose the exact model for accurate pricing.';
+    if (titleEl) titleEl.textContent = 'Which model is it?';
+    var subEl = document.getElementById('qw-s2s') || document.querySelector('#qw-s2 .qw-s-sub');
+    if (subEl) {
+      subEl.textContent = 'Choose the exact ' + (DN[dev] || '') + ' model from ' + seriesLabel + '.';
+    }
     var hT = document.getElementById('qw-hT');
     if (hT) hT.style.display = 'none';
     var hP = document.getElementById('qw-hP');
     if (hP) { hP.classList.remove('open'); hP.innerHTML = ''; }
+
+    if (dev === 'macbook') {
+      var hint = buildMacBookModelHint();
+      if (hint) c.appendChild(hint);
+    }
 
     var list = document.createElement('div'); list.className = 'qw-m-list qw-m-list--flat';
     var sorted = sortModels(group.models || []);
     sorted.forEach(function(m) {
       var it = document.createElement('button');
       it.type = 'button';
-      it.className = 'qw-m-item';
+      it.className = 'qw-m-item qw-choice-btn';
       it.innerHTML = '<span class="qw-mn">' + esc(m.name) + '</span>';
       wireA11y(it, 'Select ' + m.name);
       it.onclick = function() { pickModel(m.name, m.collectionHandle, it); };
       list.appendChild(it);
     });
+
+    /* Intake-parity: unsure option at the end (uses newest model for an indicative quote). */
+    if (sorted.length > 0) {
+      var unsure = document.createElement('button');
+      unsure.type = 'button';
+      unsure.className = 'qw-m-item qw-choice-btn qw-m-item--unsure';
+      unsure.innerHTML = '<span class="qw-mn">I am not sure</span>';
+      wireA11y(unsure, 'I am not sure which model');
+      unsure.onclick = function() {
+        var newest = sorted[0];
+        pickModel(newest.name, newest.collectionHandle, unsure);
+      };
+      list.appendChild(unsure);
+    }
+
     c.appendChild(list);
   }
 
@@ -2080,12 +2148,13 @@ window.__QW_CATALOGUE = null;
     if (v === 'Other') {
       S.issue = 'Other';
       setTimeout(function() {
-        var tC = document.getElementById('qw-tC'); if (tC) tC.innerHTML = '';
-        var rP = document.getElementById('qw-rP'); if (rP) { rP.style.display = 'none'; rP.innerHTML = ''; }
+        var tC = document.getElementById('qw-tC'); if (tC) { tC.innerHTML = ''; tC.hidden = true; }
+        hideResolutionPanel();
         go(4);
-        var titleEl = document.getElementById('qw-s4t'); if (titleEl) titleEl.textContent = 'Tell us what\'s going on';
-        var subEl = document.getElementById('qw-s4s'); if (subEl) subEl.textContent = 'Describe the issue and we\'ll get back to you with the right repair option.';
-        showResolution({ label: 'Other', route: 'contact', repairType: null, copy: 'Tell us what\'s happening with your ' + (DN[S.device] || 'device') + ' and we\'ll point you in the right direction.' });
+        showResolution({ label: 'Other', route: 'contact', repairType: null, copy: 'Tell us what\'s happening with your ' + (DN[S.device] || 'device') + ' and we\'ll point you in the right direction.' }, {
+          title: 'Tell us what\'s going on',
+          sub: 'Describe the issue and we\'ll get back to you with the right repair option.'
+        });
       }, 150);
       return;
     }
@@ -2099,9 +2168,9 @@ window.__QW_CATALOGUE = null;
   function renderIssues(dev, fault) {
     var c = document.getElementById('qw-tC');
     if (!c) return;
+    c.hidden = false;
     c.innerHTML = '';
-    var rP = document.getElementById('qw-rP');
-    if (rP) { rP.style.display = 'none'; rP.innerHTML = ''; }
+    hideResolutionPanel();
     destroyStickyCTA();
 
     var issues = getAvailableIssues(dev, fault, _repairsMap);
@@ -2145,20 +2214,22 @@ window.__QW_CATALOGUE = null;
     });
     trackWizardStep('resolution');
 
-    /* Dustgate sub-question: if this issue has dustgateCheck and dustgate product exists */
-    if (iss.dustgateCheck && _repairsMap['dustgate']) {
-      showDustgateQuestion(iss);
-    } else if (iss.flexgateCheck && _repairsMap['flexgate']) {
-      showFlexgateQuestion(iss);
-    } else {
-      showResolution(iss);
-    }
+    /* Advance to the service/pricing screen (same pattern as device → model). */
+    setTimeout(function() {
+      if (iss.dustgateCheck && _repairsMap['dustgate']) {
+        showDustgateQuestion(iss);
+      } else if (iss.flexgateCheck && _repairsMap['flexgate']) {
+        showFlexgateQuestion(iss);
+      } else {
+        showResolution(iss);
+      }
+    }, 150);
   }
 
   function showDustgateQuestion(originalIss) {
     var p = document.getElementById('qw-rP');
     if (!p) return;
-    p.style.display = 'block';
+    openResolutionScreen('Quick check', 'Do the marks on your screen look like this?');
     p.innerHTML =
       '<div class="qw-res"><div class="qw-res-top" style="padding-bottom:24px;">' +
         '<h3 class="qw-res-h">Do the marks on your screen look like this?</h3>' +
@@ -2173,18 +2244,17 @@ window.__QW_CATALOGUE = null;
         '</div>' +
       '</div></div>';
     document.getElementById('qwDgYes').onclick = function() {
-      showResolution({ label: 'Dustgate repair', route: 'repair', repairType: 'dustgate', copy: 'Dustgate is a design flaw affecting 2016-2020 MacBook Pro models. Dust and debris accumulate in the hinge and damage the display flex cable over time, causing purple lines and screen corruption. We repair the damaged flex cable at component level, avoiding a full display replacement.' });
+      showResolution({ label: 'Dustgate repair', route: 'repair', repairType: 'dustgate', copy: 'Dustgate is a known design flaw on 2016–2020 MacBook Pro models. Dust works into the hinge and damages the display flex cable. We repair the flex at component level so you don\'t need a full screen replacement.' });
     };
     document.getElementById('qwDgNo').onclick = function() {
       showResolution(originalIss);
     };
-    scrollToEl(p, 200);
   }
 
   function showFlexgateQuestion(originalIss) {
     var p = document.getElementById('qw-rP');
     if (!p) return;
-    p.style.display = 'block';
+    openResolutionScreen('Quick check', 'Does your screen look like this?');
     p.innerHTML =
       '<div class="qw-res"><div class="qw-res-top" style="padding-bottom:24px;">' +
         '<h3 class="qw-res-h">Does your screen look like this?</h3>' +
@@ -2204,7 +2274,6 @@ window.__QW_CATALOGUE = null;
     document.getElementById('qwFgNo').onclick = function() {
       showResolution(originalIss);
     };
-    scrollToEl(p, 200);
   }
 
   /* =============================================
@@ -2419,16 +2488,22 @@ window.__QW_CATALOGUE = null;
   /* =============================================
      RESOLUTION CARDS
      ============================================= */
-  async function showResolution(iss) {
+  async function showResolution(iss, screenOpts) {
     var p = document.getElementById('qw-rP');
     if (!p) return;
     S.route = iss.route || null;
     S.repairType = iss.repairType || null;
     _resolutionSeen = true;
     _resolutionConverted = false;
-    p.style.display = 'block';
+    var title = (screenOpts && screenOpts.title) || 'Your repair quote';
+    var sub = (screenOpts && screenOpts.sub);
+    if (sub === undefined) {
+      sub = iss.route === 'repair' || iss.route === 'diagnostic'
+        ? 'Enter your postcode to see your all-in price and book collection.'
+        : 'Next steps for your device.';
+    }
+    openResolutionScreen(title, sub);
     p.innerHTML = '<div class="qw-loading"><div class="qw-spinner"></div></div>';
-    updateProg(4);
     if (iss.route === 'repair') await showRepairCard(iss, p);
     else if (iss.route === 'diagnostic') await showDiagnosticCard(iss, p);
     else if (iss.route === 'dismiss') showDismissCard(iss, p);
@@ -2437,7 +2512,6 @@ window.__QW_CATALOGUE = null;
       route: iss.route,
       resolutionLabel: iss.label
     }));
-    scrollToEl(p, 300);
   }
 
   /* ---- REPAIR CARD ---- */
@@ -3098,8 +3172,9 @@ document.getElementById('qwEqErr').style.display = 'none';
     _trackedSteps = {};
     clearResolutionState();
     document.querySelectorAll('.qw-dev').forEach(function(c) { c.classList.remove('sel'); });
-    var rP = document.getElementById('qw-rP');
-    if (rP) { rP.style.display = 'none'; rP.innerHTML = ''; }
+    hideResolutionPanel();
+    var tC = document.getElementById('qw-tC');
+    if (tC) { tC.hidden = false; tC.innerHTML = ''; }
     destroyStickyCTA();
     go(1);
   }
@@ -3117,7 +3192,20 @@ document.getElementById('qwEqErr').style.display = 'none';
     go(1);
   };
   var b3 = document.getElementById('qw-back3'); if (b3) b3.onclick = function() { go(2); };
-  var b4 = document.getElementById('qw-back4'); if (b4) b4.onclick = function() { go(3); };
+  var b4 = document.getElementById('qw-back4');
+  if (b4) b4.onclick = function() {
+    /* From pricing/service screen → back to issue list (same step shell). */
+    if (resolutionScreenOpen() && S.fault && S.fault !== 'Other') {
+      clearResolutionState();
+      S.issue = null; S.route = null; S.repairType = null;
+      delete _trackedSteps.resolution;
+      destroyStickyCTA();
+      renderIssues(S.device, S.fault);
+      if (!_suppressScroll) scrollToEl(document.querySelector('.qw-prog') || document.querySelector('.qw-wizard'), 100);
+      return;
+    }
+    go(3);
+  };
 
   /* =============================================
      PRE-FILL SYSTEM
