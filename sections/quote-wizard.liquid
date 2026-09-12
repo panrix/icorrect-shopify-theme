@@ -1161,9 +1161,8 @@ window.__QW_CATALOGUE = null;
   /* [2.2] Device-specific badge builders */
   function buildRepairBadges(device, model) {
     var h = svcBadge('warranty', CFG.warrantyLabel || '2-year warranty');
-    /* Courier-first: never promise same-day / while-you-wait (#53). */
-    var ta = { macbook: '3 working days', iphone: '1 working day', ipad: '3 working days', watch: '3 working days' };
-    h += svcBadge('turnaround', ta[device] || '3 working days');
+    /* Same source as journey ETA + trust card (#53). */
+    h += svcBadge('turnaround', turnaroundClaimLabel(device));
     h += svcBadge('parts', partsClaimLabel(device, model));
     return h;
   }
@@ -1173,13 +1172,26 @@ window.__QW_CATALOGUE = null;
       svcBadge('diagnostic', 'Full report and quote sent via email');
   }
 
-  /* One full-width trust+price module: reviews centred over badges · price boxed right. */
+  /* Device bench days → label shared by journey ETA + repair badges. */
+  function turnaroundClaimLabel(device, opts) {
+    opts = opts || {};
+    if (opts.diagnostic) {
+      return CFG.diagnosticTurnaround || '2 working days';
+    }
+    var days = typeof repairBenchDays === 'function' ? repairBenchDays(device) : (device === 'iphone' ? 1 : 3);
+    if (days === 1) return '1 working day';
+    return days + ' working days';
+  }
+
+  /* TrustCard 2×2 cross (reviews · parts · microsoldering · warranty) + boxed price.
+     Journey ETA turnaround uses turnaroundClaimLabel / repairBenchDays. */
   function buildPriceTrustBlock(device, model, opts) {
     opts = opts || {};
     var parts = partsClaimLabel(device, model);
     var starSvg = '<svg width="12" height="12" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1l1.8 3.8 4.2.6-3 2.9.7 4.1L7 10.5 3.3 12.4l.7-4.1-3-2.9 4.2-.6z" fill="currentColor"/></svg>';
     var stars = starSvg + starSvg + starSvg + starSvg + starSvg;
     var monitorSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>';
+    var chipSvg = '<svg width="18" height="18" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="6" y="6" width="10" height="10" rx="1.5"/><path d="M8.5 4.5V2M11 4.5V2M13.5 4.5V2M8.5 20V17.5M11 20V17.5M13.5 20V17.5M4.5 8.5H2M4.5 11H2M4.5 13.5H2M20 8.5H17.5M20 11H17.5M20 13.5H17.5"/></svg>';
     var shieldSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>';
     var gateCopy = opts.gateCopy || 'Enter your postcode above';
     var priceInner = opts.gate
@@ -1191,31 +1203,36 @@ window.__QW_CATALOGUE = null;
       : '<div class="qw-price-from">All-in total</div>' +
         '<div class="qw-price-big" id="qwPriceBig">' + (opts.priceHtml || '') + '</div>';
     return '<div class="qw-price-trust" id="qwPriceTrust">' +
-      '<div class="qw-trust-main" aria-label="Trust signals">' +
-        '<div class="qw-trust-reviews" aria-label="4.9 out of 5 from 719 Google reviews">' +
-          '<div class="qw-trust-reviews-row">' +
-            '<span class="qw-trust-score">4.9</span>' +
+      '<ul class="qw-trust-cross" role="list" aria-label="Trust signals">' +
+        '<li class="qw-trust-cell qw-trust-reviews" aria-label="4.9 out of 5 from 719 Google reviews">' +
+          '<span class="qw-trust-score">4.9</span>' +
+          '<span class="qw-trust-reviews-meta">' +
             '<span class="qw-trust-stars" aria-hidden="true">' + stars + '</span>' +
-          '</div>' +
-          '<div class="qw-trust-sub">719 Google reviews</div>' +
-        '</div>' +
-        '<div class="qw-trust-grid">' +
-          '<div class="qw-trust-cell qw-trust-parts">' +
-            '<span class="qw-trust-ico" aria-hidden="true">' + monitorSvg + '</span>' +
-            '<span class="qw-trust-copy">' +
-              '<span class="qw-trust-title">' + esc(parts) + '</span>' +
-              '<span class="qw-trust-sub">Calibrated in-house</span>' +
-            '</span>' +
-          '</div>' +
-          '<div class="qw-trust-cell qw-trust-warranty" aria-label="2-year warranty">' +
-            '<span class="qw-trust-ico" aria-hidden="true">' + shieldSvg + '</span>' +
-            '<span class="qw-trust-copy">' +
-              '<span class="qw-trust-title">2-yr warranty</span>' +
-              '<span class="qw-trust-sub">Double the standard</span>' +
-            '</span>' +
-          '</div>' +
-        '</div>' +
-      '</div>' +
+            '<span class="qw-trust-sub">719 Google reviews</span>' +
+          '</span>' +
+        '</li>' +
+        '<li class="qw-trust-cell qw-trust-parts">' +
+          '<span class="qw-trust-ico" aria-hidden="true">' + monitorSvg + '</span>' +
+          '<span class="qw-trust-copy">' +
+            '<span class="qw-trust-title">' + esc(parts) + '</span>' +
+            '<span class="qw-trust-sub">Calibrated in-house</span>' +
+          '</span>' +
+        '</li>' +
+        '<li class="qw-trust-cell qw-trust-micro" aria-label="Microsoldering">' +
+          '<span class="qw-trust-ico" aria-hidden="true">' + chipSvg + '</span>' +
+          '<span class="qw-trust-copy">' +
+            '<span class="qw-trust-title">Microsoldering</span>' +
+            '<span class="qw-trust-sub">Board-level repairs</span>' +
+          '</span>' +
+        '</li>' +
+        '<li class="qw-trust-cell qw-trust-warranty" aria-label="2-year warranty">' +
+          '<span class="qw-trust-ico" aria-hidden="true">' + shieldSvg + '</span>' +
+          '<span class="qw-trust-copy">' +
+            '<span class="qw-trust-title">2-yr warranty</span>' +
+            '<span class="qw-trust-sub">Double the standard</span>' +
+          '</span>' +
+        '</li>' +
+      '</ul>' +
       '<div class="qw-price-trust-price">' + priceInner + '</div>' +
     '</div>';
   }
@@ -1308,7 +1325,7 @@ window.__QW_CATALOGUE = null;
       return {
         steps: [
           { title: 'We collect', meta: 'Pick a collection window' },
-          { title: 'We repair', meta: bench + ' working day' + (bench === 1 ? '' : 's') },
+          { title: 'We repair', meta: turnaroundClaimLabel(S.device) },
           { title: 'Back to you', meta: 'After repair' }
         ],
         returnDate: null
@@ -1318,7 +1335,7 @@ window.__QW_CATALOGUE = null;
     return {
       steps: [
         { title: 'We collect', meta: formatJourneyDate(collect) },
-        { title: 'We repair', meta: bench + ' working day' + (bench === 1 ? '' : 's') },
+        { title: 'We repair', meta: turnaroundClaimLabel(S.device) },
         { title: 'Back to you', meta: formatJourneyDate(returnDate) }
       ],
       returnDate: returnDate
@@ -1337,7 +1354,7 @@ window.__QW_CATALOGUE = null;
       steps: [
         { title: 'We send pack', meta: formatJourneyDate(ship) },
         { title: 'You post device', meta: 'by ' + formatJourneyDate(youPostBy) },
-        { title: 'We repair', meta: bench + ' working day' + (bench === 1 ? '' : 's') },
+        { title: 'We repair', meta: turnaroundClaimLabel(S.device) },
         { title: 'Back to you', meta: formatJourneyDate(returnDate) }
       ],
       returnDate: returnDate
@@ -3117,7 +3134,7 @@ window.__QW_CATALOGUE = null;
     var likelyHtml = estimateRows ? '<div class="qw-estimate">' + estimateRows + '</div>' : '';
 
     var priceTrustHtml = diagPrice
-      ? buildPriceTrustBlock(S.device, S.model, { gate: true, priceHtml: gbp.format(diagPrice) })
+      ? buildPriceTrustBlock(S.device, S.model, { gate: true, diagnostic: true, priceHtml: gbp.format(diagPrice) })
       : '';
     var totalHtml = diagPrice
       ? ('<div class="qw-price-total-wrap" id="qwPriceTotalWrap" hidden>' +
