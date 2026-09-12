@@ -1,7 +1,7 @@
 /**
  * Courier collection slot helpers (#53 slice 3).
  *
- * Windows: Today (before 2pm, B1/B2 only), Tomorrow, or later date.
+ * Windows: Today (internal cutoff still B1/B2 before 14:00), Tomorrow, or later — no customer-facing 2pm copy.
  * Day-parts: AM (09:00–12:00) / PM (12:00–17:00).
  * B3/B4: earliest = tomorrow.
  *
@@ -60,20 +60,20 @@
       return {
         todayAllowed: true,
         earliest: today,
-        reason: 'Book by 2pm for same-day collection in your area.',
+        reason: '', /* cutoff still applies; no 2pm marketing copy */
       };
     }
     if (inner && !before2pm) {
       return {
         todayAllowed: false,
         earliest: addDays(today, 1),
-        reason: 'Same-day cutoff is 2pm — earliest collection is tomorrow.',
+        reason: '',
       };
     }
     return {
       todayAllowed: false,
       earliest: addDays(today, 1),
-      reason: 'Outer London (B3/B4) — earliest collection is tomorrow.',
+      reason: '',
     };
   }
 
