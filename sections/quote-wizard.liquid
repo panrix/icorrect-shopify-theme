@@ -124,7 +124,7 @@ window.__QW_CATALOGUE = null;
 
 <!-- HTML SKELETON -->
 <div class="qw-section">
-  <div class="qw-wrap">
+  <div class="qw-wrap{% unless section.settings.show_map %} qw-wrap--solo{% endunless %}">
 
     {%- if section.settings.show_map -%}
     <!-- LEFT: MAP + DETAILS -->
@@ -3193,8 +3193,22 @@ document.getElementById('qwEqErr').style.display = 'none';
 
 <!-- CSS -->
 <style>
-/* Residual layout bridges — visual system lives in assets/quote-wizard.css (May prototype port). */
-.quote-wizard-section .qw-section { font-family: "Geist", Arial, sans-serif; }
+/* Residual bridges — visual system in assets/quote-wizard.css. Keep theme overrides at bay. */
+.quote-wizard-section .qw-section {
+  font-family: "Geist", Arial, sans-serif !important;
+  font-size: 16px !important;
+  text-align: left !important;
+}
+.quote-wizard-section .qw-section h1,
+.quote-wizard-section .qw-section h2,
+.quote-wizard-section .qw-section h3,
+.quote-wizard-section .qw-title,
+.quote-wizard-section .qw-s-title,
+.quote-wizard-section .qw-step-title {
+  font-family: "Geist", Arial, sans-serif !important;
+  text-align: left !important;
+}
+.quote-wizard-section .qw-wrap--solo { max-width: 820px; margin-left: auto; margin-right: auto; }
 .qw-slot-panel[hidden] { display: none !important; }
 .qw-delivery-card { width: 100%; }
 .qw-opt-disabled, .qw-card-disabled { opacity: 0.45; pointer-events: none; }
