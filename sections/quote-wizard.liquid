@@ -2051,11 +2051,23 @@ window.__QW_CATALOGUE = null;
   }
 
   function updateProg(step) {
+    var mono = document.getElementById('qwProgMono');
+    if (mono) mono.textContent = 'Step ' + step + ' of 4';
     document.querySelectorAll('.qw-prog-s').forEach(function(el) {
-      var s = parseInt(el.dataset.s);
-      el.classList.remove('on', 'done');
-      if (s < step) el.classList.add('done');
-      else if (s === step) el.classList.add('on');
+      var s = parseInt(el.dataset.s, 10);
+      el.classList.remove('on', 'done', 'current');
+      if (s < step) {
+        el.classList.add('done');
+        el.disabled = false;
+        el.setAttribute('aria-current', 'false');
+      } else if (s === step) {
+        el.classList.add('on', 'current');
+        el.disabled = false;
+        el.setAttribute('aria-current', 'step');
+      } else {
+        el.disabled = true;
+        el.setAttribute('aria-current', 'false');
+      }
     });
   }
 
