@@ -1088,13 +1088,40 @@ window.__QW_CATALOGUE = null;
     return '<div class="qw-svc-r"><div class="qw-svc-i">' + (BADGE_ICONS[k]||'') + '</div><span class="qw-svc-l">' + (BADGE_LABELS[k]||k) + '</span><span class="qw-svc-v">' + v + '</span></div>';
   }
 
+  /* Parts claim for trust badges:
+     MacBook Silicon (M1+) / iPhone 12+ → "Original parts"
+     MacBook Intel / iPhone 11 and older → "Original specification" */
+  function isAppleSiliconModel(model) {
+    return /(?:^|[^A-Za-z])M\d/i.test(String(model || ''));
+  }
+
+  function iphoneGenerationNumber(model) {
+    var name = String(model || '');
+    if (/iPhone\s*SE/i.test(name)) return 0;
+    var gen = name.match(/iPhone\s*(\d{1,2})/i);
+    if (gen) return parseInt(gen[1], 10) || 0;
+    if (/iPhone\s*X/i.test(name)) return 10;
+    return 0;
+  }
+
+  function partsClaimLabel(device, model) {
+    if (device === 'macbook') {
+      return isAppleSiliconModel(model) ? 'Original parts' : 'Original specification';
+    }
+    if (device === 'iphone') {
+      return iphoneGenerationNumber(model) >= 12 ? 'Original parts' : 'Original specification';
+    }
+    /* Safer default for iPad / Watch until we have a model rule. */
+    return 'Original specification';
+  }
+
   /* [2.2] Device-specific badge builders */
-  function buildRepairBadges(device) {
+  function buildRepairBadges(device, model) {
     var h = svcBadge('warranty', CFG.warrantyLabel || '2-year warranty');
     /* Courier-first: never promise same-day / while-you-wait (#53). */
     var ta = { macbook: '3 working days', iphone: '1 working day', ipad: '3 working days', watch: '3 working days' };
     h += svcBadge('turnaround', ta[device] || '3 working days');
-    h += svcBadge('parts', 'Genuine Apple parts');
+    h += svcBadge('parts', partsClaimLabel(device, model));
     return h;
   }
 
@@ -2848,7 +2875,7 @@ window.__QW_CATALOGUE = null;
          '</div>')
       : '';
 
-    var badges = buildRepairBadges(S.device);
+    var badges = buildRepairBadges(S.device, S.model);
 
     /* Turnaround + Service + Colour cards */
     var expressData = await detectExpressFromPage(product.handle);
@@ -3407,7 +3434,7 @@ document.getElementById('qwEqErr').style.display = 'none';
             totalPrice: totalPrice,
             estimates: estimates.length > 0 ? JSON.stringify(estimates) : null,
             warranty: CFG.warrantyLabel || '2-year warranty',
-            parts: 'Genuine Apple parts',
+            parts: partsClaimLabel(S.device, S.model),
             productUrl: productHandle ? 'https://www.icorrect.co.uk/products/' + productHandle : null,
             deviceColor: (function(){ var cb = document.querySelector('#qwColorGrid .qw-color-btn.sel'); return cb ? cb.dataset.color : null; })(),
             url: window.location.href,
