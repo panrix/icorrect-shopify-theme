@@ -2142,15 +2142,15 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
   gap: 6px 10px;
 }
 .qw-journey-eta-label {
-  font: 500 10px/1 var(--font-mono);
+  font: 700 10px/1 var(--font-mono);
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #808080;
+  color: #525252;
   width: 100%;
 }
 .qw-journey-eta-date {
-  font: 600 16px/1.2 var(--font-sans);
-  letter-spacing: -0.3px;
+  font: 700 20px/1.15 var(--font-sans);
+  letter-spacing: -0.4px;
   color: #171717;
 }
 .qw-journey-eta-note {
@@ -2179,29 +2179,48 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 }
 
 /* ============================================================
-   PRICE TRUST — boxed badges left · big price right (#53)
+   PRICE TRUST — one full-width module · badges + boxed price (#53)
    ============================================================ */
 .qw-res-price {
-  margin: 10px 0 6px;
-  padding: 4px 0 8px;
+  margin: 8px 0 4px;
+  padding: 0;
+}
+/* Duplicate Total row removed — big All-in price is enough */
+.qw-res-price .qw-price-total-wrap {
+  display: none !important;
 }
 .qw-price-trust {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 14px;
-  padding: 8px 0 4px;
-}
-.qw-trust-card {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas:
-    "reviews reviews"
-    "parts warranty";
+  gap: 0;
+  margin: 0;
+  padding: 0;
   border-radius: 12px;
   background: #fff;
   box-shadow: inset 0 0 0 1px #e6e6e6;
   overflow: hidden;
+}
+.qw-trust-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.qw-trust-reviews {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 4px;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid #e6e6e6;
+}
+.qw-trust-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-width: 0;
 }
 .qw-trust-cell {
   display: flex;
@@ -2210,21 +2229,13 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
   padding: 12px 14px;
   min-width: 0;
 }
-.qw-trust-reviews {
-  grid-area: reviews;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  border-bottom: 1px solid #e6e6e6;
-}
 .qw-trust-parts {
-  grid-area: parts;
   border-right: 1px solid #e6e6e6;
 }
-.qw-trust-warranty { grid-area: warranty; }
 .qw-trust-reviews-row {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
 }
 .qw-trust-score {
@@ -2234,8 +2245,11 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 }
 .qw-trust-stars {
   display: flex;
-  gap: 1px;
-  color: #d4a017;
+  gap: 2px;
+  color: #ffd400; /* bright yellow pop */
+}
+.qw-trust-stars svg {
+  filter: drop-shadow(0 0 0.4px #e6b800);
 }
 .qw-trust-ico {
   flex: 0 0 32px;
@@ -2266,25 +2280,33 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 }
 .qw-price-trust-price {
   text-align: center;
+  padding: 16px 18px;
+  border-top: 1px solid #e6e6e6;
+  background: #fafafa;
 }
 .qw-price-trust-price .qw-price-from {
-  margin-bottom: 2px;
+  margin-bottom: 4px;
   font: 500 12px var(--font-sans);
   color: #808080;
 }
 .qw-price-trust-price .qw-price-big {
   margin-bottom: 0;
   font-weight: 700;
-  font-size: 40px;
-  letter-spacing: -1.4px;
+  font-size: 42px;
+  letter-spacing: -1.5px;
   line-height: 1;
   color: #171717;
   font-feature-settings: "tnum";
 }
+.qw-price-trust-price .qw-price-big-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .qw-price-gate--inline {
   margin: 0 auto;
   padding: 10px 12px;
-  max-width: 180px;
+  max-width: 200px;
   font: 500 12.5px/1.35 var(--font-sans);
   text-align: center;
 }
@@ -2295,32 +2317,57 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 @media (min-width: 720px) {
   .qw-price-trust {
     flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 12px 0 6px;
+    align-items: stretch;
   }
-  .qw-trust-card {
-    flex: 0 1 340px;
-    max-width: 360px;
+  .qw-trust-main {
+    flex: 1 1 auto;
+  }
+  .qw-trust-reviews {
+    padding: 16px 20px 12px;
+  }
+  .qw-trust-cell {
+    padding: 14px 18px;
   }
   .qw-price-trust-price {
-    flex: 1 1 auto;
-    text-align: right;
+    flex: 0 0 240px;
+    width: 240px;
+    border-top: 0;
+    border-left: 1px solid #e6e6e6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 18px;
+    background: #f5f5f5;
   }
   .qw-price-trust-price .qw-price-big {
-    font-size: 48px;
-    letter-spacing: -1.6px;
+    font-size: 56px;
+    letter-spacing: -2px;
+  }
+  .qw-journey {
+    margin-bottom: 10px;
+  }
+  .qw-res-price {
+    margin: 4px 0 2px;
   }
   .qw-price-gate--inline {
-    margin-left: auto;
-    margin-right: 0;
+    margin: 0;
+    max-width: none;
+  }
+  /* Morning / afternoon fill the same full width as the trust module */
+  .qw-window-strip,
+  .qw-window-grid {
+    width: 100%;
+  }
+  .qw-window-btn {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+  }
+  .qw-res-cta {
+    padding-top: 12px;
   }
 }
 @media (max-width: 719px) {
-  .qw-res-price .qw-price-total-wrap {
-    display: none !important;
-  }
   .qw-trust-cell { padding: 10px 12px; }
   .qw-trust-score { font-size: 20px; }
   .qw-trust-title { font-size: 12.5px; }
