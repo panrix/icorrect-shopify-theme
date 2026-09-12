@@ -1497,7 +1497,13 @@ a.qw-d-val:hover { text-decoration: underline; text-underline-offset: 2px; }
   color: #4d4d4d;
 }
 .qw-price-big-wrap { margin-bottom: 8px; }
-.qw-price-total-wrap { display: block; }
+.qw-price-total-wrap:not([hidden]) { display: block; }
+/* [hidden] must beat earlier display rules — UA [hidden] loses to .qw-price-total-wrap { display:block } */
+.qw-price-total-wrap[hidden],
+.qw-price-big-wrap[hidden],
+.qw-price-gate[hidden] {
+  display: none !important;
+}
 
 .qw-service-mapper { margin-top: 8px; }
 .qw-section-label {
@@ -1645,4 +1651,55 @@ a.qw-d-val:hover { text-decoration: underline; text-underline-offset: 2px; }
 .qw-window-detail { font: 400 12px/1.3 var(--font-sans); opacity: 0.75; }
 .qw-delivery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; }
 .qw-delivery-card { min-height: 88px; padding: 16px !important; }
+
+/* ── Series → model (workshop-os walk-in style) ───────────── */
+.qw-series-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+.qw-series-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 18px;
+  border: 0;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-sans);
+  transition: box-shadow 150ms, transform 150ms;
+}
+.qw-series-card:hover {
+  box-shadow: 0 0 0 1px #171717, 0 2px 8px rgba(0,0,0,0.06);
+  transform: translateY(-1px);
+}
+.qw-series-card:active { transform: scale(0.99); }
+.qw-series-name {
+  flex: 1;
+  min-width: 0;
+  font: 600 15px/1.3 var(--font-sans);
+  letter-spacing: -0.3px;
+  color: #171717;
+}
+.qw-series-count {
+  font: 500 12px/1 var(--font-sans);
+  color: #808080;
+  white-space: nowrap;
+}
+.qw-series-chev {
+  width: 18px;
+  height: 18px;
+  color: #808080;
+  flex-shrink: 0;
+}
+.qw-m-list--flat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 0;
+}
 

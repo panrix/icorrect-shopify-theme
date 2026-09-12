@@ -123,7 +123,7 @@ window.__QW_CATALOGUE = null;
 </script>
 
 <!-- HTML SKELETON -->
-<div class="qw-section">
+<div class="qw-section" id="get-free-quote">
   <div class="qw-wrap{% unless section.settings.show_map %} qw-wrap--solo{% endunless %}">
 
     {%- if section.settings.show_map -%}
@@ -500,7 +500,7 @@ window.__QW_CATALOGUE = null;
   /* =============================================
      STATE
      ============================================= */
-  var S = { device: null, model: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null, route: null, repairType: null, entrySource: null , preVariantId: null, preRepairType: null };
+  var S = { device: null, model: null, modelGroup: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null, route: null, repairType: null, entrySource: null , preVariantId: null, preRepairType: null };
   var _collectionCache = {}, _productCache = {}, _repairsMap = {}, _collectionProducts = [], _trackedSteps = {}, _trackedOps = {};
   var _stepStartTime = Date.now();
   var _suppressScroll = false;
@@ -1598,7 +1598,7 @@ window.__QW_CATALOGUE = null;
   }
 
   function pickDev(id, el) {
-    S.device = id; S.model = null; S.fault = null; S.issue = null; S.route = null; S.repairType = null;
+    S.device = id; S.model = null; S.modelGroup = null; S.fault = null; S.issue = null; S.route = null; S.repairType = null;
     S.collectionHandle = null; _repairsMap = {};
     clearTrackedStepsAfter(1);
     document.querySelectorAll('#qw-s1 .qw-dev').forEach(function(c) { c.classList.remove('sel'); });
@@ -1635,14 +1635,25 @@ window.__QW_CATALOGUE = null;
     });
   }
 
+  /* Model step mirrors workshop-os walk-in intake:
+     device → series/range screen → exact model (e.g. MacBook A2338). */
   function renderModels(dev) {
+    S.modelGroup = null;
+    renderModelGroups(dev);
+  }
+
+  function renderModelGroups(dev) {
     var c = document.getElementById('qw-mC');
     if (!c) return;
     c.innerHTML = '';
     var titleEl = document.getElementById('qw-s2t');
-    if (titleEl) titleEl.textContent = 'Pick your ' + DN[dev] + ' model';
+    if (titleEl) titleEl.textContent = 'Which ' + DN[dev] + ' is it?';
+    var subEl = document.querySelector('#qw-s2 .qw-s-sub');
+    if (subEl) subEl.textContent = 'Choose the series first, then we’ll show the exact models.';
     var hP = document.getElementById('qw-hP');
     if (hP) { hP.classList.remove('open'); hP.innerHTML = ''; }
+    var hT = document.getElementById('qw-hT');
+    if (hT) hT.style.display = '';
 
     var groups = MODELS[dev];
     if (!groups || groups.length === 0) {
@@ -1650,32 +1661,59 @@ window.__QW_CATALOGUE = null;
       return;
     }
 
-    var w = document.createElement('div'); w.className = 'qw-m-groups';
-    groups.forEach(function(g, gi) {
-      var ge = document.createElement('div'); ge.className = 'qw-m-group';
-      var h = document.createElement('div'); h.className = 'qw-m-head';
-      h.innerHTML = '<div><span class="qw-m-name">' + esc(g.group) + '</span><span class="qw-m-count">' + g.models.length + ' models</span></div><svg class="qw-m-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>';
-      h.onclick = function() {
-        var wasOpen = ge.classList.contains('open');
-        w.querySelectorAll('.qw-m-group.open').forEach(function(g) { g.classList.remove('open'); });
-        if (!wasOpen) ge.classList.add('open');
-      };
-      ge.appendChild(h);
+    /* Single series → skip straight to models (still one clear screen). */
+    if (groups.length === 1) {
+      pickModelGroup(dev, groups[0]);
+      return;
+    }
 
-      var b = document.createElement('div'); b.className = 'qw-m-body';
-      var l = document.createElement('div'); l.className = 'qw-m-list';
-      var sorted = sortModels(g.models);
-      sorted.forEach(function(m) {
-        var it = document.createElement('div'); it.className = 'qw-m-item';
-        it.innerHTML = '<span class="qw-mn">' + esc(m.name) + '</span>';
-        wireA11y(it, 'Select ' + m.name);
-        it.onclick = function() { pickModel(m.name, m.collectionHandle, it); };
-        l.appendChild(it);
-      });
-      b.appendChild(l); ge.appendChild(b); w.appendChild(ge);
+    var w = document.createElement('div'); w.className = 'qw-series-grid';
+    groups.forEach(function(g) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'qw-series-card';
+      btn.innerHTML =
+        '<span class="qw-series-name">' + esc(g.group) + '</span>' +
+        '<span class="qw-series-count">' + g.models.length + ' model' + (g.models.length === 1 ? '' : 's') + '</span>' +
+        '<svg class="qw-series-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>';
+      wireA11y(btn, 'Select ' + g.group);
+      btn.onclick = function() { pickModelGroup(dev, g); };
+      w.appendChild(btn);
     });
     c.appendChild(w);
     renderHelper(dev);
+  }
+
+  function pickModelGroup(dev, group) {
+    S.modelGroup = group.group;
+    renderModelList(dev, group);
+  }
+
+  function renderModelList(dev, group) {
+    var c = document.getElementById('qw-mC');
+    if (!c) return;
+    c.innerHTML = '';
+    var titleEl = document.getElementById('qw-s2t');
+    if (titleEl) titleEl.textContent = 'Pick your ' + (group.group || DN[dev]) + ' model';
+    var subEl = document.querySelector('#qw-s2 .qw-s-sub');
+    if (subEl) subEl.textContent = 'Choose the exact model for accurate pricing.';
+    var hT = document.getElementById('qw-hT');
+    if (hT) hT.style.display = 'none';
+    var hP = document.getElementById('qw-hP');
+    if (hP) { hP.classList.remove('open'); hP.innerHTML = ''; }
+
+    var list = document.createElement('div'); list.className = 'qw-m-list qw-m-list--flat';
+    var sorted = sortModels(group.models || []);
+    sorted.forEach(function(m) {
+      var it = document.createElement('button');
+      it.type = 'button';
+      it.className = 'qw-m-item';
+      it.innerHTML = '<span class="qw-mn">' + esc(m.name) + '</span>';
+      wireA11y(it, 'Select ' + m.name);
+      it.onclick = function() { pickModel(m.name, m.collectionHandle, it); };
+      list.appendChild(it);
+    });
+    c.appendChild(list);
   }
 
   async function pickModel(name, handle, el) {
@@ -1717,8 +1755,9 @@ window.__QW_CATALOGUE = null;
       renderIssues(S.device, pf);
       trackWizardStep(4);
       go(4);
-      /* Product / skip_to_service: auto-pick matching issue → service resolution (#53) */
-      if (CONTEXT.skipToService || S.preVariantId) {
+      /* Product pages stay sequential: fault → postcode → price.
+         Only auto-advance when skip_to_service is explicitly on (rare deep-links). */
+      if (CONTEXT.skipToService) {
         autoPickIssueForPrefill(pf);
       }
       return;
@@ -3054,7 +3093,7 @@ document.getElementById('qwEqErr').style.display = 'none';
      RESET
      ============================================= */
   function reset() {
-    S.device = null; S.model = null; S.fault = null; S.issue = null; S.step = 1; S.collectionHandle = null; S.route = null; S.repairType = null; _repairsMap = {};
+    S.device = null; S.model = null; S.modelGroup = null; S.fault = null; S.issue = null; S.step = 1; S.collectionHandle = null; S.route = null; S.repairType = null; _repairsMap = {};
     _collectionProducts = [];
     _trackedSteps = {};
     clearResolutionState();
@@ -3068,7 +3107,15 @@ document.getElementById('qwEqErr').style.display = 'none';
   /* =============================================
      BACK BUTTONS
      ============================================= */
-  var b2 = document.getElementById('qw-back2'); if (b2) b2.onclick = function() { go(1); };
+  var b2 = document.getElementById('qw-back2');
+  if (b2) b2.onclick = function() {
+    if (S.modelGroup && (MODELS[S.device] || []).length > 1) {
+      renderModelGroups(S.device);
+      return;
+    }
+    S.modelGroup = null;
+    go(1);
+  };
   var b3 = document.getElementById('qw-back3'); if (b3) b3.onclick = function() { go(2); };
   var b4 = document.getElementById('qw-back4'); if (b4) b4.onclick = function() { go(3); };
 
@@ -3419,7 +3466,8 @@ document.getElementById('qwEqErr').style.display = 'none';
       "type": "checkbox",
       "id": "skip_to_service",
       "label": "Skip to service step when product is fully resolved",
-      "default": true
+      "default": false,
+      "info": "Keep off so product pages stay sequential: fault → postcode → price."
     }
   ],
   "presets": [{ "name": "Quote Wizard" }]
