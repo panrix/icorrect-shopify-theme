@@ -47,7 +47,8 @@
         "padding-bottom": 70,
         "mob-padding-top": 40,
         "mob-padding-bottom": 40,
-        "bg": "#ffffff"
+        "bg": "#ffffff",
+        "show_header": false
       }
     },
     "iphone_videos_GEpK4D": {
@@ -230,7 +231,8 @@
     },
     "iphone_repair_link_bugsR": {
       "type": "iphone-repair-link",
-      "settings": {}
+      "settings": {},
+      "disabled": true
     },
     "quote_wizard_top": {
       "type": "quote-wizard",
@@ -241,14 +243,25 @@
         "prefill_mode": "auto",
         "skip_to_service": false
       }
+    },
+    "collection_repair_header_top": {
+      "type": "collection-repair-header",
+      "settings": {
+        "bg": "#ffffff",
+        "padding_top": 48,
+        "padding_bottom": 8,
+        "mob_padding_top": 32,
+        "mob_padding_bottom": 4
+      }
     }
   },
   "order": [
     "banner",
-    "product-grid",
-    "iphone_repair_link_bugsR",
-    "icorrect_product_grid_AAVQCj",
+    "collection_repair_header_top",
     "quote_wizard_top",
+    "product-grid",
+    "icorrect_product_grid_AAVQCj",
+    "iphone_repair_link_bugsR",
     "iphone_videos_GEpK4D",
     "repair_services_nQkwFT",
     "iphone_faqs_BYhWkP",

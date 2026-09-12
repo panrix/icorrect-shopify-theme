@@ -38,7 +38,8 @@
         "padding-bottom": 70,
         "mob-padding-top": 40,
         "mob-padding-bottom": 40,
-        "bg": "#ffffff"
+        "bg": "#ffffff",
+        "show_header": false
       }
     },
     "ipad_videos_fjY9ew": {
@@ -237,13 +238,24 @@
         "prefill_mode": "auto",
         "skip_to_service": false
       }
+    },
+    "collection_repair_header_top": {
+      "type": "collection-repair-header",
+      "settings": {
+        "bg": "#ffffff",
+        "padding_top": 48,
+        "padding_bottom": 8,
+        "mob_padding_top": 32,
+        "mob_padding_bottom": 4
+      }
     }
   },
   "order": [
     "banner",
+    "collection_repair_header_top",
+    "quote_wizard_top",
     "product-grid",
     "icorrect_product_grid_AAVQCj",
-    "quote_wizard_top",
     "ipad_videos_fjY9ew",
     "repair_services_nQkwFT",
     "ipad_faqs_cLJJjE",

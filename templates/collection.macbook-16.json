@@ -237,12 +237,23 @@
         "prefill_mode": "auto",
         "skip_to_service": false
       }
+    },
+    "collection_repair_header_top": {
+      "type": "collection-repair-header",
+      "settings": {
+        "bg": "#ffffff",
+        "padding_top": 48,
+        "padding_bottom": 8,
+        "mob_padding_top": 32,
+        "mob_padding_bottom": 4
+      }
     }
   },
   "order": [
     "banner",
-    "product-grid",
+    "collection_repair_header_top",
     "quote_wizard_top",
+    "product-grid",
     "repair_services_nQkwFT",
     "video_reviews_83ReMa",
     "icorrect_faqs_RVk3VL",

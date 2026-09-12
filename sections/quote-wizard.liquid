@@ -2006,7 +2006,32 @@ window.__QW_CATALOGUE = null;
   /* =============================================
      NAVIGATION + BREADCRUMB + PROGRESS
      ============================================= */
+  /* Hold the wizard chrome at the same viewport Y across step swaps so
+     changing Device → Model → Fault doesn't "jump" when content height changes.
+     Only force-scroll if chrome is fully off-screen (e.g. back from pricing). */
+  function pinWizardChrome(beforeTop) {
+    if (_suppressScroll) return;
+    var anchor = document.querySelector('.qw-prog') || document.querySelector('.qw-wizard');
+    if (!anchor) return;
+    var rect = anchor.getBoundingClientRect();
+    var vh = window.innerHeight || document.documentElement.clientHeight || 0;
+    var topLimit = 72;
+    var offscreen = rect.bottom < topLimit || rect.top > vh * 0.85;
+    if (offscreen) {
+      scrollToEl(anchor, 80, 'start');
+      return;
+    }
+    if (typeof beforeTop === 'number') {
+      var delta = rect.top - beforeTop;
+      if (Math.abs(delta) > 1) {
+        try { window.scrollBy(0, delta); } catch (e) {}
+      }
+    }
+  }
+
   function go(n) {
+    var anchor = document.querySelector('.qw-prog') || document.querySelector('.qw-wizard');
+    var beforeTop = anchor ? anchor.getBoundingClientRect().top : null;
     if (n < S.step) clearTrackedStepsAfter(n);
     S.step = n;
     _stepStartTime = Date.now();
@@ -2016,7 +2041,7 @@ window.__QW_CATALOGUE = null;
     if (stepEl) stepEl.classList.add('on');
     updateProg(n);
     updateCrumb();
-    if (!_suppressScroll) scrollToEl(document.querySelector('.qw-prog') || document.querySelector('.qw-wizard'), 100);
+    requestAnimationFrame(function() { pinWizardChrome(beforeTop); });
   }
 
   /* Issue → service/pricing is a full-screen transition (same feel as device → model). */
@@ -3688,7 +3713,7 @@ document.getElementById('qwEqErr').style.display = 'none';
       delete _trackedSteps.resolution;
       destroyStickyCTA();
       renderIssues(S.device, S.fault);
-      if (!_suppressScroll) scrollToEl(document.querySelector('.qw-prog') || document.querySelector('.qw-wizard'), 100);
+      requestAnimationFrame(function() { pinWizardChrome(null); });
       return;
     }
     go(3);
