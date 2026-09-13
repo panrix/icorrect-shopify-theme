@@ -191,15 +191,15 @@ function main() {
       };
     }
 
+    /* Wizard reads title/price/variantId/tags/handle per repair
+       (assets/repair-catalogue.js asWizardProduct + quote-wizard). */
+    const courierTags = tags.filter((t) => /^courier:/i.test(t));
     const entry = {
-      productId: p.id,
       variantId: variant.id,
       handle: p.handle,
       title: p.title,
       price,
-      tags,
-      courierTier: tier,
-      type: p.type || '',
+      tags: courierTags,
     };
 
     // Prefer genuine/original screen SKUs when colliding.

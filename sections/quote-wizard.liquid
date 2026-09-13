@@ -104,10 +104,10 @@ window.WIZARD_CONTEXT = {
 
 <!-- Service products + courier assets (#53) — PURE collection & delivery, no walk-in -->
 {%- assign mail_in_prod = all_products['mail-in-service'] -%}
-<script src="{{ 'courier-pricing.js' | asset_url }}"></script>
-<script src="{{ 'courier-slots.js' | asset_url }}"></script>
-<script src="{{ 'wizard-prefill.js' | asset_url }}"></script>
-<script src="{{ 'repair-catalogue.js' | asset_url }}"></script>
+<script src="{{ 'courier-pricing.js' | asset_url }}" defer></script>
+<script src="{{ 'courier-slots.js' | asset_url }}" defer></script>
+<script src="{{ 'wizard-prefill.js' | asset_url }}" defer></script>
+<script src="{{ 'repair-catalogue.js' | asset_url }}" defer></script>
 <script>
 window.WIZARD_CFG = {
   warrantyLabel: {{ section.settings.warranty_label | default: '2-year warranty' | json }},
@@ -194,17 +194,23 @@ window.__QW_CATALOGUE = null;
               assign qw_heading_generic = true
             endif
 
-            # Contextual heading from collection/page title when heading is generic.
-            # "iPhone 14 Plus Repair Prices" → "Get your iPhone 14 Plus repair quote"
+            # Contextual heading from product/collection/page when heading is generic.
+            # Product: "iPhone 14 Plus Screen Repair (Genuine OLED)" → "Get your iPhone 14 Plus Screen Repair quote"
+            # Collection: "MacBook Screen Repair Prices" → "Get your MacBook Screen Repair quote"
             if qw_heading_generic
               assign qw_subject = ''
-              if collection and collection.title != blank
+              if product and product.title != blank
+                assign qw_subject = product.title | strip
+              elsif collection and collection.title != blank
                 assign qw_subject = collection.title | strip
               elsif request.page_type == 'page' and page and page.title != blank and page.handle != 'contact'
                 assign qw_subject = page.title | strip
               endif
 
               if qw_subject != blank
+                if qw_subject contains '('
+                  assign qw_subject = qw_subject | split: '(' | first | strip
+                endif
                 if qw_subject contains 'Repair Prices'
                   assign qw_subject = qw_subject | replace: 'Repair Prices', 'Repair'
                 elsif qw_subject contains 'Repair Pricing'
@@ -227,7 +233,7 @@ window.__QW_CATALOGUE = null;
                 endif
                 assign qw_subject = qw_subject | strip
                 assign qw_subject_l = qw_subject | downcase
-                unless qw_subject_l contains 'repair'
+                unless qw_subject_l contains 'repair' or qw_subject_l contains 'replacement' or qw_subject_l contains 'diagnostic'
                   assign qw_subject = qw_subject | append: ' repair'
                 endunless
                 assign qw_heading = 'Get your ' | append: qw_subject | append: ' quote'
@@ -257,7 +263,12 @@ window.__QW_CATALOGUE = null;
       <div class="qw-step on" id="qw-s1">
         <h3 class="qw-step-title qw-s-title">What needs fixing?</h3>
         <p class="qw-step-sub qw-s-sub">Pick your device to get started.</p>
-        <div class="qw-device-grid qw-dev-grid" id="qw-devGrid"></div>
+        <div class="qw-device-grid qw-dev-grid" id="qw-devGrid">
+          <div class="qw-dev" data-dev="macbook" tabindex="0"><div class="qw-dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M2 17h20M8 21h8M12 17v4"/></svg></div><span class="qw-dev-lbl">MacBook</span></div>
+          <div class="qw-dev" data-dev="iphone" tabindex="0"><div class="qw-dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="1" width="12" height="22" rx="2.5"/><path d="M10 19h4"/></svg></div><span class="qw-dev-lbl">iPhone</span></div>
+          <div class="qw-dev" data-dev="ipad" tabindex="0"><div class="qw-dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M10 18h4"/></svg></div><span class="qw-dev-lbl">iPad</span></div>
+          <div class="qw-dev" data-dev="watch" tabindex="0"><div class="qw-dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="4" width="12" height="16" rx="6"/><path d="M9 1h6M9 23h6"/></svg></div><span class="qw-dev-lbl">Watch</span></div>
+        </div>
       </div>
 
       <!-- Step 2: Models -->
@@ -2229,9 +2240,21 @@ window.__QW_CATALOGUE = null;
   function renderDevices() {
     var g = document.getElementById('qw-devGrid');
     if (!g) return;
+    var existing = g.querySelectorAll('.qw-dev[data-dev]');
+    if (existing.length) {
+      existing.forEach(function(c) {
+        var id = c.getAttribute('data-dev');
+        var lbl = c.querySelector('.qw-dev-lbl');
+        wireA11y(c, 'Select ' + (lbl ? lbl.textContent : id));
+        c.onclick = function() { pickDev(id, c); };
+      });
+      return;
+    }
+    g.innerHTML = '';
     DEVS.forEach(function(d) {
       var c = document.createElement('div');
       c.className = 'qw-dev';
+      c.setAttribute('data-dev', d.id);
       c.innerHTML = '<div class="qw-dev-ico">' + d.icon + '</div><span class="qw-dev-lbl">' + d.label + '</span>';
       wireA11y(c, 'Select ' + d.label);
       c.onclick = function() { pickDev(d.id, c); };
@@ -4155,15 +4178,21 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
      ============================================= */
   wireProgDots();
   function bootPrefill() {
-    ensureCourierAssets().then(function() {
-      initPrefill();
-    }).catch(function() {
-      initPrefill();
-    });
+    var ctx = CONTEXT || {};
+    var needsCatalogue = !!(ctx.productHandle || ctx.collectionHandle || ctx.device);
+    if (needsCatalogue) {
+      ensureCourierAssets().then(function() {
+        initPrefill();
+      }).catch(function() {
+        initPrefill();
+      });
+      return;
+    }
+    /* Homepage / no context: paint step 1 immediately; fetch bands+map in the background. */
+    initPrefill();
+    ensureCourierAssets().catch(function(){});
   }
-  if (window.ICorrectWizardPrefill && window.ICorrectCourierSlots && window.ICorrectCatalogue) {
-    bootPrefill();
-  } else if (document.readyState === 'loading') {
+  if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', bootPrefill);
   } else {
     bootPrefill();
@@ -4222,7 +4251,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
       "id": "heading",
       "label": "Heading",
       "default": "Get a repair quote",
-      "info": "On collection/repair pages, leave as “Get a repair quote” to auto-title from the page (e.g. “Get your iPhone 14 Plus repair quote”). Set a custom heading to override."
+      "info": "Leave as “Get a repair quote” to auto-title from the product, collection, or page (e.g. “Get your iPhone 14 Plus Screen Repair quote”). Set a custom heading to override."
     },
     {
       "type": "textarea",
