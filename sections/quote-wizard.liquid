@@ -186,7 +186,55 @@ window.__QW_CATALOGUE = null;
         {% if request.page_type == 'page' and page.handle == 'contact' %}
           <h1 class="qw-title">Contact iCorrect London</h1>
         {% else %}
-          <h2 class="qw-title">{{ section.settings.heading }}</h2>
+          {%- liquid
+            assign qw_heading = section.settings.heading | default: 'Get a repair quote' | strip
+            assign qw_heading_l = qw_heading | downcase
+            assign qw_heading_generic = false
+            if qw_heading == blank or qw_heading_l == 'get a repair quote' or qw_heading_l == 'get your free quote' or qw_heading_l == 'get a free quote' or qw_heading_l == 'get your repair quote'
+              assign qw_heading_generic = true
+            endif
+
+            # Contextual heading from collection/page title when heading is generic.
+            # "iPhone 14 Plus Repair Prices" → "Get your iPhone 14 Plus repair quote"
+            if qw_heading_generic
+              assign qw_subject = ''
+              if collection and collection.title != blank
+                assign qw_subject = collection.title | strip
+              elsif request.page_type == 'page' and page and page.title != blank and page.handle != 'contact'
+                assign qw_subject = page.title | strip
+              endif
+
+              if qw_subject != blank
+                if qw_subject contains 'Repair Prices'
+                  assign qw_subject = qw_subject | replace: 'Repair Prices', 'Repair'
+                elsif qw_subject contains 'Repair Pricing'
+                  assign qw_subject = qw_subject | replace: 'Repair Pricing', 'Repair'
+                elsif qw_subject contains 'Repair Price'
+                  assign qw_subject = qw_subject | replace: 'Repair Price', 'Repair'
+                elsif qw_subject contains ' Prices'
+                  assign qw_subject = qw_subject | replace: ' Prices', ''
+                elsif qw_subject contains ' Pricing'
+                  assign qw_subject = qw_subject | replace: ' Pricing', ''
+                elsif qw_subject contains ' Price'
+                  assign qw_subject = qw_subject | replace: ' Price', ''
+                endif
+                if qw_subject contains ' Models'
+                  assign qw_subject = qw_subject | replace: ' Models', ''
+                elsif qw_subject contains ' Collections'
+                  assign qw_subject = qw_subject | replace: ' Collections', ''
+                elsif qw_subject contains ' Collection'
+                  assign qw_subject = qw_subject | replace: ' Collection', ''
+                endif
+                assign qw_subject = qw_subject | strip
+                assign qw_subject_l = qw_subject | downcase
+                unless qw_subject_l contains 'repair'
+                  assign qw_subject = qw_subject | append: ' repair'
+                endunless
+                assign qw_heading = 'Get your ' | append: qw_subject | append: ' quote'
+              endif
+            endif
+          -%}
+          <h2 class="qw-title">{{ qw_heading }}</h2>
         {% endif %}
         <p class="qw-sub">{{ section.settings.subheading }}</p>
       </div>
@@ -4173,7 +4221,8 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Get your free quote"
+      "default": "Get a repair quote",
+      "info": "On collection/repair pages, leave as “Get a repair quote” to auto-title from the page (e.g. “Get your iPhone 14 Plus repair quote”). Set a custom heading to override."
     },
     {
       "type": "textarea",
