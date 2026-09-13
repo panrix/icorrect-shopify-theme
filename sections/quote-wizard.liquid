@@ -289,12 +289,22 @@ window.__QW_CATALOGUE = null;
     return !!(window.matchMedia && window.matchMedia('(max-width: 720px)').matches);
   }
 
-  /* After fault → land on postcode / quote, not the progress pills. */
+  /* After fault → land on the quote screen, not the progress pills.
+     Mobile: scroll to the step title / repair card so "Your repair quote"
+     stays near the top and the postcode sits mid–lower — never yank
+     #qwPostcodeCard to block:start (that put postcode flush at the top). */
   function focusQuoteEntry() {
+    if (isMobileQuoteLayout()) {
+      var mobileTarget = document.getElementById('qw-s4t') ||
+        document.getElementById('qwResCard') ||
+        document.getElementById('qw-rP');
+      scrollToEl(mobileTarget, 120, 'start');
+      return;
+    }
     var target = document.getElementById('qwPostcodeCard') ||
       document.getElementById('qw-rP') ||
       document.getElementById('qwResCard');
-    scrollToEl(target, 180, isMobileQuoteLayout() ? 'start' : 'nearest');
+    scrollToEl(target, 180, 'nearest');
   }
 
   /* After postcode → land on collection + journey + price as one screen. */
@@ -3710,7 +3720,14 @@ document.getElementById('qwEqErr').style.display = 'none';
       delete _trackedSteps.resolution;
       destroyStickyCTA();
       renderIssues(S.device, S.fault);
-      requestAnimationFrame(function() { pinWizardChrome(null); });
+      /* If pricing scrolled the chrome away above the viewport, ease back.
+         Do not pull the page down when the wizard is simply below the fold. */
+      requestAnimationFrame(function() {
+        var anchor = document.querySelector('.qw-prog') || document.querySelector('.qw-wizard');
+        if (!anchor) return;
+        var rect = anchor.getBoundingClientRect();
+        if (rect.bottom < 72) scrollToEl(anchor, 80, 'start');
+      });
       return;
     }
     go(3);
