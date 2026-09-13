@@ -194,17 +194,23 @@ window.__QW_CATALOGUE = null;
               assign qw_heading_generic = true
             endif
 
-            # Contextual heading from collection/page title when heading is generic.
-            # "iPhone 14 Plus Repair Prices" → "Get your iPhone 14 Plus repair quote"
+            # Contextual heading from product/collection/page when heading is generic.
+            # Product: "iPhone 14 Plus Screen Repair (Genuine OLED)" → "Get your iPhone 14 Plus Screen Repair quote"
+            # Collection: "MacBook Screen Repair Prices" → "Get your MacBook Screen Repair quote"
             if qw_heading_generic
               assign qw_subject = ''
-              if collection and collection.title != blank
+              if product and product.title != blank
+                assign qw_subject = product.title | strip
+              elsif collection and collection.title != blank
                 assign qw_subject = collection.title | strip
               elsif request.page_type == 'page' and page and page.title != blank and page.handle != 'contact'
                 assign qw_subject = page.title | strip
               endif
 
               if qw_subject != blank
+                if qw_subject contains '('
+                  assign qw_subject = qw_subject | split: '(' | first | strip
+                endif
                 if qw_subject contains 'Repair Prices'
                   assign qw_subject = qw_subject | replace: 'Repair Prices', 'Repair'
                 elsif qw_subject contains 'Repair Pricing'
@@ -227,7 +233,7 @@ window.__QW_CATALOGUE = null;
                 endif
                 assign qw_subject = qw_subject | strip
                 assign qw_subject_l = qw_subject | downcase
-                unless qw_subject_l contains 'repair'
+                unless qw_subject_l contains 'repair' or qw_subject_l contains 'replacement' or qw_subject_l contains 'diagnostic'
                   assign qw_subject = qw_subject | append: ' repair'
                 endunless
                 assign qw_heading = 'Get your ' | append: qw_subject | append: ' quote'
@@ -4222,7 +4228,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
       "id": "heading",
       "label": "Heading",
       "default": "Get a repair quote",
-      "info": "On collection/repair pages, leave as “Get a repair quote” to auto-title from the page (e.g. “Get your iPhone 14 Plus repair quote”). Set a custom heading to override."
+      "info": "Leave as “Get a repair quote” to auto-title from the product, collection, or page (e.g. “Get your iPhone 14 Plus Screen Repair quote”). Set a custom heading to override."
     },
     {
       "type": "textarea",
