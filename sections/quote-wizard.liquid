@@ -814,6 +814,72 @@ window.__QW_CATALOGUE = null;
     trackWizardEvent(eventName, extra);
   }
 
+  function courierTrackExtra(quote, extra) {
+    if (window.ICorrectCourier && typeof window.ICorrectCourier.courierFunnelExtra === 'function') {
+      return window.ICorrectCourier.courierFunnelExtra(quote, extra);
+    }
+    var payload = extra ? Object.assign({}, extra) : {};
+    delete payload.postcode;
+    return payload;
+  }
+
+  function trackCourierQuoteEvents(quote) {
+    if (!quote || !quote.outward) return;
+    var extra = courierTrackExtra(quote);
+    var outward = extra.outward;
+    trackWizardEventOnce('pc:' + outward + ':' + String(extra.band), 'wizard_postcode_entered', {
+      outward: extra.outward,
+      band: extra.band
+    });
+    if (quote.service === 'courier' && quote.band) {
+      trackWizardEventOnce(
+        'quoted:' + outward + ':' + quote.band + ':' + quote.tier + ':' + quote.adjustment + ':' + quote.total,
+        'wizard_courier_quoted',
+        extra
+      );
+    }
+    if (quote.forcedMailIn || !quote.band) {
+      trackWizardEventOnce('ooa:' + outward, 'wizard_out_of_area', {
+        outward: extra.outward,
+        band: null
+      });
+    }
+    var service = quote.service === 'mail-in' ? 'mail-in' : 'courier';
+    trackWizardEventOnce('svc:' + outward + ':' + service, 'wizard_service_selected', {
+      service: service,
+      adjustment: extra.adjustment,
+      total: extra.total,
+      band: extra.band
+    });
+    if (service === 'mail-in') {
+      trackWizardEventOnce('mailin:' + outward, 'wizard_mailin_confirmed', extra);
+    }
+  }
+
+  function trackSlotSelected() {
+    if (!_collectionSlot.date || !_collectionSlot.part) return;
+    var extra = courierTrackExtra(_courierQuote, {
+      collection_date: _collectionSlot.date.iso,
+      collection_window: _collectionSlot.part.id,
+      collection_window_label: _collectionSlot.part.windowLabel
+        || ((_collectionSlot.part.label || '') + ' ' + (_collectionSlot.part.detail || '')).trim()
+    });
+    trackWizardEventOnce(
+      'slot:' + extra.collection_date + ':' + extra.collection_window,
+      'wizard_slot_selected',
+      extra
+    );
+  }
+
+  function trackWizardProceed() {
+    var svcKind = selectedServiceKind();
+    var service = svcKind === 'mailin' ? 'mail-in' : 'courier';
+    trackWizardEvent('wizard_proceed', courierTrackExtra(_courierQuote, {
+      service: service,
+      total: getWizardTotalValue()
+    }));
+  }
+
   function trackWizardEntry(source, extra) {
     S.entrySource = source;
     if (_entryTracked) return;
@@ -1850,6 +1916,7 @@ window.__QW_CATALOGUE = null;
     _collectionSlot.date = found;
     paintDateStrip();
     refreshServiceJourney();
+    trackSlotSelected();
   }
 
   function renderCollectionSlots(band) {
@@ -1897,6 +1964,7 @@ window.__QW_CATALOGUE = null;
         var id = btn.getAttribute('data-part');
         _collectionSlot.part = parts.filter(function(p) { return p.id === id; })[0] || null;
         refreshServiceJourney();
+        trackSlotSelected();
       });
     });
 
@@ -1917,6 +1985,7 @@ window.__QW_CATALOGUE = null;
 
     panel.hidden = false;
     refreshServiceJourney();
+    trackSlotSelected();
   }
 
   function applyCourierQuoteToUI(quote) {
@@ -2018,6 +2087,7 @@ window.__QW_CATALOGUE = null;
 
     refreshAllInTotal();
     if (!_suppressScroll) focusPriceAndProceed();
+    trackCourierQuoteEvents(_courierQuote);
   }
 
   function wireCourierService(container) {
@@ -3116,6 +3186,8 @@ window.__QW_CATALOGUE = null;
       }
       return;
     }
+
+    trackWizardProceed();
 
     var btn = document.getElementById('qwBookBtn');
     if (btn) { btn.disabled = true; btn.textContent = 'Redirecting...'; }

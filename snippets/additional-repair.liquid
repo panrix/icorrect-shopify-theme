@@ -742,6 +742,74 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  const _courierFunnelOps = {};
+
+  function courierTrackExtra(quote, extra) {
+    if (window.ICorrectCourier && typeof window.ICorrectCourier.courierFunnelExtra === 'function') {
+      return window.ICorrectCourier.courierFunnelExtra(quote, extra);
+    }
+    const payload = extra ? Object.assign({}, extra) : {};
+    delete payload.postcode;
+    return payload;
+  }
+
+  function trackCourierFunnel(eventName, extra) {
+    if (!window.posthog || typeof window.posthog.capture !== 'function') return;
+    window.posthog.capture(eventName, extra || {});
+  }
+
+  function trackCourierFunnelOnce(key, eventName, extra) {
+    if (!window.posthog || _courierFunnelOps[key]) return;
+    _courierFunnelOps[key] = true;
+    trackCourierFunnel(eventName, extra);
+  }
+
+  function displayedBookerTotal() {
+    const el = document.querySelector('.walk-in-book-row .repair-total-price');
+    const n = parseFloat(el && el.dataset ? el.dataset.productpricefinal : '');
+    return isNaN(n) ? null : n;
+  }
+
+  function postcodeCompact() {
+    const postcodeEl = document.getElementById('courier-postcode');
+    const pc = postcodeEl ? String(postcodeEl.value || '').trim() : '';
+    return pc.replace(/\s+/g, '');
+  }
+
+  function trackCourierQuoteEvents(quote) {
+    if (!quote || !quote.outward) return;
+    if (postcodeCompact().length < 5) return;
+    const extra = courierTrackExtra(quote);
+    const outward = extra.outward;
+    trackCourierFunnelOnce('pc:' + outward + ':' + String(extra.band), 'wizard_postcode_entered', {
+      outward: extra.outward,
+      band: extra.band
+    });
+    if (quote.service === 'courier' && quote.band) {
+      trackCourierFunnelOnce(
+        'quoted:' + outward + ':' + quote.band + ':' + quote.tier + ':' + quote.adjustment + ':' + quote.total,
+        'wizard_courier_quoted',
+        extra
+      );
+    }
+    if (quote.forcedMailIn || !quote.band) {
+      trackCourierFunnelOnce('ooa:' + outward, 'wizard_out_of_area', {
+        outward: extra.outward,
+        band: null
+      });
+    }
+    const service = quote.service === 'mail-in' ? 'mail-in' : 'courier';
+    trackCourierFunnelOnce('svc:' + outward + ':' + service, 'wizard_service_selected', {
+      service: service,
+      adjustment: extra.adjustment,
+      total: extra.total,
+      band: extra.band
+    });
+    if (service === 'mail-in') {
+      trackCourierFunnelOnce('mailin:' + outward, 'wizard_mailin_confirmed', extra);
+    }
+  }
+
   function applyServiceQuote(quote) {
     _courierQuote = quote;
     _serviceAdjustment = quote && quote.adjustment != null ? Number(quote.adjustment) : 0;
@@ -755,6 +823,7 @@ document.addEventListener("DOMContentLoaded", () => {
       collectDeviceBtn.click();
     }
     calculateTotalPrice();
+    trackCourierQuoteEvents(_courierQuote);
   }
 
   function refreshCourierQuote() {
@@ -1332,6 +1401,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     const effectiveCourier = courierActive && _courierQuote && _courierQuote.service === 'courier';
     const effectiveMail = !effectiveCourier;
+    const proceedService = effectiveCourier ? 'courier' : 'mail-in';
+    trackCourierFunnel('wizard_proceed', courierTrackExtra(_courierQuote, {
+      service: proceedService,
+      total: displayedBookerTotal()
+    }));
+    if (proceedService === 'mail-in' && _courierQuote && _courierQuote.outward) {
+      trackCourierFunnelOnce('mailin:' + _courierQuote.outward, 'wizard_mailin_confirmed', courierTrackExtra(_courierQuote));
+    }
 
     if (effectiveCourier) {
       const pc = postcodeEl ? String(postcodeEl.value || '').trim().toUpperCase() : '';
