@@ -21,7 +21,7 @@
             <p>{{ repair_details }}</p>
           </div>
           <div class="repair-service-btn">
-            <a href="{{ block.settings.link }}">
+            <a href="{% if block.settings.link != blank %}{{ block.settings.link }}{% else %}/pages/our-services{% endif %}">
               {{ block.settings.btn }}
               <span><img src="https://cdn.shopify.com/s/files/1/0754/5903/5403/files/black-rt-arrow.png?v=1724005968" alt=""></span>
             </a>

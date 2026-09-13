@@ -9,7 +9,7 @@
         <h2 class="ic-why-heading">{{ section.settings.heading }}</h2>
         <div class="ic-why-desc">{{ section.settings.details }}</div>
         {% if section.settings.show_cta %}
-          <a href="{{ section.settings.cta_link }}" class="ic-why-cta">
+          <a href="{% if section.settings.cta_link != blank %}{{ section.settings.cta_link }}{% else %}/pages/about-us{% endif %}" class="ic-why-cta">
             {{ section.settings.cta_text }}
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>

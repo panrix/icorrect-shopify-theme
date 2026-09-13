@@ -39,6 +39,10 @@ cart-items.is-empty .title-wrapper-with-link,
 
 .cart__login-paragraph a {
   font-size: inherit;
+  width: auto;
+  max-width: none;
+  white-space: nowrap;
+  display: inline;
 }
 
 @media screen and (min-width: 990px) {

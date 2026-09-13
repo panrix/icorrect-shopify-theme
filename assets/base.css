@@ -590,10 +590,6 @@ details > * {
   --animation-fade-in: fadeIn var(--duration-extra-long) var(--ease-out-slow);
 }
 
-.underlined-link,
-.customer a,
-/* inline-richtext inherits from content link rules in base.css below */
-
 .icon-arrow {
   width: 1.5rem;
 }

@@ -37,6 +37,20 @@
       elsif request.page_type == 'blog' and blog.handle == 'news'
         assign seo_page_title = 'Apple Repair Advice & News | iCorrect London'
         assign seo_page_description = 'Apple repair advice and news from iCorrect London, covering MacBook, iPhone and iPad faults, diagnostics, parts, maintenance and repair options.'
+      elsif request.page_type == 'page'
+        if page.handle == 'our-services'
+          assign seo_page_description = 'Specialist Apple repairs: courier collection in London, or a free tracked mail-in pack for the rest of the UK. Original parts and a 2-year warranty.'
+        elsif page.handle == 'iphone-repairs'
+          assign seo_page_description = 'Specialist iPhone repairs with original parts and a 2-year warranty. Courier collection in London, or a free tracked mail-in pack across the UK.'
+        elsif page.handle == 'ipad-repairs'
+          assign seo_page_description = 'Specialist iPad repairs with original parts and a 2-year warranty. Courier collection in London, or a free tracked mail-in pack across the UK.'
+        elsif page.handle == 'apple-watch-repairs'
+          assign seo_page_description = 'Specialist Apple Watch repairs with original parts and a 2-year warranty. Courier collection in London, or a free tracked mail-in pack across the UK.'
+        elsif page.handle == 'macbook-repairs'
+          assign seo_page_description = 'Specialist MacBook repairs including board-level work. Courier collection in London, or a free tracked mail-in pack across the UK.'
+        elsif page.handle == 'contact'
+          assign seo_page_description = 'Contact iCorrect London. Collection or mail-in only — no walk-ins. Call, email, or book a repair online.'
+        endif
       endif
     -%}
 

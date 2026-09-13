@@ -93,6 +93,79 @@
 </script>
 {%- elsif request.page_type == 'page' -%}
 {%- case page.handle -%}
+  {%- when 'our-services' -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do I book a repair?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Select your device, choose your repair, and pick a time. Courier collection or free mail-in. Takes two minutes."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What's the difference between courier and mail-in?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Courier means we collect from your door in London. Outside London we send a free tracked mail-in pack. Same repair quality, same warranty, same turnaround."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How long does a repair take?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most repairs take 1 to 3 working days. Simple fixes like screen or battery can be same day if pre-booked. Complex work like liquid damage or logic board repair takes 2 to 5 days depending on what we find."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need to back up my device first?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We recommend it, but it's not required. We never wipe devices and always prioritise keeping your data intact. If backup isn't possible due to the fault, we'll discuss options."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens if you find additional problems?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We stop and contact you before doing anything extra. You'll get a clear explanation and updated quote. Nothing proceeds without your approval."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I track my courier repair?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. You'll get tracking for collection and return delivery, plus updates from us when it arrives, when diagnostics are done, and when repair is complete."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is there an express option?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Express repairs are available for most issues if booked in advance. Subject to availability. Contact us to check."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What areas do you cover for courier collection?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Courier collection is London only — typically same day or next day depending on your location and booking time. Outside London we send a free tracked mail-in pack."
+          }
+        }
+      ]
+    }
+    </script>
   {%- when 'iphone-repairs' -%}
     <script type="application/ld+json">
     {
