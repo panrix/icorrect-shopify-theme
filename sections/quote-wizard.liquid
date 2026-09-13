@@ -214,11 +214,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       contact_email: email || null
     });
     if (!body.session_id) return;
-    var blob = new Blob([JSON.stringify(body)], { type: "application/json" });
-    if (navigator.sendBeacon) {
-      navigator.sendBeacon(ENDPOINT, blob);
-      return;
-    }
+    // No navigation happens on email-quote — use fetch keepalive (proven path);
+    // sendBeacon's preflight fired but the POST never followed on Chromium (2026-09-13).
     fetch(ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
