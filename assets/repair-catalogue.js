@@ -100,18 +100,26 @@
   /** Shape a catalogue repair entry like a products.json product for the wizard. */
   function asWizardProduct(entry) {
     if (!entry) return null;
+    var tags = Array.isArray(entry.tags) ? entry.tags.slice() : [];
+    var tier = entry.courierTier || null;
+    if (!tier) {
+      for (var i = 0; i < tags.length; i++) {
+        var m = String(tags[i] || '').toLowerCase().match(/^courier:(.+)$/);
+        if (m) { tier = m[1]; break; }
+      }
+    }
     return {
-      id: entry.productId,
+      id: entry.productId || entry.variantId,
       title: entry.title,
       handle: entry.handle,
-      tags: entry.tags,
+      tags: tags,
       variants: [
         {
           id: entry.variantId,
           price: String(Number(entry.price).toFixed(2)),
         },
       ],
-      courierTier: entry.courierTier,
+      courierTier: tier,
       _fromCatalogue: true,
     };
   }

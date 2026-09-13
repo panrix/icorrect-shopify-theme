@@ -61,6 +61,14 @@ describe('repair catalogue map', () => {
     assert.ok(model);
     assert.match(model.name, /A2337/);
   });
+
+  it('keeps only wizard fields on each repair row', () => {
+    const allowed = new Set(['variantId', 'handle', 'title', 'price', 'tags']);
+    const sample = map.models['watch::apple-watch-se-2-40mm'].repairs.battery;
+    assert.deepEqual(Object.keys(sample).sort(), [...allowed].sort());
+    const bytes = fs.statSync(path.join(root, 'assets/repair-catalogue-map.json')).size;
+    assert.ok(bytes < 220000, 'catalogue map should stay under 220KB, got ' + bytes);
+  });
 });
 
 describe('SW11 all-in adjustment (done-when, policy v2)', () => {
