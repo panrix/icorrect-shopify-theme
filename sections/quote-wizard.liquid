@@ -131,6 +131,96 @@ window.WIZARD_CFG = {
 };
 window.__QW_BANDS = null;
 window.__QW_CATALOGUE = null;
+window.__icorrectQuote = window.__icorrectQuote || {};
+</script>
+<script>
+(function () {
+  var ENDPOINT = "https://api.icorrect.co.uk/api/quote-events";
+
+  function phDistinctId() {
+    try {
+      if (window.posthog && typeof window.posthog.get_distinct_id === "function") {
+        return String(window.posthog.get_distinct_id() || "");
+      }
+    } catch (e) {}
+    return "";
+  }
+
+  function quotePayload(extra) {
+    var q = window.__icorrectQuote || {};
+    var payload = {
+      session_id: phDistinctId(),
+      device: q.device || null,
+      model: q.model || null,
+      fault: q.fault || null,
+      issue: q.issue || null,
+      outward_code: q.outward_code || q.outwardCode || null,
+      band: q.band || null,
+      tier: q.tier || null,
+      repair_price: typeof q.repair_price === "number" ? q.repair_price : (typeof q.repairPrice === "number" ? q.repairPrice : null),
+      adjustment: typeof q.adjustment === "number" ? q.adjustment : null,
+      total: typeof q.total === "number" ? q.total : null,
+      service_selected: q.service_selected || q.serviceSelected || null,
+      collection_date: q.collection_date || q.collectionDate || null,
+      collection_window: q.collection_window || q.collectionWindow || null,
+      proceeded: false
+    };
+    if (extra) {
+      for (var k in extra) payload[k] = extra[k];
+    }
+    Object.keys(payload).forEach(function (key) {
+      if (payload[key] === null || payload[key] === "") delete payload[key];
+    });
+    return payload;
+  }
+
+  function captureQuoteShown() {
+    var body = quotePayload({ proceeded: false });
+    if (!body.session_id) return;
+    fetch(ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      keepalive: true,
+      credentials: "omit",
+      mode: "cors"
+    }).catch(function () {});
+  }
+
+  function captureQuoteProceeded() {
+    var body = quotePayload({ proceeded: true });
+    if (!body.session_id) return;
+    var blob = new Blob([JSON.stringify(body)], { type: "application/json" });
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(ENDPOINT, blob);
+      return;
+    }
+    fetch(ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      keepalive: true,
+      credentials: "omit",
+      mode: "cors"
+    }).catch(function () {});
+  }
+
+  function withPhCartAttribute(items) {
+    var id = phDistinctId();
+    if (!id) return items;
+    return items.map(function (item) {
+      var attrs = Object.assign({}, item.properties || {}, { _ph_distinct_id: id });
+      return Object.assign({}, item, { properties: attrs });
+    });
+  }
+
+  window.icorrectQuoteEvents = {
+    captureQuoteShown: captureQuoteShown,
+    captureQuoteProceeded: captureQuoteProceeded,
+    withPhCartAttribute: withPhCartAttribute,
+    phDistinctId: phDistinctId
+  };
+})();
 </script>
 
 <!-- HTML SKELETON -->
@@ -1354,6 +1444,7 @@ window.__QW_CATALOGUE = null;
      ============================================= */
   var _courierQuote = null;
   var _postcodeResolved = false;
+  var _quoteShownCaptured = false;
   var _collectionSlot = { date: null, part: null };
   var _collectionSlotDates = [];
   var SLOT_STRIP_COUNT = 5;
@@ -1562,6 +1653,117 @@ window.__QW_CATALOGUE = null;
     return card ? (card.getAttribute('data-svc') || 'courier') : 'courier';
   }
 
+  /* Quote-events beacon (#53) — outward half only, never a full postcode. */
+  function outwardHalfOnly(value) {
+    if (value == null || value === '') return null;
+    var compact = String(value).toUpperCase().replace(/\s+/g, '');
+    if (!compact) return null;
+    if (compact.length >= 5 && /\d[A-Z]{2}$/.test(compact)) {
+      return compact.slice(0, -3);
+    }
+    return compact;
+  }
+
+  function quoteNumber(n) {
+    if (typeof n === 'number' && isFinite(n)) return n;
+    var parsed = parseFloat(n);
+    return isFinite(parsed) ? parsed : null;
+  }
+
+  function syncIcorrectQuote() {
+    try {
+      var q = window.__icorrectQuote || {};
+      q.device = S.device || null;
+      q.model = S.model || null;
+      q.fault = S.fault || null;
+      q.issue = S.issue || null;
+
+      var outward = (_courierQuote && _courierQuote.outward) || null;
+      if (!outward) {
+        var pcInput = document.getElementById('qwPostcode');
+        var pc = pcInput ? String(pcInput.value || '').trim() : '';
+        if (pc && window.ICorrectCourier && typeof window.ICorrectCourier.extractOutwardCode === 'function') {
+          outward = window.ICorrectCourier.extractOutwardCode(pc);
+        } else if (pc) {
+          outward = pc;
+        }
+      }
+      q.outward_code = outwardHalfOnly(outward);
+
+      if (_courierQuote && _postcodeResolved) {
+        q.band = _courierQuote.band || null;
+        q.tier = _courierQuote.tier || null;
+        q.repair_price = quoteNumber(_courierQuote.repair_price);
+        if (q.repair_price == null) q.repair_price = quoteNumber(currentRepairPrice());
+        q.adjustment = quoteNumber(_courierQuote.adjustment);
+        q.total = quoteNumber(_courierQuote.total);
+        var kind = selectedServiceKind();
+        if (_courierQuote.forcedMailIn || _courierQuote.service === 'mail-in' || kind === 'mailin') {
+          q.service_selected = 'mail-in';
+        } else {
+          q.service_selected = 'courier';
+        }
+        var resCard = document.getElementById('qwResCard');
+        if (resCard) {
+          var base = parseFloat(resCard.dataset.base || 0);
+          var total = base;
+          resCard.querySelectorAll('.qw-opt-card.sel').forEach(function(c) {
+            if (c.getAttribute('data-opt') === 'svc') return;
+            total += parseFloat(c.dataset.add || 0);
+          });
+          if (_courierQuote.adjustment) total += Number(_courierQuote.adjustment) || 0;
+          if (isFinite(base)) q.repair_price = base;
+          if (isFinite(total)) q.total = total;
+        }
+      } else {
+        q.band = null;
+        q.tier = null;
+        q.repair_price = null;
+        q.adjustment = null;
+        q.total = null;
+        q.service_selected = null;
+      }
+
+      if (q.service_selected === 'courier' && _collectionSlot.date && _collectionSlot.date.iso) {
+        q.collection_date = _collectionSlot.date.iso;
+        var slotProps = window.ICorrectCourierSlots
+          ? window.ICorrectCourierSlots.slotCartProperties(_collectionSlot.date, _collectionSlot.part)
+          : null;
+        q.collection_window = slotProps ? slotProps['Collection Window'] : null;
+        if (!q.collection_window && _collectionSlot.part) {
+          q.collection_window = _collectionSlot.part.windowLabel || _collectionSlot.part.label || null;
+        }
+      } else {
+        q.collection_date = null;
+        q.collection_window = null;
+      }
+
+      window.__icorrectQuote = q;
+    } catch (e) {}
+  }
+
+  function maybeFireQuoteShown() {
+    try {
+      syncIcorrectQuote();
+      if (_quoteShownCaptured || !_postcodeResolved) return;
+      var q = window.__icorrectQuote || {};
+      if (typeof q.total !== 'number' && typeof q.repair_price !== 'number') return;
+      _quoteShownCaptured = true;
+      if (window.icorrectQuoteEvents && typeof window.icorrectQuoteEvents.captureQuoteShown === 'function') {
+        window.icorrectQuoteEvents.captureQuoteShown();
+      }
+    } catch (e) {}
+  }
+
+  function fireQuoteProceeded() {
+    try {
+      syncIcorrectQuote();
+      if (window.icorrectQuoteEvents && typeof window.icorrectQuoteEvents.captureQuoteProceeded === 'function') {
+        window.icorrectQuoteEvents.captureQuoteProceeded();
+      }
+    } catch (e) {}
+  }
+
   function serviceVariantsAsset() {
     if (window.__QW_SERVICE_ADJUSTMENTS) return window.__QW_SERVICE_ADJUSTMENTS;
     return { variants: CFG.serviceAdjustments || {} };
@@ -1678,6 +1880,7 @@ window.__QW_CATALOGUE = null;
     if (!resCard) return;
     if (!_postcodeResolved) {
       setPriceVisibility(false);
+      syncIcorrectQuote();
       return;
     }
     var base = parseFloat(resCard.dataset.base || 0);
@@ -1694,6 +1897,7 @@ window.__QW_CATALOGUE = null;
     var bigEl = document.getElementById('qwPriceBig');
     if (bigEl) bigEl.textContent = gbp.format(total);
     setPriceVisibility(true);
+    maybeFireQuoteShown();
   }
 
   function selectServiceCard(svc) {
@@ -1849,6 +2053,7 @@ window.__QW_CATALOGUE = null;
     if (!found) return;
     _collectionSlot.date = found;
     paintDateStrip();
+    syncIcorrectQuote();
     refreshServiceJourney();
   }
 
@@ -1896,6 +2101,7 @@ window.__QW_CATALOGUE = null;
         btn.setAttribute('aria-selected', 'true');
         var id = btn.getAttribute('data-part');
         _collectionSlot.part = parts.filter(function(p) { return p.id === id; })[0] || null;
+        syncIcorrectQuote();
         refreshServiceJourney();
       });
     });
@@ -1935,6 +2141,8 @@ window.__QW_CATALOGUE = null;
 
     if (!quote) {
       _postcodeResolved = false;
+      _quoteShownCaptured = false;
+      syncIcorrectQuote();
       if (reveal) reveal.hidden = true;
       if (slotPanel) { slotPanel.hidden = true; _collectionSlot = { date: null, part: null }; _collectionSlotDates = []; }
       if (mailPanel) mailPanel.hidden = true;
@@ -2294,6 +2502,7 @@ window.__QW_CATALOGUE = null;
   function pickDev(id, el) {
     S.device = id; S.model = null; S.modelGroup = null; S.fault = null; S.issue = null; S.route = null; S.repairType = null;
     S.collectionHandle = null; _repairsMap = {};
+    syncIcorrectQuote();
     clearTrackedStepsAfter(1);
     document.querySelectorAll('#qw-s1 .qw-dev').forEach(function(c) { c.classList.remove('sel'); });
     if (el) el.classList.add('sel');
@@ -2395,6 +2604,7 @@ window.__QW_CATALOGUE = null;
     S.preFault = null;
     S.preRepairType = null;
     _repairsMap = {};
+    syncIcorrectQuote();
     clearTrackedStepsAfter(1);
     if (!S.device) {
       go(1);
@@ -2466,6 +2676,7 @@ window.__QW_CATALOGUE = null;
 
   async function pickModel(name, handle, el) {
     S.model = name; S.collectionHandle = handle; S.fault = null; S.issue = null; S.route = null; S.repairType = null;
+    syncIcorrectQuote();
     clearTrackedStepsAfter(2);
     /* [3.6] Auto-close helper */
     var hP = document.getElementById('qw-hP');
@@ -2499,6 +2710,7 @@ window.__QW_CATALOGUE = null;
 
     if (S.preFault) {
       var pf = S.preFault; S.preFault = null; S.fault = pf;
+      syncIcorrectQuote();
       renderFaults(S.device);
       renderIssues(S.device, pf);
       trackWizardStep(4);
@@ -2812,6 +3024,7 @@ window.__QW_CATALOGUE = null;
 
   function pickFault(v, el) {
     S.fault = v; S.issue = null; S.route = null; S.repairType = null;
+    syncIcorrectQuote();
     clearTrackedStepsAfter(3);
     document.querySelectorAll('#qw-s3 .qw-f-card').forEach(function(c) { c.classList.remove('sel'); });
     if (el) el.classList.add('sel');
@@ -2828,6 +3041,7 @@ window.__QW_CATALOGUE = null;
     /* "Other" skips issues and goes straight to contact */
     if (v === 'Other') {
       S.issue = 'Other';
+      syncIcorrectQuote();
       setTimeout(function() {
         var tC = document.getElementById('qw-tC'); if (tC) { tC.innerHTML = ''; tC.hidden = true; }
         hideResolutionPanel();
@@ -2881,6 +3095,7 @@ window.__QW_CATALOGUE = null;
     S.issue = iss.label;
     S.route = iss.route || null;
     S.repairType = iss.repairType || null;
+    syncIcorrectQuote();
     delete _trackedSteps.resolution;
     document.querySelectorAll('#qw-s4 .qw-t-card').forEach(function(c) { c.classList.remove('sel'); });
     if (el) el.classList.add('sel');
@@ -3127,13 +3342,20 @@ window.__QW_CATALOGUE = null;
         return;
       }
 
+      var addItems = items;
+      try {
+        if (window.icorrectQuoteEvents && typeof window.icorrectQuoteEvents.withPhCartAttribute === 'function') {
+          addItems = window.icorrectQuoteEvents.withPhCartAttribute(items);
+        }
+      } catch (e) { addItems = items; }
+
       var addRes = await fetch(getShopifyRoot() + 'cart/add.js', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify({ items: items })
+        body: JSON.stringify({ items: addItems })
       });
 
       if (!addRes.ok) {
@@ -3143,6 +3365,21 @@ window.__QW_CATALOGUE = null;
       }
 
       await addRes.json();
+      try {
+        var phId = window.icorrectQuoteEvents && typeof window.icorrectQuoteEvents.phDistinctId === 'function'
+          ? window.icorrectQuoteEvents.phDistinctId()
+          : '';
+        if (phId) {
+          await fetch(getShopifyRoot() + 'cart/update.js', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({ attributes: { _ph_distinct_id: phId } })
+          }).catch(function () {});
+        }
+      } catch (e) {}
       trackWizardSubmit('checkout', {
         route: S.route || null,
         value: getWizardTotalValue(),
@@ -3268,6 +3505,7 @@ window.__QW_CATALOGUE = null;
     if (bookBtn) {
       bookBtn.onclick = function() {
         _resolutionConverted = true;
+        fireQuoteProceeded();
         if (window.posthog) {
           var payload = buildWizardTrackPayload({ action: 'book_repair', route: 'repair' });
           posthog.capture('book_now_clicked', payload);
@@ -3370,6 +3608,7 @@ window.__QW_CATALOGUE = null;
     if (bookBtn) {
       bookBtn.onclick = function() {
         _resolutionConverted = true;
+        fireQuoteProceeded();
         if (window.posthog) {
           var payload = buildWizardTrackPayload({ action: 'book_diagnostic', route: 'diagnostic' });
           posthog.capture('book_now_clicked', payload);
@@ -3831,6 +4070,11 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
      ============================================= */
   function reset() {
     S.device = null; S.model = null; S.modelGroup = null; S.fault = null; S.issue = null; S.step = 1; S.collectionHandle = null; S.route = null; S.repairType = null; _repairsMap = {};
+    _courierQuote = null;
+    _postcodeResolved = false;
+    _quoteShownCaptured = false;
+    _collectionSlot = { date: null, part: null };
+    window.__icorrectQuote = {};
     _collectionProducts = [];
     _trackedSteps = {};
     clearResolutionState();
@@ -3861,6 +4105,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
     if (resolutionScreenOpen() && S.fault && S.fault !== 'Other') {
       clearResolutionState();
       S.issue = null; S.route = null; S.repairType = null;
+      syncIcorrectQuote();
       delete _trackedSteps.resolution;
       destroyStickyCTA();
       renderIssues(S.device, S.fault);
@@ -4018,6 +4263,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
 
   function openDeviceModels(device, ctx) {
     S.device = device;
+    syncIcorrectQuote();
     renderDevices();
     var group = findModelGroupFromContext(device, ctx || CONTEXT);
     if (group) {
@@ -4176,6 +4422,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
       S.issue = null;
       S.route = null;
       S.repairType = null;
+      syncIcorrectQuote();
       clearTrackedStepsAfter(e.state.step);
       document.querySelectorAll('.qw-step').forEach(function(el) { el.classList.remove('on'); });
       var stepEl = document.getElementById('qw-s' + e.state.step);
