@@ -23,7 +23,7 @@
         "title": {
           "type": "title",
           "settings": {
-            "enable-price": true
+            "enable-price": false
           }
         },
         "description": {
@@ -33,10 +33,6 @@
         "price": {
           "type": "price",
           "disabled": true,
-          "settings": {}
-        },
-        "repair_product_YHEQJr": {
-          "type": "repair_product",
           "settings": {}
         },
         "variant_picker": {
@@ -54,9 +50,10 @@
         "buy_buttons": {
           "type": "buy_buttons",
           "settings": {
-            "show_dynamic_checkout": true,
+            "show_dynamic_checkout": false,
             "show_gift_card_recipient": true
-          }
+          },
+          "disabled": true
         },
         "share": {
           "type": "share",
@@ -71,7 +68,6 @@
         "title",
         "description",
         "price",
-        "repair_product_YHEQJr",
         "variant_picker",
         "quantity_selector",
         "buy_buttons",
@@ -278,16 +274,20 @@
     },
     "contact_with_map_dXbbDU": {
       "type": "quote-wizard",
-      "settings": {}
+      "settings": {
+        "show_map": false,
+        "skip_to_service": false,
+        "prefill_mode": "auto"
+      }
     }
   },
   "order": [
     "main",
+    "contact_with_map_dXbbDU",
     "related-products",
     "pdp_sustain_repair_info_9EePrK",
     "about_info_A8a6YY",
     "video_reviews_83ReMa",
-    "icorrect_faqs_RVk3VL",
-    "contact_with_map_dXbbDU"
+    "icorrect_faqs_RVk3VL"
   ]
 }

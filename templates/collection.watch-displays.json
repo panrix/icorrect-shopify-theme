@@ -142,9 +142,9 @@
         "service_PEi9BF": {
           "type": "service",
           "settings": {
-            "icon": "shopify://shop_images/Service_icon_Walk-in.png",
-            "heading": "Walk-In Service",
-            "details": "For clients based in Central London who wish to visit us, we operate a  walk-in drop-off service by appointment. Simply book your repair via our  website booking page to confirm your appointment time before heading to us.",
+            "icon": "shopify://shop_images/Service_icon_Courier.png",
+            "heading": "London Collection",
+            "details": "We collect from your door — same-day in most of London. Book online and we arrange tracked, insured collection and return. Outside London, use our free mail-in pack.",
             "btn": "Learn more",
             "link": "shopify://pages/our-services"
           }
@@ -295,11 +295,15 @@
     },
     "contact_with_map_dXbbDU": {
       "type": "quote-wizard",
-      "settings": {}
+      "settings": {
+        "show_map": false,
+        "prefill_mode": "auto"
+      }
     }
   },
   "order": [
     "banner",
+    "contact_with_map_dXbbDU",
     "product-grid",
     "main_banner_and_video_HjbmW9",
     "about_info_RWbQxj",
@@ -307,7 +311,6 @@
     "about_info_XAqnaH",
     "apple_watch_videos_Tjeg38",
     "repair_services_nQkwFT",
-    "icorrect_faqs_RVk3VL",
-    "contact_with_map_dXbbDU"
+    "icorrect_faqs_RVk3VL"
   ]
 }

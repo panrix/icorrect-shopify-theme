@@ -1,0 +1,425 @@
+{
+  "source": "data/gophr-london-bands-2026-09-10.json",
+  "generated_for": "courier-first-pivot #53",
+  "fallback": "mail-in",
+  "outward": {
+    "W1B": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
+    "W1C": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
+    "W1D": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
+    "W1F": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
+    "W1G": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
+    "W1H": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
+    "W1J": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
+    "W1K": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
+    "W1S": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
+    "W1T": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
+    "W1U": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
+    "W1W": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
+    "WC1": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
+    "WC2": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
+    "EC1": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
+    "SW1": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
+    "SE1": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
+    "NW1": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
+    "W2": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
+    "EC4": {
+      "band": "B1",
+      "rt_cost": 17.78
+    },
+    "NW8": {
+      "band": "B1",
+      "rt_cost": 17.78
+    },
+    "N1": {
+      "band": "B1",
+      "rt_cost": 19.16
+    },
+    "W9": {
+      "band": "B1",
+      "rt_cost": 19.16
+    },
+    "W11": {
+      "band": "B1",
+      "rt_cost": 19.82
+    },
+    "SW7": {
+      "band": "B1",
+      "rt_cost": 19.82
+    },
+    "EC2": {
+      "band": "B1",
+      "rt_cost": 20.86
+    },
+    "SW8": {
+      "band": "B1",
+      "rt_cost": 20.86
+    },
+    "EC3": {
+      "band": "B1",
+      "rt_cost": 21.2
+    },
+    "SE11": {
+      "band": "B1",
+      "rt_cost": 21.2
+    },
+    "NW5": {
+      "band": "B1",
+      "rt_cost": 21.56
+    },
+    "SW3": {
+      "band": "B1",
+      "rt_cost": 21.88
+    },
+    "SE17": {
+      "band": "B1",
+      "rt_cost": 22.22
+    },
+    "E1": {
+      "band": "B1",
+      "rt_cost": 22.56
+    },
+    "N5": {
+      "band": "B1",
+      "rt_cost": 22.92
+    },
+    "NW6": {
+      "band": "B1",
+      "rt_cost": 22.92
+    },
+    "W8": {
+      "band": "B1",
+      "rt_cost": 23.6
+    },
+    "W10": {
+      "band": "B1",
+      "rt_cost": 23.92
+    },
+    "N7": {
+      "band": "B1",
+      "rt_cost": 23.92
+    },
+    "SW11": {
+      "band": "B2",
+      "rt_cost": 24.28
+    },
+    "SW5": {
+      "band": "B2",
+      "rt_cost": 24.62
+    },
+    "W14": {
+      "band": "B2",
+      "rt_cost": 24.96
+    },
+    "SW10": {
+      "band": "B2",
+      "rt_cost": 24.96
+    },
+    "E2": {
+      "band": "B2",
+      "rt_cost": 24.96
+    },
+    "W12": {
+      "band": "B2",
+      "rt_cost": 25.3
+    },
+    "SW6": {
+      "band": "B2",
+      "rt_cost": 26
+    },
+    "SW4": {
+      "band": "B2",
+      "rt_cost": 26.66
+    },
+    "N4": {
+      "band": "B2",
+      "rt_cost": 27.02
+    },
+    "E8": {
+      "band": "B2",
+      "rt_cost": 27.7
+    },
+    "SW9": {
+      "band": "B2",
+      "rt_cost": 27.7
+    },
+    "W6": {
+      "band": "B2",
+      "rt_cost": 28.04
+    },
+    "SE5": {
+      "band": "B2",
+      "rt_cost": 28.72
+    },
+    "SE16": {
+      "band": "B2",
+      "rt_cost": 28.72
+    },
+    "N16": {
+      "band": "B2",
+      "rt_cost": 28.72
+    },
+    "SE24": {
+      "band": "B2",
+      "rt_cost": 29.06
+    },
+    "NW3": {
+      "band": "B2",
+      "rt_cost": 29.12
+    },
+    "N19": {
+      "band": "B2",
+      "rt_cost": 29.12
+    },
+    "SE15": {
+      "band": "B2",
+      "rt_cost": 29.4
+    },
+    "E3": {
+      "band": "B2",
+      "rt_cost": 30.44
+    },
+    "NW2": {
+      "band": "B2",
+      "rt_cost": 30.98
+    },
+    "E14": {
+      "band": "B2",
+      "rt_cost": 31.46
+    },
+    "E5": {
+      "band": "B2",
+      "rt_cost": 31.46
+    },
+    "E9": {
+      "band": "B2",
+      "rt_cost": 31.8
+    },
+    "SE14": {
+      "band": "B2",
+      "rt_cost": 31.8
+    },
+    "N6": {
+      "band": "B3",
+      "rt_cost": 32.4
+    },
+    "SW15": {
+      "band": "B3",
+      "rt_cost": 32.84
+    },
+    "SE8": {
+      "band": "B3",
+      "rt_cost": 33.5
+    },
+    "SW18": {
+      "band": "B3",
+      "rt_cost": 34.2
+    },
+    "E15": {
+      "band": "B3",
+      "rt_cost": 34.54
+    },
+    "NW10": {
+      "band": "B3",
+      "rt_cost": 35.66
+    },
+    "SE10": {
+      "band": "B3",
+      "rt_cost": 35.9
+    },
+    "SE22": {
+      "band": "B3",
+      "rt_cost": 36.14
+    },
+    "NW11": {
+      "band": "B3",
+      "rt_cost": 36.6
+    },
+    "N10": {
+      "band": "B3",
+      "rt_cost": 37.54
+    },
+    "SE21": {
+      "band": "B3",
+      "rt_cost": 38.96
+    },
+    "N2": {
+      "band": "B3",
+      "rt_cost": 38.96
+    },
+    "SW12": {
+      "band": "B3",
+      "rt_cost": 39.88
+    },
+    "N15": {
+      "band": "B3",
+      "rt_cost": 39.88
+    },
+    "W3": {
+      "band": "B3",
+      "rt_cost": 40.34
+    },
+    "W4": {
+      "band": "B3",
+      "rt_cost": 40.34
+    },
+    "N8": {
+      "band": "B3",
+      "rt_cost": 40.8
+    },
+    "SW13": {
+      "band": "B3",
+      "rt_cost": 41.74
+    },
+    "SE4": {
+      "band": "B3",
+      "rt_cost": 42.2
+    },
+    "W5": {
+      "band": "B4",
+      "rt_cost": 44.54
+    },
+    "E10": {
+      "band": "B4",
+      "rt_cost": 45.48
+    },
+    "SW17": {
+      "band": "B4",
+      "rt_cost": 45.94
+    },
+    "SE13": {
+      "band": "B4",
+      "rt_cost": 47.8
+    },
+    "E7": {
+      "band": "B4",
+      "rt_cost": 47.8
+    },
+    "W13": {
+      "band": "B4",
+      "rt_cost": 48.28
+    },
+    "SE23": {
+      "band": "B4",
+      "rt_cost": 48.28
+    },
+    "SW16": {
+      "band": "B4",
+      "rt_cost": 49.68
+    },
+    "E17": {
+      "band": "B4",
+      "rt_cost": 49.68
+    },
+    "SE6": {
+      "band": "B4",
+      "rt_cost": 50.16
+    },
+    "E11": {
+      "band": "B4",
+      "rt_cost": 50.62
+    },
+    "E16": {
+      "band": "B4",
+      "rt_cost": 50.62
+    },
+    "SE19": {
+      "band": "B4",
+      "rt_cost": 52.04
+    },
+    "E12": {
+      "band": "B4",
+      "rt_cost": 52.48
+    },
+    "E6": {
+      "band": "B4",
+      "rt_cost": 54.84
+    },
+    "SW19": {
+      "band": "B4",
+      "rt_cost": 57.16
+    },
+    "W7": {
+      "band": "B4",
+      "rt_cost": 65.76
+    }
+  },
+  "bands": {
+    "B1": {
+      "count": 38,
+      "rt_min": 17.08,
+      "rt_max": 23.92
+    },
+    "B2": {
+      "count": 25,
+      "rt_min": 24.28,
+      "rt_max": 31.8
+    },
+    "B3": {
+      "count": 19,
+      "rt_min": 32.4,
+      "rt_max": 42.2
+    },
+    "B4": {
+      "count": 17,
+      "rt_min": 44.54,
+      "rt_max": 65.76
+    }
+  }
+}

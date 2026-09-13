@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>iCorrect — Courier-first UI mockups for sign-off · 2026-09-11</title>
+<style>
+  :root{
+    --g1000:#171717; --g700:#333; --g600:#4d4d4d; --g500:#666; --g400:#808080;
+    --g300:#a3a3a3; --g200:#d4d4d4; --g100:#ebebeb; --g50:#fafafa;
+    --blue:#0a72ef; --blue-bg:#f0f6ff; --red:#ff5b4f; --green:#0d7a4f; --green-bg:#effaf4;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{font-family:"Geist",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; background:#e8e8e8; color:var(--g1000); padding:32px 16px 80px}
+  .wrap{max-width:1200px; margin:0 auto}
+  h1{font-size:24px; letter-spacing:-.02em}
+  .sub{color:var(--g600); font-size:13px; margin:6px 0 24px}
+  .screen-row{display:flex; gap:24px; flex-wrap:wrap; margin-bottom:40px}
+  .device{background:#fff; border-radius:18px; box-shadow:0 8px 30px rgba(0,0,0,.12); width:390px; flex:none; overflow:hidden; border:1px solid var(--g200)}
+  .device.wide{width:760px}
+  .screen-label{font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--g600); margin:0 0 10px 4px}
+  .screen-label .q{color:var(--red); font-weight:600; text-transform:none; letter-spacing:0}
+  .pad{padding:22px}
+  /* mock wizard */
+  .brand{font-weight:800; font-size:17px; letter-spacing:-.02em}
+  .step-dots{display:flex; gap:5px; margin:4px 0 18px}
+  .dot{height:4px; flex:1; border-radius:2px; background:var(--g100)}
+  .dot.on{background:var(--g1000)}
+  .crumb{font-size:12px; color:var(--g500); margin-bottom:2px}
+  .q-title{font-size:19px; font-weight:700; letter-spacing:-.01em; margin-bottom:14px}
+  .opt{border:1.5px solid var(--g200); border-radius:12px; padding:14px 16px; margin-bottom:10px; cursor:pointer}
+  .opt.sel{border-color:var(--g1000); box-shadow:0 0 0 1px var(--g1000)}
+  .opt .ot{font-weight:700; font-size:14.5px; display:flex; justify-content:space-between; align-items:center}
+  .opt .od{font-size:12.5px; color:var(--g600); margin-top:3px}
+  .pill{font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:999px; background:var(--green-bg); color:var(--green); text-transform:uppercase; letter-spacing:.05em}
+  .pill.blue{background:var(--blue-bg); color:var(--blue)}
+  .pill.gray{background:var(--g50); color:var(--g500); border:1px solid var(--g200)}
+  .field{border:1.5px solid var(--g200); border-radius:10px; padding:12px 14px; font-size:15px; margin-bottom:10px; background:#fff}
+  .field .ph{color:var(--g400)}
+  .btn{background:var(--g1000); color:#fff; border-radius:10px; padding:13px; text-align:center; font-weight:700; font-size:14px; margin-top:6px}
+  .btn.ghost{background:#fff; color:var(--g1000); border:1.5px solid var(--g200)}
+  .result{border:1.5px solid var(--g1000); border-radius:12px; padding:14px 16px; margin:12px 0}
+  .result .price{font-size:24px; font-weight:800; letter-spacing:-.02em}
+  .result .why{font-size:12px; color:var(--g600); margin-top:2px}
+  .note{font-size:12px; color:var(--g500); margin-top:10px}
+  .slotrow{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0}
+  .slot{border:1.5px solid var(--g200); border-radius:9px; padding:8px 12px; font-size:12.5px; font-weight:600}
+  .slot.full{color:var(--g300); text-decoration:line-through; border-color:var(--g100)}
+  .slot.sel{border-color:var(--g1000); box-shadow:0 0 0 1px var(--g1000)}
+  .banner{background:var(--g1000); color:#fff; border-radius:12px; padding:14px 16px; font-size:13px; margin-bottom:14px}
+  .banner b{color:#fff}
+  .track{border:1px solid var(--g200); border-radius:12px; padding:14px 16px}
+  .track .st{display:flex; align-items:center; gap:10px; font-size:13px; padding:7px 0}
+  .tick{width:18px; height:18px; border-radius:50%; background:var(--green); color:#fff; font-size:11px; display:flex; align-items:center; justify-content:center; flex:none}
+  .tick.pending{background:var(--g100); color:var(--g400)}
+  .annot{flex:1; min-width:260px; font-size:13px; color:var(--g700); background:#fff; border:1px dashed var(--g300); border-radius:12px; padding:16px 18px; align-self:flex-start}
+  .annot h4{font-size:12px; text-transform:uppercase; letter-spacing:.1em; color:var(--g500); margin-bottom:8px}
+  .annot li{margin:6px 0 6px 16px}
+  .annot code{font-family:ui-monospace,Menlo,monospace; font-size:11.5px; background:var(--g50); padding:1px 5px; border-radius:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Courier-first UI — mockups for Ricky sign-off</h1>
+  <p class="sub">2026-09-11 · These are the only new/changed visible surfaces in the 48h build. Everything else is existing theme or invisible plumbing. Approve per-screen or mark changes. Shown at mobile 390px (primary) — desktop uses the same components wider.</p>
+
+  <!-- SCREEN 1: service choice -->
+  <div class="screen-row">
+    <div>
+      <p class="screen-label">Screen 1 · Wizard — "How do you want to get it to us?" <span class="q">(replaces Walk-in vs Collection step)</span></p>
+      <div class="device"><div class="pad">
+        <div class="brand">iCorrect</div>
+        <div class="step-dots"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="crumb">MacBook Air M2 · Screen replacement · <b>£399</b></div>
+        <div class="q-title">How do you want to get it to us?</div>
+        <div class="opt sel">
+          <div class="ot">Courier collection <span class="pill">Free for this repair</span></div>
+          <div class="od">We collect from your door, anywhere in London. Same-day in most areas.</div>
+        </div>
+        <div class="opt">
+          <div class="ot">Post it — free pack <span class="pill blue">Nationwide</span></div>
+          <div class="od">We send a tracked, insured mail-in pack within 24h.</div>
+        </div>
+        <div class="opt">
+          <div class="ot">Book a drop-off slot <span class="pill gray">Limited daily slots</span></div>
+          <div class="od">Pre-booked only — Fitzrovia workshop. No walk-ins.</div>
+        </div>
+        <div class="btn">Continue</div>
+        <div class="note">We've moved to collection-only so every repair gets full bench time. No queues, no waiting around.</div>
+      </div></div>
+    </div>
+    <div class="annot"><h4>Build notes</h4><ul>
+      <li>Walk-in option <b>removed</b>; three options only.</li>
+      <li>"Free for this repair" pill is <b>tier-driven</b>: product tag <code>courier:free</code> on ≥£250 repairs. Mid tier shows "Subsidised", low tier shows the band price.</li>
+      <li>Copy line at bottom is the walk-in-kill explanation — Ferrari to wordsmith.</li>
+    </ul></div>
+  </div>
+
+  <!-- SCREEN 2: postcode → price -->
+  <div class="screen-row">
+    <div>
+      <p class="screen-label">Screen 2 · Courier postcode → instant price <span class="q">(the new module)</span></p>
+      <div class="device"><div class="pad">
+        <div class="brand">iCorrect</div>
+        <div class="step-dots"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot"></div></div>
+        <div class="crumb">MacBook Air M2 · Screen · £399 · Courier collection</div>
+        <div class="q-title">Where are we collecting from?</div>
+        <div class="field"><span class="ph">Postcode — e.g. SW11 8BJ</span> <b style="color:var(--g1000)">SW11 8…</b></div>
+        <div class="result">
+          <div class="price">Collection: <span style="color:var(--green)">FREE</span></div>
+          <div class="why">Battersea area · this repair qualifies for free collection &amp; return</div>
+        </div>
+        <div class="result" style="border-color:var(--g200); box-shadow:none">
+          <div style="font-size:13.5px"><b>Earliest collection:</b> today, 3–6pm window</div>
+          <div style="font-size:12.5px; color:var(--g600); margin-top:2px">Book by 2pm for same-day collection in your area.</div>
+        </div>
+        <div class="btn">Book collection — £399 total</div>
+        <div class="note">Outside London? <u>Post it free</u> instead.</div>
+      </div></div>
+    </div>
+    <div class="annot"><h4>Build notes</h4><ul>
+      <li>Postcode → <b>static band table</b> (99 London outward codes, live-priced 2026-09-10). No API in the browser.</li>
+      <li>Price shown = band × tier. This example: B2 band × <code>courier:free</code> = £0.</li>
+      <li>Low-tier example would read: <code>Collection: £24</code> (B2 full RT).</li>
+      <li>Unknown/outside postcode → graceful mail-in offer, never an error.</li>
+      <li>Window copy is static by band + cutoff time (2pm same-day B1–B2; wider windows B3–B4).</li>
+    </ul></div>
+  </div>
+
+  <!-- SCREEN 3: booked drop-off slots -->
+  <div class="screen-row">
+    <div>
+      <p class="screen-label">Screen 3 · Booked drop-off — capped slots <span class="q">(existing picker, reframed)</span></p>
+      <div class="device"><div class="pad">
+        <div class="brand">iCorrect</div>
+        <div class="crumb">Booked drop-off · 12 Margaret Street, Fitzrovia</div>
+        <div class="q-title">Pick your slot</div>
+        <div style="font-size:13px; color:var(--g600); margin-bottom:8px">Today — Fri 11 Sep</div>
+        <div class="slotrow">
+          <span class="slot full">10:00</span><span class="slot full">12:00</span><span class="slot sel">15:30</span><span class="slot">17:00</span>
+        </div>
+        <div style="font-size:13px; color:var(--g600); margin:12px 0 8px">Tomorrow — Sat 12 Sep</div>
+        <div class="slotrow">
+          <span class="slot">10:00</span><span class="slot">12:00</span><span class="slot full">14:00</span><span class="slot">16:00</span>
+        </div>
+        <div class="btn">Confirm slot — 15:30 today</div>
+        <div class="note">Slots are limited so every device gets a proper check-in. No booking = we can't take the device — but we can <b>collect it from you</b>.</div>
+      </div></div>
+    </div>
+    <div class="annot"><h4>Build notes</h4><ul>
+      <li>Existing date/time picker UI, now with <b>static daily cap</b> (4 slots/day-part, config-only — no backend this week).</li>
+      <li>"Full" states are illustrative; v1 shows all slots open (soft cap), real capacity comes with the D-09 system later.</li>
+      <li>The note is the walk-up redirect: every "no" offers courier as the yes.</li>
+    </ul></div>
+  </div>
+
+  <!-- SCREEN 4: post-booking / tracking v0 -->
+  <div class="screen-row">
+    <div>
+      <p class="screen-label">Screen 4 · After booking — what happens next + tracking v0</p>
+      <div class="device"><div class="pad">
+        <div class="brand">iCorrect</div>
+        <div class="q-title" style="margin-top:10px">You're booked ✓</div>
+        <div class="banner">Courier collects <b>today 3–6pm</b> · Have the device charged &amp; ready — no box needed.</div>
+        <div class="track">
+          <div class="st"><span class="tick">✓</span> Booking confirmed — repair #1842</div>
+          <div class="st"><span class="tick">✓</span> Courier assigned · <u>track your courier live</u></div>
+          <div class="st"><span class="tick pending">3</span> Arrives at workshop — we text you</div>
+          <div class="st"><span class="tick pending">4</span> Diagnosed / repaired — updates at each step</div>
+          <div class="st"><span class="tick pending">5</span> Courier returns it to your door</div>
+        </div>
+        <div class="note">Questions? Reply to any of our messages — a person reads them.</div>
+      </div></div>
+    </div>
+    <div class="annot"><h4>Build notes</h4><ul>
+      <li>v0: "track your courier live" links to Gophr's tracking page, wrapped in our branding/messaging.</li>
+      <li>v1 (your design session, after launch): this becomes a branded page on our domain polling courier status.</li>
+      <li>Steps 3–5 already exist via status-notifications — this screen just presents them.</li>
+    </ul></div>
+  </div>
+
+  <!-- SCREEN 5: homepage hero copy -->
+  <div class="screen-row">
+    <div>
+      <p class="screen-label">Screen 5 · Homepage hero — walk-in kill <span class="q">(copy block, all pages)</span></p>
+      <div class="device wide"><div class="pad" style="padding:34px">
+        <div class="brand" style="margin-bottom:14px">iCorrect</div>
+        <div style="font-size:30px; font-weight:800; letter-spacing:-.03em; line-height:1.15; max-width:560px">
+          MacBook &amp; iPhone repair, <span style="color:var(--blue)">collected from your door.</span>
+        </div>
+        <div style="font-size:15px; color:var(--g600); margin:12px 0 18px; max-width:520px">
+          London's micro-soldering specialists. We collect anywhere in London — same-day in most areas — or post it free from anywhere in the UK. No queues, no walk-ins: every device gets full bench time.
+        </div>
+        <div style="display:flex; gap:10px">
+          <div class="btn" style="padding:13px 26px; margin:0">Get an instant quote</div>
+          <div class="btn ghost" style="padding:13px 26px; margin:0">Book a drop-off slot</div>
+        </div>
+        <div class="note" style="margin-top:14px">719+ Google reviews · 4.8★ · Fitzrovia workshop since 2012</div>
+      </div></div>
+    </div>
+    <div class="annot"><h4>Build notes</h4><ul>
+      <li>Pattern for the ~78 cloned blocks: "Walk-In Service" → "Courier Collection" with this framing.</li>
+      <li>Google Ads compliance: keeps concrete local job language + NAP, drops "walk-in" as the CTA.</li>
+      <li>Review-count claims stay exactly as signed (719+/4.8) — no new claims introduced.</li>
+    </ul></div>
+  </div>
+
+  <p class="sub" style="margin-top:32px">Sign-off: reply per screen (1–5) with "ok" or your change. Screens 1–2 are the money path; 3–5 are copy/class changes. Once signed, builder implements in Liquid against these.</p>
+</div>
+</body>
+</html>

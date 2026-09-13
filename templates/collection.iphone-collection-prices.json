@@ -47,7 +47,8 @@
         "padding-bottom": 70,
         "mob-padding-top": 40,
         "mob-padding-bottom": 40,
-        "bg": "#ffffff"
+        "bg": "#ffffff",
+        "show_header": false
       }
     },
     "iphone_videos_GEpK4D": {
@@ -70,9 +71,9 @@
         "service_PEi9BF": {
           "type": "service",
           "settings": {
-            "icon": "shopify://shop_images/Service_icon_Walk-in.png",
-            "heading": "Walk-In Service",
-            "details": "For clients based in Central London who wish to visit us, we operate a  walk-in drop-off service by appointment. Simply book your repair via our  website booking page to confirm your appointment time before heading to us.",
+            "icon": "shopify://shop_images/Service_icon_Courier.png",
+            "heading": "London Collection",
+            "details": "We collect from your door — same-day in most of London. Book online and we arrange tracked, insured collection and return. Outside London, use our free mail-in pack.",
             "btn": "Learn more",
             "link": ""
           }
@@ -230,14 +231,37 @@
     },
     "iphone_repair_link_bugsR": {
       "type": "iphone-repair-link",
-      "settings": {}
+      "settings": {},
+      "disabled": true
+    },
+    "quote_wizard_top": {
+      "type": "quote-wizard",
+      "settings": {
+        "heading": "Get a repair quote",
+        "subheading": "Courier collection across London, or free tracked mail-in nationwide.",
+        "show_map": false,
+        "prefill_mode": "auto",
+        "skip_to_service": false
+      }
+    },
+    "collection_repair_header_top": {
+      "type": "collection-repair-header",
+      "settings": {
+        "bg": "#ffffff",
+        "padding_top": 48,
+        "padding_bottom": 8,
+        "mob_padding_top": 32,
+        "mob_padding_bottom": 4
+      }
     }
   },
   "order": [
     "banner",
+    "collection_repair_header_top",
+    "quote_wizard_top",
     "product-grid",
-    "iphone_repair_link_bugsR",
     "icorrect_product_grid_AAVQCj",
+    "iphone_repair_link_bugsR",
     "iphone_videos_GEpK4D",
     "repair_services_nQkwFT",
     "iphone_faqs_BYhWkP",

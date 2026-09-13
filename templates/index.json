@@ -91,7 +91,7 @@
         "primary_btn_color": "#ffffff",
         "primary_btn_hover_bg": "#005bbe",
         "secondary_btn_text": "Get Free Quote",
-        "secondary_btn_link": "/#home-contact",
+        "secondary_btn_link": "/#get-free-quote",
         "secondary_btn_bg": "rgba(0,0,0,0)",
         "secondary_btn_color": "#1d1d1f",
         "secondary_btn_border": "#1d1d1f",
@@ -455,7 +455,8 @@
         "bg": "#ffffff",
         "heading": "Find your repair",
         "details": "<p>Either select your device or select the repair you need to find out more</p>"
-      }
+      },
+      "disabled": true
     },
     "repair_contact_row_6T3CNw": {
       "type": "repair-contact-row",
@@ -508,9 +509,9 @@
         "service_PEi9BF": {
           "type": "service",
           "settings": {
-            "icon": "shopify://shop_images/Service_icon_Walk-in.png",
-            "heading": "Walk-In Service",
-            "details": "For clients based in Central London who wish to visit us, we operate a  walk-in drop-off service by appointment. Simply book your repair via our  website booking page to confirm your appointment time before heading to us.",
+            "icon": "shopify://shop_images/Service_icon_Courier.png",
+            "heading": "London Collection",
+            "details": "We collect from your door — same-day in most of London. Book online and we arrange tracked, insured collection and return. Outside London, use our free mail-in pack.",
             "btn": "Learn more",
             "link": ""
           }
@@ -608,8 +609,8 @@
         "accordion_H3eeMX": {
           "type": "accordion",
           "settings": {
-            "heading": "Do I need an appointment?",
-            "sub_head": "<p>You do not need an appointment to contact us, get a quote, or book in for a repair. For walk ins, we can normally accept devices during opening hours, but availability can vary depending on workload and the type of repair.</p><p>If you want the quickest turnaround, booking in advance is best. It allows us to reserve bench time, confirm parts availability, and prioritise your repair. This is especially important for same day repairs and for any express service requests.</p><p>If you are sending your device in, you can place an order online and follow the shipping instructions. We will confirm receipt, run intake checks, and then proceed according to the booked service or agreed quote.</p>",
+            "heading": "Do I need to book in advance?",
+            "sub_head": "<p>You do not need an appointment to contact us, get a quote, or book a repair. We collect from your door — same-day in most of London — or you can use our free mail-in pack as the nationwide alternative.</p><p>Book online and we arrange collection or send packaging. Booking ahead helps us reserve bench time, confirm parts availability, and prioritise your repair — especially for same-day London collections and express requests.</p><p>Once your device arrives, we confirm receipt, run intake checks, and proceed according to the booked service or agreed quote.</p>",
             "alignment": "left"
           }
         },
@@ -617,7 +618,7 @@
           "type": "accordion",
           "settings": {
             "heading": "Do I need to back up my data before my repair?",
-            "sub_head": "<p>Yes, you should back up your data whenever possible. Most repairs do not affect data, but storage can never be guaranteed if a device has underlying faults, liquid damage, or an unstable power issue.</p><p>If your device is still usable, back up before bringing it in. For phones and tablets, an iCloud backup is usually the fastest option. For computers, use Time Machine or another full backup method.</p><p>If the device is not turning on or is too unstable to back up, we can advise on the safest next step after inspection. In many cases we can repair the device enough to allow a backup, but that depends on the fault and the condition of the hardware.</p>",
+            "sub_head": "<p>Yes, you should back up your data whenever possible. Most repairs do not affect data, but storage can never be guaranteed if a device has underlying faults, liquid damage, or an unstable power issue.</p><p>If your device is still usable, back up before we collect it or before you post the free mail-in pack. For phones and tablets, an iCloud backup is usually the fastest option. For computers, use Time Machine or another full backup method.</p><p>If the device is not turning on or is too unstable to back up, we can advise on the safest next step after inspection. In many cases we can repair the device enough to allow a backup, but that depends on the fault and the condition of the hardware.</p>",
             "alignment": "left"
           }
         },
@@ -724,12 +725,16 @@
       "type": "quote-wizard",
       "name": "Contact with map",
       "settings": {
-        "map_html": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.7925117760165!2d-0.1422392230845079!3d51.51702250999988!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2c5aabf83b%3A0x2abbd489a9d66382!2siCorrect!5e0!3m2!1sen!2sit!4v1766495755523!5m2!1sen!2sit\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>"
+        "map_html": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.7925117760165!2d-0.1422392230845079!3d51.51702250999988!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2c5aabf83b%3A0x2abbd489a9d66382!2siCorrect!5e0!3m2!1sen!2sit!4v1766495755523!5m2!1sen!2sit\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
+        "show_map": false,
+        "heading": "Get a repair quote",
+        "subheading": "Courier collection across London, or free tracked mail-in nationwide."
       }
     }
   },
   "order": [
     "hero_banner_xz89GQ",
+    "contact_with_map_JLb8kC",
     "image_banner",
     "google_reviews_4dYetV",
     "why_icorrect_qePBLH",
@@ -745,7 +750,6 @@
     "repair_services_nQkwFT",
     "image_banner_eU9nzn",
     "homepage_faqs_LfBAfa",
-    "custom_liquid_8aD8UK",
-    "contact_with_map_JLb8kC"
+    "custom_liquid_8aD8UK"
   ]
 }

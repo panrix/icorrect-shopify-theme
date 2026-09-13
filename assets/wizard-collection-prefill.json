@@ -1,0 +1,31 @@
+{
+  "note": "Handle → wizard prefill for collection templates (#53 slice 3). Matched by longest handle substring / prefix. device ids match quote-wizard DEVICES.",
+  "default": {},
+  "rules": [
+    { "match": "macbook-pro-16", "device": "macbook" },
+    { "match": "macbook-16", "device": "macbook" },
+    { "match": "macbook-pro-14", "device": "macbook" },
+    { "match": "macbook-14", "device": "macbook" },
+    { "match": "macbook-pro-13", "device": "macbook" },
+    { "match": "macbook-air-15", "device": "macbook" },
+    { "match": "macbook-air-13", "device": "macbook" },
+    { "match": "macbook", "device": "macbook" },
+    { "match": "iphone-12", "device": "iphone" },
+    { "match": "iphone", "device": "iphone" },
+    { "match": "ipad", "device": "ipad" },
+    { "match": "watch", "device": "watch" },
+    { "match": "apple-watch", "device": "watch" },
+    { "match": "screen", "fault": "screen" },
+    { "match": "display", "fault": "screen" },
+    { "match": "battery", "fault": "battery" },
+    { "match": "batteries", "fault": "battery" },
+    { "match": "charging", "fault": "charging-port" },
+    { "match": "charge-port", "fault": "charging-port" },
+    { "match": "keyboard", "fault": "keyboard" },
+    { "match": "trackpad", "fault": "trackpad" },
+    { "match": "diagnostic", "fault": "diagnostic" },
+    { "match": "glass", "fault": "screen-glass" },
+    { "match": "camera", "fault": "rear-camera" },
+    { "match": "speaker", "fault": "loudspeaker" }
+  ]
+}

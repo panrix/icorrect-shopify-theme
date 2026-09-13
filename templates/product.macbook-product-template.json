@@ -23,7 +23,7 @@
         "title": {
           "type": "title",
           "settings": {
-            "enable-price": true
+            "enable-price": false
           }
         },
         "description": {
@@ -33,10 +33,6 @@
         "price": {
           "type": "price",
           "disabled": true,
-          "settings": {}
-        },
-        "repair_product_YHEQJr": {
-          "type": "repair_product",
           "settings": {}
         },
         "variant_picker": {
@@ -54,9 +50,10 @@
         "buy_buttons": {
           "type": "buy_buttons",
           "settings": {
-            "show_dynamic_checkout": true,
+            "show_dynamic_checkout": false,
             "show_gift_card_recipient": true
-          }
+          },
+          "disabled": true
         },
         "share": {
           "type": "share",
@@ -71,7 +68,6 @@
         "title",
         "description",
         "price",
-        "repair_product_YHEQJr",
         "variant_picker",
         "quantity_selector",
         "buy_buttons",
@@ -459,12 +455,16 @@
       "type": "quote-wizard",
       "name": "Contact with map",
       "settings": {
-        "map_html": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.7925117760165!2d-0.1422392230845079!3d51.51702250999988!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2c5aabf83b%3A0x2abbd489a9d66382!2siCorrect!5e0!3m2!1sen!2sit!4v1766495755523!5m2!1sen!2sit\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>"
+        "map_html": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.7925117760165!2d-0.1422392230845079!3d51.51702250999988!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2c5aabf83b%3A0x2abbd489a9d66382!2siCorrect!5e0!3m2!1sen!2sit!4v1766495755523!5m2!1sen!2sit\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
+        "show_map": false,
+        "skip_to_service": false,
+        "prefill_mode": "auto"
       }
     }
   },
   "order": [
     "main",
+    "contact_with_map_RfErQT",
     "related-products",
     "pdp_sustain_repair_info_9EePrK",
     "about_info_A8a6YY",
@@ -472,7 +472,6 @@
     "macbook_videos_DiRzn3",
     "video_multicolumn_TRzgaY",
     "macbook_faqs_zpJfcD",
-    "icorrect_faqs_RVk3VL",
-    "contact_with_map_RfErQT"
+    "icorrect_faqs_RVk3VL"
   ]
 }

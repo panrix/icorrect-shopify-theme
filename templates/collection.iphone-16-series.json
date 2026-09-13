@@ -253,12 +253,23 @@
         "details": "Learn more about iCorrect, the essential iPhone repair services we offer and the warranties that come with each repair.",
         "txt-clr": "#ffffff"
       }
+    },
+    "quote_wizard_top": {
+      "type": "quote-wizard",
+      "settings": {
+        "heading": "Get a repair quote",
+        "subheading": "Courier collection across London, or free tracked mail-in nationwide.",
+        "show_map": false,
+        "prefill_mode": "auto",
+        "skip_to_service": false
+      }
     }
   },
   "order": [
     "banner",
     "product-grid",
     "parent_categories_nWCAYw",
+    "quote_wizard_top",
     "iphone_repair_link_wudnk",
     "main_banner_and_video_HjbmW9",
     "iphone_videos_Krrtdz",
