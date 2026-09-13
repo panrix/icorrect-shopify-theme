@@ -174,6 +174,7 @@ window.__QW_CATALOGUE = null;
               <span class="qw-hrs-d">Sat</span><span class="qw-hrs-t">{{ section.settings.hours_sat | default: 'Closed' }}</span>
               <span class="qw-hrs-d">Sun</span><span class="qw-hrs-t">{{ section.settings.hours_sun | default: 'Closed' }}</span>
             </div>
+            <p class="qw-no-walkin">Collection or mail-in only — no walk-ins.</p>
           </div>
         </div>
       </div>
@@ -331,17 +332,38 @@ window.__QW_CATALOGUE = null;
   /* Centralized scroll: precise, firm, no clunkiness.
      Uses requestAnimationFrame so the DOM has settled. */
   var _scrollLock = false;
+  function prefersReducedMotion() {
+    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+  function scrollBehavior() {
+    return prefersReducedMotion() ? 'auto' : 'smooth';
+  }
   function scrollToEl(el, delay, block) {
     if (!el || _scrollLock) return;
     _scrollLock = true;
     setTimeout(function() {
       requestAnimationFrame(function() {
         try {
-          el.scrollIntoView({ behavior: 'smooth', block: block || 'start' });
+          el.scrollIntoView({ behavior: scrollBehavior(), block: block || 'start' });
         } catch (e) {}
         _scrollLock = false;
       });
     }, delay || 80);
+  }
+
+  /* After a postcode produces a price, bring Total + Proceed into view (#53 P1 #14). */
+  function focusPriceAndProceed() {
+    var wrap = document.getElementById('qwPriceTotalWrap');
+    var btn = document.getElementById('qwBookBtn');
+    var price = document.getElementById('qwResPrice');
+    if (wrap && wrap.hidden) return;
+    var target = btn || wrap || price;
+    if (!target) return;
+    var rect = target.getBoundingClientRect();
+    var vh = window.innerHeight || document.documentElement.clientHeight || 0;
+    if (rect.top >= 56 && rect.bottom <= vh - 12) return;
+    _scrollLock = false;
+    scrollToEl(target, 220, 'end');
   }
 
   function isMobileQuoteLayout() {
@@ -396,7 +418,7 @@ window.__QW_CATALOGUE = null;
         try {
           var rect = price.getBoundingClientRect();
           if (rect.bottom > (window.innerHeight || 0) - 12) {
-            price.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            price.scrollIntoView({ behavior: scrollBehavior(), block: 'end' });
           }
         } catch (e) {}
       }, 320);
@@ -1643,6 +1665,12 @@ window.__QW_CATALOGUE = null;
       bookBtn.disabled = !show;
       bookBtn.classList.toggle('qw-btn-prompt', !show);
     }
+    if (show) {
+      var totalEl = document.getElementById('qwPriceTotal');
+      if (totalEl) setupStickyCTA(totalEl.textContent);
+    } else {
+      destroyStickyCTA();
+    }
   }
 
   function refreshAllInTotal() {
@@ -1989,6 +2017,7 @@ window.__QW_CATALOGUE = null;
     }
 
     refreshAllInTotal();
+    if (!_suppressScroll) focusPriceAndProceed();
   }
 
   function wireCourierService(container) {

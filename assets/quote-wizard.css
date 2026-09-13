@@ -481,6 +481,11 @@
   display: block;
 }
 a.qw-d-val:hover { text-decoration: underline; text-underline-offset: 2px; }
+.qw-no-walkin {
+  font: 500 13px/1.4 var(--font-sans);
+  color: #171717;
+  margin: 8px 0 0;
+}
 .qw-hrs {
   display: grid;
   grid-template-columns: 80px 1fr;

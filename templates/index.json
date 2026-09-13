@@ -167,7 +167,7 @@
         "details": "<p>At iCorrect, our repairs are completed using original parts which are sustainably sourced. We are a team of Apple microelectronic specialists who understand and repair to microchip level. Our on-demand collection & delivery repair service is faster than a trip to your local Apple Store.</p>",
         "show_cta": true,
         "cta_text": "Learn more about us",
-        "cta_link": "",
+        "cta_link": "shopify://pages/about-us",
         "stat_2_num": "4.8",
         "stat_3_num": "10",
         "bg_color": "#f5f5f7",
@@ -513,7 +513,7 @@
             "heading": "London Collection",
             "details": "We collect from your door — same-day in most of London. Book online and we arrange tracked, insured collection and return. Outside London, use our free mail-in pack.",
             "btn": "Learn more",
-            "link": ""
+            "link": "shopify://pages/our-services"
           }
         },
         "service_RaggTi": {
@@ -532,9 +532,9 @@
           "settings": {
             "icon": "shopify://shop_images/Service_icon_Delivery.png",
             "heading": "National Courier",
-            "details": "We collect from anywhere in the UK. Book online and we send secure packaging to your door. Your device is returned fully repaired and tested.",
+            "details": "Courier collection is London only. Outside London we send a free tracked mail-in pack. Book online and we send secure packaging to your door. Your device is returned fully repaired and tested.",
             "btn": "Learn more",
-            "link": ""
+            "link": "shopify://pages/our-services"
           }
         }
       },
