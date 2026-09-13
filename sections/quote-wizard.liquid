@@ -1510,8 +1510,10 @@ window.__QW_CATALOGUE = null;
     return '—';
   }
 
-  /* Hide mail-in when courier is free or strictly cheaper — no reason to offer it.
-     On mobile, hide mail-in whenever courier is available so collection + price fit one screen. */
+  /* Hide mail-in only when courier is free or strictly cheaper.
+     Paid B1/B2 (<£200) must keep BOTH options: courier +£25 or mail-in +£20.
+     Do not hide mail-in on mobile just because courier is available — that
+     removed the cheaper mail-in choice and broke the policy. */
   function shouldHideMailInOption(quote, postcode) {
     if (!quote || quote.courierAvailable === false) return false;
     var pc = postcode || '';
@@ -1519,9 +1521,9 @@ window.__QW_CATALOGUE = null;
       ? quote
       : quoteForService('courier', pc);
     if (!courierQ || courierQ.courierAvailable === false || courierQ.forcedMailIn) return false;
-    if (isMobileQuoteLayout()) return true;
     var courierAdj = Number(courierQ.adjustment);
     if (!isFinite(courierAdj)) courierAdj = 0;
+    /* Free courier (B1/B2 ≥£200): mail-in adds nothing — solo courier is fine. */
     if (courierAdj === 0) return true;
     var mailQuote = quoteForService('mailin', pc);
     if (!mailQuote) return false;
@@ -1544,7 +1546,8 @@ window.__QW_CATALOGUE = null;
       }
     }
     if (grid) grid.classList.toggle('qw-delivery-grid-solo', !show);
-    /* Solo courier on mobile: drop choice chrome so slots + journey + price fit. */
+    /* Solo free-courier on mobile: drop choice chrome so slots + journey + price fit.
+       Only reached when shouldHideMailInOption is true (courier free/cheaper). */
     if (!show && isMobileQuoteLayout()) {
       if (choice) choice.hidden = true;
       if (courierCard) courierCard.hidden = true;

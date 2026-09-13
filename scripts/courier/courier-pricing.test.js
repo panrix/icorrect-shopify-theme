@@ -165,6 +165,26 @@ describe('adjustment matrix — band × tag × service', () => {
     assert.equal(q.variantId, variantsAsset.variants['25']);
   });
 
+  it('<£200 + B1 + courier selected → adjustment 25, variant …445437, service stays courier', () => {
+    const q = quoteServiceAdjustment({
+      postcode: 'W1B 4BD',
+      productTags: [],
+      bands: bandsAsset,
+      service: 'courier',
+      repairPrice: 89,
+      variants: variantsAsset,
+    });
+    assert.equal(q.tier, 'paid');
+    assert.equal(q.band, 'B1');
+    assert.equal(q.service, 'courier');
+    assert.equal(q.forcedMailIn, false);
+    assert.equal(q.courierAvailable, true);
+    assert.equal(q.adjustment, 25);
+    assert.equal(q.variantId, 71280436445437);
+    assert.equal(q.variantMode, 'ok');
+    assert.equal(q.total, 114);
+  });
+
   it('<£200 B1–B2 mail-in → +£20', () => {
     const q = quoteServiceAdjustment({
       postcode: 'SW11 8BJ',
@@ -179,7 +199,7 @@ describe('adjustment matrix — band × tag × service', () => {
     assert.equal(q.variantId, variantsAsset.variants['20']);
   });
 
-  it('<£200 B3/B4/outside → mail-in +£20 only (courier forced)', () => {
+  it('<£200 + B3/B4 + courier → still mail-in only', () => {
     for (const pc of ['N6 4AA', 'W5 5RF', OUTSIDE]) {
       const q = quoteServiceAdjustment({
         postcode: pc,
