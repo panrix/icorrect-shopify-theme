@@ -2007,25 +2007,22 @@ window.__QW_CATALOGUE = null;
      NAVIGATION + BREADCRUMB + PROGRESS
      ============================================= */
   /* Hold the wizard chrome at the same viewport Y across step swaps so
-     changing Device → Model → Fault doesn't "jump" when content height changes.
-     Only force-scroll if chrome is fully off-screen (e.g. back from pricing). */
+     Device → Model → Fault doesn't jump when content height changes.
+     Only pin when the chrome was already on-screen. Never yank the page
+     down to the wizard (that hijacked homepage load when the module sits
+     below the hero). */
   function pinWizardChrome(beforeTop) {
     if (_suppressScroll) return;
+    if (typeof beforeTop !== 'number') return;
     var anchor = document.querySelector('.qw-prog') || document.querySelector('.qw-wizard');
     if (!anchor) return;
-    var rect = anchor.getBoundingClientRect();
     var vh = window.innerHeight || document.documentElement.clientHeight || 0;
-    var topLimit = 72;
-    var offscreen = rect.bottom < topLimit || rect.top > vh * 0.85;
-    if (offscreen) {
-      scrollToEl(anchor, 80, 'start');
-      return;
-    }
-    if (typeof beforeTop === 'number') {
-      var delta = rect.top - beforeTop;
-      if (Math.abs(delta) > 1) {
-        try { window.scrollBy(0, delta); } catch (e) {}
-      }
+    /* Chrome started below the fold / off-page — leave scroll alone. */
+    if (beforeTop > vh * 0.9 || beforeTop < -120) return;
+    var rect = anchor.getBoundingClientRect();
+    var delta = rect.top - beforeTop;
+    if (Math.abs(delta) > 1) {
+      try { window.scrollBy(0, delta); } catch (e) {}
     }
   }
 
@@ -3993,11 +3990,17 @@ document.getElementById('qwEqErr').style.display = 'none';
       return;
     }
 
-    /* CASE 4: No context — start fresh */
+    /* CASE 4: No context — start fresh.
+       Keep scroll suppressed across go(1)'s rAF pin so homepage load
+       doesn't jump down into the quote module below the hero. */
     trackWizardEntry('fresh');
     renderDevices();
     go(1);
-    _suppressScroll = false;
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        _suppressScroll = false;
+      });
+    });
   }
 
   /* =============================================
