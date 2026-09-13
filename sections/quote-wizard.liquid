@@ -307,6 +307,23 @@ window.__QW_CATALOGUE = null;
     scrollToEl(target, 180, 'nearest');
   }
 
+
+  /* After model → fault: bring "What's wrong with your …?" back into view.
+     Model lists (esp. MacBook + find-model image) push users down the page;
+     pinWizardChrome preserves that Y and leaves the fault title off-screen. */
+  function focusWizardStep(stepN) {
+    if (_suppressScroll) return;
+    var title = document.getElementById('qw-s' + stepN + 't');
+    var step = document.getElementById('qw-s' + stepN);
+    var target = title || step || document.querySelector('.qw-prog') || document.querySelector('.qw-wizard');
+    if (!target) return;
+    var rect = target.getBoundingClientRect();
+    var vh = window.innerHeight || document.documentElement.clientHeight || 0;
+    /* Already comfortably in the upper half — don't yank. */
+    if (rect.top >= 56 && rect.top < vh * 0.42) return;
+    scrollToEl(target, 120, 'start');
+  }
+
   /* After postcode → land on collection + journey + price as one screen. */
   function focusCollectionPanel() {
     var slot = document.getElementById('qwSlotPanel');
@@ -2392,6 +2409,7 @@ window.__QW_CATALOGUE = null;
     }
     renderFaults(S.device);
     go(3);
+    focusWizardStep(3);
   }
 
 
