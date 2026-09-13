@@ -287,6 +287,43 @@
     return computed.adjustment;
   }
 
+  var FUNNEL_PII_KEYS = {
+    postcode: true,
+    Postcode: true,
+    full_postcode: true,
+    postal_code: true,
+    email: true,
+    name: true,
+    phone: true,
+    address: true,
+  };
+
+  /**
+   * PostHog courier-funnel extra fields. Outward code only — never a full postcode.
+   * @param {object|null} quote quoteServiceAdjustment result
+   * @param {object} [extra]
+   */
+  function courierFunnelExtra(quote, extra) {
+    quote = quote || {};
+    var payload = {
+      outward: quote.outward || null,
+      band: quote.band == null ? null : quote.band,
+      tier: quote.tier || null,
+      adjustment: quote.adjustment == null ? null : quote.adjustment,
+      repair_price: quote.repair_price == null ? null : quote.repair_price,
+      total: quote.total == null ? null : quote.total,
+      service: quote.service || null,
+    };
+    if (extra) {
+      Object.keys(extra).forEach(function (key) {
+        if (extra[key] === undefined) return;
+        if (FUNNEL_PII_KEYS[key]) return;
+        payload[key] = extra[key];
+      });
+    }
+    return payload;
+  }
+
   return {
     TIER_TAGS: TIER_TAGS,
     ADJUSTMENT: ADJUSTMENT,
@@ -298,6 +335,7 @@
     quoteServiceAdjustment: quoteServiceAdjustment,
     quoteCourierCollection: quoteCourierCollection,
     customerCourierPrice: customerCourierPrice,
+    courierFunnelExtra: courierFunnelExtra,
     isFreeEligible: isFreeEligible,
     roundMoney: roundMoney,
   };
