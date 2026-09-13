@@ -205,6 +205,30 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     }).catch(function () {});
   }
 
+  function captureQuoteEmailRequested(contact) {
+    var name = contact && contact.contact_name ? String(contact.contact_name) : (contact && contact.name ? String(contact.name) : "");
+    var email = contact && contact.contact_email ? String(contact.contact_email) : (contact && contact.email ? String(contact.email) : "");
+    var body = quotePayload({
+      quote_email_requested: true,
+      contact_name: name || null,
+      contact_email: email || null
+    });
+    if (!body.session_id) return;
+    var blob = new Blob([JSON.stringify(body)], { type: "application/json" });
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(ENDPOINT, blob);
+      return;
+    }
+    fetch(ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      keepalive: true,
+      credentials: "omit",
+      mode: "cors"
+    }).catch(function () {});
+  }
+
   function withPhCartAttribute(items) {
     var id = phDistinctId();
     if (!id) return items;
@@ -217,6 +241,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   window.icorrectQuoteEvents = {
     captureQuoteShown: captureQuoteShown,
     captureQuoteProceeded: captureQuoteProceeded,
+    captureQuoteEmailRequested: captureQuoteEmailRequested,
     withPhCartAttribute: withPhCartAttribute,
     phDistinctId: phDistinctId
   };
@@ -4102,6 +4127,14 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
  
         postQuoteWizardWebhook(payload).then(function() {
           showEmailSuccess();
+          try {
+            if (window.icorrectQuoteEvents && typeof window.icorrectQuoteEvents.captureQuoteEmailRequested === 'function') {
+              window.icorrectQuoteEvents.captureQuoteEmailRequested({
+                contact_name: name,
+                contact_email: email
+              });
+            }
+          } catch (e) {}
         }).catch(function() {
           sendBtn.disabled = false; sendBtn.textContent = 'Send quote';
           document.getElementById('qwEqErr').textContent = 'Something went wrong. Please try again.';
