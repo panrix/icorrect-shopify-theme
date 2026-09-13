@@ -269,7 +269,7 @@
 .qw-delivery-sub { font: 400 12px/1.4 var(--font-sans); color: #666; }
 .qw-delivery-price { font: 600 13px var(--font-mono); color: #171717; white-space: nowrap; flex-shrink: 0; margin-top: 1px; }
 
-.qw-courier-confirm { margin-bottom: 16px; padding: 12px 14px; border-radius: 8px; background: #e6f6ec; color: #1a6b34; font: 400 13px/1.5 var(--font-sans); box-shadow: inset 0 0 0 1px rgba(26,107,52,0.18); }
+.qw-courier-confirm { margin-bottom: 8px; padding: 8px 10px; border-radius: 8px; background: #e6f6ec; color: #1a6b34; font: 400 13px/1.35 var(--font-sans); box-shadow: inset 0 0 0 1px rgba(26,107,52,0.18); }
 .qw-courier-confirm strong { color: #134d24; font-weight: 600; }
 
 .qw-delivery-detail { margin-top: 4px; }
@@ -1089,7 +1089,7 @@ a.qw-d-val:hover { text-decoration: underline; text-underline-offset: 2px; }
   font-feature-settings: "tnum";
 }
 .qw-res-cta {
-  padding: 16px 24px 24px;
+  padding: 8px 24px 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -1650,16 +1650,25 @@ a.qw-d-val:hover { text-decoration: underline; text-underline-offset: 2px; }
 }
 
 .qw-courier-confirm {
-  margin-top: 12px;
-  padding: 12px 14px;
-  border-radius: 10px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
   background: #f0f7ff;
   color: #171717;
-  font: 500 14px/1.4 var(--font-sans);
+  font: 500 13px/1.35 var(--font-sans);
+}
+.qw-courier-confirm--compact {
+  margin-top: 8px;
+  margin-bottom: 0;
+  padding: 8px 10px;
+}
+.qw-courier-confirm-title {
+  font: 600 13px/1.3 var(--font-sans);
+  color: #171717;
 }
 .qw-courier-confirm-detail {
-  margin-top: 4px;
-  font: 400 13px/1.45 var(--font-sans);
+  margin-top: 2px;
+  font: 400 12px/1.35 var(--font-sans);
   color: #4d4d4d;
 }
 
@@ -2295,9 +2304,12 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 }
 .qw-price-trust-price {
   text-align: center;
-  padding: 16px 18px;
+  padding: 14px 18px 10px;
   border-top: 1px solid #e6e6e6;
   background: #fafafa;
+}
+.qw-price-trust-price .qw-price-big-wrap {
+  margin-bottom: 0;
 }
 .qw-price-trust-price .qw-price-from {
   margin-bottom: 4px;
@@ -2387,7 +2399,13 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
   .qw-trust-score { font-size: 24px; }
   .qw-trust-title { font-size: 12.5px; }
   .qw-trust-sub { font-size: 11px; }
-  .qw-price-trust-price .qw-price-big { font-size: 36px; }
+  .qw-price-trust-price {
+    padding: 12px 14px 6px;
+  }
+  .qw-price-trust-price .qw-price-big { font-size: 36px; margin-bottom: 0; }
+  .qw-price-trust-price .qw-price-big-wrap { margin-bottom: 0; }
+  .qw-res-cta { padding-top: 6px; }
+  .qw-res-price { margin-bottom: 0; }
   .qw-postcode-card.qw-postcode-card-resolved {
     padding: 10px 12px;
     margin-bottom: 8px;

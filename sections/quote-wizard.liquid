@@ -1534,8 +1534,22 @@ window.__QW_CATALOGUE = null;
       return;
     }
     if (choice) choice.hidden = false;
-    if (courierCard) courierCard.hidden = false;
-    if (choiceLabel) choiceLabel.hidden = !show;
+    /* Mobile: keep unavailable courier fully removed (desktop stays greyed). */
+    if (courierCard) {
+      var courierUnavailable = courierCard.classList.contains('qw-opt-disabled');
+      if (courierUnavailable && isMobileQuoteLayout()) {
+        courierCard.hidden = true;
+        courierCard.setAttribute('aria-hidden', 'true');
+        if (grid) grid.classList.add('qw-delivery-grid-solo');
+      } else {
+        courierCard.hidden = false;
+        courierCard.setAttribute('aria-hidden', 'false');
+      }
+    }
+    if (choiceLabel) {
+      var courierVisible = !!(courierCard && !courierCard.hidden);
+      choiceLabel.hidden = !show || !courierVisible;
+    }
   }
 
   function setPriceVisibility(show) {
@@ -1821,6 +1835,12 @@ window.__QW_CATALOGUE = null;
       if (pcCard) pcCard.classList.remove('qw-postcode-card-resolved');
       if (priceLbl) priceLbl.textContent = '—';
       if (mailLbl) mailLbl.textContent = '—';
+      if (courierCard) {
+        courierCard.classList.remove('qw-opt-disabled');
+        courierCard.removeAttribute('aria-disabled');
+        courierCard.removeAttribute('aria-hidden');
+        courierCard.hidden = false;
+      }
       setMailInOptionVisible(true);
       setPriceVisibility(false);
       hideServiceJourney();
@@ -1836,12 +1856,13 @@ window.__QW_CATALOGUE = null;
 
     if (courierCard) {
       courierCard.dataset.add = '0';
-      if (quote.courierAvailable === false) {
+      if (quote.courierAvailable === false || quote.forcedMailIn) {
         courierCard.classList.add('qw-opt-disabled');
         courierCard.setAttribute('aria-disabled', 'true');
       } else {
         courierCard.classList.remove('qw-opt-disabled');
         courierCard.removeAttribute('aria-disabled');
+        courierCard.removeAttribute('aria-hidden');
       }
     }
 
@@ -1872,10 +1893,12 @@ window.__QW_CATALOGUE = null;
       if (result) {
         result.hidden = false;
         if (quote.forcedMailIn) {
-          result.innerHTML = '<div class="qw-courier-confirm"><strong>Mail-in</strong> · Courier isn\'t available for this postcode' +
-            '<div class="qw-courier-confirm-detail">We\'ve switched you to tracked mail-in. Total below is all-in.</div></div>';
+          result.innerHTML = '<div class="qw-courier-confirm qw-courier-confirm--compact">' +
+            '<div class="qw-courier-confirm-title">Same Day Courier isn\'t available for your postcode.</div>' +
+            '<div class="qw-courier-confirm-detail">We\'ve switched you to tracked mail-in.</div></div>';
         } else {
-          result.innerHTML = '<div class="qw-courier-confirm"><strong>Mail-in pack</strong>' +
+          result.innerHTML = '<div class="qw-courier-confirm qw-courier-confirm--compact">' +
+            '<div class="qw-courier-confirm-title">Mail-in pack</div>' +
             '<div class="qw-courier-confirm-detail">Total below is the all-in price.</div></div>';
         }
       }
