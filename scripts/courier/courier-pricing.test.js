@@ -60,6 +60,28 @@ describe('outward → band lookup', () => {
     assert.equal(result.service, 'mail-in');
     assert.equal(result.band, null);
   });
+
+  it("SW1A 1AA → B1 via district SW1 (trailing letter fallback)", () => {
+    const result = lookupCourierBand('SW1A 1AA', bandsAsset);
+    assert.equal(result.service, 'courier');
+    assert.equal(result.band, 'B1');
+    assert.equal(result.rt_cost, bandsAsset.outward.SW1.rt_cost);
+  });
+
+  it("W1T 2LY still matches the existing W1T key as B1", () => {
+    const result = lookupCourierBand('W1T 2LY', bandsAsset);
+    assert.equal(result.service, 'courier');
+    assert.equal(result.outward, 'W1T');
+    assert.equal(result.band, 'B1');
+    assert.equal(result.rt_cost, bandsAsset.outward.W1T.rt_cost);
+  });
+
+  it("unknown ZZ9 9ZZ still mail-in fallback", () => {
+    const result = lookupCourierBand('ZZ9 9ZZ', bandsAsset);
+    assert.equal(result.service, 'mail-in');
+    assert.equal(result.band, null);
+    assert.equal(result.rt_cost, null);
+  });
 });
 
 describe('resolveCourierTier (tags beat price)', () => {

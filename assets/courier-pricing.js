@@ -68,6 +68,13 @@
       return { service: 'mail-in', outward: outward, band: null, rt_cost: null };
     }
     var entry = bandsAsset.outward[outward];
+    /* District fallback: SW1A → SW1 when only the district key exists. */
+    if (!entry && /[A-Z]$/.test(outward)) {
+      var district = outward.slice(0, -1);
+      if (bandsAsset.outward[district]) {
+        entry = bandsAsset.outward[district];
+      }
+    }
     if (!entry) {
       return { service: 'mail-in', outward: outward, band: null, rt_cost: null };
     }
