@@ -20,34 +20,51 @@ function parseThemeJson(rel) {
   return JSON.parse(read(rel).replace(/^\/\*[\s\S]*?\*\/\s*/, ''));
 }
 
-const NEW_SUB =
-  "The bench is at capacity, so we've paused walk-ins. Quote online and we'll collect your device — same day in London, or free tracked mail-in nationwide.";
+function serviceUpdate(noun) {
+  return `Service Update: the bench is at capacity, so we've paused walk-ins. Get an instant quote online, and we'll collect your ${noun} same day in London, nationwide by courier.`;
+}
+
 const STALE_SUB =
   'Courier collection across London, or free tracked mail-in nationwide.';
 
 describe('quote wizard collection-only intro', () => {
   const wizard = read('sections/quote-wizard.liquid');
 
-  it('renders the bench-at-capacity / no walk-ins explanation', () => {
+  it('renders the Service Update and names the device from the page', () => {
+    assert.match(wizard, /Service Update:/);
     assert.match(wizard, /paused walk-ins/);
-    assert.match(wizard, /same day in London/);
-    assert.match(wizard, /free tracked mail-in nationwide/);
-    assert.match(wizard, /qw_sub_default/);
+    assert.match(wizard, /Get an instant quote online/);
+    assert.match(wizard, /nationwide by courier/);
+    assert.match(wizard, /assign qw_noun = 'iPhone'/);
+    assert.match(wizard, /assign qw_noun = 'MacBook'/);
+    assert.match(wizard, /assign qw_noun = 'iPad'/);
+    assert.match(wizard, /assign qw_noun = 'Apple Watch'/);
+    assert.match(wizard, /assign qw_noun = 'device'/);
   });
 
-  it('still remaps the stale courier-only one-liner', () => {
-    assert.match(wizard, /assign qw_sub_stale = 'Courier collection across London/);
-    assert.match(wizard, /qw_sub == qw_sub_stale/);
-  });
-
-  it('schema default matches the live intro', () => {
-    assert.match(wizard, new RegExp(NEW_SUB.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-  });
-
-  it('homepage quote uses the collection-only intro', () => {
+  it('homepage quote says device, not a named product', () => {
     const index = parseThemeJson('templates/index.json');
-    assert.equal(index.sections.contact_with_map_JLb8kC.settings.subheading, NEW_SUB);
+    assert.equal(index.sections.contact_with_map_JLb8kC.settings.subheading, serviceUpdate('device'));
     assert.equal(read('templates/index.json').includes(STALE_SUB), false);
+  });
+
+  it('iPhone / MacBook / iPad / Watch templates use the matching noun', () => {
+    assert.equal(
+      parseThemeJson('templates/collection.iphone-collections.json').sections.quote_wizard_top.settings.subheading,
+      serviceUpdate('iPhone')
+    );
+    assert.equal(
+      parseThemeJson('templates/collection.macbook-collections.json').sections.quote_wizard_top.settings.subheading,
+      serviceUpdate('MacBook')
+    );
+    assert.equal(
+      parseThemeJson('templates/collection.ipad-collections.json').sections.quote_wizard_top.settings.subheading,
+      serviceUpdate('iPad')
+    );
+    assert.equal(
+      parseThemeJson('templates/collection.apple-watch-collections.json').sections.quote_wizard_top.settings.subheading,
+      serviceUpdate('Apple Watch')
+    );
   });
 });
 
@@ -59,10 +76,9 @@ describe('device collection pages put the quote first', () => {
       order.indexOf('quote_wizard_top') < order.indexOf('parent_categories_nWCAYw'),
       'iPhone quote is still below Choose your iPhone model'
     );
-    assert.equal(t.sections.quote_wizard_top.settings.subheading, NEW_SUB);
   });
 
-  it('iPad collections: wizard above the model grid and a real description', () => {
+  it('iPad collections: wizard above the model grid and a real description without an em dash', () => {
     const t = parseThemeJson('templates/collection.ipad-collections.json');
     const order = t.order;
     assert.ok(
@@ -73,6 +89,6 @@ describe('device collection pages put the quote first', () => {
     assert.ok(details && details.length > 80, 'iPad collection still has no description');
     assert.match(details, /iPad repairs/i);
     assert.match(details, /collect/i);
-    assert.equal(t.sections.quote_wizard_top.settings.subheading, NEW_SUB);
+    assert.equal(details.includes('—'), false, 'iPad description still has an em dash');
   });
 });
