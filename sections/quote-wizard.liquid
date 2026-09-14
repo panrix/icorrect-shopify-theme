@@ -3447,14 +3447,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       var postcodeMi = postcodeInputMi ? String(postcodeInputMi.value || '').trim() : '';
       if (postcodeMi) items[0].properties['Postcode'] = postcodeMi.toUpperCase();
       if (_courierQuote && _courierQuote.band) items[0].properties['Band'] = _courierQuote.band;
-      var miVid = CFG.mailIn ? CFG.mailIn.variantId : null;
-      if (miVid && miVid !== 'null' && miVid !== null) {
-        items.push({
-          id: parseInt(miVid, 10),
-          quantity: 1,
-          properties: { 'Service Type': 'Mail-in' }
-        });
-      }
+      /* Do not add mail-in-service (Shopify £20). ≥£200 postage is already
+         in the all-in quote (adjustment 0). Paid postage is the adjustment variant. */
     }
 
     /* Service adjustment variant — null-safe: missing ID already forced free mail-in in quote */
