@@ -162,6 +162,28 @@
   }
 
   /**
+   * Build the £15/£20/£25 → variant ID map from a live Shopify product.js payload.
+   * Missing / empty product (draft, 404) → {} so checkout never uses a dead ID.
+   * Price may be cents (product.js) or pounds (Admin-style "15.00").
+   *
+   * @param {{ variants?: Array<{ id?: number, price?: number|string }> }|null|undefined} product
+   * @returns {Record<string, number>}
+   */
+  function storefrontAdjustmentMap(product) {
+    if (!product || !product.variants || !product.variants.length) return {};
+    var map = {};
+    for (var i = 0; i < product.variants.length; i++) {
+      var variant = product.variants[i];
+      if (!variant || variant.id == null) continue;
+      var raw = Number(variant.price);
+      if (!Number.isFinite(raw) || raw <= 0) continue;
+      var pounds = raw >= 100 ? Math.round(raw / 100) : Math.round(raw);
+      if (pounds > 0) map[String(pounds)] = Number(variant.id);
+    }
+    return map;
+  }
+
+  /**
    * Resolve Shopify variant ID for a quoted adjustment.
    * Null-safe: missing ID → free mail-in fallback (never charge £0 for a quote).
    *
@@ -332,6 +354,7 @@
     resolveCourierTier: resolveCourierTier,
     computeAdjustment: computeAdjustment,
     resolveAdjustmentVariant: resolveAdjustmentVariant,
+    storefrontAdjustmentMap: storefrontAdjustmentMap,
     quoteServiceAdjustment: quoteServiceAdjustment,
     quoteCourierCollection: quoteCourierCollection,
     customerCourierPrice: customerCourierPrice,

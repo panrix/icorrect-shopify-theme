@@ -118,8 +118,9 @@ window.WIZARD_CFG = {
   catalogueUrl: {{ 'repair-catalogue-map.json' | asset_url | json }},
   collectionPrefillUrl: {{ 'wizard-collection-prefill.json' | asset_url | json }},
   serviceAdjustmentsUrl: {{ 'service-adjustment-variants.json' | asset_url | json }},
+  serviceAdjustmentHandle: 'service-adjustment',
   macbookModelHintUrl: {{ 'macbook-model-number.svg' | asset_url | json }},
-  /* Inline IDs so checkout never waits on a fetch for money-path (#53) */
+  /* Optimistic IDs; ensureCourierAssets replaces from live product.js (empty if draft/404). */
   serviceAdjustments: {
     "15": 71280436379901,
     "20": 71280436412669,
@@ -1815,11 +1816,23 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     if (!window.__QW_CATALOGUE && CFG.catalogueUrl) {
       jobs.push(fetch(CFG.catalogueUrl).then(function(r){ return r.json(); }).then(function(j){ window.__QW_CATALOGUE = j; }));
     }
-    if (!window.__QW_SERVICE_ADJUSTMENTS && CFG.serviceAdjustmentsUrl) {
-      jobs.push(fetch(CFG.serviceAdjustmentsUrl).then(function(r){ return r.json(); }).then(function(j){
-        window.__QW_SERVICE_ADJUSTMENTS = j;
-        if (j && j.variants) CFG.serviceAdjustments = Object.assign({}, CFG.serviceAdjustments || {}, j.variants);
-      }).catch(function(){ /* inline CFG IDs remain */ }));
+    if (!window.__QW_SERVICE_ADJUSTMENTS) {
+      var adjHandle = CFG.serviceAdjustmentHandle || 'service-adjustment';
+      jobs.push(
+        fetch(getShopifyRoot() + 'products/' + adjHandle + '.js', { headers: { 'Accept': 'application/json' } })
+          .then(function(r){ if (!r.ok) throw new Error('unpublished'); return r.json(); })
+          .then(function(p){
+            var map = window.ICorrectCourier && window.ICorrectCourier.storefrontAdjustmentMap
+              ? window.ICorrectCourier.storefrontAdjustmentMap(p)
+              : {};
+            CFG.serviceAdjustments = map;
+            window.__QW_SERVICE_ADJUSTMENTS = { variants: map, source: 'storefront' };
+          })
+          .catch(function(){
+            CFG.serviceAdjustments = {};
+            window.__QW_SERVICE_ADJUSTMENTS = { variants: {}, source: 'unavailable' };
+          })
+      );
     }
     if (!window.__QW_COLLECTION_PREFILL && CFG.collectionPrefillUrl) {
       jobs.push(fetch(CFG.collectionPrefillUrl).then(function(r){ return r.json(); }).then(function(j){ window.__QW_COLLECTION_PREFILL = j; }));

@@ -697,6 +697,7 @@ window.__ADDITIONAL_REPAIR_COURIER = {
   bandsUrl: {{ 'courier-london-bands.json' | asset_url | json }},
   productTags: {{ product.tags | json }},
   repairPrice: {{ product.price | money_without_trailing_zeros | remove: cart.currency.symbol | json }},
+  serviceAdjustmentHandle: 'service-adjustment',
   serviceAdjustments: {
     "15": 71280436379901,
     "20": 71280436412669,
@@ -724,6 +725,28 @@ document.addEventListener("DOMContentLoaded", () => {
     if (__bands) return Promise.resolve(__bands);
     if (!COURIER_CFG.bandsUrl) return Promise.resolve(null);
     return fetch(COURIER_CFG.bandsUrl).then(function(r){ return r.json(); }).then(function(j){ __bands = j; return j; });
+  }
+
+  var __adjustmentsReady = false;
+  function ensureServiceAdjustments() {
+    if (__adjustmentsReady) return Promise.resolve(COURIER_CFG.serviceAdjustments);
+    var handle = COURIER_CFG.serviceAdjustmentHandle || 'service-adjustment';
+    var root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+    return fetch(root + 'products/' + handle + '.js', { headers: { 'Accept': 'application/json' } })
+      .then(function(r){ if (!r.ok) throw new Error('unpublished'); return r.json(); })
+      .then(function(p){
+        var map = window.ICorrectCourier && window.ICorrectCourier.storefrontAdjustmentMap
+          ? window.ICorrectCourier.storefrontAdjustmentMap(p)
+          : {};
+        COURIER_CFG.serviceAdjustments = map;
+        __adjustmentsReady = true;
+        return map;
+      })
+      .catch(function(){
+        COURIER_CFG.serviceAdjustments = {};
+        __adjustmentsReady = true;
+        return {};
+      });
   }
 
   function quoteCurrentService() {
@@ -827,7 +850,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function refreshCourierQuote() {
-    ensureBands().then(function(){
+    Promise.all([ensureBands(), ensureServiceAdjustments()]).then(function(){
       const quote = quoteCurrentService();
       applyServiceQuote(quote);
     }).catch(function(){ applyServiceQuote(null); });
@@ -1395,6 +1418,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!__bands) {
       try { __bands = await ensureBands(); } catch (e) {}
     }
+    try { await ensureServiceAdjustments(); } catch (e) {}
     _courierQuote = quoteCurrentService();
     if (_courierQuote && _courierQuote.forcedMailIn) {
       // Null-variant or unavailable courier → mail-in path
