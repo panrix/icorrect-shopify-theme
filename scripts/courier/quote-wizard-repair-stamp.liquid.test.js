@@ -29,4 +29,13 @@ describe('quote-wizard repair stamp wiring', () => {
     assert.match(syncBody, /syncIcorrectQuote\(\)/);
     assert.ok(emailIdx > 0);
   });
+
+  it('diagnostic turnaround copy is 1 working day, not 24 hours', () => {
+    assert.match(liquid, /Quote in 1 working day/);
+    assert.match(liquid, /diagnose within 1 working day/);
+    assert.equal(liquid.includes('Quote in 24 hours'), false);
+    assert.equal(liquid.includes('24 hours on the bench'), false);
+    assert.equal(liquid.includes('diagnose within 24 hours'), false);
+    assert.match(liquid, /within 24 hours/); // liquid-damage incident copy stays
+  });
 });

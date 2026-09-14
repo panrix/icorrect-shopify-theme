@@ -113,7 +113,7 @@ window.WIZARD_CONTEXT = {
 <script>
 window.WIZARD_CFG = {
   warrantyLabel: {{ section.settings.warranty_label | default: '2-year warranty' | json }},
-  diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: 'Quote in 24 hours' | json }},
+  diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: 'Quote in 1 working day' | json }},
   bandsUrl: {{ 'courier-london-bands.json' | asset_url | json }},
   catalogueUrl: {{ 'repair-catalogue-map.json' | asset_url | json }},
   collectionPrefillUrl: {{ 'wizard-collection-prefill.json' | asset_url | json }},
@@ -1460,7 +1460,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   }
 
   function buildDiagnosticBadges(device) {
-    return svcBadge('turnaround', CFG.diagnosticTurnaround || 'Quote in 24 hours') +
+    return svcBadge('turnaround', CFG.diagnosticTurnaround || 'Quote in 1 working day') +
       svcBadge('diagnostic', 'Full report and quote sent via email');
   }
 
@@ -1473,7 +1473,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       });
     }
     if (opts.diagnostic || S.route === 'diagnostic') {
-      return CFG.diagnosticTurnaround || 'Quote in 24 hours';
+      return CFG.diagnosticTurnaround || 'Quote in 1 working day';
     }
     var days = repairBenchDays(device, opts);
     if (days === 1) return '1 working day';
@@ -1635,7 +1635,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         kind: 'diagnostic',
         steps: [
           { title: 'We collect', meta: collect ? formatJourneyDate(collect) : 'Pick a collection window' },
-          { title: 'We diagnose', meta: '24 hours on the bench' },
+          { title: 'We diagnose', meta: '1 working day on the bench' },
           { title: 'Quote emailed to you', meta: collect ? formatJourneyDate(addWorkingDays(collect, 1)) : 'Device stays with us' }
         ],
         returnDate: null,
@@ -1702,7 +1702,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         steps: [
           { title: 'We send pack', meta: formatJourneyDate(ship) },
           { title: 'You post device', meta: formatJourneyDate(youPostBy) },
-          { title: 'We diagnose', meta: '24 hours on the bench' },
+          { title: 'We diagnose', meta: '1 working day on the bench' },
           { title: 'Quote emailed to you', meta: formatJourneyDate(quoteDate) }
         ],
         returnDate: null,
@@ -3785,7 +3785,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           '<div class="qw-res-badge qw-badge-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>We need to take a look</div>' +
           '<h3 class="qw-res-h">Book a Diagnostic</h3>' +
           '<p class="qw-res-p">' + esc(iss.copy) + '</p>' +
-          '<p class="qw-res-p">We collect, diagnose within 24 hours, then email your quote. The device stays with us until you decide.</p>' +
+          '<p class="qw-res-p">We collect, diagnose within 1 working day, then email your quote. The device stays with us until you decide.</p>' +
           likelyHtml +
         '</div>' +
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
@@ -4773,7 +4773,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
       "type": "text",
       "id": "diagnostic_turnaround",
       "label": "Diagnostic turnaround label",
-      "default": "Quote in 24 hours"
+      "default": "Quote in 1 working day"
     },
     {
       "type": "text",

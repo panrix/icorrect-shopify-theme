@@ -38,6 +38,15 @@ describe('courier clocks from Monday collection', () => {
     assert.equal(iso(j.quoteDate), '2026-09-15');
     assert.equal(j.returnDate, null);
     assert.equal(j.steps[2].title, 'Quote emailed to you');
+    assert.equal(j.steps[1].meta, '1 working day on the bench');
+    assert.equal(J.turnaroundClaimLabel('macbook', { diagnostic: true }), 'Quote in 1 working day');
+  });
+
+  it('Friday collection quotes next working day (Monday)', () => {
+    const friday = new Date(2026, 8, 18); // Fri 18 Sep 2026
+    const j = J.courierDiagnosticJourney(friday);
+    assert.equal(iso(j.quoteDate), '2026-09-21');
+    assert.equal(j.returnDate, null);
   });
 });
 
@@ -56,6 +65,13 @@ describe('mail-in from Sunday evening', () => {
     assert.equal(j.returnDate, null);
     assert.ok(j.quoteDate);
     assert.equal(j.steps[2].title, 'We diagnose');
+    assert.equal(j.steps[2].meta, '1 working day on the bench');
     assert.equal(j.steps[3].title, 'Quote emailed to you');
+  });
+
+  it('mail-in received Friday quotes Monday', () => {
+    const wednesdayMorning = new Date(2026, 8, 16, 9, 0, 0); // Wed 16 Sep
+    const j = J.mailinDiagnosticJourney(wednesdayMorning);
+    assert.equal(iso(j.quoteDate), '2026-09-21');
   });
 });

@@ -60,7 +60,7 @@
 
   function turnaroundClaimLabel(device, opts) {
     opts = opts || {};
-    if (opts.diagnostic) return 'Quote in 24 hours';
+    if (opts.diagnostic) return 'Quote in 1 working day';
     var days = repairBenchDays(device, opts);
     if (days === 1) return '1 working day';
     return days + ' working days';
@@ -99,7 +99,7 @@
         kind: 'diagnostic',
         steps: [
           { title: 'We collect', meta: 'Pick a collection window' },
-          { title: 'We diagnose', meta: '24 hours on the bench' },
+          { title: 'We diagnose', meta: '1 working day on the bench' },
           { title: 'Quote emailed to you', meta: 'Device stays with us' }
         ],
         returnDate: null,
@@ -111,7 +111,7 @@
       kind: 'diagnostic',
       steps: [
         { title: 'We collect', meta: collectDate },
-        { title: 'We diagnose', meta: '24 hours on the bench' },
+          { title: 'We diagnose', meta: '1 working day on the bench' },
         { title: 'Quote emailed to you', meta: quoteDate }
       ],
       returnDate: null,
@@ -149,7 +149,7 @@
       steps: [
         { title: 'We send pack', meta: ship },
         { title: 'You post device', meta: youPost },
-        { title: 'We diagnose', meta: '24 hours on the bench' },
+          { title: 'We diagnose', meta: '1 working day on the bench' },
         { title: 'Quote emailed to you', meta: quoteDate }
       ],
       returnDate: null,
