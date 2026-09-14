@@ -113,3 +113,26 @@ describe('mail-in pack clock (UK, UPost +1 working day)', () => {
     assert.equal(iso(j.quoteDate), '2026-09-18');
   });
 });
+
+describe('quote-wizard packShipDate fallback uses UK time', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const wizard = fs.readFileSync(
+    path.join(__dirname, '../../sections/quote-wizard.liquid'),
+    'utf8'
+  );
+  const start = wizard.indexOf('function packShipDate(now)');
+  const end = wizard.indexOf('function journeyStepHtml(');
+  assert.ok(start >= 0 && end > start, 'packShipDate / journeyStepHtml markers missing');
+  const fallback = wizard.slice(wizard.lastIndexOf('function londonWall(now)', start), end);
+
+  it('fallback derives the cutoff from Europe/London, not Date#getHours', () => {
+    assert.match(fallback, /timeZone:\s*'Europe\/London'/);
+    assert.equal(
+      /getHours\s*\(/.test(fallback),
+      false,
+      'wizard packShipDate fallback still uses browser-local getHours()'
+    );
+    assert.match(fallback, /wall\.hour >= PACK_CUTOFF_HOUR/);
+  });
+});

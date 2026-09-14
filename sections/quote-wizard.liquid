@@ -1602,12 +1602,34 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     return DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()];
   }
 
+  function londonWall(now) {
+    var parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/London',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23'
+    }).formatToParts(now || new Date());
+    var get = function (type) {
+      for (var i = 0; i < parts.length; i++) {
+        if (parts[i].type === type) return parts[i].value;
+      }
+      return '0';
+    };
+    return {
+      date: new Date(parseInt(get('year'), 10), parseInt(get('month'), 10) - 1, parseInt(get('day'), 10)),
+      hour: parseInt(get('hour'), 10) + parseInt(get('minute'), 10) / 60
+    };
+  }
+
   function packShipDate(now) {
     var lib = window.ICorrectRepairJourney;
     if (lib && typeof lib.packShipDate === 'function') return lib.packShipDate(now);
-    var n = now || new Date();
-    var d = startOfDay(n);
-    if (!isWorkingDay(d) || n.getHours() >= PACK_CUTOFF_HOUR) {
+    var wall = londonWall(now);
+    var d = startOfDay(wall.date);
+    if (!isWorkingDay(d) || wall.hour >= PACK_CUTOFF_HOUR) {
       return addWorkingDays(d, 1);
     }
     return d;
