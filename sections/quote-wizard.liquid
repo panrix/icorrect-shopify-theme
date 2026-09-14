@@ -1594,6 +1594,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   var _quoteShownCaptured = false;
   var _collectionSlot = { date: null, part: null };
   var _collectionSlotDates = [];
+  var _standardCollectIso = null;
   var SLOT_STRIP_COUNT = 5;
   var SLOT_CALENDAR_COUNT = 28;
 
@@ -2319,10 +2320,12 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var found = findSlotDate(iso);
     if (!found) return;
     _collectionSlot.date = found;
+    _standardCollectIso = found.iso || _standardCollectIso;
     paintDateStrip();
     syncIcorrectQuote();
     refreshServiceJourney();
     trackSlotSelected();
+    refreshTurnaroundCards();
   }
 
   function renderCollectionSlots(band) {
@@ -2347,6 +2350,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
     var keepIso = _collectionSlot.date && _collectionSlot.date.iso;
     _collectionSlot.date = (keepIso && findSlotDate(keepIso)) || _collectionSlotDates[0];
+    if (_collectionSlot.date && _collectionSlot.date.iso) _standardCollectIso = _collectionSlot.date.iso;
     paintDateStrip();
 
     var parts = window.ICorrectCourierSlots.dayParts();
@@ -2372,6 +2376,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         syncIcorrectQuote();
         refreshServiceJourney();
         trackSlotSelected();
+        refreshTurnaroundCards();
       });
     });
 
@@ -2414,7 +2419,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       _quoteShownCaptured = false;
       syncIcorrectQuote();
       if (reveal) reveal.hidden = true;
-      if (slotPanel) { slotPanel.hidden = true; _collectionSlot = { date: null, part: null }; _collectionSlotDates = []; }
+      if (slotPanel) { slotPanel.hidden = true; _collectionSlot = { date: null, part: null }; _collectionSlotDates = []; _standardCollectIso = null; }
       if (mailPanel) mailPanel.hidden = true;
       if (result) { result.hidden = true; result.innerHTML = ''; }
       if (pcCard) pcCard.classList.remove('qw-postcode-card-resolved');
@@ -2474,7 +2479,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     } else if (quote.forcedMailIn || quote.service === 'mail-in') {
       selectServiceCard('mailin');
       setMailInOptionVisible(true);
-      if (slotPanel) { slotPanel.hidden = true; _collectionSlot = { date: null, part: null }; _collectionSlotDates = []; }
+      if (slotPanel) { slotPanel.hidden = true; _collectionSlot = { date: null, part: null }; _collectionSlotDates = []; _standardCollectIso = null; }
       if (mailPanel) mailPanel.hidden = false;
       if (result) {
         result.hidden = false;
@@ -2524,7 +2529,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           hideServiceJourney();
         }
       } else {
-        if (slotPanel) { slotPanel.hidden = true; _collectionSlot = { date: null, part: null }; }
+        if (slotPanel) { slotPanel.hidden = true; _collectionSlot = { date: null, part: null }; _standardCollectIso = null; }
         if (mailPanel) mailPanel.hidden = false;
         refreshServiceJourney();
       }
@@ -2611,10 +2616,35 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var device = ctx.device;
     var diagnostic = !!ctx.diagnostic;
     var showFast = diagnostic || device === 'macbook' || device === 'ipad';
-    if (device === 'iphone' || device === 'watch') showFast = false;
+    if (!diagnostic && (device === 'iphone' || device === 'watch')) showFast = false;
     var innerLondon = ctx.service === 'courier' && (ctx.band === 'B1' || ctx.band === 'B2');
     var showSameDay = !diagnostic && innerLondon && (device === 'iphone' || device === 'macbook') && !!ctx.sameDayOk;
     return { standard: true, fast: showFast, sameDay: showSameDay };
+  }
+
+  function collectionWindowFromPartId(partId) {
+    return partId === 'PM' ? 'afternoon' : 'morning';
+  }
+
+  function ensureMorningCollectionWindow() {
+    if (collectionWindowFromPartId(_collectionSlot.part && _collectionSlot.part.id) === 'morning') return;
+    var amPart = null;
+    if (window.ICorrectCourierSlots && typeof window.ICorrectCourierSlots.dayParts === 'function') {
+      var parts = window.ICorrectCourierSlots.dayParts();
+      for (var i = 0; i < parts.length; i++) {
+        if (parts[i].id === 'AM') { amPart = parts[i]; break; }
+      }
+    }
+    if (amPart) _collectionSlot.part = amPart;
+    else if (_collectionSlot.part) _collectionSlot.part = Object.assign({}, _collectionSlot.part, { id: 'AM' });
+    var partsEl = document.getElementById('qwSlotParts');
+    if (partsEl) {
+      partsEl.querySelectorAll('.qw-window-btn').forEach(function(b) {
+        var on = b.getAttribute('data-part') === 'AM';
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+    }
   }
 
   function currentSpeedService() {
@@ -2627,7 +2657,6 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   function buildSameDayOpts() {
     var stub = window.__sameDayEligibility || { inStock: false, dates: {} };
     var partId = _collectionSlot.part && _collectionSlot.part.id;
-    var collectionWindow = partId === 'PM' ? 'afternoon' : 'morning';
     return {
       device: S.device,
       band: (_courierQuote && _courierQuote.band) || null,
@@ -2636,7 +2665,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       inStock: stub.inStock === true,
       slotsByDate: stub.dates || {},
       slotsRemaining: typeof stub.slotsRemaining === 'number' ? stub.slotsRemaining : undefined,
-      collectionWindow: S.device === 'macbook' ? 'morning' : collectionWindow,
+      collectionWindow: collectionWindowFromPartId(partId),
       now: new Date()
     };
   }
@@ -2661,6 +2690,24 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
   function weCollectSentence(dateLabel) {
     return dateLabel ? ('We collect ' + dateLabel + '.') : 'We collect.';
+  }
+
+  function dateToIsoLocal(d) {
+    if (!d) return '';
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1);
+    var day = String(d.getDate());
+    if (m.length < 2) m = '0' + m;
+    if (day.length < 2) day = '0' + day;
+    return y + '-' + m + '-' + day;
+  }
+
+  function standardCardCollectIso(ctx) {
+    ctx = ctx || {};
+    if (ctx.standardCollectIso) return ctx.standardCollectIso;
+    if (ctx.selectedSpeed === 'same_day') return ctx.packShipIso || '';
+    if (ctx.collectionIso) return ctx.collectionIso;
+    return ctx.packShipIso || '';
   }
 
   function standardSpeedCopy(dateLabel) {
@@ -2708,12 +2755,14 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     if (current === 'same_day' && !offers.sameDay) current = 'standard';
     if (offers.sameDay && picked) S.sameDayDate = picked.iso;
 
-    var dateLabel = '';
-    if (current === 'same_day' && picked) {
-      dateLabel = formatJourneyDate(parseISODate(picked.iso));
-    } else if (_collectionSlot.date && _collectionSlot.date.iso) {
-      dateLabel = formatJourneyDate(parseISODate(_collectionSlot.date.iso));
-    }
+    var stdIso = standardCardCollectIso({
+      selectedSpeed: current,
+      sameDayIso: picked ? picked.iso : '',
+      collectionIso: (_collectionSlot.date && _collectionSlot.date.iso) || '',
+      standardCollectIso: _standardCollectIso || '',
+      packShipIso: dateToIsoLocal(packShipDate(new Date()))
+    });
+    var dateLabel = stdIso ? formatJourneyDate(parseISODate(stdIso)) : '';
 
     var cfgFastVid = parseInt(cfg.fastVariantId, 10) || 0;
     var fastPrice = 79;
@@ -2827,6 +2876,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         if (datesEl) datesEl.hidden = card.getAttribute('data-speed') !== 'same_day';
         if (card.getAttribute('data-speed') === 'same_day') {
           S.sameDayDate = card.getAttribute('data-date') || S.sameDayDate;
+          ensureMorningCollectionWindow();
         }
         refreshAllInTotal();
         refreshServiceJourney();
@@ -4619,6 +4669,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
     _postcodeResolved = false;
     _quoteShownCaptured = false;
     _collectionSlot = { date: null, part: null };
+    _standardCollectIso = null;
     window.__icorrectQuote = {};
     _collectionProducts = [];
     _trackedSteps = {};

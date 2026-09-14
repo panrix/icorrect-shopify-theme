@@ -141,6 +141,110 @@ describe('planSpeedOffers', () => {
       { standard: true, fast: false, sameDay: false }
     );
   });
+
+  it('iPhone diagnostic still gets Fast; known-repair iPhone does not', () => {
+    assert.deepEqual(
+      plan({ device: 'iphone', service: 'courier', band: 'B1', diagnostic: true, sameDayOk: true }),
+      { standard: true, fast: true, sameDay: false }
+    );
+    assert.deepEqual(
+      plan({ device: 'iphone', service: 'mailin', band: null, diagnostic: true, sameDayOk: false }),
+      { standard: true, fast: true, sameDay: false }
+    );
+    assert.deepEqual(
+      plan({ device: 'iphone', service: 'courier', band: 'B3', diagnostic: true, sameDayOk: false }),
+      { standard: true, fast: true, sameDay: false }
+    );
+    assert.deepEqual(
+      plan({ device: 'iphone', service: 'courier', band: 'B1', diagnostic: false, sameDayOk: true }),
+      { standard: true, fast: false, sameDay: true }
+    );
+  });
+});
+
+describe('MacBook same-day uses selected collection window', () => {
+  it('maps AM/PM part ids to morning/afternoon', () => {
+    const fromPart = new Function('return (' + extractFunction(liquid, 'collectionWindowFromPartId') + ')')();
+    assert.equal(fromPart('AM'), 'morning');
+    assert.equal(fromPart('PM'), 'afternoon');
+    assert.equal(fromPart(null), 'morning');
+  });
+
+  it('does not hardcode MacBook eligibility to morning', () => {
+    const fn = extractFunction(liquid, 'buildSameDayOpts');
+    assert.doesNotMatch(fn, /macbook['"]?\s*\?\s*['"]morning['"]/);
+    assert.match(fn, /collectionWindowFromPartId/);
+  });
+
+  it('afternoon window refresh hides same-day until morning; same-day pick forces morning', () => {
+    const windowClick = liquid.slice(
+      liquid.indexOf("btn.getAttribute('data-part')"),
+      liquid.indexOf("btn.getAttribute('data-part')") + 800
+    );
+    assert.match(windowClick, /refreshTurnaroundCards\s*\(/);
+    assert.match(liquid, /function ensureMorningCollectionWindow\s*\(/);
+    const sameDayClick = liquid.slice(
+      liquid.indexOf("card.getAttribute('data-speed') === 'same_day'"),
+      liquid.indexOf("card.getAttribute('data-speed') === 'same_day'") + 400
+    );
+    assert.match(sameDayClick, /ensureMorningCollectionWindow\s*\(/);
+  });
+});
+
+describe('standard card copy uses standard collect clock', () => {
+  const standardIso = new Function('return (' + extractFunction(liquid, 'standardCardCollectIso') + ')')();
+
+  it('ignores selected same-day date when Same-day is selected', () => {
+    assert.equal(
+      standardIso({
+        selectedSpeed: 'same_day',
+        sameDayIso: '2026-09-14',
+        collectionIso: '2026-09-16',
+        standardCollectIso: '2026-09-16',
+        packShipIso: '2026-09-15'
+      }),
+      '2026-09-16'
+    );
+    assert.equal(
+      standardIso({
+        selectedSpeed: 'same_day',
+        sameDayIso: '2026-09-14',
+        collectionIso: '2026-09-14',
+        standardCollectIso: '',
+        packShipIso: '2026-09-15'
+      }),
+      '2026-09-15'
+    );
+  });
+
+  it('uses collection slot when Standard is selected, else next-working-day clock', () => {
+    assert.equal(
+      standardIso({
+        selectedSpeed: 'standard',
+        sameDayIso: '2026-09-14',
+        collectionIso: '2026-09-16',
+        standardCollectIso: '',
+        packShipIso: '2026-09-15'
+      }),
+      '2026-09-16'
+    );
+    assert.equal(
+      standardIso({
+        selectedSpeed: 'standard',
+        collectionIso: '',
+        standardCollectIso: '',
+        packShipIso: '2026-09-15'
+      }),
+      '2026-09-15'
+    );
+  });
+
+  it('buildTurnaroundCards feeds Standard copy from standardCardCollectIso, not picked same-day', () => {
+    const fn = extractFunction(liquid, 'buildTurnaroundCards');
+    assert.match(fn, /standardCardCollectIso\s*\(/);
+    assert.match(fn, /standardSpeedCopy\s*\(/);
+    assert.doesNotMatch(fn, /current === 'same_day' && picked/);
+  });
 });
 
 describe('speedCardHtml data attributes', () => {
