@@ -1447,17 +1447,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      // MAIL-IN pack SKU (null-safe if product absent)
-      if (mailActive || (mailInCheckbox && mailInCheckbox.checked)) {
-        const id = mailInCheckbox ? parseInt(mailInCheckbox.value, 10) : 0;
-        if (id && !Number.isNaN(id)) {
-          items.push({
-            id,
-            quantity: 1,
-            properties: { 'Service Type': 'Mail-in' }
-          });
-        }
-      }
+      /* Do not add mail-in-service (Shopify £20). Service Type is on the
+         repair line. Paid postage is the adjustment variant only. */
 
       // TURNAROUND
       const trt = document.querySelector('.turn_arround_time-wrapper input[type="radio"]:checked');
