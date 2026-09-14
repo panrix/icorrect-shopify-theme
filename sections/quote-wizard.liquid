@@ -1030,9 +1030,9 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: 'Battery draining quickly', route: 'repair', repairType: 'battery', copy: 'Your battery has degraded and isn\'t holding a full charge. We\'ll replace it with an original-spec battery and your MacBook will show accurate health monitoring again.' },
         { label: '"Service Recommended" warning', route: 'repair', repairType: 'battery', copy: 'macOS is telling you the battery needs replacing. We use original-spec batteries and your health monitoring will report accurately after the swap.' },
         { label: 'Battery swollen or expanding', route: 'repair', repairType: 'battery', copy: 'We\'ll safely remove the old battery and fit a new one.', urgent: true },
-        { label: 'Won\'t turn on', route: 'repair', repairType: 'battery', copy: 'A MacBook that won\'t power on is often the battery. We\'ll quote a battery replacement. If we find a board or charging fault after it arrives, we\'ll contact you before doing extra work.' },
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'A MacBook that won\'t power on could be the battery, charging circuit, or logic board. We can\'t quote the full repair until we\'ve looked.' },
         { label: 'Random shutdowns or reboots', route: 'repair', repairType: 'battery', copy: 'Unexpected shutdowns are usually a failing battery. We\'ll quote a battery replacement. If something else is causing it, we\'ll tell you once we\'ve looked.' },
-        { label: 'Won\'t charge or charger not recognised', route: 'repair', repairType: 'charging-port', copy: 'Charging issues are often the USB-C port. We\'ll quote a port replacement. If the fault is on the board, we\'ll contact you before doing extra work.' }
+        { label: 'Won\'t charge or charger not recognised', route: 'diagnostic', repairType: 'diagnostic', copy: 'Charging failure could be the USB-C port, battery, or charging circuit. We can\'t quote the full repair until we\'ve tested each one.' }
       ],
       'Trackpad / Keyboard': [
         { label: 'Keys not responding', route: 'repair', repairType: 'keyboard', copy: 'Non-responsive keys usually mean the keyboard needs replacing. We\'ll quote a full top-case keyboard. If we find liquid damage after it arrives, we\'ll contact you before doing extra work.' },
@@ -1075,11 +1075,11 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: 'Touch not responding', route: 'repair', repairType: 'screen', copy: 'A dead touchscreen means the digitiser is damaged. A genuine screen replacement will restore full touch functionality.' },
         { label: 'Lines, discolouration, or green line', route: 'repair', repairType: 'screen', copy: 'Display lines or colour shifting indicate panel damage. A genuine screen replacement will fix it.' },
         { label: 'Black screen (phone still vibrates/rings)', route: 'repair', repairType: 'screen', copy: 'If your phone vibrates or makes sounds but the screen is black, the display has failed. A screen replacement will bring it back.' },
-        { label: 'No display, no response', route: 'repair', repairType: 'screen', copy: 'A phone with no display is usually the screen. We\'ll quote a genuine display replacement. If we find a board or battery fault after it arrives, we\'ll contact you before doing extra work.' }
+        { label: 'No display, no response', route: 'diagnostic', repairType: 'diagnostic', copy: 'If your iPhone shows no signs of life, it could be the display, battery, or logic board. We can\'t quote the full repair until we\'ve tested it.' }
       ],
       'Power / Battery / Charging': [
         { label: 'Battery drains fast', route: 'repair', repairType: 'battery', copy: 'Your battery has degraded below healthy capacity. We\'ll replace it with a genuine Apple battery and your battery health will read accurately again.' },
-        { label: 'Won\'t charge', route: 'repair', repairType: 'charging-port', copy: 'Charging issues are often the port. We\'ll quote a charging-port replacement. If the battery or board is the cause, we\'ll tell you once we\'ve looked.' },
+        { label: 'Won\'t charge', route: 'diagnostic', repairType: 'diagnostic', copy: 'Charging failure could be the port, battery, or charging circuit. We can\'t quote the full repair until we\'ve tested each one.' },
         { label: 'Random shutdowns or reboots', route: 'repair', repairType: 'battery', copy: 'Unexpected shutdowns are usually a failing battery. We\'ll quote a battery replacement. If something else is causing it, we\'ll contact you before doing extra work.' },
         { label: 'Swollen battery', route: 'repair', repairType: 'battery', copy: 'We\'ll replace the battery safely.', urgent: true }
       ],
@@ -1113,9 +1113,9 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       ],
       'Other': [
         { label: 'Vibration not working', route: 'contact', repairType: null, copy: 'The Taptic Engine may have failed. Get in touch and we\'ll confirm whether we can repair it for your model.' },
-        { label: 'No signal / "No Service" / "SOS only"', route: 'contact', repairType: null, copy: 'Signal loss is often board-level. Tell us what you\'re seeing and we\'ll confirm whether we can quote a parts repair.' },
-        { label: 'WiFi not connecting or greyed out', route: 'contact', repairType: null, copy: 'A greyed-out WiFi toggle is usually a board fault. Get in touch and we\'ll confirm the options for your model.' },
-        { label: 'Bluetooth not working', route: 'contact', repairType: null, copy: 'Bluetooth faults are often the same wireless chip as WiFi. Get in touch and we\'ll confirm whether we can quote a repair.' },
+        { label: 'No signal / "No Service" / "SOS only"', route: 'diagnostic', repairType: 'diagnostic', copy: 'Loss of cellular signal could be an antenna, baseband chip, or SIM reader. We need to diagnose the device to quote the repair.' },
+        { label: 'WiFi not connecting or greyed out', route: 'diagnostic', repairType: 'diagnostic', copy: 'A greyed-out WiFi toggle usually means a hardware fault on the logic board. We need to diagnose it to quote.' },
+        { label: 'Bluetooth not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth and WiFi share the same chip on iPhones. We need to diagnose the device to quote the repair.' },
         { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe the issue and we\'ll get back to you with the best repair option.' }
       ]
     },
@@ -1128,8 +1128,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       ],
       'Power / Battery / Charging': [
         { label: 'Battery drains quickly', route: 'repair', repairType: 'battery', copy: 'Your iPad battery has degraded. We\'ll replace it with an original-spec battery.' },
-        { label: 'Won\'t charge', route: 'repair', repairType: 'charging-port', copy: 'Charging issues are often the port. We\'ll quote a charging-port replacement. If the battery or board is the cause, we\'ll tell you once we\'ve looked.' },
-        { label: 'Won\'t turn on', route: 'repair', repairType: 'battery', copy: 'An iPad that won\'t power on is often the battery. Try a hard reset first (hold Power + Volume Down for 10 seconds). We\'ll quote a battery replacement. If we find a board fault after it arrives, we\'ll contact you first.' },
+        { label: 'Won\'t charge', route: 'diagnostic', repairType: 'diagnostic', copy: 'Charging failure could be the port, battery, or charging circuit. We can\'t quote the full repair until we\'ve tested each one.' },
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'An iPad that won\'t power on could be the battery, charging circuit, or logic board. Try a hard reset first (hold Power + Volume Down for 10 seconds). We can\'t quote the full repair until we\'ve looked.' },
         { label: 'Battery swollen or screen lifting', route: 'repair', repairType: 'battery', copy: 'A swollen battery is pushing the screen away from the frame. We\'ll safely remove it and fit a replacement.', urgent: true }
       ],
       'Camera': [],
@@ -1148,8 +1148,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       'Other': [
         { label: 'No sound from speakers', route: 'contact', repairType: null, copy: 'iPad speaker faults vary by model. Tell us what you\'re hearing and we\'ll confirm the repair and price.' },
         { label: 'Microphone not working', route: 'contact', repairType: null, copy: 'iPad mic faults depend on the model. Get in touch and we\'ll confirm whether we can quote a parts repair.' },
-        { label: 'WiFi not connecting', route: 'contact', repairType: null, copy: 'WiFi issues can be the antenna, wireless chip, or software. Get in touch and we\'ll confirm the options for your iPad.' },
-        { label: 'Bluetooth not working', route: 'contact', repairType: null, copy: 'Bluetooth faults are often the same wireless hardware as WiFi. Get in touch and we\'ll confirm whether we can quote a repair.' },
+        { label: 'WiFi not connecting', route: 'diagnostic', repairType: 'diagnostic', copy: 'WiFi issues can be the antenna, wireless chip, or software. We need to diagnose the device to quote the repair.' },
+        { label: 'Bluetooth not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth and WiFi share components on iPads. We need to diagnose the device to quote the repair.' },
         { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe the issue and we\'ll get back to you with the best repair option.' }
       ]
     },
@@ -1160,9 +1160,9 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: 'Display dead or unresponsive', route: 'repair', repairType: 'screen', copy: 'A dead watch display is usually the screen. We\'ll quote a genuine panel and re-seal. If we find a board or battery fault after it arrives, we\'ll contact you first.' }
       ],
       'Power / Battery / Charging': [
-        { label: 'Won\'t charge', route: 'repair', repairType: 'battery', copy: 'A watch that won\'t charge is often the battery. We\'ll quote a battery replacement and re-seal. If the coil or board is the cause, we\'ll tell you once we\'ve looked.' },
+        { label: 'Won\'t charge', route: 'diagnostic', repairType: 'diagnostic', copy: 'Charging failure on Apple Watch can be the coil, battery, or main board. We can\'t quote the full repair until we\'ve tested it.' },
         { label: 'Battery drains fast', route: 'repair', repairType: 'battery', copy: 'Your watch battery has degraded. We\'ll swap it and re-seal the watch.' },
-        { label: 'Won\'t turn on', route: 'repair', repairType: 'battery', copy: 'A watch that won\'t power on is often the battery. We\'ll quote a battery replacement. If we find a board fault after it arrives, we\'ll contact you first.' },
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'If the watch won\'t power on, it could be the battery or a board-level fault. We can\'t quote the full repair until we\'ve looked.' },
         { label: 'Battery swollen or back popping off', route: 'repair', repairType: 'battery', copy: 'A swollen battery is pushing the back off the watch. Stop wearing it immediately. We\'ll replace the battery and re-seal the case.', urgent: true }
       ],
       'Rear Glass': [
@@ -1177,8 +1177,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: 'Submerged beyond depth rating', route: 'diagnostic', repairType: 'diagnostic', copy: 'Exceeding the rated depth can force water past the seals. Don\'t charge the watch. We\'ll open it, clean the internals, and check each component.' }
       ],
       'Other': [
-        { label: 'Bluetooth not connecting to phone', route: 'contact', repairType: null, copy: 'Bluetooth pairing can be hardware or software. Get in touch and we\'ll confirm the options for your watch.' },
-        { label: 'WiFi not working', route: 'contact', repairType: null, copy: 'Watch WiFi faults are typically the antenna or wireless chip. Get in touch and we\'ll confirm whether we can quote a repair.' },
+        { label: 'Bluetooth not connecting to phone', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth pairing can be hardware or software. We need to diagnose the watch to quote the repair.' },
+        { label: 'WiFi not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Watch WiFi faults are typically the antenna or wireless chip. We need to diagnose it to quote.' },
         { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe the issue and we\'ll get back to you with the best repair option.' }
       ]
     }

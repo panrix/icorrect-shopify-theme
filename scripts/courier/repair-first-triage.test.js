@@ -1,6 +1,7 @@
 /**
- * Contract: quote wizard sends common faults to a repair quote.
- * Diagnostic is only for Water Damage, Data Recovery, and liquid-evidence labels.
+ * Contract: named parts faults quote a repair.
+ * Diagnostic is for water, data recovery, won't-turn-on / won't-charge,
+ * Wi-Fi / Bluetooth / signal, and liquid-evidence labels.
  * Run: node --test scripts/courier/repair-first-triage.test.js
  */
 'use strict';
@@ -18,16 +19,23 @@ const liquid = fs.readFileSync(
 const DIAGNOSTIC_CATEGORIES = new Set(['Water Damage', 'Data Recovery']);
 const DIAGNOSTIC_LABELS = new Set([
   'Condensation in camera',
-]);
-
-const MUST_BE_REPAIR = [
   'Won\'t turn on',
   'Won\'t charge',
   'Won\'t charge or charger not recognised',
+  'No display, no response',
+  'No signal / "No Service" / "SOS only"',
+  'WiFi not connecting or greyed out',
+  'Bluetooth not working',
+  'WiFi not connecting',
+  'Bluetooth not connecting to phone',
+  'WiFi not working',
+]);
+
+const MUST_BE_REPAIR = [
   'Random shutdowns or reboots',
   'Black screen (external doesn\'t work or untested)',
   'Black screen',
-  'No display, no response',
+  'Black screen (phone still vibrates/rings)',
   'Keys not responding',
   'Sticky, stuck, or crunchy keys',
   'Trackpad not clicking',
@@ -38,6 +46,21 @@ const MUST_BE_REPAIR = [
   'Microphone not picking up voice',
   'Home button or Touch ID not working',
   'Display dead or unresponsive',
+  'Cracked or shattered screen',
+  'Physically damaged trackpad',
+];
+
+const MUST_BE_DIAGNOSTIC = [
+  'Won\'t turn on',
+  'Won\'t charge',
+  'Won\'t charge or charger not recognised',
+  'No display, no response',
+  'No signal / "No Service" / "SOS only"',
+  'WiFi not connecting or greyed out',
+  'Bluetooth not working',
+  'WiFi not connecting',
+  'Bluetooth not connecting to phone',
+  'WiFi not working',
 ];
 
 function extractIssues() {
@@ -72,7 +95,7 @@ describe('repair-first triage', () => {
     assert.ok(issues.length > 40, `expected a full map, got ${issues.length}`);
   });
 
-  it('diagnostic is only for liquid, data recovery, or named liquid-evidence labels', () => {
+  it('diagnostic is only for water, data, power-unknown, wireless, or liquid-evidence', () => {
     const unexpected = issues.filter((iss) => {
       if (iss.route !== 'diagnostic') return false;
       if (DIAGNOSTIC_CATEGORIES.has(iss.category)) return false;
@@ -86,7 +109,7 @@ describe('repair-first triage', () => {
     );
   });
 
-  it('common bookable faults quote a repair, not a diagnostic', () => {
+  it('named parts faults quote a repair, not a diagnostic', () => {
     for (const label of MUST_BE_REPAIR) {
       const matches = issues.filter((iss) => iss.label === label);
       assert.ok(matches.length > 0, `missing issue: ${label}`);
@@ -103,11 +126,33 @@ describe('repair-first triage', () => {
     }
   });
 
-  it('water damage and data recovery still use the diagnostic card', () => {
-    const kept = issues.filter(
-      (iss) =>
-        DIAGNOSTIC_CATEGORIES.has(iss.category) && iss.route === 'diagnostic'
+  it('won\'t turn on, won\'t charge, and Wi-Fi/Bluetooth/signal stay diagnostic', () => {
+    for (const label of MUST_BE_DIAGNOSTIC) {
+      const matches = issues.filter((iss) => iss.label === label);
+      assert.ok(matches.length > 0, `missing issue: ${label}`);
+      assert.ok(
+        matches.every((iss) => iss.route === 'diagnostic'),
+        `${label} should be diagnostic (got ${matches.map((i) => i.route).join(',')})`
+      );
+    }
+  });
+
+  it('every water-damage issue is diagnostic', () => {
+    const water = issues.filter((iss) => iss.category === 'Water Damage');
+    assert.ok(water.length >= 8, `expected water-damage paths, got ${water.length}`);
+    assert.ok(
+      water.every((iss) => iss.route === 'diagnostic'),
+      water
+        .filter((i) => i.route !== 'diagnostic')
+        .map((i) => `${i.label}=${i.route}`)
+        .join(', ')
     );
-    assert.ok(kept.length >= 8, `expected liquid/data diagnostic paths, got ${kept.length}`);
+  });
+
+  it('data recovery still has diagnostic paths', () => {
+    const kept = issues.filter(
+      (iss) => iss.category === 'Data Recovery' && iss.route === 'diagnostic'
+    );
+    assert.ok(kept.length >= 3, `expected data-recovery diagnostic paths, got ${kept.length}`);
   });
 });
