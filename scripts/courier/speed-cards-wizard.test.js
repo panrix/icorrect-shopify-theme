@@ -298,6 +298,110 @@ describe('buildTurnaroundCards fail-closed variant ids', () => {
   });
 });
 
+describe('I1: Fast card price must match the charged variant', () => {
+  const fastCardPrice = new Function('return (' + extractFunction(liquid, 'fastCardPrice') + ')')();
+
+  it('uses the scraped price when it belongs to the configured Fast variant', () => {
+    assert.equal(fastCardPrice({ price: 65, variantId: 111 }, 111), 65);
+  });
+
+  it('falls back to £79 when the scraped variant id does not match the configured Fast variant id', () => {
+    assert.equal(fastCardPrice({ price: 65, variantId: 999 }, 111), 79);
+  });
+
+  it('falls back to £79 when there is no express data at all', () => {
+    assert.equal(fastCardPrice(null, 111), 79);
+  });
+
+  it('falls back to £79 when the scraped variant id is missing', () => {
+    assert.equal(fastCardPrice({ price: 65, variantId: null }, 111), 79);
+  });
+
+  it('buildTurnaroundCards computes the Fast price via fastCardPrice, not a bare expressData.price check', () => {
+    const fn = extractFunction(liquid, 'buildTurnaroundCards');
+    assert.match(fn, /fastCardPrice\s*\(\s*expressData\s*,\s*cfgFastVid\s*\)/);
+    assert.doesNotMatch(fn, /if\s*\(\s*expressData\s*&&\s*expressData\.price\s*\)\s*fastPrice\s*=\s*expressData\.price/);
+  });
+});
+
+describe('I2: Standard card must not say "We collect" on mail-in or with no collection slot', () => {
+  const standardSpeedMeta = new Function('return (' + extractFunction(liquid, 'standardSpeedMeta') + ')')();
+
+  it('courier with a collection slot says "We collect <date>."', () => {
+    const meta = standardSpeedMeta({
+      postOnly: false,
+      diagnostic: false,
+      device: 'macbook',
+      dateLabel: 'Tue 15 Sep',
+      benchDays: 3,
+      benchLabel: '3 working days'
+    });
+    assert.match(meta, /^We collect Tue 15 Sep\./);
+  });
+
+  it('mail-in never says a bare "We collect" and keeps the pack/post + bench sentence', () => {
+    const meta = standardSpeedMeta({
+      postOnly: true,
+      diagnostic: false,
+      device: 'macbook',
+      dateLabel: 'Tue 15 Sep',
+      benchDays: 3,
+      benchLabel: '3 working days'
+    });
+    assert.doesNotMatch(meta, /We collect/);
+    assert.equal(meta, 'We send you a pack to post your device to us. We repair in 3 working days.');
+  });
+
+  it('no collection slot yet (courier, pre-postcode) does not say "We collect" either', () => {
+    const meta = standardSpeedMeta({
+      postOnly: true,
+      diagnostic: false,
+      device: 'iphone',
+      dateLabel: 'Tue 15 Sep',
+      benchDays: 1,
+      benchLabel: '1 working day'
+    });
+    assert.doesNotMatch(meta, /We collect/);
+  });
+
+  it('mail-in diagnostic keeps the bench claim via turnaroundClaimLabel, not a bare "We collect"', () => {
+    const meta = standardSpeedMeta({
+      postOnly: true,
+      diagnostic: true,
+      device: 'macbook',
+      dateLabel: 'Tue 15 Sep',
+      benchDays: 3,
+      benchLabel: 'Quote in 3 working days'
+    });
+    assert.doesNotMatch(meta, /We collect/);
+    assert.match(meta, /Quote in 3 working days\./);
+  });
+
+  it('courier diagnostic still says "We collect" and keeps the bench claim', () => {
+    const meta = standardSpeedMeta({
+      postOnly: false,
+      diagnostic: true,
+      device: 'macbook',
+      dateLabel: 'Tue 15 Sep',
+      benchDays: 3,
+      benchLabel: 'Quote in 3 working days'
+    });
+    assert.match(meta, /^We collect Tue 15 Sep\. Quote in 3 working days\./);
+  });
+
+  it('standardSpeedCopy call site passes postOnly from mail-in or a missing collection slot', () => {
+    const fn = extractFunction(liquid, 'buildTurnaroundCards');
+    assert.match(fn, /standardSpeedCopy\s*\(\s*dateLabel\s*,\s*standardPostOnly\s*\)/);
+    assert.match(fn, /currentSpeedService\s*\(\s*\)\s*===\s*'mailin'\s*\|\|\s*!hasCollectionSlot/);
+  });
+
+  it('standardSpeedCopy uses turnaroundClaimLabel for the bench claim (reviewer M3)', () => {
+    const fn = extractFunction(liquid, 'standardSpeedCopy');
+    assert.match(fn, /turnaroundClaimLabel\s*\(/);
+    assert.doesNotMatch(fn, /['"]Quote in 3 working days\.['"]/);
+  });
+});
+
 describe('leaving Same-day restores standard collection date', () => {
   it('Standard/Fast click restores _collectionSlot.date from _standardCollectIso', () => {
     const wire = extractFunction(liquid, 'wireTurnaroundMount');

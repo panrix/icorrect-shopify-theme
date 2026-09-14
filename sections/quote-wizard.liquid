@@ -2811,10 +2811,6 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     return null;
   }
 
-  function weCollectSentence(dateLabel) {
-    return dateLabel ? ('We collect ' + dateLabel + '.') : 'We collect.';
-  }
-
   function dateToIsoLocal(d) {
     if (!d) return '';
     var y = d.getFullYear();
@@ -2825,6 +2821,17 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     return y + '-' + m + '-' + day;
   }
 
+  /* I1: Fast card price must come from the variant it charges. detectExpressFromPage
+     scrapes price + variantId from the product-page metafield, which can point at a
+     different product than the section's configured fast_variant_id. Only trust the
+     scraped price when the scraped variant id matches; otherwise use the flat £79. */
+  function fastCardPrice(expressData, cfgFastVid) {
+    if (expressData && expressData.price && expressData.variantId === cfgFastVid) {
+      return expressData.price;
+    }
+    return 79;
+  }
+
   function standardCardCollectIso(ctx) {
     ctx = ctx || {};
     if (ctx.standardCollectIso) return ctx.standardCollectIso;
@@ -2833,15 +2840,32 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     return ctx.packShipIso || '';
   }
 
-  function standardSpeedCopy(dateLabel) {
-    var prefix = weCollectSentence(dateLabel);
-    if (S.route === 'diagnostic') {
-      return prefix + ' Quote in 3 working days.';
+  /* I2: courier customers get collected; mail-in customers post their own device, and
+     a courier customer with no collection slot yet (pre-postcode) has no collect date
+     either. Neither of those should say "We collect". postOnly covers both cases. */
+  function standardSpeedMeta(ctx) {
+    ctx = ctx || {};
+    var prefix = ctx.postOnly
+      ? 'We send you a pack to post your device to us.'
+      : (ctx.dateLabel ? ('We collect ' + ctx.dateLabel + '.') : 'We collect.');
+    if (ctx.diagnostic) {
+      return prefix + ' ' + ctx.benchLabel + '.';
     }
-    if (S.device === 'iphone' || repairBenchDays(S.device) === 1) {
+    if (ctx.device === 'iphone' || ctx.benchDays === 1) {
       return prefix + ' We repair the next working day and return it that afternoon.';
     }
-    return prefix + ' We repair in ' + repairBenchDays(S.device) + ' working days.';
+    return prefix + ' We repair in ' + ctx.benchDays + ' working days.';
+  }
+
+  function standardSpeedCopy(dateLabel, postOnly) {
+    return standardSpeedMeta({
+      postOnly: postOnly,
+      diagnostic: S.route === 'diagnostic',
+      device: S.device,
+      dateLabel: dateLabel,
+      benchDays: repairBenchDays(S.device),
+      benchLabel: turnaroundClaimLabel(S.device, { speed: 'standard' })
+    });
   }
 
   function speedCardHtml(opts) {
@@ -2887,11 +2911,12 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       packShipIso: dateToIsoLocal(packShipDate(new Date()))
     });
     var dateLabel = stdIso ? formatJourneyDate(parseISODate(stdIso)) : '';
+    var hasCollectionSlot = !!((_collectionSlot.date && _collectionSlot.date.iso) || _standardCollectIso);
+    var standardPostOnly = currentSpeedService() === 'mailin' || !hasCollectionSlot;
 
     var cfgFastVid = parseInt(cfg.fastVariantId, 10) || 0;
-    var fastPrice = 79;
     var fastVid = cfgFastVid;
-    if (expressData && expressData.price) fastPrice = expressData.price;
+    var fastPrice = fastCardPrice(expressData, cfgFastVid);
 
     var sdPrice = S.device === 'macbook' ? 149 : 49;
     var sdVid = S.device === 'macbook'
@@ -2903,7 +2928,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     cards.push(speedCardHtml({
       speed: 'standard',
       name: 'Standard',
-      meta: standardSpeedCopy(dateLabel),
+      meta: standardSpeedCopy(dateLabel, standardPostOnly),
       price: 0,
       vid: 0,
       selected: current !== 'fast' && current !== 'same_day',

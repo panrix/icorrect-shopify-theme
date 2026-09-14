@@ -2,7 +2,8 @@
  * Courier / mail-in / diagnostic journey clocks (Ricky 2026-09-14).
  *
  * Conversion bias: shortest honest working-day clock when parts are in stock.
- * Courier collection day is day 1 of the clock.
+ * Courier collection day is day 0 — it does not count as a bench day; the
+ * bench clock starts on the next working day.
  * iPhone known repair: 1 working day (collect Mon → back Tue).
  * MacBook / iPad known repair: 3 working days (collect Mon → back Thu).
  * Watch stays 3 (adhesive cure — physical constraint).
