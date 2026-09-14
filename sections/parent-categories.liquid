@@ -2,7 +2,9 @@
   <div class="parent-categories-wrapper page-width">
     <div class="parent-categories-info">
       <h2>{{ section.settings.heading }}</h2>
-      <p>{{ section.settings.details }}</p>
+      {% if section.settings.details != blank %}
+        <p>{{ section.settings.details }}</p>
+      {% endif %}
       <a href="{{ section.settings.btn_link }}" class="read-more">{{ section.settings.btn_text }}</a>
     </div>
     <div class="parent-category-row">
