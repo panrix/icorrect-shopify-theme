@@ -1,0 +1,20 @@
+{
+  "name": "icorrect-shopify-theme",
+  "version": "11.0.0",
+  "private": true,
+  "description": "iCorrect Shopify theme (Dawn-based) — developer tooling, tests, and Shopify CLI wrapper scripts.",
+  "scripts": {
+    "test": "node --test \"scripts/courier/*.test.js\"",
+    "theme:check": "shopify theme check",
+    "theme:dev": "shopify theme dev",
+    "theme:pull": "shopify theme pull",
+    "theme:preview": "shopify theme push --unpublished --json",
+    "theme:push": "shopify theme push"
+  },
+  "devDependencies": {
+    "@shopify/cli": "^4.8.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

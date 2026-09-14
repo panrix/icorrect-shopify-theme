@@ -110,10 +110,11 @@ window.WIZARD_CONTEXT = {
 <script src="{{ 'repair-catalogue.js' | asset_url }}" defer></script>
 <script src="{{ 'quoted-repair-stamp.js' | asset_url }}" defer></script>
 <script src="{{ 'repair-journey.js' | asset_url }}" defer></script>
+<script src="{{ 'same-day-eligibility.js' | asset_url }}" defer></script>
 <script>
 window.WIZARD_CFG = {
   warrantyLabel: {{ section.settings.warranty_label | default: '2-year warranty' | json }},
-  diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: 'Quote in 1 working day' | json }},
+  diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: 'Quote in 3 working days' | json }},
   bandsUrl: {{ 'courier-london-bands.json' | asset_url | json }},
   catalogueUrl: {{ 'repair-catalogue-map.json' | asset_url | json }},
   collectionPrefillUrl: {{ 'wizard-collection-prefill.json' | asset_url | json }},
@@ -131,6 +132,13 @@ window.WIZARD_CFG = {
     variantId: {{ mail_in_prod.selected_or_first_available_variant.id | default: 'null' }}
   }
 };
+window.__sameDayConfig = {
+  fastVariantId: {{ section.settings.fast_variant_id | default: 0 | json }},
+  iphoneSameDayVariantId: {{ section.settings.iphone_sameday_variant_id | default: 0 | json }},
+  macbookSameDayVariantId: {{ section.settings.macbook_sameday_variant_id | default: 0 | json }},
+  eligibilityUrl: {{ section.settings.same_day_eligibility_url | default: '' | json }}
+};
+window.__sameDayEligibility = window.__sameDayEligibility || { inStock: false, dates: {} };
 window.__QW_BANDS = null;
 window.__QW_CATALOGUE = null;
 window.__icorrectQuote = window.__icorrectQuote || {};
@@ -138,6 +146,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 <script>
 (function () {
   var ENDPOINT = "https://api.icorrect.co.uk/api/quote-events";
+  var sameDayEligibilityUrl = {{ section.settings.same_day_eligibility_url | default: '' | json }};
 
   function phDistinctId() {
     try {
@@ -800,7 +809,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   /* =============================================
      STATE
      ============================================= */
-  var S = { device: null, model: null, modelGroup: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null, route: null, repairType: null, entrySource: null , preVariantId: null, preRepairType: null };
+  var S = { device: null, model: null, modelGroup: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null, route: null, repairType: null, entrySource: null , preVariantId: null, preRepairType: null, sameDayDate: null };
+  var _expressData = null;
   var _collectionCache = {}, _productCache = {}, _repairsMap = {}, _collectionProducts = [], _trackedSteps = {}, _trackedOps = {};
   var _stepStartTime = Date.now();
   var _suppressScroll = false;
@@ -962,6 +972,22 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     trackWizardEvent(eventName, extra);
   }
 
+  function selectedSpeedTrackFields() {
+    var speed = selectedSpeed();
+    if (speed !== 'fast' && speed !== 'same_day') speed = 'standard';
+    var sameDayDate = (speed === 'same_day' && S.sameDayDate) ? S.sameDayDate : null;
+    var slots = null;
+    if (speed === 'same_day') {
+      var stub = window.__sameDayEligibility || {};
+      if (sameDayDate && stub.dates && typeof stub.dates[sameDayDate] === 'number') {
+        slots = stub.dates[sameDayDate];
+      } else if (typeof stub.slotsRemaining === 'number') {
+        slots = stub.slotsRemaining;
+      }
+    }
+    return { speed: speed, same_day_date: sameDayDate, slots_remaining: slots };
+  }
+
   function courierTrackExtra(quote, extra) {
     if (window.ICorrectCourier && typeof window.ICorrectCourier.courierFunnelExtra === 'function') {
       return window.ICorrectCourier.courierFunnelExtra(quote, extra);
@@ -973,7 +999,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
   function trackCourierQuoteEvents(quote) {
     if (!quote || !quote.outward) return;
-    var extra = courierTrackExtra(quote);
+    var extra = courierTrackExtra(quote, selectedSpeedTrackFields());
     var outward = extra.outward;
     trackWizardEventOnce('pc:' + outward + ':' + String(extra.band), 'wizard_postcode_entered', {
       outward: extra.outward,
@@ -1022,10 +1048,10 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   function trackWizardProceed() {
     var svcKind = selectedServiceKind();
     var service = svcKind === 'mailin' ? 'mail-in' : 'courier';
-    trackWizardEvent('wizard_proceed', courierTrackExtra(_courierQuote, {
+    trackWizardEvent('wizard_proceed', courierTrackExtra(_courierQuote, Object.assign({
       service: service,
       total: getWizardTotalValue()
-    }));
+    }, selectedSpeedTrackFields())));
   }
 
   function trackWizardEntry(source, extra) {
@@ -1490,20 +1516,31 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   }
 
   function buildDiagnosticBadges(device) {
-    return svcBadge('turnaround', CFG.diagnosticTurnaround || 'Quote in 1 working day') +
+    return svcBadge('turnaround', CFG.diagnosticTurnaround || 'Quote in 3 working days') +
       svcBadge('diagnostic', 'Full report and quote sent via email');
   }
 
   /* Device bench days → label shared by journey ETA + repair badges. */
+  function selectedSpeed() {
+    var card = document.querySelector('.qw-opt-card.sel[data-opt="speed"]');
+    return (card && card.getAttribute('data-speed')) || 'standard';
+  }
+
+  function speedJourneyOpts(extra) {
+    var opts = extra ? Object.assign({}, extra) : {};
+    if (!opts.speed) opts.speed = selectedSpeed();
+    if (opts.diagnostic == null) opts.diagnostic = S.route === 'diagnostic';
+    return opts;
+  }
+
   function turnaroundClaimLabel(device, opts) {
-    opts = opts || {};
+    opts = speedJourneyOpts(opts || {});
     if (window.ICorrectRepairJourney) {
-      return window.ICorrectRepairJourney.turnaroundClaimLabel(device, {
-        diagnostic: !!(opts.diagnostic || S.route === 'diagnostic')
-      });
+      return window.ICorrectRepairJourney.turnaroundClaimLabel(device, opts);
     }
     if (opts.diagnostic || S.route === 'diagnostic') {
-      return CFG.diagnosticTurnaround || 'Quote in 1 working day';
+      if (opts.speed === 'fast') return 'Quote in 1 working day';
+      return CFG.diagnosticTurnaround || 'Quote in 3 working days';
     }
     var days = repairBenchDays(device, opts);
     if (days === 1) return '1 working day';
@@ -1573,9 +1610,11 @@ window.__icorrectQuote = window.__icorrectQuote || {};
      ============================================= */
   var _courierQuote = null;
   var _postcodeResolved = false;
+  var _sameDayEligSeq = 0;
   var _quoteShownCaptured = false;
   var _collectionSlot = { date: null, part: null };
   var _collectionSlotDates = [];
+  var _standardCollectIso = null;
   var SLOT_STRIP_COUNT = 5;
   var SLOT_CALENDAR_COUNT = 28;
 
@@ -1585,10 +1624,12 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   function repairBenchDays(device, opts) {
     if (window.ICorrectRepairJourney) return window.ICorrectRepairJourney.repairBenchDays(device, opts);
     opts = opts || {};
-    if (opts.diagnostic) return 1;
+    if (opts.speed === 'same_day') return 0;
+    if (opts.speed === 'fast') return 1;
+    if (opts.diagnostic) return 3;
     if (device === 'iphone') return 1;
     if (device === 'watch') return 3;
-    return 2;
+    return 3;
   }
 
   function parseISODate(iso) {
@@ -1679,30 +1720,35 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var collect = _collectionSlot.date && _collectionSlot.date.iso
       ? parseISODate(_collectionSlot.date.iso)
       : null;
+    if (selectedSpeed() === 'same_day' && S.sameDayDate) {
+      collect = parseISODate(S.sameDayDate) || collect;
+    }
     var lib = window.ICorrectRepairJourney;
+    var opts = speedJourneyOpts({ diagnostic: diagnostic });
     var model = diagnostic
-      ? (lib ? lib.courierDiagnosticJourney(collect) : null)
-      : (lib ? lib.courierRepairJourney(S.device, collect) : null);
+      ? (lib ? lib.courierDiagnosticJourney(collect, opts) : null)
+      : (lib ? lib.courierRepairJourney(S.device, collect, opts) : null);
     if (model) return formatJourneyModel(model);
     if (diagnostic) {
+      var quoteDays = repairBenchDays(S.device, opts);
       return {
         kind: 'diagnostic',
         steps: [
           { title: 'We collect', meta: collect ? formatJourneyDate(collect) : 'Pick a collection window' },
-          { title: 'We diagnose & email your quote', meta: collect ? formatJourneyDate(addWorkingDays(collect, 1)) : '1 working day after collection' },
+          { title: 'We diagnose & email your quote', meta: collect ? formatJourneyDate(addWorkingDays(collect, quoteDays)) : (quoteDays === 1 ? '1 working day after collection' : '3 working days after collection') },
           { title: 'You decide next', meta: 'Device stays with us until you approve' }
         ],
         returnDate: null,
-        quoteDate: collect ? addWorkingDays(collect, 1) : null
+        quoteDate: collect ? addWorkingDays(collect, quoteDays) : null
       };
     }
-    var bench = repairBenchDays(S.device);
+    var bench = repairBenchDays(S.device, opts);
     if (!collect) {
       return {
         kind: 'repair',
         steps: [
           { title: 'We collect', meta: 'Pick a collection window' },
-          { title: 'We repair', meta: turnaroundClaimLabel(S.device) },
+          { title: 'We repair', meta: turnaroundClaimLabel(S.device, opts) },
           { title: 'Back to you', meta: 'After repair' }
         ],
         returnDate: null,
@@ -1714,7 +1760,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       kind: 'repair',
       steps: [
         { title: 'We collect', meta: formatJourneyDate(collect) },
-        { title: 'We repair', meta: turnaroundClaimLabel(S.device) },
+        { title: 'We repair', meta: turnaroundClaimLabel(S.device, opts) },
         { title: 'Back to you', meta: formatJourneyDate(returnDate) }
       ],
       returnDate: returnDate,
@@ -1741,16 +1787,17 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   function buildMailinJourneyModel() {
     var diagnostic = S.route === 'diagnostic';
     var lib = window.ICorrectRepairJourney;
+    var opts = speedJourneyOpts({ diagnostic: diagnostic });
     var model = diagnostic
-      ? (lib ? lib.mailinDiagnosticJourney(new Date()) : null)
-      : (lib ? lib.mailinRepairJourney(S.device, new Date()) : null);
+      ? (lib ? lib.mailinDiagnosticJourney(new Date(), opts) : null)
+      : (lib ? lib.mailinRepairJourney(S.device, new Date(), opts) : null);
     if (model) return formatJourneyModel(model);
-    var bench = repairBenchDays(S.device, { diagnostic: diagnostic });
+    var bench = repairBenchDays(S.device, opts);
     var ship = packShipDate(new Date());
     var weReceive = addWorkingDays(ship, 1);
     var youPostBy = weReceive;
     if (diagnostic) {
-      var quoteDate = addWorkingDays(weReceive, 1);
+      var quoteDate = addWorkingDays(weReceive, bench);
       return {
         kind: 'diagnostic',
         steps: [
@@ -1770,7 +1817,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       steps: [
         { title: 'We send packaging', meta: formatJourneyDate(ship) },
         { title: 'You post the device', meta: formatJourneyDate(youPostBy) },
-        { title: 'We repair', meta: turnaroundClaimLabel(S.device) },
+        { title: 'We repair', meta: turnaroundClaimLabel(S.device, opts) },
         { title: 'Back to you', meta: formatJourneyDate(returnDate) }
       ],
       returnDate: returnDate,
@@ -1972,6 +2019,11 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         q.collection_date = null;
         q.collection_window = null;
       }
+
+      var speedFields = selectedSpeedTrackFields();
+      q.speed = speedFields.speed;
+      q.same_day_date = speedFields.same_day_date;
+      q.slots_remaining = speedFields.slots_remaining;
 
       window.__icorrectQuote = q;
     } catch (e) {}
@@ -2296,10 +2348,12 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var found = findSlotDate(iso);
     if (!found) return;
     _collectionSlot.date = found;
+    _standardCollectIso = found.iso || _standardCollectIso;
     paintDateStrip();
     syncIcorrectQuote();
     refreshServiceJourney();
     trackSlotSelected();
+    refreshTurnaroundCards();
   }
 
   function renderCollectionSlots(band) {
@@ -2324,6 +2378,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
     var keepIso = _collectionSlot.date && _collectionSlot.date.iso;
     _collectionSlot.date = (keepIso && findSlotDate(keepIso)) || _collectionSlotDates[0];
+    if (_collectionSlot.date && _collectionSlot.date.iso) _standardCollectIso = _collectionSlot.date.iso;
     paintDateStrip();
 
     var parts = window.ICorrectCourierSlots.dayParts();
@@ -2349,6 +2404,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         syncIcorrectQuote();
         refreshServiceJourney();
         trackSlotSelected();
+        refreshTurnaroundCards();
       });
     });
 
@@ -2391,7 +2447,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       _quoteShownCaptured = false;
       syncIcorrectQuote();
       if (reveal) reveal.hidden = true;
-      if (slotPanel) { slotPanel.hidden = true; _collectionSlot = { date: null, part: null }; _collectionSlotDates = []; }
+      if (slotPanel) { slotPanel.hidden = true; _collectionSlot = { date: null, part: null }; _collectionSlotDates = []; _standardCollectIso = null; }
       if (mailPanel) mailPanel.hidden = true;
       if (result) { result.hidden = true; result.innerHTML = ''; }
       if (pcCard) pcCard.classList.remove('qw-postcode-card-resolved');
@@ -2407,6 +2463,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       setPriceVisibility(false);
       hideServiceJourney();
       closeCollectionCalendar();
+      refreshSameDayEligibility();
       return;
     }
 
@@ -2450,7 +2507,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     } else if (quote.forcedMailIn || quote.service === 'mail-in') {
       selectServiceCard('mailin');
       setMailInOptionVisible(true);
-      if (slotPanel) { slotPanel.hidden = true; _collectionSlot = { date: null, part: null }; _collectionSlotDates = []; }
+      if (slotPanel) { slotPanel.hidden = true; _collectionSlot = { date: null, part: null }; _collectionSlotDates = []; _standardCollectIso = null; }
       if (mailPanel) mailPanel.hidden = false;
       if (result) {
         result.hidden = false;
@@ -2472,6 +2529,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     }
 
     refreshAllInTotal();
+    refreshSameDayEligibility();
     if (!_suppressScroll) focusPriceAndProceed();
     trackCourierQuoteEvents(_courierQuote);
   }
@@ -2499,7 +2557,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           hideServiceJourney();
         }
       } else {
-        if (slotPanel) { slotPanel.hidden = true; _collectionSlot = { date: null, part: null }; }
+        if (slotPanel) { slotPanel.hidden = true; _collectionSlot = { date: null, part: null }; _standardCollectIso = null; }
         if (mailPanel) mailPanel.hidden = false;
         refreshServiceJourney();
       }
@@ -2581,25 +2639,436 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     } catch(e) { _expressCache[handle] = null; return null; }
   }
 
-  function buildTurnaroundCards(expressData) {
-    if (!expressData || !expressData.price) return '';
-    var standardMeta = turnaroundClaimLabel(S.device);
-    var fastMeta = repairBenchDays(S.device) <= 1 ? 'Priority' : '1 working day';
-    return '<div class="qw-opt-section">' +
-      '<div class="qw-opt-label">Repair turnaround</div>' +
-      '<div class="qw-opt-row">' +
-        '<div class="qw-opt-card sel" data-opt="speed" data-add="0" data-vid="0" tabindex="0">' +
-          '<div class="qw-opt-name">Standard</div>' +
-          '<div class="qw-opt-meta">' + esc(standardMeta) + '</div>' +
-          '<div class="qw-opt-price free">Included</div>' +
-        '</div>' +
-        '<div class="qw-opt-card" data-opt="speed" data-add="' + expressData.price + '" data-vid="' + (expressData.variantId || 0) + '" tabindex="0">' +
-          '<div class="qw-opt-name">Fast</div>' +
-          '<div class="qw-opt-meta">' + esc(fastMeta) + '</div>' +
-          '<div class="qw-opt-price">+' + gbp.format(expressData.price) + '</div>' +
-        '</div>' +
-      '</div>' +
+  function planSpeedOffers(ctx) {
+    ctx = ctx || {};
+    var device = ctx.device;
+    var diagnostic = !!ctx.diagnostic;
+    var cfg = ctx.config || {};
+    var showFast = diagnostic || device === 'macbook' || device === 'ipad';
+    if (!diagnostic && (device === 'iphone' || device === 'watch')) showFast = false;
+    var innerLondon = ctx.service === 'courier' && (ctx.band === 'B1' || ctx.band === 'B2');
+    var showSameDay = !diagnostic && innerLondon && (device === 'iphone' || device === 'macbook') && !!ctx.sameDayOk;
+    var fastVid = parseInt(cfg.fastVariantId, 10) || 0;
+    if (fastVid <= 0) showFast = false;
+    var sdVid = device === 'macbook'
+      ? (parseInt(cfg.macbookSameDayVariantId, 10) || 0)
+      : (parseInt(cfg.iphoneSameDayVariantId, 10) || 0);
+    if (sdVid <= 0) showSameDay = false;
+    return { standard: true, fast: showFast, sameDay: showSameDay };
+  }
+
+  function collectionWindowFromPartId(partId) {
+    return partId === 'PM' ? 'afternoon' : 'morning';
+  }
+
+  function ensureMorningCollectionWindow() {
+    if (collectionWindowFromPartId(_collectionSlot.part && _collectionSlot.part.id) === 'morning') return;
+    var amPart = null;
+    if (window.ICorrectCourierSlots && typeof window.ICorrectCourierSlots.dayParts === 'function') {
+      var parts = window.ICorrectCourierSlots.dayParts();
+      for (var i = 0; i < parts.length; i++) {
+        if (parts[i].id === 'AM') { amPart = parts[i]; break; }
+      }
+    }
+    if (amPart) _collectionSlot.part = amPart;
+    else if (_collectionSlot.part) _collectionSlot.part = Object.assign({}, _collectionSlot.part, { id: 'AM' });
+    var partsEl = document.getElementById('qwSlotParts');
+    if (partsEl) {
+      partsEl.querySelectorAll('.qw-window-btn').forEach(function(b) {
+        var on = b.getAttribute('data-part') === 'AM';
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+    }
+  }
+
+  function currentSpeedService() {
+    var kind = selectedServiceKind();
+    if (kind === 'mailin') return 'mailin';
+    if (_courierQuote && (_courierQuote.forcedMailIn || _courierQuote.service === 'mail-in')) return 'mailin';
+    return 'courier';
+  }
+
+  /* Task 6: POST /same-day/reserve on Shopify orders/paid is not in this theme.
+     Courier webhook lives in panrix/workshop-os; VPS worktree
+     /home/ricky/worktrees/workshop-os-same-day is absent here. When that
+     webhook sees same-day-iphone or turn-around-time-fatest-4-hours, it
+     should reserve; if ok === false, remove/refund the line and Slack
+     SAME-DAY RESERVE FAILED. See scripts/same-day-proxy.md. */
+  async function fetchSameDayEligibility(handle, isoDate, outward) {
+    var t;
+    try {
+      var url = (window.__sameDayConfig && window.__sameDayConfig.eligibilityUrl) || '';
+      if (!url) return { inStock: false, slotsRemaining: 0 };
+      var ctrl = new AbortController();
+      t = setTimeout(function () { ctrl.abort(); }, 1500);
+      var res = await fetch(url + '?handle=' + encodeURIComponent(handle) + '&date=' + isoDate + '&outward=' + encodeURIComponent(outward), { signal: ctrl.signal, credentials: 'omit' });
+      if (!res.ok) return { inStock: false, slotsRemaining: 0 };
+      var j = await res.json();
+      return { inStock: !!j.in_stock, slotsRemaining: j.slots_remaining | 0, eligible: !!j.eligible };
+    } catch (e) {
+      return { inStock: false, slotsRemaining: 0 };
+    } finally {
+      if (t) clearTimeout(t);
+    }
+  }
+
+  function sameDayEligibilityHandle() {
+    var quotedCard = document.querySelector('.qw-quoted-card');
+    var repairHandle = quotedCard && quotedCard.dataset && quotedCard.dataset.repairHandle;
+    var ctx = window.WIZARD_CONTEXT || {};
+    return repairHandle || S.collectionHandle || ctx.productHandle || S.device || '';
+  }
+
+  function sameDayEligibilityIsos() {
+    var today = new Date();
+    var isos = [dateToIsoLocal(today)];
+    if (window.ICorrectSameDay && typeof window.ICorrectSameDay.nextWorkingDays === 'function') {
+      var start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      start.setDate(start.getDate() + 1);
+      var days = window.ICorrectSameDay.nextWorkingDays(start, 5);
+      for (var i = 0; i < days.length; i++) isos.push(dateToIsoLocal(days[i]));
+    }
+    return isos;
+  }
+
+  function refreshSameDayEligibility() {
+    var seq = ++_sameDayEligSeq;
+    window.__sameDayEligibility = { inStock: false, dates: {}, slotsRemaining: 0 };
+    refreshTurnaroundCards();
+    var url = (window.__sameDayConfig && window.__sameDayConfig.eligibilityUrl) || '';
+    if (!url || !_courierQuote) return;
+    var handle = sameDayEligibilityHandle();
+    var outward = _courierQuote.outward || '';
+    if (!handle || !outward) return;
+    var isos = sameDayEligibilityIsos();
+    Promise.all(isos.map(function (iso) {
+      return fetchSameDayEligibility(handle, iso, outward).then(function (result) {
+        return { iso: iso, result: result };
+      });
+    })).then(function (rows) {
+      if (seq !== _sameDayEligSeq) return;
+      var dates = {};
+      var inStock = false;
+      var slotsRemaining = 0;
+      var eligible = false;
+      for (var i = 0; i < rows.length; i++) {
+        dates[rows[i].iso] = rows[i].result.slotsRemaining;
+        if (rows[i].result.inStock) inStock = true;
+        if (rows[i].result.eligible) eligible = true;
+        if ((rows[i].result.slotsRemaining | 0) > slotsRemaining) {
+          slotsRemaining = rows[i].result.slotsRemaining | 0;
+        }
+      }
+      window.__sameDayEligibility = {
+        inStock: inStock,
+        dates: dates,
+        slotsRemaining: slotsRemaining,
+        eligible: eligible
+      };
+      refreshTurnaroundCards();
+    }).catch(function () {
+      if (seq !== _sameDayEligSeq) return;
+      window.__sameDayEligibility = { inStock: false, dates: {}, slotsRemaining: 0 };
+      refreshTurnaroundCards();
+    });
+  }
+
+  function buildSameDayOpts() {
+    var stub = window.__sameDayEligibility || { inStock: false, dates: {} };
+    var partId = _collectionSlot.part && _collectionSlot.part.id;
+    return {
+      device: S.device,
+      band: (_courierQuote && _courierQuote.band) || null,
+      service: currentSpeedService() === 'mailin' ? 'mail-in' : 'courier',
+      diagnostic: S.route === 'diagnostic',
+      inStock: stub.inStock === true,
+      slotsByDate: stub.dates || {},
+      slotsRemaining: typeof stub.slotsRemaining === 'number' ? stub.slotsRemaining : undefined,
+      collectionWindow: collectionWindowFromPartId(partId),
+      now: new Date()
+    };
+  }
+
+  function sameDayDateOptions() {
+    if (!window.ICorrectSameDay || typeof window.ICorrectSameDay.dateOptions !== 'function') return [];
+    return window.ICorrectSameDay.dateOptions(buildSameDayOpts()) || [];
+  }
+
+  function pickAvailableSameDay(dates) {
+    var i;
+    if (S.sameDayDate) {
+      for (i = 0; i < dates.length; i++) {
+        if (dates[i].available && dates[i].iso === S.sameDayDate) return dates[i];
+      }
+    }
+    for (i = 0; i < dates.length; i++) {
+      if (dates[i].available) return dates[i];
+    }
+    return null;
+  }
+
+  function dateToIsoLocal(d) {
+    if (!d) return '';
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1);
+    var day = String(d.getDate());
+    if (m.length < 2) m = '0' + m;
+    if (day.length < 2) day = '0' + day;
+    return y + '-' + m + '-' + day;
+  }
+
+  /* I1: Fast card price must come from the variant it charges. detectExpressFromPage
+     scrapes price + variantId from the product-page metafield, which can point at a
+     different product than the section's configured fast_variant_id. Only trust the
+     scraped price when the scraped variant id matches; otherwise use the flat £79. */
+  function fastCardPrice(expressData, cfgFastVid) {
+    if (cfgFastVid > 0 && expressData && expressData.price && expressData.variantId === cfgFastVid) {
+      return expressData.price;
+    }
+    return 79;
+  }
+
+  function standardCardCollectIso(ctx) {
+    ctx = ctx || {};
+    if (ctx.standardCollectIso) return ctx.standardCollectIso;
+    if (ctx.selectedSpeed === 'same_day') return ctx.packShipIso || '';
+    if (ctx.collectionIso) return ctx.collectionIso;
+    return ctx.packShipIso || '';
+  }
+
+  /* I2: courier customers get collected; mail-in customers post their own device, and
+     a courier customer with no collection slot yet (pre-postcode) has no collect date
+     either. Neither of those should say "We collect". postOnly covers both cases. */
+  function standardSpeedMeta(ctx) {
+    ctx = ctx || {};
+    var prefix = ctx.postOnly
+      ? 'We send you a pack to post your device to us.'
+      : (ctx.dateLabel ? ('We collect ' + ctx.dateLabel + '.') : 'We collect.');
+    if (ctx.diagnostic) {
+      return prefix + ' ' + ctx.benchLabel + '.';
+    }
+    if (ctx.device === 'iphone' || ctx.benchDays === 1) {
+      return prefix + (ctx.postOnly
+        ? ' We repair the next working day after it arrives.'
+        : ' We repair the next working day and return it that afternoon.');
+    }
+    return prefix + ' We repair in ' + ctx.benchDays + ' working days.';
+  }
+
+  function standardSpeedCopy(dateLabel, postOnly) {
+    return standardSpeedMeta({
+      postOnly: postOnly,
+      diagnostic: S.route === 'diagnostic',
+      device: S.device,
+      dateLabel: dateLabel,
+      benchDays: repairBenchDays(S.device),
+      benchLabel: turnaroundClaimLabel(S.device, { speed: 'standard' })
+    });
+  }
+
+  function speedCardHtml(opts) {
+    var sel = opts.selected ? ' sel' : '';
+    var priceHtml = opts.price > 0
+      ? '<div class="qw-opt-price">+' + gbp.format(opts.price) + '</div>'
+      : '<div class="qw-opt-price free">Included</div>';
+    var extra = opts.extraInner || '';
+    return '<div class="qw-opt-card' + sel + '" data-opt="speed" data-speed="' + opts.speed +
+      '" data-add="' + (opts.price || 0) + '" data-vid="' + (opts.vid || 0) +
+      '" data-date="' + esc(opts.dateIso || '') + '" tabindex="0">' +
+      '<div class="qw-opt-name">' + esc(opts.name) + '</div>' +
+      '<div class="qw-opt-meta">' + esc(opts.meta) + '</div>' +
+      extra +
+      priceHtml +
     '</div>';
+  }
+
+  function buildTurnaroundCards(expressData) {
+    if (expressData !== undefined) _expressData = expressData;
+    expressData = _expressData;
+    var cfg = window.__sameDayConfig || {};
+    var dates = sameDayDateOptions();
+    var picked = pickAvailableSameDay(dates);
+    var offers = planSpeedOffers({
+      device: S.device,
+      service: currentSpeedService(),
+      band: _courierQuote && _courierQuote.band,
+      diagnostic: S.route === 'diagnostic',
+      sameDayOk: !!picked,
+      config: cfg
+    });
+    var current = selectedSpeed();
+    if (current === 'fast' && !offers.fast) current = 'standard';
+    if (current === 'same_day' && !offers.sameDay) current = 'standard';
+    if (offers.sameDay && picked) S.sameDayDate = picked.iso;
+
+    var stdIso = standardCardCollectIso({
+      selectedSpeed: current,
+      sameDayIso: picked ? picked.iso : '',
+      collectionIso: (_collectionSlot.date && _collectionSlot.date.iso) || '',
+      standardCollectIso: _standardCollectIso || '',
+      packShipIso: dateToIsoLocal(packShipDate(new Date()))
+    });
+    var dateLabel = stdIso ? formatJourneyDate(parseISODate(stdIso)) : '';
+    var hasCollectionSlot = !!((_collectionSlot.date && _collectionSlot.date.iso) || _standardCollectIso);
+    var standardPostOnly = currentSpeedService() === 'mailin' || !hasCollectionSlot;
+
+    var cfgFastVid = parseInt(cfg.fastVariantId, 10) || 0;
+    var fastVid = cfgFastVid;
+    var fastPrice = fastCardPrice(expressData, cfgFastVid);
+
+    var sdPrice = S.device === 'macbook' ? 149 : 49;
+    var sdVid = S.device === 'macbook'
+      ? (parseInt(cfg.macbookSameDayVariantId, 10) || 0)
+      : (parseInt(cfg.iphoneSameDayVariantId, 10) || 0);
+    var slotsLine = picked ? (picked.slotsRemaining + ' slots left') : '';
+
+    var cards = [];
+    cards.push(speedCardHtml({
+      speed: 'standard',
+      name: 'Standard',
+      meta: standardSpeedCopy(dateLabel, standardPostOnly),
+      price: 0,
+      vid: 0,
+      selected: current !== 'fast' && current !== 'same_day',
+      dateIso: ''
+    }));
+    if (offers.fast) {
+      cards.push(speedCardHtml({
+        speed: 'fast',
+        name: 'Fast',
+        meta: '1 working day',
+        price: fastPrice,
+        vid: fastVid,
+        selected: current === 'fast',
+        dateIso: ''
+      }));
+    }
+    if (offers.sameDay) {
+      cards.push(speedCardHtml({
+        speed: 'same_day',
+        name: 'Same-day',
+        meta: 'Collect and back the same day.',
+        price: sdPrice,
+        vid: sdVid,
+        selected: current === 'same_day',
+        dateIso: picked ? picked.iso : '',
+        extraInner: slotsLine ? '<div class="qw-slot-left">' + esc(slotsLine) + '</div>' : ''
+      }));
+    }
+
+    var chips = '';
+    if (offers.sameDay) {
+      var chipsInner = dates.filter(function(d) { return d.available; }).map(function(d) {
+        var on = picked && d.iso === picked.iso;
+        var lab = formatJourneyDate(parseISODate(d.iso));
+        return '<button type="button" class="qw-date-chip' + (on ? ' sel' : '') + '" data-iso="' + d.iso +
+          '" data-slots="' + d.slotsRemaining + '">' + esc(lab) +
+          '<span class="qw-slot-left">' + d.slotsRemaining + ' slots left</span></button>';
+      }).join('');
+      chips = '<div class="qw-sameday-dates" id="qwSameDayDates"' + (current === 'same_day' ? '' : ' hidden') + '>' +
+        '<button type="button" class="qw-book-ahead" id="qwBookAhead">Book a day ahead</button>' +
+        '<div class="qw-date-chip-row" id="qwDateChipRow" hidden>' + chipsInner + '</div>' +
+      '</div>';
+    }
+
+    return '<div class="qw-opt-section" id="qwTurnaroundMount">' +
+      '<div class="qw-opt-label">Repair turnaround</div>' +
+      '<div class="qw-opt-row">' + cards.join('') + '</div>' +
+      chips +
+    '</div>';
+  }
+
+  function restoreStandardCollectionSlot() {
+    if (!_standardCollectIso) return;
+    var found = findSlotDate(_standardCollectIso);
+    if (found) {
+      _collectionSlot.date = found;
+      if (typeof paintDateStrip === 'function') paintDateStrip();
+    }
+  }
+
+  function applySameDayIso(iso) {
+    if (!iso) return;
+    S.sameDayDate = iso;
+    var card = document.querySelector('.qw-opt-card[data-speed="same_day"]');
+    if (card) card.setAttribute('data-date', iso);
+    var dates = sameDayDateOptions();
+    var hit = null;
+    for (var i = 0; i < dates.length; i++) {
+      if (dates[i].iso === iso) { hit = dates[i]; break; }
+    }
+    if (card && hit) {
+      var slotEl = card.querySelector('.qw-slot-left');
+      if (slotEl) slotEl.textContent = hit.slotsRemaining + ' slots left';
+    }
+    document.querySelectorAll('.qw-date-chip').forEach(function(ch) {
+      ch.classList.toggle('sel', ch.getAttribute('data-iso') === iso);
+    });
+    if (typeof findSlotDate === 'function') {
+      var found = findSlotDate(iso);
+      if (found) {
+        _collectionSlot.date = found;
+        if (typeof paintDateStrip === 'function') paintDateStrip();
+      }
+    }
+    refreshServiceJourney();
+    syncIcorrectQuote();
+  }
+
+  function wireTurnaroundMount(mount) {
+    if (!mount) return;
+    mount.querySelectorAll('.qw-opt-card[data-opt="speed"]').forEach(function(card) {
+      wireA11y(card, card.querySelector('.qw-opt-name') ? card.querySelector('.qw-opt-name').textContent : '');
+      card.onclick = function() {
+        var resCard = document.getElementById('qwResCard');
+        if (!resCard) return;
+        var group = card.dataset.opt;
+        card.parentNode.querySelectorAll('.qw-opt-card[data-opt="' + group + '"]').forEach(function(c) {
+          c.classList.remove('sel');
+        });
+        card.classList.add('sel');
+        var datesEl = document.getElementById('qwSameDayDates');
+        if (datesEl) datesEl.hidden = card.getAttribute('data-speed') !== 'same_day';
+        if (card.getAttribute('data-speed') === 'same_day') {
+          S.sameDayDate = card.getAttribute('data-date') || S.sameDayDate;
+          ensureMorningCollectionWindow();
+        } else {
+          restoreStandardCollectionSlot();
+        }
+        refreshAllInTotal();
+        refreshServiceJourney();
+      };
+    });
+    var ahead = mount.querySelector('#qwBookAhead');
+    if (ahead) {
+      ahead.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var row = document.getElementById('qwDateChipRow');
+        if (row) row.hidden = !row.hidden;
+      };
+    }
+    mount.querySelectorAll('.qw-date-chip').forEach(function(chip) {
+      chip.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        applySameDayIso(chip.getAttribute('data-iso'));
+        var sd = mount.querySelector('.qw-opt-card[data-speed="same_day"]');
+        if (sd && !sd.classList.contains('sel')) sd.click();
+      };
+    });
+  }
+
+  function refreshTurnaroundCards() {
+    var extras = document.getElementById('qwResExtras');
+    if (!extras) return;
+    var html = buildTurnaroundCards();
+    var mount = document.getElementById('qwTurnaroundMount');
+    if (mount) mount.outerHTML = html;
+    else extras.insertAdjacentHTML('beforeend', html);
+    wireTurnaroundMount(document.getElementById('qwTurnaroundMount'));
+    refreshAllInTotal();
   }
 
   /* =============================================
@@ -3722,7 +4191,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           (iss.refImages ? '<div class="qw-dustgate-imgs">' + iss.refImages.map(function(src,i){ return '<img src="' + src + '" alt="Reference image ' + (i+1) + '">'; }).join('') + '</div>' : '') +
         '</div>' +
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
-        '<div class="qw-res-extras" style="padding:0 24px 8px;">' + colorHtml + turnaroundHtml + '</div>' +
+        '<div class="qw-res-extras" id="qwResExtras" style="padding:0 24px 8px;">' + colorHtml + turnaroundHtml + '</div>' +
         '<div class="qw-res-cta">' +
           '<button class="qw-btn-book" id="qwBookBtn" disabled>Proceed to checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
           '<button class="qw-btn-email" id="qwEmailQuote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email me this quote</button>' +
@@ -3733,6 +4202,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       '<button class="qw-restart" id="qwRestart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Start over</button>';
 
     wireOptCards(container);
+    wireTurnaroundMount(document.getElementById('qwTurnaroundMount'));
     wireColorSelector(container);
     (function stampRepairTags(){
       var resEl = document.getElementById('qwResCard');
@@ -3814,6 +4284,9 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
     var likelyHtml = estimateRows ? '<div class="qw-estimate">' + estimateRows + '</div>' : '';
 
+    var expressData = await detectExpressFromPage(diagProduct.handle);
+    var turnaroundHtml = buildTurnaroundCards(expressData);
+
     var priceTrustHtml = diagPrice
       ? buildPriceTrustBlock(S.device, S.model, { gate: true, diagnostic: true, priceHtml: gbp.format(diagPrice) })
       : '';
@@ -3834,10 +4307,11 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           '<h3 class="qw-res-h">Book a Diagnostic</h3>' +
           '<p class="qw-res-p">' + esc(iss.copy) + '</p>' +
           '<p class="qw-res-p">We can\'t quote the full repair until we\'ve looked. The prices below are a guide — diagnostic first, then the repair if the board or other parts need work.</p>' +
-          '<p class="qw-res-p">Once your device arrives — by courier or mail-in — we diagnose within 1 working day and email your quote. The device stays with us until you decide.</p>' +
+          '<p class="qw-res-p">Once your device arrives — by courier or mail-in — we diagnose within 3 working days and email your quote. The device stays with us until you decide.</p>' +
           likelyHtml +
         '</div>' +
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
+        '<div class="qw-res-extras" id="qwResExtras" style="padding:0 24px 8px;">' + turnaroundHtml + '</div>' +
         '<div class="qw-res-cta">' +
           '<button class="qw-btn-book" id="qwBookBtn" disabled>Proceed to checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
           '<button class="qw-btn-email" id="qwEmailQuote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email me this quote</button>' +
@@ -3856,6 +4330,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     }
 
     wireOptCards(container);
+    wireTurnaroundMount(document.getElementById('qwTurnaroundMount'));
     wireCourierService(container);
     wireCFToggle(container);
     wireRestart(container);
@@ -4089,6 +4564,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   /* ---- WIRING HELPERS ---- */
   function wireOptCards(container) {
     container.querySelectorAll('.qw-opt-card').forEach(function(card) {
+      if (card.getAttribute('data-opt') === 'speed') return;
       wireA11y(card, card.querySelector('.qw-opt-name') ? card.querySelector('.qw-opt-name').textContent : '');
       card.onclick = function() {
         var resCard = document.getElementById('qwResCard');
@@ -4346,11 +4822,12 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
      RESET
      ============================================= */
   function reset() {
-    S.device = null; S.model = null; S.modelGroup = null; S.fault = null; S.issue = null; S.step = 1; S.collectionHandle = null; S.route = null; S.repairType = null; _repairsMap = {};
+    S.device = null; S.model = null; S.modelGroup = null; S.fault = null; S.issue = null; S.step = 1; S.collectionHandle = null; S.route = null; S.repairType = null; S.sameDayDate = null; _repairsMap = {};
     _courierQuote = null;
     _postcodeResolved = false;
     _quoteShownCaptured = false;
     _collectionSlot = { date: null, part: null };
+    _standardCollectIso = null;
     window.__icorrectQuote = {};
     _collectionProducts = [];
     _trackedSteps = {};
@@ -4822,7 +5299,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
       "type": "text",
       "id": "diagnostic_turnaround",
       "label": "Diagnostic turnaround label",
-      "default": "Quote in 1 working day"
+      "default": "Quote in 3 working days"
     },
     {
       "type": "text",
@@ -4905,6 +5382,37 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
       "label": "Skip to service step when product is fully resolved",
       "default": false,
       "info": "Keep off so product pages stay sequential: fault → postcode → price."
+    },
+    {
+      "type": "header",
+      "content": "Fast / same-day variant IDs"
+    },
+    {
+      "type": "text",
+      "id": "same_day_eligibility_url",
+      "label": "Same-day eligibility proxy URL",
+      "info": "Public proxy on the quote-events origin, e.g. https://api.icorrect.co.uk/same-day/eligibility. Blank = hide same-day. Never paste the workshop token."
+    },
+    {
+      "type": "number",
+      "id": "fast_variant_id",
+      "label": "Fast repair variant ID",
+      "default": 0,
+      "info": "Handle turn-around-time-1-working-day (£79). 0 until pasted from Admin."
+    },
+    {
+      "type": "number",
+      "id": "iphone_sameday_variant_id",
+      "label": "iPhone same-day variant ID",
+      "default": 0,
+      "info": "Handle same-day-iphone (£49). 0 until pasted from Admin."
+    },
+    {
+      "type": "number",
+      "id": "macbook_sameday_variant_id",
+      "label": "MacBook same-day variant ID",
+      "default": 0,
+      "info": "Handle turn-around-time-fatest-4-hours (£149). 0 until pasted from Admin."
     }
   ],
   "presets": [{ "name": "Quote Wizard" }]

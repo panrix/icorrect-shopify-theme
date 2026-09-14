@@ -1,0 +1,12 @@
+{
+  "name": "iCorrect Shopify Theme",
+  "install": "npm install",
+  "start": "./scripts/cloud-agent-start.sh",
+  "terminals": [
+    {
+      "name": "theme-dev",
+      "command": "./scripts/cloud-agent-theme-dev.sh"
+    }
+  ],
+  "ports": [9292]
+}

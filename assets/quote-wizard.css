@@ -951,6 +951,51 @@ a.qw-d-val:hover { text-decoration: underline; text-underline-offset: 2px; }
   margin-top: 6px;
 }
 .qw-opt-price.free { color: var(--qw-green); }
+.qw-slot-left {
+  display: block;
+  font: 400 12px var(--font-sans);
+  color: var(--qw-text-3);
+  margin-top: 4px;
+}
+.qw-sameday-dates { margin-top: 10px; }
+.qw-book-ahead {
+  display: inline-block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: 500 12px var(--font-sans);
+  color: var(--qw-accent);
+  text-decoration: underline;
+}
+.qw-date-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.qw-date-chip {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--qw-r-sm);
+  background: var(--qw-bg);
+  box-shadow: inset 0 0 0 1px var(--qw-line);
+  cursor: pointer;
+  font: 500 12px var(--font-sans);
+  color: var(--qw-text);
+  text-align: left;
+}
+.qw-date-chip:hover {
+  box-shadow: inset 0 0 0 1px var(--qw-text-2);
+}
+.qw-date-chip.sel {
+  background: var(--qw-bg-soft);
+  box-shadow: inset 0 0 0 2px var(--qw-ring);
+}
 .qw-pop-tag {
   position: absolute;
   top: -8px;

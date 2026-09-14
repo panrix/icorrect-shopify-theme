@@ -69,6 +69,31 @@ describe('hub #432 allowlist contract', () => {
     assert.match(liquid, /route:\s*q\.route/);
   });
 
+  it('quotePayload (hub POST body) excludes speed, same_day_date, slots_remaining', () => {
+    const payloadStart = liquid.indexOf('function quotePayload(extra)');
+    const payload = liquid.slice(payloadStart, liquid.indexOf('function captureQuoteShown'));
+    assert.doesNotMatch(payload, /speed:\s*q\.speed/);
+    assert.doesNotMatch(payload, /same_day_date:/);
+    assert.doesNotMatch(payload, /slots_remaining:/);
+  });
+
+  it('PostHog proceed / courier-quote extras still include speed, same_day_date, slots_remaining via selectedSpeedTrackFields', () => {
+    assert.match(liquid, /function selectedSpeedTrackFields\s*\(/);
+    const trackFieldsStart = liquid.indexOf('function selectedSpeedTrackFields');
+    const trackFields = liquid.slice(trackFieldsStart, liquid.indexOf('function courierTrackExtra'));
+    assert.match(trackFields, /speed:\s*speed/);
+    assert.match(trackFields, /same_day_date:\s*sameDayDate/);
+    assert.match(trackFields, /slots_remaining:\s*slots/);
+    const proceedStart = liquid.indexOf("function trackWizardProceed");
+    const proceed = liquid.slice(proceedStart, liquid.indexOf("function trackWizardEntry"));
+    assert.match(proceed, /selectedSpeedTrackFields\s*\(/);
+    const courierEvents = liquid.slice(
+      liquid.indexOf("function trackCourierQuoteEvents"),
+      liquid.indexOf("function trackSlotSelected")
+    );
+    assert.match(courierEvents, /selectedSpeedTrackFields\s*\(/);
+  });
+
   it('diagnostic card copy is service-neutral (no bare “We collect”)', () => {
     assert.doesNotMatch(
       liquid,
@@ -76,7 +101,7 @@ describe('hub #432 allowlist contract', () => {
     );
     assert.match(
       liquid,
-      /Once your device arrives — by courier or mail-in — we diagnose within 1 working day/
+      /Once your device arrives — by courier or mail-in — we diagnose within 3 working days/
     );
   });
 });

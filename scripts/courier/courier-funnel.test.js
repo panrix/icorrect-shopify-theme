@@ -118,6 +118,12 @@ describe('theme source: courier funnel events', () => {
     assert.match(wizard, /trackWizardEventOnce\([\s\S]*?'wizard_postcode_entered'/);
     assert.match(wizard, /trackWizardEvent\('wizard_proceed'/);
     assert.match(wizard, /if \(!window\.posthog\) return/);
+    assert.match(wizard, /function selectedSpeedTrackFields\s*\(/);
+    assert.match(wizard, /same_day_date:/);
+    assert.match(wizard, /slots_remaining:/);
+    const proceedIdx = wizard.indexOf("trackWizardEvent('wizard_proceed'");
+    const proceedSlice = wizard.slice(proceedIdx, proceedIdx + 350);
+    assert.match(proceedSlice, /selectedSpeedTrackFields\s*\(/);
   });
 
   it('additional-repair still has live courier UI and the same events except slots', () => {
