@@ -154,6 +154,10 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       model: q.model || null,
       fault: q.fault || null,
       issue: q.issue || null,
+      repair: q.repair || null,
+      repair_handle: q.repair_handle || q.repairHandle || null,
+      repair_type: q.repair_type || q.repairType || null,
+      route: q.route || null,
       outward_code: q.outward_code || q.outwardCode || null,
       band: q.band || null,
       tier: q.tier || null,
@@ -1765,6 +1769,11 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       q.model = S.model || null;
       q.fault = S.fault || null;
       q.issue = S.issue || null;
+      var quotedCard = document.getElementById('qwResCard');
+      q.repair = (quotedCard && quotedCard.dataset.repair) || null;
+      q.repair_handle = (quotedCard && quotedCard.dataset.repairHandle) || null;
+      q.repair_type = (quotedCard && quotedCard.dataset.repairType) || S.repairType || null;
+      q.route = (quotedCard && quotedCard.dataset.route) || S.route || null;
 
       var outward = (_courierQuote && _courierQuote.outward) || null;
       if (!outward) {
@@ -3562,7 +3571,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var serviceHtml = injectServicePrice(buildServiceCards(), priceTrustHtml + totalHtml);
 
     container.innerHTML = urgentHtml +
-      '<div class="qw-res" id="qwResCard" data-base="' + basePrice + '" data-vid="' + mainVariantId + '" data-needs-color="' + (deviceColors ? '1' : '0') + '">' +
+      '<div class="qw-res" id="qwResCard" data-base="' + basePrice + '" data-vid="' + mainVariantId + '" data-needs-color="' + (deviceColors ? '1' : '0') + '" data-repair="' + esc(product.title || '') + '" data-repair-handle="' + esc(product.handle || '') + '" data-repair-type="' + esc(iss.repairType || '') + '" data-route="repair">' +
         '<div class="qw-res-top">' +
           '<div class="qw-res-badge qw-badge-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>We can fix this</div>' +
           '<h3 class="qw-res-h">' + esc(product.title) + '</h3>' +
@@ -3668,7 +3677,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var diagVariantId = fullDiag ? fullDiag.variants[0].id : 0;
 
     container.innerHTML = urgentHtml +
-      '<div class="qw-res" id="qwResCard" data-base="' + diagPrice + '" data-vid="' + diagVariantId + '">' +
+      '<div class="qw-res" id="qwResCard" data-base="' + diagPrice + '" data-vid="' + diagVariantId + '" data-repair="' + esc((fullDiag && fullDiag.title) || diagProduct.title || 'Diagnostic') + '" data-repair-handle="' + esc(diagProduct.handle || '') + '" data-repair-type="diagnostic" data-route="diagnostic">' +
         '<div class="qw-res-top">' +
           '<div class="qw-res-badge qw-badge-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>We need to take a look</div>' +
           '<h3 class="qw-res-h">Book a Diagnostic</h3>' +
