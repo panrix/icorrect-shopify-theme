@@ -1,0 +1,11 @@
+{
+  "name": "iCorrect Shopify Theme",
+  "install": "npm install",
+  "terminals": [
+    {
+      "name": "theme-preview",
+      "command": "python3 -m http.server 8080"
+    }
+  ],
+  "ports": [8080]
+}

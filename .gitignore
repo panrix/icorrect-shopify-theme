@@ -1,0 +1,10 @@
+# Node / Shopify CLI tooling
+node_modules/
+package-lock.json
+.shopify/
+npm-debug.log*
+yarn-error.log*
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
