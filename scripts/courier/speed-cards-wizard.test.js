@@ -317,6 +317,10 @@ describe('I1: Fast card price must match the charged variant', () => {
     assert.equal(fastCardPrice({ price: 65, variantId: null }, 111), 79);
   });
 
+  it('falls back to £79 when cfgFastVid is 0 even if scraped variant id is also 0 (M11)', () => {
+    assert.equal(fastCardPrice({ price: 65, variantId: 0 }, 0), 79);
+  });
+
   it('buildTurnaroundCards computes the Fast price via fastCardPrice, not a bare expressData.price check', () => {
     const fn = extractFunction(liquid, 'buildTurnaroundCards');
     assert.match(fn, /fastCardPrice\s*\(\s*expressData\s*,\s*cfgFastVid\s*\)/);
@@ -362,6 +366,37 @@ describe('I2: Standard card must not say "We collect" on mail-in or with no coll
       benchLabel: '1 working day'
     });
     assert.doesNotMatch(meta, /We collect/);
+  });
+
+  it('mail-in iPhone (1-day bench) does not promise same-afternoon return (I4)', () => {
+    const meta = standardSpeedMeta({
+      postOnly: true,
+      diagnostic: false,
+      device: 'iphone',
+      dateLabel: 'Tue 15 Sep',
+      benchDays: 1,
+      benchLabel: '1 working day'
+    });
+    assert.doesNotMatch(meta, /return it that afternoon/);
+    assert.equal(
+      meta,
+      'We send you a pack to post your device to us. We repair the next working day after it arrives.'
+    );
+  });
+
+  it('courier iPhone (1-day bench) still promises same-afternoon return', () => {
+    const meta = standardSpeedMeta({
+      postOnly: false,
+      diagnostic: false,
+      device: 'iphone',
+      dateLabel: 'Tue 15 Sep',
+      benchDays: 1,
+      benchLabel: '1 working day'
+    });
+    assert.equal(
+      meta,
+      'We collect Tue 15 Sep. We repair the next working day and return it that afternoon.'
+    );
   });
 
   it('mail-in diagnostic keeps the bench claim via turnaroundClaimLabel, not a bare "We collect"', () => {
