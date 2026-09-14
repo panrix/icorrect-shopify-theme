@@ -41,7 +41,7 @@ function homepageDiagnosticAnswerHtml() {
   return faq.settings.sub_head;
 }
 
-const STALE = /two to three working days|2-3 working days|2 to 3 working days/i;
+const STALE = /two to three working days|one to two working days|2-3 working days|2 to 3 working days|1 to 2 working days/i;
 const ONE_DAY = /diagnose within 1 working day/;
 const SERVICE_NEUTRAL = /by courier or mail-in/;
 const DEVICE_STAYS = /device stays with us/;
@@ -57,6 +57,8 @@ const DIAGNOSTIC_SOURCES = [
   'templates/collection.ipad-diagnostics.json',
   'templates/collection.macbook-diagnostic.json',
   'templates/collection.apple-watch-diagnostics.json',
+  'templates/collection.watch-diagnostics.json',
+  'templates/collection.iphone-diagnostics.json',
   'templates/page.advanced-diagnostics.json',
 ];
 
@@ -99,5 +101,11 @@ describe('FAQ diagnostic clock copy', () => {
       );
       assert.match(read(rel), /1 working day/, `${rel} missing 1 working day`);
     }
+  });
+
+  it('apple-watch-diagnostics is watch-named, not an iPad paste', () => {
+    const src = read('templates/collection.apple-watch-diagnostics.json');
+    assert.equal(src.includes('iPad'), false);
+    assert.match(src, /Apple Watch Diagnostic/);
   });
 });
