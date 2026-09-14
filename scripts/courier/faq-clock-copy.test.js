@@ -1,6 +1,6 @@
 /**
  * Contract: customer-facing diagnostic FAQ/schema matches wizard clocks.
- * Wizard source: assets/repair-journey.js (diagnostic = 1 working day).
+ * Wizard source: assets/repair-journey.js (diagnostic = 3 working days).
  * Run: node --test scripts/courier/faq-clock-copy.test.js
  */
 'use strict';
@@ -42,7 +42,7 @@ function homepageDiagnosticAnswerHtml() {
 }
 
 const STALE = /two to three working days|one to two working days|2-3 working days|2 to 3 working days|1 to 2 working days/i;
-const ONE_DAY = /diagnose within 1 working day/;
+const THREE_DAY = /diagnose within 3 working days/;
 const SERVICE_NEUTRAL = /by courier or mail-in/;
 const DEVICE_STAYS = /device stays with us/;
 
@@ -73,10 +73,10 @@ describe('FAQ diagnostic clock copy', () => {
     }
   });
 
-  it('homepage FAQ + schema use the 1-day courier-or-mail-in diagnostic clock', () => {
+  it('homepage FAQ + schema use the 3-day courier-or-mail-in diagnostic clock', () => {
     for (const rel of HOMEPAGE_SOURCES) {
       const src = read(rel);
-      assert.match(src, ONE_DAY, `${rel} missing 1 working day diagnose claim`);
+      assert.match(src, THREE_DAY, `${rel} missing 3 working day diagnose claim`);
       assert.match(src, SERVICE_NEUTRAL, `${rel} missing courier-or-mail-in wording`);
       assert.match(src, DEVICE_STAYS, `${rel} missing device-stays wording`);
     }
@@ -99,7 +99,7 @@ describe('FAQ diagnostic clock copy', () => {
         false,
         `${rel} still claims two to three / 2-3 working days`
       );
-      assert.match(read(rel), /1 working day/, `${rel} missing 1 working day`);
+      assert.match(read(rel), /diagnose within 3 working days/, `${rel} missing 3 working day diagnose claim`);
     }
   });
 

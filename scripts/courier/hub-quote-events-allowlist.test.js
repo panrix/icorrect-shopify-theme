@@ -76,7 +76,7 @@ describe('hub #432 allowlist contract', () => {
     );
     assert.match(
       liquid,
-      /Once your device arrives — by courier or mail-in — we diagnose within 1 working day/
+      /Once your device arrives — by courier or mail-in — we diagnose within 3 working days/
     );
   });
 });

@@ -114,7 +114,7 @@ window.WIZARD_CONTEXT = {
 <script>
 window.WIZARD_CFG = {
   warrantyLabel: {{ section.settings.warranty_label | default: '2-year warranty' | json }},
-  diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: 'Quote in 1 working day' | json }},
+  diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: 'Quote in 3 working days' | json }},
   bandsUrl: {{ 'courier-london-bands.json' | asset_url | json }},
   catalogueUrl: {{ 'repair-catalogue-map.json' | asset_url | json }},
   collectionPrefillUrl: {{ 'wizard-collection-prefill.json' | asset_url | json }},
@@ -1498,7 +1498,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   }
 
   function buildDiagnosticBadges(device) {
-    return svcBadge('turnaround', CFG.diagnosticTurnaround || 'Quote in 1 working day') +
+    return svcBadge('turnaround', CFG.diagnosticTurnaround || 'Quote in 3 working days') +
       svcBadge('diagnostic', 'Full report and quote sent via email');
   }
 
@@ -1521,7 +1521,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       return window.ICorrectRepairJourney.turnaroundClaimLabel(device, opts);
     }
     if (opts.diagnostic || S.route === 'diagnostic') {
-      return CFG.diagnosticTurnaround || 'Quote in 1 working day';
+      return CFG.diagnosticTurnaround || 'Quote in 3 working days';
     }
     var days = repairBenchDays(device, opts);
     if (days === 1) return '1 working day';
@@ -1712,11 +1712,11 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         kind: 'diagnostic',
         steps: [
           { title: 'We collect', meta: collect ? formatJourneyDate(collect) : 'Pick a collection window' },
-          { title: 'We diagnose & email your quote', meta: collect ? formatJourneyDate(addWorkingDays(collect, 1)) : '1 working day after collection' },
+          { title: 'We diagnose & email your quote', meta: collect ? formatJourneyDate(addWorkingDays(collect, 3)) : '3 working days after collection' },
           { title: 'You decide next', meta: 'Device stays with us until you approve' }
         ],
         returnDate: null,
-        quoteDate: collect ? addWorkingDays(collect, 1) : null
+        quoteDate: collect ? addWorkingDays(collect, 3) : null
       };
     }
     var bench = repairBenchDays(S.device, opts);
@@ -4149,7 +4149,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           '<h3 class="qw-res-h">Book a Diagnostic</h3>' +
           '<p class="qw-res-p">' + esc(iss.copy) + '</p>' +
           '<p class="qw-res-p">We can\'t quote the full repair until we\'ve looked. The prices below are a guide — diagnostic first, then the repair if the board or other parts need work.</p>' +
-          '<p class="qw-res-p">Once your device arrives — by courier or mail-in — we diagnose within 1 working day and email your quote. The device stays with us until you decide.</p>' +
+          '<p class="qw-res-p">Once your device arrives — by courier or mail-in — we diagnose within 3 working days and email your quote. The device stays with us until you decide.</p>' +
           likelyHtml +
         '</div>' +
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
@@ -5141,7 +5141,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
       "type": "text",
       "id": "diagnostic_turnaround",
       "label": "Diagnostic turnaround label",
-      "default": "Quote in 1 working day"
+      "default": "Quote in 3 working days"
     },
     {
       "type": "text",
