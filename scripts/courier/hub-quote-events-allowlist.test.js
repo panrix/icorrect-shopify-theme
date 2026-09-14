@@ -63,10 +63,12 @@ describe('hub #432 allowlist contract', () => {
     assert.deepEqual(missing, [], `repairTypes not in hub allowlist: ${missing.join(', ')}`);
   });
 
-  it('payload keys include repair / repair_handle / repair_type / route', () => {
-    assert.match(liquid, /repair_handle:\s*q\.repair_handle/);
-    assert.match(liquid, /repair_type:\s*q\.repair_type/);
-    assert.match(liquid, /route:\s*q\.route/);
+  it('repair fields stay wired behind HUB_ACCEPTS_REPAIR_FIELDS gate', () => {
+    assert.match(liquid, /var HUB_ACCEPTS_REPAIR_FIELDS = false;/);
+    assert.match(liquid, /if \(HUB_ACCEPTS_REPAIR_FIELDS\)/);
+    assert.match(liquid, /payload\.repair_handle = q\.repair_handle/);
+    assert.match(liquid, /payload\.repair_type = q\.repair_type/);
+    assert.match(liquid, /payload\.route = q\.route/);
   });
 
   it('diagnostic card copy is service-neutral (no bare “We collect”)', () => {

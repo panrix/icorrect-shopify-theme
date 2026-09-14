@@ -138,6 +138,11 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 <script>
 (function () {
   var ENDPOINT = "https://api.icorrect.co.uk/api/quote-events";
+  // Hub #432 (repair / repair_handle / repair_type / route) is merged in workshop-os
+  // but not yet deployed to intake-hub. Live API still fail-closes unknown keys and
+  // drops the whole beacon. Keep client-side stamps; omit outbound keys until the
+  // hub accepts them (flip after VPS pull + migration 0028 + intake-hub restart).
+  var HUB_ACCEPTS_REPAIR_FIELDS = false;
 
   function phDistinctId() {
     try {
@@ -156,10 +161,6 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       model: q.model || null,
       fault: q.fault || null,
       issue: q.issue || null,
-      repair: q.repair || null,
-      repair_handle: q.repair_handle || q.repairHandle || null,
-      repair_type: q.repair_type || q.repairType || null,
-      route: q.route || null,
       outward_code: q.outward_code || q.outwardCode || null,
       band: q.band || null,
       tier: q.tier || null,
@@ -171,6 +172,12 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       collection_window: q.collection_window || q.collectionWindow || null,
       proceeded: false
     };
+    if (HUB_ACCEPTS_REPAIR_FIELDS) {
+      payload.repair = q.repair || null;
+      payload.repair_handle = q.repair_handle || q.repairHandle || null;
+      payload.repair_type = q.repair_type || q.repairType || null;
+      payload.route = q.route || null;
+    }
     if (extra) {
       for (var k in extra) payload[k] = extra[k];
     }
