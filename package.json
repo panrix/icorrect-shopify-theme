@@ -8,8 +8,8 @@
     "theme:check": "shopify theme check",
     "theme:dev": "shopify theme dev",
     "theme:pull": "shopify theme pull",
-    "theme:push": "shopify theme push",
-    "serve": "python3 -m http.server 8080"
+    "theme:preview": "shopify theme push --unpublished --json",
+    "theme:push": "shopify theme push"
   },
   "devDependencies": {
     "@shopify/cli": "^4.8.0"
