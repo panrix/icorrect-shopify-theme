@@ -1,29 +1,41 @@
 # Go-live: quote-events repair fields (hub #432)
 
-**Status (2026-09-14):** Theme PR #65 is live on `icorrect.co.uk` and stamps repair metadata client-side, but production `POST https://api.icorrect.co.uk/api/quote-events` still returns `400 {"ok":false,"error":"unknown field: repair"}`. Legacy payloads without those keys still return `200`.
+**Status (2026-09-14 ~04:07 UTC): LIVE**
 
-## Immediate mitigation (theme)
+- Hub deployed: `intake-hub` @ `f5eade1` — *Capture quoted repair on quote_events (#432)*
+- Migration `0028-quote-events-repair.sql` applied clean; post-check PASS
+- Theme: still on [#65](https://github.com/panrix/icorrect-shopify-theme/pull/65) (gate [#66](https://github.com/panrix/icorrect-shopify-theme/pull/66) closed unmerged — would have omitted repair keys)
+- Production smoke: repair-field POST and legacy POST both `{"ok":true}`
 
-`HUB_ACCEPTS_REPAIR_FIELDS = false` in `sections/quote-wizard.liquid` omits `repair`, `repair_handle`, `repair_type`, and `route` from outbound beacons so device/fault/email capture keeps working. Client-side stamps remain so flipping the flag re-enables product capture after the hub is live.
+## What was broken
 
-## Hub deploy (VPS — required)
+Theme #65 emitted `repair` / `repair_handle` / `repair_type` / `route`. Until hub #432 was deployed, production returned `400 unknown field: repair` and dropped the whole beacon.
 
-This cloud agent has no SSH key to `ops.icorrect.co.uk`. Deploy from a machine that can reach the protected clone:
+## Deploy (ops — done)
+
+Follow **`H-DEPLOY-RUNBOOK.md`** and `.claude/skills/intake-hub-*` on the VPS — not guessed repo-root paths.
 
 ```bash
-# On ops / jarvis as the deploy user
+ssh ricky@ops.icorrect.co.uk
 cd /home/ricky/apps/workshop-os
-git fetch origin
-git checkout main
-git pull --ff-only origin main
-# build intake-hub (use the repo's usual build command)
-npm run build --workspace=intake-hub   # or the project-standard equivalent
-npx tsx scripts/apply-pending-migrations.ts   # must apply 0028-quote-events-repair
+git fetch origin && git checkout main && git pull --ff-only origin main
+
+cd intake/intake-hub
+npm run build   # tsc -p tsconfig.json
+
+# migrations: scripts live under intake/intake-hub/scripts/
+# SUPABASE_DB_URL must come from the systemd unit's env file:
+#   /home/ricky/config/.env
+# (not api-keys/.env)
+set -a && source /home/ricky/config/.env && set +a
+npx tsx scripts/apply-pending-migrations.ts   # confirm path matches runbook on box
+
+sudo systemctl daemon-reload
 sudo systemctl restart intake-hub
 sudo systemctl status intake-hub --no-pager
 ```
 
-## Smoke after hub restart
+## Smoke
 
 ```bash
 curl -sS -X POST 'https://api.icorrect.co.uk/api/quote-events' \
@@ -33,9 +45,16 @@ curl -sS -X POST 'https://api.icorrect.co.uk/api/quote-events' \
 # expect: {"ok":true}
 ```
 
-Then set `HUB_ACCEPTS_REPAIR_FIELDS = true` in the theme, merge via Terra SHIP, and confirm one live repair + one diagnostic quote write repair columns in Supabase `quote_events`.
+## Theme follow-up
 
-## Residual checks
+**None required for the gate.** Live theme already sends repair fields; hub accepts them.
 
-- Shopify section setting `diagnostic_turnaround` on live templates (homepage already shows “Quote in 1 working day”; spot-check other templates in the theme editor for a legacy “24 hours” override).
-- Soft lead-gate + express mail-in remain follow-ups in `docs/CONVERSION-NOTES-QUOTES-2026-09-14.md`.
+Optional residuals (not blocking):
+
+- Spot-check Shopify `diagnostic_turnaround` section settings for a legacy “24 hours” override
+- Soft lead-gate + express mail-in: `docs/CONVERSION-NOTES-QUOTES-2026-09-14.md`
+
+## Pre-existing ops drift (noted by CLI deploy, untouched)
+
+- `intake_tasks.payment_amount_gbp` numeric precision drift (preflight non-zero)
+- Dirty `intake/icloud-checker/specs-cache.json` + old backup junk on the box
