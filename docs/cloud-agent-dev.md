@@ -1,62 +1,59 @@
 # Cloud Agent development environment
 
 How a Cursor Cloud Agent previews and tests the **real** iCorrect theme against the
-store, and how changes get released.
+store. Same credentials the other Shopify agents already use — no extra token
+setup.
 
 - Store: `i-correct-final.myshopify.com` (public: `www.icorrect.co.uk`)
-- Live theme id: `158358438141` (never pushed to by the agent)
-- Releases: via GitHub (Shopify's GitHub theme integration) — the agent does **not**
-  publish to the live theme.
+- Live theme: `158358438141` (`icorrect-shopify-theme/main`, GitHub-connected)
+- Credentials: `/home/ricky/config/api-keys/.env` on mission-control
+  (`SHOPIFY_STORE`, `SHOPIFY_ACCESS_TOKEN`, `SHOPIFY_CLIENT_ID`,
+  `SHOPIFY_CLIENT_SECRET`)
+- Releases: GitHub → Shopify theme integration. Agents do **not** publish the
+  live theme.
 
-## Auth: Shopify CLI needs a token (headless)
+## Auth (already in place)
 
-The Shopify CLI (`theme dev`, `theme push`, `theme pull`, `theme check`) authenticates
-non-interactively with a **Theme Access password** (`shptka_...`) or an Admin API token
-(`shpat_...`), supplied via environment variables. No interactive browser login is needed.
+Cloud Agents reach the VPS with the existing `VPS_SSH_*` secrets, then load the
+same `.env` file other Shopify agents source. `scripts/load-shopify-env-from-vps.sh`
+does that and (when possible) mints a client-credentials Admin token, matching
+`/home/ricky/scripts/push-staging-theme-53.py`.
 
-Set these as Cloud Agent **secrets** (right-hand Secrets panel, next to the chat):
+`start` writes those exports to `/tmp/icorrect-secrets/shopify.env` (mode 600,
+never committed). The `theme-dev` terminal then runs `shopify theme dev`, which
+uploads this worktree to a CLI **development** theme (never the live theme).
 
-| Secret | Value |
-| --- | --- |
-| `SHOPIFY_CLI_THEME_TOKEN` | the Theme Access password (`shptka_...`) |
-| `SHOPIFY_FLAG_STORE` | `i-correct-final.myshopify.com` |
+The local proxy at <http://127.0.0.1:9292> returns 401 with an Admin API token
+(Shopify's documented limitation vs a Theme Access password). Preview the real
+storefront instead:
 
-### Where to get the Theme Access password
+`https://icorrect.co.uk/?preview_theme_id=<id>`
 
-1. In the Shopify admin for `i-correct-final.myshopify.com`, install the free
-   **Theme Access** app: <https://apps.shopify.com/theme-access>
-2. Open **Apps → Theme Access → Create password**. Give it a name (e.g.
-   `Cursor Cloud Agent`) and your email.
-3. Shopify emails a link. Open it and copy the `shptka_...` password — it is shown
-   **once** and the link expires after 7 days or first view.
-4. Paste it into the `SHOPIFY_CLI_THEME_TOKEN` secret above.
+That is the same URL shape other agents already use for QA.
 
-The password is scoped to `write_themes` only — it can work on themes and nothing else
-(no products, orders, or customers).
+## Test loop (change UI → preview → release)
 
-## Test loop (make change → preview → release)
+1. Edit theme files in this repo.
+2. `theme-dev` hot-reloads them on <http://127.0.0.1:9292>.
+3. Click through the real quote wizard / collections / product pages.
+4. When approved, merge via GitHub; Shopify picks up `main` on the live theme.
 
-1. Make theme changes in the repo (Liquid / CSS / JS).
-2. Push to an **unpublished** preview theme (never live):
-   ```bash
-   npx shopify theme push --unpublished --json -t "cursor-preview"
-   # → returns the new theme id + preview URL
-   ```
-   To reuse one preview theme per branch instead of creating new ones each time:
-   ```bash
-   npx shopify theme push --development --development-context "$(git branch --show-current)" --json
-   ```
-3. Open the preview in a browser and verify on the real storefront:
-   `https://i-correct-final.myshopify.com/<path>?preview_theme_id=<id>`
-4. When approved, release through the normal GitHub flow.
-
-Alternatively, `npx shopify theme dev` (auto-started by the `theme-dev` terminal when the
-secrets are present) runs a local hot-reload server at <http://localhost:9292> rendering the
-real theme.
-
-## Offline checks (no token needed)
+To push an unpublished staging theme instead (same pattern as #53):
 
 ```bash
-npm test              # node --test scripts/courier/*.test.js (quote/courier logic)
+eval "$(./scripts/load-shopify-env-from-vps.sh)"
+npx shopify theme push --unpublished --json -t "STAGING — do not publish"
+```
+
+Existing unpublished themes on the store (do not publish, do not overwrite unless
+you intend to):
+
+- `162397946109` — STAGING — NEW DESIGN
+- `213180776701` — STAGING — courier-first #53
+
+## Offline checks (no store needed)
+
+```bash
+npm test              # scripts/courier/*.test.js
 npm run theme:check   # Shopify theme linter
 ```

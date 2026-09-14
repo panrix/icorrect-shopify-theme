@@ -1,10 +1,11 @@
 {
   "name": "iCorrect Shopify Theme",
   "install": "npm install",
+  "start": "./scripts/cloud-agent-start.sh",
   "terminals": [
     {
       "name": "theme-dev",
-      "command": "if [ -n \"$SHOPIFY_CLI_THEME_TOKEN\" ]; then npx shopify theme dev --store \"${SHOPIFY_FLAG_STORE:-i-correct-final.myshopify.com}\"; else echo 'theme-dev not started. Add SHOPIFY_CLI_THEME_TOKEN + SHOPIFY_FLAG_STORE as Cloud Agent secrets to enable live preview of the real theme. See docs/cloud-agent-dev.md'; sleep infinity; fi"
+      "command": "./scripts/cloud-agent-theme-dev.sh"
     }
   ],
   "ports": [9292]
