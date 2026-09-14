@@ -16,10 +16,10 @@ function iso(d) {
 }
 
 describe('repairBenchDays', () => {
-  it('iphone/macbook/ipad 1, watch 3, diagnostic 1', () => {
+  it('iphone 1, macbook/ipad 2, watch 3, diagnostic 1', () => {
     assert.equal(J.repairBenchDays('iphone'), 1);
-    assert.equal(J.repairBenchDays('macbook'), 1);
-    assert.equal(J.repairBenchDays('ipad'), 1);
+    assert.equal(J.repairBenchDays('macbook'), 2);
+    assert.equal(J.repairBenchDays('ipad'), 2);
     assert.equal(J.repairBenchDays('watch'), 3);
     assert.equal(J.repairBenchDays('macbook', { diagnostic: true }), 1);
   });
@@ -28,9 +28,9 @@ describe('repairBenchDays', () => {
 describe('courier clocks from Monday collection', () => {
   const collect = new Date(2026, 8, 14); // Mon 14 Sep 2026
 
-  it('iphone and macbook back Tuesday (1 working day)', () => {
+  it('iphone back Tuesday; macbook back Wednesday', () => {
     assert.equal(iso(J.courierRepairJourney('iphone', collect).returnDate), '2026-09-15');
-    assert.equal(iso(J.courierRepairJourney('macbook', collect).returnDate), '2026-09-15');
+    assert.equal(iso(J.courierRepairJourney('macbook', collect).returnDate), '2026-09-16');
   });
 
   it('watch still back Thursday (3 working days)', () => {

@@ -3,7 +3,8 @@
  *
  * Conversion bias: shortest honest working-day clock when parts are in stock.
  * Courier collection day is day 1 of the clock.
- * Known repair (iPhone / MacBook / iPad): 1 working day (collect Mon → back Tue).
+ * iPhone known repair: 1 working day (collect Mon → back Tue).
+ * MacBook / iPad known repair: 2 working days (collect Mon → back Wed).
  * Watch stays 3 (adhesive cure — physical constraint).
  * Diagnostic: collect/receive → diagnose + email quote in 1 working day.
  * Device stays with us. No return until the customer approves a repair.
@@ -25,9 +26,10 @@
   function repairBenchDays(device, opts) {
     opts = opts || {};
     if (opts.diagnostic) return 1;
+    if (device === 'iphone') return 1;
     if (device === 'watch') return 3;
-    // iPhone / MacBook / iPad: 1 working day when stocked (Ricky 2026-09-14).
-    return 1;
+    // MacBook / iPad: 2 working days (Ricky 2026-09-14 confirm).
+    return 2;
   }
 
   function startOfDay(d) {

@@ -10,7 +10,7 @@ Reviewed 2026-09-14. Builds on r2 (dataset stamp + clocks) and Ricky's conversio
 | 2 | Diagnostic ETA is quote/diagnosis date, not return | YES | ETA label: “We'll tell you what's wrong by {date}”. |
 | 3 | Working-day math kept (Fri → Mon) | YES | Tests: Friday collection → Monday quote. |
 | 4 | Copy says 1 working day, not 24 hours | YES | Badge + journey strings. |
-| 5 | Known repair iPhone/MacBook/iPad = 1 working day; watch = 3 | YES | `repairBenchDays` + tests. |
+| 5 | iPhone = 1 working day; MacBook/iPad = 2; diagnostic quote = 1; watch = 3 | YES | `repairBenchDays` + tests. |
 | 6 | Independent courier tests | YES | `node --test scripts/courier/*.test.js` → 70 pass. |
 
 ## Findings

@@ -1556,8 +1556,9 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     if (window.ICorrectRepairJourney) return window.ICorrectRepairJourney.repairBenchDays(device, opts);
     opts = opts || {};
     if (opts.diagnostic) return 1;
+    if (device === 'iphone') return 1;
     if (device === 'watch') return 3;
-    return 1;
+    return 2;
   }
 
   function parseISODate(iso) {

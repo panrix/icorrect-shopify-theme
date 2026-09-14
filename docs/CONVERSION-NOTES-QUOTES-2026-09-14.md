@@ -29,4 +29,4 @@ Suggested offer:
 ## 3. What this PR already changes for conversion
 - Diagnostic journey no longer says collect → repair → return.
 - It now says collect/send pack → diagnose & email quote by {date} → you decide (device stays).
-- MacBook/iPad known repair promised at **1 working day** (watch stays 3 for adhesive). Prefer too much demand over idle benches.
+- Clocks: iPhone **1** working day, MacBook/iPad **2**, diagnostic quote **1**, watch **3** (adhesive). Prefer demand over idle benches; pull back operationally if needed.
