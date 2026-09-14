@@ -75,6 +75,14 @@ describe('quote wizard cart must not add the £20 mail-in-service SKU', () => {
     assert.match(fn, /_courierQuote\.adjustment > 0/);
     assert.match(fn, /_courierQuote\.variantId/);
   });
+
+  it('never adds a mail-in adjustment on repairs of £200 or more', () => {
+    assert.match(
+      fn,
+      /currentRepairPrice\(\) >= 200/,
+      '≥£200 mail-in must not add Mail-in pack contribution'
+    );
+  });
 });
 
 describe('product-page additional-repair cart matches the same rule', () => {

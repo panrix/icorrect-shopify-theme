@@ -15,30 +15,35 @@ const {
   addDays,
 } = require('../../assets/courier-slots.js');
 
+/** Sep 2026 is BST (UTC+1). */
+function bst(y, m, d, hourLondon, min) {
+  return new Date(Date.UTC(y, m, d, hourLondon - 1, min || 0, 0));
+}
+
 describe('earliestCollectionDay cutoff', () => {
-  it('B1 before 2pm → today allowed', () => {
-    const now = new Date(2026, 8, 11, 13, 30, 0); // Fri 11 Sep 2026 13:30
+  it('B1 before 2pm UK → today allowed', () => {
+    const now = bst(2026, 8, 11, 13, 30); // Fri 11 Sep 2026 13:30 London
     const g = earliestCollectionDay('B1', now);
     assert.equal(g.todayAllowed, true);
     assert.equal(toISODate(g.earliest), '2026-09-11');
   });
 
-  it('B2 after 2pm → tomorrow', () => {
-    const now = new Date(2026, 8, 11, 14, 0, 0);
+  it('B2 after 2pm UK → tomorrow', () => {
+    const now = bst(2026, 8, 11, 14, 0);
     const g = earliestCollectionDay('B2', now);
     assert.equal(g.todayAllowed, false);
     assert.equal(toISODate(g.earliest), '2026-09-12');
   });
 
-  it('B4 before 2pm → still tomorrow (outer London)', () => {
-    const now = new Date(2026, 8, 11, 10, 0, 0);
+  it('B4 before 2pm UK → still tomorrow (outer London)', () => {
+    const now = bst(2026, 8, 11, 10, 0);
     const g = earliestCollectionDay('B4', now);
     assert.equal(g.todayAllowed, false);
     assert.equal(toISODate(g.earliest), '2026-09-12');
   });
 
-  it('B3 after 2pm → tomorrow', () => {
-    const now = new Date(2026, 8, 11, 16, 0, 0);
+  it('B3 after 2pm UK → tomorrow', () => {
+    const now = bst(2026, 8, 11, 16, 0);
     const g = earliestCollectionDay('B3', now);
     assert.equal(g.todayAllowed, false);
     assert.equal(toISODate(g.earliest), '2026-09-12');
@@ -47,7 +52,7 @@ describe('earliestCollectionDay cutoff', () => {
 
 describe('listCollectionDates', () => {
   it('B2 before 2pm includes Today as first option', () => {
-    const now = new Date(2026, 8, 11, 11, 0, 0);
+    const now = bst(2026, 8, 11, 11, 0);
     const { dates } = listCollectionDates('B2', { now: now, count: 5, includeWeekends: true });
     assert.equal(dates[0].isToday, true);
     assert.equal(dates[0].headline, 'Today');
@@ -55,7 +60,7 @@ describe('listCollectionDates', () => {
   });
 
   it('B4 never offers Today', () => {
-    const now = new Date(2026, 8, 11, 11, 0, 0);
+    const now = bst(2026, 8, 11, 11, 0);
     const { dates } = listCollectionDates('B4', { now: now, count: 5, includeWeekends: true });
     assert.equal(dates[0].isToday, false);
     assert.equal(dates[0].headline, 'Tomorrow');

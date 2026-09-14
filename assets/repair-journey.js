@@ -9,8 +9,9 @@
  * Diagnostic: collect/receive → diagnose + email quote in 1 working day.
  * Device stays with us. No return until the customer approves a repair.
  *
- * Mail-in: we ship pack day 0, customer posts next working day, we receive
- * the day after that, then bench, then return (repair only).
+ * Mail-in: pack ships same UK working day until 15:00 Europe/London.
+ * UPost / device with us = next working day. Then bench, then return +1.
+ * Clocks always use Europe/London — never the browser timezone.
  */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
@@ -21,7 +22,36 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
-  var PACK_CUTOFF_HOUR = 14;
+  var PACK_CUTOFF_HOUR = 15;
+  var LONDON_TZ = 'Europe/London';
+
+  function londonWall(now) {
+    var n = now || new Date();
+    var parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: LONDON_TZ,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23'
+    }).formatToParts(n);
+    var get = function (type) {
+      for (var i = 0; i < parts.length; i++) {
+        if (parts[i].type === type) return parts[i].value;
+      }
+      return '0';
+    };
+    var year = parseInt(get('year'), 10);
+    var month = parseInt(get('month'), 10) - 1;
+    var day = parseInt(get('day'), 10);
+    var hour = parseInt(get('hour'), 10);
+    var minute = parseInt(get('minute'), 10);
+    return {
+      date: new Date(year, month, day),
+      hour: hour + minute / 60
+    };
+  }
 
   function repairBenchDays(device, opts) {
     opts = opts || {};
@@ -53,9 +83,9 @@
   }
 
   function packShipDate(now) {
-    var n = now || new Date();
-    var d = startOfDay(n);
-    if (!isWorkingDay(d) || n.getHours() >= PACK_CUTOFF_HOUR) {
+    var wall = londonWall(now);
+    var d = startOfDay(wall.date);
+    if (!isWorkingDay(d) || wall.hour >= PACK_CUTOFF_HOUR) {
       return addWorkingDays(d, 1);
     }
     return d;
@@ -125,15 +155,14 @@
   function mailinRepairJourney(device, now) {
     var bench = repairBenchDays(device, { diagnostic: false });
     var ship = packShipDate(now);
-    var youPost = addWorkingDays(ship, 1);
-    var weReceive = addWorkingDays(youPost, 1);
+    var weReceive = addWorkingDays(ship, 1);
     var repairDone = addWorkingDays(weReceive, bench);
     var returnDate = addWorkingDays(repairDone, 1);
     return {
       kind: 'repair',
       steps: [
         { title: 'We send packaging', meta: ship },
-        { title: 'You post the device', meta: youPost },
+        { title: 'You post the device', meta: weReceive },
         { title: 'We repair', meta: turnaroundClaimLabel(device) },
         { title: 'Back to you', meta: returnDate }
       ],
@@ -144,14 +173,13 @@
 
   function mailinDiagnosticJourney(now) {
     var ship = packShipDate(now);
-    var youPost = addWorkingDays(ship, 1);
-    var weReceive = addWorkingDays(youPost, 1);
+    var weReceive = addWorkingDays(ship, 1);
     var quoteDate = addWorkingDays(weReceive, 1);
     return {
       kind: 'diagnostic',
       steps: [
         { title: 'We send packaging', meta: ship },
-        { title: 'You post the device', meta: youPost },
+        { title: 'You post the device', meta: weReceive },
         { title: 'We diagnose & email your quote', meta: quoteDate },
         { title: 'You decide next', meta: 'Device stays with us until you approve' }
       ],

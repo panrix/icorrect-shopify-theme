@@ -1550,7 +1550,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   var SLOT_CALENDAR_COUNT = 28;
 
   /* ---------- Service journey / estimated return (Ricky 2026-09-14) ---------- */
-  var PACK_CUTOFF_HOUR = (window.ICorrectRepairJourney && window.ICorrectRepairJourney.PACK_CUTOFF_HOUR) || 14;
+  var PACK_CUTOFF_HOUR = (window.ICorrectRepairJourney && window.ICorrectRepairJourney.PACK_CUTOFF_HOUR) || 15;
 
   function repairBenchDays(device, opts) {
     if (window.ICorrectRepairJourney) return window.ICorrectRepairJourney.repairBenchDays(device, opts);
@@ -1602,10 +1602,34 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     return DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()];
   }
 
+  function londonWall(now) {
+    var parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/London',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23'
+    }).formatToParts(now || new Date());
+    var get = function (type) {
+      for (var i = 0; i < parts.length; i++) {
+        if (parts[i].type === type) return parts[i].value;
+      }
+      return '0';
+    };
+    return {
+      date: new Date(parseInt(get('year'), 10), parseInt(get('month'), 10) - 1, parseInt(get('day'), 10)),
+      hour: parseInt(get('hour'), 10) + parseInt(get('minute'), 10) / 60
+    };
+  }
+
   function packShipDate(now) {
-    var n = now || new Date();
-    var d = startOfDay(n);
-    if (!isWorkingDay(d) || n.getHours() >= PACK_CUTOFF_HOUR) {
+    var lib = window.ICorrectRepairJourney;
+    if (lib && typeof lib.packShipDate === 'function') return lib.packShipDate(now);
+    var wall = londonWall(now);
+    var d = startOfDay(wall.date);
+    if (!isWorkingDay(d) || wall.hour >= PACK_CUTOFF_HOUR) {
       return addWorkingDays(d, 1);
     }
     return d;
@@ -1693,8 +1717,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     if (model) return formatJourneyModel(model);
     var bench = repairBenchDays(S.device, { diagnostic: diagnostic });
     var ship = packShipDate(new Date());
-    var youPostBy = addWorkingDays(ship, 1);
-    var weReceive = addWorkingDays(youPostBy, 1);
+    var weReceive = addWorkingDays(ship, 1);
+    var youPostBy = weReceive;
     if (diagnostic) {
       var quoteDate = addWorkingDays(weReceive, 1);
       return {
@@ -3452,7 +3476,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     }
 
     /* Service adjustment variant — null-safe: missing ID already forced free mail-in in quote */
-    if (_courierQuote && _courierQuote.adjustment > 0) {
+    if (_courierQuote && _courierQuote.adjustment > 0 && !(svcKind === 'mailin' && currentRepairPrice() >= 200)) {
       if (_courierQuote.variantMode === 'fallback-free-mail-in') {
         items[0].properties['Service Type'] = 'Mail-in';
         delete items[0].properties['Collection Window'];
