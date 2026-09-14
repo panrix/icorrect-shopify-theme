@@ -1520,7 +1520,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           '<span class="qw-trust-ico" aria-hidden="true">' + clockSvg + '</span>' +
           '<span class="qw-trust-copy">' +
             '<span class="qw-trust-title">' + esc(turnaround) + '</span>' +
-            '<span class="qw-trust-sub">' + (opts.diagnostic ? 'Quote emailed to you' : 'Typical repair time') + '</span>' +
+            '<span class="qw-trust-sub">' + (opts.diagnostic ? 'Diagnosis emailed to you' : 'Typical repair time') + '</span>' +
           '</span>' +
         '</li>' +
         '<li class="qw-trust-cell qw-trust-warranty" aria-label="2-year warranty">' +
@@ -1556,9 +1556,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     if (window.ICorrectRepairJourney) return window.ICorrectRepairJourney.repairBenchDays(device, opts);
     opts = opts || {};
     if (opts.diagnostic) return 1;
-    if (device === 'iphone') return 1;
     if (device === 'watch') return 3;
-    return 2;
+    return 1;
   }
 
   function parseISODate(iso) {
@@ -1635,8 +1634,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         kind: 'diagnostic',
         steps: [
           { title: 'We collect', meta: collect ? formatJourneyDate(collect) : 'Pick a collection window' },
-          { title: 'We diagnose', meta: '1 working day on the bench' },
-          { title: 'Quote emailed to you', meta: collect ? formatJourneyDate(addWorkingDays(collect, 1)) : 'Device stays with us' }
+          { title: 'We diagnose & email your quote', meta: collect ? formatJourneyDate(addWorkingDays(collect, 1)) : '1 working day after collection' },
+          { title: 'You decide next', meta: 'Device stays with us until you approve' }
         ],
         returnDate: null,
         quoteDate: collect ? addWorkingDays(collect, 1) : null
@@ -1700,10 +1699,10 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       return {
         kind: 'diagnostic',
         steps: [
-          { title: 'We send pack', meta: formatJourneyDate(ship) },
-          { title: 'You post device', meta: formatJourneyDate(youPostBy) },
-          { title: 'We diagnose', meta: '1 working day on the bench' },
-          { title: 'Quote emailed to you', meta: formatJourneyDate(quoteDate) }
+          { title: 'We send packaging', meta: formatJourneyDate(ship) },
+          { title: 'You post the device', meta: formatJourneyDate(youPostBy) },
+          { title: 'We diagnose & email your quote', meta: formatJourneyDate(quoteDate) },
+          { title: 'You decide next', meta: 'Device stays with us until you approve' }
         ],
         returnDate: null,
         quoteDate: quoteDate
@@ -1714,8 +1713,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     return {
       kind: 'repair',
       steps: [
-        { title: 'We send pack', meta: formatJourneyDate(ship) },
-        { title: 'You post device', meta: formatJourneyDate(youPostBy) },
+        { title: 'We send packaging', meta: formatJourneyDate(ship) },
+        { title: 'You post the device', meta: formatJourneyDate(youPostBy) },
         { title: 'We repair', meta: turnaroundClaimLabel(S.device) },
         { title: 'Back to you', meta: formatJourneyDate(returnDate) }
       ],
@@ -1736,12 +1735,12 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var eta;
     if (diagnostic && quoteDate) {
       eta = '<div class="qw-journey-eta">' +
-          '<span class="qw-journey-eta-label">Quote emailed by</span>' +
+          '<span class="qw-journey-eta-label">We\'ll tell you what\'s wrong by</span>' +
           '<span class="qw-journey-eta-date">' + esc(formatJourneyDate(quoteDate)) + '</span>' +
-          '<span class="qw-journey-eta-note">Device stays with us until you approve</span>' +
+          '<span class="qw-journey-eta-note">Device stays with us until you approve a repair</span>' +
         '</div>';
     } else if (diagnostic) {
-      eta = '<div class="qw-journey-eta qw-journey-eta--pending"><span class="qw-journey-eta-note">Select a collection window to see when we email your quote</span></div>';
+      eta = '<div class="qw-journey-eta qw-journey-eta--pending"><span class="qw-journey-eta-note">Select a collection window to see when we diagnose and email your quote</span></div>';
     } else if (model.returnDate) {
       eta = '<div class="qw-journey-eta">' +
           '<span class="qw-journey-eta-label">Estimated return by</span>' +

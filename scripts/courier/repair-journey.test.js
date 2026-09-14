@@ -16,10 +16,10 @@ function iso(d) {
 }
 
 describe('repairBenchDays', () => {
-  it('iphone 1, macbook/ipad 2, watch 3, diagnostic 1', () => {
+  it('iphone/macbook/ipad 1, watch 3, diagnostic 1', () => {
     assert.equal(J.repairBenchDays('iphone'), 1);
-    assert.equal(J.repairBenchDays('macbook'), 2);
-    assert.equal(J.repairBenchDays('ipad'), 2);
+    assert.equal(J.repairBenchDays('macbook'), 1);
+    assert.equal(J.repairBenchDays('ipad'), 1);
     assert.equal(J.repairBenchDays('watch'), 3);
     assert.equal(J.repairBenchDays('macbook', { diagnostic: true }), 1);
   });
@@ -28,17 +28,24 @@ describe('repairBenchDays', () => {
 describe('courier clocks from Monday collection', () => {
   const collect = new Date(2026, 8, 14); // Mon 14 Sep 2026
 
-  it('iphone back Tuesday; macbook back Wednesday', () => {
+  it('iphone and macbook back Tuesday (1 working day)', () => {
     assert.equal(iso(J.courierRepairJourney('iphone', collect).returnDate), '2026-09-15');
-    assert.equal(iso(J.courierRepairJourney('macbook', collect).returnDate), '2026-09-16');
+    assert.equal(iso(J.courierRepairJourney('macbook', collect).returnDate), '2026-09-15');
+  });
+
+  it('watch still back Thursday (3 working days)', () => {
+    assert.equal(iso(J.courierRepairJourney('watch', collect).returnDate), '2026-09-17');
   });
 
   it('diagnostic quotes Tuesday and does not return the device', () => {
     const j = J.courierDiagnosticJourney(collect);
     assert.equal(iso(j.quoteDate), '2026-09-15');
     assert.equal(j.returnDate, null);
-    assert.equal(j.steps[2].title, 'Quote emailed to you');
-    assert.equal(j.steps[1].meta, '1 working day on the bench');
+    assert.equal(j.steps[0].title, 'We collect');
+    assert.equal(j.steps[1].title, 'We diagnose & email your quote');
+    assert.equal(iso(j.steps[1].meta), '2026-09-15');
+    assert.equal(j.steps[2].title, 'You decide next');
+    assert.match(j.steps[2].meta, /stays with us/i);
     assert.equal(J.turnaroundClaimLabel('macbook', { diagnostic: true }), 'Quote in 1 working day');
   });
 
@@ -57,6 +64,8 @@ describe('mail-in from Sunday evening', () => {
     const j = J.mailinRepairJourney('macbook', sundayNight);
     assert.equal(iso(j.steps[0].meta), '2026-09-14');
     assert.equal(iso(j.steps[1].meta), '2026-09-15');
+    assert.equal(j.steps[0].title, 'We send packaging');
+    assert.equal(j.steps[1].title, 'You post the device');
     assert.ok(j.returnDate);
   });
 
@@ -64,9 +73,10 @@ describe('mail-in from Sunday evening', () => {
     const j = J.mailinDiagnosticJourney(sundayNight);
     assert.equal(j.returnDate, null);
     assert.ok(j.quoteDate);
-    assert.equal(j.steps[2].title, 'We diagnose');
-    assert.equal(j.steps[2].meta, '1 working day on the bench');
-    assert.equal(j.steps[3].title, 'Quote emailed to you');
+    assert.equal(j.steps[2].title, 'We diagnose & email your quote');
+    assert.equal(iso(j.steps[2].meta), iso(j.quoteDate));
+    assert.equal(j.steps[3].title, 'You decide next');
+    assert.match(j.steps[3].meta, /stays with us/i);
   });
 
   it('mail-in received Friday quotes Monday', () => {
