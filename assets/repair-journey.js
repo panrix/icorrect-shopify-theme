@@ -4,9 +4,10 @@
  * Conversion bias: shortest honest working-day clock when parts are in stock.
  * Courier collection day is day 1 of the clock.
  * iPhone known repair: 1 working day (collect Mon → back Tue).
- * MacBook / iPad known repair: 2 working days (collect Mon → back Wed).
+ * MacBook / iPad known repair: 3 working days (collect Mon → back Thu).
  * Watch stays 3 (adhesive cure — physical constraint).
- * Diagnostic: collect/receive → diagnose + email quote in 1 working day.
+ * Fast repair: 1 working day. Same-day: back on collect day (0 bench days).
+ * Diagnostic: collect/receive → diagnose + email quote in 3 working days.
  * Device stays with us. No return until the customer approves a repair.
  *
  * Mail-in: pack ships same UK working day until 15:00 Europe/London.
@@ -55,11 +56,12 @@
 
   function repairBenchDays(device, opts) {
     opts = opts || {};
-    if (opts.diagnostic) return 1;
+    if (opts.speed === 'same_day') return 0;
+    if (opts.speed === 'fast') return 1;
+    if (opts.diagnostic) return 3;
     if (device === 'iphone') return 1;
     if (device === 'watch') return 3;
-    // MacBook / iPad: 2 working days (Ricky 2026-09-14 confirm).
-    return 2;
+    return 3; // macbook / ipad
   }
 
   function startOfDay(d) {
@@ -93,32 +95,38 @@
 
   function turnaroundClaimLabel(device, opts) {
     opts = opts || {};
-    if (opts.diagnostic) return 'Quote in 1 working day';
+    if (opts.diagnostic) return 'Quote in 3 working days';
+    if (opts.speed === 'same_day') return 'Same day';
+    if (opts.speed === 'fast') return '1 working day';
     var days = repairBenchDays(device, opts);
     if (days === 1) return '1 working day';
     return days + ' working days';
   }
 
-  function courierRepairJourney(device, collectDate) {
-    var bench = repairBenchDays(device, { diagnostic: false });
+  function courierRepairJourney(device, collectDate, opts) {
+    opts = opts || {};
+    var bench = repairBenchDays(device, opts);
     if (!collectDate) {
       return {
         kind: 'repair',
         steps: [
           { title: 'We collect', meta: 'Pick a collection window' },
-          { title: 'We repair', meta: turnaroundClaimLabel(device) },
+          { title: 'We repair', meta: turnaroundClaimLabel(device, opts) },
           { title: 'Back to you', meta: 'After repair' }
         ],
         returnDate: null,
         quoteDate: null
       };
     }
-    var returnDate = addWorkingDays(collectDate, bench);
+    var returnDate =
+      opts.speed === 'same_day'
+        ? startOfDay(collectDate)
+        : addWorkingDays(collectDate, bench);
     return {
       kind: 'repair',
       steps: [
         { title: 'We collect', meta: collectDate },
-        { title: 'We repair', meta: turnaroundClaimLabel(device) },
+        { title: 'We repair', meta: turnaroundClaimLabel(device, opts) },
         { title: 'Back to you', meta: returnDate }
       ],
       returnDate: returnDate,
@@ -132,14 +140,14 @@
         kind: 'diagnostic',
         steps: [
           { title: 'We collect', meta: 'Pick a collection window' },
-          { title: 'We diagnose & email your quote', meta: '1 working day after collection' },
+          { title: 'We diagnose & email your quote', meta: '3 working days after collection' },
           { title: 'You decide next', meta: 'Device stays with us until you approve' }
         ],
         returnDate: null,
         quoteDate: null
       };
     }
-    var quoteDate = addWorkingDays(collectDate, 1);
+    var quoteDate = addWorkingDays(collectDate, 3);
     return {
       kind: 'diagnostic',
       steps: [
@@ -152,8 +160,9 @@
     };
   }
 
-  function mailinRepairJourney(device, now) {
-    var bench = repairBenchDays(device, { diagnostic: false });
+  function mailinRepairJourney(device, now, opts) {
+    opts = opts || {};
+    var bench = repairBenchDays(device, opts);
     var ship = packShipDate(now);
     var weReceive = addWorkingDays(ship, 1);
     var repairDone = addWorkingDays(weReceive, bench);
@@ -163,7 +172,7 @@
       steps: [
         { title: 'We send packaging', meta: ship },
         { title: 'You post the device', meta: weReceive },
-        { title: 'We repair', meta: turnaroundClaimLabel(device) },
+        { title: 'We repair', meta: turnaroundClaimLabel(device, opts) },
         { title: 'Back to you', meta: returnDate }
       ],
       returnDate: returnDate,
@@ -174,7 +183,7 @@
   function mailinDiagnosticJourney(now) {
     var ship = packShipDate(now);
     var weReceive = addWorkingDays(ship, 1);
-    var quoteDate = addWorkingDays(weReceive, 1);
+    var quoteDate = addWorkingDays(weReceive, 3);
     return {
       kind: 'diagnostic',
       steps: [
