@@ -2,7 +2,7 @@
 
 Date: 2026-09-14  
 Repos: `panrix/icorrect-shopify-theme` (wizard, clocks, copy) + `panrix/workshop-os` (stock read + slot reserve)  
-Status: draft for Ricky review — do not implement until approved
+Status: approved 2026-09-14 (Ricky). Same-day means higher Gophr cost and more bench stress; we take that to get the orders. The 3-slot cap, inner-London cutoffs, and baked-in Fastest price are the controls so stress stays bounded.
 
 ## Goal
 
