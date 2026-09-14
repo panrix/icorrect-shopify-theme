@@ -97,67 +97,110 @@ describe('default stock stub hides same-day', () => {
 
 describe('planSpeedOffers', () => {
   const plan = new Function('return (' + extractFunction(liquid, 'planSpeedOffers') + ')')();
+  const vids = {
+    config: { fastVariantId: 111, iphoneSameDayVariantId: 222, macbookSameDayVariantId: 333 }
+  };
 
   it('iPhone courier B1/B2 eligible: Standard + Same-day, never Fast', () => {
     assert.deepEqual(
-      plan({ device: 'iphone', service: 'courier', band: 'B1', diagnostic: false, sameDayOk: true }),
+      plan(Object.assign({ device: 'iphone', service: 'courier', band: 'B1', diagnostic: false, sameDayOk: true }, vids)),
       { standard: true, fast: false, sameDay: true }
     );
   });
 
   it('MacBook courier B1/B2 eligible: Standard + Fast + Same-day', () => {
     assert.deepEqual(
-      plan({ device: 'macbook', service: 'courier', band: 'B2', diagnostic: false, sameDayOk: true }),
+      plan(Object.assign({ device: 'macbook', service: 'courier', band: 'B2', diagnostic: false, sameDayOk: true }, vids)),
       { standard: true, fast: true, sameDay: true }
     );
   });
 
   it('MacBook/iPad/diagnostic mail-in or B3/B4: Standard + Fast only', () => {
     assert.deepEqual(
-      plan({ device: 'macbook', service: 'mailin', band: null, diagnostic: false, sameDayOk: true }),
+      plan(Object.assign({ device: 'macbook', service: 'mailin', band: null, diagnostic: false, sameDayOk: true }, vids)),
       { standard: true, fast: true, sameDay: false }
     );
     assert.deepEqual(
-      plan({ device: 'ipad', service: 'courier', band: 'B3', diagnostic: false, sameDayOk: true }),
+      plan(Object.assign({ device: 'ipad', service: 'courier', band: 'B3', diagnostic: false, sameDayOk: true }, vids)),
       { standard: true, fast: true, sameDay: false }
     );
     assert.deepEqual(
-      plan({ device: 'macbook', service: 'courier', band: 'B1', diagnostic: true, sameDayOk: true }),
+      plan(Object.assign({ device: 'macbook', service: 'courier', band: 'B1', diagnostic: true, sameDayOk: true }, vids)),
       { standard: true, fast: true, sameDay: false }
     );
   });
 
   it('iPhone mail-in / B3/B4 / ineligible stub: Standard only', () => {
     assert.deepEqual(
-      plan({ device: 'iphone', service: 'mailin', band: 'B1', diagnostic: false, sameDayOk: true }),
+      plan(Object.assign({ device: 'iphone', service: 'mailin', band: 'B1', diagnostic: false, sameDayOk: true }, vids)),
       { standard: true, fast: false, sameDay: false }
     );
     assert.deepEqual(
-      plan({ device: 'iphone', service: 'courier', band: 'B4', diagnostic: false, sameDayOk: true }),
+      plan(Object.assign({ device: 'iphone', service: 'courier', band: 'B4', diagnostic: false, sameDayOk: true }, vids)),
       { standard: true, fast: false, sameDay: false }
     );
     assert.deepEqual(
-      plan({ device: 'iphone', service: 'courier', band: 'B1', diagnostic: false, sameDayOk: false }),
+      plan(Object.assign({ device: 'iphone', service: 'courier', band: 'B1', diagnostic: false, sameDayOk: false }, vids)),
       { standard: true, fast: false, sameDay: false }
     );
   });
 
   it('iPhone diagnostic still gets Fast; known-repair iPhone does not', () => {
     assert.deepEqual(
-      plan({ device: 'iphone', service: 'courier', band: 'B1', diagnostic: true, sameDayOk: true }),
+      plan(Object.assign({ device: 'iphone', service: 'courier', band: 'B1', diagnostic: true, sameDayOk: true }, vids)),
       { standard: true, fast: true, sameDay: false }
     );
     assert.deepEqual(
-      plan({ device: 'iphone', service: 'mailin', band: null, diagnostic: true, sameDayOk: false }),
+      plan(Object.assign({ device: 'iphone', service: 'mailin', band: null, diagnostic: true, sameDayOk: false }, vids)),
       { standard: true, fast: true, sameDay: false }
     );
     assert.deepEqual(
-      plan({ device: 'iphone', service: 'courier', band: 'B3', diagnostic: true, sameDayOk: false }),
+      plan(Object.assign({ device: 'iphone', service: 'courier', band: 'B3', diagnostic: true, sameDayOk: false }, vids)),
       { standard: true, fast: true, sameDay: false }
     );
     assert.deepEqual(
-      plan({ device: 'iphone', service: 'courier', band: 'B1', diagnostic: false, sameDayOk: true }),
+      plan(Object.assign({ device: 'iphone', service: 'courier', band: 'B1', diagnostic: false, sameDayOk: true }, vids)),
       { standard: true, fast: false, sameDay: true }
+    );
+  });
+
+  it('hides Fast and Same-day when variant ids are missing or 0 (fail closed)', () => {
+    assert.deepEqual(
+      plan({ device: 'macbook', service: 'courier', band: 'B1', diagnostic: false, sameDayOk: true }),
+      { standard: true, fast: false, sameDay: false }
+    );
+    assert.deepEqual(
+      plan({
+        device: 'macbook',
+        service: 'courier',
+        band: 'B1',
+        diagnostic: false,
+        sameDayOk: true,
+        config: { fastVariantId: 0, macbookSameDayVariantId: 0, iphoneSameDayVariantId: 999 }
+      }),
+      { standard: true, fast: false, sameDay: false }
+    );
+    assert.deepEqual(
+      plan({
+        device: 'iphone',
+        service: 'courier',
+        band: 'B1',
+        diagnostic: false,
+        sameDayOk: true,
+        config: { fastVariantId: 111, iphoneSameDayVariantId: 0, macbookSameDayVariantId: 333 }
+      }),
+      { standard: true, fast: false, sameDay: false }
+    );
+    assert.deepEqual(
+      plan({
+        device: 'macbook',
+        service: 'mailin',
+        band: null,
+        diagnostic: true,
+        sameDayOk: false,
+        config: { fastVariantId: 111, iphoneSameDayVariantId: 222, macbookSameDayVariantId: 333 }
+      }),
+      { standard: true, fast: true, sameDay: false }
     );
   });
 });
@@ -244,6 +287,53 @@ describe('standard card copy uses standard collect clock', () => {
     assert.match(fn, /standardCardCollectIso\s*\(/);
     assert.match(fn, /standardSpeedCopy\s*\(/);
     assert.doesNotMatch(fn, /current === 'same_day' && picked/);
+  });
+});
+
+describe('buildTurnaroundCards fail-closed variant ids', () => {
+  it('passes section config into planSpeedOffers and does not invent Fast vid from product HTML', () => {
+    const fn = extractFunction(liquid, 'buildTurnaroundCards');
+    assert.match(fn, /planSpeedOffers\s*\(\s*\{[\s\S]*config:\s*cfg/);
+    assert.doesNotMatch(fn, /expressData\.variantId/);
+  });
+});
+
+describe('leaving Same-day restores standard collection date', () => {
+  it('Standard/Fast click restores _collectionSlot.date from _standardCollectIso', () => {
+    const wire = extractFunction(liquid, 'wireTurnaroundMount');
+    assert.match(wire, /restoreStandardCollectionSlot\s*\(/);
+    assert.match(wire, /data-speed'\) === 'same_day'/);
+    const restore = extractFunction(liquid, 'restoreStandardCollectionSlot');
+    assert.match(restore, /_standardCollectIso/);
+    assert.match(restore, /_collectionSlot\.date/);
+    assert.doesNotMatch(restore, /S\.sameDayDate/);
+  });
+});
+
+describe('quote-wizard clock fallbacks match repair-journey.js', () => {
+  it('repairBenchDays fallback: diagnostic 3, macbook/ipad 3, iphone 1, same_day 0, fast 1', () => {
+    const fn = extractFunction(liquid, 'repairBenchDays');
+    assert.match(fn, /speed === 'same_day'[\s\S]*return 0/);
+    assert.match(fn, /speed === 'fast'[\s\S]*return 1/);
+    assert.match(fn, /opts\.diagnostic\) return 3/);
+    assert.match(fn, /device === 'iphone'\) return 1/);
+    assert.match(fn, /device === 'watch'\) return 3/);
+    assert.match(fn, /return 3/);
+    assert.doesNotMatch(fn, /opts\.diagnostic\) return 1/);
+    assert.doesNotMatch(fn, /return 2;/);
+  });
+
+  it('mail-in diagnostic fallback uses repairBenchDays, not +1 calendar/working day', () => {
+    const fn = extractFunction(liquid, 'buildMailinJourneyModel');
+    assert.doesNotMatch(fn, /addWorkingDays\(weReceive,\s*1\)/);
+    assert.match(fn, /addWorkingDays\(weReceive,\s*bench\)/);
+  });
+
+  it('diagnostic journeys receive speedJourneyOpts so Fast is +1 WD', () => {
+    const courier = extractFunction(liquid, 'buildCourierJourneyModel');
+    const mailin = extractFunction(liquid, 'buildMailinJourneyModel');
+    assert.match(courier, /courierDiagnosticJourney\(collect,\s*opts\)/);
+    assert.match(mailin, /mailinDiagnosticJourney\(new Date\(\),\s*opts\)/);
   });
 });
 

@@ -60,6 +60,14 @@ describe('courier clocks from Monday collection', () => {
     assert.equal(J.turnaroundClaimLabel('macbook', { diagnostic: true }), 'Quote in 3 working days');
   });
 
+  it('diagnostic + fast quotes the next working day', () => {
+    const j = J.courierDiagnosticJourney(collect, { speed: 'fast' });
+    assert.equal(iso(j.quoteDate), '2026-09-15');
+    assert.equal(j.returnDate, null);
+    assert.equal(J.repairBenchDays('macbook', { diagnostic: true, speed: 'fast' }), 1);
+    assert.equal(J.turnaroundClaimLabel('macbook', { diagnostic: true, speed: 'fast' }), 'Quote in 1 working day');
+  });
+
   it('Friday collection quotes three working days later (Wednesday)', () => {
     const friday = new Date(2026, 8, 18); // Fri 18 Sep 2026
     const j = J.courierDiagnosticJourney(friday);
@@ -116,6 +124,12 @@ describe('mail-in pack clock (UK, UPost +1 working day)', () => {
     assert.equal(iso(j.steps[2].meta), iso(j.quoteDate));
     assert.equal(j.steps[3].title, 'You decide next');
     assert.match(j.steps[3].meta, /stays with us/i);
+  });
+
+  it('mail-in diagnostic + fast quotes one working day after arrival', () => {
+    const j = J.mailinDiagnosticJourney(bst(2026, 8, 14, 10, 0), { speed: 'fast' });
+    assert.equal(j.returnDate, null);
+    assert.equal(iso(j.quoteDate), '2026-09-16'); // ship Mon, arrive Tue, quote Wed
   });
 
   it('Wednesday morning ships Wednesday; quote Tuesday', () => {
