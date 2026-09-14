@@ -108,10 +108,12 @@ window.WIZARD_CONTEXT = {
 <script src="{{ 'courier-slots.js' | asset_url }}" defer></script>
 <script src="{{ 'wizard-prefill.js' | asset_url }}" defer></script>
 <script src="{{ 'repair-catalogue.js' | asset_url }}" defer></script>
+<script src="{{ 'quoted-repair-stamp.js' | asset_url }}" defer></script>
+<script src="{{ 'repair-journey.js' | asset_url }}" defer></script>
 <script>
 window.WIZARD_CFG = {
   warrantyLabel: {{ section.settings.warranty_label | default: '2-year warranty' | json }},
-  diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: '2 working days' | json }},
+  diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: 'Quote in 1 working day' | json }},
   bandsUrl: {{ 'courier-london-bands.json' | asset_url | json }},
   catalogueUrl: {{ 'repair-catalogue-map.json' | asset_url | json }},
   collectionPrefillUrl: {{ 'wizard-collection-prefill.json' | asset_url | json }},
@@ -154,6 +156,10 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       model: q.model || null,
       fault: q.fault || null,
       issue: q.issue || null,
+      repair: q.repair || null,
+      repair_handle: q.repair_handle || q.repairHandle || null,
+      repair_type: q.repair_type || q.repairType || null,
+      route: q.route || null,
       outward_code: q.outward_code || q.outwardCode || null,
       band: q.band || null,
       tier: q.tier || null,
@@ -1454,17 +1460,22 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   }
 
   function buildDiagnosticBadges(device) {
-    return svcBadge('turnaround', CFG.diagnosticTurnaround || '2 working days') +
+    return svcBadge('turnaround', CFG.diagnosticTurnaround || 'Quote in 1 working day') +
       svcBadge('diagnostic', 'Full report and quote sent via email');
   }
 
   /* Device bench days → label shared by journey ETA + repair badges. */
   function turnaroundClaimLabel(device, opts) {
     opts = opts || {};
-    if (opts.diagnostic) {
-      return CFG.diagnosticTurnaround || '2 working days';
+    if (window.ICorrectRepairJourney) {
+      return window.ICorrectRepairJourney.turnaroundClaimLabel(device, {
+        diagnostic: !!(opts.diagnostic || S.route === 'diagnostic')
+      });
     }
-    var days = typeof repairBenchDays === 'function' ? repairBenchDays(device) : (device === 'iphone' ? 1 : 3);
+    if (opts.diagnostic || S.route === 'diagnostic') {
+      return CFG.diagnosticTurnaround || 'Quote in 1 working day';
+    }
+    var days = repairBenchDays(device, opts);
     if (days === 1) return '1 working day';
     return days + ' working days';
   }
@@ -1509,7 +1520,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           '<span class="qw-trust-ico" aria-hidden="true">' + clockSvg + '</span>' +
           '<span class="qw-trust-copy">' +
             '<span class="qw-trust-title">' + esc(turnaround) + '</span>' +
-            '<span class="qw-trust-sub">Typical repair time</span>' +
+            '<span class="qw-trust-sub">' + (opts.diagnostic ? 'Diagnosis emailed to you' : 'Typical repair time') + '</span>' +
           '</span>' +
         '</li>' +
         '<li class="qw-trust-cell qw-trust-warranty" aria-label="2-year warranty">' +
@@ -1538,11 +1549,16 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   var SLOT_STRIP_COUNT = 5;
   var SLOT_CALENDAR_COUNT = 28;
 
-  /* ---------- Service journey / estimated return (#53) ---------- */
-  var PACK_CUTOFF_HOUR = 14; /* before 2pm → pack ships same working day */
+  /* ---------- Service journey / estimated return (Ricky 2026-09-14) ---------- */
+  var PACK_CUTOFF_HOUR = (window.ICorrectRepairJourney && window.ICorrectRepairJourney.PACK_CUTOFF_HOUR) || 14;
 
-  function repairBenchDays(device) {
-    return device === 'iphone' ? 1 : 3;
+  function repairBenchDays(device, opts) {
+    if (window.ICorrectRepairJourney) return window.ICorrectRepairJourney.repairBenchDays(device, opts);
+    opts = opts || {};
+    if (opts.diagnostic) return 1;
+    if (device === 'iphone') return 1;
+    if (device === 'watch') return 3;
+    return 2;
   }
 
   function parseISODate(iso) {
@@ -1605,47 +1621,106 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   }
 
   function buildCourierJourneyModel() {
-    var bench = repairBenchDays(S.device);
+    var diagnostic = S.route === 'diagnostic';
     var collect = _collectionSlot.date && _collectionSlot.date.iso
       ? parseISODate(_collectionSlot.date.iso)
       : null;
+    var lib = window.ICorrectRepairJourney;
+    var model = diagnostic
+      ? (lib ? lib.courierDiagnosticJourney(collect) : null)
+      : (lib ? lib.courierRepairJourney(S.device, collect) : null);
+    if (model) return formatJourneyModel(model);
+    if (diagnostic) {
+      return {
+        kind: 'diagnostic',
+        steps: [
+          { title: 'We collect', meta: collect ? formatJourneyDate(collect) : 'Pick a collection window' },
+          { title: 'We diagnose & email your quote', meta: collect ? formatJourneyDate(addWorkingDays(collect, 1)) : '1 working day after collection' },
+          { title: 'You decide next', meta: 'Device stays with us until you approve' }
+        ],
+        returnDate: null,
+        quoteDate: collect ? addWorkingDays(collect, 1) : null
+      };
+    }
+    var bench = repairBenchDays(S.device);
     if (!collect) {
       return {
+        kind: 'repair',
         steps: [
           { title: 'We collect', meta: 'Pick a collection window' },
           { title: 'We repair', meta: turnaroundClaimLabel(S.device) },
           { title: 'Back to you', meta: 'After repair' }
         ],
-        returnDate: null
+        returnDate: null,
+        quoteDate: null
       };
     }
     var returnDate = addWorkingDays(collect, bench);
     return {
+      kind: 'repair',
       steps: [
         { title: 'We collect', meta: formatJourneyDate(collect) },
         { title: 'We repair', meta: turnaroundClaimLabel(S.device) },
         { title: 'Back to you', meta: formatJourneyDate(returnDate) }
       ],
-      returnDate: returnDate
+      returnDate: returnDate,
+      quoteDate: null
+    };
+  }
+
+  function formatJourneyModel(model) {
+    function fmt(v) {
+      if (!v) return v;
+      if (v instanceof Date) return formatJourneyDate(v);
+      return v;
+    }
+    return {
+      kind: model.kind,
+      steps: (model.steps || []).map(function(s) {
+        return { title: s.title, meta: fmt(s.meta) };
+      }),
+      returnDate: model.returnDate || null,
+      quoteDate: model.quoteDate || null
     };
   }
 
   function buildMailinJourneyModel() {
-    var bench = repairBenchDays(S.device);
+    var diagnostic = S.route === 'diagnostic';
+    var lib = window.ICorrectRepairJourney;
+    var model = diagnostic
+      ? (lib ? lib.mailinDiagnosticJourney(new Date()) : null)
+      : (lib ? lib.mailinRepairJourney(S.device, new Date()) : null);
+    if (model) return formatJourneyModel(model);
+    var bench = repairBenchDays(S.device, { diagnostic: diagnostic });
     var ship = packShipDate(new Date());
-    var withCustomer = addWorkingDays(ship, 1);
-    var youPostBy = addWorkingDays(withCustomer, 1);
+    var youPostBy = addWorkingDays(ship, 1);
     var weReceive = addWorkingDays(youPostBy, 1);
+    if (diagnostic) {
+      var quoteDate = addWorkingDays(weReceive, 1);
+      return {
+        kind: 'diagnostic',
+        steps: [
+          { title: 'We send packaging', meta: formatJourneyDate(ship) },
+          { title: 'You post the device', meta: formatJourneyDate(youPostBy) },
+          { title: 'We diagnose & email your quote', meta: formatJourneyDate(quoteDate) },
+          { title: 'You decide next', meta: 'Device stays with us until you approve' }
+        ],
+        returnDate: null,
+        quoteDate: quoteDate
+      };
+    }
     var repairDone = addWorkingDays(weReceive, bench);
     var returnDate = addWorkingDays(repairDone, 1);
     return {
+      kind: 'repair',
       steps: [
-        { title: 'We send pack', meta: formatJourneyDate(ship) },
-        { title: 'You post device', meta: 'by ' + formatJourneyDate(youPostBy) },
+        { title: 'We send packaging', meta: formatJourneyDate(ship) },
+        { title: 'You post the device', meta: formatJourneyDate(youPostBy) },
         { title: 'We repair', meta: turnaroundClaimLabel(S.device) },
         { title: 'Back to you', meta: formatJourneyDate(returnDate) }
       ],
-      returnDate: returnDate
+      returnDate: returnDate,
+      quoteDate: null
     };
   }
 
@@ -1656,13 +1731,26 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var stepsHtml = model.steps.map(function(s, i) {
       return journeyStepHtml(i + 1, s.title, s.meta);
     }).join('');
-    var eta = model.returnDate
-      ? ('<div class="qw-journey-eta">' +
+    var quoteDate = model.quoteDate;
+    var diagnostic = model.kind === 'diagnostic' || S.route === 'diagnostic';
+    var eta;
+    if (diagnostic && quoteDate) {
+      eta = '<div class="qw-journey-eta">' +
+          '<span class="qw-journey-eta-label">We\'ll tell you what\'s wrong by</span>' +
+          '<span class="qw-journey-eta-date">' + esc(formatJourneyDate(quoteDate)) + '</span>' +
+          '<span class="qw-journey-eta-note">Device stays with us until you approve a repair</span>' +
+        '</div>';
+    } else if (diagnostic) {
+      eta = '<div class="qw-journey-eta qw-journey-eta--pending"><span class="qw-journey-eta-note">Select a collection window to see when we diagnose and email your quote</span></div>';
+    } else if (model.returnDate) {
+      eta = '<div class="qw-journey-eta">' +
           '<span class="qw-journey-eta-label">Estimated return by</span>' +
           '<span class="qw-journey-eta-date">' + esc(formatJourneyDate(model.returnDate)) + '</span>' +
           '<span class="qw-journey-eta-note">Often sooner</span>' +
-        '</div>')
-      : '<div class="qw-journey-eta qw-journey-eta--pending"><span class="qw-journey-eta-note">Select a collection window to see your return estimate</span></div>';
+        '</div>';
+    } else {
+      eta = '<div class="qw-journey-eta qw-journey-eta--pending"><span class="qw-journey-eta-note">Select a collection window to see your return estimate</span></div>';
+    }
     host.innerHTML =
       '<div class="qw-journey" data-kind="' + esc(kind) + '">' +
         '<div class="qw-journey-steps">' + stepsHtml + '</div>' +
@@ -1765,6 +1853,11 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       q.model = S.model || null;
       q.fault = S.fault || null;
       q.issue = S.issue || null;
+      var quotedCard = document.getElementById('qwResCard');
+      q.repair = (quotedCard && quotedCard.dataset.repair) || null;
+      q.repair_handle = (quotedCard && quotedCard.dataset.repairHandle) || null;
+      q.repair_type = (quotedCard && quotedCard.dataset.repairType) || S.repairType || null;
+      q.route = (quotedCard && quotedCard.dataset.route) || S.route || null;
 
       var outward = (_courierQuote && _courierQuote.outward) || null;
       if (!outward) {
@@ -1848,6 +1941,15 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       syncIcorrectQuote();
       if (window.icorrectQuoteEvents && typeof window.icorrectQuoteEvents.captureQuoteProceeded === 'function') {
         window.icorrectQuoteEvents.captureQuoteProceeded();
+      }
+    } catch (e) {}
+  }
+
+  function fireQuoteEmailRequested(contact) {
+    try {
+      syncIcorrectQuote();
+      if (window.icorrectQuoteEvents && typeof window.icorrectQuoteEvents.captureQuoteEmailRequested === 'function') {
+        window.icorrectQuoteEvents.captureQuoteEmailRequested(contact);
       }
     } catch (e) {}
   }
@@ -2427,17 +2529,19 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
   function buildTurnaroundCards(expressData) {
     if (!expressData || !expressData.price) return '';
+    var standardMeta = turnaroundClaimLabel(S.device);
+    var fastMeta = repairBenchDays(S.device) <= 1 ? 'Priority' : '1 working day';
     return '<div class="qw-opt-section">' +
       '<div class="qw-opt-label">Repair turnaround</div>' +
       '<div class="qw-opt-row">' +
         '<div class="qw-opt-card sel" data-opt="speed" data-add="0" data-vid="0" tabindex="0">' +
           '<div class="qw-opt-name">Standard</div>' +
-          '<div class="qw-opt-meta">3 working days</div>' +
+          '<div class="qw-opt-meta">' + esc(standardMeta) + '</div>' +
           '<div class="qw-opt-price free">Included</div>' +
         '</div>' +
         '<div class="qw-opt-card" data-opt="speed" data-add="' + expressData.price + '" data-vid="' + (expressData.variantId || 0) + '" tabindex="0">' +
           '<div class="qw-opt-name">Fast</div>' +
-          '<div class="qw-opt-meta">1 working day</div>' +
+          '<div class="qw-opt-meta">' + esc(fastMeta) + '</div>' +
           '<div class="qw-opt-price">+' + gbp.format(expressData.price) + '</div>' +
         '</div>' +
       '</div>' +
@@ -3590,6 +3694,14 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       if (product.courierTier) tagList.push('courier:' + product.courierTier);
       resEl.dataset.tags = JSON.stringify(tagList);
       if (iss && iss.repairType) S.repairType = iss.repairType;
+      if (window.ICorrectQuotedRepair) {
+        window.ICorrectQuotedRepair.stampQuotedRepair(resEl, {
+          title: product.title || '',
+          handle: product.handle || '',
+          repairType: iss.repairType || '',
+          route: 'repair'
+        });
+      }
     })();
     wireCourierService(container);
     wireCFToggle(container);
@@ -3673,6 +3785,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           '<div class="qw-res-badge qw-badge-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>We need to take a look</div>' +
           '<h3 class="qw-res-h">Book a Diagnostic</h3>' +
           '<p class="qw-res-p">' + esc(iss.copy) + '</p>' +
+          '<p class="qw-res-p">Once your device arrives — by courier or mail-in — we diagnose within 1 working day and email your quote. The device stays with us until you decide.</p>' +
           likelyHtml +
         '</div>' +
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
@@ -3697,6 +3810,19 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     wireCourierService(container);
     wireCFToggle(container);
     wireRestart(container);
+
+    (function stampDiagnosticRepair(){
+      var resEl = document.getElementById('qwResCard');
+      if (!resEl) return;
+      if (window.ICorrectQuotedRepair) {
+        window.ICorrectQuotedRepair.stampQuotedRepair(resEl, {
+          title: (fullDiag && fullDiag.title) || diagProduct.title || 'Diagnostic',
+          handle: diagProduct.handle || '',
+          repairType: 'diagnostic',
+          route: 'diagnostic'
+        });
+      }
+    })();
 
     var bookBtn = container.querySelector('#qwBookBtn');
     if (bookBtn) {
@@ -4125,8 +4251,8 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
         postQuoteWizardWebhook(payload).then(function() {
           showEmailSuccess();
           try {
-            if (window.icorrectQuoteEvents && typeof window.icorrectQuoteEvents.captureQuoteEmailRequested === 'function') {
-              window.icorrectQuoteEvents.captureQuoteEmailRequested({
+            if (typeof fireQuoteEmailRequested === 'function') {
+              fireQuoteEmailRequested({
                 contact_name: name,
                 contact_email: email
               });
@@ -4647,7 +4773,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
       "type": "text",
       "id": "diagnostic_turnaround",
       "label": "Diagnostic turnaround label",
-      "default": "2 working days"
+      "default": "Quote in 1 working day"
     },
     {
       "type": "text",
