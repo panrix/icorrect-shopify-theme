@@ -389,7 +389,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           elsif qw_device == 'watch' or qw_haystack contains 'watch'
             assign qw_noun = 'Apple Watch'
           endif
-          assign qw_sub = "Service Update: the bench is at capacity, so we've paused walk-ins. Get an instant quote online, and we'll collect your " | append: qw_noun | append: ' same day in London, nationwide by courier.'
+          assign qw_sub = "We'll collect your " | append: qw_noun | append: ' same day in London, nationwide by courier.'
         -%}
         <p class="qw-sub">{{ qw_sub }}</p>
       </div>
@@ -4810,7 +4810,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
       "type": "textarea",
       "id": "subheading",
       "label": "Subheading",
-      "default": "Service Update: the bench is at capacity, so we've paused walk-ins. Get an instant quote online, and we'll collect your device same day in London, nationwide by courier."
+      "default": "We'll collect your device same day in London, nationwide by courier."
     },
     {
       "type": "text",
