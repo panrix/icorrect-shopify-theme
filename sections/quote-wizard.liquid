@@ -135,7 +135,8 @@ window.WIZARD_CFG = {
 window.__sameDayConfig = {
   fastVariantId: {{ section.settings.fast_variant_id | default: 0 | json }},
   iphoneSameDayVariantId: {{ section.settings.iphone_sameday_variant_id | default: 0 | json }},
-  macbookSameDayVariantId: {{ section.settings.macbook_sameday_variant_id | default: 0 | json }}
+  macbookSameDayVariantId: {{ section.settings.macbook_sameday_variant_id | default: 0 | json }},
+  eligibilityUrl: {{ section.settings.same_day_eligibility_url | default: '' | json }}
 };
 window.__sameDayEligibility = window.__sameDayEligibility || { inStock: false, dates: {} };
 window.__QW_BANDS = null;
@@ -145,6 +146,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 <script>
 (function () {
   var ENDPOINT = "https://api.icorrect.co.uk/api/quote-events";
+  var sameDayEligibilityUrl = {{ section.settings.same_day_eligibility_url | default: '' | json }};
 
   function phDistinctId() {
     try {
@@ -1591,6 +1593,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
      ============================================= */
   var _courierQuote = null;
   var _postcodeResolved = false;
+  var _sameDayEligSeq = 0;
   var _quoteShownCaptured = false;
   var _collectionSlot = { date: null, part: null };
   var _collectionSlotDates = [];
@@ -2435,7 +2438,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       setPriceVisibility(false);
       hideServiceJourney();
       closeCollectionCalendar();
-      refreshTurnaroundCards();
+      refreshSameDayEligibility();
       return;
     }
 
@@ -2501,7 +2504,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     }
 
     refreshAllInTotal();
-    refreshTurnaroundCards();
+    refreshSameDayEligibility();
     if (!_suppressScroll) focusPriceAndProceed();
     trackCourierQuoteEvents(_courierQuote);
   }
@@ -2652,6 +2655,91 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     if (kind === 'mailin') return 'mailin';
     if (_courierQuote && (_courierQuote.forcedMailIn || _courierQuote.service === 'mail-in')) return 'mailin';
     return 'courier';
+  }
+
+  /* Task 6: POST /same-day/reserve on Shopify orders/paid is not in this theme.
+     Courier webhook lives in panrix/workshop-os; VPS worktree
+     /home/ricky/worktrees/workshop-os-same-day is absent here. When that
+     webhook sees same-day-iphone or turn-around-time-fatest-4-hours, it
+     should reserve; if ok === false, remove/refund the line and Slack
+     SAME-DAY RESERVE FAILED. See scripts/same-day-proxy.md. */
+  async function fetchSameDayEligibility(handle, isoDate, outward) {
+    var t;
+    try {
+      var url = (window.__sameDayConfig && window.__sameDayConfig.eligibilityUrl) || '';
+      if (!url) return { inStock: false, slotsRemaining: 0 };
+      var ctrl = new AbortController();
+      t = setTimeout(function () { ctrl.abort(); }, 1500);
+      var res = await fetch(url + '?handle=' + encodeURIComponent(handle) + '&date=' + isoDate + '&outward=' + encodeURIComponent(outward), { signal: ctrl.signal, credentials: 'omit' });
+      if (!res.ok) return { inStock: false, slotsRemaining: 0 };
+      var j = await res.json();
+      return { inStock: !!j.in_stock, slotsRemaining: j.slots_remaining | 0, eligible: !!j.eligible };
+    } catch (e) {
+      return { inStock: false, slotsRemaining: 0 };
+    } finally {
+      if (t) clearTimeout(t);
+    }
+  }
+
+  function sameDayEligibilityHandle() {
+    var quotedCard = document.querySelector('.qw-quoted-card');
+    var repairHandle = quotedCard && quotedCard.dataset && quotedCard.dataset.repairHandle;
+    var ctx = window.WIZARD_CONTEXT || {};
+    return repairHandle || S.collectionHandle || ctx.productHandle || S.device || '';
+  }
+
+  function sameDayEligibilityIsos() {
+    var today = new Date();
+    var isos = [dateToIsoLocal(today)];
+    if (window.ICorrectSameDay && typeof window.ICorrectSameDay.nextWorkingDays === 'function') {
+      var start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      start.setDate(start.getDate() + 1);
+      var days = window.ICorrectSameDay.nextWorkingDays(start, 5);
+      for (var i = 0; i < days.length; i++) isos.push(dateToIsoLocal(days[i]));
+    }
+    return isos;
+  }
+
+  function refreshSameDayEligibility() {
+    var seq = ++_sameDayEligSeq;
+    window.__sameDayEligibility = { inStock: false, dates: {}, slotsRemaining: 0 };
+    refreshTurnaroundCards();
+    var url = (window.__sameDayConfig && window.__sameDayConfig.eligibilityUrl) || '';
+    if (!url || !_courierQuote) return;
+    var handle = sameDayEligibilityHandle();
+    var outward = _courierQuote.outward || '';
+    if (!handle || !outward) return;
+    var isos = sameDayEligibilityIsos();
+    Promise.all(isos.map(function (iso) {
+      return fetchSameDayEligibility(handle, iso, outward).then(function (result) {
+        return { iso: iso, result: result };
+      });
+    })).then(function (rows) {
+      if (seq !== _sameDayEligSeq) return;
+      var dates = {};
+      var inStock = false;
+      var slotsRemaining = 0;
+      var eligible = false;
+      for (var i = 0; i < rows.length; i++) {
+        dates[rows[i].iso] = rows[i].result.slotsRemaining;
+        if (rows[i].result.inStock) inStock = true;
+        if (rows[i].result.eligible) eligible = true;
+        if ((rows[i].result.slotsRemaining | 0) > slotsRemaining) {
+          slotsRemaining = rows[i].result.slotsRemaining | 0;
+        }
+      }
+      window.__sameDayEligibility = {
+        inStock: inStock,
+        dates: dates,
+        slotsRemaining: slotsRemaining,
+        eligible: eligible
+      };
+      refreshTurnaroundCards();
+    }).catch(function () {
+      if (seq !== _sameDayEligSeq) return;
+      window.__sameDayEligibility = { inStock: false, dates: {}, slotsRemaining: 0 };
+      refreshTurnaroundCards();
+    });
   }
 
   function buildSameDayOpts() {
@@ -5228,6 +5316,13 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
     {
       "type": "header",
       "content": "Fast / same-day variant IDs"
+    },
+    {
+      "type": "text",
+      "id": "same_day_eligibility_url",
+      "label": "Same-day eligibility proxy URL",
+      "default": "",
+      "info": "Public proxy on the quote-events origin, e.g. https://api.icorrect.co.uk/same-day/eligibility. Blank = hide same-day. Never paste the workshop token."
     },
     {
       "type": "number",
