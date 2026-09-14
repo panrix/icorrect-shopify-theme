@@ -35,7 +35,7 @@ function extractFunction(src, name) {
 }
 
 describe('theme wiring: proxy URL + no workshop secret', () => {
-  it('keeps quote-events on api.icorrect.co.uk and adds same_day_eligibility_url (blank default)', () => {
+  it('keeps quote-events on api.icorrect.co.uk and adds same_day_eligibility_url (no blank schema default)', () => {
     assert.match(liquid, /var ENDPOINT = "https:\/\/api\.icorrect\.co\.uk\/api\/quote-events"/);
     assert.match(liquid, /var sameDayEligibilityUrl/);
     assert.match(liquid, /"id":\s*"same_day_eligibility_url"/);
@@ -43,8 +43,14 @@ describe('theme wiring: proxy URL + no workshop secret', () => {
       liquid,
       /eligibilityUrl:\s*\{\{\s*section\.settings\.same_day_eligibility_url/
     );
+    assert.match(
+      liquid,
+      /section\.settings\.same_day_eligibility_url\s*\|\s*default:\s*''/
+    );
     const schema = liquid.slice(liquid.indexOf('"id": "same_day_eligibility_url"'));
-    assert.match(schema, /"default":\s*""/);
+    const settingEnd = schema.indexOf('},');
+    const settingBlock = schema.slice(0, settingEnd);
+    assert.doesNotMatch(settingBlock, /"default":\s*""/);
   });
 
   it('never embeds a workshop token or webhookAuth secret in Liquid/JS', () => {
