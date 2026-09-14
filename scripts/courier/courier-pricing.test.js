@@ -17,6 +17,7 @@ const {
   resolveCourierTier,
   computeAdjustment,
   resolveAdjustmentVariant,
+  storefrontAdjustmentMap,
   quoteServiceAdjustment,
   quoteCourierCollection,
   ADJUSTMENT,
@@ -293,5 +294,57 @@ describe('null-variant fallback', () => {
     assert.equal(resolveAdjustmentVariant(15, variantsAsset).variantId, variantsAsset.variants['15']);
     assert.equal(resolveAdjustmentVariant(20, variantsAsset).variantId, variantsAsset.variants['20']);
     assert.equal(resolveAdjustmentVariant(25, variantsAsset).variantId, variantsAsset.variants['25']);
+  });
+});
+
+describe('wizard and booker probe live service-adjustment.js', () => {
+  const wizardSrc = fs.readFileSync(path.join(root, 'sections/quote-wizard.liquid'), 'utf8');
+  const additionalSrc = fs.readFileSync(path.join(root, 'snippets/additional-repair.liquid'), 'utf8');
+
+  it('quote wizard replaces hardcoded IDs from product.js and clears them on 404', () => {
+    assert.match(wizardSrc, /products\/' \+ adjHandle \+ '\.js/);
+    assert.match(wizardSrc, /storefrontAdjustmentMap/);
+    assert.match(wizardSrc, /source: 'unavailable'/);
+  });
+
+  it('additional-repair probes the same handle before quoting', () => {
+    assert.match(additionalSrc, /function ensureServiceAdjustments\(\)/);
+    assert.match(additionalSrc, /storefrontAdjustmentMap/);
+    assert.match(additionalSrc, /Promise\.all\(\[ensureBands\(\), ensureServiceAdjustments\(\)\]\)/);
+    assert.match(additionalSrc, /await ensureServiceAdjustments\(\)/);
+  });
+});
+
+describe('storefrontAdjustmentMap', () => {
+  it('returns empty when the product is missing (draft / 404)', () => {
+    assert.deepEqual(storefrontAdjustmentMap(null), {});
+    assert.deepEqual(storefrontAdjustmentMap(undefined), {});
+    assert.deepEqual(storefrontAdjustmentMap({ variants: [] }), {});
+  });
+
+  it('maps Shopify product.js variants by pound price, including cents', () => {
+    const map = storefrontAdjustmentMap({
+      variants: [
+        { id: 111, price: 1500, available: true },
+        { id: 222, price: 2000, available: true },
+        { id: 333, price: 2500, available: false },
+      ],
+    });
+    assert.deepEqual(map, { '15': 111, '20': 222, '25': 333 });
+  });
+
+  it('unpublished product empties the map so a £49 diagnostic cannot cart a dead £25 id', () => {
+    const q = quoteServiceAdjustment({
+      postcode: 'SW11 8BJ',
+      productTags: [],
+      bands: bandsAsset,
+      service: 'courier',
+      repairPrice: 49,
+      variants: { variants: storefrontAdjustmentMap(null) },
+    });
+    assert.equal(q.variantMode, 'fallback-free-mail-in');
+    assert.equal(q.variantId, null);
+    assert.equal(q.adjustment, 0);
+    assert.equal(q.total, 49);
   });
 });
