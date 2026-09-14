@@ -110,6 +110,7 @@ window.WIZARD_CONTEXT = {
 <script src="{{ 'repair-catalogue.js' | asset_url }}" defer></script>
 <script src="{{ 'quoted-repair-stamp.js' | asset_url }}" defer></script>
 <script src="{{ 'repair-journey.js' | asset_url }}" defer></script>
+<script src="{{ 'same-day-eligibility.js' | asset_url }}" defer></script>
 <script>
 window.WIZARD_CFG = {
   warrantyLabel: {{ section.settings.warranty_label | default: '2-year warranty' | json }},
@@ -131,6 +132,12 @@ window.WIZARD_CFG = {
     variantId: {{ mail_in_prod.selected_or_first_available_variant.id | default: 'null' }}
   }
 };
+window.__sameDayConfig = {
+  fastVariantId: {{ section.settings.fast_variant_id | default: 0 | json }},
+  iphoneSameDayVariantId: {{ section.settings.iphone_sameday_variant_id | default: 0 | json }},
+  macbookSameDayVariantId: {{ section.settings.macbook_sameday_variant_id | default: 0 | json }}
+};
+window.__sameDayEligibility = window.__sameDayEligibility || { inStock: false, dates: {} };
 window.__QW_BANDS = null;
 window.__QW_CATALOGUE = null;
 window.__icorrectQuote = window.__icorrectQuote || {};
@@ -800,7 +807,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   /* =============================================
      STATE
      ============================================= */
-  var S = { device: null, model: null, modelGroup: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null, route: null, repairType: null, entrySource: null , preVariantId: null, preRepairType: null };
+  var S = { device: null, model: null, modelGroup: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null, route: null, repairType: null, entrySource: null , preVariantId: null, preRepairType: null, sameDayDate: null };
+  var _expressData = null;
   var _collectionCache = {}, _productCache = {}, _repairsMap = {}, _collectionProducts = [], _trackedSteps = {}, _trackedOps = {};
   var _stepStartTime = Date.now();
   var _suppressScroll = false;
@@ -1495,12 +1503,22 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   }
 
   /* Device bench days → label shared by journey ETA + repair badges. */
+  function selectedSpeed() {
+    var card = document.querySelector('.qw-opt-card.sel[data-opt="speed"]');
+    return (card && card.getAttribute('data-speed')) || 'standard';
+  }
+
+  function speedJourneyOpts(extra) {
+    var opts = extra ? Object.assign({}, extra) : {};
+    if (!opts.speed) opts.speed = selectedSpeed();
+    if (opts.diagnostic == null) opts.diagnostic = S.route === 'diagnostic';
+    return opts;
+  }
+
   function turnaroundClaimLabel(device, opts) {
-    opts = opts || {};
+    opts = speedJourneyOpts(opts || {});
     if (window.ICorrectRepairJourney) {
-      return window.ICorrectRepairJourney.turnaroundClaimLabel(device, {
-        diagnostic: !!(opts.diagnostic || S.route === 'diagnostic')
-      });
+      return window.ICorrectRepairJourney.turnaroundClaimLabel(device, opts);
     }
     if (opts.diagnostic || S.route === 'diagnostic') {
       return CFG.diagnosticTurnaround || 'Quote in 1 working day';
@@ -1679,10 +1697,14 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var collect = _collectionSlot.date && _collectionSlot.date.iso
       ? parseISODate(_collectionSlot.date.iso)
       : null;
+    if (selectedSpeed() === 'same_day' && S.sameDayDate) {
+      collect = parseISODate(S.sameDayDate) || collect;
+    }
     var lib = window.ICorrectRepairJourney;
+    var opts = speedJourneyOpts({ diagnostic: diagnostic });
     var model = diagnostic
       ? (lib ? lib.courierDiagnosticJourney(collect) : null)
-      : (lib ? lib.courierRepairJourney(S.device, collect) : null);
+      : (lib ? lib.courierRepairJourney(S.device, collect, opts) : null);
     if (model) return formatJourneyModel(model);
     if (diagnostic) {
       return {
@@ -1696,13 +1718,13 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         quoteDate: collect ? addWorkingDays(collect, 1) : null
       };
     }
-    var bench = repairBenchDays(S.device);
+    var bench = repairBenchDays(S.device, opts);
     if (!collect) {
       return {
         kind: 'repair',
         steps: [
           { title: 'We collect', meta: 'Pick a collection window' },
-          { title: 'We repair', meta: turnaroundClaimLabel(S.device) },
+          { title: 'We repair', meta: turnaroundClaimLabel(S.device, opts) },
           { title: 'Back to you', meta: 'After repair' }
         ],
         returnDate: null,
@@ -1714,7 +1736,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       kind: 'repair',
       steps: [
         { title: 'We collect', meta: formatJourneyDate(collect) },
-        { title: 'We repair', meta: turnaroundClaimLabel(S.device) },
+        { title: 'We repair', meta: turnaroundClaimLabel(S.device, opts) },
         { title: 'Back to you', meta: formatJourneyDate(returnDate) }
       ],
       returnDate: returnDate,
@@ -1741,11 +1763,12 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   function buildMailinJourneyModel() {
     var diagnostic = S.route === 'diagnostic';
     var lib = window.ICorrectRepairJourney;
+    var opts = speedJourneyOpts({ diagnostic: diagnostic });
     var model = diagnostic
       ? (lib ? lib.mailinDiagnosticJourney(new Date()) : null)
-      : (lib ? lib.mailinRepairJourney(S.device, new Date()) : null);
+      : (lib ? lib.mailinRepairJourney(S.device, new Date(), opts) : null);
     if (model) return formatJourneyModel(model);
-    var bench = repairBenchDays(S.device, { diagnostic: diagnostic });
+    var bench = repairBenchDays(S.device, opts);
     var ship = packShipDate(new Date());
     var weReceive = addWorkingDays(ship, 1);
     var youPostBy = weReceive;
@@ -1770,7 +1793,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       steps: [
         { title: 'We send packaging', meta: formatJourneyDate(ship) },
         { title: 'You post the device', meta: formatJourneyDate(youPostBy) },
-        { title: 'We repair', meta: turnaroundClaimLabel(S.device) },
+        { title: 'We repair', meta: turnaroundClaimLabel(S.device, opts) },
         { title: 'Back to you', meta: formatJourneyDate(returnDate) }
       ],
       returnDate: returnDate,
@@ -2407,6 +2430,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       setPriceVisibility(false);
       hideServiceJourney();
       closeCollectionCalendar();
+      refreshTurnaroundCards();
       return;
     }
 
@@ -2472,6 +2496,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     }
 
     refreshAllInTotal();
+    refreshTurnaroundCards();
     if (!_suppressScroll) focusPriceAndProceed();
     trackCourierQuoteEvents(_courierQuote);
   }
@@ -2581,25 +2606,261 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     } catch(e) { _expressCache[handle] = null; return null; }
   }
 
-  function buildTurnaroundCards(expressData) {
-    if (!expressData || !expressData.price) return '';
-    var standardMeta = turnaroundClaimLabel(S.device);
-    var fastMeta = repairBenchDays(S.device) <= 1 ? 'Priority' : '1 working day';
-    return '<div class="qw-opt-section">' +
-      '<div class="qw-opt-label">Repair turnaround</div>' +
-      '<div class="qw-opt-row">' +
-        '<div class="qw-opt-card sel" data-opt="speed" data-add="0" data-vid="0" tabindex="0">' +
-          '<div class="qw-opt-name">Standard</div>' +
-          '<div class="qw-opt-meta">' + esc(standardMeta) + '</div>' +
-          '<div class="qw-opt-price free">Included</div>' +
-        '</div>' +
-        '<div class="qw-opt-card" data-opt="speed" data-add="' + expressData.price + '" data-vid="' + (expressData.variantId || 0) + '" tabindex="0">' +
-          '<div class="qw-opt-name">Fast</div>' +
-          '<div class="qw-opt-meta">' + esc(fastMeta) + '</div>' +
-          '<div class="qw-opt-price">+' + gbp.format(expressData.price) + '</div>' +
-        '</div>' +
-      '</div>' +
+  function planSpeedOffers(ctx) {
+    ctx = ctx || {};
+    var device = ctx.device;
+    var diagnostic = !!ctx.diagnostic;
+    var showFast = diagnostic || device === 'macbook' || device === 'ipad';
+    if (device === 'iphone' || device === 'watch') showFast = false;
+    var innerLondon = ctx.service === 'courier' && (ctx.band === 'B1' || ctx.band === 'B2');
+    var showSameDay = !diagnostic && innerLondon && (device === 'iphone' || device === 'macbook') && !!ctx.sameDayOk;
+    return { standard: true, fast: showFast, sameDay: showSameDay };
+  }
+
+  function currentSpeedService() {
+    var kind = selectedServiceKind();
+    if (kind === 'mailin') return 'mailin';
+    if (_courierQuote && (_courierQuote.forcedMailIn || _courierQuote.service === 'mail-in')) return 'mailin';
+    return 'courier';
+  }
+
+  function buildSameDayOpts() {
+    var stub = window.__sameDayEligibility || { inStock: false, dates: {} };
+    var partId = _collectionSlot.part && _collectionSlot.part.id;
+    var collectionWindow = partId === 'PM' ? 'afternoon' : 'morning';
+    return {
+      device: S.device,
+      band: (_courierQuote && _courierQuote.band) || null,
+      service: currentSpeedService() === 'mailin' ? 'mail-in' : 'courier',
+      diagnostic: S.route === 'diagnostic',
+      inStock: stub.inStock === true,
+      slotsByDate: stub.dates || {},
+      slotsRemaining: typeof stub.slotsRemaining === 'number' ? stub.slotsRemaining : undefined,
+      collectionWindow: S.device === 'macbook' ? 'morning' : collectionWindow,
+      now: new Date()
+    };
+  }
+
+  function sameDayDateOptions() {
+    if (!window.ICorrectSameDay || typeof window.ICorrectSameDay.dateOptions !== 'function') return [];
+    return window.ICorrectSameDay.dateOptions(buildSameDayOpts()) || [];
+  }
+
+  function pickAvailableSameDay(dates) {
+    var i;
+    if (S.sameDayDate) {
+      for (i = 0; i < dates.length; i++) {
+        if (dates[i].available && dates[i].iso === S.sameDayDate) return dates[i];
+      }
+    }
+    for (i = 0; i < dates.length; i++) {
+      if (dates[i].available) return dates[i];
+    }
+    return null;
+  }
+
+  function weCollectSentence(dateLabel) {
+    return dateLabel ? ('We collect ' + dateLabel + '.') : 'We collect.';
+  }
+
+  function standardSpeedCopy(dateLabel) {
+    var prefix = weCollectSentence(dateLabel);
+    if (S.route === 'diagnostic') {
+      return prefix + ' Quote in 3 working days.';
+    }
+    if (S.device === 'iphone' || repairBenchDays(S.device) === 1) {
+      return prefix + ' We repair the next working day and return it that afternoon.';
+    }
+    return prefix + ' We repair in ' + repairBenchDays(S.device) + ' working days.';
+  }
+
+  function speedCardHtml(opts) {
+    var sel = opts.selected ? ' sel' : '';
+    var priceHtml = opts.price > 0
+      ? '<div class="qw-opt-price">+' + gbp.format(opts.price) + '</div>'
+      : '<div class="qw-opt-price free">Included</div>';
+    var extra = opts.extraInner || '';
+    return '<div class="qw-opt-card' + sel + '" data-opt="speed" data-speed="' + opts.speed +
+      '" data-add="' + (opts.price || 0) + '" data-vid="' + (opts.vid || 0) +
+      '" data-date="' + esc(opts.dateIso || '') + '" tabindex="0">' +
+      '<div class="qw-opt-name">' + esc(opts.name) + '</div>' +
+      '<div class="qw-opt-meta">' + esc(opts.meta) + '</div>' +
+      extra +
+      priceHtml +
     '</div>';
+  }
+
+  function buildTurnaroundCards(expressData) {
+    if (expressData !== undefined) _expressData = expressData;
+    expressData = _expressData;
+    var cfg = window.__sameDayConfig || {};
+    var dates = sameDayDateOptions();
+    var picked = pickAvailableSameDay(dates);
+    var offers = planSpeedOffers({
+      device: S.device,
+      service: currentSpeedService(),
+      band: _courierQuote && _courierQuote.band,
+      diagnostic: S.route === 'diagnostic',
+      sameDayOk: !!picked
+    });
+    var current = selectedSpeed();
+    if (current === 'fast' && !offers.fast) current = 'standard';
+    if (current === 'same_day' && !offers.sameDay) current = 'standard';
+    if (offers.sameDay && picked) S.sameDayDate = picked.iso;
+
+    var dateLabel = '';
+    if (current === 'same_day' && picked) {
+      dateLabel = formatJourneyDate(parseISODate(picked.iso));
+    } else if (_collectionSlot.date && _collectionSlot.date.iso) {
+      dateLabel = formatJourneyDate(parseISODate(_collectionSlot.date.iso));
+    }
+
+    var cfgFastVid = parseInt(cfg.fastVariantId, 10) || 0;
+    var fastPrice = 79;
+    var fastVid = cfgFastVid;
+    if (expressData && expressData.price) fastPrice = expressData.price;
+    if (!fastVid && expressData && expressData.variantId) fastVid = expressData.variantId;
+
+    var sdPrice = S.device === 'macbook' ? 149 : 49;
+    var sdVid = S.device === 'macbook'
+      ? (parseInt(cfg.macbookSameDayVariantId, 10) || 0)
+      : (parseInt(cfg.iphoneSameDayVariantId, 10) || 0);
+    var slotsLine = picked ? (picked.slotsRemaining + ' slots left') : '';
+
+    var cards = [];
+    cards.push(speedCardHtml({
+      speed: 'standard',
+      name: 'Standard',
+      meta: standardSpeedCopy(dateLabel),
+      price: 0,
+      vid: 0,
+      selected: current !== 'fast' && current !== 'same_day',
+      dateIso: ''
+    }));
+    if (offers.fast) {
+      cards.push(speedCardHtml({
+        speed: 'fast',
+        name: 'Fast',
+        meta: '1 working day',
+        price: fastPrice,
+        vid: fastVid,
+        selected: current === 'fast',
+        dateIso: ''
+      }));
+    }
+    if (offers.sameDay) {
+      cards.push(speedCardHtml({
+        speed: 'same_day',
+        name: 'Same-day',
+        meta: 'Collect and back the same day.',
+        price: sdPrice,
+        vid: sdVid,
+        selected: current === 'same_day',
+        dateIso: picked ? picked.iso : '',
+        extraInner: slotsLine ? '<div class="qw-slot-left">' + esc(slotsLine) + '</div>' : ''
+      }));
+    }
+
+    var chips = '';
+    if (offers.sameDay) {
+      var chipsInner = dates.filter(function(d) { return d.available; }).map(function(d) {
+        var on = picked && d.iso === picked.iso;
+        var lab = formatJourneyDate(parseISODate(d.iso));
+        return '<button type="button" class="qw-date-chip' + (on ? ' sel' : '') + '" data-iso="' + d.iso +
+          '" data-slots="' + d.slotsRemaining + '">' + esc(lab) +
+          '<span class="qw-slot-left">' + d.slotsRemaining + ' slots left</span></button>';
+      }).join('');
+      chips = '<div class="qw-sameday-dates" id="qwSameDayDates"' + (current === 'same_day' ? '' : ' hidden') + '>' +
+        '<button type="button" class="qw-book-ahead" id="qwBookAhead">Book a day ahead</button>' +
+        '<div class="qw-date-chip-row" id="qwDateChipRow" hidden>' + chipsInner + '</div>' +
+      '</div>';
+    }
+
+    return '<div class="qw-opt-section" id="qwTurnaroundMount">' +
+      '<div class="qw-opt-label">Repair turnaround</div>' +
+      '<div class="qw-opt-row">' + cards.join('') + '</div>' +
+      chips +
+    '</div>';
+  }
+
+  function applySameDayIso(iso) {
+    if (!iso) return;
+    S.sameDayDate = iso;
+    var card = document.querySelector('.qw-opt-card[data-speed="same_day"]');
+    if (card) card.setAttribute('data-date', iso);
+    var dates = sameDayDateOptions();
+    var hit = null;
+    for (var i = 0; i < dates.length; i++) {
+      if (dates[i].iso === iso) { hit = dates[i]; break; }
+    }
+    if (card && hit) {
+      var slotEl = card.querySelector('.qw-slot-left');
+      if (slotEl) slotEl.textContent = hit.slotsRemaining + ' slots left';
+    }
+    document.querySelectorAll('.qw-date-chip').forEach(function(ch) {
+      ch.classList.toggle('sel', ch.getAttribute('data-iso') === iso);
+    });
+    if (typeof findSlotDate === 'function') {
+      var found = findSlotDate(iso);
+      if (found) {
+        _collectionSlot.date = found;
+        if (typeof paintDateStrip === 'function') paintDateStrip();
+      }
+    }
+    refreshServiceJourney();
+    syncIcorrectQuote();
+  }
+
+  function wireTurnaroundMount(mount) {
+    if (!mount) return;
+    mount.querySelectorAll('.qw-opt-card[data-opt="speed"]').forEach(function(card) {
+      wireA11y(card, card.querySelector('.qw-opt-name') ? card.querySelector('.qw-opt-name').textContent : '');
+      card.onclick = function() {
+        var resCard = document.getElementById('qwResCard');
+        if (!resCard) return;
+        var group = card.dataset.opt;
+        card.parentNode.querySelectorAll('.qw-opt-card[data-opt="' + group + '"]').forEach(function(c) {
+          c.classList.remove('sel');
+        });
+        card.classList.add('sel');
+        var datesEl = document.getElementById('qwSameDayDates');
+        if (datesEl) datesEl.hidden = card.getAttribute('data-speed') !== 'same_day';
+        if (card.getAttribute('data-speed') === 'same_day') {
+          S.sameDayDate = card.getAttribute('data-date') || S.sameDayDate;
+        }
+        refreshAllInTotal();
+        refreshServiceJourney();
+      };
+    });
+    var ahead = mount.querySelector('#qwBookAhead');
+    if (ahead) {
+      ahead.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var row = document.getElementById('qwDateChipRow');
+        if (row) row.hidden = !row.hidden;
+      };
+    }
+    mount.querySelectorAll('.qw-date-chip').forEach(function(chip) {
+      chip.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        applySameDayIso(chip.getAttribute('data-iso'));
+        var sd = mount.querySelector('.qw-opt-card[data-speed="same_day"]');
+        if (sd && !sd.classList.contains('sel')) sd.click();
+      };
+    });
+  }
+
+  function refreshTurnaroundCards() {
+    var extras = document.getElementById('qwResExtras');
+    if (!extras) return;
+    var html = buildTurnaroundCards();
+    var mount = document.getElementById('qwTurnaroundMount');
+    if (mount) mount.outerHTML = html;
+    else extras.insertAdjacentHTML('beforeend', html);
+    wireTurnaroundMount(document.getElementById('qwTurnaroundMount'));
+    refreshAllInTotal();
   }
 
   /* =============================================
@@ -3722,7 +3983,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           (iss.refImages ? '<div class="qw-dustgate-imgs">' + iss.refImages.map(function(src,i){ return '<img src="' + src + '" alt="Reference image ' + (i+1) + '">'; }).join('') + '</div>' : '') +
         '</div>' +
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
-        '<div class="qw-res-extras" style="padding:0 24px 8px;">' + colorHtml + turnaroundHtml + '</div>' +
+        '<div class="qw-res-extras" id="qwResExtras" style="padding:0 24px 8px;">' + colorHtml + turnaroundHtml + '</div>' +
         '<div class="qw-res-cta">' +
           '<button class="qw-btn-book" id="qwBookBtn" disabled>Proceed to checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
           '<button class="qw-btn-email" id="qwEmailQuote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email me this quote</button>' +
@@ -3733,6 +3994,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       '<button class="qw-restart" id="qwRestart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Start over</button>';
 
     wireOptCards(container);
+    wireTurnaroundMount(document.getElementById('qwTurnaroundMount'));
     wireColorSelector(container);
     (function stampRepairTags(){
       var resEl = document.getElementById('qwResCard');
@@ -3814,6 +4076,9 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
     var likelyHtml = estimateRows ? '<div class="qw-estimate">' + estimateRows + '</div>' : '';
 
+    var expressData = await detectExpressFromPage(diagProduct.handle);
+    var turnaroundHtml = buildTurnaroundCards(expressData);
+
     var priceTrustHtml = diagPrice
       ? buildPriceTrustBlock(S.device, S.model, { gate: true, diagnostic: true, priceHtml: gbp.format(diagPrice) })
       : '';
@@ -3838,6 +4103,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           likelyHtml +
         '</div>' +
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
+        '<div class="qw-res-extras" id="qwResExtras" style="padding:0 24px 8px;">' + turnaroundHtml + '</div>' +
         '<div class="qw-res-cta">' +
           '<button class="qw-btn-book" id="qwBookBtn" disabled>Proceed to checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
           '<button class="qw-btn-email" id="qwEmailQuote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email me this quote</button>' +
@@ -3856,6 +4122,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     }
 
     wireOptCards(container);
+    wireTurnaroundMount(document.getElementById('qwTurnaroundMount'));
     wireCourierService(container);
     wireCFToggle(container);
     wireRestart(container);
@@ -4089,6 +4356,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   /* ---- WIRING HELPERS ---- */
   function wireOptCards(container) {
     container.querySelectorAll('.qw-opt-card').forEach(function(card) {
+      if (card.getAttribute('data-opt') === 'speed') return;
       wireA11y(card, card.querySelector('.qw-opt-name') ? card.querySelector('.qw-opt-name').textContent : '');
       card.onclick = function() {
         var resCard = document.getElementById('qwResCard');
@@ -4346,7 +4614,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
      RESET
      ============================================= */
   function reset() {
-    S.device = null; S.model = null; S.modelGroup = null; S.fault = null; S.issue = null; S.step = 1; S.collectionHandle = null; S.route = null; S.repairType = null; _repairsMap = {};
+    S.device = null; S.model = null; S.modelGroup = null; S.fault = null; S.issue = null; S.step = 1; S.collectionHandle = null; S.route = null; S.repairType = null; S.sameDayDate = null; _repairsMap = {};
     _courierQuote = null;
     _postcodeResolved = false;
     _quoteShownCaptured = false;
@@ -4905,6 +5173,31 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
       "label": "Skip to service step when product is fully resolved",
       "default": false,
       "info": "Keep off so product pages stay sequential: fault → postcode → price."
+    },
+    {
+      "type": "header",
+      "content": "Fast / same-day variant IDs"
+    },
+    {
+      "type": "number",
+      "id": "fast_variant_id",
+      "label": "Fast repair variant ID",
+      "default": 0,
+      "info": "Handle turn-around-time-1-working-day (£79). 0 until pasted from Admin."
+    },
+    {
+      "type": "number",
+      "id": "iphone_sameday_variant_id",
+      "label": "iPhone same-day variant ID",
+      "default": 0,
+      "info": "Handle same-day-iphone (£49). 0 until pasted from Admin."
+    },
+    {
+      "type": "number",
+      "id": "macbook_sameday_variant_id",
+      "label": "MacBook same-day variant ID",
+      "default": 0,
+      "info": "Handle turn-around-time-fatest-4-hours (£149). 0 until pasted from Admin."
     }
   ],
   "presets": [{ "name": "Quote Wizard" }]
