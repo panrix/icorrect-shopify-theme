@@ -69,6 +69,23 @@ describe('hub #432 allowlist contract', () => {
     assert.match(liquid, /route:\s*q\.route/);
   });
 
+  it('quotePayload and proceed extras include speed, same_day_date, slots_remaining', () => {
+    const payloadStart = liquid.indexOf('function quotePayload(extra)');
+    const payload = liquid.slice(payloadStart, liquid.indexOf('function captureQuoteShown'));
+    assert.match(payload, /speed:\s*q\.speed/);
+    assert.match(payload, /same_day_date:/);
+    assert.match(payload, /slots_remaining:/);
+    assert.match(liquid, /function selectedSpeedTrackFields\s*\(/);
+    const proceedStart = liquid.indexOf("function trackWizardProceed");
+    const proceed = liquid.slice(proceedStart, liquid.indexOf("function trackWizardEntry"));
+    assert.match(proceed, /selectedSpeedTrackFields\s*\(/);
+    const courierEvents = liquid.slice(
+      liquid.indexOf("function trackCourierQuoteEvents"),
+      liquid.indexOf("function trackSlotSelected")
+    );
+    assert.match(courierEvents, /selectedSpeedTrackFields\s*\(/);
+  });
+
   it('diagnostic card copy is service-neutral (no bare “We collect”)', () => {
     assert.doesNotMatch(
       liquid,

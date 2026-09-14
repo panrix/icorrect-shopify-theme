@@ -95,7 +95,10 @@
 
   function turnaroundClaimLabel(device, opts) {
     opts = opts || {};
-    if (opts.diagnostic) return 'Quote in 3 working days';
+    if (opts.diagnostic) {
+      if (opts.speed === 'fast') return 'Quote in 1 working day';
+      return 'Quote in 3 working days';
+    }
     if (opts.speed === 'same_day') return 'Same day';
     if (opts.speed === 'fast') return '1 working day';
     var days = repairBenchDays(device, opts);
@@ -134,20 +137,23 @@
     };
   }
 
-  function courierDiagnosticJourney(collectDate) {
+  function courierDiagnosticJourney(collectDate, opts) {
+    opts = opts || {};
+    var quoteDays = repairBenchDays(null, { diagnostic: true, speed: opts.speed });
+    var quoteMeta = quoteDays === 1 ? '1 working day after collection' : '3 working days after collection';
     if (!collectDate) {
       return {
         kind: 'diagnostic',
         steps: [
           { title: 'We collect', meta: 'Pick a collection window' },
-          { title: 'We diagnose & email your quote', meta: '3 working days after collection' },
+          { title: 'We diagnose & email your quote', meta: quoteMeta },
           { title: 'You decide next', meta: 'Device stays with us until you approve' }
         ],
         returnDate: null,
         quoteDate: null
       };
     }
-    var quoteDate = addWorkingDays(collectDate, 3);
+    var quoteDate = addWorkingDays(collectDate, quoteDays);
     return {
       kind: 'diagnostic',
       steps: [
@@ -180,10 +186,12 @@
     };
   }
 
-  function mailinDiagnosticJourney(now) {
+  function mailinDiagnosticJourney(now, opts) {
+    opts = opts || {};
     var ship = packShipDate(now);
     var weReceive = addWorkingDays(ship, 1);
-    var quoteDate = addWorkingDays(weReceive, 3);
+    var quoteDays = repairBenchDays(null, { diagnostic: true, speed: opts.speed });
+    var quoteDate = addWorkingDays(weReceive, quoteDays);
     return {
       kind: 'diagnostic',
       steps: [
