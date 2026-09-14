@@ -361,7 +361,37 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           -%}
           <h2 class="qw-title">{{ qw_heading }}</h2>
         {% endif %}
-        <p class="qw-sub">{{ section.settings.subheading }}</p>
+        {%- liquid
+          assign qw_noun = 'device'
+          assign qw_device = section.settings.prefill_device | default: '' | downcase
+          if collection and collection.metafields.custom.wizard_device != blank
+            assign qw_device = collection.metafields.custom.wizard_device | downcase
+          elsif product and product.metafields.custom.wizard_device != blank
+            assign qw_device = product.metafields.custom.wizard_device | downcase
+          endif
+          assign qw_haystack = qw_device
+          if collection
+            assign qw_haystack = qw_haystack | append: ' ' | append: collection.handle | append: ' ' | append: collection.title
+          endif
+          if product
+            assign qw_haystack = qw_haystack | append: ' ' | append: product.handle | append: ' ' | append: product.title
+          endif
+          if request.page_type == 'page' and page
+            assign qw_haystack = qw_haystack | append: ' ' | append: page.handle | append: ' ' | append: page.title
+          endif
+          assign qw_haystack = qw_haystack | downcase
+          if qw_device == 'iphone' or qw_haystack contains 'iphone'
+            assign qw_noun = 'iPhone'
+          elsif qw_device == 'macbook' or qw_haystack contains 'macbook'
+            assign qw_noun = 'MacBook'
+          elsif qw_device == 'ipad' or qw_haystack contains 'ipad'
+            assign qw_noun = 'iPad'
+          elsif qw_device == 'watch' or qw_haystack contains 'watch'
+            assign qw_noun = 'Apple Watch'
+          endif
+          assign qw_sub = "Service Update: the bench is at capacity, so we've paused walk-ins. Get an instant quote online, and we'll collect your " | append: qw_noun | append: ' same day in London, nationwide by courier.'
+        -%}
+        <p class="qw-sub">{{ qw_sub }}</p>
       </div>
 
       <!-- Step indicator -->
@@ -4780,7 +4810,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
       "type": "textarea",
       "id": "subheading",
       "label": "Subheading",
-      "default": "Pick your device and we'll point you to the right repair."
+      "default": "Service Update: the bench is at capacity, so we've paused walk-ins. Get an instant quote online, and we'll collect your device same day in London, nationwide by courier."
     },
     {
       "type": "text",
