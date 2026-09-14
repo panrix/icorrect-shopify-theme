@@ -57,31 +57,59 @@ describe('courier clocks from Monday collection', () => {
   });
 });
 
-describe('mail-in from Sunday evening', () => {
-  const sundayNight = new Date(2026, 8, 13, 23, 0, 0);
+/** Sep 2026 is BST (UTC+1). hourLondon is wall time in Europe/London. */
+function bst(y, m, d, hourLondon, min) {
+  return new Date(Date.UTC(y, m, d, hourLondon - 1, min || 0, 0));
+}
 
-  it('pack Monday, customer posts Tuesday, then bench + return', () => {
+describe('mail-in pack clock (UK, UPost +1 working day)', () => {
+  it('cutoff is 3pm Europe/London', () => {
+    assert.equal(J.PACK_CUTOFF_HOUR, 15);
+  });
+
+  it('Monday 10:00 UK ships today; UPost arrives Tuesday', () => {
+    const j = J.mailinRepairJourney('iphone', bst(2026, 8, 14, 10, 0));
+    assert.equal(j.steps[0].title, 'We send packaging');
+    assert.equal(iso(j.steps[0].meta), '2026-09-14');
+    assert.equal(j.steps[1].title, 'You post the device');
+    assert.equal(iso(j.steps[1].meta), '2026-09-15');
+    assert.equal(iso(j.returnDate), '2026-09-17'); // receive Tue, repair Wed, back Thu
+  });
+
+  it('Monday 15:30 UK ships Tuesday', () => {
+    const j = J.mailinRepairJourney('iphone', bst(2026, 8, 14, 15, 30));
+    assert.equal(iso(j.steps[0].meta), '2026-09-15');
+    assert.equal(iso(j.steps[1].meta), '2026-09-16');
+  });
+
+  it('Bali afternoon that is still morning in the UK ships today', () => {
+    // 15:16 Bali (UTC+8) on Mon 14 Sep = 07:16 UTC = 08:16 UK
+    const baliAfternoon = new Date('2026-09-14T15:16:00+08:00');
+    const ship = J.packShipDate(baliAfternoon);
+    assert.equal(iso(ship), '2026-09-14');
+  });
+
+  it('Sunday evening UK ships Monday, device Tuesday', () => {
+    const sundayNight = bst(2026, 8, 13, 23, 0);
     const j = J.mailinRepairJourney('macbook', sundayNight);
     assert.equal(iso(j.steps[0].meta), '2026-09-14');
     assert.equal(iso(j.steps[1].meta), '2026-09-15');
-    assert.equal(j.steps[0].title, 'We send packaging');
-    assert.equal(j.steps[1].title, 'You post the device');
     assert.ok(j.returnDate);
   });
 
-  it('diagnostic emails quote, no return leg', () => {
-    const j = J.mailinDiagnosticJourney(sundayNight);
+  it('diagnostic emails quote one working day after the device arrives', () => {
+    const j = J.mailinDiagnosticJourney(bst(2026, 8, 14, 10, 0));
     assert.equal(j.returnDate, null);
-    assert.ok(j.quoteDate);
+    assert.equal(iso(j.quoteDate), '2026-09-16'); // ship Mon, arrive Tue, quote Wed
     assert.equal(j.steps[2].title, 'We diagnose & email your quote');
     assert.equal(iso(j.steps[2].meta), iso(j.quoteDate));
     assert.equal(j.steps[3].title, 'You decide next');
     assert.match(j.steps[3].meta, /stays with us/i);
   });
 
-  it('mail-in received Friday quotes Monday', () => {
-    const wednesdayMorning = new Date(2026, 8, 16, 9, 0, 0); // Wed 16 Sep
-    const j = J.mailinDiagnosticJourney(wednesdayMorning);
-    assert.equal(iso(j.quoteDate), '2026-09-21');
+  it('Wednesday morning ships Wednesday; quote Friday', () => {
+    const j = J.mailinDiagnosticJourney(bst(2026, 8, 16, 9, 0));
+    assert.equal(iso(j.steps[0].meta), '2026-09-16');
+    assert.equal(iso(j.quoteDate), '2026-09-18');
   });
 });

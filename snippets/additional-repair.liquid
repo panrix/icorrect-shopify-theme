@@ -731,7 +731,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const courierActive = visitBtn && visitBtn.classList.contains('active');
     const postcodeEl = document.getElementById('courier-postcode');
     const pc = postcodeEl ? String(postcodeEl.value || '').trim() : '';
-    const repairPrice = parseFloat(COURIER_CFG.repairPrice) || 0;
+    const repairPrice = parseFloat(String(COURIER_CFG.repairPrice || '').replace(/[^0-9.]/g, '')) || 0;
     return window.ICorrectCourier.quoteServiceAdjustment({
       postcode: pc,
       productTags: COURIER_CFG.productTags || [],
@@ -1465,7 +1465,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // Service adjustment variant (null-safe — never add £0 for a quoted adjustment)
-      if (_courierQuote && _courierQuote.adjustment > 0 && _courierQuote.variantId && _courierQuote.variantMode === 'ok') {
+      if (_courierQuote && _courierQuote.adjustment > 0 && _courierQuote.variantId && _courierQuote.variantMode === 'ok' && !(proceedService === 'mail-in' && (parseFloat(String(COURIER_CFG.repairPrice || '').replace(/[^0-9.]/g, '')) || 0) >= 200)) {
         items.push({
           id: parseInt(_courierQuote.variantId, 10),
           quantity: 1,

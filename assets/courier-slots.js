@@ -1,9 +1,10 @@
 /**
  * Courier collection slot helpers (#53 slice 3).
  *
- * Windows: Today (internal cutoff still B1/B2 before 14:00), Tomorrow, or later — no customer-facing 2pm copy.
+ * Windows: Today (B1/B2 before 14:00 Europe/London), Tomorrow, or later — no customer-facing 2pm copy.
  * Day-parts: AM (09:00–12:00) / PM (12:00–17:00).
  * B3/B4: earliest = tomorrow.
+ * Cutoff always uses UK time — never the browser timezone.
  *
  * Safe for browser (theme asset) and Node (tests).
  */
@@ -49,10 +50,42 @@
    * @param {Date} [now]
    * @returns {{ todayAllowed: boolean, earliest: Date, reason: string }}
    */
+  function londonHour(now) {
+    var parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/London',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23'
+    }).formatToParts(now || new Date());
+    var hour = 0;
+    var minute = 0;
+    for (var i = 0; i < parts.length; i++) {
+      if (parts[i].type === 'hour') hour = parseInt(parts[i].value, 10);
+      if (parts[i].type === 'minute') minute = parseInt(parts[i].value, 10);
+    }
+    return hour + minute / 60;
+  }
+
+  function londonToday(now) {
+    var parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/London',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).formatToParts(now || new Date());
+    var get = function (type) {
+      for (var i = 0; i < parts.length; i++) {
+        if (parts[i].type === type) return parseInt(parts[i].value, 10);
+      }
+      return 0;
+    };
+    return new Date(get('year'), get('month') - 1, get('day'));
+  }
+
   function earliestCollectionDay(band, now) {
     now = now || new Date();
-    var today = startOfDay(now);
-    var hour = now.getHours() + now.getMinutes() / 60;
+    var today = startOfDay(londonToday(now));
+    var hour = londonHour(now);
     var before2pm = hour < 14;
     var inner = band === 'B1' || band === 'B2';
 
@@ -89,7 +122,8 @@
     var includeWeekends = !!opts.includeWeekends;
     var gate = earliestCollectionDay(band, now);
     var cursor = startOfDay(gate.earliest);
-    var todayISO = toISODate(startOfDay(now));
+    var londonDay = startOfDay(londonToday(now));
+    var todayISO = toISODate(londonDay);
     var out = [];
 
     var guard = 0;
@@ -109,7 +143,7 @@
         labelDow: cursor.toLocaleDateString('en-GB', { weekday: 'short' }),
         labelDay: String(cursor.getDate()),
         labelMon: cursor.toLocaleDateString('en-GB', { month: 'short' }),
-        headline: isToday ? 'Today' : iso === toISODate(addDays(startOfDay(now), 1)) ? 'Tomorrow' : null,
+        headline: isToday ? 'Today' : iso === toISODate(addDays(londonDay, 1)) ? 'Tomorrow' : null,
       });
       cursor = addDays(cursor, 1);
     }

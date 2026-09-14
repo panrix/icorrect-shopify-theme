@@ -1550,7 +1550,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   var SLOT_CALENDAR_COUNT = 28;
 
   /* ---------- Service journey / estimated return (Ricky 2026-09-14) ---------- */
-  var PACK_CUTOFF_HOUR = (window.ICorrectRepairJourney && window.ICorrectRepairJourney.PACK_CUTOFF_HOUR) || 14;
+  var PACK_CUTOFF_HOUR = (window.ICorrectRepairJourney && window.ICorrectRepairJourney.PACK_CUTOFF_HOUR) || 15;
 
   function repairBenchDays(device, opts) {
     if (window.ICorrectRepairJourney) return window.ICorrectRepairJourney.repairBenchDays(device, opts);
@@ -1603,6 +1603,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   }
 
   function packShipDate(now) {
+    var lib = window.ICorrectRepairJourney;
+    if (lib && typeof lib.packShipDate === 'function') return lib.packShipDate(now);
     var n = now || new Date();
     var d = startOfDay(n);
     if (!isWorkingDay(d) || n.getHours() >= PACK_CUTOFF_HOUR) {
@@ -1693,8 +1695,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     if (model) return formatJourneyModel(model);
     var bench = repairBenchDays(S.device, { diagnostic: diagnostic });
     var ship = packShipDate(new Date());
-    var youPostBy = addWorkingDays(ship, 1);
-    var weReceive = addWorkingDays(youPostBy, 1);
+    var weReceive = addWorkingDays(ship, 1);
+    var youPostBy = weReceive;
     if (diagnostic) {
       var quoteDate = addWorkingDays(weReceive, 1);
       return {
@@ -3452,7 +3454,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     }
 
     /* Service adjustment variant — null-safe: missing ID already forced free mail-in in quote */
-    if (_courierQuote && _courierQuote.adjustment > 0) {
+    if (_courierQuote && _courierQuote.adjustment > 0 && !(svcKind === 'mailin' && currentRepairPrice() >= 200)) {
       if (_courierQuote.variantMode === 'fallback-free-mail-in') {
         items[0].properties['Service Type'] = 'Mail-in';
         delete items[0].properties['Collection Window'];
