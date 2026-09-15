@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mock — Quote sign-off · speed then collect</title>
+  <style>
+    :root {
+      --ink: #171717;
+      --muted: #666;
+      --faint: #808080;
+      --line: rgba(0,0,0,0.08);
+      --blue: #38598C;
+      --blue-tint: #EAF0F8;
+      --ok: #1a6b34;
+      --font: Arial, Helvetica, sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #ececef;
+      color: var(--ink);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+    .page { max-width: 1080px; margin: 0 auto; padding: 28px 16px 80px; }
+    .note {
+      max-width: 720px;
+      margin: 0 0 16px;
+      font: 400 13px/1.5 var(--font);
+      color: #525252;
+    }
+    .note strong { color: var(--ink); }
+    .scenarios {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 18px;
+    }
+    .scenarios button {
+      border: 0;
+      border-radius: 999px;
+      padding: 8px 14px;
+      background: #fff;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12);
+      font: 500 13px var(--font);
+      cursor: pointer;
+    }
+    .scenarios button.on { background: var(--ink); color: #fff; box-shadow: none; }
+
+    .sheet {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.08), 0 18px 40px -24px rgba(0,0,0,0.28);
+      overflow: hidden;
+    }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 22px 24px 18px;
+    }
+    .device { font: 600 16px/1.3 var(--font); letter-spacing: -0.3px; }
+    .device span { display: block; font: 400 13px/1.4 var(--font); color: var(--muted); margin-top: 4px; }
+    .price-head { text-align: right; flex-shrink: 0; }
+    .price-head b { display: block; font: 600 28px/1 var(--font); letter-spacing: -1px; }
+    .price-head em { font: 400 12px var(--font); color: var(--faint); font-style: normal; }
+    .x {
+      width: 36px; height: 36px; border-radius: 999px;
+      border: 0; background: #f4f4f5; cursor: pointer; font-size: 18px;
+    }
+    .trust {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin: 0 24px 8px;
+    }
+    .trust span {
+      background: #f6f8fb;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font: 500 12.5px/1.3 var(--font);
+      color: #334155;
+    }
+    .trust b { display: block; font: 600 13px var(--font); color: var(--ink); margin-bottom: 1px; }
+
+    .body { padding: 8px 24px 28px; }
+    .step-kicker {
+      font: 500 11px var(--mono);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin: 12px 0 8px;
+    }
+    .speeds { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .speeds.two { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 640px; }
+    .speed {
+      position: relative;
+      text-align: left;
+      padding: 18px 16px 16px;
+      background: #fff;
+      border: 0;
+      border-radius: 14px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+      cursor: pointer;
+      font-family: inherit;
+      min-height: 196px;
+      display: flex;
+      flex-direction: column;
+    }
+    .speed:hover { box-shadow: inset 0 0 0 1px rgba(0,0,0,0.28); }
+    .speed.on { box-shadow: inset 0 0 0 2px #171717; }
+    .pop {
+      position: absolute;
+      top: -9px; left: 14px;
+      background: #171717;
+      color: #fff;
+      font: 600 9px var(--mono);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+    .speed-name { font: 600 18px/1.15 var(--font); letter-spacing: -0.4px; }
+    .speed-why { font: 400 13px/1.35 var(--font); color: var(--muted); margin: 4px 0 12px; }
+    .speed-add { font: 600 26px/1 var(--font); letter-spacing: -1px; }
+    .speed-add.inc { color: var(--ok); font-size: 22px; }
+    .speed-total { font: 400 12.5px var(--font); color: var(--faint); margin-top: 4px; }
+    .ready {
+      margin-top: 12px;
+      background: #f6f8fb;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font: 500 12.5px/1.35 var(--font);
+    }
+    .ready b { display: block; font: 600 13px var(--font); }
+    .go {
+      margin-top: auto;
+      width: 100%;
+      margin-top: 14px;
+      min-height: 40px;
+      border: 0;
+      border-radius: 999px;
+      background: #f4f4f5;
+      font: 600 13.5px var(--font);
+      cursor: pointer;
+    }
+    .speed.on .go { background: #171717; color: #fff; }
+
+    .pledge {
+      margin-top: 14px;
+      background: #f8f1e8;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font: 400 13px/1.45 var(--font);
+      color: #5a3717;
+    }
+    .pledge strong { display: block; color: #3f2610; margin-bottom: 2px; }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+      align-items: start;
+    }
+    .back {
+      border: 0;
+      background: none;
+      padding: 0;
+      font: 500 13px var(--font);
+      color: var(--muted);
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+    .dates { display: flex; gap: 8px; }
+    .date {
+      flex: 1;
+      min-height: 76px;
+      border: 0;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+    .date.on { background: #171717; color: #fff; }
+    .date .dow, .date .mon { font: 500 11px var(--font); color: #666; }
+    .date.on .dow, .date.on .mon { color: rgba(255,255,255,0.7); }
+    .date .n { font: 600 20px/1 var(--font); }
+    .date .tag { font: 600 9px var(--mono); text-transform: uppercase; color: #b7f0c8; }
+    .wins { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+    .win {
+      min-height: 44px;
+      border: 0;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+      font: 500 13px var(--mono);
+      cursor: pointer;
+    }
+    .win.on { background: #171717; color: #fff; }
+    .win:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .timeline {
+      background: #fafafa;
+      border-radius: 14px;
+      padding: 16px 16px 14px;
+      box-shadow: inset 0 0 0 1px var(--line);
+    }
+    .timeline h3 { margin: 0 0 4px; font: 600 15px var(--font); letter-spacing: -0.2px; }
+    .timeline p { margin: 0 0 12px; font: 400 12.5px/1.4 var(--font); color: var(--muted); }
+    .tl { list-style: none; margin: 0; padding: 0; }
+    .tl li {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 10px;
+      padding: 8px 0;
+    }
+    .dot {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #171717; color: #fff;
+      font: 600 11px/22px var(--mono);
+      text-align: center;
+    }
+    .tl b { display: block; font: 600 13.5px var(--font); }
+    .tl span { font: 400 12.5px var(--font); color: var(--muted); }
+
+    .bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin: 18px -24px -28px;
+      padding: 16px 24px;
+      background: #171717;
+      color: #fff;
+    }
+    .bar-l b { display: block; font: 600 15px var(--font); }
+    .bar-l span { font: 400 12.5px var(--font); color: rgba(255,255,255,0.68); }
+    .bar-r { display: flex; align-items: center; gap: 16px; }
+    .bar-r strong { font: 600 28px/1 var(--font); letter-spacing: -1px; }
+    .bar-r em { display: block; font: 400 11.5px var(--font); font-style: normal; color: rgba(255,255,255,0.6); text-align: right; }
+    .book {
+      border: 0;
+      border-radius: 999px;
+      min-height: 46px;
+      padding: 0 20px;
+      background: #fff;
+      color: #171717;
+      font: 600 14px var(--font);
+      cursor: pointer;
+    }
+    .foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      font: 400 12px var(--font);
+      color: var(--faint);
+    }
+    @media (max-width: 820px) {
+      .speeds, .trust, .split { grid-template-columns: 1fr; }
+      .bar, .bar-r { flex-direction: column; align-items: stretch; }
+      .bar-r strong { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <p class="note">
+      <strong>Mock only — not the live theme.</strong>
+      Slim version of the original two-step sign-off: choose speed, then choose when we collect and book.
+      Walk-in is gone. Feature lists and Klarna are shown once, not on every card.
+      Collection day does not count as a bench day.
+    </p>
+    <div class="scenarios" id="scenarios">
+      <button type="button" class="on" data-sc="mac">MacBook · London courier</button>
+      <button type="button" data-sc="iphone">iPhone · London courier</button>
+      <button type="button" data-sc="mail">MacBook · mail-in</button>
+    </div>
+
+    <div class="sheet">
+      <div class="top">
+        <div>
+          <div class="device" id="deviceTitle">MacBook Pro 14" M3 · cracked screen</div>
+          <span id="deviceMeta">W1B 4BD · courier collection · genuine parts</span>
+        </div>
+        <div class="price-head">
+          <b id="headPrice">£449</b>
+          <em id="headCap">repair · courier included</em>
+        </div>
+      </div>
+      <div class="trust" id="trust"></div>
+
+      <div class="body">
+        <div id="step1">
+          <div class="step-kicker">1 · Choose your speed</div>
+          <div class="speeds" id="speeds"></div>
+          <div class="pledge" id="pledge"></div>
+        </div>
+
+        <div id="step2" hidden>
+          <button type="button" class="back" id="back">← Change speed</button>
+          <div class="split">
+            <div>
+              <div class="step-kicker">2 · When shall we collect?</div>
+              <div class="dates" id="dates"></div>
+              <div class="wins">
+                <button type="button" class="win on" id="am">Morning · 9am–12pm</button>
+                <button type="button" class="win" id="pm">Afternoon · 12pm–5pm</button>
+              </div>
+            </div>
+            <div class="timeline">
+              <h3>Your repair timeline</h3>
+              <p>Booking reserves the part and the bench slot. The dates below become a guarantee.</p>
+              <ol class="tl" id="tl"></ol>
+            </div>
+          </div>
+          <div class="bar">
+            <div class="bar-l">
+              <b id="barTitle">Fast · courier</b>
+              <span id="barReady">Ready by Wednesday 16 Sep</span>
+            </div>
+            <div class="bar-r">
+              <div>
+                <strong id="barTotal">£528</strong>
+                <em id="barKlarna">Klarna · 3 × £176</em>
+              </div>
+              <button type="button" class="book">Book this repair →</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="foot" id="foot">
+          <span>★ 4.8 · 719 reviews · payment reserves the part</span>
+          <span>£0 if we cannot repair it</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var SCENARIOS = {
+      mac: {
+        title: 'MacBook Pro 14" M3 · cracked screen',
+        meta: 'W1B 4BD · courier collection · genuine parts',
+        head: '£449',
+        cap: 'repair · courier included',
+        base: 449,
+        offers: ['standard', 'fast', 'same_day']
+      },
+      iphone: {
+        title: 'iPhone 16 Pro Max · cracked screen',
+        meta: 'W1B 4BD · courier collection · genuine parts',
+        head: '£379',
+        cap: 'repair · courier included',
+        base: 379,
+        offers: ['standard', 'same_day']
+      },
+      mail: {
+        title: 'MacBook Pro 14" M3 · cracked screen',
+        meta: 'M1 1AE · tracked mail-in · genuine parts',
+        head: '£449',
+        cap: 'repair · mail-in +£20',
+        base: 469,
+        offers: ['standard', 'fast']
+      }
+    };
+
+    var DATES = [
+      { iso: '2026-09-15', dow: 'Tue', n: '15', mon: 'Sep', label: 'Tue 15 Sep', long: 'Tuesday 15 Sep' },
+      { iso: '2026-09-16', dow: 'Wed', n: '16', mon: 'Sep', label: 'Wed 16 Sep', long: 'Wednesday 16 Sep' },
+      { iso: '2026-09-17', dow: 'Thu', n: '17', mon: 'Sep', label: 'Thu 17 Sep', long: 'Thursday 17 Sep' },
+      { iso: '2026-09-18', dow: 'Fri', n: '18', mon: 'Sep', label: 'Fri 18 Sep', long: 'Friday 18 Sep' },
+      { iso: '2026-09-21', dow: 'Mon', n: '21', mon: 'Sep', label: 'Mon 21 Sep', long: 'Monday 21 Sep' }
+    ];
+
+    var params = new URLSearchParams(location.search);
+    var scenario = params.get('sc') || 'mac';
+    var step = parseInt(params.get('step') || '1', 10);
+    var speed = params.get('speed') || (scenario === 'iphone' ? 'standard' : 'fast');
+    var collect = DATES[0];
+    var part = params.get('part') || 'AM';
+
+    function addWorking(from, n) {
+      var i = DATES.indexOf(from);
+      return DATES[Math.min(i + n, DATES.length - 1)];
+    }
+    function backDate() {
+      if (speed === 'same_day') return collect;
+      if (speed === 'fast') return addWorking(collect, 1);
+      if (scenario === 'iphone') return addWorking(collect, 1);
+      return addWorking(collect, 3);
+    }
+    function extra() {
+      if (speed === 'same_day') return scenario === 'iphone' ? 49 : 149;
+      if (speed === 'fast') return 79;
+      return 0;
+    }
+    function total() { return SCENARIOS[scenario].base + extra(); }
+    function money(n) { return '£' + n; }
+    function speedName() {
+      return { standard: 'Standard', fast: 'Fast', same_day: 'Same-day' }[speed];
+    }
+    function bench() {
+      if (speed === 'same_day') return '~4 hours on the bench';
+      if (speed === 'fast') return '1 working day after we collect';
+      if (scenario === 'iphone') return '1 working day after we collect';
+      return '3 working days after we collect';
+    }
+
+    function cardMeta(id) {
+      var sc = SCENARIOS[scenario];
+      if (id === 'standard') {
+        var stdBack = scenario === 'iphone' ? addWorking(DATES[0], 1) : addWorking(DATES[0], 3);
+        return {
+          name: 'Standard',
+          why: 'No rush. We book the next honest slot.',
+          add: 'Included',
+          inc: true,
+          total: money(sc.base),
+          ready: scenario === 'mail'
+            ? 'Ready from the working day we receive it · 3 working days on the bench'
+            : 'Ready from ' + stdBack.label + ' · ' + (scenario === 'iphone' ? '1 working day' : '3 working days')
+        };
+      }
+      if (id === 'fast') {
+        return {
+          name: 'Fast',
+          why: 'Skip the queue. Next working day after collection.',
+          add: '+£79',
+          inc: false,
+          total: money(sc.base + 79),
+          ready: scenario === 'mail'
+            ? 'Ready 1 working day after we receive the device'
+            : 'Ready from ' + addWorking(DATES[0], 1).label + ' · 1 working day',
+          popular: scenario === 'mac'
+        };
+      }
+      return {
+        name: 'Same-day',
+        why: 'Back in your hands the day we collect.',
+        add: scenario === 'iphone' ? '+£49' : '+£149',
+        inc: false,
+        total: money(sc.base + (scenario === 'iphone' ? 49 : 149)),
+        ready: 'Ready ' + DATES[0].label + ' · morning collection · 3 slots left'
+      };
+    }
+
+    function render() {
+      document.querySelectorAll('#scenarios button').forEach(function (x) {
+        x.classList.toggle('on', x.getAttribute('data-sc') === scenario);
+      });
+      var sc = SCENARIOS[scenario];
+      document.getElementById('deviceTitle').textContent = sc.title;
+      document.getElementById('deviceMeta').textContent = sc.meta;
+      document.getElementById('headPrice').textContent = sc.head;
+      document.getElementById('headCap').textContent = sc.cap;
+      document.getElementById('trust').innerHTML =
+        '<span><b>2-year warranty</b>Genuine Apple parts</span>' +
+        '<span><b>' + (speed === 'same_day' ? 'Back today' : (speed === 'fast' ? 'From 1 working day' : (scenario === 'iphone' ? 'From 1 working day' : 'From 3 working days'))) + '</b>Clock starts after we collect</span>' +
+        '<span><b>London courier</b>' + (scenario === 'mail' ? 'Tracked mail-in this postcode' : 'We come to you') + '</span>';
+
+      document.getElementById('step1').hidden = step !== 1;
+      document.getElementById('step2').hidden = step !== 2;
+      document.getElementById('trust').style.display = step === 1 ? 'grid' : 'none';
+      document.getElementById('foot').style.display = step === 2 ? 'none' : 'flex';
+
+      var speedsEl = document.getElementById('speeds');
+      speedsEl.className = 'speeds' + (sc.offers.length === 2 ? ' two' : '');
+      speedsEl.innerHTML = sc.offers.map(function (id) {
+        var c = cardMeta(id);
+        return '<button type="button" class="speed' + (speed === id ? ' on' : '') + '" data-speed="' + id + '">' +
+          (c.popular ? '<span class="pop">Most popular</span>' : '') +
+          '<div class="speed-name">' + c.name + '</div>' +
+          '<div class="speed-why">' + c.why + '</div>' +
+          '<div class="speed-add' + (c.inc ? ' inc' : '') + '">' + c.add + '</div>' +
+          '<div class="speed-total">' + c.total + ' all-in</div>' +
+          '<div class="ready"><b>' + c.ready.split(' · ')[0] + '</b>' + (c.ready.split(' · ')[1] || '') + '</div>' +
+          '<div class="go">Select ' + c.name + ' →</div></button>';
+      }).join('');
+
+      document.getElementById('pledge').innerHTML = speed === 'same_day'
+        ? '<strong>On time, or the same-day fee comes back.</strong> The date locks when you book. If we miss it, that fee is refunded automatically.'
+        : speed === 'fast'
+          ? '<strong>On time, or the £79 Fast fee comes back.</strong> The date locks when you book. Extra faults stay untouched until you sign them off.'
+          : '<strong>Honest clock. Extra faults stay untouched.</strong> We do not start extra work until you approve it. £0 if we cannot repair it.';
+
+      if (scenario === 'mail') {
+        document.getElementById('dates').innerHTML = '<p style="margin:0;color:#666">No collection calendar. You post the device; the bench clock starts the working day we receive it.</p>';
+        document.getElementById('am').hidden = true;
+        document.getElementById('pm').hidden = true;
+      } else {
+        document.getElementById('am').hidden = false;
+        document.getElementById('pm').hidden = false;
+        document.getElementById('dates').innerHTML = DATES.map(function (d) {
+          var tag = (speed === 'same_day' && d.iso === collect.iso) ? '<span class="tag">Back same day</span>' : '';
+          return '<button type="button" class="date' + (d.iso === collect.iso ? ' on' : '') + '" data-iso="' + d.iso + '">' +
+            '<span class="dow">' + d.dow + '</span><span class="n">' + d.n + '</span>' +
+            '<span class="mon">' + d.mon + '</span>' + tag + '</button>';
+        }).join('');
+      }
+
+      document.getElementById('am').className = 'win' + (part === 'AM' ? ' on' : '');
+      document.getElementById('pm').className = 'win' + (part === 'PM' ? ' on' : '');
+      document.getElementById('pm').disabled = speed === 'same_day';
+
+      var back = backDate();
+      var collectLine = scenario === 'mail' ? 'You post it · we start when it arrives' : ('We collect ' + collect.label + ' · ' + (part === 'AM' ? '9am–12pm' : '12pm–5pm'));
+      document.getElementById('tl').innerHTML =
+        '<li><span class="dot">1</span><div><b>You book</b><span>Part reserved · payment taken</span></div></li>' +
+        '<li><span class="dot">2</span><div><b>' + (scenario === 'mail' ? 'You send it' : 'We collect') + '</b><span>' + collectLine + '</span></div></li>' +
+        '<li><span class="dot">3</span><div><b>We repair</b><span>' + bench() + '</span></div></li>' +
+        '<li><span class="dot">✓</span><div><b>Back in your hands</b><span>' + (scenario === 'mail' ? 'Tracked return after the bench clock' : back.long) + (speed !== 'standard' ? ' · on time or the speed fee is refunded' : '') + '</span></div></li>';
+
+      document.getElementById('barTitle').textContent = speedName() + (scenario === 'mail' ? ' · mail-in' : ' · courier');
+      document.getElementById('barReady').textContent = scenario === 'mail'
+        ? (speed === 'fast' ? 'Ready 1 working day after we receive it' : 'Ready 3 working days after we receive it')
+        : 'Ready by ' + back.long;
+      document.getElementById('barTotal').textContent = money(total());
+      document.getElementById('barKlarna').textContent = 'Klarna · 3 × £' + Math.round(total() / 3);
+    }
+
+    document.getElementById('scenarios').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-sc]');
+      if (!b) return;
+      scenario = b.getAttribute('data-sc');
+      document.querySelectorAll('#scenarios button').forEach(function (x) {
+        x.classList.toggle('on', x.getAttribute('data-sc') === scenario);
+      });
+      speed = SCENARIOS[scenario].offers.indexOf('fast') >= 0 ? 'fast' : 'standard';
+      collect = DATES[0];
+      part = 'AM';
+      step = 1;
+      render();
+    });
+    document.getElementById('speeds').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-speed]');
+      if (!b) return;
+      speed = b.getAttribute('data-speed');
+      if (speed === 'same_day') part = 'AM';
+      step = 2;
+      render();
+    });
+    document.getElementById('back').onclick = function () { step = 1; render(); };
+    document.getElementById('dates').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-iso]');
+      if (!b) return;
+      collect = DATES.filter(function (d) { return d.iso === b.getAttribute('data-iso'); })[0];
+      render();
+    });
+    document.getElementById('am').onclick = function () { part = 'AM'; render(); };
+    document.getElementById('pm').onclick = function () {
+      if (speed === 'same_day') return;
+      part = 'PM';
+      render();
+    };
+    render();
+  </script>
+</body>
+</html>
