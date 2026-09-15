@@ -63,7 +63,7 @@ describe('quote-wizard same-day / Fast wiring', () => {
     assert.match(liquid, /We repair the next working day and return it that afternoon/);
     assert.match(liquid, /Collect and back the same day\./);
     assert.match(liquid, /slots left/);
-    assert.match(liquid, /How fast should we turn it around/);
+    assert.match(liquid, /How fast do you need it back/);
     assert.match(liquid, /When should we collect/);
     assert.match(liquid, /qw-opt-back/);
     assert.match(liquid, /speedBackLabel/);
@@ -525,7 +525,8 @@ describe('speedCardHtml data attributes', () => {
     assert.match(html, /data-date="2026-09-14"/);
     assert.match(html, /data-add="49"/);
     assert.match(html, /data-vid="111"/);
-    assert.match(html, /qw-opt-card sel/);
+    assert.match(html, /qw-opt-card[^"]* sel/);
+    assert.match(html, /qw-speed-card--same_day/);
     assert.match(html, /3 slots left/);
   });
 });

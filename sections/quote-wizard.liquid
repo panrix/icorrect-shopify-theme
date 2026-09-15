@@ -111,6 +111,7 @@ window.WIZARD_CONTEXT = {
 <script src="{{ 'quoted-repair-stamp.js' | asset_url }}" defer></script>
 <script src="{{ 'repair-journey.js' | asset_url }}" defer></script>
 <script src="{{ 'same-day-eligibility.js' | asset_url }}" defer></script>
+<script src="{{ 'quote-lead-checkout.js' | asset_url }}" defer></script>
 <script>
 window.WIZARD_CFG = {
   warrantyLabel: {{ section.settings.warranty_label | default: '2-year warranty' | json }},
@@ -809,7 +810,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   /* =============================================
      STATE
      ============================================= */
-  var S = { device: null, model: null, modelGroup: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null, route: null, repairType: null, repairHandle: null, entrySource: null , preVariantId: null, preRepairType: null, sameDayDate: null, speed: 'standard' };
+  var S = { device: null, model: null, modelGroup: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null, route: null, repairType: null, repairHandle: null, entrySource: null , preVariantId: null, preRepairType: null, sameDayDate: null, speed: 'standard', lead: null };
   var _expressData = null;
   var _collectionCache = {}, _productCache = {}, _repairsMap = {}, _collectionProducts = [], _trackedSteps = {}, _trackedOps = {};
   var _stepStartTime = Date.now();
@@ -1559,7 +1560,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var monitorSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>';
     var clockSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
     var shieldSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>';
-    var gateCopy = opts.gateCopy || 'Enter your postcode above';
+    var gateCopy = opts.gateCopy || 'Your details first';
     var priceInner = opts.gate
       ? '<div class="qw-price-gate qw-price-gate--inline" id="qwPriceGate">' + esc(gateCopy) + '</div>' +
         '<div class="qw-price-big-wrap" id="qwPriceBigWrap" hidden>' +
@@ -1606,11 +1607,12 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
   /* =============================================
      SERVICE STEP — courier OR mail-in only (#53)
-     Postcode gates price; valid postcode auto-reveals band + slots.
+     Details-first gate: name / email / mobile / postcode before price.
      Walk-in / drop-off removed (Ricky 2026-09-11).
      ============================================= */
   var _courierQuote = null;
   var _postcodeResolved = false;
+  var _leadUnlocked = false;
   var _sameDayEligSeq = 0;
   var _quoteShownCaptured = false;
   var _collectionSlot = { date: null, part: null };
@@ -2219,16 +2221,40 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
   function buildServiceCards() {
     return '<div class="qw-opt-section qw-service-mapper">' +
-      '<div class="qw-section-label">Where should we collect from?</div>' +
-      '<div class="qw-postcode-card" id="qwPostcodeCard">' +
-        '<label class="qw-postcode-label" for="qwPostcode">Enter your postcode to see your all-in price' +
-          '<span class="qw-postcode-hint">London postcodes unlock courier collection windows. Outside London we use tracked mail-in.</span>' +
-        '</label>' +
-        '<div class="qw-postcode-row">' +
-          '<input type="text" id="qwPostcode" class="qw-postcode-input qw-courier-inp" placeholder="e.g. SW11 8BJ" autocomplete="postal-code" inputmode="text">' +
-        '</div>' +
-        '<div class="qw-courier-result" id="qwCourierResult" hidden></div>' +
+      '<div class="qw-section-label">Your details first</div>' +
+      '<div class="qw-lead-summary" id="qwLeadSummary" hidden>' +
+        '<div class="qw-lead-summary-copy">Quote for <strong id="qwLeadSummaryName"></strong> · <span id="qwLeadSummaryMeta"></span></div>' +
+        '<button type="button" class="qw-lead-change" id="qwLeadChange">Change</button>' +
       '</div>' +
+      '<div class="qw-lead-gate" id="qwLeadGate">' +
+        '<div class="qw-lead-kicker">Your fixed price · one step left</div>' +
+        '<h3 class="qw-lead-title" id="qwLeadTitle">We need a few details for the quote</h3>' +
+        '<p class="qw-lead-sub">It\u2019s instant. Your all-in price appears on the next screen.</p>' +
+        '<div class="qw-lead-grid">' +
+          '<label class="qw-lead-field" for="qwLeadName"><span>Full name</span>' +
+            '<input type="text" id="qwLeadName" class="qw-lead-input" name="name" autocomplete="name" placeholder="Jane Whitfield">' +
+            '<span class="qw-lead-err" id="qwLeadNameErr"></span>' +
+          '</label>' +
+          '<label class="qw-lead-field" for="qwLeadEmail"><span>Email</span>' +
+            '<input type="email" id="qwLeadEmail" class="qw-lead-input" name="email" autocomplete="email" placeholder="jane@company.co.uk">' +
+            '<span class="qw-lead-err" id="qwLeadEmailErr"></span>' +
+          '</label>' +
+          '<label class="qw-lead-field" for="qwLeadMobile"><span>Mobile</span>' +
+            '<input type="tel" id="qwLeadMobile" class="qw-lead-input" name="tel" autocomplete="tel" placeholder="07700 900 812">' +
+            '<span class="qw-lead-err" id="qwLeadMobileErr"></span>' +
+          '</label>' +
+          '<label class="qw-lead-field" for="qwPostcode"><span>Collection postcode</span>' +
+            '<input type="text" id="qwPostcode" class="qw-postcode-input qw-lead-input qw-courier-inp" name="postal-code" autocomplete="postal-code" inputmode="text" placeholder="W1W 8JQ">' +
+            '<span class="qw-lead-hint"><strong>We come to you and collect</strong> the device, then bring it back once it\u2019s repaired. Outside London we send a free tracked mail-in pack instead.</span>' +
+            '<span class="qw-lead-err" id="qwLeadPostcodeErr"></span>' +
+          '</label>' +
+        '</div>' +
+        '<button type="button" class="qw-lead-submit" id="qwLeadSubmit">Show my price and turnaround time <span aria-hidden="true">\u2192</span></button>' +
+        '<p class="qw-lead-note">No obligation to book. We use these details for your quote and to answer any questions about it.</p>' +
+        '<div class="qw-lead-trust">719 Google reviews · 2-yr warranty on every repair · 12 Margaret Street, W1W 8JQ</div>' +
+      '</div>' +
+      '<div class="qw-courier-result" id="qwCourierResult" hidden></div>' +
+      '<div class="qw-postcode-card" id="qwPostcodeCard" hidden></div>' +
       '<div class="qw-delivery-reveal" id="qwDeliveryReveal" hidden>' +
         '<div class="qw-delivery-choice" id="qwDeliveryChoice">' +
           '<div class="qw-section-label" id="qwDeliveryChoiceLabel">How do you want to get it to us?</div>' +
@@ -2557,12 +2583,85 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     trackCourierQuoteEvents(_courierQuote);
   }
 
+  function readLeadFromForm() {
+    var nameEl = document.getElementById('qwLeadName');
+    var emailEl = document.getElementById('qwLeadEmail');
+    var mobileEl = document.getElementById('qwLeadMobile');
+    var pcEl = document.getElementById('qwPostcode');
+    return {
+      name: nameEl ? nameEl.value : '',
+      email: emailEl ? emailEl.value : '',
+      mobile: mobileEl ? mobileEl.value : '',
+      postcode: pcEl ? pcEl.value : ''
+    };
+  }
+
+  function paintLeadErrors(errors) {
+    function setErr(id, msg) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = msg || '';
+    }
+    setErr('qwLeadNameErr', errors && errors.name);
+    setErr('qwLeadEmailErr', errors && errors.email);
+    setErr('qwLeadMobileErr', errors && errors.mobile);
+    setErr('qwLeadPostcodeErr', errors && errors.postcode);
+  }
+
+  function fillLeadForm(lead) {
+    if (!lead) return;
+    var nameEl = document.getElementById('qwLeadName');
+    var emailEl = document.getElementById('qwLeadEmail');
+    var mobileEl = document.getElementById('qwLeadMobile');
+    var pcEl = document.getElementById('qwPostcode');
+    if (nameEl && lead.name) nameEl.value = lead.name;
+    if (emailEl && lead.email) emailEl.value = lead.email;
+    if (mobileEl && lead.mobile) mobileEl.value = lead.mobile;
+    if (pcEl && lead.postcode) pcEl.value = lead.postcode;
+  }
+
+  function setLeadGateOpen(open) {
+    var gate = document.getElementById('qwLeadGate');
+    var summary = document.getElementById('qwLeadSummary');
+    if (gate) gate.hidden = !open;
+    if (summary) summary.hidden = !!open;
+    if (!open && S.lead) {
+      var nameEl = document.getElementById('qwLeadSummaryName');
+      var metaEl = document.getElementById('qwLeadSummaryMeta');
+      if (nameEl) nameEl.textContent = S.lead.name || '';
+      if (metaEl) metaEl.textContent = [S.lead.email, S.lead.postcode].filter(Boolean).join(' · ');
+    }
+  }
+
+  function fireLeadIntake(lead) {
+    if (!lead || !window.ICorrectQuoteLead) return;
+    try {
+      var payload = window.ICorrectQuoteLead.intakeContactPayload(lead, {
+        device: DN[S.device] || S.device || '',
+        model: S.model || '',
+        fault: S.fault || S.issue || ''
+      });
+      postQuoteWizardWebhook(payload).catch(function(){});
+    } catch (e) {}
+  }
+
   function wireCourierService(container) {
     ensureCourierAssets().catch(function(){});
     _postcodeResolved = false;
+    _leadUnlocked = false;
     setPriceVisibility(false);
     var input = document.getElementById('qwPostcode');
     if (!input) return;
+
+    if (!S.lead && window.WIZARD_CUSTOMER) {
+      fillLeadForm({
+        name: window.WIZARD_CUSTOMER.name || '',
+        email: window.WIZARD_CUSTOMER.email || '',
+        mobile: '',
+        postcode: ''
+      });
+    } else if (S.lead) {
+      fillLeadForm(S.lead);
+    }
 
     function syncFromSelection() {
       var err = document.getElementById('qwServiceErr');
@@ -2570,7 +2669,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       var slotPanel = document.getElementById('qwSlotPanel');
       var mailPanel = document.getElementById('qwMailinPanel');
       var svc = selectedServiceKind();
-      if (!_postcodeResolved) return;
+      if (!_leadUnlocked || !_postcodeResolved) return;
       if (svc === 'courier') {
         if (mailPanel) mailPanel.hidden = true;
         if (_courierQuote && _courierQuote.service === 'courier') {
@@ -2600,6 +2699,10 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
     var timer = null;
     function runLookup() {
+      if (!_leadUnlocked) {
+        applyCourierQuoteToUI(null);
+        return;
+      }
       var pc = String(input.value || '').trim();
       if (!pc) {
         applyCourierQuoteToUI(null);
@@ -2624,9 +2727,53 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       var quote = quoteForService(kind, pc);
       applyCourierQuoteToUI(quote);
     }
-    input.addEventListener('input', function(){ clearTimeout(timer); timer = setTimeout(runLookup, 220); });
-    input.addEventListener('blur', runLookup);
-    setTimeout(function(){ try { input.focus(); } catch (e) {} }, 120);
+
+    function submitLeadGate() {
+      var api = window.ICorrectQuoteLead;
+      if (!api || typeof api.validateLead !== 'function') return;
+      var checked = api.validateLead(readLeadFromForm());
+      paintLeadErrors(checked.ok ? null : checked.errors);
+      if (!checked.ok) return;
+      S.lead = checked.lead;
+      input.value = checked.lead.postcode;
+      _leadUnlocked = true;
+      setLeadGateOpen(false);
+      fireLeadIntake(S.lead);
+      runLookup();
+    }
+
+    function editLeadGate() {
+      _leadUnlocked = false;
+      _postcodeResolved = false;
+      setLeadGateOpen(true);
+      applyCourierQuoteToUI(null);
+      var nameEl = document.getElementById('qwLeadName');
+      try { if (nameEl) nameEl.focus(); } catch (e) {}
+    }
+
+    var submitBtn = document.getElementById('qwLeadSubmit');
+    if (submitBtn) submitBtn.addEventListener('click', submitLeadGate);
+    var changeBtn = document.getElementById('qwLeadChange');
+    if (changeBtn) changeBtn.addEventListener('click', editLeadGate);
+    ['qwLeadName', 'qwLeadEmail', 'qwLeadMobile', 'qwPostcode'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('keydown', function(ev) {
+        if (ev.key === 'Enter') { ev.preventDefault(); submitLeadGate(); }
+      });
+    });
+
+    input.addEventListener('input', function(){
+      if (!_leadUnlocked) return;
+      clearTimeout(timer);
+      timer = setTimeout(runLookup, 220);
+    });
+    input.addEventListener('blur', function(){ if (_leadUnlocked) runLookup(); });
+    setLeadGateOpen(true);
+    setTimeout(function(){
+      var focusEl = document.getElementById('qwLeadName') || input;
+      try { focusEl.focus(); } catch (e) {}
+    }, 120);
   }
 
   /* Turnaround cards: detected dynamically from the product page HTML.
@@ -2895,12 +3042,13 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
   function speedCardHtml(opts) {
     var sel = opts.selected ? ' sel' : '';
+    var tone = opts.speed ? ' qw-speed-card qw-speed-card--' + opts.speed : '';
     var priceHtml = opts.price > 0
       ? '<div class="qw-opt-price">+' + gbp.format(opts.price) + '</div>'
       : '<div class="qw-opt-price free">Included</div>';
     var extra = opts.extraInner || '';
     var back = opts.back ? '<div class="qw-opt-back">' + esc(opts.back) + '</div>' : '';
-    return '<div class="qw-opt-card' + sel + '" data-opt="speed" data-speed="' + opts.speed +
+    return '<div class="qw-opt-card' + tone + sel + '" data-opt="speed" data-speed="' + opts.speed +
       '" data-add="' + (opts.price || 0) + '" data-vid="' + (opts.vid || 0) +
       '" data-date="' + esc(opts.dateIso || '') + '" tabindex="0">' +
       '<div class="qw-opt-name">' + esc(opts.name) + '</div>' +
@@ -2970,8 +3118,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       : (parseInt(cfg.iphoneSameDayVariantId, 10) || 0);
     var slotsLine = picked ? (picked.slotsRemaining + ' slots left') : '';
 
-    var cards = [];
-    cards.push(speedCardHtml({
+    var standardHtml = speedCardHtml({
       speed: 'standard',
       name: 'Standard',
       back: speedBackLabel('standard'),
@@ -2980,9 +3127,10 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       vid: 0,
       selected: current !== 'fast' && current !== 'same_day',
       dateIso: ''
-    }));
+    });
+    var upgrade = [];
     if (offers.fast) {
-      cards.push(speedCardHtml({
+      upgrade.push(speedCardHtml({
         speed: 'fast',
         name: 'Fast',
         back: speedBackLabel('fast'),
@@ -2994,7 +3142,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       }));
     }
     if (offers.sameDay) {
-      cards.push(speedCardHtml({
+      upgrade.push(speedCardHtml({
         speed: 'same_day',
         name: 'Same-day',
         back: speedBackLabel('same_day', picked ? picked.iso : ''),
@@ -3003,13 +3151,22 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         vid: sdVid,
         selected: current === 'same_day',
         dateIso: picked ? picked.iso : '',
-        extraInner: slotsLine ? '<div class="qw-slot-left">' + esc(slotsLine) + '</div>' : ''
+        extraInner: slotsLine
+          ? '<div class="qw-slot-left"><span class="qw-speed-sameday-badge">' + esc(slotsLine) + '</span></div>'
+          : ''
       }));
     }
 
-    return '<div class="qw-opt-label">How fast should we turn it around?</div>' +
+    var html = '<div class="qw-opt-label">How fast do you need it back?</div>' +
       '<p class="qw-slot-hint">We collect the day you pick above. Each option shows when it comes back.</p>' +
-      '<div class="qw-opt-row">' + cards.join('') + '</div>';
+      '<div class="qw-opt-row">' + standardHtml + '</div>';
+    if (upgrade.length) {
+      html += '<div class="qw-speed-upgrade">' +
+        '<div class="qw-speed-upgrade-head">Upgrade · get it back sooner</div>' +
+        '<div class="qw-opt-row">' + upgrade.join('') + '</div>' +
+      '</div>';
+    }
+    return html;
   }
 
   function restoreStandardCollectionSlot() {
@@ -3057,7 +3214,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         var resCard = document.getElementById('qwResCard');
         if (!resCard) return;
         var group = card.dataset.opt;
-        card.parentNode.querySelectorAll('.qw-opt-card[data-opt="' + group + '"]').forEach(function(c) {
+        mount.querySelectorAll('.qw-opt-card[data-opt="' + group + '"]').forEach(function(c) {
           c.classList.remove('sel');
         });
         card.classList.add('sel');
@@ -4095,7 +4252,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     try {
       var shouldContinue = await ensureCleanWizardCart();
       if (!shouldContinue) {
-        if (btn) { btn.disabled = false; btn.textContent = 'Proceed to checkout'; }
+        if (btn) { btn.disabled = false; btn.textContent = 'Book this repair'; }
         return;
       }
 
@@ -4123,17 +4280,22 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
       await addRes.json();
       try {
+        var cartAttrs = {};
         var phId = window.icorrectQuoteEvents && typeof window.icorrectQuoteEvents.phDistinctId === 'function'
           ? window.icorrectQuoteEvents.phDistinctId()
           : '';
-        if (phId) {
+        if (phId) cartAttrs._ph_distinct_id = phId;
+        if (window.ICorrectQuoteLead && typeof window.ICorrectQuoteLead.cartLeadAttributes === 'function') {
+          Object.assign(cartAttrs, window.ICorrectQuoteLead.cartLeadAttributes(S.lead));
+        }
+        if (Object.keys(cartAttrs).length) {
           await fetch(getShopifyRoot() + 'cart/update.js', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'Accept': 'application/json'
             },
-            body: JSON.stringify({ attributes: { _ph_distinct_id: phId } })
+            body: JSON.stringify({ attributes: cartAttrs })
           }).catch(function () {});
         }
       } catch (e) {}
@@ -4149,13 +4311,15 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         currency: 'GBP',
         item_count: items.length
       });
-      var checkoutUrl = '/checkout';
+      var extraQ = {};
       if (window.posthog && posthog.get_distinct_id) {
-        checkoutUrl += '?ph_distinct_id=' + encodeURIComponent(posthog.get_distinct_id());
+        extraQ.ph_distinct_id = posthog.get_distinct_id();
       }
-      window.location.href = checkoutUrl;
+      window.location.href = (window.ICorrectQuoteLead && window.ICorrectQuoteLead.checkoutPrefillUrl)
+        ? window.ICorrectQuoteLead.checkoutPrefillUrl('/checkout', S.lead, extraQ)
+        : '/checkout';
     } catch (err) {
-      if (btn) { btn.disabled = false; btn.textContent = 'Proceed to checkout'; }
+      if (btn) { btn.disabled = false; btn.textContent = 'Book this repair'; }
       alert(err.message || 'Something went wrong. Please try again.');
     }
   }
@@ -4174,7 +4338,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var sub = (screenOpts && screenOpts.sub);
     if (sub === undefined) {
       sub = iss.route === 'repair' || iss.route === 'diagnostic'
-        ? 'Enter your postcode to see your all-in price and book collection.'
+        ? 'Your details first — then your all-in price and collection options.'
         : 'Next steps for your device.';
     }
     openResolutionScreen(title, sub);
@@ -4235,7 +4399,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
         '<div class="qw-res-extras" id="qwResExtras" style="padding:0 24px 8px;">' + colorHtml + '</div>' +
         '<div class="qw-res-cta">' +
-          '<button class="qw-btn-book" id="qwBookBtn" disabled>Proceed to checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
+          '<button class="qw-btn-book" id="qwBookBtn" disabled>Book this repair <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
           '<button class="qw-btn-email" id="qwEmailQuote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email me this quote</button>' +
           '<button class="qw-btn-q" id="qwToggleCF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>I have a question first</button>' +
         '</div>' +
@@ -4356,7 +4520,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
         '<div class="qw-res-extras" id="qwResExtras" style="padding:0 24px 8px;"></div>' +
         '<div class="qw-res-cta">' +
-          '<button class="qw-btn-book" id="qwBookBtn" disabled>Proceed to checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
+          '<button class="qw-btn-book" id="qwBookBtn" disabled>Book this repair <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
           '<button class="qw-btn-email" id="qwEmailQuote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email me this quote</button>' +
           '<button class="qw-btn-q" id="qwToggleCF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>I have a question first</button>' +
           '<a href="#" class="qw-btn-chat" id="qwIntercomBtn" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>Chat with us now</a>' +
@@ -4455,12 +4619,13 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
   function buildContactFormHTML(prefix, visible) {
     var cust = CUST || {};
+    var lead = S.lead || {};
     return '<form class="qw-cf" id="' + prefix + 'Form" novalidate' + (visible ? '' : ' style="display:none"') + '>' +
       '<div class="qw-f-row two">' +
-        '<div class="qw-f-grp"><label class="qw-f-lbl" for="' + prefix + 'N">Name<span class="qw-req">*</span></label><input class="qw-f-inp" type="text" id="' + prefix + 'N" placeholder="Full name" required value="' + esc(cust.name || '') + '"><span class="qw-f-err" id="' + prefix + 'NErr"></span></div>' +
-        '<div class="qw-f-grp"><label class="qw-f-lbl" for="' + prefix + 'E">Email<span class="qw-req">*</span></label><input class="qw-f-inp" type="email" id="' + prefix + 'E" placeholder="you@email.com" required value="' + esc(cust.email || '') + '"><span class="qw-f-err" id="' + prefix + 'EErr"></span></div>' +
+        '<div class="qw-f-grp"><label class="qw-f-lbl" for="' + prefix + 'N">Name<span class="qw-req">*</span></label><input class="qw-f-inp" type="text" id="' + prefix + 'N" placeholder="Full name" required value="' + esc(lead.name || cust.name || '') + '"><span class="qw-f-err" id="' + prefix + 'NErr"></span></div>' +
+        '<div class="qw-f-grp"><label class="qw-f-lbl" for="' + prefix + 'E">Email<span class="qw-req">*</span></label><input class="qw-f-inp" type="email" id="' + prefix + 'E" placeholder="you@email.com" required value="' + esc(lead.email || cust.email || '') + '"><span class="qw-f-err" id="' + prefix + 'EErr"></span></div>' +
       '</div>' +
-      '<div class="qw-f-row"><div class="qw-f-grp"><label class="qw-f-lbl" for="' + prefix + 'P">Phone<span class="qw-req">*</span></label><input class="qw-f-inp" type="tel" id="' + prefix + 'P" placeholder="+44 7000 000000" required><span class="qw-f-err" id="' + prefix + 'PErr"></span></div></div>' +
+      '<div class="qw-f-row"><div class="qw-f-grp"><label class="qw-f-lbl" for="' + prefix + 'P">Phone<span class="qw-req">*</span></label><input class="qw-f-inp" type="tel" id="' + prefix + 'P" placeholder="+44 7000 000000" required value="' + esc(lead.mobile || '') + '"><span class="qw-f-err" id="' + prefix + 'PErr"></span></div></div>' +
       '<div class="qw-f-row"><div class="qw-f-grp"><label class="qw-f-lbl" for="' + prefix + 'M">Your question</label><textarea class="qw-f-ta" id="' + prefix + 'M" placeholder="What do you need help with?"></textarea></div></div>' +
       '<button type="submit" class="qw-f-sub" disabled>Send question</button>' +
     '</form>' +
@@ -4687,15 +4852,16 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       }
 
       var cust = window.WIZARD_CUSTOMER || {};
+      var lead = S.lead || {};
       var html = '<div class="qw-eq-panel show" id="qwEmailPanel">' +
         '<div class="qw-eq-fields">' +
           '<div class="qw-eq-field">' +
             '<label class="qw-eq-label" for="qwEqName">Name</label>' +
-            '<input type="text" class="qw-eq-input" placeholder="John Smith" id="qwEqName" required value="' + esc(cust.name || '') + '">' +
+            '<input type="text" class="qw-eq-input" placeholder="John Smith" id="qwEqName" required value="' + esc(lead.name || cust.name || '') + '">' +
           '</div>' +
           '<div class="qw-eq-field">' +
             '<label class="qw-eq-label" for="qwEqEmail">Email</label>' +
-            '<input type="email" class="qw-eq-input" placeholder="you@example.com" id="qwEqEmail" required value="' + esc(cust.email || '') + '">' +
+            '<input type="email" class="qw-eq-input" placeholder="you@example.com" id="qwEqEmail" required value="' + esc(lead.email || cust.email || '') + '">' +
           '</div>' +
         '</div>' +
         '<button class="qw-eq-send" id="qwEqSend"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/></svg>Send quote</button>' +
@@ -4866,9 +5032,10 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
      RESET
      ============================================= */
   function reset() {
-    S.device = null; S.model = null; S.modelGroup = null; S.fault = null; S.issue = null; S.step = 1; S.collectionHandle = null; S.route = null; S.repairType = null; S.repairHandle = null; S.sameDayDate = null; S.speed = 'standard'; _repairsMap = {};
+    S.device = null; S.model = null; S.modelGroup = null; S.fault = null; S.issue = null; S.step = 1; S.collectionHandle = null; S.route = null; S.repairType = null; S.repairHandle = null; S.sameDayDate = null; S.speed = 'standard'; S.lead = null; _repairsMap = {};
     _courierQuote = null;
     _postcodeResolved = false;
+    _leadUnlocked = false;
     _quoteShownCaptured = false;
     _collectionSlot = { date: null, part: null };
     _standardCollectIso = null;
