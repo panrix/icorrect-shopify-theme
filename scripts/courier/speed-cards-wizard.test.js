@@ -67,6 +67,8 @@ describe('quote-wizard same-day / Fast wiring', () => {
     assert.match(liquid, /When should we collect/);
     assert.match(liquid, /qw-opt-back/);
     assert.match(liquid, /speedBackLabel/);
+    assert.match(liquid, /function speedBackLabel\s*\(\s*speed,\s*isoOverride\s*\)/);
+    assert.match(liquid, /speedBackLabel\('same_day',\s*picked \? picked\.iso : ''\)/);
     assert.doesNotMatch(liquid, /Book a day ahead/);
     assert.match(liquid, /S\.sameDayDate/);
   });

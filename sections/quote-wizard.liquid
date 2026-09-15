@@ -2910,8 +2910,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     '</div>';
   }
 
-  function speedBackLabel(speed) {
-    var iso = (_collectionSlot.date && _collectionSlot.date.iso) || _standardCollectIso || '';
+  function speedBackLabel(speed, isoOverride) {
+    var iso = isoOverride || (_collectionSlot.date && _collectionSlot.date.iso) || _standardCollectIso || '';
     var collect = iso ? parseISODate(iso) : null;
     if (!collect || !window.ICorrectRepairJourney) return '';
     var opts = { speed: speed, diagnostic: S.route === 'diagnostic' };
@@ -2995,7 +2995,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       cards.push(speedCardHtml({
         speed: 'same_day',
         name: 'Same-day',
-        back: speedBackLabel('same_day'),
+        back: speedBackLabel('same_day', picked ? picked.iso : ''),
         meta: 'Collect and back the same day.',
         price: sdPrice,
         vid: sdVid,
@@ -3074,6 +3074,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         if (typeof paintDateStrip === 'function') paintDateStrip();
         refreshAllInTotal();
         refreshServiceJourney();
+        refreshTurnaroundCards();
       };
     });
     mount.querySelectorAll('.qw-date-chip').forEach(function(chip) {
