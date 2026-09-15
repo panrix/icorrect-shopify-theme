@@ -99,7 +99,7 @@
     var wall = londonWall(opts.now);
     var today = startOfDay(wall.date);
     if (!isWorkingDay(today)) return { ok: false, reason: 'weekend' };
-    if (opts.device === 'macbook' && opts.collectionWindow !== 'morning') {
+    if (isToday && opts.device === 'macbook' && opts.collectionWindow !== 'morning') {
       return { ok: false, reason: 'collection_window' };
     }
     var iso = isoDate(today);

@@ -63,8 +63,23 @@ describe('quote-wizard same-day / Fast wiring', () => {
     assert.match(liquid, /We repair the next working day and return it that afternoon/);
     assert.match(liquid, /Collect and back the same day\./);
     assert.match(liquid, /slots left/);
-    assert.match(liquid, /Book a day ahead/);
+    assert.match(liquid, /How fast should we turn it around/);
+    assert.match(liquid, /When should we collect/);
+    assert.match(liquid, /qw-opt-back/);
+    assert.match(liquid, /speedBackLabel/);
+    assert.match(liquid, /function speedBackLabel\s*\(\s*speed,\s*isoOverride\s*\)/);
+    assert.match(liquid, /speedBackLabel\('same_day',\s*picked \? picked\.iso : ''\)/);
+    assert.doesNotMatch(liquid, /Book a day ahead/);
     assert.match(liquid, /S\.sameDayDate/);
+  });
+
+  it('places speed cards after the collection strip and before the journey', () => {
+    const svc = extractFunction(liquid, 'buildServiceCards');
+    const slot = svc.indexOf('qwSlotPanel');
+    const speed = svc.indexOf('qwTurnaroundMount');
+    const journey = svc.indexOf('qwJourney');
+    assert.ok(slot !== -1 && speed !== -1 && journey !== -1);
+    assert.ok(slot < speed && speed < journey);
   });
 
   it('CSS adds slot subline and date chips with existing --qw tokens', () => {
@@ -442,6 +457,10 @@ describe('leaving Same-day restores standard collection date', () => {
     const wire = extractFunction(liquid, 'wireTurnaroundMount');
     assert.match(wire, /restoreStandardCollectionSlot\s*\(/);
     assert.match(wire, /data-speed'\) === 'same_day'/);
+    assert.match(wire, /S\.speed\s*=\s*card\.getAttribute\('data-speed'\)/);
+    assert.doesNotMatch(wire, /refreshTurnaroundCards\s*\(/);
+    const sel = extractFunction(liquid, 'selectedSpeed');
+    assert.match(sel, /S\.speed === 'same_day'/);
     const restore = extractFunction(liquid, 'restoreStandardCollectionSlot');
     assert.match(restore, /_standardCollectIso/);
     assert.match(restore, /_collectionSlot\.date/);

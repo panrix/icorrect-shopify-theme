@@ -1,47 +1,48 @@
 # Same-day eligibility proxy
 
-The quote wizard already posts unauthenticated quote events to
-`https://api.icorrect.co.uk/api/quote-events`. Workshop-os Task 5
-(`GET /same-day/eligibility`, `POST /same-day/reserve`) sits behind
-`webhookAuth`. The browser must never receive that token.
+Public (browser) path:
 
-There is **no** public unauthenticated eligibility path today. Theme setting
-`same_day_eligibility_url` therefore defaults to blank (fail closed:
-`inStock: false`, `slotsRemaining: 0`). When a proxy exists, set it to the
-**same origin** as quote-events:
+`https://api.icorrect.co.uk/same-day/eligibility?handle=&date=&outward=&device=`
 
+`device` is `iphone` or `macbook` from the wizard. Shopify handles often omit
+those words, so prototype stock keys off `device` first.
+
+The quote wizard fetches this with no secret. Fail closed if the URL is
+blank, times out, 404s, or CORS-fails.
+
+Nginx on `api.icorrect.co.uk` must **not** add a second
+`Access-Control-Allow-Origin`. The Node process already sends `*`.
+Chromium treats `*, *` as invalid and the wizard hides Same-day.
+
+## Prototype service (this repo)
+
+`scripts/same-day-eligibility-proxy/server.js` is a localhost Node process
+on the VPS (`127.0.0.1:8061`). Nginx exposes only GET + OPTIONS.
+
+Prototype stock: iPhone / MacBook handles return `in_stock: true`.
+Slots default to 3. Band comes from `assets/courier-london-bands.json`.
+iPad, Watch, missing handle, and non-B1/B2 outward fail closed.
+
+This is **not** the Monday parts ledger. Set `SAME_DAY_PROTOTYPE_STOCK=0`
+to fail closed on stock. Do **not** point the live theme at this URL
+until workshop-os has a handle → parts map and `orders/paid` reserve.
+
+Preview theme setting: `same_day_eligibility_url` =
 `https://api.icorrect.co.uk/same-day/eligibility`
 
-That path should be a Cloudflare Worker / hub ingress that injects the
-workshop secret server-side, forwards query `handle`, `date`, `outward`,
-and returns Task 5 JSON. No CORS secret, no `?token=` in Liquid.
+The older `/same-day/eligibility-preview` stub (always yes) stays for
+emergencies. Prefer the prototype service above.
 
-```js
-export default {
-  async fetch(req, env) {
-    const src = new URL(req.url);
-    if (src.pathname !== '/same-day/eligibility' || req.method !== 'GET') {
-      return new Response('not found', { status: 404 });
-    }
-    const dest = new URL(env.PARTS_ELIGIBILITY_ORIGIN + '/same-day/eligibility');
-    dest.search = src.search;
-    dest.searchParams.set('token', env.WORKSHOP_WEBHOOK_TOKEN);
-    return fetch(dest, { method: 'GET', headers: { accept: 'application/json' } });
-  }
-};
-```
+## workshop-os (authenticated, not public)
 
-Do not invent a Shopify handle → parts map in the theme. Production
-`in_stock` stays fail-closed until workshop-os has that map.
+`GET /same-day/eligibility` and `POST /same-day/reserve` on the parts
+service still sit behind `webhookAuth`. The browser must never receive
+that token. When the ledger map exists, this public proxy should forward
+to that service instead of using prototype stock.
 
 ## orders/paid reserve (not in this theme)
 
-This Cloud environment does not have
-`/home/ricky/worktrees/workshop-os-same-day` (or the courier
-`orders/paid` webhook). Theme-only work: fetch eligibility.
-
-On `panrix/workshop-os` branch `cursor/same-day-express-a035`, when the
-paid-order / courier webhook is edited, POST `/same-day/reserve` with
-`{ orderId, date, handle }` if line items include `same-day-iphone` or
-`turn-around-time-fatest-4-hours`. If `ok === false`, remove/refund that
-line and Slack `SAME-DAY RESERVE FAILED`.
+On `panrix/workshop-os`, when the paid-order / courier webhook sees
+`same-day-iphone` or `turn-around-time-fatest-4-hours`, POST
+`/same-day/reserve` with `{ orderId, date, handle }`. If `ok === false`,
+remove/refund that line and Slack `SAME-DAY RESERVE FAILED`.

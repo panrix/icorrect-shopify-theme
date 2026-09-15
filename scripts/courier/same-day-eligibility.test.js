@@ -29,6 +29,13 @@ describe('todayEligible', () => {
   it('macbook afternoon window no', () => {
     assert.equal(E.todayEligible(Object.assign({}, base, { device: 'macbook', collectionWindow: 'afternoon' })).ok, false);
   });
+  it('macbook afternoon still offers future same-day dates', () => {
+    const dates = E.dateOptions(Object.assign({}, base, {
+      device: 'macbook',
+      collectionWindow: 'afternoon'
+    }));
+    assert.ok(dates.some((d) => d.available), 'future same-day dates stay bookable');
+  });
   it('B3 / mail-in / ipad / diagnostic / no stock / 0 slots all no', () => {
     ['band', 'service', 'device', 'diagnostic', 'inStock', 'slotsRemaining'].forEach(() => {});
     assert.equal(E.todayEligible(Object.assign({}, base, { band: 'B3' })).ok, false);
