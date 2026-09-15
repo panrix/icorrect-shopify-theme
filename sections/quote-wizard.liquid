@@ -809,7 +809,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   /* =============================================
      STATE
      ============================================= */
-  var S = { device: null, model: null, modelGroup: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null, route: null, repairType: null, entrySource: null , preVariantId: null, preRepairType: null, sameDayDate: null };
+  var S = { device: null, model: null, modelGroup: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null, route: null, repairType: null, entrySource: null , preVariantId: null, preRepairType: null, sameDayDate: null, speed: 'standard' };
   var _expressData = null;
   var _collectionCache = {}, _productCache = {}, _repairsMap = {}, _collectionProducts = [], _trackedSteps = {}, _trackedOps = {};
   var _stepStartTime = Date.now();
@@ -1522,6 +1522,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
   /* Device bench days → label shared by journey ETA + repair badges. */
   function selectedSpeed() {
+    if (S.speed === 'fast' || S.speed === 'same_day' || S.speed === 'standard') return S.speed;
     var card = document.querySelector('.qw-opt-card.sel[data-opt="speed"]');
     return (card && card.getAttribute('data-speed')) || 'standard';
   }
@@ -2937,6 +2938,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var current = selectedSpeed();
     if (current === 'fast' && !offers.fast) current = 'standard';
     if (current === 'same_day' && !offers.sameDay) current = 'standard';
+    S.speed = current;
     var collectIso = (_collectionSlot.date && _collectionSlot.date.iso) || '';
     if (collectIso) {
       for (var ci = 0; ci < dates.length; ci++) {
@@ -3059,6 +3061,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           c.classList.remove('sel');
         });
         card.classList.add('sel');
+        S.speed = card.getAttribute('data-speed') || 'standard';
         if (card.getAttribute('data-speed') === 'same_day') {
           ensureMorningCollectionWindow();
           S.sameDayDate = card.getAttribute('data-date') || S.sameDayDate ||
@@ -4854,7 +4857,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
      RESET
      ============================================= */
   function reset() {
-    S.device = null; S.model = null; S.modelGroup = null; S.fault = null; S.issue = null; S.step = 1; S.collectionHandle = null; S.route = null; S.repairType = null; S.sameDayDate = null; _repairsMap = {};
+    S.device = null; S.model = null; S.modelGroup = null; S.fault = null; S.issue = null; S.step = 1; S.collectionHandle = null; S.route = null; S.repairType = null; S.sameDayDate = null; S.speed = 'standard'; _repairsMap = {};
     _courierQuote = null;
     _postcodeResolved = false;
     _quoteShownCaptured = false;
