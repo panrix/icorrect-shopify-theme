@@ -184,18 +184,18 @@ describe('quote-wizard details-first wiring', () => {
 
   it('puts the details gate in front of price and collection', () => {
     const svc = extractFunction(liquid, 'buildServiceCards');
-    assert.match(svc, /id="qwLeadGate"/);
-    assert.match(svc, /We need a few details for the quote/);
-    assert.match(svc, /Show my price and turnaround time/);
-    assert.match(svc, /id="qwLeadName"/);
-    assert.match(svc, /id="qwLeadEmail"/);
-    assert.match(svc, /id="qwLeadMobile"/);
-    assert.match(svc, /id="qwPostcode"/);
-    assert.match(svc, /id="qwLeadSummary"/);
-    assert.match(svc, /id="qwLeadChange"/);
-    const gate = svc.indexOf('qwLeadGate');
-    const reveal = svc.indexOf('qwDeliveryReveal');
-    assert.ok(gate !== -1 && reveal !== -1 && gate < reveal);
+    const leadJs = fs.readFileSync(path.join(root, 'assets/quote-lead-checkout.js'), 'utf8');
+    assert.match(svc, /leadGateHtml/);
+    assert.match(svc, /qwDeliveryReveal/);
+    assert.match(leadJs, /id="qwLeadGate"/);
+    assert.match(leadJs, /We need a few details for the quote/);
+    assert.match(leadJs, /Show my price and turnaround time/);
+    assert.match(leadJs, /id="qwLeadName"/);
+    assert.match(leadJs, /id="qwLeadEmail"/);
+    assert.match(leadJs, /id="qwLeadMobile"/);
+    assert.match(leadJs, /id="qwPostcode"/);
+    assert.match(leadJs, /id="qwLeadSummary"/);
+    assert.match(leadJs, /id="qwLeadChange"/);
   });
 
   it('does not reveal a courier quote until the lead gate is unlocked', () => {

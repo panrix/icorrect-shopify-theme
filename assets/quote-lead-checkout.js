@@ -92,12 +92,43 @@
     };
   }
 
+  function leadGateHtml() {
+    return '<div class="qw-lead-summary" id="qwLeadSummary" hidden>' +
+      '<div class="qw-lead-summary-copy">Quote for <strong id="qwLeadSummaryName"></strong> · <span id="qwLeadSummaryMeta"></span></div>' +
+      '<button type="button" class="qw-lead-change" id="qwLeadChange">Change</button>' +
+    '</div>' +
+    '<div class="qw-lead-gate" id="qwLeadGate">' +
+      '<div class="qw-lead-kicker">Your fixed price · one step left</div>' +
+      '<h3 class="qw-lead-title" id="qwLeadTitle">We need a few details for the quote</h3>' +
+      '<p class="qw-lead-sub">It\u2019s instant. Your all-in price appears on the next screen.</p>' +
+      '<div class="qw-lead-grid">' +
+        '<label class="qw-lead-field" for="qwLeadName"><span>Full name</span>' +
+          '<input type="text" id="qwLeadName" class="qw-lead-input" name="name" autocomplete="name" placeholder="Jane Whitfield">' +
+          '<span class="qw-lead-err" id="qwLeadNameErr"></span></label>' +
+        '<label class="qw-lead-field" for="qwLeadEmail"><span>Email</span>' +
+          '<input type="email" id="qwLeadEmail" class="qw-lead-input" name="email" autocomplete="email" placeholder="jane@company.co.uk">' +
+          '<span class="qw-lead-err" id="qwLeadEmailErr"></span></label>' +
+        '<label class="qw-lead-field" for="qwLeadMobile"><span>Mobile</span>' +
+          '<input type="tel" id="qwLeadMobile" class="qw-lead-input" name="tel" autocomplete="tel" placeholder="07700 900 812">' +
+          '<span class="qw-lead-err" id="qwLeadMobileErr"></span></label>' +
+        '<label class="qw-lead-field" for="qwPostcode"><span>Collection postcode</span>' +
+          '<input type="text" id="qwPostcode" class="qw-postcode-input qw-lead-input qw-courier-inp" name="postal-code" autocomplete="postal-code" inputmode="text" placeholder="W1W 8JQ">' +
+          '<span class="qw-lead-hint"><strong>We come to you and collect</strong> the device, then bring it back once it\u2019s repaired. Outside London we send a free tracked mail-in pack instead.</span>' +
+          '<span class="qw-lead-err" id="qwLeadPostcodeErr"></span></label>' +
+      '</div>' +
+      '<button type="button" class="qw-lead-submit" id="qwLeadSubmit">Show my price and turnaround time <span aria-hidden="true">\u2192</span></button>' +
+      '<p class="qw-lead-note">No obligation to book. We use these details for your quote and to answer any questions about it.</p>' +
+      '<div class="qw-lead-trust">719 Google reviews · 2-yr warranty on every repair · 12 Margaret Street, W1W 8JQ</div>' +
+    '</div>';
+  }
+
   return {
     normalizePostcode: normalizePostcode,
     splitName: splitName,
     validateLead: validateLead,
     cartLeadAttributes: cartLeadAttributes,
     checkoutPrefillUrl: checkoutPrefillUrl,
-    intakeContactPayload: intakeContactPayload
+    intakeContactPayload: intakeContactPayload,
+    leadGateHtml: leadGateHtml
   };
 });
