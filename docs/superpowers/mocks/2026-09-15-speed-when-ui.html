@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mock — when we collect, then speed, then timeline</title>
+  <style>
+    :root {
+      --font-sans: Arial, Helvetica, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #f4f4f5;
+      color: #171717;
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.5;
+      padding: 32px 16px 64px;
+    }
+    .note {
+      max-width: 720px;
+      margin: 0 auto 16px;
+      font: 400 13px/1.45 var(--font-sans);
+      color: #525252;
+    }
+    .note strong { color: #171717; }
+    .wrap { max-width: 720px; margin: 0 auto; }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 22px 20px 24px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+    }
+    .device {
+      font: 600 15px/1.3 var(--font-sans);
+      letter-spacing: -0.3px;
+      margin-bottom: 18px;
+    }
+    .label {
+      font: 500 11px var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #666;
+      margin: 0 0 10px;
+    }
+    .hint {
+      font: 400 12.5px/1.4 var(--font-sans);
+      color: #808080;
+      margin: -4px 0 12px;
+    }
+    .date-row { display: flex; gap: 8px; }
+    .date-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      min-height: 72px;
+      padding: 10px 4px;
+      background: #fff;
+      border: 0;
+      border-radius: 10px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .date-btn:hover { box-shadow: inset 0 0 0 1px rgba(0,0,0,0.3); }
+    .date-btn.on { background: #171717; color: #fff; box-shadow: inset 0 0 0 2px #171717; }
+    .date-dow, .date-mon { font: 500 11px var(--font-sans); color: #666; }
+    .date-day { font: 600 20px/1 var(--font-sans); letter-spacing: -0.4px; }
+    .date-btn.on .date-dow, .date-btn.on .date-mon { color: rgba(255,255,255,0.7); }
+    .date-btn.on .date-day { color: #fff; }
+    .date-tag {
+      font: 600 9px var(--font-mono);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #1a6b34;
+      margin-top: 2px;
+    }
+    .date-btn.on .date-tag { color: #b7f0c8; }
+    .windows { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+    .win {
+      padding: 12px 8px;
+      background: #fff;
+      border: 0;
+      border-radius: 6px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+      font: 500 13px var(--font-mono);
+      cursor: pointer;
+    }
+    .win.on { background: #171717; color: #fff; }
+    .win:disabled { opacity: 0.35; cursor: not-allowed; }
+    .speeds { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    @media (max-width: 560px) { .speeds { grid-template-columns: 1fr; } }
+    .speed {
+      text-align: left;
+      padding: 14px;
+      background: #fff;
+      border: 0;
+      border-radius: 10px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+      cursor: pointer;
+      font-family: inherit;
+      min-height: 132px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .speed:hover { box-shadow: inset 0 0 0 1px rgba(0,0,0,0.3); }
+    .speed.on { background: #fafafa; box-shadow: inset 0 0 0 2px #171717; }
+    .speed-name { font: 600 15px/1.2 var(--font-sans); letter-spacing: -0.28px; }
+    .speed-back { font: 600 13px/1.3 var(--font-sans); color: #171717; margin-top: 6px; }
+    .speed-meta { font: 400 12px/1.4 var(--font-sans); color: #666; margin-top: 4px; flex: 1; }
+    .speed-price { font: 600 13px var(--font-mono); margin-top: 10px; }
+    .speed-price.inc { color: #1a6b34; }
+    .journey {
+      margin-top: 18px;
+      padding: 18px 16px 16px;
+      border-radius: 12px;
+      background: #fafafa;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+    }
+    .steps { display: flex; justify-content: space-between; }
+    .step { flex: 1; text-align: center; position: relative; }
+    .step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 11px;
+      left: calc(50% + 16px);
+      width: calc(100% - 32px);
+      height: 1.5px;
+      background: rgba(0,0,0,0.14);
+    }
+    .num {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: #171717; color: #fff;
+      font: 600 11px/24px var(--font-mono);
+      display: inline-block;
+      position: relative;
+      z-index: 1;
+    }
+    .st { display: block; font: 600 13px/1.25 var(--font-sans); margin-top: 8px; letter-spacing: -0.2px; }
+    .sm { display: block; font: 500 12px/1.3 var(--font-mono); color: #525252; }
+    .eta {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    .eta-l { font: 700 10px var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: #525252; }
+    .eta-d { font: 700 20px/1.2 var(--font-sans); letter-spacing: -0.4px; margin-top: 4px; }
+    .price {
+      margin-top: 12px;
+      padding: 16px;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .price-l { font: 500 12px var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; color: #666; }
+    .price-n { font: 700 28px/1 var(--font-sans); letter-spacing: -0.6px; }
+    .cta {
+      margin-top: 14px;
+      width: 100%;
+      min-height: 48px;
+      border: 0;
+      border-radius: 999px;
+      background: #171717;
+      color: #fff;
+      font: 600 15px var(--font-sans);
+    }
+  </style>
+</head>
+<body>
+  <p class="note"><strong>Mock only — not the live theme.</strong> Collection date is the booking. Speed sits with that choice. Timeline and price are the result. No second calendar.</p>
+  <div class="wrap">
+    <div class="card">
+      <div class="device">MacBook Pro 16" screen · W1B · courier</div>
+
+      <div class="label">When should we collect?</div>
+      <p class="hint">This is the booking date. Same-day uses this strip — pick another day here to book ahead.</p>
+      <div class="date-row" id="dates"></div>
+      <div class="windows">
+        <button type="button" class="win on" id="am">Morning · 9am–12pm</button>
+        <button type="button" class="win" id="pm">Afternoon · 12pm–5pm</button>
+      </div>
+
+      <div class="label" style="margin-top:18px">How fast should we turn it around?</div>
+      <p class="hint" id="speedHint">Collect Tuesday. Return date changes with the option you pick.</p>
+      <div class="speeds" id="speeds"></div>
+
+      <div class="journey">
+        <div class="steps">
+          <div class="step"><span class="num">1</span><span class="st">We collect</span><span class="sm" id="j1">Tue 15 Sep</span></div>
+          <div class="step"><span class="num">2</span><span class="st">We repair</span><span class="sm" id="j2">3 working days</span></div>
+          <div class="step"><span class="num">3</span><span class="st">Back to you</span><span class="sm" id="j3">Fri 18 Sep</span></div>
+        </div>
+        <div class="eta">
+          <div class="eta-l">Estimated return by</div>
+          <div class="eta-d" id="eta">Friday 18 Sep</div>
+        </div>
+      </div>
+
+      <div class="price">
+        <span class="price-l">All-in total</span>
+        <span class="price-n" id="total">£799</span>
+      </div>
+      <button type="button" class="cta">Proceed to checkout</button>
+    </div>
+  </div>
+  <script>
+    var dates = [
+      { iso: '2026-09-15', dow: 'Today', day: '15', mon: 'Sept', label: 'Tue 15 Sep', long: 'Tuesday 15 Sep' },
+      { iso: '2026-09-16', dow: 'Tomorrow', day: '16', mon: 'Sept', label: 'Wed 16 Sep', long: 'Wednesday 16 Sep' },
+      { iso: '2026-09-17', dow: 'Thursday', day: '17', mon: 'Sept', label: 'Thu 17 Sep', long: 'Thursday 17 Sep' },
+      { iso: '2026-09-18', dow: 'Friday', day: '18', mon: 'Sept', label: 'Fri 18 Sep', long: 'Friday 18 Sep' },
+      { iso: '2026-09-21', dow: 'Monday', day: '21', mon: 'Sept', label: 'Mon 21 Sep', long: 'Monday 21 Sep' }
+    ];
+    var collect = dates[0];
+    var speed = 'standard';
+    var part = 'AM';
+    var base = 799;
+
+    function addDays(from, n) {
+      var i = dates.indexOf(from);
+      return dates[Math.min(i + n, dates.length - 1)];
+    }
+    function backFor() {
+      if (speed === 'same_day') return collect;
+      if (speed === 'fast') return addDays(collect, 1);
+      return addDays(collect, 3);
+    }
+    function bench() {
+      if (speed === 'same_day') return 'Same day';
+      if (speed === 'fast') return '1 working day';
+      return '3 working days';
+    }
+    function price() {
+      if (speed === 'same_day') return base + 149;
+      if (speed === 'fast') return base + 79;
+      return base;
+    }
+
+    function render() {
+      var sameDayOk = part === 'AM';
+      if (speed === 'same_day' && !sameDayOk) speed = 'standard';
+
+      document.getElementById('dates').innerHTML = dates.map(function (d) {
+        var tag = (speed === 'same_day' && d.iso === collect.iso) ? '<span class="date-tag">Back same day</span>' : '';
+        return '<button type="button" class="date-btn' + (d.iso === collect.iso ? ' on' : '') + '" data-iso="' + d.iso + '">' +
+          '<span class="date-dow">' + d.dow + '</span><span class="date-day">' + d.day + '</span>' +
+          '<span class="date-mon">' + d.mon + '</span>' + tag + '</button>';
+      }).join('');
+
+      document.getElementById('am').className = 'win' + (part === 'AM' ? ' on' : '');
+      document.getElementById('pm').className = 'win' + (part === 'PM' ? ' on' : '');
+      document.getElementById('pm').disabled = speed === 'same_day';
+
+      var back = backFor();
+      var cards = [
+        { id: 'standard', name: 'Standard', meta: 'We repair in 3 working days after we collect.', price: 'Included', cls: 'inc', back: addDays(collect, 3) },
+        { id: 'fast', name: 'Fast', meta: 'Back the next working day after collection.', price: '+£79', cls: '', back: addDays(collect, 1) },
+        { id: 'same_day', name: 'Same-day', meta: sameDayOk ? 'Collect and back on this collection day. 3 slots left.' : 'Needs a morning collection.', price: '+£149', cls: '', back: collect }
+      ];
+      document.getElementById('speeds').innerHTML = cards.map(function (c) {
+        var off = c.id === 'same_day' && !sameDayOk;
+        return '<button type="button" class="speed' + (speed === c.id ? ' on' : '') + '" data-speed="' + c.id + '"' + (off ? ' disabled style="opacity:.4"' : '') + '>' +
+          '<div class="speed-name">' + c.name + '</div>' +
+          '<div class="speed-back">Back ' + c.back.label + '</div>' +
+          '<div class="speed-meta">' + c.meta + '</div>' +
+          '<div class="speed-price ' + c.cls + '">' + c.price + '</div></button>';
+      }).join('');
+
+      document.getElementById('speedHint').textContent =
+        'We collect ' + collect.label + '. Each option shows when it comes back.';
+      document.getElementById('j1').textContent = collect.label;
+      document.getElementById('j2').textContent = bench();
+      document.getElementById('j3').textContent = back.label;
+      document.getElementById('eta').textContent = back.long;
+      document.getElementById('total').textContent = '£' + price();
+    }
+
+    document.getElementById('dates').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-iso]');
+      if (!b) return;
+      collect = dates.filter(function (d) { return d.iso === b.getAttribute('data-iso'); })[0];
+      render();
+    });
+    document.getElementById('speeds').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-speed]');
+      if (!b || b.disabled) return;
+      speed = b.getAttribute('data-speed');
+      if (speed === 'same_day') part = 'AM';
+      render();
+    });
+    document.getElementById('am').onclick = function () { part = 'AM'; render(); };
+    document.getElementById('pm').onclick = function () { part = 'PM'; render(); };
+    render();
+  </script>
+</body>
+</html>
