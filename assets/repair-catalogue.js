@@ -54,7 +54,15 @@
       if (m.device !== deviceKey) continue;
       var n = normalizeName(m.name);
       var score = 0;
-      if (m.slug === wantSlug || n === wantNorm) {
+      var aliasHit = false;
+      var aliases = Array.isArray(m.aliases) ? m.aliases : [];
+      for (var al = 0; al < aliases.length; al++) {
+        if (slugify(aliases[al]) === wantSlug || normalizeName(aliases[al]) === wantNorm) {
+          aliasHit = true;
+          break;
+        }
+      }
+      if (m.slug === wantSlug || n === wantNorm || aliasHit) {
         score = 100;
       } else {
         // A-number hits are strong signals
@@ -76,7 +84,8 @@
         if (wantToks.length) score += Math.round((hit / wantToks.length) * 30);
       }
       // If query has an A-number, require the candidate to share one
-      if (wantA.length) {
+      // (skip when the wizard menu alias already matched)
+      if (wantA.length && !aliasHit) {
         var shared = false;
         for (var a = 0; a < wantA.length; a++) {
           if (n.indexOf(wantA[a]) !== -1) shared = true;
