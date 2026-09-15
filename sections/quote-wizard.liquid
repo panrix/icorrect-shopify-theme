@@ -111,6 +111,8 @@ window.WIZARD_CONTEXT = {
 <script src="{{ 'quoted-repair-stamp.js' | asset_url }}" defer></script>
 <script src="{{ 'repair-journey.js' | asset_url }}" defer></script>
 <script src="{{ 'same-day-eligibility.js' | asset_url }}" defer></script>
+<script src="{{ 'quote-lead-checkout.js' | asset_url }}" defer></script>
+<script src="{{ 'quote-wizard-model-help.js' | asset_url }}" defer></script>
 <script>
 window.WIZARD_CFG = {
   warrantyLabel: {{ section.settings.warranty_label | default: '2-year warranty' | json }},
@@ -398,7 +400,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           elsif qw_device == 'watch' or qw_haystack contains 'watch'
             assign qw_noun = 'Apple Watch'
           endif
-          assign qw_sub = "Service Update: the bench is at capacity, so we've paused walk-ins. Get an instant quote online, and we'll collect your " | append: qw_noun | append: ' same day in London, nationwide by courier.'
+          assign qw_sub = "We'll collect your " | append: qw_noun | append: ' same day in London, nationwide by courier.'
         -%}
         <p class="qw-sub">{{ qw_sub }}</p>
       </div>
@@ -809,7 +811,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   /* =============================================
      STATE
      ============================================= */
-  var S = { device: null, model: null, modelGroup: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null, route: null, repairType: null, repairHandle: null, entrySource: null , preVariantId: null, preRepairType: null, sameDayDate: null, speed: 'standard' };
+  var S = { device: null, model: null, modelGroup: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null, route: null, repairType: null, repairHandle: null, entrySource: null , preVariantId: null, preRepairType: null, sameDayDate: null, speed: 'standard', lead: null };
   var _expressData = null;
   var _collectionCache = {}, _productCache = {}, _repairsMap = {}, _collectionProducts = [], _trackedSteps = {}, _trackedOps = {};
   var _stepStartTime = Date.now();
@@ -1559,7 +1561,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var monitorSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>';
     var clockSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
     var shieldSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>';
-    var gateCopy = opts.gateCopy || 'Enter your postcode above';
+    var gateCopy = opts.gateCopy || 'Your details first';
     var priceInner = opts.gate
       ? '<div class="qw-price-gate qw-price-gate--inline" id="qwPriceGate">' + esc(gateCopy) + '</div>' +
         '<div class="qw-price-big-wrap" id="qwPriceBigWrap" hidden>' +
@@ -1606,11 +1608,12 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
   /* =============================================
      SERVICE STEP — courier OR mail-in only (#53)
-     Postcode gates price; valid postcode auto-reveals band + slots.
+     Details-first gate: name / email / mobile / postcode before price.
      Walk-in / drop-off removed (Ricky 2026-09-11).
      ============================================= */
   var _courierQuote = null;
   var _postcodeResolved = false;
+  var _leadUnlocked = false;
   var _sameDayEligSeq = 0;
   var _quoteShownCaptured = false;
   var _collectionSlot = { date: null, part: null };
@@ -2218,17 +2221,14 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   }
 
   function buildServiceCards() {
+    var leadHtml = (window.ICorrectQuoteLead && window.ICorrectQuoteLead.leadGateHtml)
+      ? window.ICorrectQuoteLead.leadGateHtml()
+      : '';
     return '<div class="qw-opt-section qw-service-mapper">' +
-      '<div class="qw-section-label">Where should we collect from?</div>' +
-      '<div class="qw-postcode-card" id="qwPostcodeCard">' +
-        '<label class="qw-postcode-label" for="qwPostcode">Enter your postcode to see your all-in price' +
-          '<span class="qw-postcode-hint">London postcodes unlock courier collection windows. Outside London we use tracked mail-in.</span>' +
-        '</label>' +
-        '<div class="qw-postcode-row">' +
-          '<input type="text" id="qwPostcode" class="qw-postcode-input qw-courier-inp" placeholder="e.g. SW11 8BJ" autocomplete="postal-code" inputmode="text">' +
-        '</div>' +
-        '<div class="qw-courier-result" id="qwCourierResult" hidden></div>' +
-      '</div>' +
+      '<div class="qw-section-label">Your details first</div>' +
+      leadHtml +
+      '<div class="qw-courier-result" id="qwCourierResult" hidden></div>' +
+      '<div class="qw-postcode-card" id="qwPostcodeCard" hidden></div>' +
       '<div class="qw-delivery-reveal" id="qwDeliveryReveal" hidden>' +
         '<div class="qw-delivery-choice" id="qwDeliveryChoice">' +
           '<div class="qw-section-label" id="qwDeliveryChoiceLabel">How do you want to get it to us?</div>' +
@@ -2557,12 +2557,85 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     trackCourierQuoteEvents(_courierQuote);
   }
 
+  function readLeadFromForm() {
+    var nameEl = document.getElementById('qwLeadName');
+    var emailEl = document.getElementById('qwLeadEmail');
+    var mobileEl = document.getElementById('qwLeadMobile');
+    var pcEl = document.getElementById('qwPostcode');
+    return {
+      name: nameEl ? nameEl.value : '',
+      email: emailEl ? emailEl.value : '',
+      mobile: mobileEl ? mobileEl.value : '',
+      postcode: pcEl ? pcEl.value : ''
+    };
+  }
+
+  function paintLeadErrors(errors) {
+    function setErr(id, msg) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = msg || '';
+    }
+    setErr('qwLeadNameErr', errors && errors.name);
+    setErr('qwLeadEmailErr', errors && errors.email);
+    setErr('qwLeadMobileErr', errors && errors.mobile);
+    setErr('qwLeadPostcodeErr', errors && errors.postcode);
+  }
+
+  function fillLeadForm(lead) {
+    if (!lead) return;
+    var nameEl = document.getElementById('qwLeadName');
+    var emailEl = document.getElementById('qwLeadEmail');
+    var mobileEl = document.getElementById('qwLeadMobile');
+    var pcEl = document.getElementById('qwPostcode');
+    if (nameEl && lead.name) nameEl.value = lead.name;
+    if (emailEl && lead.email) emailEl.value = lead.email;
+    if (mobileEl && lead.mobile) mobileEl.value = lead.mobile;
+    if (pcEl && lead.postcode) pcEl.value = lead.postcode;
+  }
+
+  function setLeadGateOpen(open) {
+    var gate = document.getElementById('qwLeadGate');
+    var summary = document.getElementById('qwLeadSummary');
+    if (gate) gate.hidden = !open;
+    if (summary) summary.hidden = !!open;
+    if (!open && S.lead) {
+      var nameEl = document.getElementById('qwLeadSummaryName');
+      var metaEl = document.getElementById('qwLeadSummaryMeta');
+      if (nameEl) nameEl.textContent = S.lead.name || '';
+      if (metaEl) metaEl.textContent = [S.lead.email, S.lead.postcode].filter(Boolean).join(' · ');
+    }
+  }
+
+  function fireLeadIntake(lead) {
+    if (!lead || !window.ICorrectQuoteLead) return;
+    try {
+      var payload = window.ICorrectQuoteLead.intakeContactPayload(lead, {
+        device: DN[S.device] || S.device || '',
+        model: S.model || '',
+        fault: S.fault || S.issue || ''
+      });
+      postQuoteWizardWebhook(payload).catch(function(){});
+    } catch (e) {}
+  }
+
   function wireCourierService(container) {
     ensureCourierAssets().catch(function(){});
     _postcodeResolved = false;
+    _leadUnlocked = false;
     setPriceVisibility(false);
     var input = document.getElementById('qwPostcode');
     if (!input) return;
+
+    if (!S.lead && window.WIZARD_CUSTOMER) {
+      fillLeadForm({
+        name: window.WIZARD_CUSTOMER.name || '',
+        email: window.WIZARD_CUSTOMER.email || '',
+        mobile: '',
+        postcode: ''
+      });
+    } else if (S.lead) {
+      fillLeadForm(S.lead);
+    }
 
     function syncFromSelection() {
       var err = document.getElementById('qwServiceErr');
@@ -2570,7 +2643,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       var slotPanel = document.getElementById('qwSlotPanel');
       var mailPanel = document.getElementById('qwMailinPanel');
       var svc = selectedServiceKind();
-      if (!_postcodeResolved) return;
+      if (!_leadUnlocked || !_postcodeResolved) return;
       if (svc === 'courier') {
         if (mailPanel) mailPanel.hidden = true;
         if (_courierQuote && _courierQuote.service === 'courier') {
@@ -2600,6 +2673,10 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
     var timer = null;
     function runLookup() {
+      if (!_leadUnlocked) {
+        applyCourierQuoteToUI(null);
+        return;
+      }
       var pc = String(input.value || '').trim();
       if (!pc) {
         applyCourierQuoteToUI(null);
@@ -2624,9 +2701,53 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       var quote = quoteForService(kind, pc);
       applyCourierQuoteToUI(quote);
     }
-    input.addEventListener('input', function(){ clearTimeout(timer); timer = setTimeout(runLookup, 220); });
-    input.addEventListener('blur', runLookup);
-    setTimeout(function(){ try { input.focus(); } catch (e) {} }, 120);
+
+    function submitLeadGate() {
+      var api = window.ICorrectQuoteLead;
+      if (!api || typeof api.validateLead !== 'function') return;
+      var checked = api.validateLead(readLeadFromForm());
+      paintLeadErrors(checked.ok ? null : checked.errors);
+      if (!checked.ok) return;
+      S.lead = checked.lead;
+      input.value = checked.lead.postcode;
+      _leadUnlocked = true;
+      setLeadGateOpen(false);
+      fireLeadIntake(S.lead);
+      runLookup();
+    }
+
+    function editLeadGate() {
+      _leadUnlocked = false;
+      _postcodeResolved = false;
+      setLeadGateOpen(true);
+      applyCourierQuoteToUI(null);
+      var nameEl = document.getElementById('qwLeadName');
+      try { if (nameEl) nameEl.focus(); } catch (e) {}
+    }
+
+    var submitBtn = document.getElementById('qwLeadSubmit');
+    if (submitBtn) submitBtn.addEventListener('click', submitLeadGate);
+    var changeBtn = document.getElementById('qwLeadChange');
+    if (changeBtn) changeBtn.addEventListener('click', editLeadGate);
+    ['qwLeadName', 'qwLeadEmail', 'qwLeadMobile', 'qwPostcode'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('keydown', function(ev) {
+        if (ev.key === 'Enter') { ev.preventDefault(); submitLeadGate(); }
+      });
+    });
+
+    input.addEventListener('input', function(){
+      if (!_leadUnlocked) return;
+      clearTimeout(timer);
+      timer = setTimeout(runLookup, 220);
+    });
+    input.addEventListener('blur', function(){ if (_leadUnlocked) runLookup(); });
+    setLeadGateOpen(true);
+    setTimeout(function(){
+      var focusEl = document.getElementById('qwLeadName') || input;
+      try { focusEl.focus(); } catch (e) {}
+    }, 120);
   }
 
   /* Turnaround cards: detected dynamically from the product page HTML.
@@ -2895,12 +3016,13 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
   function speedCardHtml(opts) {
     var sel = opts.selected ? ' sel' : '';
+    var tone = opts.speed ? ' qw-speed-card qw-speed-card--' + opts.speed : '';
     var priceHtml = opts.price > 0
       ? '<div class="qw-opt-price">+' + gbp.format(opts.price) + '</div>'
       : '<div class="qw-opt-price free">Included</div>';
     var extra = opts.extraInner || '';
     var back = opts.back ? '<div class="qw-opt-back">' + esc(opts.back) + '</div>' : '';
-    return '<div class="qw-opt-card' + sel + '" data-opt="speed" data-speed="' + opts.speed +
+    return '<div class="qw-opt-card' + tone + sel + '" data-opt="speed" data-speed="' + opts.speed +
       '" data-add="' + (opts.price || 0) + '" data-vid="' + (opts.vid || 0) +
       '" data-date="' + esc(opts.dateIso || '') + '" tabindex="0">' +
       '<div class="qw-opt-name">' + esc(opts.name) + '</div>' +
@@ -2970,8 +3092,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       : (parseInt(cfg.iphoneSameDayVariantId, 10) || 0);
     var slotsLine = picked ? (picked.slotsRemaining + ' slots left') : '';
 
-    var cards = [];
-    cards.push(speedCardHtml({
+    var standardHtml = speedCardHtml({
       speed: 'standard',
       name: 'Standard',
       back: speedBackLabel('standard'),
@@ -2980,9 +3101,10 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       vid: 0,
       selected: current !== 'fast' && current !== 'same_day',
       dateIso: ''
-    }));
+    });
+    var upgrade = [];
     if (offers.fast) {
-      cards.push(speedCardHtml({
+      upgrade.push(speedCardHtml({
         speed: 'fast',
         name: 'Fast',
         back: speedBackLabel('fast'),
@@ -2994,7 +3116,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       }));
     }
     if (offers.sameDay) {
-      cards.push(speedCardHtml({
+      upgrade.push(speedCardHtml({
         speed: 'same_day',
         name: 'Same-day',
         back: speedBackLabel('same_day', picked ? picked.iso : ''),
@@ -3003,13 +3125,22 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         vid: sdVid,
         selected: current === 'same_day',
         dateIso: picked ? picked.iso : '',
-        extraInner: slotsLine ? '<div class="qw-slot-left">' + esc(slotsLine) + '</div>' : ''
+        extraInner: slotsLine
+          ? '<div class="qw-slot-left"><span class="qw-speed-sameday-badge">' + esc(slotsLine) + '</span></div>'
+          : ''
       }));
     }
 
-    return '<div class="qw-opt-label">How fast should we turn it around?</div>' +
+    var html = '<div class="qw-opt-label">How fast do you need it back?</div>' +
       '<p class="qw-slot-hint">We collect the day you pick above. Each option shows when it comes back.</p>' +
-      '<div class="qw-opt-row">' + cards.join('') + '</div>';
+      '<div class="qw-opt-row">' + standardHtml + '</div>';
+    if (upgrade.length) {
+      html += '<div class="qw-speed-upgrade">' +
+        '<div class="qw-speed-upgrade-head">Upgrade · get it back sooner</div>' +
+        '<div class="qw-opt-row">' + upgrade.join('') + '</div>' +
+      '</div>';
+    }
+    return html;
   }
 
   function restoreStandardCollectionSlot() {
@@ -3057,7 +3188,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         var resCard = document.getElementById('qwResCard');
         if (!resCard) return;
         var group = card.dataset.opt;
-        card.parentNode.querySelectorAll('.qw-opt-card[data-opt="' + group + '"]').forEach(function(c) {
+        mount.querySelectorAll('.qw-opt-card[data-opt="' + group + '"]').forEach(function(c) {
           c.classList.remove('sel');
         });
         card.classList.add('sel');
@@ -3518,232 +3649,18 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     else renderGenericHelper(hP);
   }
 
-  /* [3.1] iPhone VG with dead-end filtering */
   function renderIphoneVG(panel) {
-    var vgS = {};
-    var VK = { 1: 'cams', 2: 'edges', 3: 'screen', 4: 'size' };
-    var CDN = 'https://cdn.shopify.com/s/files/1/0728/7111/7053/files/';
-
-    function vgOpt(val, img, lbl) { return '<div class="qw-vg-opt" data-v="' + val + '"><img src="' + img + '" class="qw-vg-img"><div class="qw-vg-lbl">' + lbl + '</div></div>'; }
-    var VG_PHONE_HEIGHTS = { max: 64, pro: 54, std: 46, mini: 38 };
-    function vgSize(val, lbl, det) {
-      var h = VG_PHONE_HEIGHTS[val] || 50;
-      var w = Math.round(h * 0.48);
-      var svg = '<svg viewBox="0 0 24 44" fill="none" stroke="var(--qw-text-2)" stroke-width="1.5" width="' + w + '" height="' + h + '" style="display:block;"><rect x="2" y="1" width="20" height="42" rx="4.5"/><line x1="9" y1="3.5" x2="15" y2="3.5" stroke-linecap="round" opacity="0.4"/><line x1="8" y1="39" x2="16" y2="39" stroke-linecap="round" opacity="0.3"/></svg>';
-      return '<div class="qw-vg-opt" data-v="' + val + '"><div style="height:70px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:2px;">' + svg + '</div><div class="qw-vg-lbl">' + lbl + '<br><span style="font-weight:400;color:var(--qw-text-3);font-size:11px;">' + det + '</span></div></div>';
-    }
-
-    var html = '<div class="qw-help-card"><div id="qwVgWiz">';
-    html += '<div class="qw-vg-step on" data-vs="1"><div class="qw-vg-title">Rear cameras</div><div class="qw-vg-sub">What does the back look like?</div><div class="qw-vg-grid">';
-    html += vgOpt('tri_plat',CDN+'17pm.png?v=1766083751','3 Cameras<br>(Plateau)');
-    html += vgOpt('tri_std',CDN+'16pm.png?v=1766083961','3 Cameras<br>(Standard)');
-    html += vgOpt('diag',CDN+'15.png?v=1766083751','2 Cameras<br>(Diagonal)');
-    html += vgOpt('vert',CDN+'16.png?v=1766083751','2 Cameras<br>(Vertical)');
-    html += vgOpt('single_plat',CDN+'air.png?v=1766083751','1 Camera<br>(Plateau)');
-    html += vgOpt('single_std',CDN+'16e.png?v=1766083751','1 Camera<br>(Standard)');
-    html += '</div></div>';
-    html += '<div class="qw-vg-step" data-vs="2"><button class="qw-vg-back" data-from="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back</button><div class="qw-vg-title">Frame shape</div><div class="qw-vg-sub">Check the metal edge</div><div class="qw-vg-grid">';
-    html += vgOpt('flat',CDN+'squared.png?v=1766085750','Flat (Square)');
-    html += vgOpt('curved',CDN+'round.png?v=1766085749','Curved (Round)');
-    html += '</div></div>';
-    html += '<div class="qw-vg-step" data-vs="3"><button class="qw-vg-back" data-from="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back</button><div class="qw-vg-title">Screen type</div><div class="qw-vg-sub">Look at the top of the display</div><div class="qw-vg-grid">';
-    html += vgOpt('island',CDN+'dynamic_island.png?v=1766085749','Dynamic Island');
-    html += vgOpt('notch',CDN+'notch.png?v=1766085750','Notch');
-    html += '</div></div>';
-    html += '<div class="qw-vg-step" data-vs="4"><button class="qw-vg-back" data-from="4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back</button><div class="qw-vg-title">Size</div><div class="qw-vg-sub">How big is it?</div><div class="qw-vg-grid">';
-    html += vgSize('max','Pro Max / Plus','6.5" - 6.9"');
-    html += vgSize('pro','Pro','5.8" - 6.3"');
-    html += vgSize('std','Standard','4.7" - 6.1"');
-    html += vgSize('mini','Mini','5.4"');
-    html += '</div></div>';
-    html += '<div class="qw-vg-step" data-vs="result"><div class="qw-vg-result" id="qwVgResult"></div></div>';
-    html += '</div><button class="qw-help-close">Close</button></div>';
-    panel.innerHTML = html;
-    panel.querySelector('.qw-help-close').onclick = function() { panel.classList.remove('open'); };
-
-    function vgGoTo(n) {
-      panel.querySelectorAll('.qw-vg-step').forEach(function(s) { s.classList.remove('on'); });
-      var target = panel.querySelector('.qw-vg-step[data-vs="' + n + '"]');
-      if (target) target.classList.add('on');
-      vgApplyFilters();
-    }
-
-    /* [3.1] Filter logic: hide options that produce zero matches */
-    function vgApplyFilters() {
-      for (var step = 1; step <= 4; step++) {
-        var key = VK[step];
-        var tempState = {};
-        for (var s = 1; s < step; s++) { if (vgS[VK[s]]) tempState[VK[s]] = vgS[VK[s]]; }
-        var allowed = {};
-        VG_DB.forEach(function(m) {
-          if (tempState.cams && m.cams !== tempState.cams) return;
-          if (tempState.edges && m.edges !== tempState.edges) return;
-          if (tempState.screen && m.screen !== tempState.screen) return;
-          if (tempState.size && m.size !== tempState.size) return;
-          allowed[m[key]] = true;
-        });
-        var stepEl = panel.querySelector('.qw-vg-step[data-vs="' + step + '"]');
-        if (stepEl) {
-          var visibleCount = 0;
-          stepEl.querySelectorAll('.qw-vg-opt').forEach(function(opt) {
-            if (allowed[opt.dataset.v]) { opt.style.display = ''; visibleCount++; }
-            else { opt.style.display = 'none'; }
-          });
-          /* Auto-skip: if only one option visible and we're on this step, auto-select it */
-        }
-      }
-    }
-
-    panel.querySelectorAll('.qw-vg-back').forEach(function(btn) {
-      btn.onclick = function() {
-        var from = parseInt(btn.dataset.from);
-        delete vgS[VK[from]];
-        vgGoTo(from - 1);
-      };
+    if (!window.ICorrectQuoteModelHelp) return;
+    window.ICorrectQuoteModelHelp.renderIphoneVG(panel, {
+      VG_DB: VG_DB, MODELS: MODELS, S: S, pickModel: pickModel, esc: esc
     });
-
-    panel.querySelectorAll('.qw-vg-opt').forEach(function(o) {
-      o.onclick = function() {
-        if (o.style.display === 'none') return;
-        var vs = parseInt(o.closest('.qw-vg-step').dataset.vs);
-        vgS[VK[vs]] = o.dataset.v;
-        if (vs === 1 && o.dataset.v === 'single_plat') { vgShowResult(); return; }
-        if (vs === 1 && o.dataset.v === 'tri_plat') { vgS.edges = 'curved'; vgS.screen = 'island'; vgGoTo(4); return; }
-        if (vs === 2 && vgS.cams === 'single_std' && o.dataset.v === 'flat') { vgS.screen = 'notch'; vgGoTo(4); return; }
-        if (vs === 2 && vgS.cams === 'single_std' && o.dataset.v === 'curved') { vgS.screen = 'home'; vgGoTo(4); return; }
-        if (vs >= 4) { vgShowResult(); return; }
-        vgGoTo(vs + 1);
-      };
-    });
-
-    function vgShowResult() {
-      var matches = VG_DB.filter(function(m) {
-        if (vgS.cams && m.cams !== vgS.cams) return false;
-        if (vgS.edges && m.edges !== vgS.edges) return false;
-        if (vgS.screen && m.screen !== vgS.screen) return false;
-        if (vgS.size && m.size !== vgS.size) return false;
-        return true;
-      });
-      var rc = document.getElementById('qwVgResult');
-      if (!rc) return;
-      if (matches.length === 1) {
-        var m = matches[0];
-        rc.innerHTML = '<img src="' + m.img + '" style="max-width:220px;max-height:170px;object-fit:contain;margin-bottom:14px;"><div class="qw-vg-result-name">' + m.n + '</div><button class="qw-vg-btn qw-vg-btn-p" id="qwVgSel">Select this model</button> <button class="qw-vg-btn qw-vg-btn-s" id="qwVgReset2">Try again</button>';
-        document.getElementById('qwVgSel').onclick = function() { vgSelect(m.n); };
-        document.getElementById('qwVgReset2').onclick = vgReset;
-      } else if (matches.length > 1) {
-        var h = '<div class="qw-vg-title" style="margin-bottom:14px;">Which one?</div><div class="qw-vg-grid">';
-        matches.forEach(function(m) {
-          h += '<div class="qw-vg-opt" data-vgname="' + esc(m.n) + '"><img src="' + m.img + '" style="max-width:140px;max-height:110px;object-fit:contain;"><div class="qw-vg-lbl">' + m.n + '</div></div>';
-        });
-        h += '</div><button class="qw-vg-btn qw-vg-btn-s" style="margin-top:14px;" id="qwVgReset3">Try again</button>';
-        rc.innerHTML = h;
-        rc.querySelectorAll('[data-vgname]').forEach(function(el) { el.onclick = function() { vgSelect(el.dataset.vgname); }; });
-        document.getElementById('qwVgReset3').onclick = vgReset;
-      } else {
-        /* Should not happen with filtering, but just in case */
-        rc.innerHTML = '<div class="qw-vg-title">Could not match your device</div><button class="qw-vg-btn qw-vg-btn-s" id="qwVgReset">Try again</button>';
-        document.getElementById('qwVgReset').onclick = vgReset;
-      }
-      vgGoTo('result');
-    }
-
-    function vgReset() { for (var k in vgS) delete vgS[k]; vgGoTo(1); }
-
-    /* [3.3] Robust name matching: exact first, then contains (longest wins) */
-    function vgSelect(name) {
-      var groups = MODELS[S.device] || [];
-      /* Pass 1: exact */
-      for (var g = 0; g < groups.length; g++) {
-        for (var m = 0; m < groups[g].models.length; m++) {
-          if (groups[g].models[m].name === name) { panel.classList.remove('open'); pickModel(groups[g].models[m].name, groups[g].models[m].collectionHandle, null); return; }
-        }
-      }
-      /* Pass 2: contains (longest match) */
-      var best = null, bestLen = 0;
-      for (var g2 = 0; g2 < groups.length; g2++) {
-        for (var m2 = 0; m2 < groups[g2].models.length; m2++) {
-          var mn = groups[g2].models[m2].name;
-          if (mn.indexOf(name) !== -1 || name.indexOf(mn) !== -1) {
-            var matchLen = Math.min(mn.length, name.length);
-            if (matchLen > bestLen) { best = groups[g2].models[m2]; bestLen = matchLen; }
-          }
-        }
-      }
-      if (best) { panel.classList.remove('open'); pickModel(best.name, best.collectionHandle, null); return; }
-      /* [3.2] No fallback with broken state - show message */
-      var rc2 = document.getElementById('qwVgResult');
-      if (rc2) rc2.innerHTML = '<div class="qw-vg-title">Could not match to a model in our system</div><p style="font-size:13px;color:var(--qw-text-2);margin:8px 0;">Please pick your model from the list above instead.</p><button class="qw-vg-btn qw-vg-btn-s" id="qwVgResetFail">Close</button>';
-      var rb = document.getElementById('qwVgResetFail');
-      if (rb) rb.onclick = function() { panel.classList.remove('open'); };
-    }
-
-    vgApplyFilters();
   }
 
-  /* [3.4] MacBook helper with reference image */
   function renderMacbookHelper(panel) {
-    panel.innerHTML =
-      '<div class="qw-help-card"><div class="qw-help-body qw-help-split">' +
-      '<div class="qw-help-left"><img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/MacBook_Model_Number_7104995a-bc9e-4b6d-9a9b-5578f42b4a7b.png?v=1773930835" alt="Where to find your MacBook model number" class="qw-help-img"></div>' +
-      '<div class="qw-help-right">' +
-      '<p class="qw-help-inst">Flip your MacBook over. The model number (e.g. <code>A1989</code>) is printed on the bottom case near the hinge.</p>' +
-      '<div class="qw-help-row"><input class="qw-help-input" type="text" id="qwMbSearch" placeholder="Type model number, e.g. A1989"></div>' +
-      '<div class="qw-help-results" id="qwMbRes"></div>' +
-      '</div></div><button class="qw-help-close">Close</button></div>';
-    panel.querySelector('.qw-help-close').onclick = function() { panel.classList.remove('open'); };
-
-    function findConfiguredModelByName(name) {
-      var exact = null;
-      var best = null;
-      var bestLen = 0;
-      var groups = MODELS['macbook'] || [];
-      for (var g = 0; g < groups.length; g++) {
-        for (var m = 0; m < groups[g].models.length; m++) {
-          var model = groups[g].models[m];
-          if (model.name === name) return model;
-          if (model.name.indexOf(name) !== -1 || name.indexOf(model.name) !== -1) {
-            var matchLen = Math.min(model.name.length, name.length);
-            if (matchLen > bestLen) {
-              best = model;
-              bestLen = matchLen;
-            }
-          }
-        }
-      }
-      return exact || best;
-    }
-
-    var groups = MODELS['macbook'] || [];
-
-    function mbFilter() {
-      var q = (document.getElementById('qwMbSearch').value || '').trim().toUpperCase();
-      var r = document.getElementById('qwMbRes');
-      if (!r) return;
-      r.innerHTML = '';
-      if (!q) return;
-      var f = MB_NUMS.filter(function(n) { return n.n.toUpperCase().indexOf(q) !== -1 || n.m.toUpperCase().indexOf(q) !== -1; });
-      if (!f.length) { r.innerHTML = '<div style="padding:10px;font-size:13px;color:var(--qw-text-3);">No match. Check the number and try again.</div>'; return; }
-      /* Deduplicate by model name to avoid showing A2338 twice with same target */
-      var seen = {};
-      f.forEach(function(n) {
-        if (seen[n.m]) return;
-        seen[n.m] = true;
-        var d = document.createElement('div'); d.className = 'qw-help-hit';
-        d.innerHTML = '<span class="qw-hn">' + n.n + '</span><span class="qw-hm">' + n.m + '</span><span class="qw-hs">Select</span>';
-        d.onclick = function() {
-          var model = findConfiguredModelByName(n.m);
-          if (model) {
-            panel.classList.remove('open');
-            pickModel(model.name, model.collectionHandle, null);
-          } else {
-            r.innerHTML = '<div style="padding:10px;font-size:13px;color:var(--qw-text-3);">This model isn\'t configured in our system yet. Please pick from the list above.</div>';
-          }
-        };
-        r.appendChild(d);
-      });
-    }
-    document.getElementById('qwMbSearch').oninput = mbFilter;
+    if (!window.ICorrectQuoteModelHelp) return;
+    window.ICorrectQuoteModelHelp.renderMacbookHelper(panel, {
+      MODELS: MODELS, MB_NUMS: MB_NUMS, pickModel: pickModel
+    });
   }
 
   function renderGenericHelper(panel) {
@@ -4095,7 +4012,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     try {
       var shouldContinue = await ensureCleanWizardCart();
       if (!shouldContinue) {
-        if (btn) { btn.disabled = false; btn.textContent = 'Proceed to checkout'; }
+        if (btn) { btn.disabled = false; btn.textContent = 'Book this repair'; }
         return;
       }
 
@@ -4123,17 +4040,22 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
       await addRes.json();
       try {
+        var cartAttrs = {};
         var phId = window.icorrectQuoteEvents && typeof window.icorrectQuoteEvents.phDistinctId === 'function'
           ? window.icorrectQuoteEvents.phDistinctId()
           : '';
-        if (phId) {
+        if (phId) cartAttrs._ph_distinct_id = phId;
+        if (window.ICorrectQuoteLead && typeof window.ICorrectQuoteLead.cartLeadAttributes === 'function') {
+          Object.assign(cartAttrs, window.ICorrectQuoteLead.cartLeadAttributes(S.lead));
+        }
+        if (Object.keys(cartAttrs).length) {
           await fetch(getShopifyRoot() + 'cart/update.js', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'Accept': 'application/json'
             },
-            body: JSON.stringify({ attributes: { _ph_distinct_id: phId } })
+            body: JSON.stringify({ attributes: cartAttrs })
           }).catch(function () {});
         }
       } catch (e) {}
@@ -4149,13 +4071,15 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         currency: 'GBP',
         item_count: items.length
       });
-      var checkoutUrl = '/checkout';
+      var extraQ = {};
       if (window.posthog && posthog.get_distinct_id) {
-        checkoutUrl += '?ph_distinct_id=' + encodeURIComponent(posthog.get_distinct_id());
+        extraQ.ph_distinct_id = posthog.get_distinct_id();
       }
-      window.location.href = checkoutUrl;
+      window.location.href = (window.ICorrectQuoteLead && window.ICorrectQuoteLead.checkoutPrefillUrl)
+        ? window.ICorrectQuoteLead.checkoutPrefillUrl('/checkout', S.lead, extraQ)
+        : '/checkout';
     } catch (err) {
-      if (btn) { btn.disabled = false; btn.textContent = 'Proceed to checkout'; }
+      if (btn) { btn.disabled = false; btn.textContent = 'Book this repair'; }
       alert(err.message || 'Something went wrong. Please try again.');
     }
   }
@@ -4174,7 +4098,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var sub = (screenOpts && screenOpts.sub);
     if (sub === undefined) {
       sub = iss.route === 'repair' || iss.route === 'diagnostic'
-        ? 'Enter your postcode to see your all-in price and book collection.'
+        ? 'Your details first — then your all-in price and collection options.'
         : 'Next steps for your device.';
     }
     openResolutionScreen(title, sub);
@@ -4235,7 +4159,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
         '<div class="qw-res-extras" id="qwResExtras" style="padding:0 24px 8px;">' + colorHtml + '</div>' +
         '<div class="qw-res-cta">' +
-          '<button class="qw-btn-book" id="qwBookBtn" disabled>Proceed to checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
+          '<button class="qw-btn-book" id="qwBookBtn" disabled>Book this repair <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
           '<button class="qw-btn-email" id="qwEmailQuote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email me this quote</button>' +
           '<button class="qw-btn-q" id="qwToggleCF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>I have a question first</button>' +
         '</div>' +
@@ -4356,7 +4280,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
         '<div class="qw-res-extras" id="qwResExtras" style="padding:0 24px 8px;"></div>' +
         '<div class="qw-res-cta">' +
-          '<button class="qw-btn-book" id="qwBookBtn" disabled>Proceed to checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
+          '<button class="qw-btn-book" id="qwBookBtn" disabled>Book this repair <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
           '<button class="qw-btn-email" id="qwEmailQuote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email me this quote</button>' +
           '<button class="qw-btn-q" id="qwToggleCF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>I have a question first</button>' +
           '<a href="#" class="qw-btn-chat" id="qwIntercomBtn" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>Chat with us now</a>' +
@@ -4455,12 +4379,13 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
   function buildContactFormHTML(prefix, visible) {
     var cust = CUST || {};
+    var lead = S.lead || {};
     return '<form class="qw-cf" id="' + prefix + 'Form" novalidate' + (visible ? '' : ' style="display:none"') + '>' +
       '<div class="qw-f-row two">' +
-        '<div class="qw-f-grp"><label class="qw-f-lbl" for="' + prefix + 'N">Name<span class="qw-req">*</span></label><input class="qw-f-inp" type="text" id="' + prefix + 'N" placeholder="Full name" required value="' + esc(cust.name || '') + '"><span class="qw-f-err" id="' + prefix + 'NErr"></span></div>' +
-        '<div class="qw-f-grp"><label class="qw-f-lbl" for="' + prefix + 'E">Email<span class="qw-req">*</span></label><input class="qw-f-inp" type="email" id="' + prefix + 'E" placeholder="you@email.com" required value="' + esc(cust.email || '') + '"><span class="qw-f-err" id="' + prefix + 'EErr"></span></div>' +
+        '<div class="qw-f-grp"><label class="qw-f-lbl" for="' + prefix + 'N">Name<span class="qw-req">*</span></label><input class="qw-f-inp" type="text" id="' + prefix + 'N" placeholder="Full name" required value="' + esc(lead.name || cust.name || '') + '"><span class="qw-f-err" id="' + prefix + 'NErr"></span></div>' +
+        '<div class="qw-f-grp"><label class="qw-f-lbl" for="' + prefix + 'E">Email<span class="qw-req">*</span></label><input class="qw-f-inp" type="email" id="' + prefix + 'E" placeholder="you@email.com" required value="' + esc(lead.email || cust.email || '') + '"><span class="qw-f-err" id="' + prefix + 'EErr"></span></div>' +
       '</div>' +
-      '<div class="qw-f-row"><div class="qw-f-grp"><label class="qw-f-lbl" for="' + prefix + 'P">Phone<span class="qw-req">*</span></label><input class="qw-f-inp" type="tel" id="' + prefix + 'P" placeholder="+44 7000 000000" required><span class="qw-f-err" id="' + prefix + 'PErr"></span></div></div>' +
+      '<div class="qw-f-row"><div class="qw-f-grp"><label class="qw-f-lbl" for="' + prefix + 'P">Phone<span class="qw-req">*</span></label><input class="qw-f-inp" type="tel" id="' + prefix + 'P" placeholder="+44 7000 000000" required value="' + esc(lead.mobile || '') + '"><span class="qw-f-err" id="' + prefix + 'PErr"></span></div></div>' +
       '<div class="qw-f-row"><div class="qw-f-grp"><label class="qw-f-lbl" for="' + prefix + 'M">Your question</label><textarea class="qw-f-ta" id="' + prefix + 'M" placeholder="What do you need help with?"></textarea></div></div>' +
       '<button type="submit" class="qw-f-sub" disabled>Send question</button>' +
     '</form>' +
@@ -4687,15 +4612,16 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       }
 
       var cust = window.WIZARD_CUSTOMER || {};
+      var lead = S.lead || {};
       var html = '<div class="qw-eq-panel show" id="qwEmailPanel">' +
         '<div class="qw-eq-fields">' +
           '<div class="qw-eq-field">' +
             '<label class="qw-eq-label" for="qwEqName">Name</label>' +
-            '<input type="text" class="qw-eq-input" placeholder="John Smith" id="qwEqName" required value="' + esc(cust.name || '') + '">' +
+            '<input type="text" class="qw-eq-input" placeholder="John Smith" id="qwEqName" required value="' + esc(lead.name || cust.name || '') + '">' +
           '</div>' +
           '<div class="qw-eq-field">' +
             '<label class="qw-eq-label" for="qwEqEmail">Email</label>' +
-            '<input type="email" class="qw-eq-input" placeholder="you@example.com" id="qwEqEmail" required value="' + esc(cust.email || '') + '">' +
+            '<input type="email" class="qw-eq-input" placeholder="you@example.com" id="qwEqEmail" required value="' + esc(lead.email || cust.email || '') + '">' +
           '</div>' +
         '</div>' +
         '<button class="qw-eq-send" id="qwEqSend"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/></svg>Send quote</button>' +
@@ -4866,9 +4792,10 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
      RESET
      ============================================= */
   function reset() {
-    S.device = null; S.model = null; S.modelGroup = null; S.fault = null; S.issue = null; S.step = 1; S.collectionHandle = null; S.route = null; S.repairType = null; S.repairHandle = null; S.sameDayDate = null; S.speed = 'standard'; _repairsMap = {};
+    S.device = null; S.model = null; S.modelGroup = null; S.fault = null; S.issue = null; S.step = 1; S.collectionHandle = null; S.route = null; S.repairType = null; S.repairHandle = null; S.sameDayDate = null; S.speed = 'standard'; S.lead = null; _repairsMap = {};
     _courierQuote = null;
     _postcodeResolved = false;
+    _leadUnlocked = false;
     _quoteShownCaptured = false;
     _collectionSlot = { date: null, part: null };
     _standardCollectIso = null;
@@ -5331,7 +5258,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
       "type": "textarea",
       "id": "subheading",
       "label": "Subheading",
-      "default": "Service Update: the bench is at capacity, so we've paused walk-ins. Get an instant quote online, and we'll collect your device same day in London, nationwide by courier."
+      "default": "We'll collect your device same day in London, nationwide by courier."
     },
     {
       "type": "text",
