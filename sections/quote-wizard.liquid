@@ -4462,7 +4462,37 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
         weak = { device: device, model: model, group: group };
       }
     });
-    return exact || contained || weak;
+    return exact || contained || weak || findModelByCatalogueName(name);
+  }
+
+  /* Catalogue titles (e.g. "iPad Pro 11 M1 (2020)") often differ from
+     wizard collection labels ("iPad Pro 11” 2nd Gen (2020)"). */
+  function findModelByCatalogueName(name) {
+    if (!name || !window.ICorrectCatalogue || !window.__QW_CATALOGUE) return null;
+    if (typeof window.ICorrectCatalogue.findWizardLabel !== 'function') return null;
+    var labelsByDevice = { macbook: [], iphone: [], ipad: [], watch: [] };
+    var entries = [];
+    eachWizardModel(function(device, group, model) {
+      if (labelsByDevice[device]) labelsByDevice[device].push(model.name);
+      entries.push({ device: device, group: group, model: model });
+    });
+    var devices = ['macbook', 'iphone', 'ipad', 'watch'];
+    for (var d = 0; d < devices.length; d++) {
+      var device = devices[d];
+      var label = window.ICorrectCatalogue.findWizardLabel(
+        window.__QW_CATALOGUE,
+        device,
+        name,
+        labelsByDevice[device]
+      );
+      if (!label) continue;
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].device === device && entries[i].model.name === label) {
+          return entries[i];
+        }
+      }
+    }
+    return null;
   }
 
   function contextHaystack(ctx) {
@@ -4597,6 +4627,12 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
         });
         if (modelMatch) {
           pickModel(modelMatch.model.name, modelMatch.model.collectionHandle, null).then(function() {
+            _suppressScroll = false;
+          });
+        } else if (hit.modelName) {
+          /* Product exists in the catalogue even when no wizard collection
+             label matches — still quote from the catalogue name. */
+          pickModel(hit.modelName, null).then(function() {
             _suppressScroll = false;
           });
         } else {

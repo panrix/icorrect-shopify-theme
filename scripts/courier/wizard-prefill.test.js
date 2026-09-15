@@ -68,4 +68,14 @@ describe('resolveProductPrefill', () => {
   it('returns null for unknown product', () => {
     assert.equal(resolveProductPrefill(catalogue, { handle: 'not-a-real-product' }), null);
   });
+
+  it('resolves the live iPad Pro 11 2020 screen handle that the wizard misses', () => {
+    const p = resolveProductPrefill(catalogue, {
+      handle: 'ipad-pro-11-2020-m1-screen-repair',
+    });
+    assert.ok(p);
+    assert.equal(p.device, 'ipad');
+    assert.equal(p.modelName, 'iPad Pro 11 M1 (2020)');
+    assert.equal(p.fault, 'screen');
+  });
 });
