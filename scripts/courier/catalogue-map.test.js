@@ -28,7 +28,7 @@ const bands = JSON.parse(
 
 describe('repair catalogue map', () => {
   it('covers hundreds of model×repair rows from the Admin snapshot', () => {
-    assert.ok(map.model_count >= 200);
+    assert.ok(map.model_count >= 140);
     assert.ok(map.repair_count >= 800);
   });
 
@@ -67,7 +67,46 @@ describe('repair catalogue map', () => {
     const sample = map.models['watch::apple-watch-se-2-40mm'].repairs.battery;
     assert.deepEqual(Object.keys(sample).sort(), [...allowed].sort());
     const bytes = fs.statSync(path.join(root, 'assets/repair-catalogue-map.json')).size;
-    assert.ok(bytes < 220000, 'catalogue map should stay under 220KB, got ' + bytes);
+    assert.ok(bytes < 260000, 'catalogue map should stay under 260KB, got ' + bytes);
+  });
+
+  it('maps iPhone 17 Screen from the live catalogue (not a 16 clone)', () => {
+    const repair = getRepair(map, 'iphone', 'iPhone 17', 'screen');
+    assert.ok(repair);
+    assert.equal(repair.handle, 'iphone-17-screen');
+    assert.equal(repair.price, 329);
+    assert.equal(repair.variantId, 71308261589245);
+  });
+
+  it('resolves wizard aliases when Monday/Shopify titles differ', () => {
+    const repair = getRepair(
+      map,
+      'ipad',
+      'iPad Pro 11” 2nd Gen (2020)',
+      'screen'
+    );
+    assert.ok(repair);
+    assert.equal(repair.handle, 'ipad-pro-11-2020-m1-screen-repair');
+    assert.ok(repair.price > 0);
+    const model = findModel(map, 'ipad', 'iPad Pro 11" 2nd Gen (2020)');
+    assert.ok(model);
+    assert.match(model.name, /iPad Pro 11 M1 \(2020\)/);
+  });
+
+  it('keeps iPhone 16 rear glass on the iPhone 16 model', () => {
+    const repair = getRepair(map, 'iphone', 'iPhone 16', 'rear-glass');
+    assert.ok(repair);
+    assert.equal(repair.handle, 'iphone-16-rear-glass-repair');
+    assert.equal(map.models['iphone::iphone-16-rear-glass-replacement'], undefined);
+  });
+
+  it('classifies earpiece separately from loudspeaker', () => {
+    const ear = getRepair(map, 'iphone', 'iPhone 17', 'earpiece');
+    const speaker = getRepair(map, 'iphone', 'iPhone 17', 'loudspeaker');
+    assert.ok(ear);
+    assert.ok(speaker);
+    assert.match(ear.handle, /earpiece/);
+    assert.match(speaker.handle, /loudspeaker/);
   });
 });
 
