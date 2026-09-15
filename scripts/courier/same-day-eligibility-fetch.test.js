@@ -71,8 +71,17 @@ describe('theme wiring: proxy URL + no workshop secret', () => {
     assert.ok(firstStub === -1 || firstStub > fetchCall, 'must not wipe stock before fetch');
     assert.ok(catchStub > fetchCall, 'must fail-close after a failed fetch');
     assert.match(liquid, /AbortController/);
-    assert.match(liquid, /1500/);
+    assert.match(liquid, /5000/);
+    assert.doesNotMatch(extractFunction(liquid, 'fetchSameDayEligibility'), /1500/);
     assert.match(liquid, /credentials:\s*['"]omit['"]/);
+  });
+
+  it('asks eligibility with the stamped repair handle, not the collection handle', () => {
+    const handleFn = extractFunction(liquid, 'sameDayEligibilityHandle');
+    assert.match(handleFn, /getElementById\('qwResCard'\)/);
+    assert.doesNotMatch(handleFn, /qw-quoted-card/);
+    assert.doesNotMatch(handleFn, /S\.collectionHandle/);
+    assert.match(handleFn, /S\.repairHandle/);
   });
 
   it('documents a secret-bearing proxy on the quote-events origin, not a browser secret', () => {

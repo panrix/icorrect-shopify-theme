@@ -7,8 +7,11 @@ const {
   evaluateEligibility,
   deviceFromHandle,
   lookupBand,
-  start
+  start,
+  setRuntime,
+  createRuntime
 } = require('./server');
+const { createSlotStore } = require('./slots');
 
 describe('same-day eligibility proxy', () => {
   it('maps handles and W1B to iPhone / B1', () => {
@@ -45,6 +48,18 @@ describe('same-day eligibility proxy', () => {
     assert.equal(body.eligible, true);
   });
 
+  it('diagnostic handles fail closed even when Monday has stock', () => {
+    const body = evaluateEligibility({
+      handle: 'macbook-pro-16-m4-2024-a3186-a3403-diagnostic',
+      date: '2026-09-16',
+      outward: 'W1B',
+      inStock: true
+    });
+    assert.equal(body.device, 'macbook');
+    assert.equal(body.in_stock, true);
+    assert.equal(body.eligible, false);
+  });
+
   it('mail-in / outer postcode and iPad fail closed', () => {
     assert.equal(evaluateEligibility({
       handle: 'macbook-pro-16-inch-screen-replacement',
@@ -63,29 +78,112 @@ describe('same-day eligibility proxy', () => {
     }).eligible, false);
   });
 
+  it('mapped handle uses ledger qty and the slot store, not prototype stock', () => {
+    const store = createSlotStore();
+    store.reserve('2026-09-16', 'seed-1');
+    const body = evaluateEligibility({
+      handle: 'iphone-16-pro-max-oled-screen-repair',
+      date: '2026-09-16',
+      outward: 'W1B',
+      map: { 'iphone-16-pro-max-oled-screen-repair': { part_ids: ['P1'], available: 2 } },
+      slotStore: store
+    });
+    assert.equal(body.in_stock, true);
+    assert.equal(body.slots_remaining, 2);
+    assert.equal(body.eligible, true);
+    const empty = evaluateEligibility({
+      handle: 'iphone-16-pro-max-oled-screen-repair',
+      date: '2026-09-16',
+      outward: 'W1B',
+      map: { 'other-handle': { part_ids: ['P1'], available: 9 } },
+      slotStore: store
+    });
+    assert.equal(empty.in_stock, false);
+    assert.equal(empty.eligible, false);
+  });
+
   it('GET /same-day/eligibility returns JSON with CORS', async () => {
+    setRuntime(createRuntime({ map: {}, reserveSecret: 'test' }));
+    const server = start(0);
+    await new Promise((resolve) => server.once('listening', resolve));
+    try {
+      const { port } = server.address();
+      const url = 'http://127.0.0.1:' + port + '/same-day/eligibility?handle=macbook-air-screen&date=2026-09-16&outward=W1B';
+      const res = await new Promise((resolve, reject) => {
+        http.get(url, resolve).on('error', reject);
+      });
+      assert.equal(res.statusCode, 200);
+      const acao = res.headers['access-control-allow-origin'];
+      assert.equal(acao, '*');
+      assert.equal(String(acao).includes(','), false);
+      const raw = await new Promise((resolve, reject) => {
+        let buf = '';
+        res.on('data', (c) => { buf += c; });
+        res.on('end', () => resolve(buf));
+        res.on('error', reject);
+      });
+      const body = JSON.parse(raw);
+      assert.equal(body.eligible, true);
+      assert.equal(body.device, 'macbook');
+      assert.equal(body.price_pence, 14900);
+    } finally {
+      await new Promise((resolve) => server.close(resolve));
+    }
+  });
+
+  it('POST /same-day/reserve binds the cap and rejects a fourth booking', async () => {
+    setRuntime(createRuntime({ map: {}, reserveSecret: 'test', slotStore: createSlotStore() }));
     const server = start(0);
     await new Promise((resolve) => server.once('listening', resolve));
     const { port } = server.address();
-    const url = 'http://127.0.0.1:' + port + '/same-day/eligibility?handle=macbook-air-screen&date=2026-09-16&outward=W1B';
-    const res = await new Promise((resolve, reject) => {
-      http.get(url, resolve).on('error', reject);
-    });
-    assert.equal(res.statusCode, 200);
-    const acao = res.headers['access-control-allow-origin'];
-    assert.equal(acao, '*');
-    assert.equal(String(acao).includes(','), false);
-    const raw = await new Promise((resolve, reject) => {
-      let buf = '';
-      res.on('data', (c) => { buf += c; });
-      res.on('end', () => resolve(buf));
-      res.on('error', reject);
-    });
-    const body = JSON.parse(raw);
-    assert.equal(body.eligible, true);
-    assert.equal(body.device, 'macbook');
-    assert.equal(body.price_pence, 14900);
-    await new Promise((resolve) => server.close(resolve));
+
+    async function reserve(orderId) {
+      return new Promise((resolve, reject) => {
+        const req = http.request({
+          hostname: '127.0.0.1',
+          port,
+          path: '/same-day/reserve',
+          method: 'POST',
+          headers: {
+            Authorization: 'Bearer test',
+            'Content-Type': 'application/json'
+          }
+        }, (res) => {
+          let buf = '';
+          res.on('data', (c) => { buf += c; });
+          res.on('end', () => resolve({ status: res.statusCode, body: JSON.parse(buf) }));
+        });
+        req.on('error', reject);
+        req.end(JSON.stringify({ date: '2026-09-16', orderId }));
+      });
+    }
+
+    try {
+      assert.equal((await reserve('1')).body.ok, true);
+      assert.equal((await reserve('2')).body.ok, true);
+      assert.equal((await reserve('3')).body.slots_remaining, 0);
+      const fourth = await reserve('4');
+      assert.equal(fourth.status, 200);
+      assert.equal(fourth.body.ok, false);
+      const denied = await new Promise((resolve, reject) => {
+        const req = http.request({
+          hostname: '127.0.0.1',
+          port,
+          path: '/same-day/reserve',
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        }, (res) => {
+          let buf = '';
+          res.on('data', (c) => { buf += c; });
+          res.on('end', () => resolve({ status: res.statusCode, body: JSON.parse(buf) }));
+        });
+        req.on('error', reject);
+        req.end(JSON.stringify({ date: '2026-09-16', orderId: 'x' }));
+      });
+      assert.equal(denied.status, 401);
+    } finally {
+      await new Promise((resolve) => server.close(resolve));
+    }
   });
 
   it('nginx snippet does not emit a second Access-Control-Allow-Origin', () => {
