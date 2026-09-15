@@ -1,6 +1,7 @@
 'use strict';
 
 const { resolveShopifyProductId, resolvePartIdsForHandle } = require('./handle-map');
+const { shopifyProductIdFromHandle } = require('./shopify-handle');
 
 const PRODUCT_PARTS_RELATION = 'connect_boards8';
 const PART_AVAILABLE = 'formula_mkv86xh7';
@@ -32,9 +33,12 @@ function availableFromPart(part) {
   return Number.isFinite(n) ? n : 0;
 }
 
-async function lookupMondayStock({ handle, map, mondayRequest, productsBoardId, productIdColumnId }) {
+async function lookupMondayStock({ handle, map, mondayRequest, productsBoardId, productIdColumnId, shopifyLookup }) {
   const mappedIds = resolvePartIdsForHandle(handle, map);
-  const shopifyProductId = resolveShopifyProductId(handle, map);
+  let shopifyProductId = resolveShopifyProductId(handle, map);
+  if (!shopifyProductId && shopifyLookup) {
+    shopifyProductId = await shopifyLookup(handle);
+  }
   if (!shopifyProductId && !mappedIds.length) return { inStock: false, partIds: [], reason: 'unmapped' };
   if (!mondayRequest) return { inStock: false, partIds: mappedIds, reason: 'no_monday' };
 
@@ -74,7 +78,8 @@ function createMondayStockProvider(opts = {}) {
         map,
         mondayRequest: opts.mondayRequest,
         productsBoardId: opts.productsBoardId,
-        productIdColumnId: opts.productIdColumnId
+        productIdColumnId: opts.productIdColumnId,
+        shopifyLookup: opts.shopifyLookup || shopifyProductIdFromHandle
       });
       cache.set(key, { at: now, inStock: result.inStock });
       return result.inStock;

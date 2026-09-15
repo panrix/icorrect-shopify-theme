@@ -25,6 +25,27 @@ describe('Monday stock lookup', () => {
     assert.equal(result.reason, 'unmapped');
   });
 
+  it('resolves an unmapped handle via Shopify product id then Monday parts', async () => {
+    const result = await lookupMondayStock({
+      handle: 'a3186-screen-replacement',
+      map: {},
+      shopifyLookup: async () => '999',
+      mondayRequest: async (job) => {
+        if (job.kind === 'products') {
+          return {
+            items: [{
+              id: 'M1',
+              column_values: [{ id: 'connect_boards8', linked_item_ids: ['P9'] }]
+            }]
+          };
+        }
+        return { items: [{ id: 'P9', column_values: [{ id: 'formula_mkv86xh7', text: '3' }] }] };
+      }
+    });
+    assert.equal(result.inStock, true);
+    assert.deepEqual(result.partIds, ['P9']);
+  });
+
   it('is in stock when a linked part has available >= 1', async () => {
     const result = await lookupMondayStock({
       handle: 'iphone-16-pro-max-oled-screen-repair',
