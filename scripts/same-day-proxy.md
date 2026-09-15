@@ -25,6 +25,7 @@ on the VPS (`127.0.0.1:8061`).
 1. Handle → Monday part ids from `handle-map.json` (generated on the VPS).
 2. Live Monday qty when `MONDAY_AUTOMATIONS_TOKEN` is set. Cache 60s.
    Unmapped handle or Monday down → `in_stock: false`.
+   Handles containing `diagnostic` are never eligible (Fast £79 only).
 3. Slot store: 3 same-day jobs per date, persisted to `data/slots.json`.
 4. Prototype stock (`SAME_DAY_PROTOTYPE_STOCK=1`) is only used when the
    map is empty. Production sets `SAME_DAY_PROTOTYPE_STOCK=0`.

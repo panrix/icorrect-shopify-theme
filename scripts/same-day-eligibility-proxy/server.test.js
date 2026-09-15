@@ -48,6 +48,18 @@ describe('same-day eligibility proxy', () => {
     assert.equal(body.eligible, true);
   });
 
+  it('diagnostic handles fail closed even when Monday has stock', () => {
+    const body = evaluateEligibility({
+      handle: 'macbook-pro-16-m4-2024-a3186-a3403-diagnostic',
+      date: '2026-09-16',
+      outward: 'W1B',
+      inStock: true
+    });
+    assert.equal(body.device, 'macbook');
+    assert.equal(body.in_stock, true);
+    assert.equal(body.eligible, false);
+  });
+
   it('mail-in / outer postcode and iPad fail closed', () => {
     assert.equal(evaluateEligibility({
       handle: 'macbook-pro-16-inch-screen-replacement',

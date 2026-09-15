@@ -148,6 +148,8 @@ function evaluateEligibility({
   const device = deviceHint === 'iphone' || deviceHint === 'macbook'
     ? deviceHint
     : deviceFromHandle(handle);
+  const diagnostic = String(handle || '').toLowerCase().includes('diagnostic')
+    || deviceHint === 'diagnostic';
   const band = lookupBand(outward);
   const stock = resolveInStockSync({ handle, device, map, availabilityById, inStock });
   const slots = slotsRemaining != null
@@ -157,7 +159,7 @@ function evaluateEligibility({
   const cutoffHour = sameDayCutoffHour(device, band);
   const isToday = date && String(date) === wall.iso;
   const cutoff = !isToday || (cutoffHour != null && wall.hour < cutoffHour);
-  const deviceOk = device === 'iphone' || device === 'macbook';
+  const deviceOk = !diagnostic && (device === 'iphone' || device === 'macbook');
   const bandOk = band === 'B1' || band === 'B2';
   const eligible = Boolean(stock && slots >= 1 && bandOk && deviceOk);
   return {
