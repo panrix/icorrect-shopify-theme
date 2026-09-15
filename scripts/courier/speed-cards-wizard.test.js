@@ -93,6 +93,15 @@ describe('quote-wizard same-day / Fast wiring', () => {
   });
 });
 
+describe('same-day cart line properties', () => {
+  it('speed variant carries Turnaround and Same-day date for the paid reserve', () => {
+    const fn = extractFunction(liquid, 'buildCartItems');
+    assert.match(fn, /speedProps\['Turnaround'\] = 'Same-day'/);
+    assert.match(fn, /speedProps\['Same-day date'\] = S\.sameDayDate/);
+    assert.match(fn, /items\.push\(\{ id: speedVid, quantity: 1, properties: speedProps \}\)/);
+  });
+});
+
 describe('default stock stub hides same-day', () => {
   const E = require('../../assets/same-day-eligibility.js');
   it('inStock false + empty dates → no available dateOptions', () => {
