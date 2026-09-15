@@ -4,7 +4,7 @@
   "private": true,
   "description": "iCorrect Shopify theme (Dawn-based) — developer tooling, tests, and Shopify CLI wrapper scripts.",
   "scripts": {
-    "test": "node --test \"scripts/courier/*.test.js\"",
+    "test": "node --test \"scripts/courier/*.test.js\" \"scripts/same-day-eligibility-proxy/*.test.js\"",
     "theme:check": "shopify theme check",
     "theme:dev": "shopify theme dev",
     "theme:pull": "shopify theme pull",

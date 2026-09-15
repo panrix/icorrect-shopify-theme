@@ -1,0 +1,20 @@
+[Unit]
+Description=iCorrect public same-day eligibility proxy (prototype)
+After=network.target
+
+[Service]
+Type=simple
+User=ricky
+WorkingDirectory=/home/ricky/apps/same-day-eligibility-proxy
+Environment=PORT=8061
+Environment=SAME_DAY_PROTOTYPE_STOCK=1
+Environment=SAME_DAY_BANDS_JSON=/home/ricky/apps/same-day-eligibility-proxy/courier-london-bands.json
+ExecStart=/usr/bin/node /home/ricky/apps/same-day-eligibility-proxy/server.js
+Restart=on-failure
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=same-day-eligibility
+
+[Install]
+WantedBy=multi-user.target
