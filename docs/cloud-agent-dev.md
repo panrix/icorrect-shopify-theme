@@ -33,21 +33,24 @@ That is the same URL shape other agents already use for QA.
 
 ## Delivery pipeline
 
-You describe the change. The agent designs the UI, updates a **preview** theme,
-runs tests, gets QA on the real storefront, and only then merges to live via
-GitHub.
+You describe the change. The agent proposes the UI and waits for confirmation,
+then updates a **preview** theme, runs tests, gets QA on the real storefront,
+and only then merges to live via GitHub.
 
 1. **Brief** — the change (copy, flow, a different quote-wizard module, etc.).
-2. **Design + implement** in the real theme files. Ignore the standalone HTML
-   prototypes at the repo root.
-3. **Preview** — `shopify theme dev` or `theme push --unpublished` using the VPS
+2. **Design — confirm with Ricky** — layout, copy, and behaviour. Do not
+   implement customer-facing UI until he signs off. Ignore the standalone HTML
+   prototypes at the repo root as “the site”; they may be a visual reference
+   only if he says so.
+3. **Implement** only the confirmed design in the real theme files.
+4. **Preview** — `shopify theme dev` or `theme push --unpublished` using the VPS
    token. Never `--live` / never publish `158358438141`.
    Open `https://icorrect.co.uk/?preview_theme_id=<id>` and click the real wizard.
-4. **Tests** — `npm test` and `npm run theme:check` must be green. Add tests for
+5. **Tests** — `npm test` and `npm run theme:check` must be green. Add tests for
    new quote/courier behaviour.
-5. **QA** — browser pass on the preview URL (happy path + edges). Write a
+6. **QA** — browser pass on the preview URL (happy path + edges). Write a
    `docs/QA-PR…` note in the existing style.
-6. **Live** — merge the PR to `main`. Shopify’s GitHub integration updates the
+7. **Live** — merge the PR to `main`. Shopify’s GitHub integration updates the
    live theme. No Admin API publish.
 
 To push an unpublished staging theme (same pattern as #53):
