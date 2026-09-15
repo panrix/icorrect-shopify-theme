@@ -1,7 +1,7 @@
 # QA — PR #78 collect-first quote + public eligibility — 2026-09-15
 
 **Branch:** `cursor/quote-collect-first-ui-a035`  
-**HEAD at this QA:** collect-first branch after CORS + Same-day Back-date fix  
+**HEAD at this QA:** `83b3a3c` (`fix: keep last eligibility while a new fetch is in flight`)  
 **PR:** https://github.com/panrix/icorrect-shopify-theme/pull/78 (draft)  
 **Preview:** https://icorrect.co.uk/?preview_theme_id=213273968893  
 **Theme:** `213273968893` `STAGING — same-day express` (unpublished)  
