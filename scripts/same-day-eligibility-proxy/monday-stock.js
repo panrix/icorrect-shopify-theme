@@ -36,7 +36,7 @@ function availableFromPart(part) {
 async function lookupMondayStock({ handle, map, mondayRequest, productsBoardId, productIdColumnId, shopifyLookup }) {
   const mappedIds = resolvePartIdsForHandle(handle, map);
   let shopifyProductId = resolveShopifyProductId(handle, map);
-  if (!shopifyProductId && shopifyLookup) {
+  if (!shopifyProductId && !mappedIds.length && shopifyLookup) {
     shopifyProductId = await shopifyLookup(handle);
   }
   if (!shopifyProductId && !mappedIds.length) return { inStock: false, partIds: [], reason: 'unmapped' };
@@ -67,26 +67,34 @@ async function lookupMondayStock({ handle, map, mondayRequest, productsBoardId, 
 function createMondayStockProvider(opts = {}) {
   const cacheMs = opts.cacheMs == null ? 60000 : opts.cacheMs;
   const cache = new Map();
+  const inflight = new Map();
   return async function stockProvider({ handle, map }) {
     const key = String(handle || '');
     const now = Date.now();
     const hit = cache.get(key);
     if (hit && now - hit.at < cacheMs) return hit.inStock;
-    try {
-      const result = await lookupMondayStock({
-        handle,
-        map,
-        mondayRequest: opts.mondayRequest,
-        productsBoardId: opts.productsBoardId,
-        productIdColumnId: opts.productIdColumnId,
-        shopifyLookup: opts.shopifyLookup || shopifyProductIdFromHandle
-      });
-      cache.set(key, { at: now, inStock: result.inStock });
-      return result.inStock;
-    } catch (e) {
-      cache.set(key, { at: now, inStock: false });
-      return false;
-    }
+    if (inflight.has(key)) return inflight.get(key);
+    const pending = (async () => {
+      try {
+        const result = await lookupMondayStock({
+          handle,
+          map,
+          mondayRequest: opts.mondayRequest,
+          productsBoardId: opts.productsBoardId,
+          productIdColumnId: opts.productIdColumnId,
+          shopifyLookup: opts.shopifyLookup || shopifyProductIdFromHandle
+        });
+        cache.set(key, { at: Date.now(), inStock: result.inStock });
+        return result.inStock;
+      } catch (e) {
+        cache.set(key, { at: Date.now(), inStock: false });
+        return false;
+      } finally {
+        inflight.delete(key);
+      }
+    })();
+    inflight.set(key, pending);
+    return pending;
   };
 }
 

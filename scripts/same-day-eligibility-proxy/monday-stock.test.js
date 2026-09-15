@@ -2,7 +2,7 @@
 
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { lookupMondayStock, parseLinkedIds, availableFromPart } = require('./monday-stock');
+const { lookupMondayStock, parseLinkedIds, availableFromPart, createMondayStockProvider } = require('./monday-stock');
 
 describe('Monday stock lookup', () => {
   it('parses linked part ids and available qty', () => {
@@ -66,5 +66,28 @@ describe('Monday stock lookup', () => {
       })
     });
     assert.equal(result.inStock, false);
+  });
+
+  it('coalesces parallel lookups for the same handle', async () => {
+    let calls = 0;
+    const map = { 'iphone-16-pro-max-screen-repair': { part_ids: ['P1'] } };
+    const provider = createMondayStockProvider({
+      cacheMs: 60000,
+      shopifyLookup: async () => {
+        throw new Error('mapped part ids must not hit Shopify');
+      },
+      mondayRequest: async () => {
+        calls += 1;
+        await new Promise((r) => setTimeout(r, 20));
+        return { items: [{ id: 'P1', column_values: [{ id: 'formula_mkv86xh7', text: '2' }] }] };
+      }
+    });
+    const rows = await Promise.all([
+      provider({ handle: 'iphone-16-pro-max-screen-repair', map }),
+      provider({ handle: 'iphone-16-pro-max-screen-repair', map }),
+      provider({ handle: 'iphone-16-pro-max-screen-repair', map })
+    ]);
+    assert.deepEqual(rows, [true, true, true]);
+    assert.equal(calls, 1);
   });
 });

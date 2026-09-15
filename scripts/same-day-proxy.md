@@ -7,8 +7,10 @@ Public (browser) path:
 `device` is `iphone` or `macbook` from the wizard. Shopify handles often omit
 those words, so device is taken from `device=` first, then the handle.
 
-The quote wizard fetches this with no secret. Fail closed if the URL is
-blank, times out, 404s, or CORS-fails.
+The quote wizard fetches this with no secret (5s abort; live Monday +
+Shopify often take ~2s on a cold handle). Fail closed if the URL is
+blank, times out, 404s, or CORS-fails. The handle must be the repair
+product handle, not the collection handle.
 
 Nginx on `api.icorrect.co.uk` must **not** add a second
 `Access-Control-Allow-Origin`. The Node process already sends `*`.

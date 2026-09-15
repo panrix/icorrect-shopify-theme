@@ -809,7 +809,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   /* =============================================
      STATE
      ============================================= */
-  var S = { device: null, model: null, modelGroup: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null, route: null, repairType: null, entrySource: null , preVariantId: null, preRepairType: null, sameDayDate: null, speed: 'standard' };
+  var S = { device: null, model: null, modelGroup: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null, route: null, repairType: null, repairHandle: null, entrySource: null , preVariantId: null, preRepairType: null, sameDayDate: null, speed: 'standard' };
   var _expressData = null;
   var _collectionCache = {}, _productCache = {}, _repairsMap = {}, _collectionProducts = [], _trackedSteps = {}, _trackedOps = {};
   var _stepStartTime = Date.now();
@@ -2727,7 +2727,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         try { device = S.device || ''; } catch (e1) { device = ''; }
       }
       var ctrl = new AbortController();
-      t = setTimeout(function () { ctrl.abort(); }, 1500);
+      t = setTimeout(function () { ctrl.abort(); }, 5000);
       var res = await fetch(url + '?handle=' + encodeURIComponent(handle) + '&date=' + isoDate + '&outward=' + encodeURIComponent(outward) + '&device=' + encodeURIComponent(device || ''), { signal: ctrl.signal, credentials: 'omit' });
       if (!res.ok) return { inStock: false, slotsRemaining: 0 };
       var j = await res.json();
@@ -2740,10 +2740,12 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   }
 
   function sameDayEligibilityHandle() {
-    var quotedCard = document.querySelector('.qw-quoted-card');
+    if (S.repairHandle) return S.repairHandle;
+    var quotedCard = document.getElementById('qwResCard');
     var repairHandle = quotedCard && quotedCard.dataset && quotedCard.dataset.repairHandle;
+    if (repairHandle) return repairHandle;
     var ctx = window.WIZARD_CONTEXT || {};
-    return repairHandle || S.collectionHandle || ctx.productHandle || S.device || '';
+    return ctx.productHandle || '';
   }
 
   function sameDayEligibilityIsos() {
@@ -4252,6 +4254,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       if (product.courierTier) tagList.push('courier:' + product.courierTier);
       resEl.dataset.tags = JSON.stringify(tagList);
       if (iss && iss.repairType) S.repairType = iss.repairType;
+      if (product && product.handle) S.repairHandle = product.handle;
       if (window.ICorrectQuotedRepair) {
         window.ICorrectQuotedRepair.stampQuotedRepair(resEl, {
           title: product.title || '',
@@ -4378,6 +4381,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     (function stampDiagnosticRepair(){
       var resEl = document.getElementById('qwResCard');
       if (!resEl) return;
+      if (diagProduct && diagProduct.handle) S.repairHandle = diagProduct.handle;
       if (window.ICorrectQuotedRepair) {
         window.ICorrectQuotedRepair.stampQuotedRepair(resEl, {
           title: (fullDiag && fullDiag.title) || diagProduct.title || 'Diagnostic',
@@ -4862,7 +4866,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
      RESET
      ============================================= */
   function reset() {
-    S.device = null; S.model = null; S.modelGroup = null; S.fault = null; S.issue = null; S.step = 1; S.collectionHandle = null; S.route = null; S.repairType = null; S.sameDayDate = null; S.speed = 'standard'; _repairsMap = {};
+    S.device = null; S.model = null; S.modelGroup = null; S.fault = null; S.issue = null; S.step = 1; S.collectionHandle = null; S.route = null; S.repairType = null; S.repairHandle = null; S.sameDayDate = null; S.speed = 'standard'; _repairsMap = {};
     _courierQuote = null;
     _postcodeResolved = false;
     _quoteShownCaptured = false;
