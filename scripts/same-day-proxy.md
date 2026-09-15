@@ -8,7 +8,11 @@ Public (browser) path:
 those words, so prototype stock keys off `device` first.
 
 The quote wizard fetches this with no secret. Fail closed if the URL is
-blank, times out, or 404s.
+blank, times out, 404s, or CORS-fails.
+
+Nginx on `api.icorrect.co.uk` must **not** add a second
+`Access-Control-Allow-Origin`. The Node process already sends `*`.
+Chromium treats `*, *` as invalid and the wizard hides Same-day.
 
 ## Prototype service (this repo)
 

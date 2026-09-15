@@ -129,6 +129,8 @@ function evaluateEligibility({ handle, date, outward, device: deviceHint, now } 
 }
 
 function cors(res) {
+  /* Single ACAO only. Nginx must hide this header before re-adding it;
+     browsers reject Access-Control-Allow-Origin: *, * */
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');

@@ -72,7 +72,9 @@ describe('same-day eligibility proxy', () => {
       http.get(url, resolve).on('error', reject);
     });
     assert.equal(res.statusCode, 200);
-    assert.equal(res.headers['access-control-allow-origin'], '*');
+    const acao = res.headers['access-control-allow-origin'];
+    assert.equal(acao, '*');
+    assert.equal(String(acao).includes(','), false);
     const raw = await new Promise((resolve, reject) => {
       let buf = '';
       res.on('data', (c) => { buf += c; });
@@ -84,5 +86,13 @@ describe('same-day eligibility proxy', () => {
     assert.equal(body.device, 'macbook');
     assert.equal(body.price_pence, 14900);
     await new Promise((resolve) => server.close(resolve));
+  });
+
+  it('nginx snippet does not emit a second Access-Control-Allow-Origin', () => {
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const nginx = fs.readFileSync(path.join(__dirname, 'nginx-location.conf'), 'utf8');
+    assert.doesNotMatch(nginx, /^\s*add_header\s+Access-Control-Allow-Origin/m);
+    assert.match(nginx, /proxy_pass http:\/\/127\.0\.0\.1:8061/);
   });
 });
