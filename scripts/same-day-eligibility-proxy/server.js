@@ -103,8 +103,10 @@ function prototypeInStock(handle, device) {
   return device === 'iphone' || device === 'macbook';
 }
 
-function evaluateEligibility({ handle, date, outward, now } = {}) {
-  const device = deviceFromHandle(handle);
+function evaluateEligibility({ handle, date, outward, device: deviceHint, now } = {}) {
+  const device = deviceHint === 'iphone' || deviceHint === 'macbook'
+    ? deviceHint
+    : deviceFromHandle(handle);
   const band = lookupBand(outward);
   const inStock = prototypeInStock(handle, device);
   const slots = SLOT_CAP;
@@ -163,7 +165,8 @@ function handleRequest(req, res) {
   const body = evaluateEligibility({
     handle: url.searchParams.get('handle'),
     date: url.searchParams.get('date'),
-    outward: url.searchParams.get('outward')
+    outward: url.searchParams.get('outward'),
+    device: url.searchParams.get('device')
   });
   send(res, 200, body);
 }

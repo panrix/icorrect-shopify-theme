@@ -2717,14 +2717,17 @@ window.__icorrectQuote = window.__icorrectQuote || {};
      webhook sees same-day-iphone or turn-around-time-fatest-4-hours, it
      should reserve; if ok === false, remove/refund the line and Slack
      SAME-DAY RESERVE FAILED. See scripts/same-day-proxy.md. */
-  async function fetchSameDayEligibility(handle, isoDate, outward) {
+  async function fetchSameDayEligibility(handle, isoDate, outward, device) {
     var t;
     try {
       var url = (window.__sameDayConfig && window.__sameDayConfig.eligibilityUrl) || '';
       if (!url) return { inStock: false, slotsRemaining: 0 };
+      if (!device) {
+        try { device = S.device || ''; } catch (e1) { device = ''; }
+      }
       var ctrl = new AbortController();
       t = setTimeout(function () { ctrl.abort(); }, 1500);
-      var res = await fetch(url + '?handle=' + encodeURIComponent(handle) + '&date=' + isoDate + '&outward=' + encodeURIComponent(outward), { signal: ctrl.signal, credentials: 'omit' });
+      var res = await fetch(url + '?handle=' + encodeURIComponent(handle) + '&date=' + isoDate + '&outward=' + encodeURIComponent(outward) + '&device=' + encodeURIComponent(device || ''), { signal: ctrl.signal, credentials: 'omit' });
       if (!res.ok) return { inStock: false, slotsRemaining: 0 };
       var j = await res.json();
       return { inStock: !!j.in_stock, slotsRemaining: j.slots_remaining | 0, eligible: !!j.eligible };
@@ -2765,7 +2768,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     if (!handle || !outward) return;
     var isos = sameDayEligibilityIsos();
     Promise.all(isos.map(function (iso) {
-      return fetchSameDayEligibility(handle, iso, outward).then(function (result) {
+      return fetchSameDayEligibility(handle, iso, outward, S.device).then(function (result) {
         return { iso: iso, result: result };
       });
     })).then(function (rows) {

@@ -33,6 +33,18 @@ describe('same-day eligibility proxy', () => {
     assert.equal(body.price_pence, 4900);
   });
 
+  it('uses device= when the Shopify handle has no macbook/iphone token', () => {
+    const body = evaluateEligibility({
+      handle: 'a3186-screen-replacement',
+      date: '2026-09-16',
+      outward: 'W1B',
+      device: 'macbook'
+    });
+    assert.equal(body.device, 'macbook');
+    assert.equal(body.in_stock, true);
+    assert.equal(body.eligible, true);
+  });
+
   it('mail-in / outer postcode and iPad fail closed', () => {
     assert.equal(evaluateEligibility({
       handle: 'macbook-pro-16-inch-screen-replacement',

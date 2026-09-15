@@ -113,7 +113,7 @@ describe('fetchSameDayEligibility', () => {
     assert.deepEqual(result, { inStock: true, slotsRemaining: 3, eligible: true });
     assert.equal(
       calls[0].url,
-      'https://api.icorrect.co.uk/same-day/eligibility?handle=iphone-15-screen&date=2026-09-14&outward=W1'
+      'https://api.icorrect.co.uk/same-day/eligibility?handle=iphone-15-screen&date=2026-09-14&outward=W1&device='
     );
     assert.equal(calls[0].opts.credentials, 'omit');
     assert.ok(calls[0].opts.signal);

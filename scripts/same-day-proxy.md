@@ -2,7 +2,10 @@
 
 Public (browser) path:
 
-`https://api.icorrect.co.uk/same-day/eligibility?handle=&date=&outward=`
+`https://api.icorrect.co.uk/same-day/eligibility?handle=&date=&outward=&device=`
+
+`device` is `iphone` or `macbook` from the wizard. Shopify handles often omit
+those words, so prototype stock keys off `device` first.
 
 The quote wizard fetches this with no secret. Fail closed if the URL is
 blank, times out, or 404s.
