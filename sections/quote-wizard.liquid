@@ -2251,7 +2251,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           '</div>' +
         '</div>' +
         '<div class="qw-slot-panel" id="qwSlotPanel" hidden>' +
-          '<div class="qw-section-label">Pick a collection window</div>' +
+          '<div class="qw-section-label">When should we collect?</div>' +
+          '<p class="qw-slot-hint">This is the booking date. Same-day uses this strip — pick another day here to book ahead.</p>' +
           '<div class="qw-date-row">' +
             '<div class="qw-date-strip" id="qwSlotDates" role="listbox" aria-label="Collection dates"></div>' +
             '<button type="button" class="qw-date-more" id="qwDateMore" aria-label="Open calendar for more dates" title="More dates">' +
@@ -2271,6 +2272,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           '</div>' +
         '</div>' +
         '<div class="qw-mailin-panel" id="qwMailinPanel" hidden></div>' +
+        '<div class="qw-opt-section qw-speed-mount" id="qwTurnaroundMount" hidden></div>' +
         '<div class="qw-journey-host" id="qwJourney" hidden></div>' +
       '</div>' +
       QW_PRICE_SLOT +
@@ -2279,10 +2281,13 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   }
 
   function dateButtonHtml(d, active) {
+    var tag = (selectedSpeed() === 'same_day' && active)
+      ? '<span class="qw-date-tag">Back same day</span>'
+      : '';
     return '<button type="button" class="qw-date-btn' + (active ? ' active' : '') + '" data-iso="' + d.iso + '" role="option" aria-selected="' + (active ? 'true' : 'false') + '">' +
       '<span class="qw-date-dow">' + (d.headline || d.labelDow) + '</span>' +
       '<span class="qw-date-day">' + d.labelDay + '</span>' +
-      '<span class="qw-date-mon">' + d.labelMon + '</span></button>';
+      '<span class="qw-date-mon">' + d.labelMon + '</span>' + tag + '</button>';
   }
 
   function stripDatesAround(allDates, selectedIso, count) {
@@ -2349,6 +2354,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     if (!found) return;
     _collectionSlot.date = found;
     _standardCollectIso = found.iso || _standardCollectIso;
+    if (selectedSpeed() === 'same_day') S.sameDayDate = found.iso;
     paintDateStrip();
     syncIcorrectQuote();
     refreshServiceJourney();
@@ -2400,6 +2406,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         btn.classList.add('active');
         btn.setAttribute('aria-selected', 'true');
         var id = btn.getAttribute('data-part');
+        if (id === 'PM' && selectedSpeed() === 'same_day') return;
         _collectionSlot.part = parts.filter(function(p) { return p.id === id; })[0] || null;
         syncIcorrectQuote();
         refreshServiceJourney();
@@ -2424,8 +2431,23 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     }
 
     panel.hidden = false;
+    lockSameDayAfternoon();
     refreshServiceJourney();
     trackSlotSelected();
+  }
+
+  function lockSameDayAfternoon() {
+    var same = selectedSpeed() === 'same_day';
+    var partsEl = document.getElementById('qwSlotParts');
+    if (partsEl) {
+      partsEl.querySelectorAll('.qw-window-btn').forEach(function(b) {
+        var pm = b.getAttribute('data-part') === 'PM';
+        b.disabled = !!(pm && same);
+        if (pm && same) b.setAttribute('aria-disabled', 'true');
+        else b.removeAttribute('aria-disabled');
+      });
+    }
+    if (same) ensureMorningCollectionWindow();
   }
 
   function applyCourierQuoteToUI(quote) {
@@ -2873,14 +2895,26 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       ? '<div class="qw-opt-price">+' + gbp.format(opts.price) + '</div>'
       : '<div class="qw-opt-price free">Included</div>';
     var extra = opts.extraInner || '';
+    var back = opts.back ? '<div class="qw-opt-back">' + esc(opts.back) + '</div>' : '';
     return '<div class="qw-opt-card' + sel + '" data-opt="speed" data-speed="' + opts.speed +
       '" data-add="' + (opts.price || 0) + '" data-vid="' + (opts.vid || 0) +
       '" data-date="' + esc(opts.dateIso || '') + '" tabindex="0">' +
       '<div class="qw-opt-name">' + esc(opts.name) + '</div>' +
+      back +
       '<div class="qw-opt-meta">' + esc(opts.meta) + '</div>' +
       extra +
       priceHtml +
     '</div>';
+  }
+
+  function speedBackLabel(speed) {
+    var iso = (_collectionSlot.date && _collectionSlot.date.iso) || _standardCollectIso || '';
+    var collect = iso ? parseISODate(iso) : null;
+    if (!collect || !window.ICorrectRepairJourney) return '';
+    var opts = { speed: speed, diagnostic: S.route === 'diagnostic' };
+    var j = window.ICorrectRepairJourney.courierRepairJourney(S.device, collect, opts);
+    if (!j || !j.returnDate) return '';
+    return 'Back ' + formatJourneyDate(j.returnDate);
   }
 
   function buildTurnaroundCards(expressData) {
@@ -2900,7 +2934,15 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var current = selectedSpeed();
     if (current === 'fast' && !offers.fast) current = 'standard';
     if (current === 'same_day' && !offers.sameDay) current = 'standard';
-    if (offers.sameDay && picked) S.sameDayDate = picked.iso;
+    var collectIso = (_collectionSlot.date && _collectionSlot.date.iso) || '';
+    if (collectIso) {
+      for (var ci = 0; ci < dates.length; ci++) {
+        if (dates[ci].available && dates[ci].iso === collectIso) { picked = dates[ci]; break; }
+      }
+    }
+    if (current === 'same_day') {
+      if (picked) S.sameDayDate = picked.iso;
+    }
 
     var stdIso = standardCardCollectIso({
       selectedSpeed: current,
@@ -2927,6 +2969,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     cards.push(speedCardHtml({
       speed: 'standard',
       name: 'Standard',
+      back: speedBackLabel('standard'),
       meta: standardSpeedCopy(dateLabel, standardPostOnly),
       price: 0,
       vid: 0,
@@ -2937,6 +2980,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       cards.push(speedCardHtml({
         speed: 'fast',
         name: 'Fast',
+        back: speedBackLabel('fast'),
         meta: '1 working day',
         price: fastPrice,
         vid: fastVid,
@@ -2948,6 +2992,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       cards.push(speedCardHtml({
         speed: 'same_day',
         name: 'Same-day',
+        back: speedBackLabel('same_day'),
         meta: 'Collect and back the same day.',
         price: sdPrice,
         vid: sdVid,
@@ -2957,26 +3002,9 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       }));
     }
 
-    var chips = '';
-    if (offers.sameDay) {
-      var chipsInner = dates.filter(function(d) { return d.available; }).map(function(d) {
-        var on = picked && d.iso === picked.iso;
-        var lab = formatJourneyDate(parseISODate(d.iso));
-        return '<button type="button" class="qw-date-chip' + (on ? ' sel' : '') + '" data-iso="' + d.iso +
-          '" data-slots="' + d.slotsRemaining + '">' + esc(lab) +
-          '<span class="qw-slot-left">' + d.slotsRemaining + ' slots left</span></button>';
-      }).join('');
-      chips = '<div class="qw-sameday-dates" id="qwSameDayDates"' + (current === 'same_day' ? '' : ' hidden') + '>' +
-        '<button type="button" class="qw-book-ahead" id="qwBookAhead">Book a day ahead</button>' +
-        '<div class="qw-date-chip-row" id="qwDateChipRow" hidden>' + chipsInner + '</div>' +
-      '</div>';
-    }
-
-    return '<div class="qw-opt-section" id="qwTurnaroundMount">' +
-      '<div class="qw-opt-label">Repair turnaround</div>' +
-      '<div class="qw-opt-row">' + cards.join('') + '</div>' +
-      chips +
-    '</div>';
+    return '<div class="qw-opt-label">How fast should we turn it around?</div>' +
+      '<p class="qw-slot-hint">We collect the day you pick above. Each option shows when it comes back.</p>' +
+      '<div class="qw-opt-row">' + cards.join('') + '</div>';
   }
 
   function restoreStandardCollectionSlot() {
@@ -3028,27 +3056,23 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           c.classList.remove('sel');
         });
         card.classList.add('sel');
-        var datesEl = document.getElementById('qwSameDayDates');
-        if (datesEl) datesEl.hidden = card.getAttribute('data-speed') !== 'same_day';
         if (card.getAttribute('data-speed') === 'same_day') {
-          S.sameDayDate = card.getAttribute('data-date') || S.sameDayDate;
           ensureMorningCollectionWindow();
+          S.sameDayDate = card.getAttribute('data-date') || S.sameDayDate ||
+            ((_collectionSlot.date && _collectionSlot.date.iso) || '');
+          if (S.sameDayDate && typeof findSlotDate === 'function') {
+            var sameSlot = findSlotDate(S.sameDayDate);
+            if (sameSlot) _collectionSlot.date = sameSlot;
+          }
         } else {
           restoreStandardCollectionSlot();
         }
+        lockSameDayAfternoon();
+        if (typeof paintDateStrip === 'function') paintDateStrip();
         refreshAllInTotal();
         refreshServiceJourney();
       };
     });
-    var ahead = mount.querySelector('#qwBookAhead');
-    if (ahead) {
-      ahead.onclick = function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        var row = document.getElementById('qwDateChipRow');
-        if (row) row.hidden = !row.hidden;
-      };
-    }
     mount.querySelectorAll('.qw-date-chip').forEach(function(chip) {
       chip.onclick = function(e) {
         e.preventDefault();
@@ -3061,13 +3085,18 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   }
 
   function refreshTurnaroundCards() {
-    var extras = document.getElementById('qwResExtras');
-    if (!extras) return;
-    var html = buildTurnaroundCards();
     var mount = document.getElementById('qwTurnaroundMount');
-    if (mount) mount.outerHTML = html;
-    else extras.insertAdjacentHTML('beforeend', html);
-    wireTurnaroundMount(document.getElementById('qwTurnaroundMount'));
+    if (!mount) return;
+    if (!_postcodeResolved) {
+      mount.innerHTML = '';
+      mount.hidden = true;
+      return;
+    }
+    mount.innerHTML = buildTurnaroundCards();
+    mount.hidden = false;
+    wireTurnaroundMount(mount);
+    lockSameDayAfternoon();
+    if (typeof paintDateStrip === 'function') paintDateStrip();
     refreshAllInTotal();
   }
 
@@ -4167,7 +4196,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
     /* Postcode first; price trust sits after collection so mobile can see slots + ETA + price together. */
     var expressData = await detectExpressFromPage(product.handle);
-    var turnaroundHtml = buildTurnaroundCards(expressData);
+    buildTurnaroundCards(expressData);
     var deviceColors = getDeviceColors(S.device, S.model, iss.repairType);
     var colorHtml = buildColorSelector(deviceColors);
 
@@ -4191,7 +4220,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           (iss.refImages ? '<div class="qw-dustgate-imgs">' + iss.refImages.map(function(src,i){ return '<img src="' + src + '" alt="Reference image ' + (i+1) + '">'; }).join('') + '</div>' : '') +
         '</div>' +
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
-        '<div class="qw-res-extras" id="qwResExtras" style="padding:0 24px 8px;">' + colorHtml + turnaroundHtml + '</div>' +
+        '<div class="qw-res-extras" id="qwResExtras" style="padding:0 24px 8px;">' + colorHtml + '</div>' +
         '<div class="qw-res-cta">' +
           '<button class="qw-btn-book" id="qwBookBtn" disabled>Proceed to checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
           '<button class="qw-btn-email" id="qwEmailQuote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email me this quote</button>' +
@@ -4285,7 +4314,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var likelyHtml = estimateRows ? '<div class="qw-estimate">' + estimateRows + '</div>' : '';
 
     var expressData = await detectExpressFromPage(diagProduct.handle);
-    var turnaroundHtml = buildTurnaroundCards(expressData);
+    buildTurnaroundCards(expressData);
 
     var priceTrustHtml = diagPrice
       ? buildPriceTrustBlock(S.device, S.model, { gate: true, diagnostic: true, priceHtml: gbp.format(diagPrice) })
@@ -4311,7 +4340,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           likelyHtml +
         '</div>' +
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
-        '<div class="qw-res-extras" id="qwResExtras" style="padding:0 24px 8px;">' + turnaroundHtml + '</div>' +
+        '<div class="qw-res-extras" id="qwResExtras" style="padding:0 24px 8px;"></div>' +
         '<div class="qw-res-cta">' +
           '<button class="qw-btn-book" id="qwBookBtn" disabled>Proceed to checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
           '<button class="qw-btn-email" id="qwEmailQuote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email me this quote</button>' +

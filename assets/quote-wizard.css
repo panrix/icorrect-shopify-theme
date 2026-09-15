@@ -951,6 +951,30 @@ a.qw-d-val:hover { text-decoration: underline; text-underline-offset: 2px; }
   margin-top: 6px;
 }
 .qw-opt-price.free { color: var(--qw-green); }
+.qw-slot-hint {
+  margin: -4px 0 10px;
+  font: 400 12.5px/1.4 var(--font-sans);
+  color: var(--qw-text-3);
+}
+.qw-opt-back {
+  font: 600 13px/1.3 var(--font-sans);
+  color: var(--qw-text);
+  margin: 4px 0 2px;
+}
+.qw-date-tag {
+  display: block;
+  font: 600 9px var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #b7f0c8;
+  margin-top: 2px;
+}
+.qw-date-btn.active .qw-date-tag { color: #b7f0c8; }
+.qw-window-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.qw-speed-mount { margin-top: 8px; }
 .qw-slot-left {
   display: block;
   font: 400 12px var(--font-sans);
