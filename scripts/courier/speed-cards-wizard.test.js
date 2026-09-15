@@ -457,6 +457,7 @@ describe('leaving Same-day restores standard collection date', () => {
     const wire = extractFunction(liquid, 'wireTurnaroundMount');
     assert.match(wire, /restoreStandardCollectionSlot\s*\(/);
     assert.match(wire, /data-speed'\) === 'same_day'/);
+    assert.doesNotMatch(wire, /refreshTurnaroundCards\s*\(/);
     const restore = extractFunction(liquid, 'restoreStandardCollectionSlot');
     assert.match(restore, /_standardCollectIso/);
     assert.match(restore, /_collectionSlot\.date/);
