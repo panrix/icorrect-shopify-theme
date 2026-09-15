@@ -58,11 +58,18 @@ describe('theme wiring: proxy URL + no workshop secret', () => {
     assert.doesNotMatch(liquid, /[?&]token=/);
   });
 
-  it('fetches after postcode resolve and fail-closes the stub first', () => {
+  it('fetches after postcode resolve and fail-closes on error, not before fetch', () => {
     assert.match(liquid, /function fetchSameDayEligibility\s*\(/);
     assert.match(liquid, /function refreshSameDayEligibility\s*\(/);
     const apply = extractFunction(liquid, 'applyCourierQuoteToUI');
     assert.match(apply, /refreshSameDayEligibility\s*\(/);
+    const refresh = extractFunction(liquid, 'refreshSameDayEligibility');
+    const firstStub = refresh.indexOf('__sameDayEligibility = { inStock: false');
+    const fetchCall = refresh.indexOf('fetchSameDayEligibility');
+    const catchStub = refresh.lastIndexOf('__sameDayEligibility = { inStock: false');
+    assert.ok(fetchCall !== -1);
+    assert.ok(firstStub === -1 || firstStub > fetchCall, 'must not wipe stock before fetch');
+    assert.ok(catchStub > fetchCall, 'must fail-close after a failed fetch');
     assert.match(liquid, /AbortController/);
     assert.match(liquid, /1500/);
     assert.match(liquid, /credentials:\s*['"]omit['"]/);

@@ -53,4 +53,4 @@ Eligibility URLs included `&device=macbook` / `&device=iphone` (Shopify handles 
 - Nginx backups must stay **out** of `sites-enabled` (`*.bak-*` were being loaded and warning `conflicting server name`).
 - If someone re-adds `add_header Access-Control-Allow-Origin` on the location, Same-day disappears again in Chrome.
 - Same-day Back date uses the picked same-day ISO (not the Standard collect day).
-- Do not rebuild speed cards inside the speed click handler — that wiped `.sel` and forced a second click.
+- Persist `S.speed` and do not wipe eligibility stock before the fetch returns. Otherwise the first Same-day click snaps back to Standard.

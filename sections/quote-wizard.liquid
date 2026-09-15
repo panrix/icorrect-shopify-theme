@@ -2760,8 +2760,6 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
   function refreshSameDayEligibility() {
     var seq = ++_sameDayEligSeq;
-    window.__sameDayEligibility = { inStock: false, dates: {}, slotsRemaining: 0 };
-    refreshTurnaroundCards();
     var url = (window.__sameDayConfig && window.__sameDayConfig.eligibilityUrl) || '';
     if (!url || !_courierQuote) return;
     var handle = sameDayEligibilityHandle();
