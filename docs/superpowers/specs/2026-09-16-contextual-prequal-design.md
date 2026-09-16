@@ -120,16 +120,56 @@ A quote is **high-value** when the issue chip is already `diagnostic` **and** th
 - iPhone 15 Pro / 15 Pro Max / 16 / 16 Pro / 16 Pro Max + dead or liquid
 - iPad Pro M-series + dead or liquid
 
-A 2018 Air with a spill is diagnostic. It is not this treatment. Battery and cracked screen never are.
+A 2018 Air with a spill is diagnostic. It is not this treatment. Cheap batteries are never this treatment. A **priced MacBook Pro screen** is Lane B below, not a diagnostic.
+
+### Two convert lanes (Ricky 2026-09-16)
+
+These are how we “get it done quickly” and whether we eat collection.
+
+Live costs we already have:
+
+| Fact | Number |
+|---|---|
+| N7 | **B1**. Economy collect **£11.96** in the 10 Sep band file. RT ≈ **£24**. Night Gophr probe: outer B1 £11–£13, ride 36–60 min. |
+| MacBook Pro 16" M3 screen | Catalogue **£699**. Older family margin: 16" screen after parts **~£352**, after free B1 RT still **~£320**. Holds easily. |
+| Same model diagnostic | **£49**. After free B1 RT **£17–32** left. Conversion bet. |
+| Policy already | B1–B2 **≥£200** collection + return is **free**, baked in. N7 + £699 screen is already free collect. We are not inventing that subsidy. |
+| Same-day | MacBook **+£149**, 3 slots, morning collect, MacBook book-by **11:00**, unpublished. Not for diagnostics. |
+| Fast | MacBook **+£79** = 1 working day after collection. |
+
+#### Lane A — high-value diagnostic (unknown board)
+
+Goal: **get it in today**, diagnose fast, word back. Then they buy the repair or the replace.
+
+- Collect today on B1 (hour-collect language, economy ASAP — not Direct).
+- **Eat collection (one leg, ~£12)** on M-series Pro / 15–16 Pro dead-or-liquid only. Still charge the **£49** diagnostic. If they refuse the repair we still owe a return (~£12 more). Worst case ~£25 left on the fee. Acceptable **only** on those models, **B1 only**. Do not eat B2–B4 or old Airs.
+- Clock: **word back in 24 hours if the Saturday / Sunday bench queue has room.** The wizard today treats Sat as closed. This lane is the first place Saturday counts. **Fail closed:** if the Sat queue is full, copy says next working day, not 24 hours. Do not promise 24h as a blanket.
+- Same-day *repair* stays off. We do not burn a slot on an unknown board.
+- Fast +£79 on diagnostic stays as an optional paid pull-forward if 24h is full. Do not give Fast away on a £49 fee.
+
+This is the “at least let’s get it in” lane. The ticket we want is the repair after the quote, not the £49.
+
+#### Lane B — known high ticket, part in stock (the N7 16" M3)
+
+Goal: collect today because profit is already in the job. Upsell **time**.
+
+Example: MacBook Pro 16" M3 screen, N7, part on the shelf.
+
+- Collection is **already free** (≥£200 + B1). Taking the hit is the current policy. Do it. Do not show +£25.
+- **Included clock for this lane only:** collect today, **back tomorrow** (1 working day). That is today’s Fast clock, **given away** on in-stock MacBook Pro screens / keyboards **≥£279** in B1/B2. After-parts on a 16" screen still clears £300. We can afford it to convert.
+- **Paid upsell:** back **today** = same-day **+£149** if a slot is left and it is before the MacBook 11:00 morning cutoff. Hidden when 0 slots or no stock.
+- Do **not** give tomorrow-free on MacBook battery (£199–£249) or anything under the high-ticket line. Those stay Standard 3 working days + paid Fast.
+- AdWords and this treatment **target only these higher tickets** (MacBook Pro screen / keyboard / liquid-dead diagnostic). Not iPhone batteries. Not cheap screens.
+
+N7 same-day is the edge of B1 (longer ride). Morning collect still fits the locked cutoff. If the slot is gone, tomorrow-free is the convert, not a fake today.
 
 ### What the high-value card says (v0, unpublished)
 
 Lead with the convert, not the fee.
 
-1. **We want this job.** Copy: this is a machine we repair; we diagnose to keep the data where we can; if it would exceed a band we stop and tell you.
-2. **We’ll call you.** Default **on** for high-value (not off). We already have the mobile. Slack / Intercom ping to Ferrari with device, model, fault, postcode, band. Human calls back. This is the fastest convert we can ship. AI voice stays later.
-3. **We’ll collect quickly** if they are B1/B2 — hour-collect language on economy ASAP, same rule as the B1 speed work. Do **not** turn on same-day *repair* for diagnostics. Same-day bench for an unknown board is how we blow the 3-slot cap. Fast collect + a call is the speed.
-4. Diagnostic £49 (or whatever the SKU is) stays as the booking mechanism, demoted. It is “how we start,” not the headline.
+**Lane A (diagnostic):** we want this job · collect today (B1, we eat the collect) · word back in 24 hours if the Sat queue allows, else next working day · we’ll call you (default on) · £49 is how we start · repair vs replace after we look.
+
+**Lane B (in-stock high ticket):** collect today, free · back tomorrow, included · back today +£149 if a slot · we’ll call you optional.
 
 Repair-vs-replace numbers stay honest: only if v7 has the model. Until then, one line: we can talk like-for-like once we have the serial or we’ve looked. Do not invent £2,500.
 
@@ -264,18 +304,20 @@ Add M4 Pro 14/16 (and M5 when it lists) and **iPhone 16 Pro / Pro Max** to scrap
 
 We will know this is working when, on unpublished preview then live:
 
-- High-value quotes (model + diagnostic fault) show convert copy + call default-on + Ferrari ping, even if Apple questions are skipped.
+- Lane A: collect today + 24h-or-next-WD diagnose copy that matches the Sat queue flag. Call default-on. Apple questions optional on the same card.
+- Lane B (in-stock MacBook Pro screen/keyboard, B1/B2): tomorrow included, same-day +£149 only when a slot exists.
 - High-context quotes that *do* answer store `apple_outcome` and `data_important` on the lead.
-- Apple-refused + liquid/dead + recent high-value model (MacBook Pro first, also 16 Pro dead) is a tagged lead Ferrari can see the same day.
-- Known battery / cracked-screen path is unchanged (no extra questions, no slower checkout).
-- We can pull Apple-refused vs Apple-yes vs Apple-no against paid amount going forward. We cannot do that today because the form never asked the follow-up.
-- AdWords work is scoped to MacBook diagnostic faults. The wizard still handles the same faults on iPhone/iPad when they arrive.
+- Apple-refused + liquid/dead + recent high-value model is a tagged lead Ferrari can see the same day.
+- iPhone battery / cheap screen path is unchanged (no extra questions, no free Fast).
+- AdWords targets MacBook Pro liquid/dead **and** MacBook Pro screen (higher tickets only).
 
 ## Locked decisions (2026-09-16)
 
 - Gate is the **fault**, not the brand. Liquid / dead / not powering → extra questions. Battery / vanilla screen → no extra questions.
 - Questions run across MacBook, iPhone, and iPad when that fault is selected. Device + model are already in the wizard.
-- **AdWords hunts MacBook.** That is where we fight for orders. iPhone 16 Pro dead is in the wizard because the machine is replacement-class; it is not the first ad group.
+- **AdWords hunts MacBook Pro higher tickets** (liquid / dead / screen). iPhone 16 Pro dead stays in the wizard; it is not the first ad group.
 - Do not print a replacement £ until v7 has that model (M4 Pro and 16 Pro are both missing today).
 - **Two modules.** High-value convert (model + fault → we want this, we call, we collect fast) ships first. Pre-qual questions sit on that same card and do not block book / call.
-- Same-day *repair* stays off for diagnostics. Speed for winners is a call + B1/B2 hour collect.
+- **Lane A (diagnostic):** B1 collect today, we eat one leg on M-series Pro / 15–16 Pro only, still charge £49. Word back in 24 hours only if Sat queue has room; else next working day. No same-day repair.
+- **Lane B (known high ticket, in stock, B1/B2):** collection already free at ≥£200. Included clock = back tomorrow. Same-day +£149 if a slot. Not for batteries.
+- AdWords and this treatment target **higher tickets only** (MacBook Pro screen / keyboard / liquid-dead).
