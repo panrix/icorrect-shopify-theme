@@ -1531,7 +1531,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     return (card && card.getAttribute('data-speed')) || 'standard';
   }
 
-  function currentHighValue(iss, priceOverride) {
+  function currentHighValue(iss, priceOverride, bandOverride) {
     if (!window.ICorrectHighValue) return { lane: null };
     var price = priceOverride;
     if (price == null) price = currentRepairPrice();
@@ -1543,7 +1543,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       repairType: (iss && iss.repairType) || S.repairType,
       fault: S.fault,
       issue: (iss && iss.label) || S.issue,
-      band: _courierQuote && _courierQuote.band,
+      band: bandOverride || (_courierQuote && _courierQuote.band),
       repairPrice: price,
       safan24hOpen: !!(CFG && CFG.safan24hOpen)
     });
@@ -2103,7 +2103,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       variants: serviceVariantsAsset()
     });
     if (window.ICorrectHighValue && typeof window.ICorrectHighValue.withEatCollect === 'function') {
-      quote = window.ICorrectHighValue.withEatCollect(quote, currentHighValue());
+      quote = window.ICorrectHighValue.withEatCollect(quote, currentHighValue(null, null, quote && quote.band));
     }
     return quote;
   }

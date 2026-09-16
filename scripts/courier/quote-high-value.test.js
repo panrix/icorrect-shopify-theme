@@ -306,13 +306,13 @@ describe('evaluate — Lane B in-stock MacBook Pro screen / keyboard', () => {
 });
 
 describe('withEatCollect', () => {
-  it('zeros a B1 courier adjustment only when eatCollect is on', () => {
+  it('zeros a B1 courier adjustment from eatCollectEligible even before band is cached', () => {
     const quote = { service: 'courier', band: 'B1', adjustment: 25, tier: 'paid' };
-    const eaten = HV.withEatCollect(quote, { eatCollect: true });
+    const eaten = HV.withEatCollect(quote, { eatCollectEligible: true, eatCollect: false });
     assert.equal(eaten.adjustment, 0);
     assert.equal(eaten.tier, 'free');
-    assert.equal(HV.withEatCollect(quote, { eatCollect: false }).adjustment, 25);
-    assert.equal(HV.withEatCollect({ service: 'courier', band: 'B2', adjustment: 25 }, { eatCollect: true }).adjustment, 25);
+    assert.equal(HV.withEatCollect(quote, { eatCollectEligible: false }).adjustment, 25);
+    assert.equal(HV.withEatCollect({ service: 'courier', band: 'B2', adjustment: 25 }, { eatCollectEligible: true }).adjustment, 25);
   });
 });
 

@@ -125,7 +125,7 @@
   }
 
   function withEatCollect(quote, evaluation) {
-    if (!quote || !evaluation || !evaluation.eatCollect) return quote;
+    if (!quote || !evaluation || !evaluation.eatCollectEligible) return quote;
     if (quote.band !== 'B1') return quote;
     if (quote.service && quote.service !== 'courier') return quote;
     return Object.assign({}, quote, { adjustment: 0, tier: 'free' });
