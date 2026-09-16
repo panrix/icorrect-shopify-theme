@@ -1,7 +1,7 @@
 # Contextual pre-qual — design
 
 Date: 2026-09-16  
-Status: draft — note only. Do not implement until Ricky signs this off.  
+Status: gate locked 2026-09-16 (Ricky). Still a note — do not implement until the spec is signed for build.  
 Repos: `panrix/icorrect-shopify-theme` (wizard) · Typeform `sDieaFMs` · Monday board `349212843` · Back Market scraper v7  
 Builds on: details-first lead gate (name / email / mobile / postcode before price).
 
@@ -11,7 +11,9 @@ Level 1 of the quote wizard was device + fault + price.
 Level 2 (last 24 hours) is details-first so we can follow up.  
 Level 3 is this: ask a short, contextual set of the questions we already ask after booking, so the quote is a conversation, not a fee.
 
-The winners Ricky described are real, and rare: M4 (or similar) MacBook, liquid, Apple have already said no. Those clients take the offer. The website today cannot see that, because those answers only exist on the post-book Typeform.
+The trigger is the **fault**, not the brand. They pick the device and the model first. If the fault is liquid, dead / not powering, or another diagnostic chip, we ask more. We already know it is a 16 Pro or an M4 Pro; the extra answers let us decide whether this is a repair-to-keep-data job, a replacement conversation, or a call.
+
+MacBook is the hunt. That is where AdWords gets built and where we fight for orders. The same wizard questions still fire on other devices when the fault is diagnostic — a dead iPhone 16 Pro (no liquid) is a £2,500-class machine coming in for a £49 diagnostic. There is money in that. Ads do not have to chase it first.
 
 This spec is the note. AI voice (Ricky → Ryan → Ferrari) is a later module, after this one works.
 
@@ -83,6 +85,8 @@ Closest Good-grade ranges that *are* priced:
 
 Ricky’s £2,500 replacement / £1,500–£1,800 like-for-like / £500–£800 repair band is the right *shape* for a high-spec 14" Pro. We should not invent an M4 Pro number until v7 actually scrapes that listing. Serial → exact spec is how that number becomes honest.
 
+**iPhone 16 Pro is the same gap on the phone side.** Live diagnostic SKU is £49 (`iphone-16-pro-diagnostic`). v7’s iPhone/iPad URL list (27 models) goes as far as iPhone 16 128GB Black/Teal and iPhone 15 Pro 128GB. **There is no iPhone 16 Pro / 16 Pro Max in the scrape.** Same rule: do not print £2,500 as a Back Market number until that listing is in the file. The *shape* is right — a dead 16 Pro is a replacement-class device, not a battery quote.
+
 ## Current wizard behaviour (why this feels thin)
 
 After issue chips:
@@ -106,23 +110,32 @@ Reject. Kills the battery / screen path we are trying to convert on courier. Put
 
 Reject for the winners. The point is to *change the offer* before they see a lonely diagnostic fee. After-the-price is fine for passcode / software / accessories (keep that post-book).
 
-### C — Route-aware pre-qual (recommended)
+### C — Fault-triggered pre-qual (locked)
 
-Keep Level 2 as-is for known cheap / mid repairs.
+Keep Level 2 as-is for known cheap / mid repairs (battery, cracked screen, priced parts).
 
-On **high-context routes only**, insert 3–4 questions after details-first and **before** the offer card. Use the answers to pick one of three offers.
+The extra questions fire when **the issue chip is already a diagnostic**, on any device we quote. Device + model are already known. The questions decipher the job.
 
-High-context routes (v1):
+**In (fault chips that already route to `diagnostic`):**
 
-- Any `route === 'diagnostic'`
-- MacBook + liquid / won’t turn on / data recovery
-- MacBook Pro M-series (M1+) even when the chip is a priced screen, if they also tick liquid or “been to Apple”
+- Liquid / spill / submerged (MacBook, iPhone, iPad)
+- Dead / won’t turn on / no display no response (including iPhone “Phone dead, need data”)
+- Won’t charge when that chip is diagnostic, not a priced port/battery
+- Data recovery / “need data from a dead device”
 
-Not in v1 (still take details, still show the normal price):
+**Out (no extra questions, normal all-in price):**
 
-- iPhone battery
-- iPhone / iPad priced screen with no liquid and no Apple visit
-- Watch (leave the existing diagnostic / repair split)
+- iPhone / iPad / MacBook priced screen with no liquid
+- iPhone / MacBook battery
+- Other priced parts (camera, rear glass, keyboard without liquid)
+- Watch — leave the existing diagnostic / repair split; not the AdWords hunt
+
+A dead iPhone 16 Pro with no liquid **is in**. That is the point. We already know the model. We ask Apple / data / optional serial, then show repair-vs-replace, not only “£49 diagnostic.”
+
+**AdWords / acquisition (separate from the wizard gate):**
+
+- Hunt: **MacBook** liquid, dead, won’t power. That is where ads get built.
+- The iPhone dead-16-Pro path is in the wizard so organic / direct / existing traffic still gets the conversation. It is not the first ad group.
 
 ## Recommended design (v1)
 
@@ -155,7 +168,7 @@ Not a single “Book a Diagnostic” fee. A short options block, honest that we 
 Estimate band from the issue + model, not a fake fixed board price. Copy: we diagnose first; if it would exceed this band we stop and tell you; we repair to keep the data where we can.
 
 **Replace with the same class of machine**  
-Back Market Good-grade from scraper v7 **only when that model exists in the scrape**. If it doesn’t (M4 Pro today), say “we’ll price a like-for-like once we have the serial / we’ve looked” — do not invent £2,500.
+Back Market Good-grade from scraper v7 **only when that model exists in the scrape**. If it doesn’t (M4 Pro and iPhone 16 Pro today), say “we’ll price a like-for-like once we have the serial / we’ve looked” — do not invent £2,500.
 
 **Talk to us**  
 “We’ll call you on the mobile you just gave us.” Checkbox default off. This is the stub for the later AI → Ferrari path. v1 = Slack / Intercom ping to Ferrari with the brief, human calls back.
@@ -200,19 +213,23 @@ Do not start this until the website questions exist and land on Monday. Otherwis
 
 **Replacement catalogue**
 
-Add M4 Pro 14/16 (and M5 when it lists) to scraper v7. Until then, replacement is a conversation, not a number.
+Add M4 Pro 14/16 (and M5 when it lists) and **iPhone 16 Pro / Pro Max** to scraper v7. Until then, replacement is a conversation, not a number. AdWords copy can still talk about repair vs replace; the website must not invent a BM price.
 
 ## Success
 
 We will know this is working when, on unpublished preview then live:
 
 - High-context quotes store `apple_outcome` and `data_important` on the lead.
-- Apple-refused + liquid + recent MacBook Pro is a tagged lead Ferrari can see the same day.
-- Known iPhone battery / screen path is unchanged (no extra questions, no slower checkout).
+- Apple-refused + liquid/dead + recent high-value model (MacBook Pro first, also 16 Pro dead) is a tagged lead Ferrari can see the same day.
+- Known battery / cracked-screen path is unchanged (no extra questions, no slower checkout).
 - We can pull Apple-refused vs Apple-yes vs Apple-no against paid amount going forward. We cannot do that today because the form never asked the follow-up.
+- AdWords work is scoped to MacBook diagnostic faults. The wizard still handles the same faults on iPhone/iPad when they arrive.
 
-## Open decision (one)
+## Locked decisions (2026-09-16)
 
-Confirm the v1 gate: extra questions **only** on diagnostic + MacBook liquid/dead/data + M-series Pro with Apple or liquid — not on iPhone battery / vanilla screen.
+- Gate is the **fault**, not the brand. Liquid / dead / not powering → extra questions. Battery / vanilla screen → no extra questions.
+- Questions run across MacBook, iPhone, and iPad when that fault is selected. Device + model are already in the wizard.
+- **AdWords hunts MacBook.** That is where we fight for orders. iPhone 16 Pro dead is in the wizard because the machine is replacement-class; it is not the first ad group.
+- Do not print a replacement £ until v7 has that model (M4 Pro and 16 Pro are both missing today).
 
-If that is wrong, say so before anything is built.
+Spec is updated. Review `docs/superpowers/specs/2026-09-16-contextual-prequal-design.md` before we write the implementation plan.
