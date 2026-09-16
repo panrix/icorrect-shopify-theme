@@ -168,7 +168,7 @@ N7 same-day is the edge of B1 (longer ride). Morning collect still fits the lock
 
 Lead with the convert, not the fee.
 
-**Lane A (diagnostic):** we want this job · **we can collect it today** (afternoon windows count) · word back in 24 hours only if Safan is not stacked, else next working day · we’ll call you (default on) · £49 is how we start · repair vs replace after we look.
+**Lane A (diagnostic):** we want this job · **shout the collect** — weekday morning B1: a courier can be with you in ~1 hour; after noon: last afternoon window today; after 17:00 / weekend: first bike next working day · word back in 24 hours only if Safan is not stacked, else next working day · we’ll call you (default on) · £49 is how we start · repair vs replace after we look.
 
 **Lane B (in-stock high ticket):** collect today, free · back tomorrow, included · back today +£149 if a slot · we’ll call you optional.
 

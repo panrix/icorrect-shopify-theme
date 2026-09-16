@@ -2769,6 +2769,31 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
 }
 .qw-hv-card .qw-res-h { margin-top: 8px; }
+.qw-hv-now {
+  margin: 10px 0 14px;
+  padding: 16px 16px 14px;
+  border-radius: 12px;
+  background: var(--ic-orange-tint, #F6EADD);
+  box-shadow: inset 0 0 0 1px rgba(188, 106, 44, 0.35);
+}
+.qw-hv-now-kicker {
+  margin: 0;
+  font: 600 11px var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ic-orange-text, #8F4E1C);
+}
+.qw-hv-now-time {
+  margin: 4px 0 0;
+  font: 700 44px/1 var(--font-sans);
+  letter-spacing: -0.04em;
+  color: #171717;
+}
+.qw-hv-now .qw-res-h {
+  margin: 8px 0 0;
+  font: 650 22px/1.2 var(--font-sans);
+}
+.qw-hv-now .qw-res-p { margin-top: 6px; }
 .qw-hv-call {
   display: flex;
   gap: 8px;

@@ -2479,6 +2479,12 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     if (same) ensureMorningCollectionWindow();
   }
 
+  function paintCollectNow() {
+    var el = document.getElementById('qwHvNow');
+    if (!el || !window.ICorrectHighValue || typeof window.ICorrectHighValue.collectNowHtml !== 'function') return;
+    el.outerHTML = window.ICorrectHighValue.collectNowHtml(currentHighValue());
+  }
+
   function applyCourierQuoteToUI(quote) {
     _courierQuote = quote;
     var reveal = document.getElementById('qwDeliveryReveal');
@@ -2579,6 +2585,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       }
     }
 
+    if (quote) paintCollectNow();
     refreshAllInTotal();
     refreshSameDayEligibility();
     if (!_suppressScroll) focusPriceAndProceed();

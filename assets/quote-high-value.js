@@ -17,6 +17,9 @@
   'use strict';
 
   var LANE_B_MIN = 279;
+  var LONDON_TZ = 'Europe/London';
+  var HOUR_UNTIL = 12;
+  var LAST_COLLECT_HOUR = 17;
 
   function text(value) {
     return String(value || '')
@@ -101,6 +104,57 @@
     return true;
   }
 
+  function londonWall(now) {
+    var n = now || new Date();
+    var parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: LONDON_TZ,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      weekday: 'long',
+      hourCycle: 'h23'
+    }).formatToParts(n);
+    var get = function (type) {
+      for (var i = 0; i < parts.length; i++) {
+        if (parts[i].type === type) return parts[i].value;
+      }
+      return '0';
+    };
+    var year = parseInt(get('year'), 10);
+    var month = parseInt(get('month'), 10) - 1;
+    var day = parseInt(get('day'), 10);
+    var hour = parseInt(get('hour'), 10);
+    var minute = parseInt(get('minute'), 10);
+    var date = new Date(year, month, day);
+    var dow = date.getDay();
+    return {
+      date: date,
+      hour: hour + minute / 60,
+      weekday: get('weekday'),
+      working: dow !== 0 && dow !== 6
+    };
+  }
+
+  function nextWorkingDayLabel(now) {
+    var wall = londonWall(now);
+    var d = new Date(wall.date.getTime());
+    do {
+      d.setDate(d.getDate() + 1);
+    } while (d.getDay() === 0 || d.getDay() === 6);
+    return d.toLocaleDateString('en-GB', { weekday: 'long', timeZone: LONDON_TZ });
+  }
+
+  function collectUrgency(raw) {
+    var ctx = raw || {};
+    var wall = londonWall(ctx.now);
+    var band = ctx.band || null;
+    if (!wall.working || wall.hour >= LAST_COLLECT_HOUR) return 'next_wd';
+    if (wall.hour < HOUR_UNTIL && (!band || band === 'B1')) return 'hour';
+    return 'today';
+  }
+
   function evaluate(raw) {
     var ctx = raw || {};
     var band = ctx.band || null;
@@ -111,6 +165,7 @@
     var laneB = bCandidate && (band === 'B1' || band === 'B2' || !band);
     var eatEligible = eatCollectEligible(ctx);
     var lane = laneA ? 'A' : (laneB ? 'B' : null);
+    var urgency = collectUrgency(ctx);
     return {
       lane: lane,
       highValue: !!lane,
@@ -120,7 +175,11 @@
       diag24h: laneA && !!ctx.safan24hOpen,
       includedFast: includedFast,
       callDefaultOn: !!lane,
-      askPrequal: askPrequal
+      askPrequal: askPrequal,
+      collectUrgency: urgency,
+      nextCollectDay: nextWorkingDayLabel(ctx.now),
+      now: ctx.now || null,
+      band: band
     };
   }
 
@@ -150,6 +209,34 @@
     return '<div class="qw-res-badge ' + cls + '">' + esc(label) + '</div>';
   }
 
+  function collectNowHtml(evaluation) {
+    evaluation = evaluation || {};
+    var urgency = evaluation.collectUrgency || collectUrgency(evaluation);
+    var nextLabel = evaluation.nextCollectDay || nextWorkingDayLabel(evaluation.now);
+    if (urgency === 'hour') {
+      return '<div class="qw-hv-now" id="qwHvNow" data-urgency="hour">' +
+        '<p class="qw-hv-now-kicker">We can send a courier now</p>' +
+        '<p class="qw-hv-now-time">~1 hour</p>' +
+        '<h3 class="qw-res-h">A bike can be with you this morning</h3>' +
+        '<p class="qw-res-p">Inner London. Book it and we dispatch. That is the time we save.</p>' +
+      '</div>';
+    }
+    if (urgency === 'today') {
+      return '<div class="qw-hv-now" id="qwHvNow" data-urgency="today">' +
+        '<p class="qw-hv-now-kicker">Last collection today</p>' +
+        '<p class="qw-hv-now-time">Today</p>' +
+        '<h3 class="qw-res-h">We can still collect it this afternoon</h3>' +
+        '<p class="qw-res-p">Afternoon windows count. Once it is on a bike today, it is in.</p>' +
+      '</div>';
+    }
+    return '<div class="qw-hv-now" id="qwHvNow" data-urgency="next_wd">' +
+      '<p class="qw-hv-now-kicker">Next collection</p>' +
+      '<p class="qw-hv-now-time">' + esc(nextLabel) + '</p>' +
+      '<h3 class="qw-res-h">First bike when we open</h3>' +
+      '<p class="qw-res-p">We are closed for collection now. Book and we collect ' + esc(nextLabel) + ' morning.</p>' +
+    '</div>';
+  }
+
   function diagnosticCardIntroHtml(iss, evaluation) {
     iss = iss || {};
     evaluation = evaluation || {};
@@ -159,8 +246,7 @@
         : 'We word back the next working day once it is on the bench.';
       return '<div class="qw-hv-card" data-hv-lane="A">' +
         badge('go', 'We want this job') +
-        '<h3 class="qw-res-h">We can collect it today</h3>' +
-        '<p class="qw-res-p">Afternoon windows count. As long as the machine is on a bike today, it is in.</p>' +
+        collectNowHtml(evaluation) +
         '<p class="qw-res-p">' + word + ' The £49 diagnostic is how we start — repair or like-for-like after we have looked. We will not invent a replacement price until we have the serial or the board in front of us.</p>' +
         (iss.copy ? '<p class="qw-res-p">' + esc(iss.copy) + '</p>' : '') +
         callRow(!!evaluation.callDefaultOn) +
@@ -181,8 +267,8 @@
     if (evaluation.lane === 'B' || evaluation.laneBCandidate) {
       return '<div class="qw-hv-card" data-hv-lane="B">' +
         badge('go', 'In stock — we\'ll move') +
-        '<h3 class="qw-res-h">We can collect it today</h3>' +
-        '<p class="qw-res-p">Afternoon windows count. On inner London jobs this size, tomorrow is included once we have your postcode. Same-day is the paid pull-forward if a slot is left.</p>' +
+        collectNowHtml(evaluation) +
+        '<p class="qw-res-p">On inner London jobs this size, tomorrow is included once we have your postcode. Same-day is the paid pull-forward if a slot is left.</p>' +
         '<p class="qw-res-p">' + esc(title) + (copy ? ' — ' + esc(copy) : '') + '</p>' +
         callRow(!!evaluation.callDefaultOn) +
       '</div>';
@@ -316,6 +402,8 @@
   return {
     LANE_B_MIN: LANE_B_MIN,
     evaluate: evaluate,
+    collectUrgency: collectUrgency,
+    collectNowHtml: collectNowHtml,
     withEatCollect: withEatCollect,
     diagnosticCardIntroHtml: diagnosticCardIntroHtml,
     repairCardIntroHtml: repairCardIntroHtml,

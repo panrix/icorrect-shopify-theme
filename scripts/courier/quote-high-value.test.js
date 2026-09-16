@@ -15,6 +15,15 @@ const root = path.join(__dirname, '../..');
 const liquid = fs.readFileSync(path.join(root, 'sections/quote-wizard.liquid'), 'utf8');
 const css = fs.readFileSync(path.join(root, 'assets/quote-wizard.css'), 'utf8');
 
+/** Sep 2026 is BST (UTC+1). */
+function bst(y, m, d, hourLondon, min) {
+  return new Date(Date.UTC(y, m, d, hourLondon - 1, min || 0, 0));
+}
+
+const WED_10 = bst(2026, 8, 16, 10, 0);
+const WED_14 = bst(2026, 8, 16, 14, 0);
+const SAT_11 = bst(2026, 8, 19, 11, 0);
+
 function ev(extra) {
   return HV.evaluate(Object.assign({
     device: 'macbook',
@@ -25,7 +34,8 @@ function ev(extra) {
     issue: 'Spilled liquid recently (within 24 hours)',
     band: 'B1',
     repairPrice: 49,
-    safan24hOpen: false
+    safan24hOpen: false,
+    now: WED_10
   }, extra || {}));
 }
 
@@ -316,16 +326,43 @@ describe('withEatCollect', () => {
   });
 });
 
+describe('collectUrgency — hour-collect shout', () => {
+  it('B1 weekday morning is the hour-collect edge', () => {
+    assert.equal(HV.collectUrgency({ now: WED_10, band: 'B1' }), 'hour');
+    assert.equal(HV.collectUrgency({ now: WED_10 }), 'hour');
+    assert.equal(ev().collectUrgency, 'hour');
+  });
+
+  it('after noon, or B2, drops to last-collection-today — not a fake hour', () => {
+    assert.equal(HV.collectUrgency({ now: WED_14, band: 'B1' }), 'today');
+    assert.equal(HV.collectUrgency({ now: WED_10, band: 'B2' }), 'today');
+  });
+
+  it('weekend or after 17:00 London is next working day', () => {
+    assert.equal(HV.collectUrgency({ now: SAT_11, band: 'B1' }), 'next_wd');
+    assert.equal(HV.collectUrgency({ now: bst(2026, 8, 16, 17, 30), band: 'B1' }), 'next_wd');
+    assert.equal(ev({ now: SAT_11 }).nextCollectDay, 'Monday');
+  });
+});
+
 describe('copy + prequal HTML', () => {
-  it('Lane A leads with collect today and does not invent a Back Market £', () => {
+  it('Lane A shouts hour-collect in the morning and does not invent a Back Market £', () => {
     const html = HV.diagnosticCardIntroHtml({ copy: 'Liquid on the board.' }, ev({ safan24hOpen: true }));
-    assert.match(html, /We can collect it today/);
-    assert.match(html, /afternoon/i);
+    assert.match(html, /We can send a courier now/);
+    assert.match(html, /~1 hour/);
+    assert.match(html, /bike can be with you this morning/);
     assert.match(html, /24 hours/);
     assert.match(html, /qwHvCall/);
     assert.match(html, /checked/);
     assert.doesNotMatch(html, /£2,?500|2500/);
     assert.doesNotMatch(html, /Book a Diagnostic/);
+  });
+
+  it('afternoon copy sells the last window today, not an hour bike', () => {
+    const html = HV.diagnosticCardIntroHtml({ copy: 'Dead board.' }, ev({ now: WED_14 }));
+    assert.match(html, /Last collection today/);
+    assert.match(html, /this afternoon/);
+    assert.doesNotMatch(html, /~1 hour/);
   });
 
   it('ordinary diagnostic keeps the 3 working day fee card', () => {
@@ -355,10 +392,11 @@ describe('copy + prequal HTML', () => {
         fault: 'Screen / Display',
         issue: 'Cracked or shattered screen',
         band: 'B1',
-        repairPrice: 699
+        repairPrice: 699,
+        now: WED_10
       })
     );
-    assert.match(html, /We can collect it today/);
+    assert.match(html, /We can send a courier now|Last collection today|Next collection/);
     assert.match(html, /qwHvCall/);
     assert.match(html, /MacBook Pro 16&quot; M3 Screen Repair/);
   });
@@ -417,6 +455,8 @@ describe('wizard wiring (liquid stays a thin hook)', () => {
     assert.match(liquid, /ICorrectHighValue\.diagnosticCardIntroHtml/);
     assert.match(liquid, /ICorrectHighValue\.repairCardIntroHtml/);
     assert.match(liquid, /ICorrectHighValue\.prequalHtml/);
+    assert.match(liquid, /ICorrectHighValue\.collectNowHtml/);
+    assert.match(liquid, /function paintCollectNow/);
     assert.match(liquid, /ICorrectHighValue\.withEatCollect/);
     assert.match(liquid, /function currentHighValue/);
   });
@@ -442,6 +482,8 @@ describe('wizard wiring (liquid stays a thin hook)', () => {
 
   it('styles the convert card without new webfonts', () => {
     assert.match(css, /\.qw-hv-card\s*\{/);
+    assert.match(css, /\.qw-hv-now\s*\{/);
+    assert.match(css, /\.qw-hv-now-time\s*\{/);
     assert.match(css, /\.qw-hv-prequal\s*\{/);
     assert.doesNotMatch(css, /@import|fonts\.google/);
   });
