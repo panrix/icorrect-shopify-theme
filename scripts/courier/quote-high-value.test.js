@@ -109,6 +109,15 @@ describe('evaluate — Lane A high-value diagnostic', () => {
   });
 
   it('iPhone 16 Pro dead and 15 Pro liquid are Lane A and eat B1; iPhone 16 non-Pro does not eat', () => {
+    const dead17pro = ev({
+      device: 'iphone',
+      model: 'iPhone 17 Pro',
+      fault: 'Screen / Display',
+      issue: 'No display, no response'
+    });
+    assert.equal(dead17pro.lane, 'A');
+    assert.equal(dead17pro.eatCollect, true);
+
     const dead16pro = ev({
       device: 'iphone',
       model: 'iPhone 16 Pro',

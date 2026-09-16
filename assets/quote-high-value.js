@@ -58,13 +58,13 @@
   function isIphoneHighValue(ctx) {
     var t = text(ctx.model);
     if (ctx.device !== 'iphone') return false;
-    if (/iphone\s*16\s*e\b/.test(t)) return false;
-    if (/iphone\s*1[56]\s*pro/.test(t)) return true;
-    return /iphone\s*16(\s*plus)?(\b|$)/.test(t);
+    if (/iphone\s*1[67]e\b/.test(t)) return false;
+    if (/iphone\s*1[567]\s*pro/.test(t)) return true;
+    return /iphone\s*1[67](\s*plus)?(\b|$)/.test(t);
   }
 
   function isIphone15or16Pro(ctx) {
-    return ctx.device === 'iphone' && /iphone\s*1[56]\s*pro/.test(text(ctx.model));
+    return ctx.device === 'iphone' && /iphone\s*1[567]\s*pro/.test(text(ctx.model));
   }
 
   function isIpadProM(ctx) {
