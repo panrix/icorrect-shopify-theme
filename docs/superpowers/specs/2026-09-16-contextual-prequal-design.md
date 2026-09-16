@@ -219,7 +219,7 @@ A dead iPhone 16 Pro with no liquid **is in**. That is the point. We already kno
 
 **AdWords / acquisition (separate from the wizard gate):**
 
-- Hunt: **MacBook** liquid, dead, won’t power. That is where ads get built.
+- Hunt: **MacBook Pro** liquid, dead, won’t power, **and in-stock screen**. Higher tickets only.
 - The iPhone dead-16-Pro path is in the wizard so organic / direct / existing traffic still gets the conversation. It is not the first ad group.
 
 ## Recommended design (v1)
