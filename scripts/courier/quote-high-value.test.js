@@ -427,6 +427,7 @@ describe('wizard wiring (liquid stays a thin hook)', () => {
     const fn = liquid.slice(start, end);
     assert.match(fn, /diag24h/);
     assert.match(fn, /includedFast/);
+    assert.match(fn, /laneA/);
   });
 
   it('does not post prequal keys on the quote-events allowlist body', () => {

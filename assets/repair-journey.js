@@ -59,7 +59,7 @@
     opts = opts || {};
     if (opts.speed === 'same_day') return 0;
     if (opts.speed === 'fast' || opts.includedFast) return 1;
-    if (opts.diagnostic) return opts.diag24h ? 1 : 3;
+    if (opts.diagnostic) return (opts.diag24h || opts.laneA) ? 1 : 3;
     if (device === 'iphone') return 1;
     if (device === 'watch') return 3;
     return 3; // macbook / ipad
@@ -99,6 +99,7 @@
     if (opts.diagnostic) {
       if (opts.speed === 'fast') return 'Quote in 1 working day';
       if (opts.diag24h) return 'Word back in 24 hours';
+      if (opts.laneA) return 'Quote the next working day';
       return 'Quote in 3 working days';
     }
     if (opts.speed === 'same_day') return 'Same day';
@@ -144,7 +145,8 @@
     var quoteDays = repairBenchDays(null, {
       diagnostic: true,
       speed: opts.speed,
-      diag24h: opts.diag24h
+      diag24h: opts.diag24h,
+      laneA: opts.laneA
     });
     var quoteMeta = quoteDays === 1 ? '1 working day after collection' : '3 working days after collection';
     if (!collectDate) {
@@ -199,7 +201,8 @@
     var quoteDays = repairBenchDays(null, {
       diagnostic: true,
       speed: opts.speed,
-      diag24h: opts.diag24h
+      diag24h: opts.diag24h,
+      laneA: opts.laneA
     });
     var quoteDate = addWorkingDays(weReceive, quoteDays);
     return {

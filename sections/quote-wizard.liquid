@@ -1556,6 +1556,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var hv = currentHighValue();
     if (hv.diag24h) opts.diag24h = true;
     if (hv.includedFast) opts.includedFast = true;
+    if (hv.lane === 'A') opts.laneA = true;
     return opts;
   }
 

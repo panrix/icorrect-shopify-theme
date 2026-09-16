@@ -36,6 +36,12 @@ describe('repairBenchDays', () => {
     assert.equal(J.turnaroundClaimLabel('macbook', { diagnostic: true, diag24h: true }), 'Word back in 24 hours');
     assert.equal(J.turnaroundClaimLabel('macbook', { includedFast: true }), '1 working day');
   });
+
+  it('Lane A diagnostic is next working day when Safan is closed, not the old 3-day clock', () => {
+    assert.equal(J.repairBenchDays('macbook', { diagnostic: true, laneA: true }), 1);
+    assert.equal(J.turnaroundClaimLabel('macbook', { diagnostic: true, laneA: true }), 'Quote the next working day');
+    assert.equal(J.repairBenchDays('macbook', { diagnostic: true }), 3);
+  });
 });
 
 describe('courier clocks from Monday collection', () => {
