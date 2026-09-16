@@ -94,7 +94,52 @@ After issue chips:
 - **Known repair** (iPhone battery, most screens): details-first → all-in price → courier / mail-in. Same-day / Fast hidden on the paths we already hide. Correct. Do not add a journey here.
 - **Diagnostic** (liquid, dead, won’t charge, data recovery): details-first → **Book a Diagnostic** + the diagnostic SKU + a “from £249 / £199 if the board needs work” guide. Collect → diagnose in 3 working days → email quote → they decide.
 
-That diagnostic card is a fee. It is not: Apple already said no · data matters · here is repair vs replace vs we will call you.
+That diagnostic card is a fee. Live SKUs: iPhone 16 Pro diagnostic **£49**, MacBook Pro 14" M4 diagnostic **£49**. Same card for a £2,000-class machine and a cheap unknown. It is not: this is a job we want · we will move · Apple already said no · data matters · repair vs replace.
+
+## Two jobs, not one screen (2026-09-16)
+
+Ricky split this correctly. They are related. They are not the same build.
+
+| | 1. Contextual pre-qual | 2. High-value convert |
+|---|---|---|
+| Job | Learn Apple outcome, data, serial | Treat a winner like a winner |
+| We already have | Almost nothing until they answer | Device + model + fault chip **right now** |
+| Risk if we do it first | Three more fields before they see we want the work. AdWords drop-off. | We call / collect without knowing Apple said no. Still a good lead. |
+| Converts | Ferrari later, warmer | The person in the wizard **now** |
+
+**Ship 2 first. Put 1 on the same card, not in front of it.**
+
+We do not need Apple to know an M4 Pro with liquid, or a 16 Pro that is dead, is a machine we fight for. Asking first, then showing a £49 fee, is the opposite of “how can we get this done quickly.”
+
+### High-value detect (automatic, no extra questions)
+
+A quote is **high-value** when the issue chip is already `diagnostic` **and** the model is replacement-class:
+
+- MacBook Pro M-series (M1+), especially 14/16 M3/M4 — this is the AdWords hunt
+- MacBook Air M3/M4 + liquid or dead
+- iPhone 15 Pro / 15 Pro Max / 16 / 16 Pro / 16 Pro Max + dead or liquid
+- iPad Pro M-series + dead or liquid
+
+A 2018 Air with a spill is diagnostic. It is not this treatment. Battery and cracked screen never are.
+
+### What the high-value card says (v0, unpublished)
+
+Lead with the convert, not the fee.
+
+1. **We want this job.** Copy: this is a machine we repair; we diagnose to keep the data where we can; if it would exceed a band we stop and tell you.
+2. **We’ll call you.** Default **on** for high-value (not off). We already have the mobile. Slack / Intercom ping to Ferrari with device, model, fault, postcode, band. Human calls back. This is the fastest convert we can ship. AI voice stays later.
+3. **We’ll collect quickly** if they are B1/B2 — hour-collect language on economy ASAP, same rule as the B1 speed work. Do **not** turn on same-day *repair* for diagnostics. Same-day bench for an unknown board is how we blow the 3-slot cap. Fast collect + a call is the speed.
+4. Diagnostic £49 (or whatever the SKU is) stays as the booking mechanism, demoted. It is “how we start,” not the headline.
+
+Repair-vs-replace numbers stay honest: only if v7 has the model. Until then, one line: we can talk like-for-like once we have the serial or we’ve looked. Do not invent £2,500.
+
+### Where the questions sit (v1, same card)
+
+Apple / data / serial do **not** gate the call or the book button.
+
+They sit under the convert copy, short, skippable except Apple yes/no on high-value. If they say Apple refused, the card can tighten (“Apple have already said no — this is the job we take”) and the Slack brief gets `apple_outcome`. If they skip, we still treat them as high-value from model + fault.
+
+That is how we get both without slowing the winners.
 
 ## Approaches
 
@@ -171,9 +216,9 @@ Estimate band from the issue + model, not a fake fixed board price. Copy: we dia
 Back Market Good-grade from scraper v7 **only when that model exists in the scrape**. If it doesn’t (M4 Pro and iPhone 16 Pro today), say “we’ll price a like-for-like once we have the serial / we’ve looked” — do not invent £2,500.
 
 **Talk to us**  
-“We’ll call you on the mobile you just gave us.” Checkbox default off. This is the stub for the later AI → Ferrari path. v1 = Slack / Intercom ping to Ferrari with the brief, human calls back.
+On **high-value** quotes the call checkbox is **default on**. On ordinary diagnostics it stays off. Slack / Intercom ping to Ferrari with the brief. Human calls back. AI voice stays later.
 
-Diagnostic fee still exists. It is the way they start Repair or “we’re not sure.” It is not the only sentence on the page.
+Diagnostic fee still exists. It is how they start. It is not the headline on a high-value card.
 
 ### What we store
 
@@ -231,3 +276,5 @@ We will know this is working when, on unpublished preview then live:
 - Questions run across MacBook, iPhone, and iPad when that fault is selected. Device + model are already in the wizard.
 - **AdWords hunts MacBook.** That is where we fight for orders. iPhone 16 Pro dead is in the wizard because the machine is replacement-class; it is not the first ad group.
 - Do not print a replacement £ until v7 has that model (M4 Pro and 16 Pro are both missing today).
+- **Two modules.** High-value convert (model + fault → we want this, we call, we collect fast) ships first. Pre-qual questions sit on that same card and do not block book / call.
+- Same-day *repair* stays off for diagnostics. Speed for winners is a call + B1/B2 hour collect.
