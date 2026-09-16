@@ -231,5 +231,3 @@ We will know this is working when, on unpublished preview then live:
 - Questions run across MacBook, iPhone, and iPad when that fault is selected. Device + model are already in the wizard.
 - **AdWords hunts MacBook.** That is where we fight for orders. iPhone 16 Pro dead is in the wizard because the machine is replacement-class; it is not the first ad group.
 - Do not print a replacement £ until v7 has that model (M4 Pro and 16 Pro are both missing today).
-
-Spec is updated. Review `docs/superpowers/specs/2026-09-16-contextual-prequal-design.md` before we write the implementation plan.
