@@ -19,7 +19,14 @@
   var LANE_B_MIN = 279;
 
   function text(value) {
-    return String(value || '').toLowerCase().replace(/[“”]/g, '"');
+    return String(value || '')
+      .toLowerCase()
+      .replace(/[“”]/g, '"')
+      .replace(/[‘’]/g, "'");
+  }
+
+  function chipText(value) {
+    return text(value).replace(/['"]/g, '');
   }
 
   function blob(ctx) {
@@ -40,11 +47,11 @@
   }
 
   function isMSeries(ctx) {
-    return /\bm[1-9](\s|$|pro|max|ultra)/.test(text(ctx.model));
+    return /\bm[1-9](\s|$|pro|max|ultra)/.test(chipText(ctx.model));
   }
 
   function isMacBookAirM3Plus(ctx) {
-    var t = text(ctx.model);
+    var t = chipText(ctx.model);
     return ctx.device === 'macbook' && /\bair\b/.test(t) && /\bm[3-9](\s|$|pro|max)/.test(t);
   }
 

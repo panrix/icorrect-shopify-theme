@@ -161,6 +161,38 @@ describe('evaluate — Lane A high-value diagnostic', () => {
     assert.equal(batt.askPrequal, false);
   });
 
+  it('matches live wizard titles with quoted M-series chips', () => {
+    const live = ev({
+      model: 'MacBook Pro 14” ‘M4’ A3112 (2024)',
+      fault: 'Water Damage',
+      issue: 'Spilled liquid recently (within 24 hours)'
+    });
+    assert.equal(live.lane, 'A');
+    assert.equal(live.eatCollect, true);
+
+    const m4max = ev({
+      model: 'MacBook Pro 16” ‘M4 Max’ A3186 (2024)',
+      fault: 'Water Damage',
+      issue: 'Spilled liquid recently (within 24 hours)'
+    });
+    assert.equal(m4max.lane, 'A');
+
+    const airM3 = ev({
+      model: 'MacBook Air 13” ‘M3’ A3113 (2024)',
+      fault: 'Water Damage',
+      issue: 'Spilled liquid recently (within 24 hours)'
+    });
+    assert.equal(airM3.lane, 'A');
+    assert.equal(airM3.eatCollect, false);
+
+    const air2018 = ev({
+      model: 'MacBook Air 13” A1932 (2018-2019)',
+      fault: 'Water Damage',
+      issue: 'MacBook was submerged'
+    });
+    assert.equal(air2018.lane, null);
+  });
+
   it('iPad Pro M-series dead is Lane A; does not eat collect', () => {
     const r = ev({
       device: 'ipad',
