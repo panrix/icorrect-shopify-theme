@@ -227,6 +227,20 @@ describe('planSpeedOffers', () => {
       { standard: true, fast: true, sameDay: false }
     );
   });
+
+  it('Lane B includedFast hides the paid Fast card and keeps same-day', () => {
+    assert.deepEqual(
+      plan(Object.assign({
+        device: 'macbook',
+        service: 'courier',
+        band: 'B1',
+        diagnostic: false,
+        sameDayOk: true,
+        includedFast: true
+      }, vids)),
+      { standard: true, fast: false, sameDay: true }
+    );
+  });
 });
 
 describe('MacBook same-day uses selected collection window', () => {

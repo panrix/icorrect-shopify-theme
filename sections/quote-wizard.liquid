@@ -112,11 +112,13 @@ window.WIZARD_CONTEXT = {
 <script src="{{ 'repair-journey.js' | asset_url }}" defer></script>
 <script src="{{ 'same-day-eligibility.js' | asset_url }}" defer></script>
 <script src="{{ 'quote-lead-checkout.js' | asset_url }}" defer></script>
+<script src="{{ 'quote-high-value.js' | asset_url }}" defer></script>
 <script src="{{ 'quote-wizard-model-help.js' | asset_url }}" defer></script>
 <script>
 window.WIZARD_CFG = {
   warrantyLabel: {{ section.settings.warranty_label | default: '2-year warranty' | json }},
   diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: 'Quote in 3 working days' | json }},
+  safan24hOpen: {{ section.settings.safan_24h_open | default: false | json }},
   bandsUrl: {{ 'courier-london-bands.json' | asset_url | json }},
   catalogueUrl: {{ 'repair-catalogue-map.json' | asset_url | json }},
   collectionPrefillUrl: {{ 'wizard-collection-prefill.json' | asset_url | json }},
@@ -1529,10 +1531,32 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     return (card && card.getAttribute('data-speed')) || 'standard';
   }
 
+  function currentHighValue(iss, priceOverride, bandOverride) {
+    if (!window.ICorrectHighValue) return { lane: null };
+    var price = priceOverride;
+    if (price == null) price = currentRepairPrice();
+    return window.ICorrectHighValue.evaluate({
+      device: S.device,
+      model: S.model,
+      modelGroup: S.modelGroup,
+      route: (iss && iss.route) || S.route,
+      repairType: (iss && iss.repairType) || S.repairType,
+      fault: S.fault,
+      issue: (iss && iss.label) || S.issue,
+      band: bandOverride || (_courierQuote && _courierQuote.band),
+      repairPrice: price,
+      safan24hOpen: !!(CFG && CFG.safan24hOpen)
+    });
+  }
+
   function speedJourneyOpts(extra) {
     var opts = extra ? Object.assign({}, extra) : {};
     if (!opts.speed) opts.speed = selectedSpeed();
     if (opts.diagnostic == null) opts.diagnostic = S.route === 'diagnostic';
+    var hv = currentHighValue();
+    if (hv.diag24h) opts.diag24h = true;
+    if (hv.includedFast) opts.includedFast = true;
+    if (hv.lane === 'A') opts.laneA = true;
     return opts;
   }
 
@@ -2071,7 +2095,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
   function quoteForService(serviceKind, postcode) {
     if (!window.ICorrectCourier || !window.__QW_BANDS) return null;
-    return window.ICorrectCourier.quoteServiceAdjustment({
+    var quote = window.ICorrectCourier.quoteServiceAdjustment({
       postcode: postcode || '',
       productTags: currentRepairTags(),
       bands: window.__QW_BANDS,
@@ -2079,6 +2103,10 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       repairPrice: currentRepairPrice(),
       variants: serviceVariantsAsset()
     });
+    if (window.ICorrectHighValue && typeof window.ICorrectHighValue.withEatCollect === 'function') {
+      quote = window.ICorrectHighValue.withEatCollect(quote, currentHighValue(null, null, quote && quote.band));
+    }
+    return quote;
   }
 
   /* Status chips only — never a fee line. Before postcode: prompt to enter one. */
@@ -2451,6 +2479,17 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     if (same) ensureMorningCollectionWindow();
   }
 
+  function paintCollectNow() {
+    var existing = document.getElementById('qwHvNow');
+    if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+    var reveal = document.getElementById('qwDeliveryReveal');
+    var HV = window.ICorrectHighValue;
+    if (!reveal || !HV || typeof HV.collectNowHtml !== 'function') return;
+    var hv = currentHighValue();
+    if (!HV.shouldShowCollectNow(hv, _courierQuote)) return;
+    reveal.insertAdjacentHTML('afterbegin', HV.collectNowHtml(hv));
+  }
+
   function applyCourierQuoteToUI(quote) {
     _courierQuote = quote;
     var reveal = document.getElementById('qwDeliveryReveal');
@@ -2487,6 +2526,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       hideServiceJourney();
       closeCollectionCalendar();
       refreshSameDayEligibility();
+      paintCollectNow();
       return;
     }
 
@@ -2551,6 +2591,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       }
     }
 
+    if (quote) paintCollectNow();
     refreshAllInTotal();
     refreshSameDayEligibility();
     if (!_suppressScroll) focusPriceAndProceed();
@@ -2609,11 +2650,22 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   function fireLeadIntake(lead) {
     if (!lead || !window.ICorrectQuoteLead) return;
     try {
-      var payload = window.ICorrectQuoteLead.intakeContactPayload(lead, {
+      var extra = {
         device: DN[S.device] || S.device || '',
         model: S.model || '',
         fault: S.fault || S.issue || ''
-      });
+      };
+      if (window.ICorrectHighValue) {
+        var pq = window.ICorrectHighValue.readPrequal(document);
+        var hv = currentHighValue();
+        extra.high_value_lane = hv.lane || '';
+        extra.apple_diagnosed = pq.apple_diagnosed;
+        extra.apple_outcome = pq.apple_outcome;
+        extra.data_important = pq.data_important;
+        extra.serial = pq.serial;
+      }
+      var payload = window.ICorrectQuoteLead.intakeContactPayload(lead, extra);
+      if (window.ICorrectHighValue) payload = window.ICorrectHighValue.enrichIntake(payload, extra);
       postQuoteWizardWebhook(payload).catch(function(){});
     } catch (e) {}
   }
@@ -2792,6 +2844,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     if (!diagnostic && (device === 'iphone' || device === 'watch')) showFast = false;
     var innerLondon = ctx.service === 'courier' && (ctx.band === 'B1' || ctx.band === 'B2');
     var showSameDay = !diagnostic && innerLondon && (device === 'iphone' || device === 'macbook') && !!ctx.sameDayOk;
+    if (ctx.includedFast) showFast = false;
     var fastVid = parseInt(cfg.fastVariantId, 10) || 0;
     if (fastVid <= 0) showFast = false;
     var sdVid = device === 'macbook'
@@ -3009,7 +3062,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       diagnostic: S.route === 'diagnostic',
       device: S.device,
       dateLabel: dateLabel,
-      benchDays: repairBenchDays(S.device),
+      benchDays: repairBenchDays(S.device, speedJourneyOpts({ speed: 'standard' })),
       benchLabel: turnaroundClaimLabel(S.device, { speed: 'standard' })
     });
   }
@@ -3037,7 +3090,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var iso = isoOverride || (_collectionSlot.date && _collectionSlot.date.iso) || _standardCollectIso || '';
     var collect = iso ? parseISODate(iso) : null;
     if (!collect || !window.ICorrectRepairJourney) return '';
-    var opts = { speed: speed, diagnostic: S.route === 'diagnostic' };
+    var opts = speedJourneyOpts({ speed: speed });
     var j = window.ICorrectRepairJourney.courierRepairJourney(S.device, collect, opts);
     if (!j || !j.returnDate) return '';
     return 'Back ' + formatJourneyDate(j.returnDate);
@@ -3055,6 +3108,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       band: _courierQuote && _courierQuote.band,
       diagnostic: S.route === 'diagnostic',
       sameDayOk: !!picked,
+      includedFast: !!(currentHighValue().includedFast),
       config: cfg
     });
     var current = selectedSpeed();
@@ -4048,6 +4102,12 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         if (window.ICorrectQuoteLead && typeof window.ICorrectQuoteLead.cartLeadAttributes === 'function') {
           Object.assign(cartAttrs, window.ICorrectQuoteLead.cartLeadAttributes(S.lead));
         }
+        if (window.ICorrectHighValue) {
+          Object.assign(cartAttrs, window.ICorrectHighValue.cartPrequalAttributes(
+            window.ICorrectHighValue.readPrequal(document),
+            currentHighValue()
+          ));
+        }
         if (Object.keys(cartAttrs).length) {
           await fetch(getShopifyRoot() + 'cart/update.js', {
             method: 'POST',
@@ -4148,12 +4208,14 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       : '';
     var serviceHtml = injectServicePrice(buildServiceCards(), priceTrustHtml + totalHtml);
 
+    var hvRepair = currentHighValue(iss, basePrice);
+    var repairIntro = (window.ICorrectHighValue && window.ICorrectHighValue.repairCardIntroHtml)
+      ? window.ICorrectHighValue.repairCardIntroHtml({ title: product.title, copy: iss.copy }, hvRepair)
+      : ('<div class="qw-res-badge qw-badge-green">We can fix this</div><h3 class="qw-res-h">' + esc(product.title) + '</h3><p class="qw-res-p">' + esc(iss.copy) + '</p>');
     container.innerHTML = urgentHtml +
       '<div class="qw-res" id="qwResCard" data-base="' + basePrice + '" data-vid="' + mainVariantId + '" data-needs-color="' + (deviceColors ? '1' : '0') + '">' +
         '<div class="qw-res-top">' +
-          '<div class="qw-res-badge qw-badge-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>We can fix this</div>' +
-          '<h3 class="qw-res-h">' + esc(product.title) + '</h3>' +
-          '<p class="qw-res-p">' + esc(iss.copy) + '</p>' +
+          repairIntro +
           (iss.refImages ? '<div class="qw-dustgate-imgs">' + iss.refImages.map(function(src,i){ return '<img src="' + src + '" alt="Reference image ' + (i+1) + '">'; }).join('') + '</div>' : '') +
         '</div>' +
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
@@ -4267,14 +4329,14 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
     var diagVariantId = fullDiag ? fullDiag.variants[0].id : 0;
 
+    var hvDiag = currentHighValue(iss, diagPrice);
+    var diagIntro = (window.ICorrectHighValue && window.ICorrectHighValue.diagnosticCardIntroHtml)
+      ? window.ICorrectHighValue.diagnosticCardIntroHtml(iss, hvDiag) + (window.ICorrectHighValue.prequalHtml(hvDiag) || '')
+      : ('<div class="qw-res-badge qw-badge-amber">We need to take a look</div><h3 class="qw-res-h">Book a Diagnostic</h3><p class="qw-res-p">' + esc(iss.copy) + '</p><p class="qw-res-p">Once your device arrives — by courier or mail-in — we diagnose within 3 working days and email your quote. The device stays with us until you decide.</p>');
     container.innerHTML = urgentHtml +
       '<div class="qw-res" id="qwResCard" data-base="' + diagPrice + '" data-vid="' + diagVariantId + '">' +
         '<div class="qw-res-top">' +
-          '<div class="qw-res-badge qw-badge-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>We need to take a look</div>' +
-          '<h3 class="qw-res-h">Book a Diagnostic</h3>' +
-          '<p class="qw-res-p">' + esc(iss.copy) + '</p>' +
-          '<p class="qw-res-p">We can\'t quote the full repair until we\'ve looked. The prices below are a guide — diagnostic first, then the repair if the board or other parts need work.</p>' +
-          '<p class="qw-res-p">Once your device arrives — by courier or mail-in — we diagnose within 3 working days and email your quote. The device stays with us until you decide.</p>' +
+          diagIntro +
           likelyHtml +
         '</div>' +
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
@@ -4301,6 +4363,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     wireCourierService(container);
     wireCFToggle(container);
     wireRestart(container);
+    if (window.ICorrectHighValue) window.ICorrectHighValue.wirePrequal(container);
 
     (function stampDiagnosticRepair(){
       var resEl = document.getElementById('qwResCard');
@@ -5353,6 +5416,17 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
       "label": "Skip to service step when product is fully resolved",
       "default": false,
       "info": "Keep off so product pages stay sequential: fault → postcode → price."
+    },
+    {
+      "type": "header",
+      "content": "High-value convert"
+    },
+    {
+      "type": "checkbox",
+      "id": "safan_24h_open",
+      "label": "Safan 24h word-back is open",
+      "default": false,
+      "info": "Fail closed. Tick only when Safan’s Short Deadline queue can take 24h diagnostics. Off = next working day copy."
     },
     {
       "type": "header",
