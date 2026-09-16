@@ -2794,16 +2794,6 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
   font: 650 22px/1.2 var(--font-sans);
 }
 .qw-hv-now .qw-res-p { margin-top: 6px; }
-.qw-hv-call {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  margin: 12px 0 0;
-  font: 500 14px/1.4 var(--font-sans);
-  color: var(--qw-text);
-  cursor: pointer;
-}
-.qw-hv-call input { margin-top: 3px; }
 .qw-hv-prequal {
   margin: 16px 0 8px;
   padding: 14px 16px;

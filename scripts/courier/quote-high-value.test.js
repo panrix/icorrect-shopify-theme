@@ -48,7 +48,6 @@ describe('evaluate — Lane A high-value diagnostic', () => {
     assert.equal(r.eatCollect, true);
     assert.equal(r.diag24h, false);
     assert.equal(r.includedFast, false);
-    assert.equal(r.callDefaultOn, true);
     assert.equal(r.askPrequal, true);
   });
 
@@ -85,7 +84,6 @@ describe('evaluate — Lane A high-value diagnostic', () => {
     assert.equal(r.highValue, false);
     assert.equal(r.eatCollect, false);
     assert.equal(r.askPrequal, true);
-    assert.equal(r.callDefaultOn, false);
   });
 
   it('Air M3/M4 liquid or dead is Lane A; battery is not', () => {
@@ -242,7 +240,6 @@ describe('evaluate — Lane B in-stock MacBook Pro screen / keyboard', () => {
     assert.equal(r.includedFast, true);
     assert.equal(r.eatCollect, false);
     assert.equal(r.diag24h, false);
-    assert.equal(r.callDefaultOn, true);
     assert.equal(r.askPrequal, false);
   });
 
@@ -329,7 +326,7 @@ describe('withEatCollect', () => {
 describe('collectUrgency — hour-collect shout', () => {
   it('B1 weekday morning is the hour-collect edge', () => {
     assert.equal(HV.collectUrgency({ now: WED_10, band: 'B1' }), 'hour');
-    assert.equal(HV.collectUrgency({ now: WED_10 }), 'hour');
+    assert.equal(HV.collectUrgency({ now: WED_10 }), 'today');
     assert.equal(ev().collectUrgency, 'hour');
   });
 
@@ -346,23 +343,31 @@ describe('collectUrgency — hour-collect shout', () => {
 });
 
 describe('copy + prequal HTML', () => {
-  it('Lane A shouts hour-collect in the morning and does not invent a Back Market £', () => {
+  it('Lane A intro is the job only — no courier time, no call box, no invented Back Market £', () => {
     const html = HV.diagnosticCardIntroHtml({ copy: 'Liquid on the board.' }, ev({ safan24hOpen: true }));
-    assert.match(html, /We can send a courier now/);
-    assert.match(html, /~1 hour/);
-    assert.match(html, /bike can be with you this morning/);
+    assert.match(html, /We want this job/);
+    assert.match(html, /take a proper look/i);
     assert.match(html, /24 hours/);
-    assert.match(html, /qwHvCall/);
-    assert.match(html, /checked/);
+    assert.doesNotMatch(html, /qwHvCall|Call me about this/);
+    assert.doesNotMatch(html, /We can send a courier now|~1 hour|Last collection today|this afternoon/);
     assert.doesNotMatch(html, /£2,?500|2500/);
     assert.doesNotMatch(html, /Book a Diagnostic/);
   });
 
-  it('afternoon copy sells the last window today, not an hour bike', () => {
-    const html = HV.diagnosticCardIntroHtml({ copy: 'Dead board.' }, ev({ now: WED_14 }));
-    assert.match(html, /Last collection today/);
-    assert.match(html, /this afternoon/);
-    assert.doesNotMatch(html, /~1 hour/);
+  it('hour-collect HTML is a postcode-unlock block, not the intro', () => {
+    const morning = HV.collectNowHtml(ev({ now: WED_10, band: 'B1' }));
+    assert.match(morning, /We can send a courier now/);
+    assert.match(morning, /~1 hour/);
+    assert.match(morning, /bike can be with you this morning/);
+    const afternoon = HV.collectNowHtml(ev({ now: WED_14, band: 'B1' }));
+    assert.match(afternoon, /Last collection today/);
+    assert.match(afternoon, /this afternoon/);
+    assert.doesNotMatch(afternoon, /~1 hour/);
+    assert.equal(HV.shouldShowCollectNow(ev(), { service: 'courier', band: 'B1' }), true);
+    assert.equal(HV.shouldShowCollectNow(ev(), { service: 'mail-in' }), false);
+    assert.equal(HV.shouldShowCollectNow(ev(), { service: 'courier', forcedMailIn: true }), false);
+    assert.equal(HV.shouldShowCollectNow({ highValue: false }, { service: 'courier' }), false);
+    assert.equal(HV.shouldShowCollectNow(ev(), null), false);
   });
 
   it('ordinary diagnostic keeps the 3 working day fee card', () => {
@@ -381,7 +386,7 @@ describe('copy + prequal HTML', () => {
     assert.doesNotMatch(html, /word back in 24 hours/i);
   });
 
-  it('Lane B repair intro is collect today, not a diagnostic fee', () => {
+  it('Lane B repair intro is the product only — collect options wait for postcode', () => {
     const html = HV.repairCardIntroHtml(
       { title: 'MacBook Pro 16" M3 Screen Repair', copy: 'Genuine display.' },
       HV.evaluate({
@@ -396,9 +401,10 @@ describe('copy + prequal HTML', () => {
         now: WED_10
       })
     );
-    assert.match(html, /We can send a courier now|Last collection today|Next collection/);
-    assert.match(html, /qwHvCall/);
+    assert.match(html, /In stock/);
     assert.match(html, /MacBook Pro 16&quot; M3 Screen Repair/);
+    assert.doesNotMatch(html, /qwHvCall|Call me about this/);
+    assert.doesNotMatch(html, /We can send a courier now|~1 hour|Last collection today|this afternoon/);
   });
 
   it('prequal sits on the card and never includes a passcode field', () => {
@@ -411,7 +417,7 @@ describe('copy + prequal HTML', () => {
     assert.doesNotMatch(html, /required/);
   });
 
-  it('readPrequal maps Apple / data / serial / call without blocking empties', () => {
+  it('readPrequal maps Apple / data / serial without a call option', () => {
     const rootEl = {
       querySelector: function (sel) {
         const map = {
@@ -422,8 +428,7 @@ describe('copy + prequal HTML', () => {
           '#qwHvDataYes': { checked: true },
           '#qwHvDataNo': { checked: false },
           '#qwHvDataUnknown': { checked: false },
-          '#qwHvSerial': { value: 'C02ABC123' },
-          '#qwHvCall': { checked: true }
+          '#qwHvSerial': { value: 'C02ABC123' }
         };
         return map[sel] || null;
       }
@@ -433,7 +438,7 @@ describe('copy + prequal HTML', () => {
     assert.equal(p.apple_outcome, 'refused');
     assert.equal(p.data_important, 'yes');
     assert.equal(p.serial, 'C02ABC123');
-    assert.equal(p.call_requested, true);
+    assert.equal(p.call_requested, undefined);
   });
 });
 
@@ -455,8 +460,11 @@ describe('wizard wiring (liquid stays a thin hook)', () => {
     assert.match(liquid, /ICorrectHighValue\.diagnosticCardIntroHtml/);
     assert.match(liquid, /ICorrectHighValue\.repairCardIntroHtml/);
     assert.match(liquid, /ICorrectHighValue\.prequalHtml/);
-    assert.match(liquid, /ICorrectHighValue\.collectNowHtml/);
+    assert.match(liquid, /HV\.collectNowHtml\(hv\)/);
+    assert.match(liquid, /HV\.shouldShowCollectNow\(hv, _courierQuote\)/);
     assert.match(liquid, /function paintCollectNow/);
+    assert.match(liquid, /insertAdjacentHTML\('afterbegin'/);
+    assert.doesNotMatch(liquid, /extra\.call_requested|qwHvCall/);
     assert.match(liquid, /ICorrectHighValue\.withEatCollect/);
     assert.match(liquid, /function currentHighValue/);
   });
@@ -485,6 +493,7 @@ describe('wizard wiring (liquid stays a thin hook)', () => {
     assert.match(css, /\.qw-hv-now\s*\{/);
     assert.match(css, /\.qw-hv-now-time\s*\{/);
     assert.match(css, /\.qw-hv-prequal\s*\{/);
+    assert.doesNotMatch(css, /\.qw-hv-call/);
     assert.doesNotMatch(css, /@import|fonts\.google/);
   });
 });

@@ -2480,9 +2480,14 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   }
 
   function paintCollectNow() {
-    var el = document.getElementById('qwHvNow');
-    if (!el || !window.ICorrectHighValue || typeof window.ICorrectHighValue.collectNowHtml !== 'function') return;
-    el.outerHTML = window.ICorrectHighValue.collectNowHtml(currentHighValue());
+    var existing = document.getElementById('qwHvNow');
+    if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+    var reveal = document.getElementById('qwDeliveryReveal');
+    var HV = window.ICorrectHighValue;
+    if (!reveal || !HV || typeof HV.collectNowHtml !== 'function') return;
+    var hv = currentHighValue();
+    if (!HV.shouldShowCollectNow(hv, _courierQuote)) return;
+    reveal.insertAdjacentHTML('afterbegin', HV.collectNowHtml(hv));
   }
 
   function applyCourierQuoteToUI(quote) {
@@ -2521,6 +2526,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       hideServiceJourney();
       closeCollectionCalendar();
       refreshSameDayEligibility();
+      paintCollectNow();
       return;
     }
 
@@ -2657,7 +2663,6 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         extra.apple_outcome = pq.apple_outcome;
         extra.data_important = pq.data_important;
         extra.serial = pq.serial;
-        extra.call_requested = pq.call_requested;
       }
       var payload = window.ICorrectQuoteLead.intakeContactPayload(lead, extra);
       if (window.ICorrectHighValue) payload = window.ICorrectHighValue.enrichIntake(payload, extra);

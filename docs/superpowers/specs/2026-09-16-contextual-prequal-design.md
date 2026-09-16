@@ -168,15 +168,19 @@ N7 same-day is the edge of B1 (longer ride). Morning collect still fits the lock
 
 Lead with the convert, not the fee.
 
-**Lane A (diagnostic):** we want this job · **shout the collect** — weekday morning B1: a courier can be with you in ~1 hour; after noon: last afternoon window today; after 17:00 / weekend: first bike next working day · word back in 24 hours only if Safan is not stacked, else next working day · we’ll call you (default on) · £49 is how we start · repair vs replace after we look.
+**Before postcode (result card):** we want this job / in stock — job copy only. No collect-today, no hour bike, no “call me about this” (that was a future-idea note, not a UI option).
 
-**Lane B (in-stock high ticket):** collect today, free · back tomorrow, included · back today +£149 if a slot · we’ll call you optional.
+**After postcode (actual options):** shout the collect on the delivery reveal — weekday morning B1: a courier can be with you in ~1 hour; after noon: last afternoon window today; after 17:00 / weekend: first bike next working day. Mail-in / no courier: no bike shout.
+
+**Lane A (diagnostic):** word back in 24 hours only if Safan is not stacked, else next working day · £49 is how we start · repair vs replace after we look.
+
+**Lane B (in-stock high ticket):** after postcode, collect today free · back tomorrow included · back today +£149 if a slot.
 
 Repair-vs-replace numbers stay honest: only if v7 has the model. Until then, one line: we can talk like-for-like once we have the serial or we’ve looked. Do not invent £2,500.
 
 ### Where the questions sit (v1, same card)
 
-Apple / data / serial do **not** gate the call or the book button.
+Apple / data / serial do **not** gate the book button.
 
 They sit under the convert copy, short, skippable except Apple yes/no on high-value. If they say Apple refused, the card can tighten (“Apple have already said no — this is the job we take”) and the Slack brief gets `apple_outcome`. If they skip, we still treat them as high-value from model + fault.
 
@@ -305,7 +309,7 @@ Add M4 Pro 14/16 (and M5 when it lists) and **iPhone 16 Pro / Pro Max** to scrap
 
 We will know this is working when, on unpublished preview then live:
 
-- Lane A: collect today (afternoon OK) is the headline. 24h diagnose only when the Safan dial is open; else next working day. Call default-on. Apple questions optional on the same card.
+- Lane A: details first, then the actual collect options after postcode. Collect today (afternoon OK) is the post-unlock headline. 24h diagnose only when the Safan dial is open; else next working day. Apple questions optional on the same card.
 - Lane B (in-stock MacBook Pro screen/keyboard, B1/B2): tomorrow included, same-day +£149 only when a slot exists.
 - High-context quotes that *do* answer store `apple_outcome` and `data_important` on the lead.
 - Apple-refused + liquid/dead + recent high-value model is a tagged lead Ferrari can see the same day.

@@ -5,7 +5,7 @@
  * Lane A: replacement-class diagnostic → collect today, optional Safan 24h,
  *         eat B1 collect only on M-series Pro / 15–16 Pro liquid-or-dead.
  * Lane B: in-stock MacBook Pro screen/keyboard ≥£279 in B1/B2 → tomorrow included.
- * Questions sit on the same card and never block book / call.
+ * Questions sit on the same card and never block booking.
  */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
@@ -151,7 +151,7 @@
     var wall = londonWall(ctx.now);
     var band = ctx.band || null;
     if (!wall.working || wall.hour >= LAST_COLLECT_HOUR) return 'next_wd';
-    if (wall.hour < HOUR_UNTIL && (!band || band === 'B1')) return 'hour';
+    if (wall.hour < HOUR_UNTIL && band === 'B1') return 'hour';
     return 'today';
   }
 
@@ -174,7 +174,6 @@
       eatCollect: eatEligible && band === 'B1',
       diag24h: laneA && !!ctx.safan24hOpen,
       includedFast: includedFast,
-      callDefaultOn: !!lane,
       askPrequal: askPrequal,
       collectUrgency: urgency,
       nextCollectDay: nextWorkingDayLabel(ctx.now),
@@ -196,12 +195,6 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
-  }
-
-  function callRow(checked) {
-    return '<label class="qw-hv-call" for="qwHvCall">' +
-      '<input type="checkbox" id="qwHvCall"' + (checked ? ' checked' : '') + '>' +
-      '<span>Call me about this — afternoon is fine</span></label>';
   }
 
   function badge(kind, label) {
@@ -237,6 +230,13 @@
     '</div>';
   }
 
+  function shouldShowCollectNow(evaluation, quote) {
+    if (!evaluation || !evaluation.highValue) return false;
+    if (!quote || quote.service !== 'courier') return false;
+    if (quote.courierAvailable === false || quote.forcedMailIn) return false;
+    return true;
+  }
+
   function diagnosticCardIntroHtml(iss, evaluation) {
     iss = iss || {};
     evaluation = evaluation || {};
@@ -246,10 +246,10 @@
         : 'We word back the next working day once it is on the bench.';
       return '<div class="qw-hv-card" data-hv-lane="A">' +
         badge('go', 'We want this job') +
-        collectNowHtml(evaluation) +
-        '<p class="qw-res-p">' + word + ' The £49 diagnostic is how we start — repair or like-for-like after we have looked. We will not invent a replacement price until we have the serial or the board in front of us.</p>' +
+        '<h3 class="qw-res-h">We\'ll take a proper look</h3>' +
+        '<p class="qw-res-p">The £49 diagnostic is how we start — repair or like-for-like after we have looked. We will not invent a replacement price until we have the serial or the board in front of us.</p>' +
+        '<p class="qw-res-p">' + word + '</p>' +
         (iss.copy ? '<p class="qw-res-p">' + esc(iss.copy) + '</p>' : '') +
-        callRow(!!evaluation.callDefaultOn) +
       '</div>';
     }
     return badge('look', 'We need to take a look') +
@@ -267,10 +267,8 @@
     if (evaluation.lane === 'B' || evaluation.laneBCandidate) {
       return '<div class="qw-hv-card" data-hv-lane="B">' +
         badge('go', 'In stock — we\'ll move') +
-        collectNowHtml(evaluation) +
-        '<p class="qw-res-p">On inner London jobs this size, tomorrow is included once we have your postcode. Same-day is the paid pull-forward if a slot is left.</p>' +
-        '<p class="qw-res-p">' + esc(title) + (copy ? ' — ' + esc(copy) : '') + '</p>' +
-        callRow(!!evaluation.callDefaultOn) +
+        '<h3 class="qw-res-h">' + esc(title) + '</h3>' +
+        (copy ? '<p class="qw-res-p">' + esc(copy) + '</p>' : '') +
       '</div>';
     }
     return badge('go', 'We can fix this') +
@@ -323,7 +321,7 @@
   function readPrequal(root) {
     root = root || (typeof document !== 'undefined' ? document : null);
     if (!root || typeof root.querySelector !== 'function') {
-      return { apple_diagnosed: '', apple_outcome: '', data_important: '', serial: '', call_requested: false };
+      return { apple_diagnosed: '', apple_outcome: '', data_important: '', serial: '' };
     }
     var apple = checkedVal(root, [
       { sel: '#qwHvAppleYes', value: 'yes' },
@@ -337,13 +335,11 @@
     ]);
     var outcomeEl = root.querySelector('#qwHvAppleOutcome');
     var serialEl = root.querySelector('#qwHvSerial');
-    var callEl = root.querySelector('#qwHvCall');
     return {
       apple_diagnosed: apple,
       apple_outcome: apple === 'yes' && outcomeEl ? String(outcomeEl.value || '') : '',
       data_important: data,
-      serial: serialEl ? String(serialEl.value || '').trim() : '',
-      call_requested: !!(callEl && callEl.checked)
+      serial: serialEl ? String(serialEl.value || '').trim() : ''
     };
   }
 
@@ -376,7 +372,6 @@
     if (prequal.apple_outcome) a['Apple outcome'] = prequal.apple_outcome;
     if (prequal.data_important) a['Data important'] = prequal.data_important;
     if (prequal.serial) a['Serial'] = prequal.serial;
-    if (prequal.call_requested) a['Call requested'] = 'yes';
     return a;
   }
 
@@ -388,7 +383,6 @@
     if (extra.apple_outcome) bits.push('Apple outcome: ' + extra.apple_outcome + '.');
     if (extra.data_important) bits.push('Data important: ' + extra.data_important + '.');
     if (extra.serial) bits.push('Serial: ' + extra.serial + '.');
-    if (extra.call_requested) bits.push('Call requested.');
     return bits.join(' ').replace(/\s+/g, ' ').trim();
   }
 
@@ -404,6 +398,7 @@
     evaluate: evaluate,
     collectUrgency: collectUrgency,
     collectNowHtml: collectNowHtml,
+    shouldShowCollectNow: shouldShowCollectNow,
     withEatCollect: withEatCollect,
     diagnosticCardIntroHtml: diagnosticCardIntroHtml,
     repairCardIntroHtml: repairCardIntroHtml,
