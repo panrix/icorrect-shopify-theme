@@ -141,13 +141,14 @@ Live costs we already have:
 
 Goal: **get it in today**, diagnose fast, word back. Then they buy the repair or the replace.
 
-- Collect today on B1 (hour-collect language, economy ASAP — not Direct).
+- **The convert is collect today.** Copy: we can collect it today. Windows run **into the afternoon**. As long as the machine is on a bike today, it is in. That is the line that converts. Not “diagnosed in 24 hours.” Not same-day repair.
+- Hour-collect language on B1 economy ASAP is fine when the window is still morning. After that, still sell **today** — last afternoon window — not tomorrow.
 - **Eat collection (one leg, ~£12)** on M-series Pro / 15–16 Pro dead-or-liquid only. Still charge the **£49** diagnostic. If they refuse the repair we still owe a return (~£12 more). Worst case ~£25 left on the fee. Acceptable **only** on those models, **B1 only**. Do not eat B2–B4 or old Airs.
-- Clock: **word back in 24 hours if the Saturday / Sunday bench queue has room.** The wizard today treats Sat as closed. This lane is the first place Saturday counts. **Fail closed:** if the Sat queue is full, copy says next working day, not 24 hours. Do not promise 24h as a blanket.
+- **Word back in 24 hours is optional, and it has a dial.** It is not Saturday. It is **Safan** (Safan Patel, lead repair tech — Short Deadline queue, diagnostics / board-level). If Safan is stacked, we **dial down**: copy becomes next working day, whatever that date is. Fail closed. One workshop-os / ops switch (or a count on Safan Short Deadline) so when the bench is overwhelmed we stop promising 24h without a theme deploy.
 - Same-day *repair* stays off. We do not burn a slot on an unknown board.
-- Fast +£79 on diagnostic stays as an optional paid pull-forward if 24h is full. Do not give Fast away on a £49 fee.
+- Fast +£79 on diagnostic stays as an optional paid pull-forward if 24h is dialled down. Do not give Fast away on a £49 fee.
 
-This is the “at least let’s get it in” lane. The ticket we want is the repair after the quote, not the £49.
+This is the “at least let’s get it in” lane. The ticket we want is the repair after the quote, not the £49. Collect today is how we start winning it.
 
 #### Lane B — known high ticket, part in stock (the N7 16" M3)
 
@@ -167,7 +168,7 @@ N7 same-day is the edge of B1 (longer ride). Morning collect still fits the lock
 
 Lead with the convert, not the fee.
 
-**Lane A (diagnostic):** we want this job · collect today (B1, we eat the collect) · word back in 24 hours if the Sat queue allows, else next working day · we’ll call you (default on) · £49 is how we start · repair vs replace after we look.
+**Lane A (diagnostic):** we want this job · **we can collect it today** (afternoon windows count) · word back in 24 hours only if Safan is not stacked, else next working day · we’ll call you (default on) · £49 is how we start · repair vs replace after we look.
 
 **Lane B (in-stock high ticket):** collect today, free · back tomorrow, included · back today +£149 if a slot · we’ll call you optional.
 
@@ -304,7 +305,7 @@ Add M4 Pro 14/16 (and M5 when it lists) and **iPhone 16 Pro / Pro Max** to scrap
 
 We will know this is working when, on unpublished preview then live:
 
-- Lane A: collect today + 24h-or-next-WD diagnose copy that matches the Sat queue flag. Call default-on. Apple questions optional on the same card.
+- Lane A: collect today (afternoon OK) is the headline. 24h diagnose only when the Safan dial is open; else next working day. Call default-on. Apple questions optional on the same card.
 - Lane B (in-stock MacBook Pro screen/keyboard, B1/B2): tomorrow included, same-day +£149 only when a slot exists.
 - High-context quotes that *do* answer store `apple_outcome` and `data_important` on the lead.
 - Apple-refused + liquid/dead + recent high-value model is a tagged lead Ferrari can see the same day.
@@ -318,6 +319,6 @@ We will know this is working when, on unpublished preview then live:
 - **AdWords hunts MacBook Pro higher tickets** (liquid / dead / screen). iPhone 16 Pro dead stays in the wizard; it is not the first ad group.
 - Do not print a replacement £ until v7 has that model (M4 Pro and 16 Pro are both missing today).
 - **Two modules.** High-value convert (model + fault → we want this, we call, we collect fast) ships first. Pre-qual questions sit on that same card and do not block book / call.
-- **Lane A (diagnostic):** B1 collect today, we eat one leg on M-series Pro / 15–16 Pro only, still charge £49. Word back in 24 hours only if Sat queue has room; else next working day. No same-day repair.
+- **Lane A (diagnostic):** B1 collect **today, into the afternoon**. Eat one leg on M-series Pro / 15–16 Pro only, still charge £49. 24h word-back only if Safan Short Deadline is not stacked; one dial to drop that to next working day when overwhelmed. No same-day repair.
 - **Lane B (known high ticket, in stock, B1/B2):** collection already free at ≥£200. Included clock = back tomorrow. Same-day +£149 if a slot. Not for batteries.
 - AdWords and this treatment target **higher tickets only** (MacBook Pro screen / keyboard / liquid-dead).
