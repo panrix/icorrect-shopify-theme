@@ -186,7 +186,7 @@ A dead iPhone 16 Pro with no liquid **is in**. That is the point. We already kno
 
 ### Extra questions (website)
 
-Ask these **only** on high-context routes. Yes/no and short choice. No passcode.
+Ask these **only** on diagnostic routes, **on the same card as the convert copy**. They do not block book or call. Yes/no and short choice. No passcode.
 
 1. **Has it been to the Apple Store / Apple for a diagnosis?**  
    Yes / No / Not sure  
@@ -264,7 +264,8 @@ Add M4 Pro 14/16 (and M5 when it lists) and **iPhone 16 Pro / Pro Max** to scrap
 
 We will know this is working when, on unpublished preview then live:
 
-- High-context quotes store `apple_outcome` and `data_important` on the lead.
+- High-value quotes (model + diagnostic fault) show convert copy + call default-on + Ferrari ping, even if Apple questions are skipped.
+- High-context quotes that *do* answer store `apple_outcome` and `data_important` on the lead.
 - Apple-refused + liquid/dead + recent high-value model (MacBook Pro first, also 16 Pro dead) is a tagged lead Ferrari can see the same day.
 - Known battery / cracked-screen path is unchanged (no extra questions, no slower checkout).
 - We can pull Apple-refused vs Apple-yes vs Apple-no against paid amount going forward. We cannot do that today because the form never asked the follow-up.
