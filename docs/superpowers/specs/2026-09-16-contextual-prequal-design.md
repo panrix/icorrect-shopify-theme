@@ -1,7 +1,7 @@
 # Contextual pre-qual — design
 
 Date: 2026-09-16  
-Status: gate locked 2026-09-16 (Ricky). Still a note — do not implement until the spec is signed for build.  
+Status: building on unpublished preview 2026-09-16. Do not publish live.  
 Repos: `panrix/icorrect-shopify-theme` (wizard) · Typeform `sDieaFMs` · Monday board `349212843` · Back Market scraper v7  
 Builds on: details-first lead gate (name / email / mobile / postcode before price).
 
