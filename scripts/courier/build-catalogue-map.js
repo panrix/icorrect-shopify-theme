@@ -122,11 +122,19 @@ function modelNameFromTitle(title, repairType) {
       break;
     }
   }
-  return name;
+  return canonicalizeModelText(name).replace(/\s+/g, ' ').trim();
+}
+
+/** Wizard menus / Monday Touch Bars use 13"; other SKUs use 13-inch. */
+function canonicalizeModelText(s) {
+  return String(s || '')
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/(\d+)\s*-?\s*(?:["\u2033](?=[\s'"]|$)|inch\b)/gi, '$1-inch');
 }
 
 function slugify(s) {
-  return String(s)
+  return canonicalizeModelText(s)
     .toLowerCase()
     .replace(/['']/g, '')
     .replace(/[^a-z0-9]+/g, '-')

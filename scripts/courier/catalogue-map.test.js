@@ -108,6 +108,53 @@ describe('repair catalogue map', () => {
     assert.match(ear.handle, /earpiece/);
     assert.match(speaker.handle, /loudspeaker/);
   });
+
+  it('maps MacBook Pro 13 M2 A2338 menu name to every collection repair', () => {
+    const repairs = repairsMapForModel(
+      map,
+      'macbook',
+      'MacBook Pro 13” ‘M2’ A2338 (2022)'
+    );
+    assert.ok(repairs.screen, 'screen');
+    assert.ok(repairs.battery, 'battery');
+    assert.ok(repairs.keyboard, 'keyboard');
+    assert.ok(repairs.trackpad, 'trackpad');
+    assert.ok(repairs['charging-port'], 'charging-port');
+    assert.ok(repairs['touch-bar'], 'touch-bar');
+    assert.ok(repairs.diagnostic, 'diagnostic');
+    assert.match(repairs.screen.handle, /m2-2022-a2338/);
+  });
+
+  it('does not collapse M2 A2338 into the M1 A2338 catalogue row', () => {
+    const m2 = findModel(map, 'macbook', 'MacBook Pro 13” ‘M2’ A2338 (2022)');
+    const m1 = findModel(map, 'macbook', 'MacBook Pro 13” ‘M1’ A2338 (2020)');
+    assert.ok(m2);
+    assert.ok(m1);
+    assert.notEqual(m2.slug, m1.slug);
+    assert.ok(m1.repairs.dustgate);
+    assert.equal(m2.repairs.dustgate, undefined);
+  });
+
+  it('maps every wizard menu name to the live catalogue repairs', () => {
+    const aliases = JSON.parse(
+      fs.readFileSync(path.join(root, 'data/wizard-menu-aliases.json'), 'utf8')
+    );
+    const catalogue = JSON.parse(
+      fs.readFileSync(path.join(root, 'data/shopify-catalogue-2026-09-15.json'), 'utf8')
+    );
+    const active = new Set((catalogue.products || []).map((p) => p.handle));
+    const thin = [];
+    for (const row of aliases.aliases || []) {
+      const liveHandles = (row.productHandles || []).filter((h) => active.has(h));
+      if (liveHandles.length < 2) continue;
+      const model = findModel(map, row.device, row.menuName);
+      const count = model && model.repairs ? Object.keys(model.repairs).length : 0;
+      if (count < 2) {
+        thin.push(row.menuName + ' → ' + count + ' (collection ' + liveHandles.length + ')');
+      }
+    }
+    assert.deepEqual(thin, []);
+  });
 });
 
 describe('SW11 all-in adjustment (done-when, policy v2)', () => {

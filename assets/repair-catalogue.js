@@ -14,8 +14,16 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
-  function slugify(s) {
+  /* Wizard menus use 13"; Monday Touch Bar titles use 13"; other SKUs use 13-inch. */
+  function canonicalizeModelText(s) {
     return String(s || '')
+      .replace(/[\u2018\u2019]/g, "'")
+      .replace(/[\u201C\u201D]/g, '"')
+      .replace(/(\d+)\s*-?\s*(?:["\u2033](?=[\s'"]|$)|inch\b)/gi, '$1-inch');
+  }
+
+  function slugify(s) {
+    return canonicalizeModelText(s)
       .toLowerCase()
       .replace(/['']/g, '')
       .replace(/[^a-z0-9]+/g, '-')
@@ -23,7 +31,7 @@
   }
 
   function normalizeName(s) {
-    return String(s || '')
+    return canonicalizeModelText(s)
       .toLowerCase()
       .replace(/['']/g, '')
       .replace(/[^a-z0-9]+/g, ' ')
@@ -43,11 +51,10 @@
     var wantSlug = slugify(modelName);
     var wantNorm = normalizeName(modelName);
     var wantA = wantNorm.match(/a\d{4}/g) || [];
-    var exact = mapAsset.models[deviceKey + '::' + wantSlug];
-    if (exact) return exact;
 
     var best = null;
     var bestScore = 0;
+    var bestRepairs = 0;
     var keys = Object.keys(mapAsset.models);
     for (var i = 0; i < keys.length; i++) {
       var m = mapAsset.models[keys[i]];
@@ -92,8 +99,13 @@
         }
         if (!shared) score = 0;
       }
-      if (score > bestScore) {
+      var repairCount = m.repairs ? Object.keys(m.repairs).length : 0;
+      if (
+        score > bestScore ||
+        (score === bestScore && score >= 40 && repairCount > bestRepairs)
+      ) {
         bestScore = score;
+        bestRepairs = repairCount;
         best = m;
       }
     }
