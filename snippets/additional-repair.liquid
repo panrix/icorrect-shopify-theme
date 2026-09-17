@@ -1480,6 +1480,13 @@ document.addEventListener("DOMContentLoaded", () => {
         items[0].properties = mainProps;
       }
 
+      /* £0 SKU on the UK shipping profile — unlocks Delivery (home) + Billing. */
+      items.push({
+        id: 46150010929405,
+        quantity: 1,
+        properties: { 'Address type': 'Home / collection / mail-in pack' }
+      });
+
       const res = await fetch(window.Shopify.routes.root + 'cart/add.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1502,12 +1509,21 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      // Append PostHog distinct_id to checkout URL so the web pixel can link
-      // the anonymous storefront session to the identified checkout session
+      // Delivery (home / collection) + billing. Prefill wizard postcode when present.
       var checkoutUrl = '/checkout';
+      var params = [];
       if (typeof posthog !== 'undefined' && typeof posthog.get_distinct_id === 'function') {
-        checkoutUrl += '?ph_distinct_id=' + encodeURIComponent(posthog.get_distinct_id());
+        params.push('ph_distinct_id=' + encodeURIComponent(posthog.get_distinct_id()));
       }
+      var homePc = '';
+      try {
+        homePc = String((items[0] && items[0].properties && (items[0].properties.Postcode || items[0].properties.postcode)) || '').trim();
+      } catch (e) {}
+      if (homePc) {
+        params.push('checkout[shipping_address][country]=' + encodeURIComponent('United Kingdom'));
+        params.push('checkout[shipping_address][zip]=' + encodeURIComponent(homePc.toUpperCase()));
+      }
+      if (params.length) checkoutUrl += '?' + params.join('&');
       window.location.href = checkoutUrl;
     } catch (e) {
       showCartError('Error adding to cart: Network or theme script error.');
