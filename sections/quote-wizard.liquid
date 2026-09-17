@@ -104,6 +104,7 @@ window.WIZARD_CONTEXT = {
 
 <!-- Service products + courier assets (#53) — PURE collection & delivery, no walk-in -->
 {%- assign mail_in_prod = all_products['mail-in-service'] -%}
+{%- assign home_addr_prod = all_products['shipping'] -%}
 <script src="{{ 'courier-pricing.js' | asset_url }}" defer></script>
 <script src="{{ 'courier-slots.js' | asset_url }}" defer></script>
 <script src="{{ 'wizard-prefill.js' | asset_url }}" defer></script>
@@ -129,6 +130,11 @@ window.WIZARD_CFG = {
     title: {{ mail_in_prod.title | default: 'Mail-in pack' | json }},
     price: 0,
     variantId: {{ mail_in_prod.selected_or_first_available_variant.id | default: 'null' }}
+  },
+  /* £0 physical SKU already on the UK shipping profile. Makes Checkout
+     ask for Delivery (home) as well as Billing. Do not use mail-in-service. */
+  homeAddress: {
+    variantId: {{ home_addr_prod.selected_or_first_available_variant.id | default: 46150010929405 }}
   }
 };
 window.__QW_BANDS = null;
@@ -3422,6 +3428,24 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     };
   }
 
+  /* Shopify hides Delivery when every SKU is digital. Home address is the
+     checkout shipping address; billing can stay different. Prefill the
+     wizard postcode so ME23 vs card-billing mismatches are obvious. */
+  function checkoutUrlWithHomeAddress(postcode) {
+    var params = [];
+    try {
+      if (window.posthog && typeof posthog.get_distinct_id === 'function') {
+        params.push('ph_distinct_id=' + encodeURIComponent(posthog.get_distinct_id()));
+      }
+    } catch (e) {}
+    var pc = String(postcode || '').trim();
+    if (pc) {
+      params.push('checkout[shipping_address][country]=' + encodeURIComponent('United Kingdom'));
+      params.push('checkout[shipping_address][zip]=' + encodeURIComponent(pc.toUpperCase()));
+    }
+    return params.length ? '/checkout?' + params.join('&') : '/checkout';
+  }
+
   /* =============================================
      CART
      ============================================= */
@@ -3523,6 +3547,17 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       } else {
         console.warn('[quote-wizard] quoted adjustment £' + _courierQuote.adjustment + ' without variantId — not adding a £0 line');
       }
+    }
+
+    var homeVid = CFG.homeAddress && parseInt(CFG.homeAddress.variantId, 10);
+    if (homeVid) {
+      items.push({
+        id: homeVid,
+        quantity: 1,
+        properties: {
+          'Address type': 'Home / collection / mail-in pack'
+        }
+      });
     }
 
     return items;
@@ -3638,11 +3673,10 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         currency: 'GBP',
         item_count: items.length
       });
-      var checkoutUrl = '/checkout';
-      if (window.posthog && posthog.get_distinct_id) {
-        checkoutUrl += '?ph_distinct_id=' + encodeURIComponent(posthog.get_distinct_id());
-      }
-      window.location.href = checkoutUrl;
+      var homePostcode = (items[0] && items[0].properties && items[0].properties.Postcode) || '';
+      var postEl = document.getElementById('qwPostcode');
+      if (!homePostcode && postEl) homePostcode = String(postEl.value || '').trim();
+      window.location.href = checkoutUrlWithHomeAddress(homePostcode);
     } catch (err) {
       if (btn) { btn.disabled = false; btn.textContent = 'Proceed to checkout'; }
       alert(err.message || 'Something went wrong. Please try again.');
