@@ -18,6 +18,7 @@ const {
 const {
   quoteCourierCollection,
 } = require('../../assets/courier-pricing.js');
+const { auditWizardCoverage, loadInputs } = require('./wizard-coverage');
 
 const map = JSON.parse(
   fs.readFileSync(path.join(root, 'assets/repair-catalogue-map.json'), 'utf8')
@@ -199,74 +200,10 @@ describe('repair catalogue map', () => {
   });
 
   it('maps every live collection SKU onto the wizard repairs map', () => {
-    const aliases = JSON.parse(
-      fs.readFileSync(path.join(root, 'data/wizard-menu-aliases.json'), 'utf8')
-    );
-    const catalogue = JSON.parse(
-      fs.readFileSync(path.join(root, 'data/shopify-catalogue-2026-09-15.json'), 'utf8')
-    );
-    const byHandle = new Map((catalogue.products || []).map((p) => [p.handle, p]));
-    const suffixType = [
-      ['heart-rate-monitor-rear-glass-repair', 'heart-rate-monitor'],
-      ['original-lcd-screen-no-screen-message-repair', 'screen'],
-      ['housing-rear-glass-repair', 'rear-glass'],
-      ['display-screen-repair', 'screen'],
-      ['lcd-display-repair', 'screen'],
-      ['glass-screen-repair', 'screen-glass'],
-      ['screen-glass-repair', 'screen-glass'],
-      ['earpiece-speaker-repair', 'earpiece'],
-      ['rear-camera-lens-repair', 'rear-camera-lens'],
-      ['charging-port-repair', 'charging-port'],
-      ['touch-bar-repair', 'touch-bar'],
-      ['screen-repair', 'screen'],
-      ['battery-repair', 'battery'],
-      ['keyboard-repair', 'keyboard'],
-      ['trackpad-repair', 'trackpad'],
-      ['loudspeaker-repair', 'loudspeaker'],
-      ['microphone-repair', 'microphone'],
-      ['rear-camera-repair', 'rear-camera'],
-      ['front-camera-repair', 'front-camera'],
-      ['face-id-repair', 'face-id'],
-      ['rear-glass-repair', 'rear-glass'],
-      ['housing-repair', 'rear-glass'],
-      ['volume-button-repair', 'volume-button'],
-      ['power-button-repair', 'power-button'],
-      ['mute-button-repair', 'mute-button'],
-      ['home-button-repair', 'home-button'],
-      ['side-button-repair', 'side-button'],
-      ['dustgate-repair', 'dustgate'],
-      ['flexgate-repair', 'flexgate'],
-      ['crown-repair', 'crown'],
-      ['xdr-screen-repair', 'screen'],
-      ['original-screen-repair', 'screen'],
-      ['diagnostic', 'diagnostic'],
-      ['battery', 'battery'],
-    ];
-    function typeFromHandle(handle) {
-      const h = String(handle || '');
-      for (const [suffix, type] of suffixType) {
-        if (h === suffix || h.endsWith('-' + suffix)) return type;
-      }
-      return null;
-    }
-    const missing = [];
-    for (const row of aliases.aliases || []) {
-      const live = (row.productHandles || []).filter((h) => byHandle.has(h));
-      if (live.length < 2) continue;
-      const repairs = repairsMapForModel(map, row.device, row.menuName);
-      const expected = {};
-      for (const h of live) {
-        const t = typeFromHandle(h);
-        if (!t) continue;
-        expected[t] = h;
-      }
-      for (const [t, h] of Object.entries(expected)) {
-        if (!repairs[t]) {
-          missing.push(row.menuName + ' missing ' + t + ' (' + h + ')');
-        }
-      }
-    }
-    assert.deepEqual(missing, []);
+    const report = auditWizardCoverage(loadInputs());
+    assert.equal(report.ok, true, JSON.stringify(report.gaps, null, 2));
+    assert.ok(report.checked >= 100);
+    assert.ok(report.skus >= 800);
   });
 
   it('maps watch side-button onto Buttons / Crown in the wizard', () => {

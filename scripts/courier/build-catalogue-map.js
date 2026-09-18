@@ -335,6 +335,29 @@ function main() {
   };
 
   fs.writeFileSync(path.join(ROOT, OUT), `${JSON.stringify(asset)}\n`);
+
+  const { auditWizardCoverage } = require('./wizard-coverage');
+  const { repairsMapForModel } = require('../../assets/repair-catalogue.js');
+  const coverage = auditWizardCoverage({
+    map: asset,
+    aliases: fs.existsSync(aliasPath)
+      ? JSON.parse(fs.readFileSync(aliasPath, 'utf8'))
+      : { aliases: [] },
+    catalogue: raw,
+    liquid: fs.readFileSync(path.join(ROOT, 'sections/quote-wizard.liquid'), 'utf8'),
+    repairsMapForModel,
+  });
+  if (!coverage.ok) {
+    console.error(
+      JSON.stringify(
+        { formula: coverage.formula, gaps: coverage.gaps },
+        null,
+        2
+      )
+    );
+    process.exit(1);
+  }
+
   console.log(
     JSON.stringify(
       {
@@ -343,6 +366,12 @@ function main() {
         repair_count: stats.mapped,
         skipped: stats.skipped,
         byDevice: stats.byDevice,
+        coverage: {
+          formula: coverage.formula,
+          models: coverage.checked,
+          skus: coverage.skus,
+          gaps: coverage.gaps.length,
+        },
       },
       null,
       2
