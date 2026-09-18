@@ -14,24 +14,32 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
-  /* Wizard menus use 13"; Monday Touch Bar titles use 13"; other SKUs use 13-inch. */
-  function canonicalizeModelText(s) {
-    return String(s || '')
+  /* Wizard menus use 13"; Monday Touch Bar titles use 13"; other SKUs use 13-inch.
+     iPad/MacBook titles often omit "inch" entirely (iPad Air 11 vs 11"). */
+  function canonicalizeModelText(s, device) {
+    var out = String(s || '')
       .replace(/[\u2018\u2019]/g, "'")
       .replace(/[\u201C\u201D]/g, '"')
-      .replace(/(\d+)\s*-?\s*(?:["\u2033](?=[\s'"]|$)|inch\b)/gi, '$1-inch');
+      .replace(/\b(20\d{2})\/(\d{2})\b/g, function (_, y, yy) {
+        return y + '-' + y.slice(0, 2) + yy;
+      })
+      .replace(/(\d+(?:\.\d+)?)\s*-?\s*(?:["\u2033](?=[\s'"]|$)|inch\b)/gi, '$1-inch');
+    if (device === 'ipad' || device === 'macbook') {
+      out = out.replace(/\b(11|12\.9|13|14|15|16)(?!-inch)\b(?=\s)/g, '$1-inch');
+    }
+    return out;
   }
 
-  function slugify(s) {
-    return canonicalizeModelText(s)
+  function slugify(s, device) {
+    return canonicalizeModelText(s, device)
       .toLowerCase()
       .replace(/['']/g, '')
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '');
   }
 
-  function normalizeName(s) {
-    return canonicalizeModelText(s)
+  function normalizeName(s, device) {
+    return canonicalizeModelText(s, device)
       .toLowerCase()
       .replace(/['']/g, '')
       .replace(/[^a-z0-9]+/g, ' ')
@@ -48,8 +56,8 @@
     var deviceKey = String(device || '').toLowerCase();
     if (deviceKey === 'mac') deviceKey = 'macbook';
     if (deviceKey === 'apple-watch') deviceKey = 'watch';
-    var wantSlug = slugify(modelName);
-    var wantNorm = normalizeName(modelName);
+    var wantSlug = slugify(modelName, deviceKey);
+    var wantNorm = normalizeName(modelName, deviceKey);
     var wantA = wantNorm.match(/a\d{4}/g) || [];
 
     var best = null;
@@ -59,12 +67,12 @@
     for (var i = 0; i < keys.length; i++) {
       var m = mapAsset.models[keys[i]];
       if (m.device !== deviceKey) continue;
-      var n = normalizeName(m.name);
+      var n = normalizeName(m.name, deviceKey);
       var score = 0;
       var aliasHit = false;
       var aliases = Array.isArray(m.aliases) ? m.aliases : [];
       for (var al = 0; al < aliases.length; al++) {
-        if (slugify(aliases[al]) === wantSlug || normalizeName(aliases[al]) === wantNorm) {
+        if (slugify(aliases[al], deviceKey) === wantSlug || normalizeName(aliases[al], deviceKey) === wantNorm) {
           aliasHit = true;
           break;
         }
