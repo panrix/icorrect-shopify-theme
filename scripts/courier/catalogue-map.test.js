@@ -268,6 +268,18 @@ describe('repair catalogue map', () => {
     }
     assert.deepEqual(missing, []);
   });
+
+  it('maps watch side-button onto Buttons / Crown in the wizard', () => {
+    const liquid = fs.readFileSync(
+      path.join(root, 'sections/quote-wizard.liquid'),
+      'utf8'
+    );
+    assert.match(liquid, /device === 'watch' && fault === 'Buttons'/);
+    assert.match(liquid, /available\['Buttons \/ Crown'\] = true/);
+    const repairs = repairsMapForModel(map, 'watch', 'Apple Watch Ultra 2');
+    assert.ok(repairs['side-button']);
+    assert.equal(repairs['power-button'], undefined);
+  });
 });
 
 describe('SW11 all-in adjustment (done-when, policy v2)', () => {
