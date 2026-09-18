@@ -39,10 +39,10 @@ const REPAIR_RULES = [
   { type: 'heart-rate-monitor', re: /heart rate/i },
   { type: 'rear-glass', re: /rear glass|back glass|(?:rear )?housing/i },
   { type: 'volume-button', re: /volume button/i },
-  { type: 'power-button', re: /power button|side button/i },
+  { type: 'side-button', re: /side button/i },
+  { type: 'power-button', re: /power button/i },
   { type: 'mute-button', re: /mute button|silent switch/i },
   { type: 'home-button', re: /home button/i },
-  { type: 'side-button', re: /side button/i },
   { type: 'crown', re: /\bcrown\b/i },
 ];
 
@@ -55,9 +55,12 @@ const STRIP_BY_TYPE = {
   trackpad: [/\s+trackpad(\s+repair)?.*$/i],
   'touch-bar': [/\s+touch ?bar(\s+repair)?.*$/i],
   screen: [
+    /\s+original(\s+lcd)?\s+screen(\s+repair)?.*$/i,
+    /\s+lcd\s+screen(\s+repair)?.*$/i,
     /\s+display screen(\s+repair)?.*$/i,
+    /\s+liquid retina.*$/i,
+    /\s+display(\s+repair)\b.*$/i,
     /\s+screen(\s+repair)?.*$/i,
-    /\s+liquid retina.*display(\s+repair)?.*$/i,
     /\s+display(\s+repair)?.*$/i,
   ],
   'screen-glass': [/\s+screen glass(\s+repair)?.*$/i],
@@ -78,7 +81,7 @@ const STRIP_BY_TYPE = {
     /\s+(rear )?housing(\s+repair)?.*$/i,
   ],
   'volume-button': [/\s+volume button(\s+repair)?.*$/i],
-  'power-button': [/\s+(power|side) button(\s+repair)?.*$/i],
+  'power-button': [/\s+power button(\s+repair)?.*$/i],
   'mute-button': [/\s+mute button(\s+repair)?.*$/i],
   'home-button': [/\s+home button(\s+repair)?.*$/i],
   'side-button': [/\s+side button(\s+repair)?.*$/i],
@@ -100,19 +103,33 @@ function deviceFromProduct(p) {
 }
 
 function repairTypeFromProduct(p) {
+  const titleHandle = `${p.title || ''} ${p.handle || ''}`;
   const tags = String(p.tags || '');
-  const title = String(p.title || '');
-  const handle = String(p.handle || '');
-  const blob = `${tags} ${title} ${handle}`;
   for (const rule of REPAIR_RULES) {
-    if (rule.re.test(blob)) return rule.type;
+    if (rule.re.test(titleHandle)) return rule.type;
+  }
+  for (const rule of REPAIR_RULES) {
+    if (rule.re.test(tags)) return rule.type;
   }
   return null;
 }
 
+/** Drop "(Genuine Liquid Retina Display)" notes without eating "(2025)". */
+function stripQualityParens(title) {
+  return String(title || '')
+    .replace(
+      /\s*\(([^)]*)\)\s*$/i,
+      (full, inner) =>
+        /genuine|original|lcd|oled|xdr|liquid retina|no screen message/i.test(inner)
+          ? ''
+          : full
+    )
+    .trim();
+}
+
 /** Strip trailing fault wording so sibling repairs share one model key. */
-function modelNameFromTitle(title, repairType) {
-  let name = String(title || '').trim();
+function modelNameFromTitle(title, repairType, device) {
+  let name = stripQualityParens(title);
   const typed = STRIP_BY_TYPE[repairType] || [];
   const cutters = typed.concat([/\s+Repair$/i]);
   for (const re of cutters) {
@@ -122,23 +139,38 @@ function modelNameFromTitle(title, repairType) {
       break;
     }
   }
-  return canonicalizeModelText(name).replace(/\s+/g, ' ').trim();
+  return canonicalizeModelText(name, device).replace(/\s+/g, ' ').trim();
 }
 
 /** Wizard menus / Monday Touch Bars use 13"; other SKUs use 13-inch. */
-function canonicalizeModelText(s) {
-  return String(s || '')
+function canonicalizeModelText(s, device) {
+  let out = String(s || '')
     .replace(/[\u2018\u2019]/g, "'")
     .replace(/[\u201C\u201D]/g, '"')
-    .replace(/(\d+)\s*-?\s*(?:["\u2033](?=[\s'"]|$)|inch\b)/gi, '$1-inch');
+    .replace(/\b(20\d{2})\/(\d{2})\b/g, (_, y, yy) => `${y}-${y.slice(0, 2)}${yy}`)
+    .replace(/(\d+(?:\.\d+)?)\s*-?\s*(?:["\u2033](?=[\s'"]|$)|inch\b)/gi, '$1-inch');
+  if (device === 'ipad' || device === 'macbook') {
+    out = out.replace(/\b(11|12\.9|13|14|15|16)(?!-inch)\b(?=\s)/g, '$1-inch');
+  }
+  return out;
 }
 
-function slugify(s) {
-  return canonicalizeModelText(s)
+function slugify(s, device) {
+  return canonicalizeModelText(s, device)
     .toLowerCase()
     .replace(/['']/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
+}
+
+function preferRepair(existing, incoming) {
+  if (!existing) return incoming;
+  const prefer =
+    /genuine|original|xdr|oled/i.test(incoming.title) &&
+    !/genuine|original|xdr|oled/i.test(existing.title);
+  if (prefer) return incoming;
+  if (incoming.price < existing.price) return incoming;
+  return existing;
 }
 
 /** Ricky tier rule until products are tagged in Admin. */
@@ -183,8 +215,8 @@ function main() {
       stats.skipped += 1;
       continue;
     }
-    const modelName = modelNameFromTitle(p.title, repairType);
-    const modelKey = `${device}::${slugify(modelName)}`;
+    const modelName = modelNameFromTitle(p.title, repairType, device);
+    const modelKey = `${device}::${slugify(modelName, device)}`;
     const price = Number(variant.price);
     const tier = inferCourierTier(price);
     let tags = String(p.tags || '')
@@ -204,7 +236,7 @@ function main() {
       models[modelKey] = {
         device,
         name: modelName,
-        slug: slugify(modelName),
+        slug: slugify(modelName, device),
         aliases: [],
         repairs: {},
       };
@@ -222,20 +254,10 @@ function main() {
       tags: courierTags,
     };
 
-    // Prefer genuine/original screen SKUs when colliding.
-    const existing = models[modelKey].repairs[repairType];
-    if (existing) {
-      const prefer =
-        /genuine|original|xdr|oled/i.test(entry.title) &&
-        !/genuine|original|xdr|oled/i.test(existing.title);
-      if (!prefer && entry.price >= existing.price) {
-        // keep existing unless new is clearly better labelled
-      } else if (prefer || entry.price < existing.price) {
-        models[modelKey].repairs[repairType] = entry;
-      }
-    } else {
-      models[modelKey].repairs[repairType] = entry;
-    }
+    models[modelKey].repairs[repairType] = preferRepair(
+      models[modelKey].repairs[repairType],
+      entry
+    );
 
     stats.mapped += 1;
     stats.byDevice[device] = (stats.byDevice[device] || 0) + 1;
@@ -252,15 +274,51 @@ function main() {
         if (!key || !models[key]) continue;
         counts[key] = (counts[key] || 0) + 1;
       }
-      const keys = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+      const keys = Object.keys(counts).sort(
+        (a, b) => counts[b] - counts[a] || a.localeCompare(b)
+      );
       if (!keys.length) continue;
-      const model = models[keys[0]];
+      const primaryKey = keys[0];
+      const model = models[primaryKey];
       const alias = String(row.menuName || '').trim();
-      if (!alias) continue;
-      if (!model.aliases.includes(alias) && slugify(alias) !== model.slug) {
+      if (
+        alias &&
+        !model.aliases.includes(alias) &&
+        slugify(alias, row.device) !== model.slug
+      ) {
         model.aliases.push(alias);
       }
+      /* Collection SKUs that title-stripping split onto another key still quote. */
+      for (const handle of row.productHandles || []) {
+        const key = handleToKey[handle];
+        const src = key && models[key];
+        if (!src) continue;
+        for (const [rt, entry] of Object.entries(src.repairs || {})) {
+          if (entry.handle !== handle) continue;
+          model.repairs[rt] = preferRepair(model.repairs[rt], entry);
+          handleToKey[handle] = primaryKey;
+        }
+      }
     }
+  }
+
+  const handleOwners = {};
+  for (const [key, model] of Object.entries(models)) {
+    for (const entry of Object.values(model.repairs || {})) {
+      if (!entry.handle) continue;
+      if (!handleOwners[entry.handle]) handleOwners[entry.handle] = [];
+      handleOwners[entry.handle].push(key);
+    }
+  }
+  for (const [key, model] of Object.entries(models)) {
+    const handles = Object.values(model.repairs || {})
+      .map((e) => e.handle)
+      .filter(Boolean);
+    const absorbed =
+      handles.length &&
+      handles.every((h) => (handleOwners[h] || []).some((k) => k !== key));
+    const hasAlias = Array.isArray(model.aliases) && model.aliases.length;
+    if (absorbed && !hasAlias) delete models[key];
   }
 
   for (const model of Object.values(models)) {
