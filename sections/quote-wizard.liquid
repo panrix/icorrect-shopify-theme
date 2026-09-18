@@ -1422,14 +1422,22 @@ window.__icorrectQuote = window.__icorrectQuote || {};
      ============================================= */
   function getAvailableFaults(device, repairsMap) {
     var available = {};
+    var allowed = {};
+    var list = FAULTS[device] || [];
+    for (var i = 0; i < list.length; i++) allowed[list[i].v] = true;
     for (var rt in repairsMap) {
       var fault = REPAIR_TYPE_TO_FAULT[rt];
-      if (fault && fault !== '_diagnostic') available[fault] = true;
+      if (!fault || fault === '_diagnostic') continue;
+      if (allowed[fault]) {
+        available[fault] = true;
+      } else if (device === 'watch' && fault === 'Buttons') {
+        available['Buttons / Crown'] = true;
+      }
     }
     available['Water Damage'] = true;
     available['Data Recovery'] = true;
     available['Other'] = true;
-    return FAULTS[device].filter(function(f) { return available[f.v]; });
+    return list.filter(function(f) { return available[f.v]; });
   }
 
   function getAvailableIssues(device, fault, repairsMap) {
