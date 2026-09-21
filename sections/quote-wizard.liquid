@@ -3483,11 +3483,22 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       selectedColor = colorBtn.dataset.color || '';
     }
 
+    var mappedRepair = (S.repairType && _repairsMap[S.repairType]) ? _repairsMap[S.repairType] : null;
+    var repairTypeLabel = (window.ICorrectCourier && typeof window.ICorrectCourier.repairTypeCartLabel === 'function')
+      ? window.ICorrectCourier.repairTypeCartLabel({
+          device: S.device,
+          repairType: S.repairType,
+          route: S.route,
+          title: mappedRepair && mappedRepair.title,
+          handle: mappedRepair && mappedRepair.handle
+        })
+      : ((String(S.repairType || S.route || '').toLowerCase() === 'diagnostic') ? 'Diagnostic' : 'Repair');
     var mainProps = {
       '_device': DN[S.device] || S.device,
       '_model': S.model || '',
       '_fault': S.fault || '',
-      '_issue': S.issue || ''
+      '_issue': S.issue || '',
+      'Repair Type': repairTypeLabel
     };
     if (selectedColor) mainProps['Device Color'] = selectedColor;
     items.push({ id: mainVid, quantity: 1, properties: mainProps });

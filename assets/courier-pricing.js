@@ -99,13 +99,36 @@
   }
 
   /**
+   * Website cart label for Monday Repair Type (status24).
+   * Diagnostic when the quoted SKU / wizard route is a diagnostic; otherwise Repair.
+   * Draft orders never go through this helper.
+   * @param {{ device?: string, repairType?: string, route?: string, title?: string, handle?: string, productType?: string, productTitle?: string, productHandle?: string }} [opts]
+   * @returns {'Diagnostic'|'Repair'}
+   */
+  function repairTypeCartLabel(opts) {
+    return isDiagnosticRepair(opts) ? 'Diagnostic' : 'Repair';
+  }
+
+  /**
+   * True when the quoted product/route is a diagnostic (any device).
+   * @param {{ device?: string, repairType?: string, route?: string, title?: string, handle?: string, productType?: string, productTitle?: string, productHandle?: string }} [opts]
+   */
+  function isDiagnosticRepair(opts) {
+    opts = opts || {};
+    var repairType = String(opts.repairType || opts.route || '').toLowerCase();
+    var title = String(opts.title || opts.productTitle || '');
+    var handle = String(opts.handle || opts.productHandle || '');
+    var blob = title + ' ' + handle;
+    return repairType === 'diagnostic' || /\bdiagnostic\b/i.test(blob);
+  }
+
+  /**
    * MacBook diagnostic is free-tier courier regardless of the £49 price.
    * @param {{ device?: string, repairType?: string, title?: string, handle?: string, productType?: string, productTitle?: string, productHandle?: string }} [opts]
    */
   function isMacbookDiagnostic(opts) {
     opts = opts || {};
     var device = String(opts.device || opts.productType || '').toLowerCase();
-    var repairType = String(opts.repairType || '').toLowerCase();
     var title = String(opts.title || opts.productTitle || '');
     var handle = String(opts.handle || opts.productHandle || '');
     var blob = title + ' ' + handle;
@@ -114,9 +137,18 @@
       device === 'mac' ||
       /macbook/.test(device) ||
       /macbook/i.test(blob);
-    var isDiag = repairType === 'diagnostic' || /\bdiagnostic\b/i.test(blob);
-    return !!(isMac && isDiag);
+    return !!(isMac && isDiagnosticRepair(opts));
   }
+
+  /**
+   * Tag beats price threshold. free > one-leg > paid.
+   * MacBook diagnostic is always free-tier (collection included in B1–B2).
+   * @param {string[]|string} productTags
+   * @param {number} [repairPrice] optional — ≥£200 → free when untagged
+   * @param {object} [opts]
+   * @returns {'free'|'one-leg'|'paid'}
+   */
+
 
   /**
    * Tag beats price threshold. free > one-leg > paid.
@@ -354,6 +386,8 @@
     extractOutwardCode: extractOutwardCode,
     lookupCourierBand: lookupCourierBand,
     isMacbookDiagnostic: isMacbookDiagnostic,
+    isDiagnosticRepair: isDiagnosticRepair,
+    repairTypeCartLabel: repairTypeCartLabel,
     resolveCourierTier: resolveCourierTier,
     computeAdjustment: computeAdjustment,
     resolveAdjustmentVariant: resolveAdjustmentVariant,
