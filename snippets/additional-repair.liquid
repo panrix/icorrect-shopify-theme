@@ -1397,6 +1397,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const items = [];
     const mainProps = {};
     if (selectedDeviceColor) mainProps['Device Color'] = selectedDeviceColor;
+    mainProps['Repair Type'] = (window.ICorrectCourier && typeof window.ICorrectCourier.repairTypeCartLabel === 'function')
+      ? window.ICorrectCourier.repairTypeCartLabel({
+          productType: COURIER_CFG.productType,
+          productTitle: COURIER_CFG.productTitle,
+          productHandle: COURIER_CFG.productHandle
+        })
+      : (/\bdiagnostic\b/i.test(String(COURIER_CFG.productTitle || '') + ' ' + String(COURIER_CFG.productHandle || '')) ? 'Diagnostic' : 'Repair');
     // Refresh quote so Band / adjustment match the postcode (#53 policy v2)
     if (!__bands) {
       try { __bands = await ensureBands(); } catch (e) {}
