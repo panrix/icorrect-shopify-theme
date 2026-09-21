@@ -101,6 +101,31 @@ describe('resolveCourierTier (tags beat price)', () => {
   it('manual free tag wins under £200 (MacBook battery edge)', () => {
     assert.equal(resolveCourierTier(['courier:free'], 199), 'free');
   });
+  it('MacBook diagnostic is free-tier even at £49', () => {
+    assert.equal(
+      resolveCourierTier([], 49, { device: 'macbook', repairType: 'diagnostic' }),
+      'free'
+    );
+    assert.equal(
+      resolveCourierTier([], 49, {
+        productTitle: "MacBook Air 13-inch 'M1' A2337 (2020) Diagnostic",
+        productHandle: 'macbook-air-13-m1-2020-a2337-diagnostic',
+      }),
+      'free'
+    );
+  });
+  it('iPhone diagnostic stays paid under £200', () => {
+    assert.equal(
+      resolveCourierTier([], 49, { device: 'iphone', repairType: 'diagnostic' }),
+      'paid'
+    );
+  });
+  it('MacBook screen under £200 stays paid', () => {
+    assert.equal(
+      resolveCourierTier([], 89, { device: 'macbook', repairType: 'screen' }),
+      'paid'
+    );
+  });
   it('legacy subsidised/full → paid', () => {
     assert.equal(resolveCourierTier(['courier:subsidised']), 'paid');
     assert.equal(resolveCourierTier(['courier:full']), 'paid');
@@ -110,6 +135,39 @@ describe('resolveCourierTier (tags beat price)', () => {
 describe('adjustment matrix — band × tag × service', () => {
   const freeTags = ['courier:free'];
   const paidTags = [];
+
+  it('MacBook diagnostic B1–B2 courier → £0', () => {
+    const q = quoteServiceAdjustment({
+      postcode: 'SW11 8BJ',
+      productTags: [],
+      bands: bandsAsset,
+      service: 'courier',
+      repairPrice: 49,
+      variants: variantsAsset,
+      device: 'macbook',
+      repairType: 'diagnostic',
+    });
+    assert.equal(q.tier, 'free');
+    assert.equal(q.service, 'courier');
+    assert.equal(q.adjustment, 0);
+    assert.equal(q.total, 49);
+  });
+
+  it('iPhone diagnostic B1–B2 courier still +£25', () => {
+    const q = quoteServiceAdjustment({
+      postcode: 'SW11 8BJ',
+      productTags: [],
+      bands: bandsAsset,
+      service: 'courier',
+      repairPrice: 49,
+      variants: variantsAsset,
+      device: 'iphone',
+      repairType: 'diagnostic',
+    });
+    assert.equal(q.tier, 'paid');
+    assert.equal(q.adjustment, 25);
+    assert.equal(q.total, 74);
+  });
 
   it('≥£200 B1–B2 courier → £0', () => {
     for (const s of SAMPLES.filter((x) => x.band === 'B1' || x.band === 'B2')) {

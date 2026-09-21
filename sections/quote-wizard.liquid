@@ -2029,13 +2029,18 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
   function quoteForService(serviceKind, postcode) {
     if (!window.ICorrectCourier || !window.__QW_BANDS) return null;
+    var mapped = S.repairType && _repairsMap[S.repairType] ? _repairsMap[S.repairType] : null;
     return window.ICorrectCourier.quoteServiceAdjustment({
       postcode: postcode || '',
       productTags: currentRepairTags(),
       bands: window.__QW_BANDS,
       service: serviceKind === 'mailin' ? 'mail-in' : 'courier',
       repairPrice: currentRepairPrice(),
-      variants: serviceVariantsAsset()
+      variants: serviceVariantsAsset(),
+      device: S.device,
+      repairType: S.repairType,
+      title: mapped && mapped.title ? mapped.title : '',
+      handle: mapped && mapped.handle ? mapped.handle : ''
     });
   }
 
