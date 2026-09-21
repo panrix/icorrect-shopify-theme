@@ -125,7 +125,10 @@ function slugify(s) {
 }
 
 /** Ricky tier rule until products are tagged in Admin. */
-function inferCourierTier(price) {
+function inferCourierTier(price, meta) {
+  if (meta && meta.device === 'macbook' && meta.repairType === 'diagnostic') {
+    return 'free';
+  }
   const n = Number(price);
   if (!Number.isFinite(n)) return 'paid';
   /* Policy v2 (#53): ≥£200 → free (B1–B2), else paid. Tags in Admin beat this. */
@@ -168,12 +171,12 @@ function main() {
     const modelName = modelNameFromTitle(p.title, repairType);
     const modelKey = `${device}::${slugify(modelName)}`;
     const price = Number(variant.price);
-    const tier = inferCourierTier(price);
+    const tier = inferCourierTier(price, { device, repairType });
     let tags = String(p.tags || '')
       .split(',')
       .map((t) => t.trim())
       .filter(Boolean);
-    /* Policy v2: only stamp courier:free (≥£200). Untagged = paid. */
+    /* Policy v2: stamp courier:free for ≥£200 and MacBook diagnostic. Untagged = paid. */
     if (tier === 'free') {
       const freeTag = courierTagForTier('free');
       if (!tags.includes(freeTag)) tags.push(freeTag);

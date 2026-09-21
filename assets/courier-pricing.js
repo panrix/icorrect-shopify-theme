@@ -5,7 +5,8 @@
  * courier/repair breakdown.
  *
  * Matrix (Ricky 2026-09-11):
- *   ≥£200 (courier:free / courier:one-leg):
+ *   MacBook diagnostic (any price):
+ *     same free-tier matrix as ≥£200 (B1–B2 courier included)
  *     B1–B2 → free collection & return
  *     B3 → +£15 · B4 → +£25 · or free mail-in
  *     Outside London → free tracked mail-in
@@ -98,12 +99,35 @@
   }
 
   /**
+   * MacBook diagnostic is free-tier courier regardless of the £49 price.
+   * @param {{ device?: string, repairType?: string, title?: string, handle?: string, productType?: string, productTitle?: string, productHandle?: string }} [opts]
+   */
+  function isMacbookDiagnostic(opts) {
+    opts = opts || {};
+    var device = String(opts.device || opts.productType || '').toLowerCase();
+    var repairType = String(opts.repairType || '').toLowerCase();
+    var title = String(opts.title || opts.productTitle || '');
+    var handle = String(opts.handle || opts.productHandle || '');
+    var blob = title + ' ' + handle;
+    var isMac =
+      device === 'macbook' ||
+      device === 'mac' ||
+      /macbook/.test(device) ||
+      /macbook/i.test(blob);
+    var isDiag = repairType === 'diagnostic' || /\bdiagnostic\b/i.test(blob);
+    return !!(isMac && isDiag);
+  }
+
+  /**
    * Tag beats price threshold. free > one-leg > paid.
+   * MacBook diagnostic is always free-tier (collection included in B1–B2).
    * @param {string[]|string} productTags
    * @param {number} [repairPrice] optional — ≥£200 → free when untagged
+   * @param {object} [opts]
    * @returns {'free'|'one-leg'|'paid'}
    */
-  function resolveCourierTier(productTags, repairPrice) {
+  function resolveCourierTier(productTags, repairPrice, opts) {
+    if (isMacbookDiagnostic(opts)) return 'free';
     var tags = normalizeTags(productTags);
     var found = null;
     var rank = { free: 3, 'one-leg': 2, paid: 1 };
@@ -214,7 +238,7 @@
     opts = opts || {};
     var preference = opts.service === 'mail-in' ? 'mail-in' : 'courier';
     var lookup = lookupCourierBand(opts.postcode, opts.bands);
-    var tier = resolveCourierTier(opts.productTags, opts.repairPrice);
+    var tier = resolveCourierTier(opts.productTags, opts.repairPrice, opts);
     var band = lookup.band;
     var repair = Number.isFinite(Number(opts.repairPrice))
       ? roundMoney(opts.repairPrice)
@@ -329,6 +353,7 @@
     ADJUSTMENT: ADJUSTMENT,
     extractOutwardCode: extractOutwardCode,
     lookupCourierBand: lookupCourierBand,
+    isMacbookDiagnostic: isMacbookDiagnostic,
     resolveCourierTier: resolveCourierTier,
     computeAdjustment: computeAdjustment,
     resolveAdjustmentVariant: resolveAdjustmentVariant,

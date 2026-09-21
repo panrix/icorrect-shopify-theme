@@ -696,6 +696,9 @@
 window.__ADDITIONAL_REPAIR_COURIER = {
   bandsUrl: {{ 'courier-london-bands.json' | asset_url | json }},
   productTags: {{ product.tags | json }},
+  productType: {{ product.type | json }},
+  productTitle: {{ product.title | json }},
+  productHandle: {{ product.handle | json }},
   repairPrice: {{ product.price | money_without_trailing_zeros | remove: cart.currency.symbol | json }},
   serviceAdjustments: {
     "15": 71280436379901,
@@ -738,7 +741,10 @@ document.addEventListener("DOMContentLoaded", () => {
       bands: __bands,
       service: courierActive ? 'courier' : 'mail-in',
       repairPrice: repairPrice,
-      variants: { variants: COURIER_CFG.serviceAdjustments || {} }
+      variants: { variants: COURIER_CFG.serviceAdjustments || {} },
+      productType: COURIER_CFG.productType || '',
+      productTitle: COURIER_CFG.productTitle || '',
+      productHandle: COURIER_CFG.productHandle || ''
     });
   }
 
