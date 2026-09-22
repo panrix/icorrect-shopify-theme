@@ -21,7 +21,6 @@ const DIAGNOSTIC_LABELS = new Set([
   'Condensation in camera',
   'Won\'t turn on',
   'Won\'t charge',
-  'Won\'t charge or charger not recognised',
   'No display, no response',
   'No signal / "No Service" / "SOS only"',
   'WiFi not connecting or greyed out',
@@ -55,7 +54,6 @@ const MUST_BE_REPAIR = [
 const MUST_BE_DIAGNOSTIC = [
   'Won\'t turn on',
   'Won\'t charge',
-  'Won\'t charge or charger not recognised',
   'No display, no response',
   'No signal / "No Service" / "SOS only"',
   'WiFi not connecting or greyed out',
