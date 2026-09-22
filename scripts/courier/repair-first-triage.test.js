@@ -340,6 +340,13 @@ describe('repair-first triage', () => {
     assert.equal(matches.every((iss) => iss.route === 'diagnostic'), true);
   });
 
+  it('Apple Watch won\'t turn on includes the crown restart', () => {
+    assert.equal(
+      liquid.includes('hold the side button and the Digital Crown together for at least 10 seconds'),
+      true
+    );
+  });
+
   it('data recovery still has diagnostic paths', () => {
     const kept = issues.filter(
       (iss) => iss.category === 'Data Recovery' && iss.route === 'diagnostic'
