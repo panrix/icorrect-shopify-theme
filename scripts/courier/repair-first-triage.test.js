@@ -30,6 +30,7 @@ const DIAGNOSTIC_LABELS = new Set([
   'Bluetooth not connecting to phone',
   'WiFi not working',
   'SIM not detected',
+  'eSIM not detected',
   'Random shutdowns or reboots',
   'Back camera: no preview or it freezes',
   'Front camera: no preview or it freezes',
@@ -70,6 +71,7 @@ const MUST_BE_DIAGNOSTIC = [
   'Bluetooth not connecting to phone',
   'WiFi not working',
   'SIM not detected',
+  'eSIM not detected',
 ];
 
 function extractIssues() {
@@ -218,6 +220,25 @@ describe('repair-first triage', () => {
     assert.equal(cracked.length, 2);
     assert.ok(liquid.includes("genuine Apple LCD display"));
     assert.ok(liquid.includes("genuine Apple OLED display"));
+  });
+
+  it('iPhone Air says eSIM, other iPhones say SIM', () => {
+    const start = liquid.indexOf('function modelIsEsimOnly');
+    const end = liquid.indexOf('function modelHasLcdScreen');
+    assert.ok(start >= 0 && end > start);
+    const modelIsEsimOnly = new Function(
+      `${liquid.slice(start, end)}\nreturn modelIsEsimOnly;`
+    )();
+    assert.equal(modelIsEsimOnly('iPhone Air'), true);
+    for (const name of ['iPhone 17', 'iPhone 17 Pro', 'iPhone 17e', 'iPhone 16', 'iPhone 14']) {
+      assert.equal(modelIsEsimOnly(name), false, name);
+    }
+    const esim = issues.find((iss) => iss.label === 'eSIM not detected');
+    const sim = issues.find((iss) => iss.label === 'SIM not detected');
+    assert.equal(esim.route, 'diagnostic');
+    assert.equal(sim.route, 'diagnostic');
+    assert.equal(liquid.includes('esimOnly: true'), true);
+    assert.equal(liquid.includes('simTrayOnly: true'), true);
   });
 
   it('data recovery still has diagnostic paths', () => {
