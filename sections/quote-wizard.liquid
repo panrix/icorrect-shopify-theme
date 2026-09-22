@@ -1120,10 +1120,11 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The iPhone still turns on, so we\'ll quote a charging port replacement and test charging before it goes back.' }
       ],
       'Camera': [
-        { label: 'Blurry photos or shaking camera', route: 'repair', repairType: 'rear-camera', copy: 'A blurry or shaking camera usually means the stabilisation system has failed. We\'ll replace the camera module.' },
-        { label: 'Face ID error or TrueDepth message', route: 'repair', repairType: 'front-camera', faceIdOnly: true, copy: 'A TrueDepth camera message in Settings, or a Face ID error, means the front camera module needs replacing. We\'ll quote that repair.' },
+        { label: 'Back camera blurry or shaking', route: 'repair', repairType: 'rear-camera', copy: 'A blurry or shaking back camera usually means the stabilisation system has failed. We\'ll replace the rear camera module.' },
+        { label: 'Back camera: no preview or it freezes', route: 'diagnostic', repairType: 'diagnostic', copy: 'A black preview, or a back camera that freezes or crashes, can be the module or the board. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Front camera: Face ID error or TrueDepth message', route: 'repair', repairType: 'front-camera', faceIdOnly: true, copy: 'A TrueDepth camera message in Settings, or a Face ID error, means the front camera module needs replacing. We\'ll quote that repair.' },
         { label: 'Front camera not working', route: 'repair', repairType: 'front-camera', noFaceIdOnly: true, copy: 'The front camera module has failed. We\'ll quote a front camera replacement.' },
-        { label: 'No preview, or the camera freezes', route: 'diagnostic', repairType: 'diagnostic', copy: 'A black preview, or a camera that freezes or crashes, can be the module or the board. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Front camera: no preview or it freezes', route: 'diagnostic', repairType: 'diagnostic', copy: 'A black preview, or a front camera that freezes or crashes, can be the module or the board. We can\'t quote the full repair until we\'ve looked.' },
         { label: 'Condensation in camera', route: 'diagnostic', repairType: 'diagnostic', copy: 'Moisture inside the camera is a sign of liquid or a broken seal. We can\'t quote the full repair until we\'ve checked for internal corrosion.' }
       ],
       'Audio / Mic / Speaker': [
