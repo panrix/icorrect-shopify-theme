@@ -1169,7 +1169,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       ],
       'Power / Battery / Charging': [
         { label: 'Battery drains quickly', route: 'repair', repairType: 'battery', copy: 'Your iPad battery has degraded. We\'ll replace it with an original-spec battery.' },
-        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'An iPad that won\'t power on could be the battery, charging circuit, or logic board. Try a hard reset first (hold Power + Volume Down for 10 seconds). We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', ipadHomeButton: true, copy: 'An iPad that won\'t power on could be the battery, charging circuit, or logic board. Try a hard reset first: hold the top button and the Home button until the Apple logo appears. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', ipadNoHomeButton: true, copy: 'An iPad that won\'t power on could be the battery, charging circuit, or logic board. Try a hard reset first: press Volume Up, press Volume Down, then hold the top button until the Apple logo appears. We can\'t quote the full repair until we\'ve looked.' },
         { label: 'Battery swollen or screen lifting', route: 'repair', repairType: 'battery', copy: 'A swollen battery is pushing the screen away from the frame. We\'ll safely remove it and fit a replacement.', urgent: true },
         { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The iPad still turns on, so we\'ll quote a charging port replacement and test charging before it goes back.' }
       ],
@@ -1448,6 +1449,14 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     return true;
   }
 
+  function modelHasIpadHomeButton(model) {
+    var name = String(model || '');
+    if (/iPad\s+Air\s+3/i.test(name)) return true;
+    if (/iPad\s+Mini\s+5/i.test(name)) return true;
+    if (/iPad\s+(5|6|7|8|9)th\s+Gen/i.test(name) && !/Air|Mini|Pro/i.test(name)) return true;
+    return false;
+  }
+
   function modelHasBloodOxygen(model) {
     var name = String(model || '');
     if (/Apple Watch SE\b/i.test(name)) return false;
@@ -1486,6 +1495,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var esimOnly = modelIsEsimOnly(S.model);
     var trueTone = modelHasTrueTone(S.model);
     var bloodOxygen = modelHasBloodOxygen(S.model);
+    var ipadHome = modelHasIpadHomeButton(S.model);
     return issues.filter(function(iss) {
       if (iss.faceIdOnly && !faceId) return false;
       if (iss.noFaceIdOnly && faceId) return false;
@@ -1497,6 +1507,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       if (iss.noTrueTone && trueTone) return false;
       if (iss.bloodOxygenOnly && !bloodOxygen) return false;
       if (iss.noBloodOxygen && bloodOxygen) return false;
+      if (iss.ipadHomeButton && !ipadHome) return false;
+      if (iss.ipadNoHomeButton && ipadHome) return false;
       if (iss.onlyWhenMissing && repairsMap[iss.onlyWhenMissing]) return false;
       if (iss.route === 'contact' || iss.route === 'dismiss') return true;
       if (iss.route === 'diagnostic') return !!repairsMap['diagnostic'];

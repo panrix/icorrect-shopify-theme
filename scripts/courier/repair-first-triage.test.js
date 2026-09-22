@@ -298,6 +298,38 @@ describe('repair-first triage', () => {
     assert.equal(crystal.every((iss) => iss.route === 'repair'), true);
   });
 
+  it('iPad hard reset matches Home button and Face ID models', () => {
+    const start = liquid.indexOf('function modelHasIpadHomeButton');
+    const end = liquid.indexOf('function modelHasBloodOxygen');
+    assert.ok(start >= 0 && end > start);
+    const modelHasIpadHomeButton = new Function(
+      `${liquid.slice(start, end)}\nreturn modelHasIpadHomeButton;`
+    )();
+    for (const name of [
+      'iPad 9th Gen (2021)',
+      'iPad 5th Gen (2017)',
+      'iPad Air 3rd Gen (2019)',
+      'iPad Mini 5th Gen (2019)',
+      'iPad Air 3 (2019)',
+    ]) {
+      assert.equal(modelHasIpadHomeButton(name), true, name);
+    }
+    for (const name of [
+      'iPad 10th Gen (2022)',
+      'iPad 11th Gen (2025)',
+      'iPad Air 4th Gen (2020)',
+      'iPad Air 11” 7th Gen ‘M3’ (2025)',
+      'iPad Mini 6th Gen (2021)',
+      'iPad Pro 11” 1st Gen (2019)',
+      'iPad Pro 12.9” 5th Gen ‘M1’ (2021)',
+    ]) {
+      assert.equal(modelHasIpadHomeButton(name), false, name);
+    }
+    assert.equal(liquid.includes('hold Power + Volume Down'), false);
+    assert.equal(liquid.includes('hold the top button and the Home button'), true);
+    assert.equal(liquid.includes('press Volume Up, press Volume Down, then hold the top button'), true);
+  });
+
   it('data recovery still has diagnostic paths', () => {
     const kept = issues.filter(
       (iss) => iss.category === 'Data Recovery' && iss.route === 'diagnostic'
