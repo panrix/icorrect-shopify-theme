@@ -201,6 +201,25 @@ describe('repair-first triage', () => {
     assert.deepEqual(visibleTypes(pro.repairs), ['screen']);
   });
 
+  it('iPhone 11, XR, and SE cracked screens say LCD', () => {
+    const start = liquid.indexOf('function modelHasLcdScreen');
+    const end = liquid.indexOf('function getAvailableIssues');
+    assert.ok(start >= 0 && end > start);
+    const modelHasLcdScreen = new Function(
+      `${liquid.slice(start, end)}\nreturn modelHasLcdScreen;`
+    )();
+    for (const name of ['iPhone 11', 'iPhone XR', 'iPhone SE (2nd Gen)', 'iPhone SE (3rd Gen)', 'iPhone SE 2nd Gen (2020)']) {
+      assert.equal(modelHasLcdScreen(name), true, name);
+    }
+    for (const name of ['iPhone 11 Pro', 'iPhone 11 Pro Max', 'iPhone 12', 'iPhone X', 'iPhone Xs', 'iPhone 16']) {
+      assert.equal(modelHasLcdScreen(name), false, name);
+    }
+    const cracked = issues.filter((iss) => iss.label === 'Cracked glass (touch still works)');
+    assert.equal(cracked.length, 2);
+    assert.ok(liquid.includes("genuine Apple LCD display"));
+    assert.ok(liquid.includes("genuine Apple OLED display"));
+  });
+
   it('data recovery still has diagnostic paths', () => {
     const kept = issues.filter(
       (iss) => iss.category === 'Data Recovery' && iss.route === 'diagnostic'

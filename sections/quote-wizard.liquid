@@ -1106,7 +1106,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     },
     iphone: {
       'Screen / Display': [
-        { label: 'Cracked glass (touch still works)', route: 'repair', repairType: 'screen', copy: 'Your iPhone screen is cracked but still functional. We replace it with a genuine Apple OLED display that\'s verified in iOS Settings.' },
+        { label: 'Cracked glass (touch still works)', route: 'repair', repairType: 'screen', lcdOnly: true, copy: 'Your iPhone screen is cracked but still functional. We replace it with a genuine Apple LCD display that\'s verified in iOS Settings.' },
+        { label: 'Cracked glass (touch still works)', route: 'repair', repairType: 'screen', oledOnly: true, copy: 'Your iPhone screen is cracked but still functional. We replace it with a genuine Apple OLED display that\'s verified in iOS Settings.' },
         { label: 'Touch not responding', route: 'repair', repairType: 'screen', copy: 'A dead touchscreen means the digitiser is damaged. A genuine screen replacement will restore full touch functionality.' },
         { label: 'Lines, discolouration, or green line', route: 'repair', repairType: 'screen', copy: 'Display lines or colour shifting indicate panel damage. A genuine screen replacement will fix it.' },
         { label: 'Black screen (phone still vibrates/rings)', route: 'repair', repairType: 'screen', copy: 'If your phone vibrates or makes sounds but the screen is black, the display has failed. A screen replacement will bring it back.' },
@@ -1444,13 +1445,24 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     return true;
   }
 
+  function modelHasLcdScreen(model) {
+    var name = String(model || '');
+    if (/iPhone\s*SE\b/i.test(name)) return true;
+    if (/iPhone\s*XR\b/i.test(name)) return true;
+    if (/iPhone\s*11(?!\s*Pro)\b/i.test(name)) return true;
+    return false;
+  }
+
   function getAvailableIssues(device, fault, repairsMap) {
     var issues = TS[device] && TS[device][fault];
     if (!issues) return [];
     var faceId = modelHasFaceId(S.model);
+    var lcd = modelHasLcdScreen(S.model);
     return issues.filter(function(iss) {
       if (iss.faceIdOnly && !faceId) return false;
       if (iss.noFaceIdOnly && faceId) return false;
+      if (iss.lcdOnly && !lcd) return false;
+      if (iss.oledOnly && lcd) return false;
       if (iss.onlyWhenMissing && repairsMap[iss.onlyWhenMissing]) return false;
       if (iss.route === 'contact' || iss.route === 'dismiss') return true;
       if (iss.route === 'diagnostic') return !!repairsMap['diagnostic'];
