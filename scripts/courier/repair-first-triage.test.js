@@ -22,6 +22,7 @@ const DIAGNOSTIC_LABELS = new Set([
   'Won\'t turn on',
   'Won\'t charge',
   'No display, no response',
+  'Black screen (external doesn\'t work or untested)',
   'No signal / "No Service" / "SOS only"',
   'WiFi not connecting or greyed out',
   'Bluetooth not working',
@@ -33,7 +34,6 @@ const DIAGNOSTIC_LABELS = new Set([
 
 const MUST_BE_REPAIR = [
   'Random shutdowns or reboots',
-  'Black screen (external doesn\'t work or untested)',
   'Black screen (sound or buttons still work)',
   'Black screen (phone still vibrates/rings)',
   'Keys not responding',
@@ -55,6 +55,7 @@ const MUST_BE_DIAGNOSTIC = [
   'Won\'t turn on',
   'Won\'t charge',
   'No display, no response',
+  'Black screen (external doesn\'t work or untested)',
   'No signal / "No Service" / "SOS only"',
   'WiFi not connecting or greyed out',
   'Bluetooth not working',
