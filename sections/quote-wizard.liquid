@@ -618,7 +618,6 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       { v: 'Audio / Mic / Speaker', icon: 'audio', label: 'Audio / Mic / Speaker' },
       { v: 'Connectivity', icon: 'connectivity', label: 'Connectivity' },
       { v: 'Rear Glass', icon: 'rear-glass', label: 'Rear Glass' },
-      { v: 'Buttons', icon: 'buttons', label: 'Buttons' },
       { v: 'Water Damage', icon: 'water', label: 'Water Damage' },
       { v: 'Data Recovery', icon: 'data', label: 'Data Recovery' },
       { v: 'Other', icon: 'other', label: 'Other' }
@@ -627,7 +626,6 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       { v: 'Screen / Display', icon: 'screen', label: 'Screen / Display' },
       { v: 'Power / Battery / Charging', icon: 'battery', label: 'Power / Battery / Charging' },
       { v: 'Camera', icon: 'camera', label: 'Camera' },
-      { v: 'Buttons', icon: 'buttons', label: 'Buttons' },
       { v: 'Water Damage', icon: 'water', label: 'Water Damage' },
       { v: 'Data Recovery', icon: 'data', label: 'Data Recovery' },
       { v: 'Other', icon: 'other', label: 'Other' }
@@ -636,7 +634,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       { v: 'Screen / Display', icon: 'screen', label: 'Screen / Display' },
       { v: 'Power / Battery / Charging', icon: 'battery', label: 'Power / Battery / Charging' },
       { v: 'Rear Glass', icon: 'rear-glass', label: 'Rear Glass' },
-      { v: 'Buttons / Crown', icon: 'buttons', label: 'Buttons / Crown' },
+      { v: 'Crown', icon: 'buttons', label: 'Crown' },
       { v: 'Water Damage', icon: 'water', label: 'Water Damage' },
       { v: 'Other', icon: 'other', label: 'Other' }
     ]
@@ -685,8 +683,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     'loudspeaker':'Audio / Mic / Speaker','earpiece':'Audio / Mic / Speaker','microphone':'Audio / Mic / Speaker',
     'rear-camera':'Camera','rear-camera-lens':'Camera','front-camera':'Camera','face-id':'Camera',
     'rear-glass':'Rear Glass','heart-rate-monitor':'Rear Glass',
-    'volume-button':'Buttons','power-button':'Buttons','mute-button':'Buttons','home-button':'Buttons',
-    'side-button':'Buttons','crown':'Buttons / Crown','diagnostic':'_diagnostic'
+    'crown':'Crown','diagnostic':'_diagnostic'
   };
 
   /* =============================================
@@ -1138,11 +1135,6 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: 'Cracked back glass', route: 'repair', repairType: 'rear-glass', copy: 'We replace the rear glass with a genuine Apple housing in your original colour.' },
         { label: 'Camera lens cover cracked', route: 'repair', repairType: 'rear-camera-lens', copy: 'A cracked camera lens cover lets dust and moisture in. We\'ll replace the lens cover to protect your cameras.' }
       ],
-      'Buttons': [
-        { label: 'Power button not working', route: 'repair', repairType: 'power-button', copy: 'The power button or flex cable has failed. We\'ll replace the flex to restore full function.' },
-        { label: 'Volume buttons not working', route: 'repair', repairType: 'volume-button', copy: 'The volume button flex cable needs replacing.' },
-        { label: 'Mute switch not working', route: 'repair', repairType: 'mute-button', copy: 'The mute switch mechanism has failed. We\'ll replace the flex cable.' }
-      ],
       'Water Damage': [
         { label: 'Dropped in liquid (within 24 hours)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Don\'t try to charge or turn on your iPhone. We\'ll open it up, perform an ultrasonic clean, and assess the damage.', urgent: true },
         { label: 'Liquid damage (more than 24 hours ago)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Liquid causes corrosion that spreads over time. We need to open the phone, clean the corrosion, and check each circuit.' }
@@ -1177,9 +1169,6 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The iPad still turns on, so we\'ll quote a charging port replacement and test charging before it goes back.' }
       ],
       'Camera': [],
-      'Buttons': [
-        { label: 'Home button or Touch ID not working', route: 'repair', repairType: 'home-button', copy: 'We\'ll quote a Home button repair. Touch ID is paired to the board, so if a like-for-like swap isn\'t possible on your model, we\'ll tell you once we\'ve looked.' }
-      ],
       'Water Damage': [
         { label: 'Dropped in liquid (within 24 hours)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Time is critical. We\'ll open the iPad, clean affected components with ultrasonic cleaning, and assess which parts need replacing. Don\'t try to charge it.', urgent: true },
         { label: 'Liquid damage (more than 24 hours ago)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Corrosion spreads over time even after the device dries out. We need to open it, clean the corrosion, and check each circuit.' },
@@ -1212,9 +1201,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       'Rear Glass': [
         { label: 'Cracked back crystal / sensor glass', route: 'repair', repairType: 'heart-rate-monitor', copy: 'The rear crystal houses the heart rate and blood oxygen sensors. We\'ll replace it to restore sensor accuracy and the water seal.' }
       ],
-      'Buttons / Crown': [
-        { label: 'Digital Crown stuck or not rotating', route: 'repair', repairType: 'crown', copy: 'The Digital Crown can get jammed by dirt or debris. We\'ll clean or replace the crown mechanism.' },
-        { label: 'Side button not responding', route: 'repair', repairType: 'side-button', copy: 'A faulty side button needs the button module replaced.' }
+      'Crown': [
+        { label: 'Digital Crown stuck or not rotating', route: 'repair', repairType: 'crown', copy: 'The Digital Crown can get jammed by dirt or debris. We\'ll clean or replace the crown mechanism.' }
       ],
       'Water Damage': [
         { label: 'Water ingress despite water resistance', route: 'diagnostic', repairType: 'diagnostic', copy: 'Water-resistant seals can fail over time or after impact. We\'ll open the watch, clean any corrosion, and assess the damage.' },
@@ -1438,8 +1426,6 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       if (!fault || fault === '_diagnostic') continue;
       if (allowed[fault]) {
         available[fault] = true;
-      } else if (device === 'watch' && fault === 'Buttons') {
-        available['Buttons / Crown'] = true;
       }
     }
     available['Water Damage'] = true;

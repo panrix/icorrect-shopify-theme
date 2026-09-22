@@ -46,7 +46,6 @@ const MUST_BE_REPAIR = [
   'Face ID error or TrueDepth message',
   'Front camera not working',
   'Microphone not picking up voice',
-  'Home button or Touch ID not working',
   'Display dead or unresponsive',
   'Cracked or shattered screen',
   'Physically damaged trackpad',
