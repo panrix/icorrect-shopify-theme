@@ -85,8 +85,16 @@ function extractIssues() {
     const lab = line.match(/label:\s*'((?:\\'|[^'])*)'/);
     if (lab) label = lab[1].replace(/\\'/g, "'");
     const route = line.match(/route:\s*'([^']+)'/);
+    const repairType = line.match(/repairType:\s*'([^']+)'/);
+    const onlyWhenMissing = line.match(/onlyWhenMissing:\s*'([^']+)'/);
     if (route && label) {
-      issues.push({ category, label, route: route[1] });
+      issues.push({
+        category,
+        label,
+        route: route[1],
+        repairType: repairType ? repairType[1] : null,
+        onlyWhenMissing: onlyWhenMissing ? onlyWhenMissing[1] : null,
+      });
       label = null;
     }
   }
@@ -152,6 +160,41 @@ describe('repair-first triage', () => {
         .map((i) => `${i.label}=${i.route}`)
         .join(', ')
     );
+  });
+
+  it('iPad outer glass quotes glass only when that product exists', () => {
+    const cracked = issues.filter(
+      (iss) => iss.label === 'Cracked glass only (display still works)'
+    );
+    assert.equal(cracked.length, 2);
+    assert.ok(cracked.some((iss) => iss.repairType === 'screen-glass' && iss.route === 'repair'));
+    assert.ok(
+      cracked.some(
+        (iss) =>
+          iss.repairType === 'screen' &&
+          iss.onlyWhenMissing === 'screen-glass' &&
+          iss.route === 'repair'
+      )
+    );
+    const blotches = issues.find(
+      (iss) => iss.label === 'Blotches, lines, or a damaged display'
+    );
+    assert.equal(blotches.repairType, 'screen');
+    assert.equal(blotches.route, 'repair');
+
+    const cat = require('../../assets/repair-catalogue-map.json');
+    function visibleTypes(repairs) {
+      return cracked
+        .filter((iss) => {
+          if (iss.onlyWhenMissing && repairs[iss.onlyWhenMissing]) return false;
+          return !!repairs[iss.repairType];
+        })
+        .map((iss) => iss.repairType);
+    }
+    const regular = Object.values(cat.models).find((m) => /iPad 10th Gen/.test(m.name));
+    const pro = Object.values(cat.models).find((m) => /iPad Pro 11-inch M4/.test(m.name));
+    assert.deepEqual(visibleTypes(regular.repairs), ['screen-glass']);
+    assert.deepEqual(visibleTypes(pro.repairs), ['screen']);
   });
 
   it('data recovery still has diagnostic paths', () => {
