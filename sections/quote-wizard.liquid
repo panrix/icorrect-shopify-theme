@@ -4200,7 +4200,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     return String(el.textContent || '').replace(/\s+/g, ' ').trim();
   }
 
-  /* Facts for the client email. Prompts and courier notices stay on the card. */
+  /* Facts for the client email. Dates and courier notices stay on the card. */
   function readQuoteSnapshot() {
     var headingEl = document.querySelector('#qwResCard .qw-res-h');
     var svc = document.querySelector('.qw-opt-card.sel[data-opt="svc"]');
@@ -4212,34 +4212,16 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       if (servicePriceLabel === '—' || servicePriceLabel === '-') servicePriceLabel = '';
     }
     var postEl = document.getElementById('qwPostcode');
-    var slotPanel = document.getElementById('qwSlotPanel');
-    var collectionLine = '';
-    if (slotPanel && !slotPanel.hidden) {
-      var dateText = '';
-      var dateBtn = slotPanel.querySelector('.qw-date-btn.active');
-      if (dateBtn) {
-        var parsed = parseISODate(dateBtn.getAttribute('data-iso'));
-        dateText = parsed ? formatJourneyDate(parsed) : qwText(dateBtn);
+    var trust = [];
+    document.querySelectorAll('#qwPriceTrust .qw-trust-cell').forEach(function(cell) {
+      if (cell.classList.contains('qw-trust-reviews')) {
+        var score = qwText(cell.querySelector('.qw-trust-score'));
+        if (score) trust.push({ title: score, sub: qwText(cell.querySelector('.qw-trust-sub')), kind: 'reviews' });
+      } else {
+        var title = qwText(cell.querySelector('.qw-trust-title'));
+        if (title) trust.push({ title: title, sub: qwText(cell.querySelector('.qw-trust-sub')) });
       }
-      var windowText = '';
-      var winBtn = slotPanel.querySelector('.qw-window-btn.active');
-      if (winBtn) {
-        windowText = [qwText(winBtn.querySelector('.qw-window-label')), qwText(winBtn.querySelector('.qw-window-detail'))].filter(Boolean).join(' · ');
-      }
-      collectionLine = [dateText, windowText].filter(Boolean).join(' · ');
-    }
-    var journeyHost = document.getElementById('qwJourney');
-    var journey = [];
-    var etaDate = '';
-    var etaNote = '';
-    if (journeyHost && !journeyHost.hidden) {
-      journeyHost.querySelectorAll('.qw-journey-step').forEach(function(step) {
-        var title = qwText(step.querySelector('.qw-journey-title'));
-        if (title) journey.push({ title: title, meta: qwText(step.querySelector('.qw-journey-meta')) });
-      });
-      etaDate = qwText(journeyHost.querySelector('.qw-journey-eta-date'));
-      etaNote = qwText(journeyHost.querySelector('.qw-journey-eta-note'));
-    }
+    });
     var bigWrap = document.getElementById('qwPriceBigWrap');
     var bigEl = document.getElementById('qwPriceBig');
     var allIn = (bigWrap && !bigWrap.hidden && bigEl) ? qwText(bigEl) : '';
@@ -4258,17 +4240,17 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         expressPriceLabel = qwText(speedCard.querySelector('.qw-opt-price'));
       }
     }
+    var diagnostic = S.route === 'diagnostic';
     return {
       screenTitle: qwText(document.getElementById('qw-s4t')),
       badge: qwText(document.querySelector('#qwResCard .qw-res-badge')),
       heading: qwText(headingEl),
       postcode: postEl ? String(postEl.value || '').trim() : '',
+      serviceKind: selectedServiceKind() || '',
       serviceName: serviceName,
       servicePriceLabel: servicePriceLabel,
-      collectionLine: collectionLine,
-      journey: journey,
-      etaDate: etaDate,
-      etaNote: etaNote,
+      benchDays: repairBenchDays(S.device, { diagnostic: diagnostic }),
+      trust: trust,
       priceLabel: priceLabel,
       allIn: allIn,
       deviceColor: colorBtn ? (colorBtn.getAttribute('data-color') || '') : '',
@@ -4398,8 +4380,10 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
             expressPrice: snap.expressPrice || 0,
             expressPriceLabel: snap.expressPriceLabel || null,
             serviceName: serviceName,
+            serviceKind: snap.serviceKind || null,
             servicePrice: servicePrice,
             servicePriceLabel: snap.servicePriceLabel || null,
+            benchDays: snap.benchDays || null,
             totalPrice: totalPrice,
             estimates: estimates.length > 0 ? JSON.stringify(estimates) : null,
             warranty: CFG.warrantyLabel || '2-year warranty',
@@ -4409,10 +4393,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
             screenTitle: snap.screenTitle || null,
             badge: snap.badge || null,
             postcode: snap.postcode || null,
-            collectionLine: snap.collectionLine || null,
-            journey: qwJson(snap.journey),
-            etaDate: snap.etaDate || null,
-            etaNote: snap.etaNote || null,
+            trust: qwJson(snap.trust),
             priceLabel: snap.priceLabel || null,
             urgent: snap.urgent || null,
             url: window.location.href,

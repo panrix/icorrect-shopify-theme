@@ -1,7 +1,7 @@
 /**
- * Client quote email. Facts from the quote the client already confirmed:
- * repair, postcode, chosen service, collection, journey, price, warranty.
- * Wizard prompts, unavailable-courier notices, and marketing blurbs are left out.
+ * Client quote email. The confirmed quote in the wizard’s style:
+ * repair, postcode, chosen service, a working-day journey, trust, price.
+ * Calendar dates, unavailable-courier notices, and question prompts stay out.
  */
 
 function gbp(amount) {
@@ -46,15 +46,117 @@ function estimatesOf(data) {
   }).filter(function (row) { return row && row.label && row.value; });
 }
 
-function journeyOf(data) {
-  var etaDate = clean(data.etaDate);
-  var sooner = /often sooner/i.test(clean(data.etaNote));
-  return parseList(data.journey).map(function (step) {
-    if (!step || typeof step === "string") return null;
-    var meta = clean(step.meta);
-    if (sooner && etaDate && meta === etaDate) meta = meta + ", often sooner";
-    return { title: clean(step.title), meta: meta };
-  }).filter(function (step) { return step && step.title; });
+function isDiagnostic(data) {
+  return clean(data.route).toLowerCase() === "diagnostic";
+}
+
+function daysLabel(n) {
+  var days = Number(n);
+  if (!isFinite(days) || days <= 0) return "";
+  if (days === 1) return "1 working day";
+  return days + " working days";
+}
+
+function benchOf(data) {
+  if (data.benchDays === 0 || data.benchDays) {
+    var n = Number(data.benchDays);
+    if (isFinite(n) && n > 0) return n;
+  }
+  if (isDiagnostic(data)) return 1;
+  var device = clean(data.deviceType || data.device).toLowerCase();
+  if (device.indexOf("iphone") !== -1) return 1;
+  if (device.indexOf("watch") !== -1) return 3;
+  return 2;
+}
+
+function isMailin(data) {
+  var kind = clean(data.serviceKind).toLowerCase();
+  if (kind === "mailin" || kind === "mail-in") return true;
+  if (kind === "courier") return false;
+  var name = clean(data.serviceName).toLowerCase();
+  return name.indexOf("mail") !== -1 || name.indexOf("post") !== -1;
+}
+
+function emailJourney(data) {
+  var diagnostic = isDiagnostic(data);
+  var bench = benchOf(data);
+  var repair = daysLabel(bench);
+  if (isMailin(data)) {
+    if (diagnostic) {
+      return {
+        steps: [
+          { title: "We send packaging", meta: "Same working day" },
+          { title: "You receive the pack", meta: "The following working day" },
+          { title: "We diagnose & email your quote", meta: "1 working day after it arrives" },
+          { title: "You decide next", meta: "Device stays with us until you approve" }
+        ],
+        etaLabel: "Typical time to your quote",
+        etaValue: "3 working days",
+        etaNote: "From when we send the pack"
+      };
+    }
+    return {
+      steps: [
+        { title: "We send packaging", meta: "Same working day" },
+        { title: "You receive the pack", meta: "The following working day" },
+        { title: "We repair", meta: repair },
+        { title: "We return it", meta: "Typically " + daysLabel(bench + 3) }
+      ],
+      etaLabel: "Typical turnaround",
+      etaValue: daysLabel(bench + 3),
+      etaNote: "Often sooner"
+    };
+  }
+  if (diagnostic) {
+    return {
+      steps: [
+        { title: "We collect", meta: "From your door" },
+        { title: "We diagnose & email your quote", meta: "1 working day after collection" },
+        { title: "You decide next", meta: "Device stays with us until you approve" }
+      ],
+      etaLabel: "Typical time to your quote",
+      etaValue: "1 working day",
+      etaNote: "From collection"
+    };
+  }
+  return {
+    steps: [
+      { title: "We collect", meta: "From your door" },
+      { title: "We repair", meta: repair },
+      { title: "We return it", meta: repair + " from collection" }
+    ],
+    etaLabel: "Typical turnaround",
+    etaValue: repair,
+    etaNote: "From collection · often sooner"
+  };
+}
+
+function warrantyTitle(data) {
+  var raw = clean(data.warranty);
+  if (!raw) return "2-yr warranty";
+  if (/2[-\s]?year/i.test(raw) || /2[-\s]?yr/i.test(raw)) return "2-yr warranty";
+  return raw;
+}
+
+function trustOf(data) {
+  var list = parseList(data.trust).map(function (cell) {
+    if (!cell || typeof cell === "string") return null;
+    return { title: clean(cell.title), sub: clean(cell.sub), kind: clean(cell.kind) };
+  }).filter(function (cell) { return cell && cell.title; });
+  if (list.length) return list;
+  var parts = clean(data.parts);
+  var warranty = clean(data.warranty);
+  if (!parts && !warranty) return [];
+  var diagnostic = isDiagnostic(data);
+  return [
+    { title: "4.9", sub: "719 Google reviews", kind: "reviews" },
+    { title: parts || "Original parts", sub: "Calibrated in-house" },
+    {
+      title: diagnostic ? "Quote in 1 working day" : daysLabel(benchOf(data)),
+      sub: diagnostic ? "Diagnosis emailed to you" : "Typical repair time"
+    },
+    { title: warrantyTitle(data), sub: "Double the standard" }
+  ];
 }
 
 function badgeTone(data, badge) {
@@ -64,18 +166,6 @@ function badgeTone(data, badge) {
   if (text.indexOf("take a look") !== -1 || text.indexOf("can't help") !== -1) return "amber";
   if (text.indexOf("chat") !== -1) return "blue";
   return "green";
-}
-
-function isDiagnostic(data) {
-  return clean(data.route).toLowerCase() === "diagnostic";
-}
-
-function collectionLine(data) {
-  var explicit = clean(data.collectionLine);
-  if (explicit) return explicit;
-  var date = [clean(data.collectionDow), clean(data.collectionDay), clean(data.collectionMon)].filter(Boolean).join(" ");
-  var windowText = [clean(data.collectionWindowLabel), clean(data.collectionWindowDetail)].filter(Boolean).join(" · ");
-  return [date, windowText].filter(Boolean).join(" · ");
 }
 
 function serviceAmount(data) {
@@ -99,10 +189,6 @@ function expressLine(data) {
   return bits.join(" · ");
 }
 
-function termsLine(data) {
-  return [clean(data.parts), clean(data.warranty)].filter(Boolean).join(" · ");
-}
-
 function bookLabel(data) {
   return isDiagnostic(data) ? "Book the diagnostic" : "Book this repair";
 }
@@ -119,13 +205,12 @@ function renderQuoteEmail(input) {
   var diagnostic = isDiagnostic(data);
   var screenTitle = diagnostic ? "" : clean(data.screenTitle);
   var badge = clean(data.badge);
-  var tone = badgeTone(data, badge);
-  if (tone === "green") badge = "";
   var heading = clean(data.repairTitle);
   var model = clean(data.deviceModel);
   var showModel = !!(model && heading.indexOf(model) === -1);
   var estimates = estimatesOf(data);
-  var journey = journeyOf(data);
+  var journey = emailJourney(data);
+  var trust = trustOf(data);
   var total = clean(data.totalPrice);
   var priceLabel = priceLabelOf(data, total);
   var bookUrl = clean(data.productUrl);
@@ -147,7 +232,7 @@ function renderQuoteEmail(input) {
     "<img src=\"https://intake.icorrect.co.uk/client/logo.png\" width=\"168\" height=\"33\" alt=\"iCorrect\" style=\"display:block;border:0;width:168px;height:auto;\">",
     name ? "<p style=\"margin:22px 0 0 0;font-size:16px;line-height:1.4;color:#171717;\">Hi " + esc(name) + ",</p>" : "",
     screenTitle ? "<h1 style=\"margin:18px 0 0 0;font-size:28px;line-height:1.15;letter-spacing:-0.8px;font-weight:600;color:#171717;\">" + esc(screenTitle) + "</h1>" : "",
-    badgeHtml(badge, tone),
+    badgeHtml(badge, badgeTone(data, badge)),
     heading ? "<h2 style=\"margin:12px 0 0 0;font-size:20px;line-height:1.25;letter-spacing:-0.4px;font-weight:600;color:#171717;\">" + esc(heading) + "</h2>" : "",
     showModel ? "<p style=\"margin:8px 0 0 0;font-size:15px;line-height:1.4;color:#4d4d4d;\">" + esc(model) + "</p>" : "",
     clean(data.urgent) ? "<p style=\"margin:14px 0 0 0;padding:10px 12px;background:#fff8ea;border-radius:8px;font-size:14px;line-height:1.45;color:#171717;\">" + esc(data.urgent) + "</p>" : "",
@@ -155,11 +240,11 @@ function renderQuoteEmail(input) {
     estimatesHtml(estimates),
     factHtml("Postcode", clean(data.postcode)),
     serviceHtml(clean(data.serviceName), serviceAmount(data)),
-    factHtml("Collection", collectionLine(data)),
     factHtml("Colour", clean(data.deviceColor)),
     factHtml("Turnaround", expressLine(data)),
     journeyHtml(journey),
-    priceHtml(priceLabel, total, termsLine(data)),
+    trustHtml(trust, priceLabel, total),
+    !trust.length ? priceHtml(priceLabel, total) : "",
     bookUrl ? ctaHtml(bookUrl, bookLabel(data)) : "",
     "<tr><td style=\"padding:8px 28px 28px 28px;font-family:Geist,Arial,Helvetica,sans-serif;\">",
     "<p style=\"margin:0;font-size:13px;line-height:1.5;color:#666666;\">iCorrect · 12 Margaret Street, Audley House, London W1W 8JQ<br>020 7099 8517 · support@icorrect.co.uk</p>",
@@ -172,10 +257,10 @@ function renderQuoteEmail(input) {
 }
 
 function badgeHtml(badge, tone) {
-  if (!badge || tone === "green") return "";
-  var style = tone === "amber"
-    ? "background:#fff8ea;color:#8c5a00;"
-    : "background:#f0f7ff;color:#0070f3;";
+  if (!badge) return "";
+  var style = "background:#e6f6ec;color:#1a6b34;";
+  if (tone === "amber") style = "background:#fff8ea;color:#8c5a00;";
+  if (tone === "blue") style = "background:#f0f7ff;color:#0070f3;";
   return "<div style=\"margin:16px 0 0 0;\">" +
     "<span style=\"display:inline-block;" + style + "font-family:'Geist Mono',ui-monospace,Menlo,Consolas,monospace;font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;padding:5px 10px;border-radius:999px;\">" +
     esc(badge) + "</span></div>";
@@ -208,37 +293,85 @@ function estimatesHtml(rows) {
 function serviceHtml(name, amount) {
   if (!name) return "";
   return "<tr><td style=\"padding:16px 28px 0 28px;font-family:Geist,Arial,Helvetica,sans-serif;\">" +
-    "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">" +
+    "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f7f7f7;border-radius:12px;border:1.5px solid #171717;\">" +
     "<tr>" +
-    "<td style=\"font-size:16px;font-weight:600;line-height:1.35;color:#171717;\">" + esc(name) + "</td>" +
-    (amount ? "<td align=\"right\" style=\"font-family:'Geist Mono',ui-monospace,Menlo,Consolas,monospace;font-size:13px;font-weight:600;color:#171717;white-space:nowrap;\">" + esc(amount) + "</td>" : "") +
+    "<td valign=\"middle\" style=\"padding:14px 16px;font-size:15px;font-weight:600;line-height:1.3;color:#171717;\">" + esc(name) + "</td>" +
+    (amount ? "<td align=\"right\" valign=\"middle\" style=\"padding:14px 16px;font-family:'Geist Mono',ui-monospace,Menlo,Consolas,monospace;font-size:12px;font-weight:600;color:#171717;white-space:nowrap;\">" + esc(amount) + "</td>" : "") +
     "</tr></table></td></tr>";
 }
 
-function journeyHtml(steps) {
-  if (!steps.length) return "";
-  var rows = steps.map(function (step, i) {
-    var border = i === steps.length - 1 ? "" : "border-bottom:1px solid #ebebeb;";
-    return "<tr>" +
-      "<td width=\"28\" valign=\"top\" style=\"padding:10px 0;" + border + "font-family:'Geist Mono',ui-monospace,Menlo,Consolas,monospace;font-size:12px;font-weight:600;color:#171717;\">" + (i + 1) + "</td>" +
-      "<td valign=\"top\" style=\"padding:10px 8px;" + border + "font-family:Geist,Arial,Helvetica,sans-serif;font-size:14px;font-weight:600;color:#171717;\">" + esc(step.title) + "</td>" +
-      "<td align=\"right\" valign=\"top\" style=\"padding:10px 0;" + border + "font-family:'Geist Mono',ui-monospace,Menlo,Consolas,monospace;font-size:13px;color:#525252;\">" + esc(step.meta) + "</td>" +
-      "</tr>";
+function journeyHtml(model) {
+  var steps = (model && model.steps) || [];
+  if (!steps.length && !(model && (model.etaLabel || model.etaValue))) return "";
+  var stepCells = steps.map(function (step, i) {
+    return "<td valign=\"top\" align=\"center\" width=\"" + Math.floor(100 / steps.length) + "%\" style=\"padding:0 4px;font-family:Geist,Arial,Helvetica,sans-serif;\">" +
+      "<div style=\"width:24px;height:24px;line-height:24px;border-radius:50%;background:#171717;color:#ffffff;font-family:'Geist Mono',ui-monospace,Menlo,Consolas,monospace;font-size:11px;font-weight:600;text-align:center;margin:0 auto 8px auto;\">" + (i + 1) + "</div>" +
+      "<div style=\"font-size:13px;font-weight:600;line-height:1.25;color:#171717;\">" + esc(step.title) + "</div>" +
+      (step.meta ? "<div style=\"margin-top:3px;font-family:'Geist Mono',ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.3;color:#525252;\">" + esc(step.meta) + "</div>" : "") +
+      "</td>";
   }).join("");
+  var eta = "";
+  if (model && (model.etaLabel || model.etaValue || model.etaNote)) {
+    eta = "<div style=\"margin-top:14px;padding:12px 14px;background:#ffffff;border-radius:8px;border:1px solid rgba(0,0,0,0.08);text-align:center;font-family:Geist,Arial,Helvetica,sans-serif;\">" +
+      (model.etaLabel ? "<div style=\"font-family:'Geist Mono',ui-monospace,Menlo,Consolas,monospace;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#525252;\">" + esc(model.etaLabel) + "</div>" : "") +
+      (model.etaValue ? "<div style=\"margin-top:6px;font-size:20px;font-weight:700;letter-spacing:-0.4px;color:#171717;\">" + esc(model.etaValue) + "</div>" : "") +
+      (model.etaNote ? "<div style=\"margin-top:4px;font-size:12px;line-height:1.3;color:#6b6b6b;\">" + esc(model.etaNote) + "</div>" : "") +
+      "</div>";
+  }
   return "<tr><td style=\"padding:16px 28px 0 28px;\">" +
-    "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#fafafa;border:1px solid #ebebeb;border-radius:12px;\">" +
-    "<tr><td style=\"padding:6px 16px;\">" +
-    "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">" + rows + "</table>" +
-    "</td></tr></table></td></tr>";
+    "<div style=\"padding:18px 12px 16px 12px;background:#fafafa;border-radius:12px;border:1px solid rgba(0,0,0,0.08);\">" +
+    (steps.length ? "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\"><tr>" + stepCells + "</tr></table>" : "") +
+    eta +
+    "</div></td></tr>";
 }
 
-function priceHtml(label, total, terms) {
-  if (!total && !terms) return "";
+function trustCell(cell) {
+  var stars = cell.kind === "reviews"
+    ? "<div style=\"color:#e6b800;font-size:11px;letter-spacing:1px;line-height:1;\">&#9733;&#9733;&#9733;&#9733;&#9733;</div>"
+    : "";
+  var titleStyle = cell.kind === "reviews"
+    ? "font-size:28px;font-weight:700;letter-spacing:-1px;line-height:1;color:#171717;"
+    : "font-size:13px;font-weight:600;line-height:1.25;color:#171717;";
+  return "<td valign=\"middle\" width=\"50%\" style=\"padding:14px 12px;border-bottom:1px solid #e6e6e6;border-right:1px solid #e6e6e6;font-family:Geist,Arial,Helvetica,sans-serif;\">" +
+    "<div style=\"" + titleStyle + "\">" + esc(cell.title) + "</div>" +
+    stars +
+    (cell.sub ? "<div style=\"margin-top:3px;font-size:12px;line-height:1.3;color:#808080;\">" + esc(cell.sub) + "</div>" : "") +
+    "</td>";
+}
+
+function trustHtml(cells, priceLabel, total) {
+  if (!cells.length && !total) return "";
+  if (!cells.length) return "";
+  var rows = "";
+  for (var i = 0; i < cells.length; i += 2) {
+    var left = trustCell(cells[i]);
+    var right = cells[i + 1]
+      ? trustCell(cells[i + 1])
+      : "<td width=\"50%\" style=\"border-bottom:1px solid #e6e6e6;\">&nbsp;</td>";
+    rows += "<tr>" + left + right + "</tr>";
+  }
+  var price = total
+    ? "<td rowspan=\"" + Math.max(Math.ceil(cells.length / 2), 1) + "\" valign=\"middle\" align=\"center\" width=\"168\" style=\"width:168px;background:#f5f5f5;border-left:1px solid #e6e6e6;padding:16px 12px;font-family:Geist,Arial,Helvetica,sans-serif;\">" +
+      (priceLabel ? "<div style=\"font-size:12px;font-weight:500;color:#808080;\">" + esc(priceLabel) + "</div>" : "") +
+      "<div style=\"margin-top:4px;font-size:36px;font-weight:700;letter-spacing:-1.2px;line-height:1;color:#171717;\">" + esc(total) + "</div>" +
+      "</td>"
+    : "";
+  if (!rows && price) {
+    rows = "<tr>" + price + "</tr>";
+  } else if (rows && price) {
+    rows = rows.replace("</tr>", price + "</tr>");
+  }
+  return "<tr><td style=\"padding:16px 28px 0 28px;\">" +
+    "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border:1px solid #e6e6e6;border-radius:12px;border-collapse:separate;\">" +
+    rows + "</table></td></tr>";
+}
+
+function priceHtml(label, total) {
+  if (!total) return "";
   return "<tr><td style=\"padding:20px 28px 0 28px;font-family:Geist,Arial,Helvetica,sans-serif;\">" +
     "<div style=\"padding:16px 18px;background:#f5f5f5;border-radius:12px;\">" +
     (label ? "<div style=\"font-size:12px;font-weight:500;color:#666666;\">" + esc(label) + "</div>" : "") +
-    (total ? "<div style=\"margin-top:4px;font-size:36px;font-weight:700;letter-spacing:-1.2px;line-height:1;color:#171717;\">" + esc(total) + "</div>" : "") +
-    (terms ? "<div style=\"margin-top:8px;font-size:13px;line-height:1.4;color:#4d4d4d;\">" + esc(terms) + "</div>" : "") +
+    "<div style=\"margin-top:4px;font-size:36px;font-weight:700;letter-spacing:-1.2px;line-height:1;color:#171717;\">" + esc(total) + "</div>" +
     "</div></td></tr>";
 }
 
@@ -250,5 +383,6 @@ function ctaHtml(url, label) {
 
 module.exports = {
   renderQuoteEmail: renderQuoteEmail,
+  emailJourney: emailJourney,
   gbp: gbp
 };
