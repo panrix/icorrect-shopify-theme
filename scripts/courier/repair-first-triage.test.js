@@ -44,6 +44,7 @@ const MUST_BE_REPAIR = [
   'Touch Bar not responding or frozen',
   'Touch Bar flickering or displaying incorrectly',
   'Face ID error or TrueDepth message',
+  'Front camera not working',
   'Microphone not picking up voice',
   'Home button or Touch ID not working',
   'Display dead or unresponsive',
