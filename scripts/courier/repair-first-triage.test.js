@@ -30,10 +30,10 @@ const DIAGNOSTIC_LABELS = new Set([
   'Bluetooth not connecting to phone',
   'WiFi not working',
   'SIM not detected',
+  'Random shutdowns or reboots',
 ]);
 
 const MUST_BE_REPAIR = [
-  'Random shutdowns or reboots',
   'Black screen (sound or buttons still work)',
   'Black screen (phone still vibrates/rings)',
   'Keys not responding',
@@ -52,6 +52,7 @@ const MUST_BE_REPAIR = [
 ];
 
 const MUST_BE_DIAGNOSTIC = [
+  'Random shutdowns or reboots',
   'Won\'t turn on',
   'Won\'t charge',
   'No display, no response',
