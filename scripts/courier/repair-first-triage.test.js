@@ -31,7 +31,8 @@ const DIAGNOSTIC_LABELS = new Set([
   'WiFi not working',
   'SIM not detected',
   'Random shutdowns or reboots',
-  'No preview, or the camera freezes',
+  'Back camera: no preview or it freezes',
+  'Front camera: no preview or it freezes',
 ]);
 
 const MUST_BE_REPAIR = [
@@ -43,7 +44,8 @@ const MUST_BE_REPAIR = [
   'Ghost typing or phantom input',
   'Touch Bar not responding or frozen',
   'Touch Bar flickering or displaying incorrectly',
-  'Face ID error or TrueDepth message',
+  'Front camera: Face ID error or TrueDepth message',
+  'Back camera blurry or shaking',
   'Front camera not working',
   'Microphone not picking up voice',
   'Display dead or unresponsive',
@@ -54,7 +56,8 @@ const MUST_BE_REPAIR = [
 ];
 
 const MUST_BE_DIAGNOSTIC = [
-  'No preview, or the camera freezes',
+  'Back camera: no preview or it freezes',
+  'Front camera: no preview or it freezes',
   'Random shutdowns or reboots',
   'Won\'t turn on',
   'Won\'t charge',
