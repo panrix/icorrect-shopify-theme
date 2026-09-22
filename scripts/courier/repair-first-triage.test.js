@@ -29,6 +29,7 @@ const DIAGNOSTIC_LABELS = new Set([
   'WiFi not connecting',
   'Bluetooth not connecting to phone',
   'WiFi not working',
+  'SIM not detected',
 ]);
 
 const MUST_BE_REPAIR = [
@@ -48,6 +49,7 @@ const MUST_BE_REPAIR = [
   'Display dead or unresponsive',
   'Cracked or shattered screen',
   'Physically damaged trackpad',
+  'Device powers on, but will not charge',
 ];
 
 const MUST_BE_DIAGNOSTIC = [
@@ -61,6 +63,7 @@ const MUST_BE_DIAGNOSTIC = [
   'WiFi not connecting',
   'Bluetooth not connecting to phone',
   'WiFi not working',
+  'SIM not detected',
 ];
 
 function extractIssues() {
