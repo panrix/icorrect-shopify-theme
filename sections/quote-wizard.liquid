@@ -1156,9 +1156,10 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     },
     ipad: {
       'Screen / Display': [
-        { label: 'Cracked glass (display still works)', route: 'repair', repairType: 'screen', copy: 'Your iPad glass is cracked. We use genuine parts to ensure Apple Pencil compatibility and full touch accuracy.' },
+        { label: 'Cracked glass only (display still works)', route: 'repair', repairType: 'screen-glass', copy: 'The picture is fine and the damage is only the outer glass. We\'ll quote a glass replacement.' },
+        { label: 'Cracked glass only (display still works)', route: 'repair', repairType: 'screen', onlyWhenMissing: 'screen-glass', copy: 'On this iPad the glass is bonded to the display, so a cracked screen is a display replacement.' },
         { label: 'Touch not responding', route: 'repair', repairType: 'screen', copy: 'A dead touchscreen needs a display replacement. We use genuine panels.' },
-        { label: 'Lines or dead areas on screen', route: 'repair', repairType: 'screen', copy: 'Lines or dead zones mean the LCD/LED panel is damaged internally. A display replacement will fix this.' },
+        { label: 'Blotches, lines, or a damaged display', route: 'repair', repairType: 'screen', copy: 'Blotches, lines, or a damaged picture need a display replacement, not glass only.' },
         { label: 'Black screen (sound or buttons still work)', route: 'repair', repairType: 'screen', copy: 'The iPad still responds, so the display has failed. We\'ll quote a genuine screen replacement.' },
         { label: 'No display, no response', route: 'diagnostic', repairType: 'diagnostic', copy: 'If the iPad shows no signs of life, it could be the display, battery, or logic board. We can\'t quote the full repair until we\'ve tested it.' }
       ],
@@ -1449,6 +1450,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     return issues.filter(function(iss) {
       if (iss.faceIdOnly && !faceId) return false;
       if (iss.noFaceIdOnly && faceId) return false;
+      if (iss.onlyWhenMissing && repairsMap[iss.onlyWhenMissing]) return false;
       if (iss.route === 'contact' || iss.route === 'dismiss') return true;
       if (iss.route === 'diagnostic') return !!repairsMap['diagnostic'];
       return !!repairsMap[iss.repairType];
