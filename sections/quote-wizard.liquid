@@ -1147,7 +1147,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       ],
       'Connectivity': [
         { label: 'No signal / "No Service" / "SOS only"', route: 'diagnostic', repairType: 'diagnostic', copy: 'Loss of cellular signal could be an antenna, baseband chip, or SIM reader. Book a diagnostic and we\'ll identify the fault before quoting a repair.' },
-        { label: 'SIM not detected', route: 'diagnostic', repairType: 'diagnostic', copy: 'A missing SIM or "No SIM" message can be the tray, the reader, or the board. Book a diagnostic and we\'ll identify it before quoting a repair.' },
+        { label: 'eSIM not detected', route: 'diagnostic', repairType: 'diagnostic', esimOnly: true, copy: 'A missing eSIM or "No SIM" message can be the eSIM profile or the board. There is no SIM tray on this iPhone. Book a diagnostic and we\'ll identify it before quoting a repair.' },
+        { label: 'SIM not detected', route: 'diagnostic', repairType: 'diagnostic', simTrayOnly: true, copy: 'A missing SIM or "No SIM" message can be the tray, the reader, or the board. Book a diagnostic and we\'ll identify it before quoting a repair.' },
         { label: 'WiFi not connecting or greyed out', route: 'diagnostic', repairType: 'diagnostic', copy: 'A greyed-out WiFi toggle usually means a hardware fault on the logic board. Book a diagnostic and we\'ll confirm it before quoting a repair.' },
         { label: 'Bluetooth not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth and WiFi share the same chip on iPhones. Book a diagnostic and we\'ll confirm the fault before quoting a repair.' }
       ],
@@ -1445,6 +1446,10 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     return true;
   }
 
+  function modelIsEsimOnly(model) {
+    return /iPhone\s*Air\b/i.test(String(model || ''));
+  }
+
   function modelHasLcdScreen(model) {
     var name = String(model || '');
     if (/iPhone\s*SE\b/i.test(name)) return true;
@@ -1458,11 +1463,14 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     if (!issues) return [];
     var faceId = modelHasFaceId(S.model);
     var lcd = modelHasLcdScreen(S.model);
+    var esimOnly = modelIsEsimOnly(S.model);
     return issues.filter(function(iss) {
       if (iss.faceIdOnly && !faceId) return false;
       if (iss.noFaceIdOnly && faceId) return false;
       if (iss.lcdOnly && !lcd) return false;
       if (iss.oledOnly && lcd) return false;
+      if (iss.esimOnly && !esimOnly) return false;
+      if (iss.simTrayOnly && esimOnly) return false;
       if (iss.onlyWhenMissing && repairsMap[iss.onlyWhenMissing]) return false;
       if (iss.route === 'contact' || iss.route === 'dismiss') return true;
       if (iss.route === 'diagnostic') return !!repairsMap['diagnostic'];
