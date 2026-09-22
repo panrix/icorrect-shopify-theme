@@ -616,6 +616,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       { v: 'Power / Battery / Charging', icon: 'battery', label: 'Power / Battery / Charging' },
       { v: 'Camera', icon: 'camera', label: 'Camera' },
       { v: 'Audio / Mic / Speaker', icon: 'audio', label: 'Audio / Mic / Speaker' },
+      { v: 'Connectivity', icon: 'connectivity', label: 'Connectivity' },
       { v: 'Rear Glass', icon: 'rear-glass', label: 'Rear Glass' },
       { v: 'Buttons', icon: 'buttons', label: 'Buttons' },
       { v: 'Water Damage', icon: 'water', label: 'Water Damage' },
@@ -652,7 +653,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     'buttons': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="2"/><circle cx="12" cy="16" r="2"/><rect x="7" y="3" width="10" height="18" rx="3"/></svg>',
     'water': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>',
     'data': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>',
-    'other': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>'
+    'other': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>',
+    'connectivity': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12.55a11 11 0 0114.08 0M8.53 16.11a6 6 0 016.95 0"/><circle cx="12" cy="20" r="1"/></svg>'
   };
 
   /* =============================================
@@ -1068,7 +1070,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: 'Battery swollen or expanding', route: 'repair', repairType: 'battery', copy: 'We\'ll safely remove the old battery and fit a new one.', urgent: true },
         { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'A MacBook that won\'t power on could be the battery, charging circuit, or logic board. We can\'t quote the full repair until we\'ve looked.' },
         { label: 'Random shutdowns or reboots', route: 'repair', repairType: 'battery', copy: 'Unexpected shutdowns are usually a failing battery. We\'ll quote a battery replacement. If something else is causing it, we\'ll tell you once we\'ve looked.' },
-        { label: 'Won\'t charge or charger not recognised', route: 'diagnostic', repairType: 'diagnostic', copy: 'Charging failure could be the USB-C port, battery, or charging circuit. We can\'t quote the full repair until we\'ve tested each one.' }
+        { label: 'Won\'t charge or charger not recognised', route: 'diagnostic', repairType: 'diagnostic', copy: 'Charging failure could be the USB-C port, battery, or charging circuit. We can\'t quote the full repair until we\'ve tested each one.' },
+        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The MacBook still turns on, so we\'ll quote a charging port replacement and test power delivery before it goes back.' }
       ],
       'Trackpad / Keyboard': [
         { label: 'Keys not responding', route: 'repair', repairType: 'keyboard', copy: 'Non-responsive keys usually mean the keyboard needs replacing. We\'ll quote a full top-case keyboard. If we find liquid damage after it arrives, we\'ll contact you before doing extra work.' },
@@ -1117,7 +1120,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: 'Battery drains fast', route: 'repair', repairType: 'battery', copy: 'Your battery has degraded below healthy capacity. We\'ll replace it with a genuine Apple battery and your battery health will read accurately again.' },
         { label: 'Won\'t charge', route: 'diagnostic', repairType: 'diagnostic', copy: 'Charging failure could be the port, battery, or charging circuit. We can\'t quote the full repair until we\'ve tested each one.' },
         { label: 'Random shutdowns or reboots', route: 'repair', repairType: 'battery', copy: 'Unexpected shutdowns are usually a failing battery. We\'ll quote a battery replacement. If something else is causing it, we\'ll contact you before doing extra work.' },
-        { label: 'Swollen battery', route: 'repair', repairType: 'battery', copy: 'We\'ll replace the battery safely.', urgent: true }
+        { label: 'Swollen battery', route: 'repair', repairType: 'battery', copy: 'We\'ll replace the battery safely.', urgent: true },
+        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The iPhone still turns on, so we\'ll quote a charging port replacement and test charging before it goes back.' }
       ],
       'Camera': [
         { label: 'Blurry photos or shaking camera', route: 'repair', repairType: 'rear-camera', copy: 'A blurry or shaking camera usually means the stabilisation system has failed. We\'ll replace the camera module.' },
@@ -1147,11 +1151,14 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: 'Phone dead, need data', route: 'diagnostic', repairType: 'diagnostic', copy: 'We can attempt a specialised repair to get the phone working long enough to back up. Success depends on the fault.' },
         { label: 'Forgotten passcode', route: 'dismiss', repairType: null, copy: 'We can\'t bypass an iPhone passcode or iCloud lock. If you\'re the original owner, Apple Support can help with account recovery.' }
       ],
+      'Connectivity': [
+        { label: 'No signal / "No Service" / "SOS only"', route: 'diagnostic', repairType: 'diagnostic', copy: 'Loss of cellular signal could be an antenna, baseband chip, or SIM reader. Book a diagnostic and we\'ll identify the fault before quoting a repair.' },
+        { label: 'SIM not detected', route: 'diagnostic', repairType: 'diagnostic', copy: 'A missing SIM or "No SIM" message can be the tray, the reader, or the board. Book a diagnostic and we\'ll identify it before quoting a repair.' },
+        { label: 'WiFi not connecting or greyed out', route: 'diagnostic', repairType: 'diagnostic', copy: 'A greyed-out WiFi toggle usually means a hardware fault on the logic board. Book a diagnostic and we\'ll confirm it before quoting a repair.' },
+        { label: 'Bluetooth not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth and WiFi share the same chip on iPhones. Book a diagnostic and we\'ll confirm the fault before quoting a repair.' }
+      ],
       'Other': [
         { label: 'Vibration not working', route: 'contact', repairType: null, copy: 'The Taptic Engine may have failed. Get in touch and we\'ll confirm whether we can repair it for your model.' },
-        { label: 'No signal / "No Service" / "SOS only"', route: 'diagnostic', repairType: 'diagnostic', copy: 'Loss of cellular signal could be an antenna, baseband chip, or SIM reader. We need to diagnose the device to quote the repair.' },
-        { label: 'WiFi not connecting or greyed out', route: 'diagnostic', repairType: 'diagnostic', copy: 'A greyed-out WiFi toggle usually means a hardware fault on the logic board. We need to diagnose it to quote.' },
-        { label: 'Bluetooth not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth and WiFi share the same chip on iPhones. We need to diagnose the device to quote the repair.' },
         { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe the issue and we\'ll get back to you with the best repair option.' }
       ]
     },
@@ -1166,7 +1173,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: 'Battery drains quickly', route: 'repair', repairType: 'battery', copy: 'Your iPad battery has degraded. We\'ll replace it with an original-spec battery.' },
         { label: 'Won\'t charge', route: 'diagnostic', repairType: 'diagnostic', copy: 'Charging failure could be the port, battery, or charging circuit. We can\'t quote the full repair until we\'ve tested each one.' },
         { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'An iPad that won\'t power on could be the battery, charging circuit, or logic board. Try a hard reset first (hold Power + Volume Down for 10 seconds). We can\'t quote the full repair until we\'ve looked.' },
-        { label: 'Battery swollen or screen lifting', route: 'repair', repairType: 'battery', copy: 'A swollen battery is pushing the screen away from the frame. We\'ll safely remove it and fit a replacement.', urgent: true }
+        { label: 'Battery swollen or screen lifting', route: 'repair', repairType: 'battery', copy: 'A swollen battery is pushing the screen away from the frame. We\'ll safely remove it and fit a replacement.', urgent: true },
+        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The iPad still turns on, so we\'ll quote a charging port replacement and test charging before it goes back.' }
       ],
       'Camera': [],
       'Buttons': [
@@ -1437,6 +1445,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     available['Water Damage'] = true;
     available['Data Recovery'] = true;
     available['Other'] = true;
+    if (device === 'iphone') available['Connectivity'] = true;
     return list.filter(function(f) { return available[f.v]; });
   }
 
