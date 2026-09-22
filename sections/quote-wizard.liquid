@@ -1204,7 +1204,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: 'Battery swollen or back popping off', route: 'repair', repairType: 'battery', copy: 'A swollen battery is pushing the back off the watch. Stop wearing it immediately. We\'ll replace the battery and re-seal the case.', urgent: true }
       ],
       'Rear Glass': [
-        { label: 'Cracked back crystal / sensor glass', route: 'repair', repairType: 'heart-rate-monitor', copy: 'The rear crystal houses the heart rate and blood oxygen sensors. We\'ll replace it to restore sensor accuracy and the water seal.' }
+        { label: 'Cracked back crystal / sensor glass', route: 'repair', repairType: 'heart-rate-monitor', noBloodOxygen: true, copy: 'The rear crystal houses the heart rate sensor. We\'ll replace it to restore sensor accuracy and the water seal.' },
+        { label: 'Cracked back crystal / sensor glass', route: 'repair', repairType: 'heart-rate-monitor', bloodOxygenOnly: true, copy: 'The rear crystal houses the heart rate and blood oxygen sensors. We\'ll replace it to restore sensor accuracy and the water seal.' }
       ],
       'Crown': [
         { label: 'Digital Crown stuck or not rotating', route: 'repair', repairType: 'crown', copy: 'The Digital Crown can get jammed by dirt or debris. We\'ll clean or replace the crown mechanism.' }
@@ -1447,6 +1448,15 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     return true;
   }
 
+  function modelHasBloodOxygen(model) {
+    var name = String(model || '');
+    if (/Apple Watch SE\b/i.test(name)) return false;
+    if (/Series\s*(2|3|4|5)\b/i.test(name)) return false;
+    if (/Ultra/i.test(name)) return true;
+    if (/Series\s*(6|7|8|9|10)\b/i.test(name)) return true;
+    return false;
+  }
+
   function modelHasTrueTone(model) {
     var name = String(model || '');
     if (/\bA1466\b/i.test(name)) return false;
@@ -1475,6 +1485,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var lcd = modelHasLcdScreen(S.model);
     var esimOnly = modelIsEsimOnly(S.model);
     var trueTone = modelHasTrueTone(S.model);
+    var bloodOxygen = modelHasBloodOxygen(S.model);
     return issues.filter(function(iss) {
       if (iss.faceIdOnly && !faceId) return false;
       if (iss.noFaceIdOnly && faceId) return false;
@@ -1484,6 +1495,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       if (iss.simTrayOnly && esimOnly) return false;
       if (iss.trueToneOnly && !trueTone) return false;
       if (iss.noTrueTone && trueTone) return false;
+      if (iss.bloodOxygenOnly && !bloodOxygen) return false;
+      if (iss.noBloodOxygen && bloodOxygen) return false;
       if (iss.onlyWhenMissing && repairsMap[iss.onlyWhenMissing]) return false;
       if (iss.route === 'contact' || iss.route === 'dismiss') return true;
       if (iss.route === 'diagnostic') return !!repairsMap['diagnostic'];
