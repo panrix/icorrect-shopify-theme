@@ -1054,7 +1054,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   var TS = {
     macbook: {
       'Screen / Display': [
-        { label: 'Cracked or shattered screen', route: 'repair', repairType: 'screen', copy: 'Your MacBook screen is damaged and needs replacing. We use genuine Apple displays and preserve True Tone calibration.' },
+        { label: 'Cracked or shattered screen', route: 'repair', repairType: 'screen', noTrueTone: true, copy: 'Your MacBook screen is damaged and needs replacing. We use genuine Apple displays.' },
+        { label: 'Cracked or shattered screen', route: 'repair', repairType: 'screen', trueToneOnly: true, copy: 'Your MacBook screen is damaged and needs replacing. We use genuine Apple displays and preserve True Tone calibration.' },
         { label: 'Thick bands, artefacts, or distortion', route: 'repair', repairType: 'screen', copy: 'Lines or colour issues on your display typically mean the display panel needs replacing. We use genuine displays with full colour calibration.', dustgateCheck: true },
         { label: 'Dead pixels or bright spots', route: 'repair', repairType: 'screen', copy: 'Dead or stuck pixels indicate panel failure. A genuine display replacement will restore your screen to full quality.' },
         { label: 'No image, backlight on, external monitor works', route: 'repair', repairType: 'screen', copy: 'The backlight is on and an external monitor shows a picture, so the built-in display has failed. A screen replacement will fix this.' },
@@ -1446,6 +1447,15 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     return true;
   }
 
+  function modelHasTrueTone(model) {
+    var name = String(model || '');
+    if (/\bA1466\b/i.test(name)) return false;
+    if (/\bA1706\b/i.test(name)) return false;
+    if (/\bA1707\b/i.test(name)) return false;
+    if (/\bA1708\b/i.test(name)) return false;
+    return true;
+  }
+
   function modelIsEsimOnly(model) {
     return /iPhone\s*Air\b/i.test(String(model || ''));
   }
@@ -1464,6 +1474,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var faceId = modelHasFaceId(S.model);
     var lcd = modelHasLcdScreen(S.model);
     var esimOnly = modelIsEsimOnly(S.model);
+    var trueTone = modelHasTrueTone(S.model);
     return issues.filter(function(iss) {
       if (iss.faceIdOnly && !faceId) return false;
       if (iss.noFaceIdOnly && faceId) return false;
@@ -1471,6 +1482,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       if (iss.oledOnly && lcd) return false;
       if (iss.esimOnly && !esimOnly) return false;
       if (iss.simTrayOnly && esimOnly) return false;
+      if (iss.trueToneOnly && !trueTone) return false;
+      if (iss.noTrueTone && trueTone) return false;
       if (iss.onlyWhenMissing && repairsMap[iss.onlyWhenMissing]) return false;
       if (iss.route === 'contact' || iss.route === 'dismiss') return true;
       if (iss.route === 'diagnostic') return !!repairsMap['diagnostic'];

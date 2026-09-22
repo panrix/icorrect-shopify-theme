@@ -241,6 +241,33 @@ describe('repair-first triage', () => {
     assert.equal(liquid.includes('simTrayOnly: true'), true);
   });
 
+  it('pre-2018 MacBooks do not promise True Tone', () => {
+    const start = liquid.indexOf('function modelHasTrueTone');
+    const end = liquid.indexOf('function modelIsEsimOnly');
+    assert.ok(start >= 0 && end > start);
+    const modelHasTrueTone = new Function(
+      `${liquid.slice(start, end)}\nreturn modelHasTrueTone;`
+    )();
+    for (const name of [
+      'MacBook Air 13” A1466 (2012-2017)',
+      'MacBook Pro 13” Touch Bar A1706 (2016-2018)',
+      'MacBook Pro 13” A1708 (2016-2017)',
+      'MacBook Pro 15” Retina A1707 (2016-2017)',
+    ]) {
+      assert.equal(modelHasTrueTone(name), false, name);
+    }
+    for (const name of [
+      'MacBook Pro 13” Touch Bar A1989 (2018-2019)',
+      'MacBook Air 13” A1932 (2018-2019)',
+      'MacBook Pro 16” ‘M1 Pro /Max’ A2485 (2021)',
+    ]) {
+      assert.equal(modelHasTrueTone(name), true, name);
+    }
+    const cracked = issues.filter((iss) => iss.label === 'Cracked or shattered screen');
+    assert.equal(cracked.length, 2);
+    assert.equal(cracked.every((iss) => iss.route === 'repair'), true);
+  });
+
   it('data recovery still has diagnostic paths', () => {
     const kept = issues.filter(
       (iss) => iss.category === 'Data Recovery' && iss.route === 'diagnostic'
