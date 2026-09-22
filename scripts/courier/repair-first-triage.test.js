@@ -34,7 +34,7 @@ const DIAGNOSTIC_LABELS = new Set([
 const MUST_BE_REPAIR = [
   'Random shutdowns or reboots',
   'Black screen (external doesn\'t work or untested)',
-  'Black screen',
+  'Black screen (sound or buttons still work)',
   'Black screen (phone still vibrates/rings)',
   'Keys not responding',
   'Sticky, stuck, or crunchy keys',
