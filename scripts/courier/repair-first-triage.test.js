@@ -268,6 +268,36 @@ describe('repair-first triage', () => {
     assert.equal(cracked.every((iss) => iss.route === 'repair'), true);
   });
 
+  it('blood oxygen is named only on Series 6 and newer, and Ultra', () => {
+    const start = liquid.indexOf('function modelHasBloodOxygen');
+    const end = liquid.indexOf('function modelHasTrueTone');
+    assert.ok(start >= 0 && end > start);
+    const modelHasBloodOxygen = new Function(
+      `${liquid.slice(start, end)}\nreturn modelHasBloodOxygen;`
+    )();
+    for (const name of [
+      'Apple Watch Series 2 42MM',
+      'Apple Watch Series 3 38MM',
+      'Apple Watch Series 4 40MM',
+      'Apple Watch Series 5 44MM',
+      'Apple Watch SE 40MM',
+      'Apple Watch SE 2 44MM',
+    ]) {
+      assert.equal(modelHasBloodOxygen(name), false, name);
+    }
+    for (const name of [
+      'Apple Watch Series 6 40MM',
+      'Apple Watch Series 10 45MM',
+      'Apple Watch Ultra',
+      'Apple Watch Ultra 2',
+    ]) {
+      assert.equal(modelHasBloodOxygen(name), true, name);
+    }
+    const crystal = issues.filter((iss) => iss.label === 'Cracked back crystal / sensor glass');
+    assert.equal(crystal.length, 2);
+    assert.equal(crystal.every((iss) => iss.route === 'repair'), true);
+  });
+
   it('data recovery still has diagnostic paths', () => {
     const kept = issues.filter(
       (iss) => iss.category === 'Data Recovery' && iss.route === 'diagnostic'
