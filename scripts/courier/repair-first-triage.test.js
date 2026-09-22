@@ -22,8 +22,7 @@ const DIAGNOSTIC_LABELS = new Set([
   'Won\'t turn on',
   'Won\'t charge',
   'No display, no response',
-  'Blue or purple glow, external black or untested',
-  'No backlight glow at all',
+  'No image, no backlight or no external picture',
   'No signal / "No Service" / "SOS only"',
   'WiFi not connecting or greyed out',
   'Bluetooth not working',
@@ -51,6 +50,7 @@ const MUST_BE_REPAIR = [
   'Cracked or shattered screen',
   'Physically damaged trackpad',
   'Device powers on, but will not charge',
+  'No image, backlight on, external monitor works',
 ];
 
 const MUST_BE_DIAGNOSTIC = [
@@ -59,8 +59,7 @@ const MUST_BE_DIAGNOSTIC = [
   'Won\'t turn on',
   'Won\'t charge',
   'No display, no response',
-  'Blue or purple glow, external black or untested',
-  'No backlight glow at all',
+  'No image, no backlight or no external picture',
   'No signal / "No Service" / "SOS only"',
   'WiFi not connecting or greyed out',
   'Bluetooth not working',
