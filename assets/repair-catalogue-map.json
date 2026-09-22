@@ -3,7 +3,7 @@
   "generated_for": "courier-first-pivot #53",
   "generated_at": "2026-09-18",
   "model_count": 113,
-  "repair_count": 898,
+  "repair_count": 902,
   "models": {
     "watch::apple-watch-se-2-40mm": {
       "device": "watch",
@@ -5216,6 +5216,20 @@
           "title": "iPhone 8 Diagnostic",
           "price": 49,
           "tags": []
+        },
+        "screen": {
+          "variantId": 46149937725693,
+          "handle": "iphone-8-original-screen-repair",
+          "title": "iPhone 8 Original Screen Repair (Genuine LCD)",
+          "price": 129,
+          "tags": []
+        },
+        "battery": {
+          "variantId": 71354393198845,
+          "handle": "iphone-8-genuine-battery-repair",
+          "title": "iPhone 8 Battery Repair",
+          "price": 99,
+          "tags": []
         }
       }
     },
@@ -5229,6 +5243,20 @@
           "handle": "iphone-8-plus-diagnostic",
           "title": "iPhone 8 Plus Diagnostic",
           "price": 49,
+          "tags": []
+        },
+        "screen": {
+          "variantId": 46149936775421,
+          "handle": "iphone-8-plus-original-screen-repair",
+          "title": "iPhone 8 Plus Original Screen Repair (Genuine LCD)",
+          "price": 129,
+          "tags": []
+        },
+        "battery": {
+          "variantId": 71354393526525,
+          "handle": "iphone-8-plus-genuine-battery-repair",
+          "title": "iPhone 8 Plus Battery Repair",
+          "price": 99,
           "tags": []
         }
       }
