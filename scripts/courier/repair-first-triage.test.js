@@ -330,6 +330,16 @@ describe('repair-first triage', () => {
     assert.equal(liquid.includes('press Volume Up, press Volume Down, then hold the top button'), true);
   });
 
+  it('iPhone won\'t turn on includes the side-button reset', () => {
+    assert.equal(
+      liquid.includes('press Volume Up, press Volume Down, then hold the side button'),
+      true
+    );
+    const matches = issues.filter((iss) => iss.label === 'Won\'t turn on');
+    assert.ok(matches.length > 0);
+    assert.equal(matches.every((iss) => iss.route === 'diagnostic'), true);
+  });
+
   it('data recovery still has diagnostic paths', () => {
     const kept = issues.filter(
       (iss) => iss.category === 'Data Recovery' && iss.route === 'diagnostic'
