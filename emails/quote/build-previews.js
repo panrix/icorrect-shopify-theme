@@ -30,7 +30,7 @@ const index = [
   "<style>body{font-family:Geist,Arial,sans-serif;color:#171717}h1{font-weight:600;letter-spacing:-1px;font-size:28px;margin:0 0 8px}p{color:#4d4d4d}nav a{color:#171717;margin-right:16px}iframe{width:720px;height:1680px;border:0;background:#fafafa;display:block}</style>",
   "</head><body style=\"padding:32px\">",
   "<h1>Quote email</h1>",
-  "<p>Same template. Mail-in repair, courier collection, diagnostic. Each one is the quote card with the client&#39;s name added.</p>",
+  "<p>Same template. Mail-in repair, courier collection, diagnostic. Each one is the confirmed quote, without wizard prompts.</p>",
   "<nav><a href=\"mailin.html\">Mail-in</a><a href=\"courier.html\">Courier</a><a href=\"diagnostic.html\">Diagnostic</a></nav>",
   "<h2 style=\"margin-top:32px;font-size:18px\">Mail-in</h2><iframe src=\"mailin.html\" title=\"Mail-in quote\"></iframe>",
   "<h2 style=\"margin-top:32px;font-size:18px\">Courier</h2><iframe src=\"courier.html\" title=\"Courier quote\"></iframe>",

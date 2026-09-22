@@ -4200,56 +4200,36 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     return String(el.textContent || '').replace(/\s+/g, ' ').trim();
   }
 
-  /* Snapshot of the quote card on screen, so the email repeats those words. */
+  /* Facts for the client email. Prompts and courier notices stay on the card. */
   function readQuoteSnapshot() {
     var headingEl = document.querySelector('#qwResCard .qw-res-h');
-    var paragraphs = [];
-    document.querySelectorAll('#qwResCard .qw-res-top > .qw-res-p').forEach(function(p) {
-      var t = qwText(p);
-      if (t) paragraphs.push(t);
-    });
     var svc = document.querySelector('.qw-opt-card.sel[data-opt="svc"]');
     var serviceName = '';
-    var serviceMeta = '';
     var servicePriceLabel = '';
     if (svc) {
       serviceName = qwText(svc.querySelector('.qw-opt-name'));
-      serviceMeta = qwText(svc.querySelector('.qw-opt-meta'));
       servicePriceLabel = qwText(svc.querySelector('.qw-opt-price'));
       if (servicePriceLabel === '—' || servicePriceLabel === '-') servicePriceLabel = '';
     }
-    var result = document.getElementById('qwCourierResult');
-    var noticeTitle = '';
-    var noticeDetail = '';
-    if (result && !result.hidden) {
-      noticeTitle = qwText(result.querySelector('.qw-courier-confirm-title'));
-      noticeDetail = qwText(result.querySelector('.qw-courier-confirm-detail'));
-    }
     var postEl = document.getElementById('qwPostcode');
     var slotPanel = document.getElementById('qwSlotPanel');
-    var collectionDow = '';
-    var collectionDay = '';
-    var collectionMon = '';
-    var collectionWindowLabel = '';
-    var collectionWindowDetail = '';
-    var collectionLabel = '';
+    var collectionLine = '';
     if (slotPanel && !slotPanel.hidden) {
-      collectionLabel = qwText(slotPanel.querySelector('.qw-section-label'));
+      var dateText = '';
       var dateBtn = slotPanel.querySelector('.qw-date-btn.active');
       if (dateBtn) {
-        collectionDow = qwText(dateBtn.querySelector('.qw-date-dow'));
-        collectionDay = qwText(dateBtn.querySelector('.qw-date-day'));
-        collectionMon = qwText(dateBtn.querySelector('.qw-date-mon'));
+        var parsed = parseISODate(dateBtn.getAttribute('data-iso'));
+        dateText = parsed ? formatJourneyDate(parsed) : qwText(dateBtn);
       }
+      var windowText = '';
       var winBtn = slotPanel.querySelector('.qw-window-btn.active');
       if (winBtn) {
-        collectionWindowLabel = qwText(winBtn.querySelector('.qw-window-label'));
-        collectionWindowDetail = qwText(winBtn.querySelector('.qw-window-detail'));
+        windowText = [qwText(winBtn.querySelector('.qw-window-label')), qwText(winBtn.querySelector('.qw-window-detail'))].filter(Boolean).join(' · ');
       }
+      collectionLine = [dateText, windowText].filter(Boolean).join(' · ');
     }
     var journeyHost = document.getElementById('qwJourney');
     var journey = [];
-    var etaLabel = '';
     var etaDate = '';
     var etaNote = '';
     if (journeyHost && !journeyHost.hidden) {
@@ -4257,76 +4237,41 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         var title = qwText(step.querySelector('.qw-journey-title'));
         if (title) journey.push({ title: title, meta: qwText(step.querySelector('.qw-journey-meta')) });
       });
-      etaLabel = qwText(journeyHost.querySelector('.qw-journey-eta-label'));
       etaDate = qwText(journeyHost.querySelector('.qw-journey-eta-date'));
       etaNote = qwText(journeyHost.querySelector('.qw-journey-eta-note'));
     }
-    var trust = [];
-    document.querySelectorAll('#qwPriceTrust .qw-trust-cell').forEach(function(cell) {
-      if (cell.classList.contains('qw-trust-reviews')) {
-        var score = qwText(cell.querySelector('.qw-trust-score'));
-        if (score) trust.push({ title: score, sub: qwText(cell.querySelector('.qw-trust-sub')), kind: 'reviews' });
-      } else {
-        var title = qwText(cell.querySelector('.qw-trust-title'));
-        if (title) trust.push({ title: title, sub: qwText(cell.querySelector('.qw-trust-sub')) });
-      }
-    });
     var bigWrap = document.getElementById('qwPriceBigWrap');
     var bigEl = document.getElementById('qwPriceBig');
     var allIn = (bigWrap && !bigWrap.hidden && bigEl) ? qwText(bigEl) : '';
     var priceLabel = qwText(document.querySelector('#qwPriceTrust .qw-price-from'));
-    var choiceLabel = document.getElementById('qwDeliveryChoiceLabel');
-    var serviceLabel = (choiceLabel && !choiceLabel.hidden) ? qwText(choiceLabel) : '';
-    var postLabelEl = document.querySelector('.qw-service-mapper > .qw-section-label');
     var colorBtn = document.querySelector('#qwColorGrid .qw-color-btn.sel');
-    var colorLabel = '';
-    if (colorBtn && colorBtn.parentNode && colorBtn.parentNode.parentNode) {
-      colorLabel = qwText(colorBtn.parentNode.parentNode.querySelector('.qw-opt-label'));
-    }
     var speedCard = document.querySelector('.qw-opt-card.sel[data-opt="speed"]');
-    var turnaroundLabel = '';
     var expressName = '';
     var expressMeta = '';
     var expressPriceLabel = '';
     var expressPrice = 0;
     if (speedCard) {
-      if (speedCard.parentNode && speedCard.parentNode.parentNode) {
-        turnaroundLabel = qwText(speedCard.parentNode.parentNode.querySelector('.qw-opt-label'));
-      }
-      expressName = qwText(speedCard.querySelector('.qw-opt-name'));
-      expressMeta = qwText(speedCard.querySelector('.qw-opt-meta'));
-      expressPriceLabel = qwText(speedCard.querySelector('.qw-opt-price'));
       expressPrice = parseFloat(speedCard.dataset.add || 0) || 0;
+      if (expressPrice > 0) {
+        expressName = qwText(speedCard.querySelector('.qw-opt-name'));
+        expressMeta = qwText(speedCard.querySelector('.qw-opt-meta'));
+        expressPriceLabel = qwText(speedCard.querySelector('.qw-opt-price'));
+      }
     }
     return {
       screenTitle: qwText(document.getElementById('qw-s4t')),
       badge: qwText(document.querySelector('#qwResCard .qw-res-badge')),
       heading: qwText(headingEl),
-      paragraphs: paragraphs,
       postcode: postEl ? String(postEl.value || '').trim() : '',
-      postcodeLabel: qwText(postLabelEl),
-      noticeTitle: noticeTitle,
-      noticeDetail: noticeDetail,
-      serviceLabel: serviceLabel,
       serviceName: serviceName,
-      serviceMeta: serviceMeta,
       servicePriceLabel: servicePriceLabel,
-      collectionLabel: collectionLabel,
-      collectionDow: collectionDow,
-      collectionDay: collectionDay,
-      collectionMon: collectionMon,
-      collectionWindowLabel: collectionWindowLabel,
-      collectionWindowDetail: collectionWindowDetail,
+      collectionLine: collectionLine,
       journey: journey,
-      etaLabel: etaLabel,
       etaDate: etaDate,
       etaNote: etaNote,
-      trust: trust,
       priceLabel: priceLabel,
       allIn: allIn,
-      colorLabel: colorLabel,
       deviceColor: colorBtn ? (colorBtn.getAttribute('data-color') || '') : '',
-      turnaroundLabel: turnaroundLabel,
       expressName: expressName,
       expressMeta: expressMeta,
       expressPriceLabel: expressPriceLabel,
@@ -4453,10 +4398,8 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
             expressPrice: snap.expressPrice || 0,
             expressPriceLabel: snap.expressPriceLabel || null,
             serviceName: serviceName,
-            serviceMeta: snap.serviceMeta || null,
             servicePrice: servicePrice,
             servicePriceLabel: snap.servicePriceLabel || null,
-            serviceLabel: snap.serviceLabel || null,
             totalPrice: totalPrice,
             estimates: estimates.length > 0 ? JSON.stringify(estimates) : null,
             warranty: CFG.warrantyLabel || '2-year warranty',
@@ -4465,25 +4408,12 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
             deviceColor: snap.deviceColor || null,
             screenTitle: snap.screenTitle || null,
             badge: snap.badge || null,
-            paragraphs: qwJson(snap.paragraphs),
             postcode: snap.postcode || null,
-            postcodeLabel: snap.postcodeLabel || null,
-            noticeTitle: snap.noticeTitle || null,
-            noticeDetail: snap.noticeDetail || null,
-            collectionLabel: snap.collectionLabel || null,
-            collectionDow: snap.collectionDow || null,
-            collectionDay: snap.collectionDay || null,
-            collectionMon: snap.collectionMon || null,
-            collectionWindowLabel: snap.collectionWindowLabel || null,
-            collectionWindowDetail: snap.collectionWindowDetail || null,
+            collectionLine: snap.collectionLine || null,
             journey: qwJson(snap.journey),
-            etaLabel: snap.etaLabel || null,
             etaDate: snap.etaDate || null,
             etaNote: snap.etaNote || null,
-            trust: qwJson(snap.trust),
             priceLabel: snap.priceLabel || null,
-            colorLabel: snap.colorLabel || null,
-            turnaroundLabel: snap.turnaroundLabel || null,
             urgent: snap.urgent || null,
             url: window.location.href,
             timestamp: new Date().toISOString()
