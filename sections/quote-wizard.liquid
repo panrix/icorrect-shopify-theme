@@ -3893,13 +3893,19 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
     var diagVariantId = fullDiag ? fullDiag.variants[0].id : 0;
 
+    var guideLine = 'The prices below are a guide — diagnostic first, then the repair if the board or other parts need work.';
+    var repeatsQuoteLine = /can['\u2019]t quote the full repair/i.test(String(iss.copy || ''));
+    var guideCopy = repeatsQuoteLine
+      ? guideLine
+      : 'We can\'t quote the full repair until we\'ve looked. ' + guideLine;
+
     container.innerHTML = urgentHtml +
       '<div class="qw-res" id="qwResCard" data-base="' + diagPrice + '" data-vid="' + diagVariantId + '">' +
         '<div class="qw-res-top">' +
           '<div class="qw-res-badge qw-badge-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>We need to take a look</div>' +
           '<h3 class="qw-res-h">Book a Diagnostic</h3>' +
           '<p class="qw-res-p">' + esc(iss.copy) + '</p>' +
-          '<p class="qw-res-p">We can\'t quote the full repair until we\'ve looked. The prices below are a guide — diagnostic first, then the repair if the board or other parts need work.</p>' +
+          '<p class="qw-res-p">' + esc(guideCopy) + '</p>' +
           '<p class="qw-res-p">Once your device arrives — by courier or mail-in — we diagnose within 1 working day and email your quote. The device stays with us until you decide.</p>' +
           likelyHtml +
         '</div>' +
