@@ -1069,7 +1069,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: '"Service Recommended" warning', route: 'repair', repairType: 'battery', copy: 'macOS is telling you the battery needs replacing. We use original-spec batteries and your health monitoring will report accurately after the swap.' },
         { label: 'Battery swollen or expanding', route: 'repair', repairType: 'battery', copy: 'We\'ll safely remove the old battery and fit a new one.', urgent: true },
         { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'A MacBook that won\'t power on could be the battery, charging circuit, or logic board. We can\'t quote the full repair until we\'ve looked.' },
-        { label: 'Random shutdowns or reboots', route: 'repair', repairType: 'battery', copy: 'Unexpected shutdowns are usually a failing battery. We\'ll quote a battery replacement. If something else is causing it, we\'ll tell you once we\'ve looked.' },
+        { label: 'Random shutdowns or reboots', route: 'diagnostic', repairType: 'diagnostic', copy: 'Unexpected shutdowns can be the battery or the logic board. We can\'t quote the full repair until we\'ve looked.' },
         { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The MacBook still turns on, so we\'ll quote a charging port replacement and test power delivery before it goes back.' }
       ],
       'Trackpad / Keyboard': [
@@ -1118,7 +1118,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       'Power / Battery / Charging': [
         { label: 'Battery drains fast', route: 'repair', repairType: 'battery', copy: 'Your battery has degraded below healthy capacity. We\'ll replace it with a genuine Apple battery and your battery health will read accurately again.' },
         { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'An iPhone that won\'t power on could be the battery, charging circuit, or logic board. We can\'t quote the full repair until we\'ve looked.' },
-        { label: 'Random shutdowns or reboots', route: 'repair', repairType: 'battery', copy: 'Unexpected shutdowns are usually a failing battery. We\'ll quote a battery replacement. If something else is causing it, we\'ll contact you before doing extra work.' },
+        { label: 'Random shutdowns or reboots', route: 'diagnostic', repairType: 'diagnostic', copy: 'Unexpected shutdowns can be the battery or the logic board. We can\'t quote the full repair until we\'ve looked.' },
         { label: 'Swollen battery', route: 'repair', repairType: 'battery', copy: 'We\'ll replace the battery safely.', urgent: true },
         { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The iPhone still turns on, so we\'ll quote a charging port replacement and test charging before it goes back.' }
       ],
