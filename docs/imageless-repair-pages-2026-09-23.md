@@ -44,14 +44,14 @@ Everything is driven by data that already exists on each product and tile: title
 
 - `snippets/repair-meta.liquid` works out family, repair type, model, repair name, qualifier, relative size and rear-lens count from the title. It uses tags and type as a fallback, and page context for tiles like "Series 9" or "45MM". It covers every active repair product in the catalogue (911).
 - `snippets/repair-icon.liquid` is a line-icon set on the Quote Wizard's 24px / 1.5-stroke grid: 23 repair types, 4 device families, and trust icons.
-- `snippets/device-glyph.liquid` holds one line-art diagram per family (iPhone, iPad, MacBook, Watch). It **highlights the part being repaired**: screen crack, battery x-ray, port, camera area, buttons, crown, keyboard, trackpad, hinge (Flexgate), heart-rate sensor, or a scan line for diagnostics. Rear repairs flip to the back of the device. The drawings are deliberately generic: no notch or Dynamic Island, no lens count, no home button. That keeps them correct for any model (SE, Air, 17 Pro Max…). Only overall size scales with the model (mini/e < base < Plus/Max, 13" < 16"). The MacBook charging port sits on the side of the top case.
+- `snippets/device-glyph.liquid` holds one line-art diagram per family (iPhone, iPad, MacBook, Watch). It **highlights the part being repaired**: screen crack, battery x-ray, port, camera area, buttons, crown, keyboard, trackpad, hinge (Flexgate), heart-rate sensor, or a scan line for diagnostics. Rear repairs flip to the back of the device. iPhone always uses the current Pro form (Dynamic Island, triple camera) as a reference shape. iPad, MacBook and Watch stay feature-neutral. No drawing is ever made per model. Only overall size scales with the model (mini/e < base < Plus/Max, 13" < 16"). The MacBook charging port sits on the side of the top case.
 - `snippets/repair-card.liquid` is the card used by every repair grid.
 - `snippets/repair-visual.liquid` is the product-page panel.
 - `assets/repair-imageless.css` holds the styles, with tokens aligned to `assets/quote-wizard.css`.
 
 ### How each page changes
 
-- **Product page:** the left column keeps the site's familiar "circle + repair icon" composition, now drawn in code. It shows the diagram with the part highlighted, a repair badge, model / repair / "Genuine OLED" chips, and a trust row (2-year warranty, genuine parts, London collection & UK courier). It stays pinned while you scroll.
+- **Product page:** the left column keeps the site's familiar "circle + repair icon" composition, now drawn in code. It shows the diagram with the part highlighted, a repair badge, model / repair / "Genuine OLED" chips, and a trust row (2-year warranty, genuine parts, London collection & UK courier). The whole left column carries the panel colour, so it always matches the height of the right column however far the wizard expands. The drawing stays pinned under the sticky header while you scroll.
   - The Quote Wizard now sits under the title and description in the right-hand column. The panel, title and wizard share the first screen at 1440×900.
   - How it works: the wizard section moves itself into a slot in the product column before it initialises. The theme editor keeps it in place so it stays editable. Its map panel is hidden in that position.
   - The theme setting "Quote Wizard beside the repair panel" turns the move off.
@@ -61,6 +61,17 @@ Everything is driven by data that already exists on each product and tile: title
 - **Model tiles:** two styles, set per section with "Tile style". The whole tile is clickable in both. Two columns on mobile instead of one.
   - **Device diagram** (default): a circle with a scaled device diagram (or a repair icon for repair-category tiles), the model name, a live "11 repairs · from £119" line read from the linked collection (diagnostics excluded), and "View repairs".
   - **Headline prices** (proposed): the model name plus its own screen and battery prices, read from the linked collection, and "View all 11 repairs". This makes tiles on a series page differ from each other instead of repeating the same picture.
+
+### Model order (automatic)
+
+`snippets/model-order.liquid` applies one rule everywhere models are listed: model tiles, and repair grids that show one repair across many models.
+
+1. Product line, in the order it first appears on the page (keeps Air and Pro groups together).
+2. Newest generation first: the year in the title (chip number breaks same-year ties), else "Nth Gen", else the model number. Names with no number (e.g. "iPhone Air") join the newest generation.
+3. Within a generation: standard, mini, Plus/Air, Pro, Pro Max/Max, then budget (16e, XR).
+4. Smaller size first (13" before 15", 41mm before 45mm).
+
+For example: iPhone 17, Air, 17 Pro, 17 Pro Max, 17e, then 16, 16 Plus, 16 Pro, 16 Pro Max, 16E. New models slot in without template edits. Tiles can opt out with "Order tiles automatically".
 
 ### What was borrowed from the staging theme, and what wasn't
 
