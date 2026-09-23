@@ -4590,7 +4590,13 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
           if (window.posthog) posthog.capture('wizard_conversion', buildWizardTrackPayload({ action: 'email_quote' }));
         }
  
-        postQuoteWizardWebhook(payload).then(function() {
+        postQuoteWizardWebhook(payload).then(function(data) {
+          if (!data || data.quoteEmailed !== true) {
+            sendBtn.disabled = false; sendBtn.textContent = 'Send quote';
+            document.getElementById('qwEqErr').textContent = 'We could not email that quote. Please try again.';
+            var errEl = document.getElementById('qwEqErr'); if (errEl) { errEl.hidden = false; errEl.style.display = 'block'; }
+            return;
+          }
           showEmailSuccess();
           try {
             if (typeof fireQuoteEmailRequested === 'function') {
