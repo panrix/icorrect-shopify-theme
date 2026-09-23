@@ -25,6 +25,9 @@
 /* ---------- Device diagram ---------- */
 .dg {
   --dg-w: 110px;
+  /* Highlight strokes and glow track the drawing size. A 34px phone on a
+     card would otherwise keep a 5px glow and a 4.5px port stroke. */
+  --dg-hl: clamp(0.42, (var(--dg-w) * var(--dg-scale, 1)) / 100px, 1);
   display: inline-block;
   width: calc(var(--dg-w) * var(--dg-scale, 1));
   line-height: 0;
@@ -95,8 +98,9 @@
 .dg .is-hl {
   display: inline;
   stroke: var(--ri-accent);
+  stroke-width: calc(1.5px * var(--dg-hl));
   fill: var(--ri-accent-soft);
-  filter: drop-shadow(0 0 5px rgba(0, 112, 243, 0.45));
+  filter: drop-shadow(0 0 calc(5px * var(--dg-hl) * var(--dg-hl)) rgba(0, 112, 243, 0.4));
 }
 .dg .dg-cam.is-hl,
 .dg .dg-island.is-hl,
@@ -107,17 +111,17 @@
 .dg .dg-port.is-hl,
 .dg .dg-touchbar.is-hl { fill: var(--ri-accent); }
 .dg .dg-lens-ring.is-hl { fill: #fff; }
-.dg .dg-port-side.is-hl { stroke-width: 4.5px; }
+.dg .dg-port-side.is-hl { stroke-width: calc(4.5px * var(--dg-hl)); }
 .dg .dg-grille.is-hl,
 .dg .dg-leds.is-hl,
-.dg .dg-dust.is-hl { stroke-width: 3.2px; }
-.dg .dg-earpiece.is-hl { stroke-width: 2.6px; }
+.dg .dg-dust.is-hl { stroke-width: calc(3.2px * var(--dg-hl)); }
+.dg .dg-earpiece.is-hl { stroke-width: calc(2.6px * var(--dg-hl)); }
 .dg .dg-keys.is-hl,
-.dg .dg-fnrow.is-hl { fill: none; stroke-width: 2.4px; }
-.dg .dg-grille--strip.is-hl { stroke-width: 2.6px; }
+.dg .dg-fnrow.is-hl { fill: none; stroke-width: calc(2.4px * var(--dg-hl)); }
+.dg .dg-grille--strip.is-hl { stroke-width: calc(2.6px * var(--dg-hl)); }
 .dg .dg-earpiece--light.is-hl { stroke: #fff; }
 .dg .dg-battery.is-hl { stroke-dasharray: 4 3; }
-.dg .dg-hinge.is-hl { stroke-width: 2.4px; }
+.dg .dg-hinge.is-hl { stroke-width: calc(2.4px * var(--dg-hl)); }
 .dg .dg-sensor.is-hl { fill: none; }
 .dg .dg-screen.is-hl ~ .dg-sheen { opacity: 0.35; }
 
@@ -127,21 +131,21 @@
   display: inline;
   fill: none;
   stroke: var(--ri-accent);
-  stroke-width: 1.3px;
+  stroke-width: calc(1.3px * var(--dg-hl));
 }
-.dg--part-glassfront .dg-screen { stroke: var(--ri-accent); stroke-width: 2px; }
+.dg--part-glassfront .dg-screen { stroke: var(--ri-accent); stroke-width: calc(2px * var(--dg-hl)); }
 .dg--part-glassfront .dg-shatter {
   display: inline;
   fill: none;
   stroke: var(--ri-accent);
-  stroke-width: 1.2px;
+  stroke-width: calc(1.2px * var(--dg-hl));
 }
 .dg--part-display .dg-screen { fill: #dfe2e8; }
 .dg--part-display .dg-sheen { opacity: 0.7; }
 .dg--part-display .dg-fault {
   display: inline;
   stroke: var(--ri-accent);
-  stroke-width: 1.6px;
+  stroke-width: calc(1.6px * var(--dg-hl));
   opacity: 0.85;
 }
 .dg--part-display .dg-fault--alt { stroke: #30b85c; }
@@ -150,7 +154,7 @@
   fill: #1d1d1f;
   stroke: none;
   opacity: 0.72;
-  filter: blur(1.5px);
+  filter: blur(calc(1.5px * var(--dg-hl)));
 }
 .dg--part-battery .dg-screen { fill: #f4f5f7; stroke-dasharray: 3 3; }
 .dg--part-battery .dg-sheen { display: none; }
