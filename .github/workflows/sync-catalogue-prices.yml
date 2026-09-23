@@ -1,0 +1,26 @@
+name: Sync catalogue prices
+
+on:
+  schedule:
+    # GitHub starts this on the default branch. It can start a few minutes late.
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Copy Shopify variant prices into the live catalogue
+        run: node scripts/courier/sync-catalogue-prices.js
+        env:
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          SHOPIFY_STORE: ${{ secrets.SHOPIFY_STORE }}
+          SHOPIFY_THEME_ID: ${{ secrets.SHOPIFY_THEME_ID }}
+          SHOPIFY_API_VERSION: '2024-01'
