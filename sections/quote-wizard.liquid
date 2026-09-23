@@ -760,7 +760,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
   function getDeviceColors(device, model, repairType) {
     var needsColor = (device === 'iphone' && (repairType === 'rear-glass' || repairType === 'rear-camera-lens')) ||
-                     (device === 'macbook' && repairType === 'trackpad');
+                     (device === 'macbook' && repairType === 'trackpad') ||
+                     (device === 'macbook' && repairType === 'screen' && modelIs15InchMacBookPro(model));
     if (!needsColor || !model) return null;
 
     if (device === 'iphone') {
@@ -785,6 +786,21 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     }
 
     return null;
+  }
+
+  function buildChoiceCards(opt, label, choices) {
+    if (!choices || !choices.length) return '';
+    var h = '<div class="qw-opt-section"><div class="qw-opt-label">' + esc(label) + '</div><div class="qw-opt-row">';
+    choices.forEach(function(choice) {
+      h += '<div class="qw-opt-card" data-opt="' + esc(opt) + '" data-add="0" data-value="' + esc(choice.value) + '" tabindex="0">' +
+        '<div class="qw-opt-name">' + esc(choice.label) + '</div></div>';
+    });
+    return h + '</div></div>';
+  }
+
+  function selectedChoice(opt) {
+    var card = document.querySelector('.qw-opt-card.sel[data-opt="' + opt + '"]');
+    return card ? (card.getAttribute('data-value') || '') : '';
   }
 
   function buildColorSelector(colors) {
@@ -1070,7 +1086,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: 'Dead pixels or bright spots', route: 'repair', repairType: 'screen', copy: 'Dead or stuck pixels indicate panel failure. A genuine display replacement will restore your screen to full quality.' },
         { label: 'No image, backlight on, external monitor works', route: 'repair', repairType: 'screen', copy: 'The backlight is on and an external monitor shows a picture, so the built-in display has failed. A screen replacement will fix this.' },
         { label: 'No image, no backlight or no external picture', route: 'diagnostic', repairType: 'diagnostic', copy: 'There is no backlight glow, or an external monitor also has no picture. That can be the screen or the logic board. We can\'t quote the full repair until we\'ve looked.' },
-        { label: 'Backlight fading or dim at angle', route: 'repair', repairType: 'screen', copy: 'Lines or colour issues on your display typically mean the display panel needs replacing. We use genuine displays with full colour calibration.', flexgateCheck: true }
+        { label: 'Backlight fading or dim at angle', route: 'repair', repairType: 'screen', copy: 'The backlight fading, or going dim when you tilt the screen, means the display panel has failed. We\'ll quote a display panel replacement. Flexgate only used to occur on the 2016–2018 13-inch MacBook Pro.', flexgateCheck: true }
       ],
       'Power / Battery / Charging': [
         { label: 'Battery draining quickly', route: 'repair', repairType: 'battery', copy: 'Your battery has degraded and isn\'t holding a full charge. We\'ll replace it with an original-spec battery and your MacBook will show accurate health monitoring again.' },
@@ -1487,6 +1503,23 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
   function modelIsEsimOnly(model) {
     return /iPhone\s*Air\b/i.test(String(model || ''));
+  }
+
+  /* Flexgate was the short backlight cable on the 13-inch 2016–2018 Pros (A1706, A1708). */
+  function modelIsFlexgate13(model) {
+    var name = String(model || '');
+    return /\bA1706\b/.test(name) || /\bA1708\b/.test(name);
+  }
+
+  function modelIs15InchMacBookPro(model) {
+    var name = String(model || '');
+    return /MacBook Pro/i.test(name) && /15/.test(name);
+  }
+
+  /* Nano-texture glass was an option on iPad Pro M4, and on M5 when that model is listed. */
+  function modelHasNanoTexture(model) {
+    var name = String(model || '');
+    return /iPad Pro/i.test(name) && /\bM[45]\b/.test(name);
   }
 
   function modelHasLcdScreen(model) {
@@ -3460,7 +3493,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     setTimeout(function() {
       if (iss.dustgateCheck && _repairsMap['dustgate']) {
         showDustgateQuestion(iss);
-      } else if (iss.flexgateCheck && _repairsMap['flexgate']) {
+      } else if (iss.flexgateCheck && _repairsMap['flexgate'] && modelIsFlexgate13(S.model)) {
         showFlexgateQuestion(iss);
       } else {
         showResolution(iss);
@@ -3500,7 +3533,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     p.innerHTML =
       '<div class="qw-res"><div class="qw-res-top" style="padding-bottom:24px;">' +
         '<h3 class="qw-res-h">Does your screen look like this?</h3>' +
-        '<p class="qw-res-p">Flexgate is a manufacturing fault on certain MacBook Pro models where the backlight flex cable is too short. The backlight fades or fails entirely, usually starting from the bottom of the screen.</p>' +
+        '<p class="qw-res-p">Flexgate only used to occur on the 2016–2018 13-inch MacBook Pro. The backlight flex cable was too short, so the backlight fades or fails, usually from the bottom of the screen. If this is what you see, we repair the flex instead of replacing the whole display.</p>' +
         '<div class="qw-dustgate-imgs">' +
           '<img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/flexgate_1.webp?v=1773951159" alt="Flexgate example 1">' +
           '<img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/flexgate_2.jpg?v=1773951159" alt="Flexgate example 2">' +
@@ -3511,7 +3544,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         '</div>' +
       '</div></div>';
     document.getElementById('qwFgYes').onclick = function() {
-      showResolution({ label: 'Flexgate repair', route: 'repair', repairType: 'flexgate', copy: 'Flexgate is a manufacturing fault on 2016-2018 MacBook Pro models where the backlight flex cable is too short. Opening and closing the lid gradually wears through the cable, causing the backlight to fail. We repair the issue by fixing the snapped flex at component level.' });
+      showResolution({ label: 'Flexgate repair', route: 'repair', repairType: 'flexgate', copy: 'Flexgate only used to occur on the 2016–2018 13-inch MacBook Pro, where the backlight flex cable was too short. Opening and closing the lid wears through the cable. We repair the snapped flex at component level.' });
     };
     document.getElementById('qwFgNo').onclick = function() {
       showResolution(originalIss);
@@ -3578,6 +3611,24 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       'Repair Type': repairTypeLabel
     };
     if (selectedColor) mainProps['Device Color'] = selectedColor;
+
+    if (resCard.dataset.needsGlass === '1') {
+      var glass = selectedChoice('glass');
+      if (!glass) {
+        if (err) err.textContent = 'Please say whether the screen is standard or nano-texture.';
+        return null;
+      }
+      mainProps['Display glass'] = glass;
+    }
+    if (resCard.dataset.needsConnect === '1') {
+      var connectivity = selectedChoice('connect');
+      if (!connectivity) {
+        if (err) err.textContent = 'Please say whether the iPad is Wi-Fi or Wi-Fi + Cellular.';
+        return null;
+      }
+      mainProps['Connectivity'] = connectivity;
+    }
+
     items.push({ id: mainVid, quantity: 1, properties: mainProps });
 
     var speedCard = document.querySelector('.qw-opt-card.sel[data-opt="speed"]');
@@ -3661,7 +3712,28 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       });
     }
 
+    items[0].properties['Order summary'] = orderSummaryText(items[0].properties);
     return items;
+  }
+
+  function orderSummaryText(props) {
+    var lines = [];
+    function add(label, key) {
+      if (props[key]) lines.push(label + ': ' + props[key]);
+    }
+    add('Device', '_model');
+    add('Fault', '_fault');
+    add('Issue', '_issue');
+    add('Repair', 'Repair Type');
+    add('Colour', 'Device Color');
+    add('Display glass', 'Display glass');
+    add('Connectivity', 'Connectivity');
+    add('Service', 'Service Type');
+    add('Collection date', 'Collection Date');
+    add('Collection window', 'Collection Window');
+    add('Postcode', 'Postcode');
+    add('Band', 'Band');
+    return lines.join('\n');
   }
 
   function getShopifyRoot() {
@@ -3836,6 +3908,16 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var turnaroundHtml = buildTurnaroundCards(expressData);
     var deviceColors = getDeviceColors(S.device, S.model, iss.repairType);
     var colorHtml = buildColorSelector(deviceColors);
+    var needsGlass = S.device === 'ipad' && (iss.repairType === 'screen' || iss.repairType === 'screen-glass') && modelHasNanoTexture(S.model);
+    var needsConnect = S.device === 'ipad' && (iss.repairType === 'screen' || iss.repairType === 'screen-glass');
+    var glassHtml = needsGlass ? buildChoiceCards('glass', 'Which screen glass is it?', [
+      { value: 'Standard', label: 'Standard' },
+      { value: 'Nano-texture', label: 'Nano-texture' }
+    ]) : '';
+    var connectHtml = needsConnect ? buildChoiceCards('connect', 'Wi-Fi or Wi-Fi + Cellular?', [
+      { value: 'Wi-Fi', label: 'Wi-Fi' },
+      { value: 'Wi-Fi + Cellular', label: 'Wi-Fi + Cellular' }
+    ]) : '';
 
     var priceTrustHtml = basePrice
       ? buildPriceTrustBlock(S.device, S.model, { gate: true, priceHtml: gbp.format(basePrice) })
@@ -3849,7 +3931,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var serviceHtml = injectServicePrice(buildServiceCards(), priceTrustHtml + totalHtml);
 
     container.innerHTML = urgentHtml +
-      '<div class="qw-res" id="qwResCard" data-base="' + basePrice + '" data-vid="' + mainVariantId + '" data-needs-color="' + (deviceColors ? '1' : '0') + '">' +
+      '<div class="qw-res" id="qwResCard" data-base="' + basePrice + '" data-vid="' + mainVariantId + '" data-needs-color="' + (deviceColors ? '1' : '0') + '" data-needs-glass="' + (needsGlass ? '1' : '0') + '" data-needs-connect="' + (needsConnect ? '1' : '0') + '">' +
         '<div class="qw-res-top">' +
           '<div class="qw-res-badge qw-badge-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>We can fix this</div>' +
           '<h3 class="qw-res-h">' + esc(product.title) + '</h3>' +
@@ -3857,7 +3939,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           (iss.refImages ? '<div class="qw-dustgate-imgs">' + iss.refImages.map(function(src,i){ return '<img src="' + src + '" alt="Reference image ' + (i+1) + '">'; }).join('') + '</div>' : '') +
         '</div>' +
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
-        '<div class="qw-res-extras" style="padding:0 24px 8px;">' + colorHtml + turnaroundHtml + '</div>' +
+        '<div class="qw-res-extras" style="padding:0 24px 8px;">' + colorHtml + glassHtml + connectHtml + turnaroundHtml + '</div>' +
         '<div class="qw-res-cta">' +
           '<button class="qw-btn-book" id="qwBookBtn" disabled>Proceed to checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
           '<button class="qw-btn-email" id="qwEmailQuote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email me this quote</button>' +
