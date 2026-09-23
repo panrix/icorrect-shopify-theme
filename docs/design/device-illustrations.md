@@ -79,7 +79,7 @@ Every era must draw these elements with these classes, adding `is-hl` when `part
 | `dg-scan` | diagnostic | Scan line; set `--dg-scan-travel` for the era in CSS |
 | Back view: `dg-module`, `dg-plateau`, `dg-lens-ring`, `dg-lens`, `dg-flash`, `dg-lidar` | `camera` | Rear camera |
 | Watch back: `dg-sensor`, `dg-leds` | `sensor` | Heart-rate sensor |
-| MacBook: `dg-keyboard`, `dg-keys`, `dg-fnrow`, `dg-trackpad`, `dg-touchbar-strip`, `dg-hinge`, `dg-dust` | `keyboard`, `trackpad`, `touchbar`, `hinge` (Flexgate), `dust` (Dustgate) | |
+| MacBook: `dg-keyboard`, `dg-keys`, `dg-fnrow`, `dg-trackpad`, `dg-touchbar-strip`, `dg-hinge`, `dg-dustbands` | `keyboard`, `trackpad`, `touchbar`, `hinge` (Flexgate: the screen fills black), `dust` (Dustgate: six wavy bands across the screen) | |
 
 ## Adding a new era (checklist)
 

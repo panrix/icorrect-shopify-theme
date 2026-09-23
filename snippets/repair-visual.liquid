@@ -42,12 +42,8 @@
     assign fact_3 = 'London collection & UK courier'
   endif
   assign rating = settings.repair_rating
-  assign review_count = settings.repair_review_count
   if rating == nil
     assign rating = '4.9'
-  endif
-  if review_count == nil
-    assign review_count = '719'
   endif
   assign title_tags = product.title | append: ' ' | append: product.tags | downcase
   if title_tags contains 'aftermarket'
@@ -62,9 +58,6 @@
   </div>
 
   <ul class="rv__labels" aria-label="Repair summary">
-    {%- if model != blank -%}
-      <li class="rv__chip">{% render 'repair-icon', icon: family, size: 16 %}{{ model | escape }}</li>
-    {%- endif -%}
     {%- if name != blank -%}
       <li class="rv__chip rv__chip--ink">{% render 'repair-icon', icon: repair, family: family, size: 16 %}{{ name | escape }}</li>
     {%- endif -%}
@@ -79,7 +72,7 @@
   {%- if fact_1 != blank or fact_2 != blank or fact_3 != blank -%}
     <ul class="rv__facts">
       {%- if rating != blank -%}
-        <li class="rv__fact rv__fact--rating">{% render 'repair-icon', icon: 'star', size: 17 %}<strong>{{ rating | escape }}</strong>{% if review_count != blank %}&nbsp;from {{ review_count | escape }} Google reviews{% endif %}</li>
+        <li class="rv__fact rv__fact--rating">{% render 'repair-icon', icon: 'star', size: 17 %}<strong>{{ rating | escape }}</strong></li>
       {%- endif -%}
       {%- if fact_1 != blank -%}<li class="rv__fact">{% render 'repair-icon', icon: 'shield', size: 17 %}{{ fact_1 | escape }}</li>{%- endif -%}
       {%- if fact_2 != blank -%}<li class="rv__fact">{% render 'repair-icon', icon: 'parts', size: 17 %}{{ fact_2 | escape }}</li>{%- endif -%}

@@ -87,6 +87,7 @@
 .dg-touchbar,
 .dg-battery,
 .dg-dust,
+.dg-dustbands,
 .dg-crack,
 .dg-scan { display: none; }
 
@@ -151,6 +152,23 @@
 }
 .dg--part-battery .dg-screen { fill: #f4f5f7; stroke-dasharray: 3 3; }
 .dg--part-battery .dg-sheen { display: none; }
+
+/* Flexgate: the backlight cable fails and the panel goes dark */
+.dg--part-hinge .dg-screen { fill: #1c1c1e; }
+.dg--part-hinge .dg-sheen { display: none; }
+.dg--part-hinge .dg-hinge.is-hl {
+  stroke: rgba(29, 29, 31, 0.18);
+  fill: none;
+  filter: none;
+}
+
+/* Dustgate: the coating breaks into uneven vertical bands of light */
+.dg-dustband { stroke: none; }
+.dg--part-dust .dg-dustbands { display: inline; }
+.dg--part-dust .dg-dust { display: none; }
+.dg--part-dust .dg-sheen { opacity: 0.2; }
+.dg--part-dust .dg-dustband:nth-child(odd) { fill: rgba(0, 112, 243, 0.22); }
+.dg--part-dust .dg-dustband:nth-child(even) { fill: rgba(0, 112, 243, 0.5); }
 .dg--part-scan .dg-scan {
   display: inline;
   fill: var(--ri-accent);
@@ -292,6 +310,9 @@
     min-height: 540px;
     max-height: 900px;
     background: transparent;
+  }
+  .product--repair-visual .product__info-wrapper {
+    padding: 40px 16px 48px 20px;
   }
 }
 @media screen and (min-width: 990px) {

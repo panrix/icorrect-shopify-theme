@@ -6,11 +6,13 @@
   Accepts: part, touchbar (true|false)
 {%- endcomment -%}
 <svg class="dg__svg" viewBox="0 0 260 190" fill="none" focusable="false">
+  <defs><clipPath id="dg-screen-touchbar"><rect x="38" y="12" width="184" height="104" rx="2"/></clipPath></defs>
   <ellipse class="dg-shadow" cx="130" cy="183" rx="120" ry="3.5"/>
   <rect class="dg-body" x="30" y="4" width="200" height="120" rx="9"/>
   <rect class="dg-frame" x="32.5" y="6.5" width="195" height="115" rx="7"/>
   <rect class="dg-screen{% if part == 'screen' %} is-hl{% endif %}" x="38" y="12" width="184" height="104" rx="2"/>
   <path class="dg-sheen" d="M124 12h30L38 104V74z"/>
+  <g class="dg-dustbands" clip-path="url(#dg-screen-touchbar)"><path class="dg-dustband" d="M39 13C43 49,35 84,39 115L69.3 115C65.3 84,73.3 49,69.3 13Z"/><path class="dg-dustband" d="M69.3 13C65.3 49,73.3 84,69.3 115L99.7 115C103.7 84,95.7 49,99.7 13Z"/><path class="dg-dustband" d="M99.7 13C103.7 49,95.7 84,99.7 115L130 115C126 84,134 49,130 13Z"/><path class="dg-dustband" d="M130 13C126 49,134 84,130 115L160.3 115C164.3 84,156.3 49,160.3 13Z"/><path class="dg-dustband" d="M160.3 13C164.3 49,156.3 84,160.3 115L190.7 115C186.7 84,194.7 49,190.7 13Z"/><path class="dg-dustband" d="M190.7 13C186.7 49,194.7 84,190.7 115L221 115C225 84,217 49,221 13Z"/></g>
   <circle class="dg-cam{% if part == 'fcam' %} is-hl{% endif %}" cx="130" cy="8.5" r="1.6"/>
   <path class="dg-hinge{% if part == 'hinge' %} is-hl{% endif %}" d="M44 120h172"/>
   <path class="dg-dust{% if part == 'dust' %} is-hl{% endif %}" d="M60 108h.01M78 111h.01M96 107h.01M118 110h.01M140 108h.01M162 111h.01M184 107h.01M202 110h.01"/>

@@ -1491,14 +1491,8 @@
         "type": "text",
         "id": "repair_rating",
         "label": "Google rating",
-        "default": "4.9"
-      },
-      {
-        "type": "text",
-        "id": "repair_review_count",
-        "label": "Google review count",
-        "default": "719",
-        "info": "Shown first in the trust row. Leave the rating empty to hide it."
+        "default": "4.9",
+        "info": "Shown first in the trust row as the star score. Leave empty to hide it."
       },
       {
         "type": "text",
