@@ -1,0 +1,36 @@
+{%- comment -%}
+  iPad — Home button era (iPad 5th–9th gen, Air 3, mini 5).
+  Thick bezels, round home button, single rear lens.
+  Part contract and drawing rules: docs/design/device-illustrations.md
+  Accepts: view (front|back), part
+{%- endcomment -%}
+<svg class="dg__svg" viewBox="0 0 180 250" fill="none" focusable="false">
+  <ellipse class="dg-shadow" cx="90" cy="244" rx="72" ry="3.5"/>
+  {%- if view == 'back' -%}
+    <rect class="dg-btn" x="20" y="1.5" width="22" height="5" rx="2.5"/>
+    <rect class="dg-body dg-glass{% if part == 'glass' %} is-hl{% endif %}" x="6" y="6" width="168" height="230" rx="14"/>
+    <rect class="dg-frame" x="8.5" y="8.5" width="163" height="225" rx="11.5"/>
+    <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="24" cy="24" r="6"/>
+    <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="24" cy="24" r="2.5"/>
+    <path class="dg-crack dg-crack--back" d="M112 60l-12 30 16 10-20 34 10 8-14 30"/>
+  {%- else -%}
+    <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="138" y="1.5" width="22" height="5" rx="2.5"/>
+    <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="173.5" y="30" width="5" height="18" rx="2.5"/>
+    <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="173.5" y="52" width="5" height="18" rx="2.5"/>
+    <rect class="dg-body" x="6" y="6" width="168" height="230" rx="14"/>
+    <rect class="dg-frame" x="8.5" y="8.5" width="163" height="225" rx="11.5"/>
+    <rect class="dg-screen{% if part == 'screen' %} is-hl{% endif %}" x="20" y="28" width="140" height="186" rx="2"/>
+    <path class="dg-sheen" d="M94 28h24L20 158v-40z"/>
+    <circle class="dg-cam{% if part == 'fcam' %} is-hl{% endif %}" cx="90" cy="17" r="1.8"/>
+    <circle class="dg-home{% if part == 'buttons' %} is-hl{% endif %}" cx="90" cy="225" r="7"/>
+    <rect class="dg-port{% if part == 'port' %} is-hl{% endif %}" x="79" y="232" width="22" height="3" rx="1.5"/>
+    <path class="dg-grille{% if part == 'grille' %} is-hl{% endif %}" d="M30 233.5h.01M36 233.5h.01M42 233.5h.01M138 233.5h.01M144 233.5h.01M150 233.5h.01"/>
+    <rect class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" x="42" y="64" width="96" height="114" rx="10"/>
+    <path class="dg-crack" d="M108 44l-12 30 16 10-20 34 10 8-14 30"/>
+    <path class="dg-shatter" d="M116 84l-16-30M116 84l24-22M116 84l30 12M116 84l12 38M116 84l-22 32M116 84l-34-4M104 70l18-6 12 14-4 20-18 6-14-12z"/>
+    <path class="dg-fault" d="M50 28v186M54.5 28v186"/>
+    <path class="dg-fault dg-fault--alt" d="M124 28v186"/>
+    <path class="dg-blot" d="M68 160c4-14 26-18 36-6 8 10 2 26-12 28-14 2-28-8-24-22z"/>
+    <rect class="dg-scan" x="20" y="28" width="140" height="3" rx="1.5"/>
+  {%- endif -%}
+</svg>

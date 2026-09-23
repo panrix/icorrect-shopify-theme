@@ -1,0 +1,32 @@
+{%- comment -%}
+  Apple Watch — Rounded era (Series 7–9).
+  Rounder case, thinner bezels, larger screen.
+  Part contract and drawing rules: docs/design/device-illustrations.md
+  Accepts: view (front|back), part
+{%- endcomment -%}
+<svg class="dg__svg" viewBox="0 0 140 228" fill="none" focusable="false">
+  <ellipse class="dg-shadow" cx="70" cy="223" rx="36" ry="3"/>
+  <path class="dg-band" d="M40 44V10a8 8 0 0 1 8-8h44a8 8 0 0 1 8 8v34M40 176v34a8 8 0 0 0 8 8h44a8 8 0 0 0 8-8v-34"/>
+  {%- if view == 'back' -%}
+    <rect class="dg-body dg-glass{% if part == 'glass' %} is-hl{% endif %}" x="16" y="36" width="104" height="148" rx="36"/>
+    <rect class="dg-frame" x="18.5" y="38.5" width="99" height="143" rx="33.5"/>
+    <circle class="dg-sensor{% if part == 'sensor' %} is-hl{% endif %}" cx="68" cy="110" r="28"/>
+    <circle class="dg-sensor{% if part == 'sensor' %} is-hl{% endif %}" cx="68" cy="110" r="14"/>
+    <path class="dg-leds{% if part == 'sensor' %} is-hl{% endif %}" d="M68 89h.01M68 131h.01M47 110h.01M89 110h.01"/>
+  {%- else -%}
+    <rect class="dg-crown{% if part == 'crown' %} is-hl{% endif %}" x="118" y="78" width="10" height="24" rx="3.5"/>
+    <rect class="dg-btn{% if part == 'crown' %} is-hl{% endif %}" x="119" y="114" width="5" height="28" rx="2.5"/>
+    <rect class="dg-body" x="16" y="36" width="104" height="148" rx="36"/>
+    <rect class="dg-frame" x="18.5" y="38.5" width="99" height="143" rx="33.5"/>
+    <rect class="dg-screen{% if part == 'screen' %} is-hl{% endif %}" x="23" y="43" width="90" height="134" rx="30"/>
+    <path class="dg-sheen" d="M58 43h18L23 140v-26z"/>
+    <path class="dg-grille{% if part == 'grille' %} is-hl{% endif %}" d="M12 94v10M12 112v10"/>
+    <rect class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" x="40" y="72" width="56" height="80" rx="16"/>
+    <path class="dg-crack" d="M82 64l-10 22 12 8-14 24 8 6-10 18"/>
+    <path class="dg-shatter" d="M80 96l-10-22M80 96l16-14M80 96l18 8M80 96l8 24M80 96l-14 18M80 96l-22-2M73 88l10-4 8 7-1 10-10 4-9-7z"/>
+    <path class="dg-fault" d="M44 43v134M47.5 43v134"/>
+    <path class="dg-fault dg-fault--alt" d="M90 43v134"/>
+    <path class="dg-blot" d="M54 140c3-10 18-12 24-4 5 7 0 17-9 18-10 1-18-5-15-14z"/>
+    <rect class="dg-scan" x="23" y="43" width="90" height="3" rx="1.5"/>
+  {%- endif -%}
+</svg>

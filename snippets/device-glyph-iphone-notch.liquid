@@ -1,0 +1,60 @@
+{%- comment -%}
+  iPhone — Notch era (iPhone X–14, 14 Plus, 16e, 17e).
+  Part contract and drawing rules: docs/design/device-illustrations.md
+  Accepts: view (front|back), part, lenses (1|2|3)
+{%- endcomment -%}
+<svg class="dg__svg" viewBox="0 0 120 250" fill="none" focusable="false">
+  <ellipse class="dg-shadow" cx="60" cy="244" rx="46" ry="3.5"/>
+  {%- if view == 'back' -%}
+    <rect class="dg-btn" x="109" y="50" width="4.5" height="12" rx="2.25"/>
+    <rect class="dg-btn" x="109" y="70" width="4.5" height="20" rx="2.25"/>
+    <rect class="dg-btn" x="109" y="96" width="4.5" height="20" rx="2.25"/>
+    <rect class="dg-btn" x="6.5" y="80" width="4.5" height="32" rx="2.25"/>
+    <rect class="dg-body dg-glass{% if part == 'glass' %} is-hl{% endif %}" x="10" y="4" width="100" height="232" rx="22"/>
+    <rect class="dg-frame" x="12.5" y="6.5" width="95" height="227" rx="19.5"/>
+    {%- case lenses -%}
+      {%- when 1 -%}
+        <rect class="dg-module{% if part == 'camera' %} is-hl{% endif %}" x="18" y="12" width="28" height="28" rx="9"/>
+        <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="32" cy="26" r="8"/>
+        <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="32" cy="26" r="3.4"/>
+        <circle class="dg-flash" cx="52" cy="19" r="2.4"/>
+      {%- when 2 -%}
+        <rect class="dg-module{% if part == 'camera' %} is-hl{% endif %}" x="17" y="11" width="40" height="40" rx="12"/>
+        <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="28.5" cy="22.5" r="7.2"/>
+        <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="28.5" cy="22.5" r="3"/>
+        <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="28.5" cy="39.5" r="7.2"/>
+        <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="28.5" cy="39.5" r="3"/>
+        <circle class="dg-flash" cx="46" cy="22.5" r="2.4"/>
+      {%- else -%}
+        <rect class="dg-module{% if part == 'camera' %} is-hl{% endif %}" x="17" y="11" width="48" height="48" rx="14"/>
+        <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="30.5" cy="24.5" r="8.2"/>
+        <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="30.5" cy="24.5" r="3.4"/>
+        <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="30.5" cy="45.5" r="8.2"/>
+        <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="30.5" cy="45.5" r="3.4"/>
+        <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="51" cy="35" r="8.2"/>
+        <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="51" cy="35" r="3.4"/>
+        <circle class="dg-flash" cx="51.5" cy="18.5" r="2.4"/>
+    {%- endcase -%}
+    <path class="dg-crack dg-crack--back" d="M80 104l-10 26 14 8-16 30 9 7-12 26"/>
+  {%- else -%}
+    <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="6.5" y="50" width="4.5" height="12" rx="2.25"/>
+    <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="6.5" y="70" width="4.5" height="20" rx="2.25"/>
+    <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="6.5" y="96" width="4.5" height="20" rx="2.25"/>
+    <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="109" y="80" width="4.5" height="32" rx="2.25"/>
+    <rect class="dg-body" x="10" y="4" width="100" height="232" rx="22"/>
+    <rect class="dg-frame" x="12.5" y="6.5" width="95" height="227" rx="19.5"/>
+    <rect class="dg-screen{% if part == 'screen' %} is-hl{% endif %}" x="16" y="10" width="88" height="220" rx="16"/>
+    <path class="dg-sheen" d="M58 10h20L16 134V96z"/>
+    <path class="dg-notch{% if part == 'fcam' %} is-hl{% endif %}" d="M41 10h38v5.5a6.5 6.5 0 0 1-6.5 6.5h-25A6.5 6.5 0 0 1 41 15.5z"/>
+    <path class="dg-earpiece dg-earpiece--light{% if part == 'earpiece' %} is-hl{% endif %}" d="M53 14h14"/>
+    <rect class="dg-port{% if part == 'port' %} is-hl{% endif %}" x="50" y="232" width="20" height="3" rx="1.5"/>
+    <path class="dg-grille{% if part == 'grille' %} is-hl{% endif %}" d="M30 233.5h.01M35 233.5h.01M40 233.5h.01M80 233.5h.01M85 233.5h.01M90 233.5h.01"/>
+    <rect class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" x="28" y="64" width="64" height="120" rx="10"/>
+    <path class="dg-crack" d="M76 38l-10 26 14 8-16 30 9 7-12 26"/>
+    <path class="dg-shatter" d="M72 74l-14-28M72 74l20-20M72 74l24 10M72 74l10 30M72 74l-18 24M72 74l-28-4M63 62l14-5 10 11-3 16-14 5-11-10z"/>
+    <path class="dg-fault" d="M38 10v220M41.5 10v220"/>
+    <path class="dg-fault dg-fault--alt" d="M80 10v220"/>
+    <path class="dg-blot" d="M46 150c4-12 22-15 30-5 7 9 1 22-11 24-12 1-23-7-19-19z"/>
+    <rect class="dg-scan" x="16" y="10" width="88" height="3" rx="1.5"/>
+  {%- endif -%}
+</svg>

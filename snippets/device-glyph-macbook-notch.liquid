@@ -1,0 +1,38 @@
+{%- comment -%}
+  MacBook — Notch era (Air M2 onwards; Pro 14"/16" 2021 onwards).
+  Notch, thin bezels, full-height function row. Pro adds a thicker base slab
+  and speaker grilles beside the keyboard; Air speakers vent through the
+  hinge, so its speaker/mic highlight is the hinge line. Part contract and drawing rules:
+  docs/design/device-illustrations.md
+  Accepts: part, pro (true|false)
+{%- endcomment -%}
+<svg class="dg__svg" viewBox="0 0 260 190" fill="none" focusable="false">
+  <ellipse class="dg-shadow" cx="130" cy="{% if pro %}186{% else %}183{% endif %}" rx="120" ry="3.5"/>
+  <rect class="dg-body" x="30" y="4" width="200" height="120" rx="9"/>
+  <rect class="dg-frame" x="32.5" y="6.5" width="195" height="115" rx="7"/>
+  <rect class="dg-screen{% if part == 'screen' %} is-hl{% endif %}" x="36" y="10" width="188" height="106" rx="4"/>
+  <path class="dg-sheen" d="M124 10h30L36 104V74z"/>
+  <path class="dg-notch{% if part == 'fcam' %} is-hl{% endif %}" d="M120 10h20v4.5a2.5 2.5 0 0 1-2.5 2.5h-15a2.5 2.5 0 0 1-2.5-2.5z"/>
+  <path class="dg-hinge{% if part == 'hinge' %} is-hl{% elsif part == 'grille' and pro == false %} is-hl{% endif %}" d="M44 120h172"/>
+  <path class="dg-dust{% if part == 'dust' %} is-hl{% endif %}" d="M60 108h.01M78 111h.01M96 107h.01M118 110h.01M140 108h.01M162 111h.01M184 107h.01M202 110h.01"/>
+  {%- if pro -%}
+    <path class="dg-body dg-slab" d="M7 175h246v4a4 4 0 0 1-4 4H11a4 4 0 0 1-4-4z"/>
+  {%- endif -%}
+  <path class="dg-body dg-base" d="M30 126h200l24 44a4 4 0 0 1-3.6 6H9.6a4 4 0 0 1-3.6-6z"/>
+  <path class="dg-lip" d="M112 176a18 4 0 0 0 36 0"/>
+  <path class="dg-fnrow dg-fnrow--full{% if part == 'keyboard' %} is-hl{% endif %}" d="M52.5 132.5h155"/>
+  <path class="dg-keyboard{% if part == 'keyboard' %} is-hl{% endif %}" d="M{% if pro %}58{% else %}49{% endif %} 137h{% if pro %}144{% else %}162{% endif %}l7 15H{% if pro %}51{% else %}42{% endif %}z"/>
+  <path class="dg-keys{% if part == 'keyboard' %} is-hl{% endif %}" d="M{% if pro %}58.5 141h143M56.8 144.8h146.4M55 148.6h150{% else %}49.5 141h161M47.8 144.8h164.4M46 148.6h168{% endif %}"/>
+  <path class="dg-trackpad{% if part == 'trackpad' %} is-hl{% endif %}" d="M92 156h76l3 16h-82z"/>
+  {%- if pro -%}
+    <path class="dg-grille dg-grille--strip{% if part == 'grille' %} is-hl{% endif %}" d="M46 135l-8 18M52 135l-8 18M208 135l8 18M214 135l8 18"/>
+  {%- endif -%}
+  <path class="dg-port-side{% if part == 'port' %} is-hl{% endif %}" d="M27.3 131.8l-3.4 6.4"/>
+  <path class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" d="M58 130h144l14 40H44z"/>
+  <path class="dg-crack" d="M152 22l-10 22 14 8-18 26 8 6-12 22"/>
+  <path class="dg-shatter" d="M166 52l-14-24M166 52l22-18M166 52l28 8M166 52l12 30M166 52l-20 26M166 52l-30-2M156 42l14-6 12 10-2 16-14 6-12-10z"/>
+  <path class="dg-fault" d="M88 10v106M92 10v106"/>
+  <path class="dg-fault dg-fault--alt" d="M178 10v106"/>
+  <path class="dg-blot" d="M108 82c4-12 24-14 32-4 6 8 0 20-12 22-12 1-24-6-20-18z"/>
+  <rect class="dg-scan" x="36" y="10" width="188" height="3" rx="1.5"/>
+</svg>

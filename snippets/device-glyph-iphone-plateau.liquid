@@ -1,0 +1,55 @@
+{%- comment -%}
+  iPhone — Camera plateau era (iPhone Air, 17 Pro, 17 Pro Max).
+  Front matches the Dynamic Island era; the back carries a full-width camera
+  plateau. Part contract and drawing rules: docs/design/device-illustrations.md
+  Accepts: view (front|back), part, lenses (1|3)
+{%- endcomment -%}
+<svg class="dg__svg" viewBox="0 0 120 250" fill="none" focusable="false">
+  <ellipse class="dg-shadow" cx="60" cy="244" rx="46" ry="3.5"/>
+  {%- if view == 'back' -%}
+    <rect class="dg-btn" x="109" y="50" width="4.5" height="12" rx="2.25"/>
+    <rect class="dg-btn" x="109" y="70" width="4.5" height="20" rx="2.25"/>
+    <rect class="dg-btn" x="109" y="96" width="4.5" height="20" rx="2.25"/>
+    <rect class="dg-btn" x="6.5" y="80" width="4.5" height="32" rx="2.25"/>
+    <rect class="dg-body dg-glass{% if part == 'glass' %} is-hl{% endif %}" x="10" y="4" width="100" height="232" rx="22"/>
+    <rect class="dg-frame" x="12.5" y="6.5" width="95" height="227" rx="19.5"/>
+    {%- if lenses == 1 -%}
+      <rect class="dg-plateau{% if part == 'camera' %} is-hl{% endif %}" x="13" y="11" width="94" height="30" rx="15"/>
+      <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="29" cy="26" r="8"/>
+      <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="29" cy="26" r="3.4"/>
+      <circle class="dg-flash" cx="90" cy="26" r="2.4"/>
+      <path class="dg-crack dg-crack--back" d="M80 96l-10 26 14 8-16 30 9 7-12 26"/>
+    {%- else -%}
+      <rect class="dg-plateau{% if part == 'camera' %} is-hl{% endif %}" x="13" y="11" width="94" height="52" rx="16"/>
+      <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="28" cy="25.5" r="8"/>
+      <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="28" cy="25.5" r="3.4"/>
+      <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="28" cy="48" r="8"/>
+      <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="28" cy="48" r="3.4"/>
+      <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="47.5" cy="36.75" r="8"/>
+      <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="47.5" cy="36.75" r="3.4"/>
+      <circle class="dg-flash" cx="90" cy="26" r="2.4"/>
+      <circle class="dg-lidar" cx="90" cy="47" r="3.2"/>
+      <path class="dg-crack dg-crack--back" d="M80 110l-10 26 14 8-16 30 9 7-12 26"/>
+    {%- endif -%}
+  {%- else -%}
+    <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="6.5" y="50" width="4.5" height="12" rx="2.25"/>
+    <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="6.5" y="70" width="4.5" height="20" rx="2.25"/>
+    <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="6.5" y="96" width="4.5" height="20" rx="2.25"/>
+    <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="109" y="80" width="4.5" height="32" rx="2.25"/>
+    <rect class="dg-body" x="10" y="4" width="100" height="232" rx="22"/>
+    <rect class="dg-frame" x="12.5" y="6.5" width="95" height="227" rx="19.5"/>
+    <rect class="dg-screen{% if part == 'screen' %} is-hl{% endif %}" x="16" y="10" width="88" height="220" rx="16"/>
+    <path class="dg-sheen" d="M58 10h20L16 134V96z"/>
+    <path class="dg-earpiece{% if part == 'earpiece' %} is-hl{% endif %}" d="M52 13.6h16"/>
+    <rect class="dg-island{% if part == 'fcam' %} is-hl{% endif %}" x="45" y="18" width="30" height="9" rx="4.5"/>
+    <rect class="dg-port{% if part == 'port' %} is-hl{% endif %}" x="50" y="232" width="20" height="3" rx="1.5"/>
+    <path class="dg-grille{% if part == 'grille' %} is-hl{% endif %}" d="M30 233.5h.01M35 233.5h.01M40 233.5h.01M80 233.5h.01M85 233.5h.01M90 233.5h.01"/>
+    <rect class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" x="28" y="64" width="64" height="120" rx="10"/>
+    <path class="dg-crack" d="M76 38l-10 26 14 8-16 30 9 7-12 26"/>
+    <path class="dg-shatter" d="M72 74l-14-28M72 74l20-20M72 74l24 10M72 74l10 30M72 74l-18 24M72 74l-28-4M63 62l14-5 10 11-3 16-14 5-11-10z"/>
+    <path class="dg-fault" d="M38 10v220M41.5 10v220"/>
+    <path class="dg-fault dg-fault--alt" d="M80 10v220"/>
+    <path class="dg-blot" d="M46 150c4-12 22-15 30-5 7 9 1 22-11 24-12 1-23-7-19-19z"/>
+    <rect class="dg-scan" x="16" y="10" width="88" height="3" rx="1.5"/>
+  {%- endif -%}
+</svg>

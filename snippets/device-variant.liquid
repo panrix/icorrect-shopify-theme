@@ -1,0 +1,194 @@
+{%- comment -%}
+  Maps a model / product title to its design-era drawing.
+  See docs/design/device-illustrations.md for the eras, the rules and how to
+  add a new one. Unknown newer models fall into the newest era of their
+  family, so a launch never breaks; a new drawing is only needed when Apple
+  changes the design.
+
+  Accepts:
+  - family: {String} iphone | ipad | macbook | watch
+  - title: {String} model or product title
+  - repair_context: {String} optional fallback text (page / collection) for
+    titles that don't name the model, e.g. a "45MM" tile on a Series 9 page
+
+  Outputs "variant|lenses|touchbar"
+  - variant: iphone-home | iphone-notch | iphone-island | iphone-plateau |
+    macbook-wedge | macbook-touchbar | macbook-notch-air | macbook-notch-pro |
+    ipad-home | ipad-allscreen | ipad-pro | watch-classic | watch-rounded |
+    watch-s10 | watch-ultra
+  - lenses: rear camera count for iPhone back views (1–3)
+  - touchbar: true when the MacBook has a Touch Bar
+{%- endcomment -%}
+{%- liquid
+  assign raw = title | append: ' || ' | append: repair_context
+  assign t = raw | downcase | replace: '(', ' ' | replace: ')', ' ' | replace: '"', ' in ' | replace: '”', ' in ' | replace: '’’', ' in ' | replace: '-inch', ' in ' | replace: "'", ' ' | replace: '‘', ' ' | replace: '’', ' ' | replace: '-', ' ' | replace: '/', ' ' | replace: ',', ' '
+  assign t = ' ' | append: t | append: ' '
+  assign own = t | split: ' || ' | first | append: ' '
+
+  assign year = 0
+  assign number = 0
+  assign ordinal = 0
+  assign suffix_e = false
+  assign prev = ''
+  assign tokens = t | split: ' '
+  for tok in tokens
+    if tok == '||' and number > 0
+      break
+    endif
+    assign n = tok | plus: 0
+    if tok.size == 4 and n > 2000 and n < 2100 and year == 0
+      assign year = n
+    endif
+    assign last2 = tok | slice: -2, 2
+    if last2 == 'st' or last2 == 'nd' or last2 == 'rd' or last2 == 'th'
+      assign hn = tok | remove_last: last2 | plus: 0
+      if hn > 0 and ordinal == 0
+        assign ordinal = hn
+      endif
+    endif
+    if number == 0
+      if prev == 'iphone' or prev == 'series' or prev == 'air' or prev == 'mini' or prev == 'ipad'
+        assign last1 = tok | slice: -1, 1
+        assign h1 = tok | remove_last: last1 | plus: 0
+        if tok == 'x' or tok == 'xs' or tok == 'xr'
+          assign number = 10
+        elsif last1 == 'e' and h1 > 0
+          assign number = h1
+          assign suffix_e = true
+        elsif n > 0 and n < 100 and tok.size < 3
+          assign number = n
+        endif
+      endif
+    endif
+    assign prev = tok
+  endfor
+
+  assign variant = ''
+  assign lenses = 2
+  assign touchbar = false
+
+  case family
+    when 'iphone'
+      assign is_pro = false
+      if own contains ' pro '
+        assign is_pro = true
+      endif
+      if own contains ' se ' or number == 6 or number == 7 or number == 8
+        assign variant = 'iphone-home'
+      elsif own contains ' air '
+        assign variant = 'iphone-plateau'
+      elsif suffix_e or own contains ' xr ' or number == 10 or number == 11 or number == 12 or number == 13
+        assign variant = 'iphone-notch'
+      elsif number == 14
+        assign variant = 'iphone-notch'
+        if is_pro
+          assign variant = 'iphone-island'
+        endif
+      elsif number == 15 or number == 16
+        assign variant = 'iphone-island'
+      elsif number == 17
+        assign variant = 'iphone-island'
+        if is_pro
+          assign variant = 'iphone-plateau'
+        endif
+      else
+        assign variant = 'iphone-plateau'
+        unless is_pro
+          assign variant = 'iphone-island'
+        endunless
+      endif
+
+      if is_pro
+        assign lenses = 3
+      elsif suffix_e or own contains ' xr ' or own contains ' se ' or own contains ' air '
+        assign lenses = 1
+      elsif number == 6 or number == 7 or number == 8
+        assign lenses = 1
+        if own contains ' plus '
+          assign lenses = 2
+        endif
+      endif
+
+    when 'macbook'
+      assign size = 0
+      if own contains ' 16 in ' or own contains ' 16 '
+        assign size = 16
+      elsif own contains ' 15 in ' or own contains ' 15 '
+        assign size = 15
+      elsif own contains ' 14 in ' or own contains ' 14 '
+        assign size = 14
+      elsif own contains ' 13 in ' or own contains ' 13 '
+        assign size = 13
+      endif
+      if own contains 'macbook air'
+        assign variant = 'macbook-notch-air'
+        if own contains ' m1 ' or own contains 'a1466' or own contains 'a1932' or own contains 'a2179' or own contains 'a2337'
+          assign variant = 'macbook-wedge'
+        elsif year > 0 and year < 2022
+          assign variant = 'macbook-wedge'
+        endif
+      else
+        assign variant = 'macbook-notch-pro'
+        if size == 13 or size == 15 or own contains 'a2141' or own contains 'touch bar'
+          assign variant = 'macbook-touchbar'
+        elsif year > 0 and year < 2021
+          assign variant = 'macbook-touchbar'
+        endif
+        if variant == 'macbook-touchbar'
+          assign touchbar = true
+          if own contains 'a1708'
+            assign touchbar = false
+          endif
+        endif
+      endif
+
+    when 'ipad'
+      if own contains 'ipad pro'
+        assign variant = 'ipad-pro'
+        if year > 0 and year < 2018
+          assign variant = 'ipad-home'
+        endif
+      elsif own contains 'ipad air'
+        assign variant = 'ipad-allscreen'
+        if year > 0 and year < 2020
+          assign variant = 'ipad-home'
+        elsif number > 0 and number < 4
+          assign variant = 'ipad-home'
+        endif
+      elsif own contains 'ipad mini'
+        assign variant = 'ipad-allscreen'
+        if year > 0 and year < 2021
+          assign variant = 'ipad-home'
+        elsif number > 0 and number < 6
+          assign variant = 'ipad-home'
+        endif
+      else
+        assign variant = 'ipad-allscreen'
+        if year > 0 and year < 2022
+          assign variant = 'ipad-home'
+        elsif ordinal > 0 and ordinal < 10
+          assign variant = 'ipad-home'
+        endif
+      endif
+      assign lenses = 1
+
+    when 'watch'
+      if own contains ' ultra'
+        assign variant = 'watch-ultra'
+      elsif own contains ' se '
+        assign variant = 'watch-classic'
+      elsif number == 0 and t contains ' ultra'
+        assign variant = 'watch-ultra'
+      elsif number == 0 and t contains ' se '
+        assign variant = 'watch-classic'
+      elsif number > 0 and number < 7
+        assign variant = 'watch-classic'
+      elsif number >= 7 and number < 10
+        assign variant = 'watch-rounded'
+      else
+        assign variant = 'watch-s10'
+      endif
+  endcase
+
+  echo variant | append: '|' | append: lenses | append: '|' | append: touchbar
+-%}

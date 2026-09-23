@@ -1,0 +1,36 @@
+{%- comment -%}
+  MacBook — Touch Bar era Pro (2016–2020 13"/15"/16", incl. M1/M2 13").
+  Thin bezels, no notch, Touch Bar strip (function keys on A1708), side
+  speaker grilles. Part contract and drawing rules:
+  docs/design/device-illustrations.md
+  Accepts: part, touchbar (true|false)
+{%- endcomment -%}
+<svg class="dg__svg" viewBox="0 0 260 190" fill="none" focusable="false">
+  <ellipse class="dg-shadow" cx="130" cy="183" rx="120" ry="3.5"/>
+  <rect class="dg-body" x="30" y="4" width="200" height="120" rx="9"/>
+  <rect class="dg-frame" x="32.5" y="6.5" width="195" height="115" rx="7"/>
+  <rect class="dg-screen{% if part == 'screen' %} is-hl{% endif %}" x="38" y="12" width="184" height="104" rx="2"/>
+  <path class="dg-sheen" d="M124 12h30L38 104V74z"/>
+  <circle class="dg-cam{% if part == 'fcam' %} is-hl{% endif %}" cx="130" cy="8.5" r="1.6"/>
+  <path class="dg-hinge{% if part == 'hinge' %} is-hl{% endif %}" d="M44 120h172"/>
+  <path class="dg-dust{% if part == 'dust' %} is-hl{% endif %}" d="M60 108h.01M78 111h.01M96 107h.01M118 110h.01M140 108h.01M162 111h.01M184 107h.01M202 110h.01"/>
+  <path class="dg-body dg-base" d="M30 126h200l24 44a4 4 0 0 1-3.6 6H9.6a4 4 0 0 1-3.6-6z"/>
+  <path class="dg-lip" d="M112 176a18 4 0 0 0 36 0"/>
+  {%- if touchbar -%}
+    <path class="dg-touchbar-strip{% if part == 'touchbar' %} is-hl{% endif %}" d="M52 130h156l1.6 3.8H50.4z"/>
+  {%- else -%}
+    <path class="dg-fnrow{% if part == 'keyboard' %} is-hl{% endif %}" d="M52 132h156"/>
+  {%- endif -%}
+  <path class="dg-keyboard{% if part == 'keyboard' %} is-hl{% endif %}" d="M49 137h162l7 15H42z"/>
+  <path class="dg-keys{% if part == 'keyboard' %} is-hl{% endif %}" d="M49.5 141h161M47.8 144.8h164.4M46 148.6h168"/>
+  <path class="dg-trackpad{% if part == 'trackpad' %} is-hl{% endif %}" d="M94 156h72l3 16h-78z"/>
+  <path class="dg-grille{% if part == 'grille' %} is-hl{% endif %}" d="M36 139l-4 11M224 139l4 11"/>
+  <path class="dg-port-side{% if part == 'port' %} is-hl{% endif %}" d="M27.3 131.8l-3.4 6.4"/>
+  <path class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" d="M58 130h144l14 40H44z"/>
+  <path class="dg-crack" d="M152 22l-10 22 14 8-18 26 8 6-12 22"/>
+  <path class="dg-shatter" d="M166 52l-14-24M166 52l22-18M166 52l28 8M166 52l12 30M166 52l-20 26M166 52l-30-2M156 42l14-6 12 10-2 16-14 6-12-10z"/>
+  <path class="dg-fault" d="M88 12v104M92 12v104"/>
+  <path class="dg-fault dg-fault--alt" d="M178 12v104"/>
+  <path class="dg-blot" d="M108 82c4-12 24-14 32-4 6 8 0 20-12 22-12 1-24-6-20-18z"/>
+  <rect class="dg-scan" x="38" y="12" width="184" height="3" rx="1.5"/>
+</svg>
