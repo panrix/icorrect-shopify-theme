@@ -110,12 +110,20 @@
 .dg .dg-lens.is-hl,
 .dg .dg-port.is-hl,
 .dg .dg-touchbar.is-hl { fill: var(--ri-accent); }
+/* The charging port is a 3-unit slot. On a phone-width drawing that is
+   about 1px tall, so grow it until it reads, and keep it near the current
+   size on a large desktop drawing. */
+.dg .dg-port.is-hl {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transform: scaleY(clamp(1.5, 200px / (var(--dg-w) * var(--dg-scale, 1)), 6));
+}
 .dg .dg-lens-ring.is-hl { fill: #fff; }
 .dg .dg-port-side.is-hl { stroke-width: calc(4.5px * var(--dg-hl)); }
 .dg .dg-grille.is-hl,
-.dg .dg-leds.is-hl,
+.dg .dg-leds.is-hl { stroke-width: max(2.8px, calc(3.2px * var(--dg-hl))); }
 .dg .dg-dust.is-hl { stroke-width: calc(3.2px * var(--dg-hl)); }
-.dg .dg-earpiece.is-hl { stroke-width: calc(2.6px * var(--dg-hl)); }
+.dg .dg-earpiece.is-hl { stroke-width: max(2.2px, calc(2.6px * var(--dg-hl))); }
 .dg .dg-keys.is-hl,
 .dg .dg-fnrow.is-hl { fill: none; stroke-width: calc(2.4px * var(--dg-hl)); }
 .dg .dg-grille--strip.is-hl { stroke-width: calc(2.6px * var(--dg-hl)); }
