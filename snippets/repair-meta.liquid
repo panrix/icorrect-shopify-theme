@@ -11,14 +11,13 @@
     title does not name it, e.g. "Series 9" on an Apple Watch page (optional)
 
   Outputs a single pipe-delimited string, consumed via capture + split:
-  family|repair|scale|model|name|qualifier|lenses
+  family|repair|scale|model|name|qualifier
 
   - family: iphone | ipad | macbook | watch | device
   - repair: repair key understood by repair-icon / device-glyph, or "repair"
     when the title is a model rather than a repair
   - scale: relative on-screen size of the device glyph (0.78–1)
   - model / name / qualifier: "iPhone 16 Pro" / "Screen Repair" / "Genuine OLED"
-  - lenses: rear camera count (1–3) used by the back-of-device diagram
 
   Usage:
   {%- capture meta -%}{% render 'repair-meta', title: product.title, repair_tags: product.tags %}{%- endcapture -%}
@@ -138,21 +137,6 @@
       endif
   endcase
 
-  assign lenses = 2
-  if family == 'iphone'
-    if tl contains ' pro'
-      assign lenses = 3
-    elsif tl contains 'xr' or tl contains 'iphone se' or tl contains '16e' or tl contains '17e' or tl contains ' air'
-      assign lenses = 1
-    elsif tl contains 'iphone 8' or tl contains 'iphone 7'
-      unless tl contains 'plus'
-        assign lenses = 1
-      endunless
-    endif
-  elsif family == 'ipad'
-    assign lenses = 1
-  endif
-
   assign phrases = ' Diagnostic| Original Screen| Genuine Screen| Genuine Battery| Screen| Display| Glass| LCD| OLED| Battery| Charging Port| Rear Camera Lens| Rear Camera| Front Camera| Camera Lens| Camera| Rear Glass| Rear Housing| Back Glass| Housing| Face ID| Earpiece| Loudspeaker| Speaker| Microphone| Power Button| Volume Button| Mute Button| Side Button| Home Button| Button| Crown| Keyboard| Trackpad| Touch Bar Repair| Flexgate| Dustgate| Heart Rate| Data Recovery| Liquid Damage| Water Damage' | split: '|'
   assign cut = t.size
   for p in phrases
@@ -184,5 +168,5 @@
     endunless
   endif
 
-  echo family | append: '|' | append: repair | append: '|' | append: scale | append: '|' | append: model | append: '|' | append: name | append: '|' | append: qualifier | append: '|' | append: lenses
+  echo family | append: '|' | append: repair | append: '|' | append: scale | append: '|' | append: model | append: '|' | append: name | append: '|' | append: qualifier
 -%}

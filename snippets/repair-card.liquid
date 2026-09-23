@@ -1,6 +1,6 @@
 {%- comment -%}
   Imageless repair card: device diagram with the repaired part highlighted,
-  repair icon, model / repair labels, price and booking link.
+  model / repair labels, price and booking link.
   The heading always contains model + repair text so link text stays close to
   the product title for SEO; emphasis only changes which part reads as the
   eyebrow.
@@ -30,7 +30,6 @@
   assign model = meta[3]
   assign name = meta[4]
   assign qualifier = meta[5]
-  assign lenses = meta[6]
 
   assign ql = qualifier | downcase
   assign qualifier_is_quality = false
@@ -42,8 +41,7 @@
 -%}
 <div class="rc rc--{{ emphasis }}" data-family="{{ family }}" data-repair="{{ repair }}">
   <div class="rc__visual">
-    {% render 'device-glyph', family: family, repair: repair, scale: scale, lenses: lenses %}
-    <span class="rc__badge">{% render 'repair-icon', icon: repair, family: family, size: 20 %}</span>
+    {% render 'device-glyph', family: family, repair: repair, scale: scale %}
   </div>
   <div class="rc__body">
     <{{ heading_tag }} class="rc__title">

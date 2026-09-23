@@ -1,14 +1,14 @@
 {%- comment -%}
-  Line-art device diagram that highlights the part being repaired.
-  One drawing per device family, so any new model or repair renders without
-  bespoke artwork. Rear-facing repairs (rear camera, rear glass, heart-rate
-  sensor) switch the drawing to the back of the device.
+  Generic line-art device diagram that highlights the part being repaired.
+  One drawing per device family and deliberately free of model-specific
+  features (no notch / Dynamic Island, no lens count, no home button), so it
+  is correct for every current and future model. Rear-facing repairs (rear
+  camera, rear glass, heart-rate sensor) switch to the back of the device.
 
   Accepts:
   - family: {String} iphone | ipad | macbook | watch | device
   - repair: {String} repair key from repair-meta (optional; "repair" = no highlight)
   - scale: {String|Number} relative size 0.78–1 (optional)
-  - lenses: {Number} rear camera count 1–3 for the iPhone back view (default 3)
   - class: {String} extra class names
 
   Styling lives in assets/repair-imageless.css (.dg*).
@@ -43,7 +43,7 @@
       assign part = 'glass'
       assign view = 'back'
     when 'front-camera', 'face-id'
-      assign part = 'island'
+      assign part = 'fcam'
     when 'earpiece'
       assign part = 'earpiece'
     when 'loudspeaker', 'microphone'
@@ -65,21 +65,19 @@
       assign part = 'scan'
   endcase
 
-  if family == 'macbook' and view == 'back'
+  if family == 'macbook'
     assign view = 'front'
-  endif
-  if family == 'macbook' and part == 'buttons'
-    assign part = 'keyboard'
-  endif
-  if family == 'macbook' and part == 'island'
-    assign part = 'notch'
+    if part == 'buttons'
+      assign part = 'keyboard'
+    elsif part == 'camera' or part == 'glass'
+      assign part = 'scan'
+    endif
   endif
   if family == 'watch' and part == 'buttons'
     assign part = 'crown'
   endif
 
   assign scale = scale | default: 1
-  assign lenses = lenses | default: 3 | plus: 0
 -%}
 <span
   class="dg dg--{{ family }} dg--{{ view }} dg--part-{{ part }}{% if class %} {{ class }}{% endif %}"
@@ -88,48 +86,60 @@
 >
   {%- case family -%}
     {%- when 'ipad' -%}
-      <svg class="dg__svg" viewBox="0 0 180 240" fill="none" focusable="false">
+      <svg class="dg__svg" viewBox="0 0 180 250" fill="none" focusable="false">
+        <ellipse class="dg-shadow" cx="90" cy="244" rx="72" ry="3.5"/>
         {%- if view == 'back' -%}
-          <rect class="dg-body dg-glass{% if part == 'glass' %} is-hl{% endif %}" x="6" y="6" width="168" height="228" rx="16"/>
+          <rect class="dg-btn" x="20" y="1.5" width="22" height="5" rx="2.5"/>
+          <rect class="dg-body dg-glass{% if part == 'glass' %} is-hl{% endif %}" x="6" y="6" width="168" height="230" rx="16"/>
+          <rect class="dg-frame" x="8.5" y="8.5" width="163" height="225" rx="13.5"/>
           <rect class="dg-module{% if part == 'camera' %} is-hl{% endif %}" x="16" y="16" width="30" height="30" rx="9"/>
-          <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="31" cy="31" r="7"/>
+          <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="31" cy="31" r="7.5"/>
+          <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="31" cy="31" r="3"/>
+          <path class="dg-crack dg-crack--back" d="M112 60l-12 30 16 10-20 34 10 8-14 30"/>
         {%- else -%}
-          <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="136" y="2" width="24" height="5" rx="2.5"/>
-          <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="173" y="30" width="5" height="18" rx="2.5"/>
-          <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="173" y="52" width="5" height="18" rx="2.5"/>
-          <rect class="dg-body" x="6" y="6" width="168" height="228" rx="16"/>
-          <rect class="dg-screen{% if part == 'screen' %} is-hl{% endif %}" x="14" y="14" width="152" height="212" rx="8"/>
-          <circle class="dg-cam{% if part == 'island' %} is-hl{% endif %}" cx="90" cy="10" r="1.8"/>
-          <rect class="dg-port{% if part == 'port' %} is-hl{% endif %}" x="78" y="229" width="24" height="3.5" rx="1.75"/>
-          <path class="dg-grille{% if part == 'grille' %} is-hl{% endif %}" d="M30 231h.01M36 231h.01M42 231h.01M138 231h.01M144 231h.01M150 231h.01"/>
-          <rect class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" x="40" y="58" width="100" height="124" rx="10"/>
-          <path class="dg-crack" d="M104 40l-12 30 16 10-20 34 10 8-14 30"/>
-          <rect class="dg-scan" x="14" y="14" width="152" height="3" rx="1.5"/>
+          <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="138" y="1.5" width="22" height="5" rx="2.5"/>
+          <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="173.5" y="30" width="5" height="18" rx="2.5"/>
+          <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="173.5" y="52" width="5" height="18" rx="2.5"/>
+          <rect class="dg-body" x="6" y="6" width="168" height="230" rx="16"/>
+          <rect class="dg-frame" x="8.5" y="8.5" width="163" height="225" rx="13.5"/>
+          <rect class="dg-screen{% if part == 'screen' %} is-hl{% endif %}" x="13" y="13" width="154" height="216" rx="8"/>
+          <path class="dg-sheen" d="M92 13h24L13 158v-40z"/>
+          <circle class="dg-cam{% if part == 'fcam' %} is-hl{% endif %}" cx="90" cy="9.8" r="1.7"/>
+          <rect class="dg-port{% if part == 'port' %} is-hl{% endif %}" x="79" y="232" width="22" height="3" rx="1.5"/>
+          <path class="dg-grille{% if part == 'grille' %} is-hl{% endif %}" d="M30 233.5h.01M36 233.5h.01M42 233.5h.01M138 233.5h.01M144 233.5h.01M150 233.5h.01"/>
+          <rect class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" x="40" y="60" width="100" height="122" rx="10"/>
+          <path class="dg-crack" d="M108 38l-12 30 16 10-20 34 10 8-14 30"/>
+          <rect class="dg-scan" x="13" y="13" width="154" height="3" rx="1.5"/>
         {%- endif -%}
       </svg>
     {%- when 'macbook' -%}
-      <svg class="dg__svg" viewBox="0 0 260 180" fill="none" focusable="false">
+      <svg class="dg__svg" viewBox="0 0 260 188" fill="none" focusable="false">
+        <ellipse class="dg-shadow" cx="130" cy="182" rx="120" ry="3.5"/>
         <rect class="dg-body" x="30" y="4" width="200" height="120" rx="9"/>
-        <rect class="dg-screen{% if part == 'screen' %} is-hl{% endif %}" x="38" y="12" width="184" height="104" rx="3"/>
-        <rect class="dg-cam{% if part == 'notch' %} is-hl{% endif %}" x="120" y="12" width="20" height="5" rx="2"/>
+        <rect class="dg-frame" x="32.5" y="6.5" width="195" height="115" rx="7"/>
+        <rect class="dg-screen{% if part == 'screen' %} is-hl{% endif %}" x="38" y="13" width="184" height="103" rx="3"/>
+        <path class="dg-sheen" d="M124 13h30L38 104V74z"/>
+        <circle class="dg-cam{% if part == 'fcam' %} is-hl{% endif %}" cx="130" cy="9.3" r="1.6"/>
         <path class="dg-hinge{% if part == 'hinge' %} is-hl{% endif %}" d="M44 120h172"/>
         <path class="dg-dust{% if part == 'dust' %} is-hl{% endif %}" d="M60 108h.01M78 111h.01M96 107h.01M118 110h.01M140 108h.01M162 111h.01M184 107h.01M202 110h.01"/>
         <path class="dg-body dg-base" d="M30 126h200l24 44a4 4 0 0 1-3.6 6H9.6a4 4 0 0 1-3.6-6z"/>
-        <path class="dg-touchbar{% if part == 'touchbar' %} is-hl{% endif %}" d="M52 131h156l1.5 3.5H50.5z"/>
-        <path class="dg-keyboard{% if part == 'keyboard' %} is-hl{% endif %}" d="M49 138h162l6 14H43z"/>
-        <path class="dg-keys{% if part == 'keyboard' %} is-hl{% endif %}" d="M47 142.7h166M45 147.3h170"/>
+        <path class="dg-touchbar{% if part == 'touchbar' %} is-hl{% endif %}" d="M52 130.5h156l1.5 3.5H50.5z"/>
+        <path class="dg-keyboard{% if part == 'keyboard' %} is-hl{% endif %}" d="M49 136h162l7 16H42z"/>
+        <path class="dg-keys{% if part == 'keyboard' %} is-hl{% endif %}" d="M49.5 140.2h161M47.8 144.1h164.4M46 148h168"/>
         <path class="dg-trackpad{% if part == 'trackpad' %} is-hl{% endif %}" d="M102 156h56l3 16h-62z"/>
         <path class="dg-grille{% if part == 'grille' %} is-hl{% endif %}" d="M36 140l-4 10M224 140l4 10"/>
-        <rect class="dg-port{% if part == 'port' %} is-hl{% endif %}" x="12" y="170" width="22" height="4.5" rx="2.25"/>
+        <path class="dg-port-side{% if part == 'port' %} is-hl{% endif %}" d="M27.3 131.8l-3.4 6.4"/>
         <path class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" d="M58 130h144l14 40H44z"/>
-        <path class="dg-crack" d="M150 22l-10 22 14 8-18 26 8 6-12 22"/>
-        <rect class="dg-scan" x="38" y="12" width="184" height="3" rx="1.5"/>
+        <path class="dg-crack" d="M152 22l-10 22 14 8-18 26 8 6-12 22"/>
+        <rect class="dg-scan" x="38" y="13" width="184" height="3" rx="1.5"/>
       </svg>
     {%- when 'watch' -%}
-      <svg class="dg__svg" viewBox="0 0 140 220" fill="none" focusable="false">
+      <svg class="dg__svg" viewBox="0 0 140 228" fill="none" focusable="false">
+        <ellipse class="dg-shadow" cx="70" cy="223" rx="36" ry="3"/>
         <path class="dg-band" d="M40 44V10a8 8 0 0 1 8-8h44a8 8 0 0 1 8 8v34M40 176v34a8 8 0 0 0 8 8h44a8 8 0 0 0 8-8v-34"/>
         {%- if view == 'back' -%}
           <rect class="dg-body dg-glass{% if part == 'glass' %} is-hl{% endif %}" x="18" y="38" width="100" height="144" rx="32"/>
+          <rect class="dg-frame" x="20.5" y="40.5" width="95" height="139" rx="29.5"/>
           <circle class="dg-sensor{% if part == 'sensor' %} is-hl{% endif %}" cx="68" cy="110" r="30"/>
           <circle class="dg-sensor{% if part == 'sensor' %} is-hl{% endif %}" cx="68" cy="110" r="15"/>
           <path class="dg-leds{% if part == 'sensor' %} is-hl{% endif %}" d="M68 88h.01M68 132h.01M46 110h.01M90 110h.01"/>
@@ -137,48 +147,42 @@
           <rect class="dg-crown{% if part == 'crown' %} is-hl{% endif %}" x="116" y="76" width="10" height="24" rx="3.5"/>
           <rect class="dg-btn{% if part == 'crown' %} is-hl{% endif %}" x="117" y="112" width="5" height="28" rx="2.5"/>
           <rect class="dg-body" x="18" y="38" width="100" height="144" rx="32"/>
+          <rect class="dg-frame" x="20.5" y="40.5" width="95" height="139" rx="29.5"/>
           <rect class="dg-screen{% if part == 'screen' %} is-hl{% endif %}" x="26" y="46" width="84" height="128" rx="25"/>
+          <path class="dg-sheen" d="M60 46h18L26 150v-28z"/>
           <path class="dg-grille{% if part == 'grille' %} is-hl{% endif %}" d="M14 94v10M14 112v10"/>
           <rect class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" x="40" y="72" width="56" height="76" rx="14"/>
-          <path class="dg-crack" d="M80 62l-10 22 12 8-14 24 8 6-10 18"/>
+          <path class="dg-crack" d="M82 62l-10 22 12 8-14 24 8 6-10 18"/>
           <rect class="dg-scan" x="26" y="46" width="84" height="3" rx="1.5"/>
         {%- endif -%}
       </svg>
     {%- else -%}
-      <svg class="dg__svg" viewBox="0 0 120 240" fill="none" focusable="false">
+      <svg class="dg__svg" viewBox="0 0 120 250" fill="none" focusable="false">
+        <ellipse class="dg-shadow" cx="60" cy="244" rx="46" ry="3.5"/>
         {%- if view == 'back' -%}
-          <rect class="dg-body dg-glass{% if part == 'glass' %} is-hl{% endif %}" x="10" y="4" width="100" height="232" rx="20"/>
-          {%- case lenses -%}
-            {%- when 1 -%}
-              <rect class="dg-module{% if part == 'camera' %} is-hl{% endif %}" x="18" y="12" width="28" height="28" rx="9"/>
-              <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="32" cy="26" r="8"/>
-              <circle class="dg-flash" cx="54" cy="18" r="2.2"/>
-            {%- when 2 -%}
-              <rect class="dg-module{% if part == 'camera' %} is-hl{% endif %}" x="18" y="12" width="28" height="46" rx="12"/>
-              <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="32" cy="25" r="8"/>
-              <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="32" cy="45" r="8"/>
-              <circle class="dg-flash" cx="54" cy="20" r="2.2"/>
-            {%- else -%}
-              <rect class="dg-module{% if part == 'camera' %} is-hl{% endif %}" x="18" y="12" width="46" height="46" rx="13"/>
-              <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="31" cy="25" r="8"/>
-              <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="31" cy="45" r="8"/>
-              <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="51" cy="35" r="8"/>
-              <circle class="dg-flash" cx="52" cy="20" r="2.2"/>
-          {%- endcase -%}
-          <path class="dg-crack dg-crack--back" d="M78 110l-10 26 14 8-16 30 9 7-12 26"/>
+          <rect class="dg-btn" x="109" y="62" width="4.5" height="20" rx="2.25"/>
+          <rect class="dg-btn" x="109" y="88" width="4.5" height="20" rx="2.25"/>
+          <rect class="dg-btn" x="6.5" y="74" width="4.5" height="32" rx="2.25"/>
+          <rect class="dg-body dg-glass{% if part == 'glass' %} is-hl{% endif %}" x="10" y="4" width="100" height="232" rx="22"/>
+          <rect class="dg-frame" x="12.5" y="6.5" width="95" height="227" rx="19.5"/>
+          <rect class="dg-module{% if part == 'camera' %} is-hl{% endif %}" x="19" y="13" width="38" height="38" rx="12"/>
+          <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="38" cy="32" r="10"/>
+          <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="38" cy="32" r="4.2"/>
+          <path class="dg-crack dg-crack--back" d="M80 104l-10 26 14 8-16 30 9 7-12 26"/>
         {%- else -%}
-          <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="6" y="44" width="5" height="12" rx="2.5"/>
-          <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="6" y="64" width="5" height="22" rx="2.5"/>
-          <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="6" y="92" width="5" height="22" rx="2.5"/>
-          <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="109" y="72" width="5" height="34" rx="2.5"/>
-          <rect class="dg-body" x="10" y="4" width="100" height="232" rx="20"/>
-          <rect class="dg-screen{% if part == 'screen' %} is-hl{% endif %}" x="16" y="10" width="88" height="220" rx="14"/>
-          <rect class="dg-island{% if part == 'island' %} is-hl{% endif %}" x="45" y="18" width="30" height="9" rx="4.5"/>
-          <path class="dg-earpiece{% if part == 'earpiece' %} is-hl{% endif %}" d="M50 13.2h20"/>
-          <rect class="dg-port{% if part == 'port' %} is-hl{% endif %}" x="49" y="231.5" width="22" height="3.5" rx="1.75"/>
-          <path class="dg-grille{% if part == 'grille' %} is-hl{% endif %}" d="M28 233.2h.01M34 233.2h.01M40 233.2h.01M80 233.2h.01M86 233.2h.01M92 233.2h.01"/>
-          <rect class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" x="28" y="62" width="64" height="124" rx="10"/>
-          <path class="dg-crack" d="M74 36l-10 26 14 8-16 30 9 7-12 26"/>
+          <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="6.5" y="62" width="4.5" height="20" rx="2.25"/>
+          <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="6.5" y="88" width="4.5" height="20" rx="2.25"/>
+          <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="109" y="74" width="4.5" height="32" rx="2.25"/>
+          <rect class="dg-body" x="10" y="4" width="100" height="232" rx="22"/>
+          <rect class="dg-frame" x="12.5" y="6.5" width="95" height="227" rx="19.5"/>
+          <rect class="dg-screen{% if part == 'screen' %} is-hl{% endif %}" x="16" y="10" width="88" height="220" rx="16"/>
+          <path class="dg-sheen" d="M58 10h20L16 134V96z"/>
+          <path class="dg-earpiece{% if part == 'earpiece' %} is-hl{% endif %}" d="M52 15h16"/>
+          <circle class="dg-fcam{% if part == 'fcam' %} is-hl{% endif %}" cx="60" cy="23" r="3.2"/>
+          <rect class="dg-port{% if part == 'port' %} is-hl{% endif %}" x="50" y="232" width="20" height="3" rx="1.5"/>
+          <path class="dg-grille{% if part == 'grille' %} is-hl{% endif %}" d="M30 233.5h.01M35 233.5h.01M40 233.5h.01M80 233.5h.01M85 233.5h.01M90 233.5h.01"/>
+          <rect class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" x="28" y="64" width="64" height="120" rx="10"/>
+          <path class="dg-crack" d="M76 38l-10 26 14 8-16 30 9 7-12 26"/>
           <rect class="dg-scan" x="16" y="10" width="88" height="3" rx="1.5"/>
         {%- endif -%}
       </svg>

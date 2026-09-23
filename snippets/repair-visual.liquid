@@ -22,7 +22,6 @@
   assign model = meta[3]
   assign name = meta[4]
   assign qualifier = meta[5]
-  assign lenses = meta[6]
 
   assign ql = qualifier | downcase
   assign qualifier_is_quality = false
@@ -46,7 +45,7 @@
 <div class="rv rv--{{ family }}" data-repair="{{ repair }}">
   <div class="rv__stage">
     <div class="rv__disc">
-      {% render 'device-glyph', family: family, repair: repair, scale: scale, lenses: lenses %}
+      {% render 'device-glyph', family: family, repair: repair, scale: scale %}
     </div>
     <span class="rv__badge">{% render 'repair-icon', icon: repair, family: family, size: 28 %}</span>
   </div>
