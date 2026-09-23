@@ -4365,6 +4365,73 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     if (btn) btn.onclick = function() { reset(); };
   }
 
+  function qwText(el) {
+    if (!el) return '';
+    return String(el.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+
+  /* Facts for the client email. Dates and courier notices stay on the card. */
+  function readQuoteSnapshot() {
+    var headingEl = document.querySelector('#qwResCard .qw-res-h');
+    var svc = document.querySelector('.qw-opt-card.sel[data-opt="svc"]');
+    var serviceName = '';
+    var servicePriceLabel = '';
+    if (svc) {
+      serviceName = qwText(svc.querySelector('.qw-opt-name'));
+      servicePriceLabel = qwText(svc.querySelector('.qw-opt-price'));
+      if (servicePriceLabel === '—' || servicePriceLabel === '-') servicePriceLabel = '';
+    }
+    var postEl = document.getElementById('qwPostcode');
+    var trust = [];
+    document.querySelectorAll('#qwPriceTrust .qw-trust-cell').forEach(function(cell) {
+      if (cell.classList.contains('qw-trust-reviews')) {
+        var score = qwText(cell.querySelector('.qw-trust-score'));
+        if (score) trust.push({ title: score, sub: qwText(cell.querySelector('.qw-trust-sub')), kind: 'reviews' });
+      } else {
+        var title = qwText(cell.querySelector('.qw-trust-title'));
+        if (title) trust.push({ title: title, sub: qwText(cell.querySelector('.qw-trust-sub')) });
+      }
+    });
+    var bigWrap = document.getElementById('qwPriceBigWrap');
+    var bigEl = document.getElementById('qwPriceBig');
+    var allIn = (bigWrap && !bigWrap.hidden && bigEl) ? qwText(bigEl) : '';
+    var priceLabel = qwText(document.querySelector('#qwPriceTrust .qw-price-from'));
+    var colorBtn = document.querySelector('#qwColorGrid .qw-color-btn.sel');
+    var speedCard = document.querySelector('.qw-opt-card.sel[data-opt="speed"]');
+    var expressName = '';
+    var expressMeta = '';
+    var expressPriceLabel = '';
+    var expressPrice = 0;
+    if (speedCard) {
+      expressPrice = parseFloat(speedCard.dataset.add || 0) || 0;
+      if (expressPrice > 0) {
+        expressName = qwText(speedCard.querySelector('.qw-opt-name'));
+        expressMeta = qwText(speedCard.querySelector('.qw-opt-meta'));
+        expressPriceLabel = qwText(speedCard.querySelector('.qw-opt-price'));
+      }
+    }
+    var diagnostic = S.route === 'diagnostic';
+    return {
+      screenTitle: qwText(document.getElementById('qw-s4t')),
+      badge: qwText(document.querySelector('#qwResCard .qw-res-badge')),
+      heading: qwText(headingEl),
+      postcode: postEl ? String(postEl.value || '').trim() : '',
+      serviceKind: selectedServiceKind() || '',
+      serviceName: serviceName,
+      servicePriceLabel: servicePriceLabel,
+      benchDays: repairBenchDays(S.device, { diagnostic: diagnostic }),
+      trust: trust,
+      priceLabel: priceLabel,
+      allIn: allIn,
+      deviceColor: colorBtn ? (colorBtn.getAttribute('data-color') || '') : '',
+      expressName: expressName,
+      expressMeta: expressMeta,
+      expressPriceLabel: expressPriceLabel,
+      expressPrice: expressPrice,
+      urgent: qwText(document.querySelector('.qw-urgent'))
+    };
+  }
+
     function wireEmailQuote(container, productTitle, price, route, productHandle) {
     var btn = container.querySelector('#qwEmailQuote');
     if (!btn) return;
@@ -4439,30 +4506,14 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
         /* Read base price from resolution card */
         var resCard = document.getElementById('qwResCard');
         var basePrice = resCard ? parseFloat(resCard.dataset.base || 0) : 0;
- 
-        /* Read express turnaround add-on */
-        var speedCard = document.querySelector('.qw-opt-card.sel[data-opt="speed"]');
-        var expressName = '';
-        var expressMeta = '';
-        var expressPrice = 0;
-        if (speedCard && parseFloat(speedCard.dataset.add || 0) > 0) {
-          var sn = speedCard.querySelector('.qw-opt-name');
-          var sm = speedCard.querySelector('.qw-opt-meta');
-          expressName = sn ? sn.textContent.trim() : '';
-          expressMeta = sm ? sm.textContent.trim() : '';
-          expressPrice = parseFloat(speedCard.dataset.add);
-        }
- 
-        /* Read service type and price */
+        var snap = readQuoteSnapshot();
+
+        /* Read service price add-on. The label on the card (Free pack, Included) is separate. */
         var svcCard = document.querySelector('.qw-opt-card.sel[data-opt="svc"]');
-        var serviceName = 'Courier collection';
+        var serviceName = snap.serviceName || 'Courier collection';
         var servicePrice = 0;
-        if (svcCard) {
-          var svn = svcCard.querySelector('.qw-opt-name');
-          serviceName = svn ? svn.textContent.trim() : 'Courier collection';
-          servicePrice = parseFloat(svcCard.dataset.add || 0);
-        }
- 
+        if (svcCard) servicePrice = parseFloat(svcCard.dataset.add || 0) || 0;
+
         /* Read diagnostic estimate rows */
         var estimates = [];
         document.querySelectorAll('.qw-estimate-row').forEach(function(row) {
@@ -4474,11 +4525,15 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
             });
           }
         });
- 
-        /* Read running total */
+
+        /* Visible all-in price. qwPriceBig is the figure on the card. */
         var totalEl = document.getElementById('qwPriceTotal');
-        var totalPrice = totalEl ? totalEl.textContent.trim() : gbp.format(basePrice);
- 
+        var totalPrice = snap.allIn || (totalEl ? totalEl.textContent.trim() : gbp.format(basePrice));
+
+        function qwJson(list) {
+          return list && list.length ? JSON.stringify(list) : null;
+        }
+
         var payload = {
             source: 'quote-wizard-email-quote',
             name: name,
@@ -4487,20 +4542,30 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
             deviceModel: S.model || '',
             faultArea: S.fault || '',
             issue: S.issue || '',
-            repairTitle: productTitle || '',
+            repairTitle: snap.heading || productTitle || '',
             route: route || 'repair',
             basePrice: basePrice,
-            expressName: expressName || null,
-            expressMeta: expressMeta || null,
-            expressPrice: expressPrice,
+            expressName: snap.expressName || null,
+            expressMeta: snap.expressMeta || null,
+            expressPrice: snap.expressPrice || 0,
+            expressPriceLabel: snap.expressPriceLabel || null,
             serviceName: serviceName,
+            serviceKind: snap.serviceKind || null,
             servicePrice: servicePrice,
+            servicePriceLabel: snap.servicePriceLabel || null,
+            benchDays: snap.benchDays || null,
             totalPrice: totalPrice,
             estimates: estimates.length > 0 ? JSON.stringify(estimates) : null,
             warranty: CFG.warrantyLabel || '2-year warranty',
             parts: partsClaimLabel(S.device, S.model),
             productUrl: productHandle ? 'https://www.icorrect.co.uk/products/' + productHandle : null,
-            deviceColor: (function(){ var cb = document.querySelector('#qwColorGrid .qw-color-btn.sel'); return cb ? cb.dataset.color : null; })(),
+            deviceColor: snap.deviceColor || null,
+            screenTitle: snap.screenTitle || null,
+            badge: snap.badge || null,
+            postcode: snap.postcode || null,
+            trust: qwJson(snap.trust),
+            priceLabel: snap.priceLabel || null,
+            urgent: snap.urgent || null,
             url: window.location.href,
             timestamp: new Date().toISOString()
         };
