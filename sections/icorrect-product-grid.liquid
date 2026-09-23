@@ -29,11 +29,17 @@
         endif
       endif
       assign model_order = blank
-      if imageless and emphasis == 'model'
+      if imageless
         assign grid_titles = collection.products | map: 'title' | join: '||'
-        capture model_order
-          render 'model-order', titles: grid_titles
-        endcapture
+        if emphasis == 'model'
+          capture model_order
+            render 'model-order', titles: grid_titles
+          endcapture
+        else
+          capture model_order
+            render 'repair-order', titles: grid_titles
+          endcapture
+        endif
         assign model_order = model_order | strip | split: ','
       endif
     -%}

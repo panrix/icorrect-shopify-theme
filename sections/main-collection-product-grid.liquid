@@ -158,6 +158,17 @@
                 if collection_repair != 'repair'
                   assign emphasis = 'model'
                 endif
+                assign grid_titles = collection.products | map: 'title' | join: '||'
+                if emphasis == 'model'
+                  capture grid_order
+                    render 'model-order', titles: grid_titles
+                  endcapture
+                else
+                  capture grid_order
+                    render 'repair-order', titles: grid_titles
+                  endcapture
+                endif
+                assign grid_order = grid_order | strip | split: ','
               endif
             -%}
             {%- if imageless -%}
@@ -173,7 +184,14 @@
               "
             >
               {% assign skip_card_product_styles = false %}
-              {%- for product in collection.products -%}
+              {%- for product_slot in collection.products -%}
+                {%- liquid
+                  assign product = product_slot
+                  if imageless and grid_order != blank
+                    assign product_index = grid_order[forloop.index0] | plus: 0
+                    assign product = collection.products[product_index]
+                  endif
+                -%}
                 {% assign lazy_load = false %}
                 {%- if forloop.index > 2 -%}
                   {%- assign lazy_load = true -%}

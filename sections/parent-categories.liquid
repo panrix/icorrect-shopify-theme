@@ -37,46 +37,6 @@
       endif
       assign tile_order = tile_order | strip | split: ','
 
-      assign tile_style = section.settings.tile_style | default: 'auto'
-      if imageless and tile_style == 'auto'
-        assign first_family = ''
-        assign same_family = true
-        assign all_models = true
-        assign all_priced = true
-        for block in section.blocks
-          capture pre_meta
-            render 'repair-meta', title: block.settings.title, repair_context: tile_context
-          endcapture
-          assign pre_meta = pre_meta | strip | split: '|'
-          if forloop.first
-            assign first_family = pre_meta[0]
-          elsif pre_meta[0] != first_family
-            assign same_family = false
-          endif
-          if pre_meta[1] != 'repair'
-            assign all_models = false
-          endif
-          assign pre_priced = false
-          if block.settings.link contains '/collections/'
-            assign pre_handle = block.settings.link | split: '/collections/' | last | split: '?' | first | split: '#' | first
-            assign pre_titles = collections[pre_handle].products | map: 'title' | join: ' '
-            if pre_titles contains 'Screen' or pre_titles contains 'Battery' or pre_titles contains 'Display'
-              assign pre_priced = true
-            endif
-          endif
-          unless pre_priced
-            assign all_priced = false
-          endunless
-        endfor
-        assign tile_style = 'device'
-        if same_family and all_models and section.blocks.size > 1
-          if all_priced and section.settings.show_stats != false
-            assign tile_style = 'prices'
-          else
-            assign tile_style = 'compact'
-          endif
-        endif
-      endif
     -%}
     <div class="parent-category-row{% if imageless %} parent-category-row--imageless{% endif %}">
       {% for tile_index in tile_order %}
@@ -143,71 +103,32 @@
             endif
             assign tile_stats = tile_stats | split: '|'
           -%}
-          {%- if tile_style == 'compact' and tile_repair == 'repair' -%}
-            <div class="parent-category-col col-{{ section.settings.column_per_row }}" {{ block.shopify_attributes }}>
-              <div class="mt mt--compact" data-family="{{ tile_family }}">
-                <div class="mt__compact-text">
-                  <h3 class="mt__title">{{ block.settings.title | escape }}</h3>
-                  {%- if tile_stats != blank -%}
-                    <p class="mt__meta">
-                      {%- for stat in tile_stats -%}<span>{{ stat | escape }}</span>{%- endfor -%}
-                    </p>
-                  {%- endif -%}
-                </div>
-                {%- if block.settings.link != blank -%}
-                  <a class="mt__go" href="{{ block.settings.link }}" aria-label="{{ block.settings.btn | default: 'View repairs' | escape }}: {{ block.settings.title | escape }}">
-                    {%- render 'repair-icon', icon: 'arrow', size: 18 -%}
-                  </a>
-                {%- endif -%}
-              </div>
-            </div>
-            {%- continue -%}
-          {%- endif -%}
-          {%- if tile_style == 'prices' and tile_repair == 'repair' -%}
-            {%- if tile_screen < 100000000 or tile_battery < 100000000 -%}
-              <div class="parent-category-col col-{{ section.settings.column_per_row }}" {{ block.shopify_attributes }}>
-                <div class="mt mt--prices" data-family="{{ tile_family }}">
-                  {%- if tile_count > 0 -%}
-                    <span class="mt__family">{% render 'repair-icon', icon: tile_family, size: 14 %}{{ tile_count }} repairs</span>
-                  {%- endif -%}
-                  <h3 class="mt__title">{{ block.settings.title | escape }}</h3>
-                  <ul class="mt__prices">
-                    {%- if tile_screen < 100000000 -%}
-                      <li class="mt__price-row">
-                        {% render 'repair-icon', icon: 'screen', family: tile_family, size: 18 %}Screen
-                        <strong>{% if tile_screen_count > 1 %}<small>from </small>{% endif %}{{ tile_screen | money_without_trailing_zeros }}</strong>
-                      </li>
-                    {%- endif -%}
-                    {%- if tile_battery < 100000000 -%}
-                      <li class="mt__price-row">
-                        {% render 'repair-icon', icon: 'battery', size: 18 %}Battery
-                        <strong>{% if tile_battery_count > 1 %}<small>from </small>{% endif %}{{ tile_battery | money_without_trailing_zeros }}</strong>
-                      </li>
-                    {%- endif -%}
-                  </ul>
-                  <span class="mt__spacer"></span>
-                  {%- if block.settings.link != blank -%}
-                    <a class="mt__btn" href="{{ block.settings.link }}">
-                      {%- if tile_count > 0 -%}<span class="mt__btn-full">View all {{ tile_count }} repairs</span><span class="mt__btn-short">{{ tile_count }} repairs</span>{% else %}{{ block.settings.btn | default: 'View repairs' | escape }}{% endif %}
-                      {% render 'repair-icon', icon: 'arrow', size: 15 -%}
-                    </a>
-                  {%- endif -%}
-                </div>
-              </div>
-              {%- continue -%}
-            {%- endif -%}
-          {%- endif -%}
           <div class="parent-category-col col-{{ section.settings.column_per_row }}" {{ block.shopify_attributes }}>
             <div class="mt" data-family="{{ tile_family }}" data-repair="{{ tile_repair }}">
               <span class="mt__visual">
                 {%- if tile_repair != 'repair' -%}
                   {% render 'repair-icon', icon: tile_repair, family: tile_family, size: 40 %}
                 {%- else -%}
-                  {% render 'device-glyph', family: tile_family, scale: tile_scale %}
+                  {% render 'device-glyph', family: tile_family, title: block.settings.title, repair_context: tile_context, scale: tile_scale %}
                 {%- endif -%}
               </span>
               <h3 class="mt__title">{{ block.settings.title | escape }}</h3>
-              {%- if tile_stats != blank -%}
+              {%- if tile_repair == 'repair' and tile_screen < 100000000 or tile_repair == 'repair' and tile_battery < 100000000 -%}
+                <ul class="mt__prices">
+                  {%- if tile_screen < 100000000 -%}
+                    <li class="mt__price-row">
+                      Screen
+                      <strong>{% if tile_screen_count > 1 %}<small>from </small>{% endif %}{{ tile_screen | money_without_trailing_zeros }}</strong>
+                    </li>
+                  {%- endif -%}
+                  {%- if tile_battery < 100000000 -%}
+                    <li class="mt__price-row">
+                      Battery
+                      <strong>{% if tile_battery_count > 1 %}<small>from </small>{% endif %}{{ tile_battery | money_without_trailing_zeros }}</strong>
+                    </li>
+                  {%- endif -%}
+                </ul>
+              {%- elsif tile_stats != blank -%}
                 <p class="mt__meta">
                   {%- for stat in tile_stats -%}<span>{{ stat | escape }}</span>{%- endfor -%}
                 </p>
@@ -215,7 +136,11 @@
               <span class="mt__spacer"></span>
               {%- if block.settings.link != blank -%}
                 <a class="mt__btn" href="{{ block.settings.link }}">
-                  {{- block.settings.btn | default: 'View repairs' | escape }}
+                  {%- if tile_repair == 'repair' and tile_count > 0 -%}
+                    <span class="mt__btn-full">View all {{ tile_count }} repairs</span><span class="mt__btn-short">{{ tile_count }} repairs</span>
+                  {%- else -%}
+                    {{- block.settings.btn | default: 'View repairs' | escape -}}
+                  {%- endif %}
                   {% render 'repair-icon', icon: 'arrow', size: 15 -%}
                 </a>
               {%- endif -%}
@@ -555,23 +480,10 @@ margin: 0;
         "default": true
       },
       {
-        "type": "select",
-        "id": "tile_style",
-        "label": "Tile style (imageless design)",
-        "options": [
-          { "value": "auto", "label": "Auto" },
-          { "value": "device", "label": "Device diagram" },
-          { "value": "prices", "label": "Headline prices (screen / battery)" },
-          { "value": "compact", "label": "Compact (text only)" }
-        ],
-        "default": "auto",
-        "info": "Auto shows pictures only when they tell tiles apart: different devices or repair types get diagrams/icons; tiles that are all the same kind of device get headline prices (when every tile's collection has them) or compact text tiles."
-      },
-      {
         "type": "checkbox",
         "id": "show_stats",
-        "label": "Show repair count and starting price",
-        "info": "Imageless design only. Read live from each tile's linked collection; diagnostics are excluded from the starting price.",
+        "label": "Show headline prices and repair count",
+        "info": "Imageless design only. Screen and battery prices (or repair count and starting price) are read live from each tile's linked collection; diagnostics are excluded.",
         "default": true
       },
       {

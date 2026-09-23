@@ -2,8 +2,9 @@
   Imageless repair card: device diagram with the repaired part highlighted,
   model / repair labels, price and booking link.
   The heading always contains model + repair text so link text stays close to
-  the product title for SEO; emphasis only changes which part reads as the
-  eyebrow.
+  the product title for SEO. On model pages (emphasis 'repair') the model is
+  visually hidden because the page title already names it; on repair pages
+  (emphasis 'model') the repair reads as the eyebrow.
 
   Accepts:
   - product: {Object} product
@@ -40,7 +41,7 @@
 -%}
 <div class="rc rc--{{ emphasis }}" data-family="{{ family }}" data-repair="{{ repair }}">
   <div class="rc__visual">
-    {% render 'device-glyph', family: family, repair: repair, scale: scale %}
+    {% render 'device-glyph', family: family, title: product.title, repair: repair, scale: scale %}
   </div>
   <div class="rc__body">
     <{{ heading_tag }} class="rc__title">
@@ -50,7 +51,7 @@
             <span class="rc__name">{{ model | escape }}</span>
             <span class="rc__eyebrow">{{ name | escape }}</span>
           {%- else -%}
-            <span class="rc__eyebrow">{{ model | escape }}</span>
+            <span class="visually-hidden">{{ model | escape }} </span>
             <span class="rc__name">{{ name | escape }}</span>
           {%- endif -%}
         {%- else -%}

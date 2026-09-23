@@ -165,11 +165,17 @@
             endif
           endif
           assign model_order = blank
-          if imageless and emphasis == 'model'
+          if imageless
             assign fc_titles = section.settings.collection.products | map: 'title' | join: '||'
-            capture model_order
-              render 'model-order', titles: fc_titles
-            endcapture
+            if emphasis == 'model'
+              capture model_order
+                render 'model-order', titles: fc_titles
+              endcapture
+            else
+              capture model_order
+                render 'repair-order', titles: fc_titles
+              endcapture
+            endif
             assign model_order = model_order | strip | split: ','
           endif
         -%}
