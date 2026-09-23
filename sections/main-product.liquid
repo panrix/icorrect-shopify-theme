@@ -191,10 +191,23 @@
   {%- endif -%}
 
   {% assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src' %}
+  {%- liquid
+    assign imageless = true
+    if settings.repair_imageless == false
+      assign imageless = false
+    endif
+  -%}
+  {%- if imageless -%}
+    {{ 'repair-imageless.css' | asset_url | stylesheet_tag }}
+  {%- endif -%}
   <div class="page-width">
-    <div class="product product--{{ section.settings.media_size }} product--{{ section.settings.media_position }} product--{{ section.settings.gallery_layout }} product--mobile-{{ section.settings.mobile_thumbnails }} grid grid--1-col {% if product.media.size > 0 %}grid--2-col-tablet{% else %}product--no-media{% endif %}">
+    <div class="product product--{{ section.settings.media_size }} product--{{ section.settings.media_position }} product--{{ section.settings.gallery_layout }} product--mobile-{{ section.settings.mobile_thumbnails }} grid grid--1-col {% if product.media.size > 0 or imageless %}grid--2-col-tablet{% else %}product--no-media{% endif %}{% if imageless %} product--repair-visual{% endif %}">
       <div class="grid__item product__media-wrapper">
-        {% render 'product-media-gallery', variant_images: variant_images %}
+        {%- if imageless -%}
+          {% render 'repair-visual', product: product %}
+        {%- else -%}
+          {% render 'product-media-gallery', variant_images: variant_images %}
+        {%- endif -%}
       </div>
       <div class="product__info-wrapper grid__item{% if settings.page_width > 1400 and section.settings.media_size == "small" %} product__info-wrapper--extra-padding{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
         <section
@@ -830,7 +843,9 @@
       </div>
     </div>
 
-    {% render 'product-media-modal', variant_images: variant_images %}
+    {%- unless imageless -%}
+      {% render 'product-media-modal', variant_images: variant_images %}
+    {%- endunless -%}
 
     {% assign popups = section.blocks | where: 'type', 'popup' %}
     {%- for block in popups -%}
@@ -858,7 +873,7 @@
       </modal-dialog>
     {%- endfor -%}
 
-    {%- if product.media.size > 0 -%}
+    {%- if product.media.size > 0 and imageless == false -%}
       <script src="{{ 'product-modal.js' | asset_url }}" defer="defer"></script>
       <script src="{{ 'media-gallery.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
