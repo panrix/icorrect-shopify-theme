@@ -1,0 +1,188 @@
+{%- comment -%}
+  Derives display metadata for a repair product or model tile from data that
+  already exists (title, tags, product type), so new devices and repairs never
+  need bespoke artwork.
+
+  Accepts:
+  - title: {String} product or tile title (required)
+  - repair_tags: {Array|String} product tags (optional). Deliberately not
+    named "tags": on collection pages an unset "tags" resolves to a page global.
+  - repair_context: {String} extra text used only to infer the device family when the
+    title does not name it, e.g. "Series 9" on an Apple Watch page (optional)
+
+  Outputs a single pipe-delimited string, consumed via capture + split:
+  family|repair|scale|model|name|qualifier|lenses
+
+  - family: iphone | ipad | macbook | watch | device
+  - repair: repair key understood by repair-icon / device-glyph, or "repair"
+    when the title is a model rather than a repair
+  - scale: relative on-screen size of the device glyph (0.78–1)
+  - model / name / qualifier: "iPhone 16 Pro" / "Screen Repair" / "Genuine OLED"
+  - lenses: rear camera count (1–3) used by the back-of-device diagram
+
+  Usage:
+  {%- capture meta -%}{% render 'repair-meta', title: product.title, repair_tags: product.tags %}{%- endcapture -%}
+  {%- assign meta = meta | split: '|' -%}
+{%- endcomment -%}
+{%- liquid
+  assign t = title | strip | replace: '|', '/'
+  assign tl = t | downcase
+  assign tag_text = repair_tags | join: ' ' | downcase | replace: '-', ' '
+  assign hay = tl | append: ' ' | append: tag_text
+  assign ctx = repair_context | downcase
+
+  assign family = 'device'
+  if tl contains 'iphone'
+    assign family = 'iphone'
+  elsif tl contains 'ipad'
+    assign family = 'ipad'
+  elsif tl contains 'macbook'
+    assign family = 'macbook'
+  elsif tl contains 'watch'
+    assign family = 'watch'
+  elsif ctx contains 'iphone'
+    assign family = 'iphone'
+  elsif ctx contains 'ipad'
+    assign family = 'ipad'
+  elsif ctx contains 'macbook' or ctx contains 'laptop'
+    assign family = 'macbook'
+  elsif ctx contains 'watch'
+    assign family = 'watch'
+  endif
+
+  assign repair = 'repair'
+  if hay contains 'diagnos'
+    assign repair = 'diagnostic'
+  elsif hay contains 'flexgate'
+    assign repair = 'flexgate'
+  elsif hay contains 'dustgate'
+    assign repair = 'dustgate'
+  elsif hay contains 'touch bar repair'
+    assign repair = 'touch-bar'
+  elsif hay contains 'face id'
+    assign repair = 'face-id'
+  elsif hay contains 'camera lens'
+    assign repair = 'rear-camera-lens'
+  elsif hay contains 'front camera'
+    assign repair = 'front-camera'
+  elsif hay contains 'rear camera'
+    assign repair = 'rear-camera'
+  elsif hay contains 'rear glass' or hay contains 'back glass' or hay contains 'housing'
+    assign repair = 'rear-glass'
+  elsif hay contains 'heart rate'
+    assign repair = 'heart-rate'
+  elsif hay contains 'earpiece'
+    assign repair = 'earpiece'
+  elsif hay contains 'speaker'
+    assign repair = 'loudspeaker'
+  elsif hay contains 'microphone'
+    assign repair = 'microphone'
+  elsif hay contains 'charging port' or hay contains ' port repair' or hay contains 'usb c'
+    assign repair = 'charging-port'
+  elsif hay contains 'battery' or hay contains 'batteries'
+    assign repair = 'battery'
+  elsif hay contains 'keyboard' or hay contains 'keybiard'
+    assign repair = 'keyboard'
+  elsif hay contains 'trackpad'
+    assign repair = 'trackpad'
+  elsif hay contains 'crown'
+    assign repair = 'crown'
+  elsif hay contains 'button'
+    assign repair = 'button'
+  elsif hay contains 'data recovery'
+    assign repair = 'data'
+  elsif hay contains 'liquid' or hay contains 'water damage'
+    assign repair = 'liquid'
+  elsif hay contains 'screen' or hay contains 'display' or hay contains 'glass' or hay contains 'lcd' or hay contains 'oled'
+    assign repair = 'screen'
+  elsif hay contains 'camera'
+    assign repair = 'rear-camera'
+  endif
+
+  assign scale = '0.92'
+  case family
+    when 'iphone'
+      if tl contains 'max' or tl contains 'plus'
+        assign scale = '1'
+      elsif tl contains 'mini'
+        assign scale = '0.8'
+      elsif tl contains 'iphone se' or tl contains '16e' or tl contains '17e' or tl contains 'iphone 8'
+        assign scale = '0.86'
+      elsif tl contains ' air'
+        assign scale = '0.97'
+      endif
+    when 'ipad'
+      assign scale = '0.9'
+      if tl contains ' 13' or tl contains '12.9'
+        assign scale = '1'
+      elsif tl contains 'mini'
+        assign scale = '0.78'
+      endif
+    when 'macbook'
+      assign scale = '0.94'
+      if tl contains ' 16'
+        assign scale = '1'
+      elsif tl contains ' 15'
+        assign scale = '0.97'
+      elsif tl contains ' 14'
+        assign scale = '0.93'
+      elsif tl contains ' 13'
+        assign scale = '0.9'
+      endif
+    when 'watch'
+      assign scale = '0.94'
+      if tl contains 'ultra' or tl contains '49mm' or tl contains '46mm' or tl contains '45mm' or tl contains '44mm'
+        assign scale = '1'
+      elsif tl contains '38mm' or tl contains '40mm' or tl contains '41mm'
+        assign scale = '0.88'
+      endif
+  endcase
+
+  assign lenses = 2
+  if family == 'iphone'
+    if tl contains ' pro'
+      assign lenses = 3
+    elsif tl contains 'xr' or tl contains 'iphone se' or tl contains '16e' or tl contains '17e' or tl contains ' air'
+      assign lenses = 1
+    elsif tl contains 'iphone 8' or tl contains 'iphone 7'
+      unless tl contains 'plus'
+        assign lenses = 1
+      endunless
+    endif
+  elsif family == 'ipad'
+    assign lenses = 1
+  endif
+
+  assign phrases = ' Diagnostic| Original Screen| Genuine Screen| Genuine Battery| Screen| Display| Glass| LCD| OLED| Battery| Charging Port| Rear Camera Lens| Rear Camera| Front Camera| Camera Lens| Camera| Rear Glass| Rear Housing| Back Glass| Housing| Face ID| Earpiece| Loudspeaker| Speaker| Microphone| Power Button| Volume Button| Mute Button| Side Button| Home Button| Button| Crown| Keyboard| Trackpad| Touch Bar Repair| Flexgate| Dustgate| Heart Rate| Data Recovery| Liquid Damage| Water Damage' | split: '|'
+  assign cut = t.size
+  for p in phrases
+    if t contains p
+      assign idx = t | split: p | first | size
+      if idx < cut
+        assign cut = idx
+      endif
+    endif
+  endfor
+
+  assign model = t
+  assign name = ''
+  assign qualifier = ''
+  if cut < t.size
+    assign model = t | slice: 0, cut | strip
+    assign rest_start = cut | plus: 1
+    assign name = t | slice: rest_start, t.size | strip
+    if name contains ' ('
+      assign qualifier = name | split: ' (' | last | remove: ')' | strip
+      assign name = name | split: ' (' | first | strip
+    elsif name contains ' - '
+      assign qualifier = name | split: ' - ' | last | strip
+      assign name = name | split: ' - ' | first | strip
+    endif
+    assign nl = name | downcase
+    unless nl contains 'repair' or nl contains 'replacement' or nl contains 'diagnostic' or nl contains 'recovery' or nl contains 'damage'
+      assign name = name | append: ' Repair'
+    endunless
+  endif
+
+  echo family | append: '|' | append: repair | append: '|' | append: scale | append: '|' | append: model | append: '|' | append: name | append: '|' | append: qualifier | append: '|' | append: lenses
+-%}

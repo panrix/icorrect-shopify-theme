@@ -1,0 +1,91 @@
+{%- comment -%}
+  Imageless repair card: device diagram with the repaired part highlighted,
+  repair icon, model / repair labels, price and booking link.
+  The heading always contains model + repair text so link text stays close to
+  the product title for SEO; emphasis only changes which part reads as the
+  eyebrow.
+
+  Accepts:
+  - product: {Object} product
+  - emphasis: {String} 'repair' (model pages: many repairs, one model) or
+    'model' (repair pages: one repair across many models). Default 'repair'.
+  - button_label: {String} default 'Book Repair'
+  - heading_tag: {String} default 'h3'
+
+  Usage:
+  {% render 'repair-card', product: product, emphasis: 'model' %}
+{%- endcomment -%}
+{%- liquid
+  assign emphasis = emphasis | default: 'repair'
+  assign button_label = button_label | default: 'Book Repair'
+  assign heading_tag = heading_tag | default: 'h3'
+
+  capture meta_raw
+    render 'repair-meta', title: product.title, repair_tags: product.tags, repair_context: product.type
+  endcapture
+  assign meta = meta_raw | strip | split: '|'
+  assign family = meta[0]
+  assign repair = meta[1]
+  assign scale = meta[2]
+  assign model = meta[3]
+  assign name = meta[4]
+  assign qualifier = meta[5]
+  assign lenses = meta[6]
+
+  assign ql = qualifier | downcase
+  assign qualifier_is_quality = false
+  if ql contains 'genuine' or ql contains 'original' or ql contains 'apple'
+    assign qualifier_is_quality = true
+  endif
+
+  assign price = product.price | money_without_trailing_zeros
+-%}
+<div class="rc rc--{{ emphasis }}" data-family="{{ family }}" data-repair="{{ repair }}">
+  <div class="rc__visual">
+    {% render 'device-glyph', family: family, repair: repair, scale: scale, lenses: lenses %}
+    <span class="rc__badge">{% render 'repair-icon', icon: repair, family: family, size: 20 %}</span>
+  </div>
+  <div class="rc__body">
+    <{{ heading_tag }} class="rc__title">
+      <a href="{{ product.url }}">
+        {%- if name != blank -%}
+          {%- if emphasis == 'model' -%}
+            <span class="rc__name">{{ model | escape }}</span>
+            <span class="rc__eyebrow">{{ name | escape }}</span>
+          {%- else -%}
+            <span class="rc__eyebrow">{{ model | escape }}</span>
+            <span class="rc__name">{{ name | escape }}</span>
+          {%- endif -%}
+        {%- else -%}
+          <span class="rc__name">{{ product.title | escape }}</span>
+        {%- endif -%}
+      </a>
+    </{{ heading_tag }}>
+
+    {%- assign features = product.metafields.custom.product_features.value -%}
+    {%- if qualifier != blank or features != blank -%}
+      <p class="rc__meta">
+        {%- if qualifier != blank -%}
+          <span class="rc__chip{% if qualifier_is_quality %} rc__chip--ok{% endif %}">
+            {%- if qualifier_is_quality -%}{% render 'repair-icon', icon: 'check', size: 13 %}{%- endif -%}
+            {{- qualifier | escape -}}
+          </span>
+        {%- endif -%}
+        {%- for feature in features -%}
+          <span class="rc__chip">{{ feature | escape }}</span>
+        {%- endfor -%}
+      </p>
+    {%- endif -%}
+
+    <div class="rc__footer">
+      <span class="rc__price">
+        {%- if product.price_varies -%}<small>From</small>{%- endif -%}
+        {{- price -}}
+      </span>
+      <a href="{{ product.url }}" class="rc__btn" tabindex="-1" aria-hidden="true">
+        {{- button_label | escape }}
+        {% render 'repair-icon', icon: 'arrow', size: 16 -%}
+      </a>
+    </div>
+  </div>
+</div>

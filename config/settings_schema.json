@@ -1465,5 +1465,39 @@
         "default": "scheme-1"
       }
     ]
+  },
+  {
+    "name": "Repair pages",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "repair_imageless",
+        "label": "Imageless repair design",
+        "info": "Draws repair cards, model tiles and product pages from product data (device diagram, repair icon, labels) instead of uploaded device images. New models need no artwork. Untick to show uploaded images again.",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Product page trust row"
+      },
+      {
+        "type": "text",
+        "id": "repair_fact_1",
+        "label": "Fact 1 (shield icon)",
+        "default": "2-year warranty"
+      },
+      {
+        "type": "text",
+        "id": "repair_fact_2",
+        "label": "Fact 2 (parts icon)",
+        "default": "Genuine Apple parts"
+      },
+      {
+        "type": "text",
+        "id": "repair_fact_3",
+        "label": "Fact 3 (courier icon)",
+        "default": "London collection & UK courier"
+      }
+    ]
   }
 ]

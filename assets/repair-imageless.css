@@ -1,0 +1,523 @@
+/*
+  Imageless repair UI: device diagrams, product-page repair panel, repair cards
+  and model tiles. Tokens mirror assets/quote-wizard.css so these components
+  sit naturally next to the Quote Wizard.
+*/
+:root {
+  --ri-ink: #1d1d1f;
+  --ri-ink-2: #6e6e73;
+  --ri-ink-3: #86868b;
+  --ri-line: rgba(0, 0, 0, 0.08);
+  --ri-line-strong: rgba(0, 0, 0, 0.14);
+  --ri-soft: #f5f5f7;
+  --ri-soft-2: #fafafa;
+  --ri-accent: #0070f3;
+  --ri-accent-soft: rgba(0, 112, 243, 0.1);
+  --ri-green: #1a6b34;
+  --ri-green-bg: #e6f6ec;
+  --ri-r-sm: 10px;
+  --ri-r-md: 16px;
+  --ri-r-lg: 24px;
+  --ri-shadow-lift: 0 1px 2px rgba(0, 0, 0, 0.04), 0 12px 32px -12px rgba(0, 0, 0, 0.18);
+  --ri-ease: 200ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* ---------- Device diagram ---------- */
+.dg {
+  --dg-w: 110px;
+  display: inline-block;
+  width: calc(var(--dg-w) * var(--dg-scale, 1));
+  line-height: 0;
+}
+.dg__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.dg__svg * {
+  vector-effect: non-scaling-stroke;
+  stroke: var(--ri-ink);
+  stroke-width: 1.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.dg-body,
+.dg-btn,
+.dg-crown,
+.dg-module { fill: #fff; }
+.dg-base { fill: #fff; }
+.dg-band { fill: var(--ri-soft); }
+.dg-glass { fill: var(--ri-soft-2); }
+.dg-screen { fill: #eceef1; stroke: rgba(29, 29, 31, 0.28); }
+.dg-island,
+.dg-cam { fill: var(--ri-ink); stroke: none; }
+.dg-lens { fill: #2c2c2e; }
+.dg-flash { fill: #e8e8ea; stroke: rgba(29, 29, 31, 0.4); }
+.dg-earpiece { stroke: rgba(29, 29, 31, 0.3); stroke-width: 1.6px; }
+.dg-port { fill: #d4d6da; stroke: none; }
+.dg-grille,
+.dg-leds { stroke: rgba(29, 29, 31, 0.45); stroke-width: 2.6px; }
+.dg-hinge { stroke: rgba(29, 29, 31, 0.18); }
+.dg-keyboard,
+.dg-trackpad { fill: var(--ri-soft); stroke: rgba(29, 29, 31, 0.3); }
+.dg-keys { stroke: rgba(29, 29, 31, 0.2); }
+.dg-sensor { fill: none; }
+.dg-touchbar,
+.dg-battery,
+.dg-dust,
+.dg-crack,
+.dg-scan { display: none; }
+
+.dg .is-hl {
+  display: inline;
+  stroke: var(--ri-accent);
+  fill: var(--ri-accent-soft);
+  filter: drop-shadow(0 0 5px rgba(0, 112, 243, 0.45));
+}
+.dg .dg-island.is-hl,
+.dg .dg-cam.is-hl,
+.dg .dg-lens.is-hl,
+.dg .dg-port.is-hl { fill: var(--ri-accent); }
+.dg .dg-grille.is-hl,
+.dg .dg-leds.is-hl,
+.dg .dg-dust.is-hl { stroke-width: 3.2px; }
+.dg .dg-battery.is-hl { stroke-dasharray: 4 3; }
+.dg .dg-hinge.is-hl { stroke-width: 2.4px; }
+.dg .dg-touchbar.is-hl { fill: var(--ri-accent); }
+.dg .dg-sensor.is-hl { fill: none; }
+
+.dg--part-screen .dg-crack,
+.dg--part-glass .dg-crack--back {
+  display: inline;
+  fill: none;
+  stroke: var(--ri-accent);
+  stroke-width: 1.3px;
+}
+.dg--part-battery .dg-screen { fill: #f4f5f7; stroke-dasharray: 3 3; }
+.dg--part-scan .dg-scan {
+  display: inline;
+  fill: var(--ri-accent);
+  stroke: none;
+  opacity: 0.55;
+  filter: drop-shadow(0 0 6px rgba(0, 112, 243, 0.6));
+  animation: dg-scan 3.2s ease-in-out infinite;
+}
+.dg--iphone { --dg-scan-travel: 214px; }
+.dg--ipad { --dg-scan-travel: 206px; }
+.dg--macbook { --dg-scan-travel: 98px; }
+.dg--watch { --dg-scan-travel: 122px; }
+
+@keyframes dg-scan {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(var(--dg-scan-travel)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dg--part-scan .dg-scan { animation: none; transform: translateY(calc(var(--dg-scan-travel) / 2)); }
+}
+
+/* ---------- Product page repair panel ---------- */
+.rv {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  height: 100%;
+  min-height: 520px;
+  padding: 56px 32px 40px;
+  background: var(--ri-soft);
+  overflow: hidden;
+  isolation: isolate;
+}
+.rv::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.085) 1px, transparent 1.2px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(ellipse 60% 55% at 50% 42%, #000 20%, transparent 75%);
+  mask-image: radial-gradient(ellipse 60% 55% at 50% 42%, #000 20%, transparent 75%);
+}
+.rv__stage {
+  position: relative;
+  width: min(360px, 78%);
+  aspect-ratio: 1;
+}
+.rv__disc {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--ri-line), 0 40px 80px -40px rgba(0, 0, 0, 0.28);
+}
+.rv__disc::before {
+  content: "";
+  position: absolute;
+  inset: 16px;
+  border-radius: 50%;
+  border: 1px dashed var(--ri-line-strong);
+}
+.rv .dg--iphone { --dg-w: 104px; }
+.rv .dg--ipad { --dg-w: 168px; }
+.rv .dg--macbook { --dg-w: 250px; }
+.rv .dg--watch { --dg-w: 120px; }
+.rv__badge {
+  position: absolute;
+  top: 6%;
+  right: 4%;
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--ri-ink);
+  box-shadow: 0 0 0 6px var(--ri-soft), 0 14px 28px -10px rgba(0, 0, 0, 0.45);
+}
+.rv__labels {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rv__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px 7px 11px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  color: var(--ri-ink);
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--ri-line);
+}
+.rv__chip--ink { color: #fff; background: var(--ri-ink); box-shadow: none; }
+.rv__chip--ok { color: var(--ri-green); background: var(--ri-green-bg); box-shadow: none; }
+.rv__facts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 22px;
+  margin: 0;
+  padding: 18px 0 0;
+  list-style: none;
+  border-top: 1px solid var(--ri-line);
+  width: min(560px, 100%);
+}
+.rv__fact {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--ri-ink-2);
+}
+.rv__fact .repair-icon { color: var(--ri-ink); flex: none; }
+
+@media screen and (max-width: 749px) {
+  .rv {
+    min-height: 0;
+    gap: 18px;
+    padding: 32px 16px 24px;
+  }
+  .rv__stage { width: min(230px, 64vw); }
+  .rv__disc::before { inset: 10px; }
+  .rv .dg--iphone { --dg-w: 66px; }
+  .rv .dg--ipad { --dg-w: 106px; }
+  .rv .dg--macbook { --dg-w: 158px; }
+  .rv .dg--watch { --dg-w: 76px; }
+  .rv__badge { width: 48px; height: 48px; box-shadow: 0 0 0 4px var(--ri-soft), 0 10px 20px -8px rgba(0, 0, 0, 0.45); }
+  .rv__badge .repair-icon { width: 20px; height: 20px; }
+  .rv__chip { font-size: 12px; padding: 6px 12px 6px 9px; }
+  .rv__facts { display: none; }
+}
+
+/* ---------- Repair card ---------- */
+.rc {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: var(--ri-r-md);
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--ri-line);
+  transition: box-shadow var(--ri-ease), transform var(--ri-ease);
+}
+.rc:hover { box-shadow: 0 0 0 1px var(--ri-line-strong), var(--ri-shadow-lift); transform: translateY(-2px); }
+.rc:focus-within { box-shadow: 0 0 0 2px var(--ri-ink); }
+.rc__visual {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 168px;
+  margin: 6px 6px 0;
+  border-radius: calc(var(--ri-r-md) - 5px);
+  background: var(--ri-soft);
+  overflow: hidden;
+  isolation: isolate;
+}
+.rc__visual::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.07) 1px, transparent 1.2px);
+  background-size: 16px 16px;
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 10%, transparent 70%);
+  mask-image: radial-gradient(circle at 50% 50%, #000 10%, transparent 70%);
+}
+.rc .dg--iphone { --dg-w: 60px; }
+.rc .dg--ipad { --dg-w: 96px; }
+.rc .dg--macbook { --dg-w: 156px; }
+.rc .dg--watch { --dg-w: 70px; }
+.rc__badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  color: var(--ri-ink);
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--ri-line), 0 4px 12px -6px rgba(0, 0, 0, 0.2);
+}
+.rc__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 10px;
+  padding: 18px 20px 20px;
+}
+.rc__title {
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--ri-ink);
+}
+.rc__title a {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: inherit;
+  text-decoration: none;
+}
+.rc--model .rc__title a { flex-direction: column-reverse; }
+.rc__name { display: block; }
+.rc__title a::after { content: ""; position: absolute; inset: 0; border-radius: inherit; z-index: 1; }
+.rc__eyebrow {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ri-ink-3);
+}
+.rc__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+}
+.rc__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--ri-ink-2);
+  background: var(--ri-soft);
+}
+.rc__chip--ok { color: var(--ri-green); background: var(--ri-green-bg); }
+.rc__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--ri-line);
+}
+.rc__price {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ri-ink);
+}
+.rc__price small {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ri-ink-3);
+}
+.rc__btn {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px 10px 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: #fff;
+  background: var(--ri-ink);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity var(--ri-ease);
+}
+.rc__btn:hover { opacity: 0.88; color: #fff; }
+.rc__btn .repair-icon { transition: transform var(--ri-ease); }
+.rc:hover .rc__btn .repair-icon { transform: translateX(2px); }
+
+@media screen and (max-width: 749px) {
+  .rc {
+    display: grid;
+    grid-template-columns: 104px 1fr;
+    align-items: stretch;
+  }
+  .rc__visual {
+    height: auto;
+    min-height: 112px;
+    margin: 6px 0 6px 6px;
+  }
+  .rc .dg--iphone { --dg-w: 34px; }
+  .rc .dg--ipad { --dg-w: 56px; }
+  .rc .dg--macbook { --dg-w: 84px; }
+  .rc .dg--watch { --dg-w: 42px; }
+  .rc__badge {
+    top: 6px;
+    left: 6px;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+  }
+  .rc__badge .repair-icon { width: 15px; height: 15px; }
+  .rc__body { gap: 8px; padding: 14px 14px 14px 16px; }
+  .rc__title { font-size: 16px; gap: 2px; }
+  .rc__eyebrow { font-size: 11px; }
+  .rc__footer { padding-top: 10px; }
+  .rc__price { font-size: 17px; }
+  .rc__btn { padding: 8px 12px 8px 14px; font-size: 13px; }
+}
+
+/* ---------- Model tile ---------- */
+.mt {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  padding: 26px 18px 22px;
+  border-radius: var(--ri-r-lg);
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--ri-line);
+  text-align: center;
+  transition: box-shadow var(--ri-ease), transform var(--ri-ease);
+}
+.mt:hover { box-shadow: 0 0 0 1px var(--ri-line-strong), var(--ri-shadow-lift); transform: translateY(-2px); }
+.mt:focus-within { box-shadow: 0 0 0 2px var(--ri-ink); }
+.mt__visual {
+  display: grid;
+  place-items: center;
+  width: 128px;
+  height: 128px;
+  margin-bottom: 18px;
+  border-radius: 50%;
+  color: var(--ri-ink);
+  background: var(--ri-soft);
+  box-shadow: inset 0 0 0 1px var(--ri-line);
+  transition: background var(--ri-ease);
+}
+.mt:hover .mt__visual { background: #eeeef1; }
+.mt .dg--iphone { --dg-w: 46px; }
+.mt .dg--ipad { --dg-w: 70px; }
+.mt .dg--macbook { --dg-w: 102px; }
+.mt .dg--watch { --dg-w: 54px; }
+.mt__title {
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--ri-ink);
+}
+.mt__meta {
+  margin: 6px 0 0;
+  padding: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ri-ink-2);
+}
+.mt__meta span { white-space: nowrap; }
+.mt__meta span + span::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  margin: 0 8px;
+  border-radius: 50%;
+  background: currentColor;
+  vertical-align: middle;
+  opacity: 0.6;
+}
+.mt__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding: 10px 16px 10px 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: #fff;
+  background: var(--ri-ink);
+  text-decoration: none;
+}
+.mt__btn:hover { color: #fff; opacity: 0.88; }
+.mt__btn::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.mt__spacer { flex: 1; min-height: 18px; }
+.mt__btn .repair-icon { transition: transform var(--ri-ease); }
+.mt:hover .mt__btn .repair-icon { transform: translateX(2px); }
+
+@media screen and (max-width: 749px) {
+  .mt { padding: 20px 12px 16px; border-radius: 20px; }
+  .mt__visual { width: 96px; height: 96px; margin-bottom: 14px; }
+  .mt .dg--iphone { --dg-w: 32px; }
+  .mt .dg--ipad { --dg-w: 50px; }
+  .mt .dg--macbook { --dg-w: 76px; }
+  .mt .dg--watch { --dg-w: 38px; }
+  .mt__title { font-size: 15px; }
+  .mt__meta { font-size: 12px; }
+  .mt__meta span { display: block; }
+  .mt__meta span + span::before { display: none; }
+  .mt__btn { padding: 8px 12px 8px 14px; font-size: 13px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rc, .mt, .rc__btn .repair-icon, .mt__btn .repair-icon { transition: none; }
+  .rc:hover, .mt:hover { transform: none; }
+}
