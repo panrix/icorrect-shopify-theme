@@ -698,14 +698,18 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     "Graphite":"#4b4e53","Gold":"#e3d0b1","Silver":"#e2e4e1","Midnight Green":"#4e5851",
     "Space Gray":"#535150","Cosmic Orange":"#e67e22","Mist Blue":"#a0d1e5","Sage":"#9db4a1",
     "Lavender":"#e6e6fa","Blue Titanium":"#4b6f86","Sky Blue":"#87CEEB",
-    "Green":"#505e4d","Pacific Blue":"#2d4e5c","Deep Blue":"#1a3a5c"
+    "Green":"#505e4d","Pacific Blue":"#2d4e5c","Deep Blue":"#1a3a5c",
+    "Cloud White":"#f4f1ea","Light Gold":"#e6d3a3","Soft Pink":"#f3c6c8","Coral":"#ff6f61"
   };
 
   var IPHONE_COLORS = {
     "iPhone 17 Pro Max":["Silver","Cosmic Orange","Deep Blue"],
     "iPhone 17 Pro":["Silver","Cosmic Orange","Deep Blue"],
     "iPhone 17":["Black","White","Mist Blue","Sage","Lavender"],
+    "iPhone Air":["Space Black","Cloud White","Light Gold","Sky Blue"],
+    "iPhone 17e":["Black","White","Soft Pink"],
     "iPhone 16e":["Black","White"],
+    "iPhone 16E":["Black","White"],
     "iPhone 16 Pro Max":["Black Titanium","White Titanium","Natural Titanium","Desert Titanium"],
     "iPhone 16 Pro":["Black Titanium","White Titanium","Natural Titanium","Desert Titanium"],
     "iPhone 16 Plus":["Black","White","Pink","Teal","Ultramarine"],
@@ -728,7 +732,13 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     "iPhone 12 Mini":["Black","White","Red","Green","Blue","Purple"],
     "iPhone 11 Pro Max":["Silver","Space Gray","Gold","Midnight Green"],
     "iPhone 11 Pro":["Silver","Space Gray","Gold","Midnight Green"],
-    "iPhone 11":["Purple","Green","Yellow","Black","White","Red"]
+    "iPhone 11":["Purple","Green","Yellow","Black","White","Red"],
+    "iPhone SE 3rd Gen":["Midnight","Starlight","Red"],
+    "iPhone SE 2nd Gen":["Black","White","Red"],
+    "iPhone Xs Max":["Gold","Space Gray","Silver"],
+    "iPhone Xs":["Gold","Space Gray","Silver"],
+    "iPhone XR":["Black","White","Blue","Yellow","Coral","Red"],
+    "iPhone X":["Silver","Space Gray"]
   };
 
   var MACBOOK_COLORS = {
@@ -1483,6 +1493,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var name = String(model || '');
     if (/iPhone\s*SE\b/i.test(name)) return true;
     if (/iPhone\s*XR\b/i.test(name)) return true;
+    if (/\biPhone\s*8(\s*Plus)?\b/i.test(name)) return true;
     if (/iPhone\s*11(?!\s*Pro)\b/i.test(name)) return true;
     return false;
   }
@@ -3808,7 +3819,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var product = resolveRepairProduct(iss.repairType, iss.label);
     if (!product) { showContactCard(iss, container); return; }
 
-    /* Price + variant from the catalogue. A 15-minute job copies the Shopify variant price into that file. Fetch only when the catalogue has no price. */
+    /* Price + variant from catalogue map; optional fetch only for express upsell HTML. */
     var basePrice = product.variants && product.variants[0] ? parseFloat(product.variants[0].price) : 0;
     var mainVariantId = product.variants && product.variants[0] ? product.variants[0].id : 0;
     var fullProduct = null;
