@@ -7,8 +7,83 @@
       {% endif %}
       <a href="{{ section.settings.btn_link }}" class="read-more">{{ section.settings.btn_text }}</a>
     </div>
-    <div class="parent-category-row">
+    {%- liquid
+      assign imageless = true
+      if settings.repair_imageless == false
+        assign imageless = false
+      endif
+      assign tile_context = section.settings.heading | append: ' ' | append: collection.title | append: ' ' | append: collection.handle
+    -%}
+    {%- if imageless -%}
+      {{ 'repair-imageless.css' | asset_url | stylesheet_tag }}
+    {%- endif -%}
+    <div class="parent-category-row{% if imageless %} parent-category-row--imageless{% endif %}">
       {% for block in section.blocks %}
+        {%- if imageless -%}
+          {%- liquid
+            capture tile_meta
+              render 'repair-meta', title: block.settings.title, repair_context: tile_context
+            endcapture
+            assign tile_meta = tile_meta | strip | split: '|'
+            assign tile_family = tile_meta[0]
+            assign tile_repair = tile_meta[1]
+            assign tile_scale = tile_meta[2]
+
+            assign tile_stats = ''
+            if section.settings.show_stats != false and block.settings.link contains '/collections/'
+              assign tile_handle = block.settings.link | split: '/collections/' | last | split: '?' | first | split: '#' | first
+              assign tile_collection = collections[tile_handle]
+              if tile_collection.products_count > 0
+                assign tile_min = 100000000
+                for p in tile_collection.products limit: 50
+                  if p.price > 0 and p.price < tile_min
+                    unless p.title contains 'Diagnostic'
+                      assign tile_min = p.price
+                    endunless
+                  endif
+                endfor
+                if tile_collection.products_count == 1
+                  assign tile_stats = '1 repair'
+                else
+                  assign tile_stats = tile_collection.products_count | append: ' repairs'
+                endif
+                if tile_min < 100000000
+                  assign tile_min_money = tile_min | money_without_trailing_zeros
+                  assign tile_stats = tile_stats | append: '|from ' | append: tile_min_money
+                endif
+              endif
+            endif
+            if block.settings.price != blank
+              assign tile_stats = block.settings.price
+            endif
+            assign tile_stats = tile_stats | split: '|'
+          -%}
+          <div class="parent-category-col col-{{ section.settings.column_per_row }}" {{ block.shopify_attributes }}>
+            <div class="mt" data-family="{{ tile_family }}" data-repair="{{ tile_repair }}">
+              <span class="mt__visual">
+                {%- if tile_repair != 'repair' -%}
+                  {% render 'repair-icon', icon: tile_repair, family: tile_family, size: 40 %}
+                {%- else -%}
+                  {% render 'device-glyph', family: tile_family, scale: tile_scale %}
+                {%- endif -%}
+              </span>
+              <h3 class="mt__title">{{ block.settings.title | escape }}</h3>
+              {%- if tile_stats != blank -%}
+                <p class="mt__meta">
+                  {%- for stat in tile_stats -%}<span>{{ stat | escape }}</span>{%- endfor -%}
+                </p>
+              {%- endif -%}
+              <span class="mt__spacer"></span>
+              {%- if block.settings.link != blank -%}
+                <a class="mt__btn" href="{{ block.settings.link }}">
+                  {{- block.settings.btn | default: 'View repairs' | escape }}
+                  {% render 'repair-icon', icon: 'arrow', size: 15 -%}
+                </a>
+              {%- endif -%}
+            </div>
+          </div>
+          {%- continue -%}
+        {%- endif -%}
         <div class="parent-category-col col-{{ section.settings.column_per_row }}">
           <img src="{{ block.settings.img | img_url: 'master' }}" alt="{{ block.settings.title }}">
           <h3>{{ block.settings.title }}</h3>
@@ -157,6 +232,48 @@ margin: 0;
     min-height: 45px;
     line-height: 25px;
   }
+  .parent-category-row--imageless{
+    column-gap: 20px;
+    row-gap: 20px;
+  }
+  .parent-category-row--imageless .parent-category-col{
+    flex: 0 0 calc(33.333% - 14px);
+    max-width: calc(33.333% - 14px);
+  }
+  .parent-category-row--imageless .parent-category-col.col-1{
+    flex: 0 0 100%;
+    max-width: 420px;
+  }
+  .parent-category-row--imageless .parent-category-col.col-2{
+    flex: 0 0 calc(50% - 10px);
+    max-width: calc(50% - 10px);
+  }
+  .parent-category-row--imageless .parent-category-col.col-4{
+    flex: 0 0 calc(25% - 15px);
+    max-width: calc(25% - 15px);
+  }
+  @media(max-width: 989px){
+    .parent-category-row--imageless .parent-category-col,
+    .parent-category-row--imageless .parent-category-col.col-4{
+      flex: 0 0 calc(33.333% - 14px);
+      max-width: calc(33.333% - 14px);
+    }
+  }
+  @media(max-width: 767px){
+    .parent-category-row--imageless{
+      column-gap: 12px;
+      row-gap: 12px;
+    }
+    .parent-category-row--imageless .parent-category-col,
+    .parent-category-row--imageless .parent-category-col.col-1,
+    .parent-category-row--imageless .parent-category-col.col-2,
+    .parent-category-row--imageless .parent-category-col.col-3,
+    .parent-category-row--imageless .parent-category-col.col-4{
+      flex: 0 0 calc(50% - 6px);
+      max-width: calc(50% - 6px);
+      padding-bottom: 0;
+    }
+  }
   @media(max-width: 767px){
     .parent-categories-{{ section.id }}{
       padding-top: {{ section.settings.mob_padding_top }}px;
@@ -290,6 +407,13 @@ margin: 0;
         "label": "Button Link"
       },
       {
+        "type": "checkbox",
+        "id": "show_stats",
+        "label": "Show repair count and starting price",
+        "info": "Imageless design only. Read live from each tile's linked collection; diagnostics are excluded from the starting price.",
+        "default": true
+      },
+      {
         "type": "text",
         "id": "btn_text",
         "label": "Button Label",
@@ -304,7 +428,8 @@ margin: 0;
           {
             "type": "image_picker",
             "id": "img",
-            "label": "Category Image"
+            "label": "Category Image",
+            "info": "Optional. Only shown when Theme settings > Repair pages > Imageless repair design is off."
           },
           {
             "type": "text",
