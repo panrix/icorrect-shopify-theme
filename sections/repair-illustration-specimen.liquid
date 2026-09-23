@@ -1,0 +1,61 @@
+{%- comment -%}
+  QA sheet for the repair illustrations: every design era with every repair
+  highlight. Open any page with ?view=repair-illustrations (noindex).
+  Add a row here whenever a new era is added (docs/design/device-illustrations.md).
+{%- endcomment -%}
+{{ 'repair-imageless.css' | asset_url | stylesheet_tag }}
+{%- liquid
+  assign samples = 'iphone~iPhone 8 Plus~iphone-home|iphone~iPhone SE 3rd Gen (2022)~iphone-home|iphone~iPhone 11~iphone-notch|iphone~iPhone 13 Pro~iphone-notch|iphone~iPhone 16e~iphone-notch|iphone~iPhone 16~iphone-island|iphone~iPhone 16 Pro~iphone-island|iphone~iPhone Air~iphone-plateau|iphone~iPhone 17 Pro~iphone-plateau|macbook~MacBook Air 13-inch A2179 (2020)~macbook-wedge|macbook~MacBook Pro 13-inch A1706 (2016-2018)~macbook-touchbar|macbook~MacBook Pro 13-inch A1708 (2016-2017)~macbook-touchbar|macbook~MacBook Air 13-inch M3 A3113 (2024)~macbook-notch-air|macbook~MacBook Pro 14-inch M4 Pro A3401 (2024)~macbook-notch-pro|ipad~iPad 9th Gen (2021)~ipad-home|ipad~iPad Air 11 M2 (2024)~ipad-allscreen|ipad~iPad Pro 13-inch 7th Gen M4 (2024)~ipad-pro|watch~Apple Watch SE 44MM~watch-classic|watch~Apple Watch Series 9 45MM~watch-rounded|watch~Apple Watch Series 10 46MM~watch-s10|watch~Apple Watch Ultra 2~watch-ultra' | split: '|'
+  assign repairs_iphone = 'repair,screen,battery,charging-port,rear-camera,rear-glass,front-camera,earpiece,loudspeaker,button,diagnostic' | split: ','
+  assign repairs_macbook = 'repair,screen,battery,charging-port,keyboard,trackpad,touch-bar,flexgate,dustgate,loudspeaker,front-camera,diagnostic' | split: ','
+  assign repairs_ipad = 'repair,display,glass,battery,charging-port,rear-camera,front-camera,button,loudspeaker,diagnostic' | split: ','
+  assign repairs_watch = 'repair,display,glass,battery,heart-rate,crown,loudspeaker,diagnostic' | split: ','
+-%}
+<section class="ris page-width">
+  <h1 class="ris__title">Repair illustrations</h1>
+  <p class="ris__lede">Every design era with every repair highlight. Rules: docs/design/device-illustrations.md</p>
+  {%- for sample in samples -%}
+    {%- assign f = sample | split: '~' -%}
+    {%- case f[0] -%}
+      {%- when 'macbook' -%}{%- assign repairs = repairs_macbook -%}
+      {%- when 'ipad' -%}{%- assign repairs = repairs_ipad -%}
+      {%- when 'watch' -%}{%- assign repairs = repairs_watch -%}
+      {%- else -%}{%- assign repairs = repairs_iphone -%}
+    {%- endcase -%}
+    <div class="ris__row">
+      <h2 class="ris__model">{{ f[1] }} <code>{{ f[2] }}</code></h2>
+      <div class="ris__grid">
+        {%- for r in repairs -%}
+          <figure class="ris__cell">
+            <div class="rc__visual ris__visual">
+              {% render 'device-glyph', family: f[0], title: f[1], repair: r %}
+            </div>
+            <figcaption>{{ r }}</figcaption>
+          </figure>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endfor -%}
+</section>
+<style>
+  .ris { padding-top: 40px; padding-bottom: 80px; }
+  .ris__title { margin: 0 0 6px; font-size: 32px; }
+  .ris__lede { margin: 0 0 32px; color: #6e6e73; }
+  .ris__row { margin-bottom: 36px; }
+  .ris__model { margin: 0 0 12px; font-size: 18px; }
+  .ris__model code { font-size: 12px; color: #6e6e73; font-weight: 400; }
+  .ris__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 10px; }
+  .ris__cell { margin: 0; text-align: center; font-size: 12px; color: #6e6e73; }
+  .ris__visual { height: 150px; margin: 0 0 6px; }
+  .ris .dg--iphone { --dg-w: 56px; }
+  .ris .dg--ipad { --dg-w: 90px; }
+  .ris .dg--macbook { --dg-w: 118px; }
+  .ris .dg--watch { --dg-w: 66px; }
+</style>
+
+{% schema %}
+{
+  "name": "Repair illustration sheet",
+  "settings": []
+}
+{% endschema %}
