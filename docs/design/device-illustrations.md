@@ -77,7 +77,7 @@ Every era must draw these elements with these classes, adding `is-hl` when `part
 | `dg-shatter` | glass only | Impact point with radial cracks |
 | `dg-fault`, `dg-fault--alt`, `dg-blot` | display only | Vertical lines plus ink bleed |
 | `dg-scan` | diagnostic | Scan line; set `--dg-scan-travel` for the era in CSS |
-| Back view: `dg-module`, `dg-plateau`, `dg-lens-ring`, `dg-lens`, `dg-flash`, `dg-lidar` | `camera` | Rear camera |
+| Back view: `dg-module`, `dg-plateau`, `dg-lens-ring`, `dg-lens`, `dg-flash`, `dg-lidar`, `dg-lens-crack` | `camera` highlights the camera block only (on a plateau phone, the left square, not the bar). `lens` highlights the top-left lens and shows `dg-lens-crack`. |
 | Watch back: `dg-sensor`, `dg-leds` | `sensor` | Heart-rate sensor |
 | MacBook: `dg-keyboard`, `dg-keys`, `dg-fnrow`, `dg-trackpad`, `dg-touchbar-strip`, `dg-hinge`, `dg-dustbands` | `keyboard`, `trackpad`, `touchbar`, `hinge` (Flexgate: the screen fills black), `dust` (Dustgate: six wavy bands across the screen) | |
 

@@ -12,16 +12,18 @@
     <rect class="dg-frame" x="8.5" y="8.5" width="163" height="225" rx="13.5"/>
     {%- if pro -%}
       <rect class="dg-module{% if part == 'camera' %} is-hl{% endif %}" x="16" y="16" width="38" height="38" rx="11"/>
-      <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="27" cy="27" r="6.2"/>
-      <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="27" cy="27" r="2.6"/>
+      <circle class="dg-lens-ring{% if part == 'camera' or part == 'lens' %} is-hl{% endif %}" cx="27" cy="27" r="6.2"/>
+      <circle class="dg-lens{% if part == 'camera' or part == 'lens' %} is-hl{% endif %}" cx="27" cy="27" r="2.6"/>
+      <path class="dg-lens-crack" d="M22.5 23.5l9 6.5M22.8 30.5l8.5-6"/>
       <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="43" cy="43" r="6.2"/>
       <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="43" cy="43" r="2.6"/>
       <circle class="dg-lidar" cx="43" cy="27" r="3.2"/>
       <circle class="dg-flash" cx="27" cy="43" r="2.2"/>
     {%- else -%}
       <rect class="dg-module{% if part == 'camera' %} is-hl{% endif %}" x="16" y="16" width="26" height="26" rx="8"/>
-      <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="29" cy="29" r="6.5"/>
-      <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="29" cy="29" r="2.7"/>
+      <circle class="dg-lens-ring{% if part == 'camera' or part == 'lens' %} is-hl{% endif %}" cx="29" cy="29" r="6.5"/>
+      <circle class="dg-lens{% if part == 'camera' or part == 'lens' %} is-hl{% endif %}" cx="29" cy="29" r="2.7"/>
+      <path class="dg-lens-crack" d="M24.2 25l9.5 7M24.5 33l8.5-6.5"/>
     {%- endif -%}
     <path class="dg-crack dg-crack--back" d="M112 70l-12 30 16 10-20 34 10 8-14 30"/>
   {%- else -%}

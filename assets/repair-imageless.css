@@ -89,6 +89,7 @@
 .dg-dust,
 .dg-dustbands,
 .dg-crack,
+.dg-lens-crack,
 .dg-scan { display: none; }
 
 .dg .is-hl {
@@ -121,7 +122,8 @@
 .dg .dg-screen.is-hl ~ .dg-sheen { opacity: 0.35; }
 
 .dg--part-screen .dg-crack,
-.dg--part-glass .dg-crack--back {
+.dg--part-glass .dg-crack--back,
+.dg--part-lens .dg-lens-crack {
   display: inline;
   fill: none;
   stroke: var(--ri-accent);

@@ -42,8 +42,11 @@
       assign part = 'battery'
     when 'charging-port'
       assign part = 'port'
-    when 'rear-camera', 'rear-camera-lens'
+    when 'rear-camera'
       assign part = 'camera'
+      assign view = 'back'
+    when 'rear-camera-lens'
+      assign part = 'lens'
       assign view = 'back'
     when 'rear-glass'
       assign part = 'glass'
@@ -75,7 +78,7 @@
     assign view = 'front'
     if part == 'buttons'
       assign part = 'keyboard'
-    elsif part == 'camera' or part == 'glass'
+    elsif part == 'camera' or part == 'lens' or part == 'glass'
       assign part = 'scan'
     endif
   endif

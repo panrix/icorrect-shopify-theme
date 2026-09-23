@@ -15,20 +15,23 @@
     {%- case lenses -%}
       {%- when 1 -%}
         <rect class="dg-module{% if part == 'camera' %} is-hl{% endif %}" x="18" y="12" width="28" height="28" rx="9"/>
-        <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="32" cy="26" r="8"/>
-        <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="32" cy="26" r="3.4"/>
+        <circle class="dg-lens-ring{% if part == 'camera' or part == 'lens' %} is-hl{% endif %}" cx="32" cy="26" r="8"/>
+        <circle class="dg-lens{% if part == 'camera' or part == 'lens' %} is-hl{% endif %}" cx="32" cy="26" r="3.4"/>
+        <path class="dg-lens-crack" d="M26.5 22l11 8M26.8 30l10-7"/>
         <circle class="dg-flash" cx="52" cy="19" r="2.4"/>
       {%- when 2 -%}
         <rect class="dg-module{% if part == 'camera' %} is-hl{% endif %}" x="18" y="12" width="27" height="46" rx="13.5"/>
-        <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="31.5" cy="25.5" r="7.6"/>
-        <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="31.5" cy="25.5" r="3.2"/>
+        <circle class="dg-lens-ring{% if part == 'camera' or part == 'lens' %} is-hl{% endif %}" cx="31.5" cy="25.5" r="7.6"/>
+        <circle class="dg-lens{% if part == 'camera' or part == 'lens' %} is-hl{% endif %}" cx="31.5" cy="25.5" r="3.2"/>
+        <path class="dg-lens-crack" d="M26 21l11 8M26.3 29.5l10-7"/>
         <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="31.5" cy="44.5" r="7.6"/>
         <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="31.5" cy="44.5" r="3.2"/>
         <circle class="dg-flash" cx="53" cy="20" r="2.4"/>
       {%- else -%}
         <rect class="dg-module{% if part == 'camera' %} is-hl{% endif %}" x="17" y="11" width="48" height="48" rx="14"/>
-        <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="30.5" cy="24.5" r="8.2"/>
-        <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="30.5" cy="24.5" r="3.4"/>
+        <circle class="dg-lens-ring{% if part == 'camera' or part == 'lens' %} is-hl{% endif %}" cx="30.5" cy="24.5" r="8.2"/>
+        <circle class="dg-lens{% if part == 'camera' or part == 'lens' %} is-hl{% endif %}" cx="30.5" cy="24.5" r="3.4"/>
+        <path class="dg-lens-crack" d="M25 20.5l11 8M25.3 28.5l10-7"/>
         <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="30.5" cy="45.5" r="8.2"/>
         <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="30.5" cy="45.5" r="3.4"/>
         <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="51" cy="35" r="8.2"/>

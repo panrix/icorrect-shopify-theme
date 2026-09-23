@@ -10,8 +10,9 @@
     <rect class="dg-btn" x="20" y="1.5" width="22" height="5" rx="2.5"/>
     <rect class="dg-body dg-glass{% if part == 'glass' %} is-hl{% endif %}" x="6" y="6" width="168" height="230" rx="14"/>
     <rect class="dg-frame" x="8.5" y="8.5" width="163" height="225" rx="11.5"/>
-    <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="24" cy="24" r="6"/>
-    <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="24" cy="24" r="2.5"/>
+    <circle class="dg-lens-ring{% if part == 'camera' or part == 'lens' %} is-hl{% endif %}" cx="24" cy="24" r="6"/>
+    <circle class="dg-lens{% if part == 'camera' or part == 'lens' %} is-hl{% endif %}" cx="24" cy="24" r="2.5"/>
+    <path class="dg-lens-crack" d="M19.8 20.5l8.5 6.5M20 28l8-6"/>
     <path class="dg-crack dg-crack--back" d="M112 60l-12 30 16 10-20 34 10 8-14 30"/>
   {%- else -%}
     <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="138" y="1.5" width="22" height="5" rx="2.5"/>
