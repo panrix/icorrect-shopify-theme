@@ -164,10 +164,25 @@
               assign emphasis = 'model'
             endif
           endif
+          assign model_order = blank
+          if imageless and emphasis == 'model'
+            assign fc_titles = section.settings.collection.products | map: 'title' | join: '||'
+            capture model_order
+              render 'model-order', titles: fc_titles
+            endcapture
+            assign model_order = model_order | strip | split: ','
+          endif
         -%}
         
         {% comment %} Removed the limit here so it shows everything (capped at 50 for safety) {% endcomment %}
-        {%- for product in section.settings.collection.products limit: 50 -%}
+        {%- for product_slot in section.settings.collection.products limit: 50 -%}
+          {%- liquid
+            assign product = product_slot
+            if model_order != blank
+              assign product_index = model_order[forloop.index0] | plus: 0
+              assign product = section.settings.collection.products[product_index]
+            endif
+          -%}
           <li
             id="Slide-{{ section.id }}-{{ forloop.index }}"
             class="grid__item{% if show_mobile_slider or show_desktop_slider %} slider__slide{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"

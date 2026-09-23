@@ -1,0 +1,226 @@
+{%- comment -%}
+  Orders a list of model (or product) titles by one rule for every device:
+
+  1. Product line, in the order the line first appears in the list
+     (e.g. MacBook Air tiles stay grouped before MacBook Pro tiles).
+  2. Newest generation first: year in the title, else "Nth Gen", else the
+     model number (iPhone 16, Series 9, Ultra 2; X/XS/XR count as 10).
+     Titles with no generation (e.g. "iPhone Air") join the newest
+     generation of their line.
+  3. Within a generation: standard, mini, Plus/Air, Pro, Pro Max/Max,
+     then budget models (e.g. 16e, XR).
+  4. Smaller size first (13" before 15", 41mm before 45mm).
+  5. Original position breaks any remaining tie.
+
+  Accepts:
+  - titles: {String} titles joined with "||"
+  - repair_context: {String} optional text naming the device family when
+    titles don't (e.g. "Series 9" tiles on an Apple Watch page)
+
+  Outputs comma-separated zero-based indices in display order.
+
+  Usage:
+  {%- capture order -%}{% render 'model-order', titles: joined_titles %}{%- endcapture -%}
+  {%- assign order = order | strip | split: ',' -%}
+{%- endcomment -%}
+{%- liquid
+  assign list = titles | split: '||'
+  assign ctx = repair_context | downcase
+  assign rows = ''
+  assign line_order = ','
+
+  for raw in list
+    assign i = forloop.index0
+    assign t = raw | downcase | replace: '’’', ' in ' | replace: "''", ' in ' | replace: '”', ' in ' | replace: '"', ' in ' | replace: '-inch', ' in ' | replace: ' inch', ' in '
+    assign t = t | replace: '(', ' ' | replace: ')', ' ' | replace: '‘', ' ' | replace: '’', ' ' | replace: "'", ' ' | replace: '/', ' ' | replace: ',', ' ' | replace: '-', ' ' | replace: '|', ' '
+    assign t = ' ' | append: t | append: ' '
+
+    assign family = 'other'
+    if t contains 'iphone'
+      assign family = 'iphone'
+    elsif t contains 'ipad'
+      assign family = 'ipad'
+    elsif t contains 'macbook'
+      assign family = 'macbook'
+    elsif t contains 'watch'
+      assign family = 'watch'
+    elsif ctx contains 'iphone'
+      assign family = 'iphone'
+    elsif ctx contains 'ipad'
+      assign family = 'ipad'
+    elsif ctx contains 'macbook'
+      assign family = 'macbook'
+    elsif ctx contains 'watch'
+      assign family = 'watch'
+    endif
+
+    assign line = family
+    case family
+      when 'iphone'
+        if t contains ' se '
+          assign line = 'iphone-se'
+        endif
+      when 'ipad'
+        if t contains 'ipad pro'
+          assign line = 'ipad-pro'
+        elsif t contains 'ipad air'
+          assign line = 'ipad-air'
+        elsif t contains 'ipad mini'
+          assign line = 'ipad-mini'
+        endif
+      when 'macbook'
+        if t contains 'macbook pro'
+          assign line = 'macbook-pro'
+        elsif t contains 'macbook air'
+          assign line = 'macbook-air'
+        endif
+      when 'watch'
+        if t contains ' ultra'
+          assign line = 'watch-ultra'
+        elsif t contains ' se '
+          assign line = 'watch-se'
+        else
+          assign line = 'watch-series'
+        endif
+    endcase
+    assign line_token = ',' | append: line | append: ','
+    unless line_order contains line_token
+      assign line_order = line_order | append: line | append: ','
+    endunless
+
+    assign s = t | replace: 'macbook pro', ' ' | replace: 'macbook air', ' ' | replace: 'ipad pro', ' ' | replace: 'ipad air', ' ' | replace: 'ipad mini', ' ' | replace: 'apple watch', ' '
+    assign tokens = s | split: ' '
+
+    assign year = 0
+    assign ordinal = 0
+    assign number = 0
+    assign chip = 0
+    assign tier = 1
+    assign size = 0
+    assign prev = ''
+    for tok in tokens
+      if tok == blank
+        continue
+      endif
+      assign n = tok | plus: 0
+      if tok.size == 4 and n > 2000 and n < 2100 and year == 0
+        assign year = n
+      endif
+      assign last2 = tok | slice: -2, 2
+      if last2 == 'st' or last2 == 'nd' or last2 == 'rd' or last2 == 'th'
+        assign head = tok | slice: 0, tok.size | remove_last: last2
+        assign hn = head | plus: 0
+        if hn > 0 and ordinal == 0
+          assign ordinal = hn
+        endif
+      endif
+      if last2 == 'mm'
+        assign head = tok | remove_last: 'mm'
+        assign size = head | times: 10 | round
+      endif
+      if tok == 'in' and prev != blank
+        assign pn = prev | plus: 0
+        if pn > 0
+          assign size = prev | times: 10 | round
+        endif
+      endif
+      if prev == 'iphone' or prev == 'series' or prev == 'ultra'
+        assign last1 = tok | slice: -1, 1
+        assign head1 = tok | remove_last: last1
+        assign h1 = head1 | plus: 0
+        if tok == 'x'
+          assign number = 100
+        elsif tok == 'xs'
+          assign number = 105
+        elsif tok == 'xr'
+          assign number = 105
+          assign tier = 6
+        elsif last1 == 'e' and h1 > 0
+          assign number = h1 | times: 10
+          assign tier = 6
+        elsif n > 0 and n < 100
+          assign number = n | times: 10
+        endif
+      endif
+      assign first1 = tok | slice: 0, 1
+      assign rest1 = tok | remove_first: first1
+      assign r1 = rest1 | plus: 0
+      if first1 == 'm' and r1 > 0 and tok.size < 4
+        assign chip = r1
+      endif
+      case tok
+        when 'mini'
+          if tier < 2
+            assign tier = 2
+          endif
+        when 'plus', 'air'
+          if tier < 3
+            assign tier = 3
+          endif
+        when 'pro'
+          if tier < 4
+            assign tier = 4
+          endif
+        when 'max'
+          if tier < 5
+            assign tier = 5
+          endif
+      endcase
+      assign prev = tok
+    endfor
+    if line == 'watch-ultra' and number == 0
+      assign number = 10
+    endif
+
+    assign gen = year | times: 10 | plus: chip
+    if gen == 0
+      assign gen = ordinal
+    endif
+    if gen == 0
+      assign gen = number
+    endif
+
+    assign row = i | append: ':' | append: line | append: ':' | append: gen | append: ':' | append: tier | append: ':' | append: size
+    assign rows = rows | append: row | append: ';'
+  endfor
+
+  assign rows = rows | split: ';'
+  assign lines = line_order | split: ','
+  assign keys = ''
+  for row in rows
+    assign f = row | split: ':'
+    assign gen = f[2] | plus: 0
+    if gen == 0
+      for other in rows
+        assign o = other | split: ':'
+        if o[1] == f[1]
+          assign og = o[2] | plus: 0
+          if og > gen
+            assign gen = og
+          endif
+        endif
+      endfor
+    endif
+    assign line_index = 0
+    for l in lines
+      if l == f[1]
+        assign line_index = forloop.index
+      endif
+    endfor
+    assign inv_gen = 99999 | minus: gen
+    assign k_line = line_index | prepend: '00' | slice: -2, 2
+    assign k_gen = inv_gen | prepend: '00000' | slice: -5, 5
+    assign k_size = f[4] | prepend: '0000' | slice: -4, 4
+    assign k_idx = f[0] | prepend: '000' | slice: -3, 3
+    assign key = k_line | append: k_gen | append: f[3] | append: k_size | append: k_idx
+    assign keys = keys | append: key | append: ','
+  endfor
+
+  assign keys = keys | split: ',' | sort
+  assign out = ''
+  for key in keys
+    assign idx = key | slice: -3, 3 | plus: 0
+    assign out = out | append: idx | append: ','
+  endfor
+  echo out
+-%}

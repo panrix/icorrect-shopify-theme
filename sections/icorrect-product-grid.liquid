@@ -28,12 +28,27 @@
           assign emphasis = 'model'
         endif
       endif
+      assign model_order = blank
+      if imageless and emphasis == 'model'
+        assign grid_titles = collection.products | map: 'title' | join: '||'
+        capture model_order
+          render 'model-order', titles: grid_titles
+        endcapture
+        assign model_order = model_order | strip | split: ','
+      endif
     -%}
     {%- if imageless -%}
       {{ 'repair-imageless.css' | asset_url | stylesheet_tag }}
     {%- endif -%}
     <div class="repair-grid{% if imageless %} repair-grid--imageless{% endif %}">
-      {%- for product in collection.products -%}
+      {%- for product_slot in collection.products -%}
+        {%- liquid
+          assign product = product_slot
+          if model_order != blank
+            assign product_index = model_order[forloop.index0] | plus: 0
+            assign product = collection.products[product_index]
+          endif
+        -%}
         {%- if imageless -%}
           {% render 'repair-card', product: product, emphasis: emphasis %}
           {%- continue -%}

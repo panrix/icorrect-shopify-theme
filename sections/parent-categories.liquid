@@ -17,8 +17,30 @@
     {%- if imageless -%}
       {{ 'repair-imageless.css' | asset_url | stylesheet_tag }}
     {%- endif -%}
+    {%- liquid
+      assign tile_order = ''
+      for block in section.blocks
+        assign tile_order = tile_order | append: forloop.index0 | append: ','
+      endfor
+      if imageless and section.settings.auto_sort != false
+        capture tile_titles
+          for block in section.blocks
+            echo block.settings.title | replace: '||', ' '
+            unless forloop.last
+              echo '||'
+            endunless
+          endfor
+        endcapture
+        capture tile_order
+          render 'model-order', titles: tile_titles, repair_context: tile_context
+        endcapture
+      endif
+      assign tile_order = tile_order | strip | split: ','
+    -%}
     <div class="parent-category-row{% if imageless %} parent-category-row--imageless{% endif %}">
-      {% for block in section.blocks %}
+      {% for tile_index in tile_order %}
+        {%- assign block_index = tile_index | plus: 0 -%}
+        {%- assign block = section.blocks[block_index] -%}
         {%- if imageless -%}
           {%- liquid
             capture tile_meta
@@ -463,6 +485,13 @@ margin: 0;
         "type": "url",
         "id": "btn_link",
         "label": "Button Link"
+      },
+      {
+        "type": "checkbox",
+        "id": "auto_sort",
+        "label": "Order tiles automatically",
+        "info": "Imageless design only. Newest generation first; within a generation: standard, mini, Plus/Air, Pro, Pro Max, then budget models (e.g. 16e). Untick to use the block order.",
+        "default": true
       },
       {
         "type": "select",
