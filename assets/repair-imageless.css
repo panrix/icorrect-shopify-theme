@@ -53,6 +53,8 @@
 .dg-sheen { fill: #fff; stroke: none; opacity: 0.6; }
 .dg-shadow { fill: rgba(0, 0, 0, 0.07); stroke: none; }
 .dg-cam { fill: #3a3a3c; stroke: none; }
+.dg-island { fill: var(--ri-ink); stroke: none; }
+.dg-flash { fill: #ececee; stroke: rgba(29, 29, 31, 0.4); }
 .dg-module { fill: #f2f2f4; stroke: rgba(29, 29, 31, 0.55); }
 .dg-lens-ring { fill: #fff; }
 .dg-lens { fill: #2c2c2e; stroke: none; }
@@ -80,6 +82,7 @@
   filter: drop-shadow(0 0 5px rgba(0, 112, 243, 0.45));
 }
 .dg .dg-cam.is-hl,
+.dg .dg-island.is-hl,
 .dg .dg-fcam.is-hl,
 .dg .dg-lens.is-hl,
 .dg .dg-port.is-hl,
@@ -235,12 +238,23 @@
 }
 .rv__fact .repair-icon { color: var(--ri-ink); flex: none; }
 
+/*
+  Split layout: the whole left column carries the panel colour so it always
+  matches the height of the info column (the wizard grows and shrinks), and
+  the panel content stays pinned under the sticky header while scrolling.
+*/
 @media screen and (min-width: 750px) {
+  .product--repair-visual .product__media-wrapper {
+    align-self: stretch;
+    background: var(--ri-soft);
+  }
   .product--repair-visual .rv {
     position: sticky;
-    top: 0;
-    height: auto;
-    min-height: min(calc(100vh - 64px), 820px);
+    top: var(--header-height, 64px);
+    height: calc(100vh - var(--header-height, 64px));
+    min-height: 540px;
+    max-height: 900px;
+    background: transparent;
   }
 }
 @media screen and (min-width: 990px) {
