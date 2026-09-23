@@ -287,7 +287,7 @@ describe('repair-first triage', () => {
     }
     for (const name of [
       'Apple Watch Series 6 40MM',
-      'Apple Watch Series 10 45MM',
+      'Apple Watch Series 10 46MM',
       'Apple Watch Ultra',
       'Apple Watch Ultra 2',
     ]) {
@@ -368,6 +368,21 @@ describe('repair-first triage', () => {
     assert.match(liquid, /data-needs-glass/);
     assert.match(liquid, /data-needs-connect/);
     assert.match(liquid, /Order summary/);
+  });
+
+  it('15-inch colour question ignores A2159', () => {
+    const start = liquid.indexOf('function modelIs15InchMacBookPro');
+    const end = liquid.indexOf('function modelHasNanoTexture');
+    assert.ok(start >= 0 && end > start);
+    const modelIs15InchMacBookPro = new Function(
+      `${liquid.slice(start, end)}\nreturn modelIs15InchMacBookPro;`
+    )();
+    assert.equal(modelIs15InchMacBookPro('MacBook Pro 15” Retina A1707 (2016-2017)'), true);
+    assert.equal(modelIs15InchMacBookPro('MacBook Pro 15” A1990 (2018-2019)'), true);
+    assert.equal(modelIs15InchMacBookPro('MacBook Pro 15-inch A1990 (2018-2019)'), true);
+    assert.equal(modelIs15InchMacBookPro('MacBook Pro 13” 2TB 3 A2159 (2019)'), false);
+    assert.equal(modelIs15InchMacBookPro('MacBook Pro 13-inch A2159 (2019)'), false);
+    assert.equal(modelIs15InchMacBookPro('MacBook Air 15” M3 (2024)'), false);
   });
 
   it('data recovery still has diagnostic paths', () => {

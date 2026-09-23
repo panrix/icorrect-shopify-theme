@@ -1512,9 +1512,10 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     return /\bA1706\b/.test(name) || /\bA1707\b/.test(name) || /\bA1708\b/.test(name);
   }
 
+  /* A real 15-inch marker only. A2159 contains the digits 15 and is a 13-inch. */
   function modelIs15InchMacBookPro(model) {
     var name = String(model || '');
-    return /MacBook Pro/i.test(name) && /15/.test(name);
+    return /MacBook Pro/i.test(name) && /15\s*(?:["”″']|-?inch)/i.test(name);
   }
 
   /* Nano-texture glass was an option on iPad Pro M4, and on M5 when that model is listed. */
