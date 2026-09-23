@@ -44,7 +44,7 @@ Everything is driven by data that already exists on each product and tile: title
 
 - `snippets/repair-meta.liquid` works out family, repair type, model, repair name, qualifier, relative size and rear-lens count from the title. It uses tags and type as a fallback, and page context for tiles like "Series 9" or "45MM". It covers every active repair product in the catalogue (911).
 - `snippets/repair-icon.liquid` is a line-icon set on the Quote Wizard's 24px / 1.5-stroke grid: 23 repair types, 4 device families, and trust icons.
-- `snippets/device-glyph.liquid` holds one line-art diagram per family (iPhone, iPad, MacBook, Watch). It **highlights the part being repaired**: screen crack, battery x-ray, port, camera area, buttons, crown, keyboard, trackpad, hinge (Flexgate), heart-rate sensor, or a scan line for diagnostics. Rear repairs flip to the back of the device. iPhone always uses the current Pro form (Dynamic Island, triple camera) as a reference shape. iPad, MacBook and Watch stay feature-neutral. No drawing is ever made per model. Only overall size scales with the model (mini/e < base < Plus/Max, 13" < 16"). The MacBook charging port sits on the side of the top case.
+- `snippets/device-glyph.liquid` + `snippets/device-glyph-<era>.liquid` hold one line-art drawing per **design era** (15 eras across iPhone, iPad, MacBook and Watch), chosen by `snippets/device-variant.liquid`. The rules for drawing a new era are in `docs/design/device-illustrations.md`. It **highlights the part being repaired**: screen crack, battery x-ray, port, camera area, buttons, crown, keyboard, trackpad, hinge (Flexgate), heart-rate sensor, or a scan line for diagnostics. Rear repairs flip to the back of the device. Each era has its identifying features (home button, notch, Dynamic Island, camera plateau, Touch Bar, Ultra crown guard…). Unknown newer models fall into the newest era, so a launch never needs artwork. Only overall size scales with the model (mini/e < base < Plus/Max, 13" < 16"). The MacBook charging port sits on the side of the top case.
 - `snippets/repair-card.liquid` is the card used by every repair grid.
 - `snippets/repair-visual.liquid` is the product-page panel.
 - `assets/repair-imageless.css` holds the styles, with tokens aligned to `assets/quote-wizard.css`.
@@ -56,7 +56,7 @@ Everything is driven by data that already exists on each product and tile: title
   - How it works: the wizard section moves itself into a slot in the product column before it initialises. The theme editor keeps it in place so it stays editable. Its map panel is hidden in that position.
   - The theme setting "Quote Wizard beside the repair panel" turns the move off.
   - Title, description, breadcrumb and structured data are unchanged.
-- **Per-model grid:** each card shows the model in small caps and the repair as the title, with the qualifier as a green chip, the price, and "Book Repair". The highlighted part differs per card, so the grid reads at a glance. There are no extra corner icons. Grids cap at 1360px, and cards and diagrams scale up at 990px and 1200px. It is a single-column list on mobile.
+- **Per-model grid:** each card shows the repair as the title (the model is visually hidden), with the qualifier as a green chip, the price, and "Book Repair". The highlighted part differs per card, so the grid reads at a glance. There are no extra corner icons. Grids cap at 1360px, and cards and diagrams scale up at 990px and 1200px. It is a single-column list on mobile.
 - **Repair-type grid:** the same card with the emphasis flipped (repair eyebrow, model title), chosen automatically when the collection title names a repair.
 - **Model tiles:** two styles, set per section with "Tile style". The whole tile is clickable in both. Two columns on mobile instead of one.
   - **Device diagram** (default): a circle with a scaled device diagram (or a repair icon for repair-category tiles), the model name, a live "11 repairs · from £119" line read from the linked collection (diagnostics excluded), and "View repairs".
@@ -64,15 +64,11 @@ Everything is driven by data that already exists on each product and tile: title
 
 ### Part badges
 
-`snippets/repair-badge.liquid` gives every repair card and product panel a truthful part-quality badge:
+`snippets/repair-badge.liquid` applies one rule, with no tags or settings:
 
-1. Product metafield `custom.part_badge` overrides. Tag `no-part-badge` hides the badge.
-2. A genuine / original note in the title wins, e.g. "(Genuine OLED)" or "(Original Specification)".
-3. Otherwise the repair type's default from Theme settings → Repair pages → **Part badges** (one `repair-type: label` per line). Defaults cover charging port, rear glass, rear camera, camera lens, front camera, earpiece, loudspeaker, microphone, buttons, heart-rate sensor, trackpad and keys.
-
-Screens, displays, glass and batteries have no default, because the store sells genuine and aftermarket variants of them ("Aftermarket Screen Repair (Soft OLED)", "Premium Aftermarket Battery", "iPhone 11 LCD Screen Repair"). Their badge has to come from the title. Anything with "aftermarket" in the title or tags never gets a default badge.
-
-New devices pick up badges automatically, because the repair type comes from the title. A brand-new repair type needs one line in the setting.
+1. The title's own quality note wins. "(Genuine OLED)" and "(Original Specification)" show as the green badge; "(Premium Aftermarket Battery)" shows as a neutral note.
+2. Otherwise the part is genuine, and the badge follows the repair type: "Genuine screen", "Genuine keys", "Genuine Face ID", "Genuine crown", "Genuine Touch Bar", and so on. Anything else shows "Genuine parts".
+3. Diagnostics, data recovery and liquid damage get no badge. Nothing with "aftermarket" in the title is ever called genuine.
 
 ### Glass vs display
 
@@ -80,12 +76,13 @@ New devices pick up badges automatically, because the repair type comes from the
 - "Display Screen Repair" and "… Display Repair" show panel damage (lines, ink bleed) under intact glass.
 - Full screen assemblies ("Screen Repair") keep the crack.
 
-### Model tiles: pictures only when they differ
+### Model tiles
 
-The "Tile style" setting defaults to **Auto**:
+Every tile shows its era drawing, the model name, the screen and battery prices from its linked collection (when there are any), and a "View all N repairs" button. Because drawings follow design eras, tiles on mixed pages (e.g. Ultra vs Series 10 vs SE) look different on their own.
 
-- Tiles of different devices or repair types keep diagrams or icons, because they help tell tiles apart.
-- Tiles that are all the same kind of device drop the picture. They show headline prices when every linked collection has screen or battery prices, otherwise compact text tiles.
+### Repair order on model pages
+
+Diagnostic first, then screen / display / glass, battery, charging port, rear glass, cameras, Face ID, audio, buttons, crown, keyboard, trackpad, Touch Bar, Flexgate, Dustgate, heart-rate sensor. The model name above each repair is hidden on these pages because the page title already names it; it stays in the HTML for SEO.
 
 ### Model order (automatic)
 
