@@ -839,6 +839,9 @@
             {{ 'products.product.view_full_details' | t }}
             {% render 'icon-arrow' %}
           </a>
+          {%- if imageless and settings.repair_wizard_in_header != false -%}
+            <div class="repair-wizard-slot" data-qw-slot></div>
+          {%- endif -%}
         </section>
       </div>
     </div>

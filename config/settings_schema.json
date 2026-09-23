@@ -1477,6 +1477,13 @@
         "default": true
       },
       {
+        "type": "checkbox",
+        "id": "repair_wizard_in_header",
+        "label": "Quote Wizard beside the repair panel",
+        "info": "Product pages only, with the imageless design on. Moves the Quote Wizard under the product description so the repair panel, title and wizard share the first screen.",
+        "default": true
+      },
+      {
         "type": "header",
         "content": "Product page trust row"
       },
