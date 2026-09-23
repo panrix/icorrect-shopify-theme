@@ -42,27 +42,31 @@
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.dg-body,
+.dg-body { fill: #fff; stroke-width: 1.75px; }
 .dg-btn,
-.dg-crown,
-.dg-module { fill: #fff; }
+.dg-crown { fill: #fff; }
 .dg-base { fill: #fff; }
 .dg-band { fill: var(--ri-soft); }
-.dg-glass { fill: var(--ri-soft-2); }
-.dg-screen { fill: #eceef1; stroke: rgba(29, 29, 31, 0.28); }
-.dg-island,
-.dg-cam { fill: var(--ri-ink); stroke: none; }
-.dg-lens { fill: #2c2c2e; }
-.dg-flash { fill: #e8e8ea; stroke: rgba(29, 29, 31, 0.4); }
-.dg-earpiece { stroke: rgba(29, 29, 31, 0.3); stroke-width: 1.6px; }
-.dg-port { fill: #d4d6da; stroke: none; }
+.dg-glass { fill: #fbfbfc; }
+.dg-frame { fill: none; stroke: rgba(29, 29, 31, 0.12); stroke-width: 1px; }
+.dg-screen { fill: #e9ebef; stroke: rgba(29, 29, 31, 0.22); }
+.dg-sheen { fill: #fff; stroke: none; opacity: 0.6; }
+.dg-shadow { fill: rgba(0, 0, 0, 0.07); stroke: none; }
+.dg-cam { fill: #3a3a3c; stroke: none; }
+.dg-module { fill: #f2f2f4; stroke: rgba(29, 29, 31, 0.55); }
+.dg-lens-ring { fill: #fff; }
+.dg-lens { fill: #2c2c2e; stroke: none; }
+.dg-earpiece { stroke: rgba(29, 29, 31, 0.28); stroke-width: 1.6px; }
+.dg-port { fill: #cfd1d5; stroke: none; }
+.dg-port-side { stroke: #b9bcc2; stroke-width: 3px; }
 .dg-grille,
-.dg-leds { stroke: rgba(29, 29, 31, 0.45); stroke-width: 2.6px; }
-.dg-hinge { stroke: rgba(29, 29, 31, 0.18); }
+.dg-leds { stroke: rgba(29, 29, 31, 0.4); stroke-width: 2.6px; }
+.dg-hinge { stroke: rgba(29, 29, 31, 0.16); }
 .dg-keyboard,
-.dg-trackpad { fill: var(--ri-soft); stroke: rgba(29, 29, 31, 0.3); }
-.dg-keys { stroke: rgba(29, 29, 31, 0.2); }
+.dg-trackpad { fill: var(--ri-soft); stroke: rgba(29, 29, 31, 0.28); }
+.dg-keys { stroke: rgba(29, 29, 31, 0.22); stroke-width: 2.4px; stroke-dasharray: 6 2.4; stroke-linecap: butt; }
 .dg-sensor { fill: none; }
+.dg-fcam,
 .dg-touchbar,
 .dg-battery,
 .dg-dust,
@@ -75,17 +79,22 @@
   fill: var(--ri-accent-soft);
   filter: drop-shadow(0 0 5px rgba(0, 112, 243, 0.45));
 }
-.dg .dg-island.is-hl,
 .dg .dg-cam.is-hl,
+.dg .dg-fcam.is-hl,
 .dg .dg-lens.is-hl,
-.dg .dg-port.is-hl { fill: var(--ri-accent); }
+.dg .dg-port.is-hl,
+.dg .dg-touchbar.is-hl { fill: var(--ri-accent); }
+.dg .dg-lens-ring.is-hl { fill: #fff; }
+.dg .dg-port-side.is-hl { stroke-width: 4.5px; }
 .dg .dg-grille.is-hl,
 .dg .dg-leds.is-hl,
 .dg .dg-dust.is-hl { stroke-width: 3.2px; }
+.dg .dg-earpiece.is-hl { stroke-width: 2.6px; }
+.dg .dg-keys.is-hl { fill: none; stroke-width: 2.4px; }
 .dg .dg-battery.is-hl { stroke-dasharray: 4 3; }
 .dg .dg-hinge.is-hl { stroke-width: 2.4px; }
-.dg .dg-touchbar.is-hl { fill: var(--ri-accent); }
 .dg .dg-sensor.is-hl { fill: none; }
+.dg .dg-screen.is-hl ~ .dg-sheen { opacity: 0.35; }
 
 .dg--part-screen .dg-crack,
 .dg--part-glass .dg-crack--back {
@@ -95,6 +104,7 @@
   stroke-width: 1.3px;
 }
 .dg--part-battery .dg-screen { fill: #f4f5f7; stroke-dasharray: 3 3; }
+.dg--part-battery .dg-sheen { display: none; }
 .dg--part-scan .dg-scan {
   display: inline;
   fill: var(--ri-accent);
@@ -225,6 +235,38 @@
 }
 .rv__fact .repair-icon { color: var(--ri-ink); flex: none; }
 
+@media screen and (min-width: 750px) {
+  .product--repair-visual .rv {
+    position: sticky;
+    top: 0;
+    height: auto;
+    min-height: min(calc(100vh - 64px), 820px);
+  }
+}
+@media screen and (min-width: 990px) {
+  .rv { gap: 32px; }
+  .rv__stage { width: min(430px, 74%); }
+  .rv .dg--iphone { --dg-w: 124px; }
+  .rv .dg--ipad { --dg-w: 196px; }
+  .rv .dg--macbook { --dg-w: 290px; }
+  .rv .dg--watch { --dg-w: 142px; }
+  .rv__badge { width: 76px; height: 76px; }
+  .rv__badge .repair-icon { width: 32px; height: 32px; }
+  .rv__chip { font-size: 15px; padding: 9px 16px 9px 13px; }
+  .rv__chip .repair-icon { width: 18px; height: 18px; }
+  .rv__fact { font-size: 14px; gap: 7px; }
+  .rv__fact .repair-icon { width: 18px; height: 18px; }
+  .rv__facts { gap: 10px 20px; padding-top: 22px; width: min(620px, 100%); }
+}
+@media screen and (min-width: 1600px) {
+  .rv__stage { width: min(500px, 74%); }
+  .rv .dg--iphone { --dg-w: 144px; }
+  .rv .dg--ipad { --dg-w: 226px; }
+  .rv .dg--macbook { --dg-w: 336px; }
+  .rv .dg--watch { --dg-w: 164px; }
+  .rv__fact { font-size: 15px; }
+}
+
 @media screen and (max-width: 749px) {
   .rv {
     min-height: 0;
@@ -281,19 +323,6 @@
 .rc .dg--ipad { --dg-w: 96px; }
 .rc .dg--macbook { --dg-w: 156px; }
 .rc .dg--watch { --dg-w: 70px; }
-.rc__badge {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  color: var(--ri-ink);
-  background: #fff;
-  box-shadow: 0 0 0 1px var(--ri-line), 0 4px 12px -6px rgba(0, 0, 0, 0.2);
-}
 .rc__body {
   display: flex;
   flex-direction: column;
@@ -391,6 +420,29 @@
 .rc__btn .repair-icon { transition: transform var(--ri-ease); }
 .rc:hover .rc__btn .repair-icon { transform: translateX(2px); }
 
+@media screen and (min-width: 990px) {
+  .rc__visual { height: 212px; }
+  .rc .dg--iphone { --dg-w: 76px; }
+  .rc .dg--ipad { --dg-w: 120px; }
+  .rc .dg--macbook { --dg-w: 196px; }
+  .rc .dg--watch { --dg-w: 88px; }
+  .rc__body { gap: 12px; padding: 22px 24px 24px; }
+  .rc__title { font-size: 21px; }
+  .rc__title a { gap: 6px; }
+  .rc__eyebrow { font-size: 13px; }
+  .rc__chip { font-size: 13px; padding: 5px 12px 5px 9px; }
+  .rc__footer { padding-top: 18px; }
+  .rc__price { font-size: 26px; }
+  .rc__btn { font-size: 15px; padding: 12px 18px 12px 20px; }
+}
+@media screen and (min-width: 1200px) {
+  .rc__visual { height: 244px; }
+  .rc .dg--iphone { --dg-w: 90px; }
+  .rc .dg--ipad { --dg-w: 142px; }
+  .rc .dg--macbook { --dg-w: 230px; }
+  .rc .dg--watch { --dg-w: 104px; }
+}
+
 @media screen and (max-width: 749px) {
   .rc {
     display: grid;
@@ -406,20 +458,19 @@
   .rc .dg--ipad { --dg-w: 56px; }
   .rc .dg--macbook { --dg-w: 84px; }
   .rc .dg--watch { --dg-w: 42px; }
-  .rc__badge {
-    top: 6px;
-    left: 6px;
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-  }
-  .rc__badge .repair-icon { width: 15px; height: 15px; }
   .rc__body { gap: 8px; padding: 14px 14px 14px 16px; }
   .rc__title { font-size: 16px; gap: 2px; }
   .rc__eyebrow { font-size: 11px; }
   .rc__footer { padding-top: 10px; }
   .rc__price { font-size: 17px; }
   .rc__btn { padding: 8px 12px 8px 14px; font-size: 13px; }
+}
+
+.repair-grid--imageless,
+.product-grid:has(> .grid__item > .rc) {
+  max-width: 1360px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* ---------- Model tile ---------- */
@@ -503,8 +554,88 @@
 .mt__btn .repair-icon { transition: transform var(--ri-ease); }
 .mt:hover .mt__btn .repair-icon { transform: translateX(2px); }
 
+/* Price-led tile variant: the model's own headline prices instead of a picture */
+.mt--prices {
+  align-items: stretch;
+  text-align: left;
+  padding: 24px 24px 22px;
+}
+.mt__family {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ri-ink-3);
+}
+.mt .mt__title {
+  padding: 0;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-align: inherit;
+}
+.mt--prices .mt__title { font-size: 22px; letter-spacing: -0.02em; }
+.mt__prices {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mt__price-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 0;
+  border-top: 1px solid var(--ri-line);
+  font-size: 15px;
+  line-height: 1.3;
+  color: var(--ri-ink-2);
+}
+.mt__price-row .repair-icon { flex: none; color: var(--ri-ink); }
+.mt__price-row strong {
+  margin-left: auto;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ri-ink);
+}
+.mt__btn-short { display: none; }
+.mt__price-row small { font-size: 12px; font-weight: 500; color: var(--ri-ink-3); }
+.mt--prices .mt__btn { align-self: stretch; justify-content: center; margin-top: 16px; }
+.mt--prices .mt__spacer { display: none; }
+.mt--prices .mt__prices { margin-top: auto; padding-top: 16px; }
+
+@media screen and (min-width: 990px) {
+  .mt { padding: 34px 24px 28px; }
+  .mt__visual { width: 168px; height: 168px; margin-bottom: 22px; }
+  .mt .dg--iphone { --dg-w: 62px; }
+  .mt .dg--ipad { --dg-w: 94px; }
+  .mt .dg--macbook { --dg-w: 136px; }
+  .mt .dg--watch { --dg-w: 72px; }
+  .mt .mt__visual > .repair-icon { width: 52px; height: 52px; }
+  .mt__title { font-size: 21px; }
+  .mt__meta { margin-top: 8px; font-size: 15px; }
+  .mt__btn { padding: 12px 20px 12px 22px; font-size: 15px; }
+  .mt--prices { padding: 28px 28px 26px; }
+  .mt--prices .mt__title { font-size: 26px; }
+  .mt__price-row { font-size: 16px; padding: 13px 0; }
+  .mt__price-row strong { font-size: 19px; }
+}
+
 @media screen and (max-width: 749px) {
   .mt { padding: 20px 12px 16px; border-radius: 20px; }
+  .mt--prices { padding: 18px 14px 14px; }
+  .mt--prices .mt__title { font-size: 17px; }
+  .mt__family { font-size: 10.5px; margin-bottom: 6px; }
+  .mt--prices .mt__prices { padding-top: 10px; }
+  .mt__price-row { gap: 6px; padding: 8px 0; font-size: 13px; }
+  .mt__price-row .repair-icon { display: none; }
+  .mt__price-row strong { font-size: 14px; }
+  .mt__btn-full { display: none; }
+  .mt__btn-short { display: inline; }
   .mt__visual { width: 96px; height: 96px; margin-bottom: 14px; }
   .mt .dg--iphone { --dg-w: 32px; }
   .mt .dg--ipad { --dg-w: 50px; }
@@ -515,6 +646,23 @@
   .mt__meta span { display: block; }
   .mt__meta span + span::before { display: none; }
   .mt__btn { padding: 8px 12px 8px 14px; font-size: 13px; }
+}
+
+/* ---------- Quote Wizard inside the product info column ---------- */
+.repair-wizard-slot { margin-top: 24px; }
+.repair-wizard-slot:empty { display: none; }
+.repair-wizard-slot .qw-section {
+  padding: 0;
+  background: transparent;
+}
+.repair-wizard-slot .qw-wrap,
+.repair-wizard-slot .qw-page { max-width: none; margin: 0; }
+.repair-wizard-slot .qw-wrap > :not(.qw-wizard) { display: none; }
+.repair-wizard-slot .qw-wizard { max-width: none; width: 100%; }
+.repair-wizard-slot .qw-title { display: none; }
+.shopify-section.repair-wizard-moved { display: none; }
+@media screen and (min-width: 750px) {
+  .product--repair-visual .product__column-sticky { position: static; }
 }
 
 @media (prefers-reduced-motion: reduce) {
