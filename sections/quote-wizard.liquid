@@ -3808,7 +3808,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var product = resolveRepairProduct(iss.repairType, iss.label);
     if (!product) { showContactCard(iss, container); return; }
 
-    /* Price + variant from catalogue map; optional fetch only for express upsell HTML. */
+    /* Price + variant from the catalogue. A 15-minute job copies the Shopify variant price into that file. Fetch only when the catalogue has no price. */
     var basePrice = product.variants && product.variants[0] ? parseFloat(product.variants[0].price) : 0;
     var mainVariantId = product.variants && product.variants[0] ? product.variants[0].id : 0;
     var fullProduct = null;
