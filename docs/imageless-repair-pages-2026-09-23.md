@@ -44,17 +44,23 @@ Everything is driven by data that already exists on each product and tile: title
 
 - `snippets/repair-meta.liquid` works out family, repair type, model, repair name, qualifier, relative size and rear-lens count from the title. It uses tags and type as a fallback, and page context for tiles like "Series 9" or "45MM". It covers every active repair product in the catalogue (911).
 - `snippets/repair-icon.liquid` is a line-icon set on the Quote Wizard's 24px / 1.5-stroke grid: 23 repair types, 4 device families, and trust icons.
-- `snippets/device-glyph.liquid` holds one line-art diagram per family (iPhone, iPad, MacBook, Watch). It **highlights the part being repaired**: screen crack, battery x-ray, port, camera module, buttons, crown, keyboard, trackpad, hinge (Flexgate), heart-rate sensor, or a scan line for diagnostics. Rear repairs flip to the back of the device. Size scales with the model (mini/e < base < Plus/Max, 13" < 16"). Lens count follows the model (Air/e/SE/XR = 1, base = 2, Pro = 3).
+- `snippets/device-glyph.liquid` holds one line-art diagram per family (iPhone, iPad, MacBook, Watch). It **highlights the part being repaired**: screen crack, battery x-ray, port, camera area, buttons, crown, keyboard, trackpad, hinge (Flexgate), heart-rate sensor, or a scan line for diagnostics. Rear repairs flip to the back of the device. The drawings are deliberately generic: no notch or Dynamic Island, no lens count, no home button. That keeps them correct for any model (SE, Air, 17 Pro Max…). Only overall size scales with the model (mini/e < base < Plus/Max, 13" < 16"). The MacBook charging port sits on the side of the top case.
 - `snippets/repair-card.liquid` is the card used by every repair grid.
 - `snippets/repair-visual.liquid` is the product-page panel.
 - `assets/repair-imageless.css` holds the styles, with tokens aligned to `assets/quote-wizard.css`.
 
 ### How each page changes
 
-- **Product page:** the left column keeps the site's familiar "circle + repair icon" composition, now drawn in code. It shows the diagram with the part highlighted, a repair badge, model / repair / "Genuine OLED" chips, and a trust row (2-year warranty, genuine parts, London collection & UK courier). Title, description, breadcrumb, Quote Wizard and structured data are unchanged.
-- **Per-model grid:** each card shows the model in small caps and the repair as the title, with the qualifier as a green chip, the price, and "Book Repair". The highlighted part differs per card, so the grid reads at a glance. It is a single-column list on mobile.
+- **Product page:** the left column keeps the site's familiar "circle + repair icon" composition, now drawn in code. It shows the diagram with the part highlighted, a repair badge, model / repair / "Genuine OLED" chips, and a trust row (2-year warranty, genuine parts, London collection & UK courier). It stays pinned while you scroll.
+  - The Quote Wizard now sits under the title and description in the right-hand column. The panel, title and wizard share the first screen at 1440×900.
+  - How it works: the wizard section moves itself into a slot in the product column before it initialises. The theme editor keeps it in place so it stays editable. Its map panel is hidden in that position.
+  - The theme setting "Quote Wizard beside the repair panel" turns the move off.
+  - Title, description, breadcrumb and structured data are unchanged.
+- **Per-model grid:** each card shows the model in small caps and the repair as the title, with the qualifier as a green chip, the price, and "Book Repair". The highlighted part differs per card, so the grid reads at a glance. There are no extra corner icons. Grids cap at 1360px, and cards and diagrams scale up at 990px and 1200px. It is a single-column list on mobile.
 - **Repair-type grid:** the same card with the emphasis flipped (repair eyebrow, model title), chosen automatically when the collection title names a repair.
-- **Model tiles:** a circle with a scaled device diagram (or repair icon for repair-category tiles), the model name, a live "11 repairs · from £119" line read from the linked collection (diagnostics excluded), and "View repairs". The whole tile is clickable. Two columns on mobile instead of one.
+- **Model tiles:** two styles, set per section with "Tile style". The whole tile is clickable in both. Two columns on mobile instead of one.
+  - **Device diagram** (default): a circle with a scaled device diagram (or a repair icon for repair-category tiles), the model name, a live "11 repairs · from £119" line read from the linked collection (diagnostics excluded), and "View repairs".
+  - **Headline prices** (proposed): the model name plus its own screen and battery prices, read from the linked collection, and "View all 11 repairs". This makes tiles on a series page differ from each other instead of repeating the same picture.
 
 ### What was borrowed from the staging theme, and what wasn't
 
