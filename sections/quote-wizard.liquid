@@ -616,8 +616,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       { v: 'Power / Battery / Charging', icon: 'battery', label: 'Power / Battery / Charging' },
       { v: 'Camera', icon: 'camera', label: 'Camera' },
       { v: 'Audio / Mic / Speaker', icon: 'audio', label: 'Audio / Mic / Speaker' },
+      { v: 'Connectivity', icon: 'connectivity', label: 'Connectivity' },
       { v: 'Rear Glass', icon: 'rear-glass', label: 'Rear Glass' },
-      { v: 'Buttons', icon: 'buttons', label: 'Buttons' },
       { v: 'Water Damage', icon: 'water', label: 'Water Damage' },
       { v: 'Data Recovery', icon: 'data', label: 'Data Recovery' },
       { v: 'Other', icon: 'other', label: 'Other' }
@@ -626,7 +626,6 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       { v: 'Screen / Display', icon: 'screen', label: 'Screen / Display' },
       { v: 'Power / Battery / Charging', icon: 'battery', label: 'Power / Battery / Charging' },
       { v: 'Camera', icon: 'camera', label: 'Camera' },
-      { v: 'Buttons', icon: 'buttons', label: 'Buttons' },
       { v: 'Water Damage', icon: 'water', label: 'Water Damage' },
       { v: 'Data Recovery', icon: 'data', label: 'Data Recovery' },
       { v: 'Other', icon: 'other', label: 'Other' }
@@ -635,7 +634,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       { v: 'Screen / Display', icon: 'screen', label: 'Screen / Display' },
       { v: 'Power / Battery / Charging', icon: 'battery', label: 'Power / Battery / Charging' },
       { v: 'Rear Glass', icon: 'rear-glass', label: 'Rear Glass' },
-      { v: 'Buttons / Crown', icon: 'buttons', label: 'Buttons / Crown' },
+      { v: 'Crown', icon: 'buttons', label: 'Crown' },
       { v: 'Water Damage', icon: 'water', label: 'Water Damage' },
       { v: 'Other', icon: 'other', label: 'Other' }
     ]
@@ -652,7 +651,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     'buttons': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="2"/><circle cx="12" cy="16" r="2"/><rect x="7" y="3" width="10" height="18" rx="3"/></svg>',
     'water': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>',
     'data': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>',
-    'other': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>'
+    'other': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>',
+    'connectivity': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12.55a11 11 0 0114.08 0M8.53 16.11a6 6 0 016.95 0"/><circle cx="12" cy="20" r="1"/></svg>'
   };
 
   /* =============================================
@@ -683,8 +683,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     'loudspeaker':'Audio / Mic / Speaker','earpiece':'Audio / Mic / Speaker','microphone':'Audio / Mic / Speaker',
     'rear-camera':'Camera','rear-camera-lens':'Camera','front-camera':'Camera','face-id':'Camera',
     'rear-glass':'Rear Glass','heart-rate-monitor':'Rear Glass',
-    'volume-button':'Buttons','power-button':'Buttons','mute-button':'Buttons','home-button':'Buttons',
-    'side-button':'Buttons','crown':'Buttons / Crown','diagnostic':'_diagnostic'
+    'crown':'Crown','diagnostic':'_diagnostic'
   };
 
   /* =============================================
@@ -699,14 +698,18 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     "Graphite":"#4b4e53","Gold":"#e3d0b1","Silver":"#e2e4e1","Midnight Green":"#4e5851",
     "Space Gray":"#535150","Cosmic Orange":"#e67e22","Mist Blue":"#a0d1e5","Sage":"#9db4a1",
     "Lavender":"#e6e6fa","Blue Titanium":"#4b6f86","Sky Blue":"#87CEEB",
-    "Green":"#505e4d","Pacific Blue":"#2d4e5c","Deep Blue":"#1a3a5c"
+    "Green":"#505e4d","Pacific Blue":"#2d4e5c","Deep Blue":"#1a3a5c",
+    "Cloud White":"#f4f1ea","Light Gold":"#e6d3a3","Soft Pink":"#f3c6c8","Coral":"#ff6f61"
   };
 
   var IPHONE_COLORS = {
     "iPhone 17 Pro Max":["Silver","Cosmic Orange","Deep Blue"],
     "iPhone 17 Pro":["Silver","Cosmic Orange","Deep Blue"],
     "iPhone 17":["Black","White","Mist Blue","Sage","Lavender"],
+    "iPhone Air":["Space Black","Cloud White","Light Gold","Sky Blue"],
+    "iPhone 17e":["Black","White","Soft Pink"],
     "iPhone 16e":["Black","White"],
+    "iPhone 16E":["Black","White"],
     "iPhone 16 Pro Max":["Black Titanium","White Titanium","Natural Titanium","Desert Titanium"],
     "iPhone 16 Pro":["Black Titanium","White Titanium","Natural Titanium","Desert Titanium"],
     "iPhone 16 Plus":["Black","White","Pink","Teal","Ultramarine"],
@@ -729,7 +732,13 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     "iPhone 12 Mini":["Black","White","Red","Green","Blue","Purple"],
     "iPhone 11 Pro Max":["Silver","Space Gray","Gold","Midnight Green"],
     "iPhone 11 Pro":["Silver","Space Gray","Gold","Midnight Green"],
-    "iPhone 11":["Purple","Green","Yellow","Black","White","Red"]
+    "iPhone 11":["Purple","Green","Yellow","Black","White","Red"],
+    "iPhone SE 3rd Gen":["Midnight","Starlight","Red"],
+    "iPhone SE 2nd Gen":["Black","White","Red"],
+    "iPhone Xs Max":["Gold","Space Gray","Silver"],
+    "iPhone Xs":["Gold","Space Gray","Silver"],
+    "iPhone XR":["Black","White","Blue","Yellow","Coral","Red"],
+    "iPhone X":["Silver","Space Gray"]
   };
 
   var MACBOOK_COLORS = {
@@ -751,7 +760,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
   function getDeviceColors(device, model, repairType) {
     var needsColor = (device === 'iphone' && (repairType === 'rear-glass' || repairType === 'rear-camera-lens')) ||
-                     (device === 'macbook' && repairType === 'trackpad');
+                     (device === 'macbook' && repairType === 'trackpad') ||
+                     (device === 'macbook' && repairType === 'screen' && modelIs15InchMacBookPro(model));
     if (!needsColor || !model) return null;
 
     if (device === 'iphone') {
@@ -776,6 +786,21 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     }
 
     return null;
+  }
+
+  function buildChoiceCards(opt, label, choices) {
+    if (!choices || !choices.length) return '';
+    var h = '<div class="qw-opt-section"><div class="qw-opt-label">' + esc(label) + '</div><div class="qw-opt-row">';
+    choices.forEach(function(choice) {
+      h += '<div class="qw-opt-card" data-opt="' + esc(opt) + '" data-add="0" data-value="' + esc(choice.value) + '" tabindex="0">' +
+        '<div class="qw-opt-name">' + esc(choice.label) + '</div></div>';
+    });
+    return h + '</div></div>';
+  }
+
+  function selectedChoice(opt) {
+    var card = document.querySelector('.qw-opt-card.sel[data-opt="' + opt + '"]');
+    return card ? (card.getAttribute('data-value') || '') : '';
   }
 
   function buildColorSelector(colors) {
@@ -1055,20 +1080,22 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   var TS = {
     macbook: {
       'Screen / Display': [
-        { label: 'Cracked or shattered screen', route: 'repair', repairType: 'screen', copy: 'Your MacBook screen is damaged and needs replacing. We use genuine Apple displays and preserve True Tone calibration.' },
-        { label: 'Thick bands, artefacts, or distortion', route: 'repair', repairType: 'screen', copy: 'Lines or colour issues on your display typically mean the LCD panel needs replacing. We use genuine displays with full colour calibration.', dustgateCheck: true },
+        { label: 'Cracked or shattered screen', route: 'repair', repairType: 'screen', noTrueTone: true, copy: 'Your MacBook screen is damaged and needs replacing. We use genuine Apple displays.' },
+        { label: 'Cracked or shattered screen', route: 'repair', repairType: 'screen', trueToneOnly: true, copy: 'Your MacBook screen is damaged and needs replacing. We use genuine Apple displays and preserve True Tone calibration.' },
+        { label: 'Thick bands, artefacts, or distortion', route: 'repair', repairType: 'screen', copy: 'Lines or colour issues on your display typically mean the display panel needs replacing. We use genuine displays with full colour calibration.', dustgateCheck: true },
         { label: 'Dead pixels or bright spots', route: 'repair', repairType: 'screen', copy: 'Dead or stuck pixels indicate panel failure. A genuine display replacement will restore your screen to full quality.' },
-        { label: 'Black screen (external monitor works)', route: 'repair', repairType: 'screen', copy: 'Your MacBook works fine on an external monitor, which confirms the issue is the built-in display. A screen replacement will fix this.' },
-        { label: 'Black screen (external doesn\'t work or untested)', route: 'repair', repairType: 'screen', copy: 'A black screen is usually the display. We\'ll quote a genuine screen replacement. If we find a board fault after it arrives, we\'ll contact you before doing anything extra.' },
-        { label: 'Backlight fading or dim at angle', route: 'repair', repairType: 'screen', copy: 'Lines or colour issues on your display typically mean the LCD panel needs replacing. We use genuine displays with full colour calibration.', flexgateCheck: true }
+        { label: 'No image, backlight on, external monitor works', route: 'repair', repairType: 'screen', copy: 'The backlight is on and an external monitor shows a picture, so the built-in display has failed. A screen replacement will fix this.' },
+        { label: 'No image, no backlight or no external picture', route: 'diagnostic', repairType: 'diagnostic', copy: 'There is no backlight glow, or an external monitor also has no picture. That can be the screen or the logic board. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Backlight fading or dim at angle', route: 'repair', repairType: 'screen', flexgateModelsOnly: true, flexgateCheck: true, copy: 'The backlight fading, or going dim when you tilt the screen, means the display panel has failed. We\'ll quote a display panel replacement.' },
+        { label: 'Backlight fading or dim at angle', route: 'repair', repairType: 'screen', notFlexgateModels: true, copy: 'The backlight fading, or going dim when you tilt the screen, means the display panel has failed. We\'ll quote a display panel replacement. Flexgate only used to occur on the 13-inch A1706 (2016–2018), the 13-inch A1708 (2016–2017), and the 15-inch A1707 (2016–2017).' }
       ],
       'Power / Battery / Charging': [
         { label: 'Battery draining quickly', route: 'repair', repairType: 'battery', copy: 'Your battery has degraded and isn\'t holding a full charge. We\'ll replace it with an original-spec battery and your MacBook will show accurate health monitoring again.' },
         { label: '"Service Recommended" warning', route: 'repair', repairType: 'battery', copy: 'macOS is telling you the battery needs replacing. We use original-spec batteries and your health monitoring will report accurately after the swap.' },
         { label: 'Battery swollen or expanding', route: 'repair', repairType: 'battery', copy: 'We\'ll safely remove the old battery and fit a new one.', urgent: true },
         { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'A MacBook that won\'t power on could be the battery, charging circuit, or logic board. We can\'t quote the full repair until we\'ve looked.' },
-        { label: 'Random shutdowns or reboots', route: 'repair', repairType: 'battery', copy: 'Unexpected shutdowns are usually a failing battery. We\'ll quote a battery replacement. If something else is causing it, we\'ll tell you once we\'ve looked.' },
-        { label: 'Won\'t charge or charger not recognised', route: 'diagnostic', repairType: 'diagnostic', copy: 'Charging failure could be the USB-C port, battery, or charging circuit. We can\'t quote the full repair until we\'ve tested each one.' }
+        { label: 'Random shutdowns or reboots', route: 'diagnostic', repairType: 'diagnostic', copy: 'Unexpected shutdowns can be the battery or the logic board. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The MacBook still turns on, so we\'ll quote a charging port replacement and test power delivery before it goes back.' }
       ],
       'Trackpad / Keyboard': [
         { label: 'Keys not responding', route: 'repair', repairType: 'keyboard', copy: 'Non-responsive keys usually mean the keyboard needs replacing. We\'ll quote a full top-case keyboard. If we find liquid damage after it arrives, we\'ll contact you before doing extra work.' },
@@ -1107,7 +1134,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     },
     iphone: {
       'Screen / Display': [
-        { label: 'Cracked glass (touch still works)', route: 'repair', repairType: 'screen', copy: 'Your iPhone screen is cracked but still functional. We replace it with a genuine Apple OLED display that\'s verified in iOS Settings.' },
+        { label: 'Cracked glass (touch still works)', route: 'repair', repairType: 'screen', lcdOnly: true, copy: 'Your iPhone screen is cracked but still functional. We replace it with a genuine Apple LCD display that\'s verified in iOS Settings.' },
+        { label: 'Cracked glass (touch still works)', route: 'repair', repairType: 'screen', oledOnly: true, copy: 'Your iPhone screen is cracked but still functional. We replace it with a genuine Apple OLED display that\'s verified in iOS Settings.' },
         { label: 'Touch not responding', route: 'repair', repairType: 'screen', copy: 'A dead touchscreen means the digitiser is damaged. A genuine screen replacement will restore full touch functionality.' },
         { label: 'Lines, discolouration, or green line', route: 'repair', repairType: 'screen', copy: 'Display lines or colour shifting indicate panel damage. A genuine screen replacement will fix it.' },
         { label: 'Black screen (phone still vibrates/rings)', route: 'repair', repairType: 'screen', copy: 'If your phone vibrates or makes sounds but the screen is black, the display has failed. A screen replacement will bring it back.' },
@@ -1115,14 +1143,17 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       ],
       'Power / Battery / Charging': [
         { label: 'Battery drains fast', route: 'repair', repairType: 'battery', copy: 'Your battery has degraded below healthy capacity. We\'ll replace it with a genuine Apple battery and your battery health will read accurately again.' },
-        { label: 'Won\'t charge', route: 'diagnostic', repairType: 'diagnostic', copy: 'Charging failure could be the port, battery, or charging circuit. We can\'t quote the full repair until we\'ve tested each one.' },
-        { label: 'Random shutdowns or reboots', route: 'repair', repairType: 'battery', copy: 'Unexpected shutdowns are usually a failing battery. We\'ll quote a battery replacement. If something else is causing it, we\'ll contact you before doing extra work.' },
-        { label: 'Swollen battery', route: 'repair', repairType: 'battery', copy: 'We\'ll replace the battery safely.', urgent: true }
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'An iPhone that won\'t power on could be the battery, charging circuit, or logic board. Try a hard reset first: press Volume Up, press Volume Down, then hold the side button until the Apple logo appears. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Random shutdowns or reboots', route: 'diagnostic', repairType: 'diagnostic', copy: 'Unexpected shutdowns can be the battery or the logic board. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Swollen battery', route: 'repair', repairType: 'battery', copy: 'We\'ll replace the battery safely.', urgent: true },
+        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The iPhone still turns on, so we\'ll quote a charging port replacement and test charging before it goes back.' }
       ],
       'Camera': [
-        { label: 'Blurry photos or shaking camera', route: 'repair', repairType: 'rear-camera', copy: 'A blurry or shaking camera usually means the stabilisation system has failed. We\'ll replace the camera module.' },
-        { label: 'Camera shows black (no image)', route: 'repair', repairType: 'rear-camera', copy: 'A black camera feed means the module has failed. We\'ll replace it with a genuine camera module.' },
-        { label: 'Front camera or Face ID not working', route: 'repair', repairType: 'front-camera', copy: 'Front camera and Face ID faults are usually the camera module. We\'ll quote that repair. If it\'s a pairing or board issue after it arrives, we\'ll contact you first.' },
+        { label: 'Back camera blurry or shaking', route: 'repair', repairType: 'rear-camera', copy: 'A blurry or shaking back camera usually means the stabilisation system has failed. We\'ll replace the rear camera module.' },
+        { label: 'Back camera: no preview or it freezes', route: 'diagnostic', repairType: 'diagnostic', copy: 'A black preview, or a back camera that freezes or crashes, can be the module or the board. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Front camera: Face ID error or TrueDepth message', route: 'repair', repairType: 'front-camera', faceIdOnly: true, copy: 'A TrueDepth camera message in Settings, or a Face ID error, means the front camera module needs replacing. We\'ll quote that repair.' },
+        { label: 'Front camera not working', route: 'repair', repairType: 'front-camera', noFaceIdOnly: true, copy: 'The front camera module has failed. We\'ll quote a front camera replacement.' },
+        { label: 'Front camera: no preview or it freezes', route: 'diagnostic', repairType: 'diagnostic', copy: 'A black preview, or a front camera that freezes or crashes, can be the module or the board. We can\'t quote the full repair until we\'ve looked.' },
         { label: 'Condensation in camera', route: 'diagnostic', repairType: 'diagnostic', copy: 'Moisture inside the camera is a sign of liquid or a broken seal. We can\'t quote the full repair until we\'ve checked for internal corrosion.' }
       ],
       'Audio / Mic / Speaker': [
@@ -1134,11 +1165,6 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: 'Cracked back glass', route: 'repair', repairType: 'rear-glass', copy: 'We replace the rear glass with a genuine Apple housing in your original colour.' },
         { label: 'Camera lens cover cracked', route: 'repair', repairType: 'rear-camera-lens', copy: 'A cracked camera lens cover lets dust and moisture in. We\'ll replace the lens cover to protect your cameras.' }
       ],
-      'Buttons': [
-        { label: 'Power button not working', route: 'repair', repairType: 'power-button', copy: 'The power button or flex cable has failed. We\'ll replace the flex to restore full function.' },
-        { label: 'Volume buttons not working', route: 'repair', repairType: 'volume-button', copy: 'The volume button flex cable needs replacing.' },
-        { label: 'Mute switch not working', route: 'repair', repairType: 'mute-button', copy: 'The mute switch mechanism has failed. We\'ll replace the flex cable.' }
-      ],
       'Water Damage': [
         { label: 'Dropped in liquid (within 24 hours)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Don\'t try to charge or turn on your iPhone. We\'ll open it up, perform an ultrasonic clean, and assess the damage.', urgent: true },
         { label: 'Liquid damage (more than 24 hours ago)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Liquid causes corrosion that spreads over time. We need to open the phone, clean the corrosion, and check each circuit.' }
@@ -1147,31 +1173,35 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: 'Phone dead, need data', route: 'diagnostic', repairType: 'diagnostic', copy: 'We can attempt a specialised repair to get the phone working long enough to back up. Success depends on the fault.' },
         { label: 'Forgotten passcode', route: 'dismiss', repairType: null, copy: 'We can\'t bypass an iPhone passcode or iCloud lock. If you\'re the original owner, Apple Support can help with account recovery.' }
       ],
+      'Connectivity': [
+        { label: 'No signal / "No Service" / "SOS only"', route: 'diagnostic', repairType: 'diagnostic', copy: 'Loss of cellular signal could be an antenna, baseband chip, or SIM reader. Book a diagnostic and we\'ll identify the fault before quoting a repair.' },
+        { label: 'eSIM not detected', route: 'diagnostic', repairType: 'diagnostic', esimOnly: true, copy: 'A missing eSIM or "No SIM" message can be the eSIM profile or the board. There is no SIM tray on this iPhone. Book a diagnostic and we\'ll identify it before quoting a repair.' },
+        { label: 'SIM not detected', route: 'diagnostic', repairType: 'diagnostic', simTrayOnly: true, copy: 'A missing SIM or "No SIM" message can be the tray, the reader, or the board. Book a diagnostic and we\'ll identify it before quoting a repair.' },
+        { label: 'WiFi not connecting or greyed out', route: 'diagnostic', repairType: 'diagnostic', copy: 'A greyed-out WiFi toggle usually means a hardware fault on the logic board. Book a diagnostic and we\'ll confirm it before quoting a repair.' },
+        { label: 'Bluetooth not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth and WiFi share the same chip on iPhones. Book a diagnostic and we\'ll confirm the fault before quoting a repair.' }
+      ],
       'Other': [
         { label: 'Vibration not working', route: 'contact', repairType: null, copy: 'The Taptic Engine may have failed. Get in touch and we\'ll confirm whether we can repair it for your model.' },
-        { label: 'No signal / "No Service" / "SOS only"', route: 'diagnostic', repairType: 'diagnostic', copy: 'Loss of cellular signal could be an antenna, baseband chip, or SIM reader. We need to diagnose the device to quote the repair.' },
-        { label: 'WiFi not connecting or greyed out', route: 'diagnostic', repairType: 'diagnostic', copy: 'A greyed-out WiFi toggle usually means a hardware fault on the logic board. We need to diagnose it to quote.' },
-        { label: 'Bluetooth not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth and WiFi share the same chip on iPhones. We need to diagnose the device to quote the repair.' },
         { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe the issue and we\'ll get back to you with the best repair option.' }
       ]
     },
     ipad: {
       'Screen / Display': [
-        { label: 'Cracked glass (display still works)', route: 'repair', repairType: 'screen', copy: 'Your iPad glass is cracked. We use genuine parts to ensure Apple Pencil compatibility and full touch accuracy.' },
+        { label: 'Cracked glass only (display still works)', route: 'repair', repairType: 'screen-glass', copy: 'The picture is fine and the damage is only the outer glass. We\'ll quote a glass replacement.' },
+        { label: 'Cracked glass only (display still works)', route: 'repair', repairType: 'screen', onlyWhenMissing: 'screen-glass', copy: 'On this iPad the glass is bonded to the display, so a cracked screen is a display replacement.' },
         { label: 'Touch not responding', route: 'repair', repairType: 'screen', copy: 'A dead touchscreen needs a display replacement. We use genuine panels.' },
-        { label: 'Lines or dead areas on screen', route: 'repair', repairType: 'screen', copy: 'Lines or dead zones mean the LCD/LED panel is damaged internally. A display replacement will fix this.' },
-        { label: 'Black screen', route: 'repair', repairType: 'screen', copy: 'A black iPad screen is usually the display. We\'ll quote a genuine screen replacement. If we find a board or battery fault after it arrives, we\'ll contact you before doing extra work.' }
+        { label: 'Blotches, lines, or a damaged display', route: 'repair', repairType: 'screen', copy: 'Blotches, lines, or a damaged picture need a display replacement, not glass only.' },
+        { label: 'Black screen (sound or buttons still work)', route: 'repair', repairType: 'screen', copy: 'The iPad still responds, so the display has failed. We\'ll quote a genuine screen replacement.' },
+        { label: 'No display, no response', route: 'diagnostic', repairType: 'diagnostic', copy: 'If the iPad shows no signs of life, it could be the display, battery, or logic board. We can\'t quote the full repair until we\'ve tested it.' }
       ],
       'Power / Battery / Charging': [
         { label: 'Battery drains quickly', route: 'repair', repairType: 'battery', copy: 'Your iPad battery has degraded. We\'ll replace it with an original-spec battery.' },
-        { label: 'Won\'t charge', route: 'diagnostic', repairType: 'diagnostic', copy: 'Charging failure could be the port, battery, or charging circuit. We can\'t quote the full repair until we\'ve tested each one.' },
-        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'An iPad that won\'t power on could be the battery, charging circuit, or logic board. Try a hard reset first (hold Power + Volume Down for 10 seconds). We can\'t quote the full repair until we\'ve looked.' },
-        { label: 'Battery swollen or screen lifting', route: 'repair', repairType: 'battery', copy: 'A swollen battery is pushing the screen away from the frame. We\'ll safely remove it and fit a replacement.', urgent: true }
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', ipadHomeButton: true, copy: 'An iPad that won\'t power on could be the battery, charging circuit, or logic board. Try a hard reset first: hold the top button and the Home button until the Apple logo appears. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', ipadNoHomeButton: true, copy: 'An iPad that won\'t power on could be the battery, charging circuit, or logic board. Try a hard reset first: press Volume Up, press Volume Down, then hold the top button until the Apple logo appears. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Battery swollen or screen lifting', route: 'repair', repairType: 'battery', copy: 'A swollen battery is pushing the screen away from the frame. We\'ll safely remove it and fit a replacement.', urgent: true },
+        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The iPad still turns on, so we\'ll quote a charging port replacement and test charging before it goes back.' }
       ],
       'Camera': [],
-      'Buttons': [
-        { label: 'Home button or Touch ID not working', route: 'repair', repairType: 'home-button', copy: 'We\'ll quote a Home button repair. Touch ID is paired to the board, so if a like-for-like swap isn\'t possible on your model, we\'ll tell you once we\'ve looked.' }
-      ],
       'Water Damage': [
         { label: 'Dropped in liquid (within 24 hours)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Time is critical. We\'ll open the iPad, clean affected components with ultrasonic cleaning, and assess which parts need replacing. Don\'t try to charge it.', urgent: true },
         { label: 'Liquid damage (more than 24 hours ago)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Corrosion spreads over time even after the device dries out. We need to open it, clean the corrosion, and check each circuit.' },
@@ -1198,15 +1228,15 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       'Power / Battery / Charging': [
         { label: 'Won\'t charge', route: 'diagnostic', repairType: 'diagnostic', copy: 'Charging failure on Apple Watch can be the coil, battery, or main board. We can\'t quote the full repair until we\'ve tested it.' },
         { label: 'Battery drains fast', route: 'repair', repairType: 'battery', copy: 'Your watch battery has degraded. We\'ll swap it and re-seal the watch.' },
-        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'If the watch won\'t power on, it could be the battery or a board-level fault. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'If the watch won\'t power on, it could be the battery or a board-level fault. Try a restart first: hold the side button and the Digital Crown together for at least 10 seconds, until the Apple logo appears. We can\'t quote the full repair until we\'ve looked.' },
         { label: 'Battery swollen or back popping off', route: 'repair', repairType: 'battery', copy: 'A swollen battery is pushing the back off the watch. Stop wearing it immediately. We\'ll replace the battery and re-seal the case.', urgent: true }
       ],
       'Rear Glass': [
-        { label: 'Cracked back crystal / sensor glass', route: 'repair', repairType: 'heart-rate-monitor', copy: 'The rear crystal houses the heart rate and blood oxygen sensors. We\'ll replace it to restore sensor accuracy and the water seal.' }
+        { label: 'Cracked back crystal / sensor glass', route: 'repair', repairType: 'heart-rate-monitor', noBloodOxygen: true, copy: 'The rear crystal houses the heart rate sensor. We\'ll replace it to restore sensor accuracy and the water seal.' },
+        { label: 'Cracked back crystal / sensor glass', route: 'repair', repairType: 'heart-rate-monitor', bloodOxygenOnly: true, copy: 'The rear crystal houses the heart rate and blood oxygen sensors. We\'ll replace it to restore sensor accuracy and the water seal.' }
       ],
-      'Buttons / Crown': [
-        { label: 'Digital Crown stuck or not rotating', route: 'repair', repairType: 'crown', copy: 'The Digital Crown can get jammed by dirt or debris. We\'ll clean or replace the crown mechanism.' },
-        { label: 'Side button not responding', route: 'repair', repairType: 'side-button', copy: 'A faulty side button needs the button module replaced.' }
+      'Crown': [
+        { label: 'Digital Crown stuck or not rotating', route: 'repair', repairType: 'crown', copy: 'The Digital Crown can get jammed by dirt or debris. We\'ll clean or replace the crown mechanism.' }
       ],
       'Water Damage': [
         { label: 'Water ingress despite water resistance', route: 'diagnostic', repairType: 'diagnostic', copy: 'Water-resistant seals can fail over time or after impact. We\'ll open the watch, clean any corrosion, and assess the damage.' },
@@ -1430,20 +1460,105 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       if (!fault || fault === '_diagnostic') continue;
       if (allowed[fault]) {
         available[fault] = true;
-      } else if (device === 'watch' && fault === 'Buttons') {
-        available['Buttons / Crown'] = true;
       }
     }
     available['Water Damage'] = true;
     available['Data Recovery'] = true;
     available['Other'] = true;
+    if (device === 'iphone') available['Connectivity'] = true;
     return list.filter(function(f) { return available[f.v]; });
+  }
+
+  function modelHasFaceId(model) {
+    var name = String(model || '');
+    if (/iPhone\s*SE\b/i.test(name)) return false;
+    if (/\biPhone\s*8(\s*Plus)?\b/i.test(name)) return false;
+    return true;
+  }
+
+  function modelHasIpadHomeButton(model) {
+    var name = String(model || '');
+    if (/iPad\s+Air\s+3/i.test(name)) return true;
+    if (/iPad\s+Mini\s+5/i.test(name)) return true;
+    if (/iPad\s+(5|6|7|8|9)th\s+Gen/i.test(name) && !/Air|Mini|Pro/i.test(name)) return true;
+    return false;
+  }
+
+  function modelHasBloodOxygen(model) {
+    var name = String(model || '');
+    if (/Apple Watch SE\b/i.test(name)) return false;
+    if (/Series\s*(2|3|4|5)\b/i.test(name)) return false;
+    if (/Ultra/i.test(name)) return true;
+    if (/Series\s*(6|7|8|9|10)\b/i.test(name)) return true;
+    return false;
+  }
+
+  function modelHasTrueTone(model) {
+    var name = String(model || '');
+    if (/\bA1466\b/i.test(name)) return false;
+    if (/\bA1706\b/i.test(name)) return false;
+    if (/\bA1707\b/i.test(name)) return false;
+    if (/\bA1708\b/i.test(name)) return false;
+    return true;
+  }
+
+  function modelIsEsimOnly(model) {
+    return /iPhone\s*Air\b/i.test(String(model || ''));
+  }
+
+  /* Flexgate: 13-inch A1706 and A1708, and 15-inch A1707. */
+  function modelIsFlexgateModel(model) {
+    var name = String(model || '');
+    return /\bA1706\b/.test(name) || /\bA1707\b/.test(name) || /\bA1708\b/.test(name);
+  }
+
+  /* A real 15-inch marker only. A2159 contains the digits 15 and is a 13-inch. */
+  function modelIs15InchMacBookPro(model) {
+    var name = String(model || '');
+    return /MacBook Pro/i.test(name) && /15\s*(?:["”″']|-?inch)/i.test(name);
+  }
+
+  /* Nano-texture glass was an option on iPad Pro M4, and on M5 when that model is listed. */
+  function modelHasNanoTexture(model) {
+    var name = String(model || '');
+    return /iPad Pro/i.test(name) && /\bM[45]\b/.test(name);
+  }
+
+  function modelHasLcdScreen(model) {
+    var name = String(model || '');
+    if (/iPhone\s*SE\b/i.test(name)) return true;
+    if (/iPhone\s*XR\b/i.test(name)) return true;
+    if (/\biPhone\s*8(\s*Plus)?\b/i.test(name)) return true;
+    if (/iPhone\s*11(?!\s*Pro)\b/i.test(name)) return true;
+    return false;
   }
 
   function getAvailableIssues(device, fault, repairsMap) {
     var issues = TS[device] && TS[device][fault];
     if (!issues) return [];
+    var faceId = modelHasFaceId(S.model);
+    var lcd = modelHasLcdScreen(S.model);
+    var esimOnly = modelIsEsimOnly(S.model);
+    var trueTone = modelHasTrueTone(S.model);
+    var bloodOxygen = modelHasBloodOxygen(S.model);
+    var ipadHome = modelHasIpadHomeButton(S.model);
+    var flexgateModel = modelIsFlexgateModel(S.model);
     return issues.filter(function(iss) {
+      if (iss.flexgateModelsOnly && !flexgateModel) return false;
+      if (iss.notFlexgateModels && flexgateModel) return false;
+      if (iss.faceIdOnly && !faceId) return false;
+      if (iss.noFaceIdOnly && faceId) return false;
+      if (iss.lcdOnly && !lcd) return false;
+      if (iss.oledOnly && lcd) return false;
+      if (iss.esimOnly && !esimOnly) return false;
+      if (iss.simTrayOnly && esimOnly) return false;
+      if (iss.trueToneOnly && !trueTone) return false;
+      if (iss.noTrueTone && trueTone) return false;
+      if (iss.bloodOxygenOnly && !bloodOxygen) return false;
+      if (iss.noBloodOxygen && bloodOxygen) return false;
+      if (iss.ipadHomeButton && !ipadHome) return false;
+      if (iss.ipadNoHomeButton && ipadHome) return false;
+      if (iss.onlyWhenMissing && repairsMap[iss.onlyWhenMissing]) return false;
       if (iss.route === 'contact' || iss.route === 'dismiss') return true;
       if (iss.route === 'diagnostic') return !!repairsMap['diagnostic'];
       return !!repairsMap[iss.repairType];
@@ -3383,7 +3498,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     setTimeout(function() {
       if (iss.dustgateCheck && _repairsMap['dustgate']) {
         showDustgateQuestion(iss);
-      } else if (iss.flexgateCheck && _repairsMap['flexgate']) {
+      } else if (iss.flexgateCheck && _repairsMap['flexgate'] && modelIsFlexgateModel(S.model)) {
         showFlexgateQuestion(iss);
       } else {
         showResolution(iss);
@@ -3423,7 +3538,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     p.innerHTML =
       '<div class="qw-res"><div class="qw-res-top" style="padding-bottom:24px;">' +
         '<h3 class="qw-res-h">Does your screen look like this?</h3>' +
-        '<p class="qw-res-p">Flexgate is a manufacturing fault on certain MacBook Pro models where the backlight flex cable is too short. The backlight fades or fails entirely, usually starting from the bottom of the screen.</p>' +
+        '<p class="qw-res-p">On this MacBook Pro the backlight flex cable was too short. The backlight fades or fails, usually from the bottom of the screen. If this is what you see, we repair the flex instead of replacing the whole display.</p>' +
         '<div class="qw-dustgate-imgs">' +
           '<img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/flexgate_1.webp?v=1773951159" alt="Flexgate example 1">' +
           '<img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/flexgate_2.jpg?v=1773951159" alt="Flexgate example 2">' +
@@ -3434,7 +3549,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         '</div>' +
       '</div></div>';
     document.getElementById('qwFgYes').onclick = function() {
-      showResolution({ label: 'Flexgate repair', route: 'repair', repairType: 'flexgate', copy: 'Flexgate is a manufacturing fault on 2016-2018 MacBook Pro models where the backlight flex cable is too short. Opening and closing the lid gradually wears through the cable, causing the backlight to fail. We repair the issue by fixing the snapped flex at component level.' });
+      showResolution({ label: 'Flexgate repair', route: 'repair', repairType: 'flexgate', copy: 'The backlight flex cable on this MacBook Pro was too short. Opening and closing the lid wears through the cable. We repair the snapped flex at component level.' });
     };
     document.getElementById('qwFgNo').onclick = function() {
       showResolution(originalIss);
@@ -3501,6 +3616,24 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       'Repair Type': repairTypeLabel
     };
     if (selectedColor) mainProps['Device Color'] = selectedColor;
+
+    if (resCard.dataset.needsGlass === '1') {
+      var glass = selectedChoice('glass');
+      if (!glass) {
+        if (err) err.textContent = 'Please say whether the screen is standard or nano-texture.';
+        return null;
+      }
+      mainProps['Display glass'] = glass;
+    }
+    if (resCard.dataset.needsConnect === '1') {
+      var connectivity = selectedChoice('connect');
+      if (!connectivity) {
+        if (err) err.textContent = 'Please say whether the iPad is Wi-Fi or Wi-Fi + Cellular.';
+        return null;
+      }
+      mainProps['Connectivity'] = connectivity;
+    }
+
     items.push({ id: mainVid, quantity: 1, properties: mainProps });
 
     var speedCard = document.querySelector('.qw-opt-card.sel[data-opt="speed"]');
@@ -3584,7 +3717,28 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       });
     }
 
+    items[0].properties['Order summary'] = orderSummaryText(items[0].properties);
     return items;
+  }
+
+  function orderSummaryText(props) {
+    var lines = [];
+    function add(label, key) {
+      if (props[key]) lines.push(label + ': ' + props[key]);
+    }
+    add('Device', '_model');
+    add('Fault', '_fault');
+    add('Issue', '_issue');
+    add('Repair', 'Repair Type');
+    add('Colour', 'Device Color');
+    add('Display glass', 'Display glass');
+    add('Connectivity', 'Connectivity');
+    add('Service', 'Service Type');
+    add('Collection date', 'Collection Date');
+    add('Collection window', 'Collection Window');
+    add('Postcode', 'Postcode');
+    add('Band', 'Band');
+    return lines.join('\n');
   }
 
   function getShopifyRoot() {
@@ -3759,6 +3913,16 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var turnaroundHtml = buildTurnaroundCards(expressData);
     var deviceColors = getDeviceColors(S.device, S.model, iss.repairType);
     var colorHtml = buildColorSelector(deviceColors);
+    var needsGlass = S.device === 'ipad' && (iss.repairType === 'screen' || iss.repairType === 'screen-glass') && modelHasNanoTexture(S.model);
+    var needsConnect = S.device === 'ipad' && (iss.repairType === 'screen' || iss.repairType === 'screen-glass');
+    var glassHtml = needsGlass ? buildChoiceCards('glass', 'Which screen glass is it?', [
+      { value: 'Standard', label: 'Standard' },
+      { value: 'Nano-texture', label: 'Nano-texture' }
+    ]) : '';
+    var connectHtml = needsConnect ? buildChoiceCards('connect', 'Wi-Fi or Wi-Fi + Cellular?', [
+      { value: 'Wi-Fi', label: 'Wi-Fi' },
+      { value: 'Wi-Fi + Cellular', label: 'Wi-Fi + Cellular' }
+    ]) : '';
 
     var priceTrustHtml = basePrice
       ? buildPriceTrustBlock(S.device, S.model, { gate: true, priceHtml: gbp.format(basePrice) })
@@ -3772,7 +3936,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var serviceHtml = injectServicePrice(buildServiceCards(), priceTrustHtml + totalHtml);
 
     container.innerHTML = urgentHtml +
-      '<div class="qw-res" id="qwResCard" data-base="' + basePrice + '" data-vid="' + mainVariantId + '" data-needs-color="' + (deviceColors ? '1' : '0') + '">' +
+      '<div class="qw-res" id="qwResCard" data-base="' + basePrice + '" data-vid="' + mainVariantId + '" data-needs-color="' + (deviceColors ? '1' : '0') + '" data-needs-glass="' + (needsGlass ? '1' : '0') + '" data-needs-connect="' + (needsConnect ? '1' : '0') + '">' +
         '<div class="qw-res-top">' +
           '<div class="qw-res-badge qw-badge-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>We can fix this</div>' +
           '<h3 class="qw-res-h">' + esc(product.title) + '</h3>' +
@@ -3780,7 +3944,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           (iss.refImages ? '<div class="qw-dustgate-imgs">' + iss.refImages.map(function(src,i){ return '<img src="' + src + '" alt="Reference image ' + (i+1) + '">'; }).join('') + '</div>' : '') +
         '</div>' +
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
-        '<div class="qw-res-extras" style="padding:0 24px 8px;">' + colorHtml + turnaroundHtml + '</div>' +
+        '<div class="qw-res-extras" style="padding:0 24px 8px;">' + colorHtml + glassHtml + connectHtml + turnaroundHtml + '</div>' +
         '<div class="qw-res-cta">' +
           '<button class="qw-btn-book" id="qwBookBtn" disabled>Proceed to checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
           '<button class="qw-btn-email" id="qwEmailQuote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email me this quote</button>' +
@@ -3860,7 +4024,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
     /* Logic board line: show for issues where the board could be the cause */
     var boardIssues = ['Won\'t turn on', 'Random shutdowns', 'Won\'t charge', 'No display, no response',
-      'Black screen (external doesn\'t work or untested)', 'No sound from speakers', 'Microphone not working',
+      'No image, no backlight or no external picture', 'No sound from speakers', 'Microphone not working',
       'Ghost typing', 'Touch Bar not responding', 'Won\'t charge or charger not recognised'];
     var showBoard = boardIssues.some(function(bi) { return S.issue && S.issue.toLowerCase().indexOf(bi.toLowerCase().substring(0, 12)) !== -1; });
     /* Also show for water damage and generic diagnostics */
@@ -3885,13 +4049,19 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
     var diagVariantId = fullDiag ? fullDiag.variants[0].id : 0;
 
+    var guideLine = 'The prices below are a guide — diagnostic first, then the repair if the board or other parts need work.';
+    var repeatsQuoteLine = /can['\u2019]t quote the full repair/i.test(String(iss.copy || ''));
+    var guideCopy = repeatsQuoteLine
+      ? guideLine
+      : 'We can\'t quote the full repair until we\'ve looked. ' + guideLine;
+
     container.innerHTML = urgentHtml +
       '<div class="qw-res" id="qwResCard" data-base="' + diagPrice + '" data-vid="' + diagVariantId + '">' +
         '<div class="qw-res-top">' +
           '<div class="qw-res-badge qw-badge-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>We need to take a look</div>' +
           '<h3 class="qw-res-h">Book a Diagnostic</h3>' +
           '<p class="qw-res-p">' + esc(iss.copy) + '</p>' +
-          '<p class="qw-res-p">We can\'t quote the full repair until we\'ve looked. The prices below are a guide — diagnostic first, then the repair if the board or other parts need work.</p>' +
+          '<p class="qw-res-p">' + esc(guideCopy) + '</p>' +
           '<p class="qw-res-p">Once your device arrives — by courier or mail-in — we diagnose within 1 working day and email your quote. The device stays with us until you decide.</p>' +
           likelyHtml +
         '</div>' +
