@@ -62,6 +62,31 @@ Everything is driven by data that already exists on each product and tile: title
   - **Device diagram** (default): a circle with a scaled device diagram (or a repair icon for repair-category tiles), the model name, a live "11 repairs · from £119" line read from the linked collection (diagnostics excluded), and "View repairs".
   - **Headline prices** (proposed): the model name plus its own screen and battery prices, read from the linked collection, and "View all 11 repairs". This makes tiles on a series page differ from each other instead of repeating the same picture.
 
+### Part badges
+
+`snippets/repair-badge.liquid` gives every repair card and product panel a truthful part-quality badge:
+
+1. Product metafield `custom.part_badge` overrides. Tag `no-part-badge` hides the badge.
+2. A genuine / original note in the title wins, e.g. "(Genuine OLED)" or "(Original Specification)".
+3. Otherwise the repair type's default from Theme settings → Repair pages → **Part badges** (one `repair-type: label` per line). Defaults cover charging port, rear glass, rear camera, camera lens, front camera, earpiece, loudspeaker, microphone, buttons, heart-rate sensor, trackpad and keys.
+
+Screens, displays, glass and batteries have no default, because the store sells genuine and aftermarket variants of them ("Aftermarket Screen Repair (Soft OLED)", "Premium Aftermarket Battery", "iPhone 11 LCD Screen Repair"). Their badge has to come from the title. Anything with "aftermarket" in the title or tags never gets a default badge.
+
+New devices pick up badges automatically, because the repair type comes from the title. A brand-new repair type needs one line in the setting.
+
+### Glass vs display
+
+- "Screen Glass Repair" and "Glass Screen Repair" show an impact shatter on an otherwise normal screen.
+- "Display Screen Repair" and "… Display Repair" show panel damage (lines, ink bleed) under intact glass.
+- Full screen assemblies ("Screen Repair") keep the crack.
+
+### Model tiles: pictures only when they differ
+
+The "Tile style" setting defaults to **Auto**:
+
+- Tiles of different devices or repair types keep diagrams or icons, because they help tell tiles apart.
+- Tiles that are all the same kind of device drop the picture. They show headline prices when every linked collection has screen or battery prices, otherwise compact text tiles.
+
 ### Model order (automatic)
 
 `snippets/model-order.liquid` applies one rule everywhere models are listed: model tiles, and repair grids that show one repair across many models.
