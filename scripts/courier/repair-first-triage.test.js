@@ -210,7 +210,7 @@ describe('repair-first triage', () => {
     const modelHasLcdScreen = new Function(
       `${liquid.slice(start, end)}\nreturn modelHasLcdScreen;`
     )();
-    for (const name of ['iPhone 11', 'iPhone XR', 'iPhone SE (2nd Gen)', 'iPhone SE (3rd Gen)', 'iPhone SE 2nd Gen (2020)']) {
+    for (const name of ['iPhone 11', 'iPhone XR', 'iPhone 8', 'iPhone 8 Plus', 'iPhone SE (2nd Gen)', 'iPhone SE (3rd Gen)', 'iPhone SE 2nd Gen (2020)']) {
       assert.equal(modelHasLcdScreen(name), true, name);
     }
     for (const name of ['iPhone 11 Pro', 'iPhone 11 Pro Max', 'iPhone 12', 'iPhone X', 'iPhone Xs', 'iPhone 16']) {
