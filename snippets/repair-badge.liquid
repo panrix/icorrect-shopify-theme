@@ -1,85 +1,95 @@
 {%- comment -%}
-  Decides the part-quality badge for a repair product, without guessing.
+  Part-quality badge for a repair product. One rule, no tags or settings:
 
-  Order of precedence:
-  1. Product metafield custom.part_badge (free text) — per-product override.
-     Tag "no-part-badge" hides the badge entirely.
-  2. The title's own qualifier, e.g. "(Genuine OLED)", "(Original
-     Specification)". Only genuine / original wording shows as a green
-     badge; anything else ("Soft OLED", "No Power or Liquid Damage") shows
-     as a neutral note.
-  3. The default for the repair type from Theme settings > Repair pages >
-     Part badges ("repair-type: label" per line). Screens, displays, glass
-     and batteries have no default on purpose: they are sold in genuine and
-     aftermarket variants, so the title must say which.
-  Titles or tags containing "aftermarket" never receive a default badge.
+  1. The title's own quality note wins: "(Genuine OLED)", "(Original
+     Specification)" show as the green badge; any other note such as
+     "(Premium Aftermarket Battery)" or "(Soft OLED)" shows as a neutral note.
+  2. Otherwise the part is genuine: the badge comes from the repair type
+     ("Genuine screen", "Genuine keys", ...). Unlisted repair types fall back
+     to "Genuine parts".
+  3. Diagnostics, data recovery and liquid damage get no badge, and nothing
+     whose title says "aftermarket" is ever called genuine.
 
   Accepts:
   - product: {Object} product
   - repair: {String} repair key from repair-meta
   - qualifier: {String} qualifier from repair-meta
 
-  A neutral title note ("Rear Glass Repair") does not block the default
-  badge; both are returned.
-
-  Outputs "kind|label" entries joined by "~" (kind is ok or note), or nothing.
+  Outputs "kind|label" entries joined by "~" (kind: ok or note), or nothing.
 {%- endcomment -%}
 {%- liquid
   assign out = ''
-  assign done = false
-
-  if product.tags contains 'no-part-badge'
-    assign done = true
-  endif
-
-  if done == false
-    assign override = product.metafields.custom.part_badge.value | default: product.metafields.custom.part_badge
-    if override != blank
-      assign out = 'ok|' | append: override
-      assign done = true
-    endif
-  endif
-
-  assign tl = product.title | downcase
-  assign tag_text = product.tags | join: ' ' | downcase
+  assign note = ''
+  assign title_l = product.title | downcase
   assign aftermarket = false
-  if tl contains 'aftermarket' or tag_text contains 'aftermarket'
+  if title_l contains 'aftermarket'
     assign aftermarket = true
   endif
 
-  assign note = ''
-  if done == false and qualifier != blank
+  if qualifier != blank
     assign ql = qualifier | downcase
-    assign note = 'note|' | append: qualifier
-    if aftermarket == false
-      if ql contains 'genuine' or ql contains 'original' or ql contains 'apple'
-        assign out = 'ok|' | append: qualifier
-        assign note = ''
-        assign done = true
-      endif
+    assign quality_note = false
+    if ql contains 'genuine' or ql contains 'original'
+      assign quality_note = true
     endif
-    if note != blank and aftermarket
-      assign done = true
+    if aftermarket
+      assign quality_note = false
+    endif
+    if quality_note
+      assign out = 'ok|' | append: qualifier
+    else
+      assign note = 'note|' | append: qualifier
     endif
   endif
 
-  if done == false and aftermarket == false
-    assign defaults = settings.repair_part_badges
-    if defaults == nil
-      assign defaults = 'charging-port: Genuine charging port|rear-glass: Genuine rear glass|rear-camera: Genuine rear camera|rear-camera-lens: Genuine camera lens|front-camera: Genuine front camera|earpiece: Genuine earpiece speaker|loudspeaker: Genuine loudspeaker|microphone: Genuine microphone|button: Genuine buttons|heart-rate: Genuine heart-rate sensor|trackpad: Genuine trackpad|keyboard: Genuine keys'
+  if out == blank and aftermarket == false
+    case repair
+      when 'diagnostic', 'data', 'liquid'
+        assign label = ''
+      when 'screen'
+        assign label = 'Genuine screen'
+      when 'display'
+        assign label = 'Genuine display'
+      when 'glass'
+        assign label = 'Genuine glass'
+      when 'battery'
+        assign label = 'Genuine battery'
+      when 'charging-port'
+        assign label = 'Genuine charging port'
+      when 'rear-glass'
+        assign label = 'Genuine rear glass'
+      when 'rear-camera'
+        assign label = 'Genuine rear camera'
+      when 'rear-camera-lens'
+        assign label = 'Genuine camera lens'
+      when 'front-camera'
+        assign label = 'Genuine front camera'
+      when 'face-id'
+        assign label = 'Genuine Face ID'
+      when 'earpiece'
+        assign label = 'Genuine earpiece speaker'
+      when 'loudspeaker'
+        assign label = 'Genuine loudspeaker'
+      when 'microphone'
+        assign label = 'Genuine microphone'
+      when 'button'
+        assign label = 'Genuine buttons'
+      when 'crown'
+        assign label = 'Genuine crown'
+      when 'heart-rate'
+        assign label = 'Genuine heart-rate sensor'
+      when 'keyboard'
+        assign label = 'Genuine keys'
+      when 'trackpad'
+        assign label = 'Genuine trackpad'
+      when 'touch-bar'
+        assign label = 'Genuine Touch Bar'
+      else
+        assign label = 'Genuine parts'
+    endcase
+    if label != blank
+      assign out = 'ok|' | append: label
     endif
-    assign lines = defaults | newline_to_br | replace: '<br />', '|' | split: '|'
-    for line in lines
-      assign l = line | strip
-      assign l_key_raw = l | split: ':' | first
-      assign l_key = l_key_raw | strip | downcase
-      if l_key == repair
-        assign label = l | remove_first: l_key_raw | remove_first: ':' | strip
-        if label != blank
-          assign out = 'ok|' | append: label
-        endif
-      endif
-    endfor
   endif
 
   if note != blank
