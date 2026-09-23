@@ -347,6 +347,27 @@ describe('repair-first triage', () => {
     );
   });
 
+  it('backlight fading names the display panel and limits Flexgate to the 13-inch 2016-2018 Pros', () => {
+    const start = liquid.indexOf('function modelIsFlexgate13');
+    const end = liquid.indexOf('function modelIs15InchMacBookPro');
+    assert.ok(start >= 0 && end > start);
+    const modelIsFlexgate13 = new Function(
+      `${liquid.slice(start, end)}\nreturn modelIsFlexgate13;`
+    )();
+    assert.equal(modelIsFlexgate13('MacBook Pro 13” Touch Bar A1706 (2016-2018)'), true);
+    assert.equal(modelIsFlexgate13('MacBook Pro 13” A1708 (2016-2017)'), true);
+    assert.equal(modelIsFlexgate13('MacBook Pro 15” Retina A1707 (2016-2017)'), false);
+    assert.equal(modelIsFlexgate13("MacBook Pro 14-inch 'M4 Pro/Max' A3112 (2024)"), false);
+    const fade = issues.find((iss) => iss.label === 'Backlight fading or dim at angle');
+    assert.equal(fade.route, 'repair');
+    assert.match(liquid, /display panel has failed/);
+    assert.match(liquid, /Flexgate only used to occur on the 2016–2018 13-inch MacBook Pro/);
+    assert.match(liquid, /modelIsFlexgate13\(S\.model\)/);
+    assert.match(liquid, /data-needs-glass/);
+    assert.match(liquid, /data-needs-connect/);
+    assert.match(liquid, /Order summary/);
+  });
+
   it('data recovery still has diagnostic paths', () => {
     const kept = issues.filter(
       (iss) => iss.category === 'Data Recovery' && iss.route === 'diagnostic'
