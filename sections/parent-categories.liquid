@@ -30,15 +30,37 @@
             assign tile_scale = tile_meta[2]
 
             assign tile_stats = ''
+            assign tile_count = 0
+            assign tile_screen = 100000000
+            assign tile_battery = 100000000
             if section.settings.show_stats != false and block.settings.link contains '/collections/'
               assign tile_handle = block.settings.link | split: '/collections/' | last | split: '?' | first | split: '#' | first
               assign tile_collection = collections[tile_handle]
               if tile_collection.products_count > 0
+                assign tile_count = tile_collection.products_count
                 assign tile_min = 100000000
+                assign tile_screen = 100000000
+                assign tile_screen_count = 0
+                assign tile_battery = 100000000
+                assign tile_battery_count = 0
                 for p in tile_collection.products limit: 50
-                  if p.price > 0 and p.price < tile_min
-                    unless p.title contains 'Diagnostic'
-                      assign tile_min = p.price
+                  if p.price == 0 or p.title contains 'Diagnostic'
+                    continue
+                  endif
+                  if p.price < tile_min
+                    assign tile_min = p.price
+                  endif
+                  if p.title contains 'Battery'
+                    assign tile_battery_count = tile_battery_count | plus: 1
+                    if p.price < tile_battery
+                      assign tile_battery = p.price
+                    endif
+                  elsif p.title contains 'Screen' or p.title contains 'Display'
+                    unless p.title contains 'Rear' or p.title contains 'Camera'
+                      assign tile_screen_count = tile_screen_count | plus: 1
+                      if p.price < tile_screen
+                        assign tile_screen = p.price
+                      endif
                     endunless
                   endif
                 endfor
@@ -58,6 +80,40 @@
             endif
             assign tile_stats = tile_stats | split: '|'
           -%}
+          {%- if section.settings.tile_style == 'prices' and tile_repair == 'repair' -%}
+            {%- if tile_screen < 100000000 or tile_battery < 100000000 -%}
+              <div class="parent-category-col col-{{ section.settings.column_per_row }}" {{ block.shopify_attributes }}>
+                <div class="mt mt--prices" data-family="{{ tile_family }}">
+                  {%- if tile_count > 0 -%}
+                    <span class="mt__family">{% render 'repair-icon', icon: tile_family, size: 14 %}{{ tile_count }} repairs</span>
+                  {%- endif -%}
+                  <h3 class="mt__title">{{ block.settings.title | escape }}</h3>
+                  <ul class="mt__prices">
+                    {%- if tile_screen < 100000000 -%}
+                      <li class="mt__price-row">
+                        {% render 'repair-icon', icon: 'screen', family: tile_family, size: 18 %}Screen
+                        <strong>{% if tile_screen_count > 1 %}<small>from </small>{% endif %}{{ tile_screen | money_without_trailing_zeros }}</strong>
+                      </li>
+                    {%- endif -%}
+                    {%- if tile_battery < 100000000 -%}
+                      <li class="mt__price-row">
+                        {% render 'repair-icon', icon: 'battery', size: 18 %}Battery
+                        <strong>{% if tile_battery_count > 1 %}<small>from </small>{% endif %}{{ tile_battery | money_without_trailing_zeros }}</strong>
+                      </li>
+                    {%- endif -%}
+                  </ul>
+                  <span class="mt__spacer"></span>
+                  {%- if block.settings.link != blank -%}
+                    <a class="mt__btn" href="{{ block.settings.link }}">
+                      {%- if tile_count > 0 -%}<span class="mt__btn-full">View all {{ tile_count }} repairs</span><span class="mt__btn-short">{{ tile_count }} repairs</span>{% else %}{{ block.settings.btn | default: 'View repairs' | escape }}{% endif %}
+                      {% render 'repair-icon', icon: 'arrow', size: 15 -%}
+                    </a>
+                  {%- endif -%}
+                </div>
+              </div>
+              {%- continue -%}
+            {%- endif -%}
+          {%- endif -%}
           <div class="parent-category-col col-{{ section.settings.column_per_row }}" {{ block.shopify_attributes }}>
             <div class="mt" data-family="{{ tile_family }}" data-repair="{{ tile_repair }}">
               <span class="mt__visual">
@@ -235,6 +291,8 @@ margin: 0;
   .parent-category-row--imageless{
     column-gap: 20px;
     row-gap: 20px;
+    max-width: 1360px;
+    margin: 0 auto;
   }
   .parent-category-row--imageless .parent-category-col{
     flex: 0 0 calc(33.333% - 14px);
@@ -405,6 +463,17 @@ margin: 0;
         "type": "url",
         "id": "btn_link",
         "label": "Button Link"
+      },
+      {
+        "type": "select",
+        "id": "tile_style",
+        "label": "Tile style (imageless design)",
+        "options": [
+          { "value": "device", "label": "Device diagram" },
+          { "value": "prices", "label": "Headline prices (screen / battery)" }
+        ],
+        "default": "device",
+        "info": "Headline prices are read from each tile's linked collection. Tiles without screen or battery prices fall back to the diagram."
       },
       {
         "type": "checkbox",
