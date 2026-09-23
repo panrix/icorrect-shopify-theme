@@ -1,7 +1,8 @@
 {%- comment -%}
   Product-page repair panel that replaces the product media gallery.
-  Keeps the site's familiar circle-and-repair-icon composition, but draws it
-  from product data, so a new model is ready the moment the product exists.
+  Draws the repair from product data (device diagram with the repaired part
+  highlighted, labels, part badge), so a new model is ready the moment the
+  product exists.
 
   Accepts:
   - product: {Object} product
@@ -23,11 +24,10 @@
   assign name = meta[4]
   assign qualifier = meta[5]
 
-  assign ql = qualifier | downcase
-  assign qualifier_is_quality = false
-  if ql contains 'genuine' or ql contains 'original' or ql contains 'apple'
-    assign qualifier_is_quality = true
-  endif
+  capture badge_raw
+    render 'repair-badge', product: product, repair: repair, qualifier: qualifier
+  endcapture
+  assign badges = badge_raw | strip | split: '~'
 
   assign fact_1 = settings.repair_fact_1
   assign fact_2 = settings.repair_fact_2
@@ -47,7 +47,6 @@
     <div class="rv__disc">
       {% render 'device-glyph', family: family, repair: repair, scale: scale %}
     </div>
-    <span class="rv__badge">{% render 'repair-icon', icon: repair, family: family, size: 28 %}</span>
   </div>
 
   <ul class="rv__labels" aria-label="Repair summary">
@@ -57,9 +56,12 @@
     {%- if name != blank -%}
       <li class="rv__chip rv__chip--ink">{% render 'repair-icon', icon: repair, family: family, size: 16 %}{{ name | escape }}</li>
     {%- endif -%}
-    {%- if qualifier != blank and qualifier_is_quality -%}
-      <li class="rv__chip rv__chip--ok">{% render 'repair-icon', icon: 'check', size: 15 %}{{ qualifier | escape }}</li>
-    {%- endif -%}
+    {%- for badge_entry in badges -%}
+      {%- assign badge = badge_entry | split: '|' -%}
+      {%- if badge[0] == 'ok' -%}
+        <li class="rv__chip rv__chip--ok">{% render 'repair-icon', icon: 'check', size: 15 %}{{ badge[1] | escape }}</li>
+      {%- endif -%}
+    {%- endfor -%}
   </ul>
 
   {%- if fact_1 != blank or fact_2 != blank or fact_3 != blank -%}

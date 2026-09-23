@@ -28,6 +28,10 @@
   case repair
     when 'screen'
       assign part = 'screen'
+    when 'glass'
+      assign part = 'glassfront'
+    when 'display'
+      assign part = 'display'
     when 'dustgate'
       assign part = 'dust'
     when 'flexgate'
@@ -109,6 +113,10 @@
           <path class="dg-grille{% if part == 'grille' %} is-hl{% endif %}" d="M30 233.5h.01M36 233.5h.01M42 233.5h.01M138 233.5h.01M144 233.5h.01M150 233.5h.01"/>
           <rect class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" x="40" y="60" width="100" height="122" rx="10"/>
           <path class="dg-crack" d="M108 38l-12 30 16 10-20 34 10 8-14 30"/>
+          <path class="dg-shatter" d="M118 78l-16-30M118 78l24-22M118 78l30 12M118 78l12 38M118 78l-22 32M118 78l-34-4M106 64l18-6 12 14-4 20-18 6-14-12z"/>
+          <path class="dg-fault" d="M52 13v216M56.5 13v216"/>
+          <path class="dg-fault dg-fault--alt" d="M126 13v216"/>
+          <path class="dg-blot" d="M70 160c4-14 26-18 36-6 8 10 2 26-12 28-14 2-28-8-24-22z"/>
           <rect class="dg-scan" x="13" y="13" width="154" height="3" rx="1.5"/>
         {%- endif -%}
       </svg>
@@ -131,6 +139,10 @@
         <path class="dg-port-side{% if part == 'port' %} is-hl{% endif %}" d="M27.3 131.8l-3.4 6.4"/>
         <path class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" d="M58 130h144l14 40H44z"/>
         <path class="dg-crack" d="M152 22l-10 22 14 8-18 26 8 6-12 22"/>
+        <path class="dg-shatter" d="M166 52l-14-24M166 52l22-18M166 52l28 8M166 52l12 30M166 52l-20 26M166 52l-30-2M156 42l14-6 12 10-2 16-14 6-12-10z"/>
+        <path class="dg-fault" d="M88 13v103M92 13v103"/>
+        <path class="dg-fault dg-fault--alt" d="M178 13v103"/>
+        <path class="dg-blot" d="M108 82c4-12 24-14 32-4 6 8 0 20-12 22-12 1-24-6-20-18z"/>
         <rect class="dg-scan" x="38" y="13" width="184" height="3" rx="1.5"/>
       </svg>
     {%- when 'watch' -%}
@@ -153,6 +165,10 @@
           <path class="dg-grille{% if part == 'grille' %} is-hl{% endif %}" d="M14 94v10M14 112v10"/>
           <rect class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" x="40" y="72" width="56" height="76" rx="14"/>
           <path class="dg-crack" d="M82 62l-10 22 12 8-14 24 8 6-10 18"/>
+          <path class="dg-shatter" d="M80 94l-10-22M80 94l16-14M80 94l18 8M80 94l8 24M80 94l-14 18M80 94l-22-2M73 86l10-4 8 7-1 10-10 4-9-7z"/>
+          <path class="dg-fault" d="M48 46v128M51.5 46v128"/>
+          <path class="dg-fault dg-fault--alt" d="M88 46v128"/>
+          <path class="dg-blot" d="M54 140c3-10 18-12 24-4 5 7 0 17-9 18-10 1-18-5-15-14z"/>
           <rect class="dg-scan" x="26" y="46" width="84" height="3" rx="1.5"/>
         {%- endif -%}
       </svg>
@@ -188,6 +204,10 @@
           <path class="dg-grille{% if part == 'grille' %} is-hl{% endif %}" d="M30 233.5h.01M35 233.5h.01M40 233.5h.01M80 233.5h.01M85 233.5h.01M90 233.5h.01"/>
           <rect class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" x="28" y="64" width="64" height="120" rx="10"/>
           <path class="dg-crack" d="M76 38l-10 26 14 8-16 30 9 7-12 26"/>
+          <path class="dg-shatter" d="M72 74l-14-28M72 74l20-20M72 74l24 10M72 74l10 30M72 74l-18 24M72 74l-28-4M63 62l14-5 10 11-3 16-14 5-11-10z"/>
+          <path class="dg-fault" d="M38 10v220M41.5 10v220"/>
+          <path class="dg-fault dg-fault--alt" d="M80 10v220"/>
+          <path class="dg-blot" d="M46 150c4-12 22-15 30-5 7 9 1 22-11 24-12 1-23-7-19-19z"/>
           <rect class="dg-scan" x="16" y="10" width="88" height="3" rx="1.5"/>
         {%- endif -%}
       </svg>

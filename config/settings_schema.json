@@ -1484,6 +1484,13 @@
         "default": true
       },
       {
+        "type": "textarea",
+        "id": "repair_part_badges",
+        "label": "Part badges",
+        "info": "One 'repair-type: label' per line, shown as the green badge on repair cards and product pages. A '(Genuine …)' note in the product title always wins; titles containing 'aftermarket' never get a badge. Screens and batteries are left out on purpose because they come in genuine and aftermarket variants. Per product: metafield custom.part_badge overrides; tag no-part-badge hides it.",
+        "default": "charging-port: Genuine charging port\nrear-glass: Genuine rear glass\nrear-camera: Genuine rear camera\nrear-camera-lens: Genuine camera lens\nfront-camera: Genuine front camera\nearpiece: Genuine earpiece speaker\nloudspeaker: Genuine loudspeaker\nmicrophone: Genuine microphone\nbutton: Genuine buttons\nheart-rate: Genuine heart-rate sensor\ntrackpad: Genuine trackpad\nkeyboard: Genuine keys"
+      },
+      {
         "type": "header",
         "content": "Product page trust row"
       },

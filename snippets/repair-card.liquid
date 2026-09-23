@@ -31,11 +31,10 @@
   assign name = meta[4]
   assign qualifier = meta[5]
 
-  assign ql = qualifier | downcase
-  assign qualifier_is_quality = false
-  if ql contains 'genuine' or ql contains 'original' or ql contains 'apple'
-    assign qualifier_is_quality = true
-  endif
+  capture badge_raw
+    render 'repair-badge', product: product, repair: repair, qualifier: qualifier
+  endcapture
+  assign badges = badge_raw | strip | split: '~'
 
   assign price = product.price | money_without_trailing_zeros
 -%}
@@ -61,14 +60,15 @@
     </{{ heading_tag }}>
 
     {%- assign features = product.metafields.custom.product_features.value -%}
-    {%- if qualifier != blank or features != blank -%}
+    {%- if badges.size > 0 or features != blank -%}
       <p class="rc__meta">
-        {%- if qualifier != blank -%}
-          <span class="rc__chip{% if qualifier_is_quality %} rc__chip--ok{% endif %}">
-            {%- if qualifier_is_quality -%}{% render 'repair-icon', icon: 'check', size: 13 %}{%- endif -%}
-            {{- qualifier | escape -}}
+        {%- for badge_entry in badges -%}
+          {%- assign badge = badge_entry | split: '|' -%}
+          <span class="rc__chip{% if badge[0] == 'ok' %} rc__chip--ok{% endif %}">
+            {%- if badge[0] == 'ok' -%}{% render 'repair-icon', icon: 'check', size: 13 %}{%- endif -%}
+            {{- badge[1] | escape -}}
           </span>
-        {%- endif -%}
+        {%- endfor -%}
         {%- for feature in features -%}
           <span class="rc__chip">{{ feature | escape }}</span>
         {%- endfor -%}

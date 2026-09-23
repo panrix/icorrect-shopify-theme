@@ -15,7 +15,8 @@
 
   - family: iphone | ipad | macbook | watch | device
   - repair: repair key understood by repair-icon / device-glyph, or "repair"
-    when the title is a model rather than a repair
+    when the title is a model rather than a repair. "screen" is a full screen
+    assembly, "glass" the outer glass only, "display" the panel under it.
   - scale: relative on-screen size of the device glyph (0.78–1)
   - model / name / qualifier: "iPhone 16 Pro" / "Screen Repair" / "Genuine OLED"
 
@@ -26,6 +27,13 @@
 {%- liquid
   assign t = title | strip | replace: '|', '/'
   assign tl = t | downcase
+  assign tl_main = tl | strip
+  assign tl_last = tl_main | slice: -1, 1
+  if tl_last == ')' and tl_main contains ' ('
+    assign tl_parts = tl_main | split: ' ('
+    assign tl_keep = tl_parts.size | minus: 1
+    assign tl_main = tl_parts | slice: 0, tl_keep | join: ' ('
+  endif
   assign tag_text = repair_tags | join: ' ' | downcase | replace: '-', ' '
   assign hay = tl | append: ' ' | append: tag_text
   assign ctx = repair_context | downcase
@@ -66,10 +74,10 @@
     assign repair = 'front-camera'
   elsif hay contains 'rear camera'
     assign repair = 'rear-camera'
-  elsif hay contains 'rear glass' or hay contains 'back glass' or hay contains 'housing'
-    assign repair = 'rear-glass'
   elsif hay contains 'heart rate'
     assign repair = 'heart-rate'
+  elsif hay contains 'rear glass' or hay contains 'back glass' or hay contains 'housing'
+    assign repair = 'rear-glass'
   elsif hay contains 'earpiece'
     assign repair = 'earpiece'
   elsif hay contains 'speaker'
@@ -90,8 +98,12 @@
     assign repair = 'button'
   elsif hay contains 'data recovery'
     assign repair = 'data'
-  elsif hay contains 'liquid' or hay contains 'water damage'
+  elsif hay contains 'liquid damage' or hay contains 'water damage'
     assign repair = 'liquid'
+  elsif tl_main contains 'glass screen' or tl_main contains 'screen glass' or tl_main contains 'glass only'
+    assign repair = 'glass'
+  elsif tl_main contains 'display'
+    assign repair = 'display'
   elsif hay contains 'screen' or hay contains 'display' or hay contains 'glass' or hay contains 'lcd' or hay contains 'oled'
     assign repair = 'screen'
   elsif hay contains 'camera'
@@ -137,7 +149,7 @@
       endif
   endcase
 
-  assign phrases = ' Diagnostic| Original Screen| Genuine Screen| Genuine Battery| Screen| Display| Glass| LCD| OLED| Battery| Charging Port| Rear Camera Lens| Rear Camera| Front Camera| Camera Lens| Camera| Rear Glass| Rear Housing| Back Glass| Housing| Face ID| Earpiece| Loudspeaker| Speaker| Microphone| Power Button| Volume Button| Mute Button| Side Button| Home Button| Button| Crown| Keyboard| Trackpad| Touch Bar Repair| Flexgate| Dustgate| Heart Rate| Data Recovery| Liquid Damage| Water Damage' | split: '|'
+  assign phrases = ' Diagnostic| Liquid Retina| Original Screen| Genuine Screen| Genuine Battery| Screen| Display| Glass| LCD| OLED| Battery| Charging Port| Rear Camera Lens| Rear Camera| Front Camera| Camera Lens| Camera| Rear Glass| Rear Housing| Back Glass| Housing| Face ID| Earpiece| Loudspeaker| Speaker| Microphone| Power Button| Volume Button| Mute Button| Side Button| Home Button| Button| Crown| Keyboard| Trackpad| Touch Bar Repair| Flexgate| Dustgate| Heart Rate| Data Recovery| Liquid Damage| Water Damage' | split: '|'
   assign cut = t.size
   for p in phrases
     if t contains p

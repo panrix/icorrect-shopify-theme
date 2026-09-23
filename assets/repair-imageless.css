@@ -68,6 +68,9 @@
 .dg-trackpad { fill: var(--ri-soft); stroke: rgba(29, 29, 31, 0.28); }
 .dg-keys { stroke: rgba(29, 29, 31, 0.22); stroke-width: 2.4px; stroke-dasharray: 6 2.4; stroke-linecap: butt; }
 .dg-sensor { fill: none; }
+.dg-shatter,
+.dg-fault,
+.dg-blot,
 .dg-fcam,
 .dg-touchbar,
 .dg-battery,
@@ -105,6 +108,29 @@
   fill: none;
   stroke: var(--ri-accent);
   stroke-width: 1.3px;
+}
+.dg--part-glassfront .dg-screen { stroke: var(--ri-accent); stroke-width: 2px; }
+.dg--part-glassfront .dg-shatter {
+  display: inline;
+  fill: none;
+  stroke: var(--ri-accent);
+  stroke-width: 1.2px;
+}
+.dg--part-display .dg-screen { fill: #dfe2e8; }
+.dg--part-display .dg-sheen { opacity: 0.7; }
+.dg--part-display .dg-fault {
+  display: inline;
+  stroke: var(--ri-accent);
+  stroke-width: 1.6px;
+  opacity: 0.85;
+}
+.dg--part-display .dg-fault--alt { stroke: #30b85c; }
+.dg--part-display .dg-blot {
+  display: inline;
+  fill: #1d1d1f;
+  stroke: none;
+  opacity: 0.72;
+  filter: blur(1.5px);
 }
 .dg--part-battery .dg-screen { fill: #f4f5f7; stroke-dasharray: 3 3; }
 .dg--part-battery .dg-sheen { display: none; }
@@ -179,19 +205,6 @@
 .rv .dg--ipad { --dg-w: 168px; }
 .rv .dg--macbook { --dg-w: 250px; }
 .rv .dg--watch { --dg-w: 120px; }
-.rv__badge {
-  position: absolute;
-  top: 6%;
-  right: 4%;
-  display: grid;
-  place-items: center;
-  width: 68px;
-  height: 68px;
-  border-radius: 50%;
-  color: #fff;
-  background: var(--ri-ink);
-  box-shadow: 0 0 0 6px var(--ri-soft), 0 14px 28px -10px rgba(0, 0, 0, 0.45);
-}
 .rv__labels {
   display: flex;
   flex-wrap: wrap;
@@ -264,8 +277,6 @@
   .rv .dg--ipad { --dg-w: 196px; }
   .rv .dg--macbook { --dg-w: 290px; }
   .rv .dg--watch { --dg-w: 142px; }
-  .rv__badge { width: 76px; height: 76px; }
-  .rv__badge .repair-icon { width: 32px; height: 32px; }
   .rv__chip { font-size: 15px; padding: 9px 16px 9px 13px; }
   .rv__chip .repair-icon { width: 18px; height: 18px; }
   .rv__fact { font-size: 14px; gap: 7px; }
@@ -293,8 +304,6 @@
   .rv .dg--ipad { --dg-w: 106px; }
   .rv .dg--macbook { --dg-w: 158px; }
   .rv .dg--watch { --dg-w: 76px; }
-  .rv__badge { width: 48px; height: 48px; box-shadow: 0 0 0 4px var(--ri-soft), 0 10px 20px -8px rgba(0, 0, 0, 0.45); }
-  .rv__badge .repair-icon { width: 20px; height: 20px; }
   .rv__chip { font-size: 12px; padding: 6px 12px 6px 9px; }
   .rv__facts { display: none; }
 }
@@ -568,6 +577,33 @@
 .mt__btn .repair-icon { transition: transform var(--ri-ease); }
 .mt:hover .mt__btn .repair-icon { transform: translateX(2px); }
 
+/* Compact text tile: used when every tile would show the same picture */
+.mt--compact {
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 20px 20px 24px;
+  border-radius: 18px;
+  text-align: left;
+}
+.mt__compact-text { flex: 1; min-width: 0; }
+.mt--compact .mt__title { font-size: 19px; }
+.mt--compact .mt__meta { margin-top: 4px; font-size: 14px; }
+.mt__go {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--ri-ink);
+  transition: transform var(--ri-ease);
+}
+.mt__go:hover { color: #fff; }
+.mt__go::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.mt--compact:hover .mt__go { transform: translateX(2px); }
+
 /* Price-led tile variant: the model's own headline prices instead of a picture */
 .mt--prices {
   align-items: stretch;
@@ -634,6 +670,8 @@
   .mt__meta { margin-top: 8px; font-size: 15px; }
   .mt__btn { padding: 12px 20px 12px 22px; font-size: 15px; }
   .mt--prices { padding: 28px 28px 26px; }
+  .mt--compact { padding: 24px 22px 24px 28px; }
+  .mt--compact .mt__title { font-size: 21px; }
   .mt--prices .mt__title { font-size: 26px; }
   .mt__price-row { font-size: 16px; padding: 13px 0; }
   .mt__price-row strong { font-size: 19px; }
@@ -642,6 +680,10 @@
 @media screen and (max-width: 749px) {
   .mt { padding: 20px 12px 16px; border-radius: 20px; }
   .mt--prices { padding: 18px 14px 14px; }
+  .mt--compact { gap: 10px; padding: 16px 14px 16px 16px; border-radius: 16px; }
+  .mt--compact .mt__title { font-size: 16px; }
+  .mt--compact .mt__meta { font-size: 12px; }
+  .mt__go { width: 32px; height: 32px; }
   .mt--prices .mt__title { font-size: 17px; }
   .mt__family { font-size: 10.5px; margin-bottom: 6px; }
   .mt--prices .mt__prices { padding-top: 10px; }
