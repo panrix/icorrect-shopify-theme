@@ -46,6 +46,16 @@
     "parent_categories_qWqkJR": {
       "type": "parent-categories",
       "blocks": {
+        "category_m5_13": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/Untitled_design_e830823e-6637-4352-ba39-0a09fb96e055.png",
+            "title": "iPad Pro 13\" 8th Gen 'M5' (2025)",
+            "price": "",
+            "link": "shopify://collections/ipad-pro-13-8th-gen-m5-a3360-a3361-2025-repair-prices",
+            "btn": "View repairs"
+          }
+        },
         "category_RxBUJB": {
           "type": "category",
           "settings": {
@@ -93,6 +103,16 @@
             "title": "iPad Pro 12.9\" 3rd Gen (2018)",
             "price": "",
             "link": "shopify://collections/ipad-pro-12-9-3rd-gen-a1876-a2014-a1895-2018-repair-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_m5_11": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/Untitled_design_ee101fda-05a3-42f0-bdde-8b5b75cffe75.png",
+            "title": "iPad Pro 11\" 6th Gen 'M5' (2025)",
+            "price": "",
+            "link": "shopify://collections/ipad-pro-11-6th-gen-m5-a3357-a3358-2025-repair-prices",
             "btn": "View repairs"
           }
         },
@@ -148,11 +168,13 @@
         }
       },
       "block_order": [
+        "category_m5_13",
         "category_RxBUJB",
         "category_Dw3pim",
         "category_jjXKNa",
         "category_cFn346",
         "category_qhUUPy",
+        "category_m5_11",
         "category_9hrTQj",
         "category_fQhHLP",
         "category_e3VAGW",
