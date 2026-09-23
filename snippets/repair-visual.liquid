@@ -41,6 +41,10 @@
   if fact_3 == nil
     assign fact_3 = 'London collection & UK courier'
   endif
+  assign title_tags = product.title | append: ' ' | append: product.tags | downcase
+  if title_tags contains 'aftermarket'
+    assign fact_2 = ''
+  endif
 -%}
 <div class="rv rv--{{ family }}" data-repair="{{ repair }}">
   <div class="rv__stage">
