@@ -55,6 +55,15 @@
     "parent_categories_nWCAYw": {
       "type": "parent-categories",
       "blocks": {
+        "category_iphone17": {
+          "type": "category",
+          "settings": {
+            "title": "iPhone 17 Series",
+            "price": "",
+            "link": "shopify://collections/iphone-17-series-repair-prices",
+            "btn": "View models"
+          }
+        },
         "category_LqJyLa": {
           "type": "category",
           "settings": {
@@ -147,6 +156,7 @@
         }
       },
       "block_order": [
+        "category_iphone17",
         "category_LqJyLa",
         "category_74pW43",
         "category_NEEHTP",
@@ -167,158 +177,6 @@
         "heading": "Choose your iPhone model",
         "heading_size": 36,
         "details": "At iCorrect, we specialise in advanced iPhone repairs, from screen repairs and battery replacements to logic board faults and data recovery. We work at microchip level to fix issues that others, including Apple, often write off.Whether you’ve cracked your screen, damaged the back glass, or your iPhone simply won’t turn on, our technicians restore everything back to factory standards using original Apple parts, many of which we’ve reclaimed and refurbished in-house.Most iPhone repairs are completed within 4 hours. If you’re in a rush, our express service can turn things around in as little as 1 to 2 hours, depending on the fault.",
-        "btn_link": "",
-        "btn_text": ""
-      }
-    },
-    "parent_categories_YgTQLW": {
-      "type": "parent-categories",
-      "blocks": {
-        "category_PzEhWB": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/Diagnostic.png",
-            "title": "Diagnostic",
-            "price": "",
-            "link": "shopify://collections/iphone-diagnostic-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_jraWHi": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/iPhone_screen.png",
-            "title": "Screen Repair",
-            "price": "",
-            "link": "shopify://collections/iphone-screen-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_B6TmQ8": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/Battery.png",
-            "title": "Battery Repair",
-            "price": "",
-            "link": "shopify://collections/iphone-battery-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_kd4QB4": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/iPhone_rear_glass.png",
-            "title": "Rear Glass Repair",
-            "price": "",
-            "link": "shopify://collections/iphone-rear-glass-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_Myf3EG": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/Charging_port.png",
-            "title": "Charging Port Repair",
-            "price": "",
-            "link": "shopify://collections/iphone-charging-port-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_PcnRyH": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/iPhone_rear_camera.png",
-            "title": "Rear Camera Repair",
-            "price": "",
-            "link": "shopify://collections/iphone-rear-camera-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_3crE77": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/iPhone_rear_camera_lens.png",
-            "title": "Rear Camera Lens Repair",
-            "price": "",
-            "link": "shopify://collections/iphone-rear-camera-lens-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_fywHEE": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/iPhone_front_camera.png",
-            "title": "Front Camera Repair",
-            "price": "",
-            "link": "shopify://collections/iphone-front-camera-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_JrADQY": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/iPhone_Face_ID.png",
-            "title": "Face ID Repair",
-            "price": "",
-            "link": "shopify://collections/iphone-face-id-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_JymLnn": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/iPhone_earpiece_speaker.png",
-            "title": "Earpiece Repair",
-            "price": "",
-            "link": "shopify://collections/iphone-earpiece-speaker-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_t9PmQ4": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/iPhone_loudspeaker.png",
-            "title": "Loudspeaker Repair",
-            "price": "",
-            "link": "shopify://collections/iphone-loudspeaker-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_LUKyJD": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/iPhone_microphone.png",
-            "title": "Microphone Repair",
-            "price": "",
-            "link": "shopify://collections/iphone-microphone-repair-prices",
-            "btn": "View repairs"
-          }
-        }
-      },
-      "block_order": [
-        "category_PzEhWB",
-        "category_jraWHi",
-        "category_B6TmQ8",
-        "category_kd4QB4",
-        "category_Myf3EG",
-        "category_PcnRyH",
-        "category_3crE77",
-        "category_fywHEE",
-        "category_JrADQY",
-        "category_JymLnn",
-        "category_t9PmQ4",
-        "category_LUKyJD"
-      ],
-      "settings": {
-        "column_per_row": 4,
-        "padding_top": 50,
-        "padding_bottom": 50,
-        "mob_padding_top": 40,
-        "mob_padding_bottom": 40,
-        "bg": "#ffffff",
-        "heading": "Choose your iPhone repair",
-        "heading_size": 36,
-        "details": "",
         "btn_link": "",
         "btn_text": ""
       }
@@ -523,7 +381,6 @@
     "main_banner_and_video_HjbmW9",
     "quote_wizard_top",
     "parent_categories_nWCAYw",
-    "parent_categories_YgTQLW",
     "iphone_videos_MxNxMM",
     "repair_services_nQkwFT",
     "icorrect_faqs_RVk3VL",
