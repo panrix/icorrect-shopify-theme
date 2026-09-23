@@ -2,8 +2,8 @@
   "source": "data/shopify-catalogue-2026-09-15.json",
   "generated_for": "courier-first-pivot #53",
   "generated_at": "2026-09-18",
-  "model_count": 113,
-  "repair_count": 902,
+  "model_count": 115,
+  "repair_count": 909,
   "models": {
     "watch::apple-watch-se-2-40mm": {
       "device": "watch",
@@ -7844,6 +7844,90 @@
           "handle": "macbook-pro-16-m4-2024-a3186-a3403-trackpad-repair",
           "title": "MacBook Pro 16-inch 'M4 Pro/Max' A3186/A3403 (2024) Trackpad Repair",
           "price": 249,
+          "tags": [
+            "courier:free"
+          ]
+        }
+      }
+    },
+    "ipad::ipad-pro-11-inch-m5-2025": {
+      "device": "ipad",
+      "name": "iPad Pro 11-inch M5 (2025)",
+      "slug": "ipad-pro-11-inch-m5-2025",
+      "aliases": [
+        "iPad Pro 11” 6th Gen ‘M5’ (2025)"
+      ],
+      "repairs": {
+        "battery": {
+          "variantId": 71358608605437,
+          "handle": "ipad-pro-11-2025-m5-battery-repair",
+          "title": "iPad Pro 11 M5 (2025) Battery Replacement (Original Specification)",
+          "price": 229,
+          "tags": [
+            "courier:free"
+          ]
+        },
+        "charging-port": {
+          "variantId": 71358611652861,
+          "handle": "ipad-pro-11-2025-m5-charging-port-repair",
+          "title": "iPad Pro 11 M5 (2025) Charging Port Repair",
+          "price": 179,
+          "tags": []
+        },
+        "diagnostic": {
+          "variantId": 71358596382973,
+          "handle": "ipad-pro-11-2025-m5-diagnostic",
+          "title": "iPad Pro 11 M5 (2025) Diagnostic",
+          "price": 49,
+          "tags": []
+        },
+        "screen": {
+          "variantId": 71358615290109,
+          "handle": "ipad-pro-11-2025-m5-screen-repair",
+          "title": "iPad Pro 11 M5 (2025) Display Repair (Genuine Ultra Retina XDR Display)",
+          "price": 799,
+          "tags": [
+            "courier:free"
+          ]
+        }
+      }
+    },
+    "ipad::ipad-pro-13-inch-m5-2025": {
+      "device": "ipad",
+      "name": "iPad Pro 13-inch M5 (2025)",
+      "slug": "ipad-pro-13-inch-m5-2025",
+      "aliases": [
+        "iPad Pro 13” 8th Gen ‘M5’ (2025)"
+      ],
+      "repairs": {
+        "battery": {
+          "variantId": 71358616273149,
+          "handle": "ipad-pro-13-2025-m5-battery-repair",
+          "title": "iPad Pro 13 M5 (2025) Battery Replacement (Original Specification)",
+          "price": 229,
+          "tags": [
+            "courier:free"
+          ]
+        },
+        "charging-port": {
+          "variantId": 71358616600829,
+          "handle": "ipad-pro-13-2025-m5-charging-port-repair",
+          "title": "iPad Pro 13 M5 (2025) Charging Port Repair",
+          "price": 179,
+          "tags": []
+        },
+        "diagnostic": {
+          "variantId": 71358615945469,
+          "handle": "ipad-pro-13-2025-m5-diagnostic",
+          "title": "iPad Pro 13 M5 (2025) Diagnostic",
+          "price": 49,
+          "tags": []
+        },
+        "screen": {
+          "variantId": 71358616961277,
+          "handle": "ipad-pro-13-2025-m5-screen-repair",
+          "title": "iPad Pro 13 M5 (2025) Display Repair (Genuine Ultra Retina XDR Display)",
+          "price": 899,
           "tags": [
             "courier:free"
           ]
