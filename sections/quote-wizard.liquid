@@ -1086,7 +1086,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: 'Dead pixels or bright spots', route: 'repair', repairType: 'screen', copy: 'Dead or stuck pixels indicate panel failure. A genuine display replacement will restore your screen to full quality.' },
         { label: 'No image, backlight on, external monitor works', route: 'repair', repairType: 'screen', copy: 'The backlight is on and an external monitor shows a picture, so the built-in display has failed. A screen replacement will fix this.' },
         { label: 'No image, no backlight or no external picture', route: 'diagnostic', repairType: 'diagnostic', copy: 'There is no backlight glow, or an external monitor also has no picture. That can be the screen or the logic board. We can\'t quote the full repair until we\'ve looked.' },
-        { label: 'Backlight fading or dim at angle', route: 'repair', repairType: 'screen', copy: 'The backlight fading, or going dim when you tilt the screen, means the display panel has failed. We\'ll quote a display panel replacement. Flexgate only used to occur on the 2016–2018 13-inch MacBook Pro.', flexgateCheck: true }
+        { label: 'Backlight fading or dim at angle', route: 'repair', repairType: 'screen', flexgateModelsOnly: true, flexgateCheck: true, copy: 'The backlight fading, or going dim when you tilt the screen, means the display panel has failed. We\'ll quote a display panel replacement.' },
+        { label: 'Backlight fading or dim at angle', route: 'repair', repairType: 'screen', notFlexgateModels: true, copy: 'The backlight fading, or going dim when you tilt the screen, means the display panel has failed. We\'ll quote a display panel replacement. Flexgate only used to occur on the 13-inch A1706 (2016–2018), the 13-inch A1708 (2016–2017), and the 15-inch A1707 (2016–2017).' }
       ],
       'Power / Battery / Charging': [
         { label: 'Battery draining quickly', route: 'repair', repairType: 'battery', copy: 'Your battery has degraded and isn\'t holding a full charge. We\'ll replace it with an original-spec battery and your MacBook will show accurate health monitoring again.' },
@@ -1505,10 +1506,10 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     return /iPhone\s*Air\b/i.test(String(model || ''));
   }
 
-  /* Flexgate was the short backlight cable on the 13-inch 2016–2018 Pros (A1706, A1708). */
-  function modelIsFlexgate13(model) {
+  /* Flexgate: 13-inch A1706 and A1708, and 15-inch A1707. */
+  function modelIsFlexgateModel(model) {
     var name = String(model || '');
-    return /\bA1706\b/.test(name) || /\bA1708\b/.test(name);
+    return /\bA1706\b/.test(name) || /\bA1707\b/.test(name) || /\bA1708\b/.test(name);
   }
 
   function modelIs15InchMacBookPro(model) {
@@ -1540,7 +1541,10 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var trueTone = modelHasTrueTone(S.model);
     var bloodOxygen = modelHasBloodOxygen(S.model);
     var ipadHome = modelHasIpadHomeButton(S.model);
+    var flexgateModel = modelIsFlexgateModel(S.model);
     return issues.filter(function(iss) {
+      if (iss.flexgateModelsOnly && !flexgateModel) return false;
+      if (iss.notFlexgateModels && flexgateModel) return false;
       if (iss.faceIdOnly && !faceId) return false;
       if (iss.noFaceIdOnly && faceId) return false;
       if (iss.lcdOnly && !lcd) return false;
@@ -3493,7 +3497,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     setTimeout(function() {
       if (iss.dustgateCheck && _repairsMap['dustgate']) {
         showDustgateQuestion(iss);
-      } else if (iss.flexgateCheck && _repairsMap['flexgate'] && modelIsFlexgate13(S.model)) {
+      } else if (iss.flexgateCheck && _repairsMap['flexgate'] && modelIsFlexgateModel(S.model)) {
         showFlexgateQuestion(iss);
       } else {
         showResolution(iss);
@@ -3533,7 +3537,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     p.innerHTML =
       '<div class="qw-res"><div class="qw-res-top" style="padding-bottom:24px;">' +
         '<h3 class="qw-res-h">Does your screen look like this?</h3>' +
-        '<p class="qw-res-p">Flexgate only used to occur on the 2016–2018 13-inch MacBook Pro. The backlight flex cable was too short, so the backlight fades or fails, usually from the bottom of the screen. If this is what you see, we repair the flex instead of replacing the whole display.</p>' +
+        '<p class="qw-res-p">On this MacBook Pro the backlight flex cable was too short. The backlight fades or fails, usually from the bottom of the screen. If this is what you see, we repair the flex instead of replacing the whole display.</p>' +
         '<div class="qw-dustgate-imgs">' +
           '<img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/flexgate_1.webp?v=1773951159" alt="Flexgate example 1">' +
           '<img src="https://cdn.shopify.com/s/files/1/0728/7111/7053/files/flexgate_2.jpg?v=1773951159" alt="Flexgate example 2">' +
@@ -3544,7 +3548,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         '</div>' +
       '</div></div>';
     document.getElementById('qwFgYes').onclick = function() {
-      showResolution({ label: 'Flexgate repair', route: 'repair', repairType: 'flexgate', copy: 'Flexgate only used to occur on the 2016–2018 13-inch MacBook Pro, where the backlight flex cable was too short. Opening and closing the lid wears through the cable. We repair the snapped flex at component level.' });
+      showResolution({ label: 'Flexgate repair', route: 'repair', repairType: 'flexgate', copy: 'The backlight flex cable on this MacBook Pro was too short. Opening and closing the lid wears through the cable. We repair the snapped flex at component level.' });
     };
     document.getElementById('qwFgNo').onclick = function() {
       showResolution(originalIss);
