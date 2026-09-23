@@ -60,7 +60,7 @@ Everything is driven by data that already exists on each product and tile: title
 
 Borrowed: the principle of typography-led repair pages, device + repair eyebrow labels, the trust row, and leaning on the Quote Wizard's visual language.
 
-Not copied: its page structure, section set, Geist font override, or product-page layout. Staging also mislabels iPhone Air as "MacBook", because its device detection depends on the new structure.
+Not copied: its page structure, section set, Geist font override, or product-page layout. The staging theme (`fablewebsite/os2-rebuild`) has no device or repair detection. Its product and collection moulds hardcode "MacBook · Screen Repair" copy, which is why the iPhone Air shows as "MacBook" there. Its iPhone collections are still the old image-based templates.
 
 ### SEO and structure
 
