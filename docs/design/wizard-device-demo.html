@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quote wizard — interactive device demo</title>
+<style>
+  :root {
+    --ink: #1d1d1f;
+    --accent: #0070f3;
+    --accent-soft: rgba(0, 112, 243, 0.1);
+    --text: #171717;
+    --muted: #666;
+    --soft: #fafafa;
+    --page: #f4f4f5;
+    --sans: Arial, Helvetica, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page { max-width: 1040px; margin: 0 auto; padding: 28px 20px 48px; }
+  .banner {
+    display: inline-block;
+    margin: 0 0 14px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+    font: 600 11px/1.4 var(--sans);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  h1 {
+    margin: 0 0 6px;
+    font: 600 28px/1.15 var(--sans);
+    letter-spacing: -1.12px;
+  }
+  .sub { margin: 0 0 22px; color: #4d4d4d; font: 400 15px/1.45 var(--sans); max-width: 62ch; }
+  .layout { display: grid; grid-template-columns: 340px 1fr; gap: 18px; align-items: start; }
+  .stage {
+    background: var(--soft);
+    border-radius: 16px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+    padding: 16px 16px 14px;
+    position: sticky;
+    top: 16px;
+  }
+  .models { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+  .models button, .issue, .fault {
+    border: 0;
+    font-family: var(--sans);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .models button {
+    background: #fff;
+    color: var(--text);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+    border-radius: 999px;
+    padding: 7px 10px;
+    font: 600 12px/1 var(--sans);
+  }
+  .models button[aria-pressed="true"] { box-shadow: 0 0 0 2px #171717; }
+  .models button:focus-visible, .fault:focus-visible, .issue:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .phone {
+    position: relative;
+    width: 220px;
+    height: 458px;
+    margin: 18px auto 8px;
+  }
+  .face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    opacity: 1;
+    transition: opacity 180ms ease;
+  }
+  .face-back { opacity: 0; }
+  .stage.is-back .face-front { opacity: 0; }
+  .stage.is-back .face-back { opacity: 1; }
+  .view-pill {
+    display: block;
+    width: fit-content;
+    margin: 0 auto 8px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+    font: 600 11px/1.4 var(--sans);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .caption { min-height: 2.8em; margin: 8px 8px 0; text-align: center; color: #4d4d4d; font: 400 13px/1.4 var(--sans); }
+  .chooser h2 { margin: 4px 0 12px; font: 600 18px/1.2 var(--sans); letter-spacing: -0.4px; }
+  .faults { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .fault {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-height: 96px;
+    padding: 16px 10px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+    color: var(--text);
+    transition: box-shadow 150ms, transform 150ms;
+  }
+  .fault:hover:not(:disabled) { box-shadow: 0 0 0 1px #171717, 0 2px 8px rgba(0, 0, 0, 0.06); transform: translateY(-1px); }
+  .fault[aria-pressed="true"] { box-shadow: 0 0 0 2px #171717; background: var(--soft); }
+  .fault:disabled { opacity: 0.45; cursor: default; }
+  .fault svg { width: 28px; height: 28px; color: #4d4d4d; }
+  .fault[aria-pressed="true"] svg { color: #171717; }
+  .fault-lbl { font: 600 13px/1.3 var(--sans); letter-spacing: -0.26px; text-align: center; }
+  .fault-sub { font: 400 11px/1.3 var(--sans); color: var(--muted); }
+  .issues { display: flex; flex-direction: column; gap: 6px; margin-top: 14px; }
+  .issues:empty { display: none; }
+  .issue {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 16px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+    text-align: left;
+    color: var(--text);
+  }
+  .issue:hover { box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3); }
+  .issue[aria-pressed="true"] { box-shadow: 0 0 0 2px #171717; background: var(--soft); }
+  .issue-mark {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: #e9ebef;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+    flex: none;
+  }
+  .issue[aria-pressed="true"] .issue-mark { background: var(--accent); box-shadow: none; }
+  .issue-lbl { font: 600 14px/1.3 var(--sans); letter-spacing: -0.28px; }
+  .note { margin: 14px 2px 0; color: var(--muted); font: 400 12px/1.45 var(--sans); }
+  .dg { --dg-w: 210px; --dg-hl: 1; width: var(--dg-w); line-height: 0; }
+  .dg__svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .dg__svg * {
+    vector-effect: non-scaling-stroke;
+    stroke: var(--ink);
+    stroke-width: 1.5px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke 150ms ease, fill 150ms ease, stroke-width 150ms ease, filter 150ms ease;
+  }
+  .dg-body { fill: #fff; stroke-width: 1.75px; }
+  .dg-btn { fill: #fff; }
+  .dg-glass { fill: #fbfbfc; }
+  .dg-frame { fill: none; stroke: rgba(29, 29, 31, 0.12); stroke-width: 1px; }
+  .dg-screen { fill: #e9ebef; stroke: rgba(29, 29, 31, 0.22); }
+  .dg-sheen { fill: #fff; stroke: none; opacity: 0.6; }
+  .dg-shadow { fill: rgba(0, 0, 0, 0.07); stroke: none; }
+  .dg-cam { fill: #3a3a3c; stroke: none; }
+  .dg-island, .dg-notch { fill: var(--ink); stroke: none; }
+  .dg-earpiece--light { stroke: rgba(255, 255, 255, 0.35); }
+  .dg-home { fill: #fff; stroke: rgba(29, 29, 31, 0.45); }
+  .dg-plateau { fill: #f2f2f4; stroke: rgba(29, 29, 31, 0.55); }
+  .dg-lidar { fill: #2c2c2e; stroke: none; }
+  .dg-flash { fill: #ececee; stroke: rgba(29, 29, 31, 0.4); }
+  .dg-module { fill: #f2f2f4; stroke: rgba(29, 29, 31, 0.55); }
+  .dg-lens-ring { fill: #fff; }
+  .dg-lens { fill: #2c2c2e; stroke: none; }
+  .dg-earpiece { stroke: rgba(29, 29, 31, 0.28); stroke-width: 1.6px; }
+  .dg-port { fill: #cfd1d5; stroke: none; }
+  .dg-grille { stroke: rgba(29, 29, 31, 0.4); stroke-width: 2.6px; }
+  .dg-crack, .dg-crack--back, .dg-battery { display: none; }
+  .dg .is-hl {
+    display: inline;
+    stroke: var(--accent);
+    stroke-width: calc(1.5px * var(--dg-hl));
+    fill: var(--accent-soft);
+    filter: drop-shadow(0 0 calc(5px * var(--dg-hl)) rgba(0, 112, 243, 0.4));
+  }
+  .dg .dg-cam.is-hl, .dg .dg-island.is-hl, .dg .dg-notch.is-hl, .dg .dg-lens.is-hl, .dg .dg-port.is-hl { fill: var(--accent); }
+  .dg .dg-port.is-hl { transform-box: fill-box; transform-origin: center bottom; transform: scaleY(1.6); }
+  .dg .dg-lens-ring.is-hl { fill: #fff; }
+  .dg .dg-grille--dots.is-hl { stroke-width: 11px; }
+  .dg .dg-earpiece.is-hl { stroke-width: 2.6px; }
+  .dg .dg-earpiece--light.is-hl { stroke: #fff; }
+  .dg .dg-battery.is-hl { stroke-dasharray: 4 3; }
+  .dg .dg-screen.is-hl ~ .dg-sheen { opacity: 0.35; }
+  .dg--part-screen .dg-crack, .dg--part-glass .dg-crack--back {
+    display: inline;
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .face, .dg__svg * { transition: none; }
+  }
+  @media (max-width: 800px) {
+    .layout { grid-template-columns: 1fr; }
+    .stage { position: static; }
+    h1 { font-size: 24px; letter-spacing: -0.96px; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <p class="banner">Demo only · not on the live wizard</p>
+  <h1>What’s wrong with it?</h1>
+  <p class="sub" id="sub">The drawing is the same one as the product page. Hover or choose a fault and that part turns blue.</p>
+  <div class="layout">
+    <section class="stage" id="stage" aria-label="Device">
+      <div class="models" id="models" role="group" aria-label="Model"></div>
+      <div class="phone" id="phone">
+        <div class="face face-front" id="face-front"></div>
+        <div class="face face-back" id="face-back"></div>
+      </div>
+      <span class="view-pill" id="view-pill">Front</span>
+      <p class="caption" id="caption" aria-live="polite"></p>
+    </section>
+    <section class="chooser" aria-label="Faults">
+      <h2>Choose a fault</h2>
+      <div class="faults" id="faults"></div>
+      <div class="issues" id="issues" role="group" aria-label="Repair"></div>
+      <p class="note">Water damage, data recovery, and other stay as written steps. They don’t light a part.</p>
+    </section>
+  </div>
+</main>
+<script>
+(function () {
+  var MODELS = {
+    se: { name: "iPhone SE", era: "home", lenses: 1, buttons: ["power", "volume", "mute"] },
+    p11: { name: "iPhone 11", era: "notch", lenses: 2, buttons: ["power", "volume", "mute"] },
+    p16: { name: "iPhone 16", era: "island", lenses: 2, buttons: ["power", "volume"] },
+    p17: { name: "iPhone 17 Pro", era: "plateau", lenses: 3, buttons: [] }
+  };
+  var ICONS = {
+    screen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M10 18h4"/></svg>',
+    battery: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="16" height="10" rx="2"/><path d="M19 10h2v4h-2"/></svg>',
+    camera: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="3"/><circle cx="12" cy="10" r="3"/></svg>',
+    audio: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M9 19h.01M12 19h.01M15 19h.01"/></svg>',
+    buttons: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="7" y="2" width="10" height="20" rx="2.6"/><path d="M4.6 6.2v2.2M4.6 10.2v3.2M4.6 15.2v3.2M19.4 8.5v5"/></svg>',
+    glass: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M8 8l8 10"/></svg>'
+  };
+  var FAULTS = [
+    { id: "screen", label: "Screen", icon: "screen", issues: [
+      { id: "screen", label: "Cracked, lines, or no image", part: "screen", face: "front", caption: "Front · screen" }
+    ]},
+    { id: "battery", label: "Battery / charging", icon: "battery", issues: [
+      { id: "battery", label: "Drains fast or shuts off", part: "battery", face: "front", caption: "Front · battery" },
+      { id: "port", label: "Powers on, but will not charge", part: "port", face: "front", caption: "Front · charging port" }
+    ]},
+    { id: "camera", label: "Camera", icon: "camera", issues: [
+      { id: "rear", label: "Back camera blurry or shaking", part: "camera", face: "back", caption: "Back · rear camera" },
+      { id: "front", label: "Front camera or Face ID", part: "fcam", face: "front", caption: "Front · front camera" }
+    ]},
+    { id: "audio", label: "Speaker", icon: "audio", issues: [
+      { id: "speaker", label: "No sound from the loudspeaker", part: "grille", face: "front", caption: "Front · loudspeaker" },
+      { id: "ear", label: "Earpiece quiet during calls", part: "earpiece", face: "front", caption: "Front · earpiece" }
+    ]},
+    { id: "buttons", label: "Buttons", icon: "buttons", issues: [
+      { id: "power", label: "Power button stuck", part: "power", face: "front", caption: "Front · power button", need: "power" },
+      { id: "volume", label: "Volume buttons stuck", part: "volume", face: "front", caption: "Front · volume buttons", need: "volume" },
+      { id: "mute", label: "Mute switch stuck", part: "mute", face: "front", caption: "Front · mute switch", need: "mute" }
+    ]},
+    { id: "glass", label: "Rear glass", icon: "glass", issues: [
+      { id: "glass", label: "Cracked rear glass", part: "glass", face: "back", caption: "Back · rear glass" }
+    ]}
+  ];
+  var PART = {
+    screen: ".dg-screen",
+    battery: ".dg-battery",
+    port: ".dg-port",
+    camera: ".dg-module, .dg-lens-ring, .dg-lens",
+    fcam: ".dg-island, .dg-notch, .dg-cam",
+    earpiece: ".dg-earpiece",
+    grille: ".dg-grille",
+    glass: ".dg-glass",
+    power: ".dg-btn-power",
+    volume: ".dg-btn-volume",
+    mute: ".dg-btn-mute"
+  };
+
+  var modelId = "p16";
+  var faultId = null;
+  var issueId = null;
+  var hover = null;
+
+  function rect(cls, x, y, w, h, rx) {
+    return '<rect class="' + cls + '" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + rx + '"/>';
+  }
+  function buttons(era, face) {
+    var modern = era !== "home";
+    if (face === "back") {
+      return modern
+        ? rect("dg-btn", 109, 50, 4.5, 12, 2.25) + rect("dg-btn", 109, 70, 4.5, 20, 2.25) + rect("dg-btn", 109, 96, 4.5, 20, 2.25) + rect("dg-btn", 6.5, 80, 4.5, 32, 2.25)
+        : rect("dg-btn", 109, 38, 4.5, 10, 2.25) + rect("dg-btn", 109, 56, 4.5, 18, 2.25) + rect("dg-btn", 109, 80, 4.5, 18, 2.25) + rect("dg-btn", 6.5, 58, 4.5, 26, 2.25);
+    }
+    return modern
+      ? rect("dg-btn dg-btn-mute", 6.5, 50, 4.5, 12, 2.25) + rect("dg-btn dg-btn-volume", 6.5, 70, 4.5, 20, 2.25) + rect("dg-btn dg-btn-volume", 6.5, 96, 4.5, 20, 2.25) + rect("dg-btn dg-btn-power", 109, 80, 4.5, 32, 2.25)
+      : rect("dg-btn dg-btn-mute", 6.5, 38, 4.5, 10, 2.25) + rect("dg-btn dg-btn-volume", 6.5, 56, 4.5, 18, 2.25) + rect("dg-btn dg-btn-volume", 6.5, 80, 4.5, 18, 2.25) + rect("dg-btn dg-btn-power", 109, 58, 4.5, 26, 2.25);
+  }
+  function shell(era, face) {
+    var rx = era === "home" ? 18 : 22;
+    var fr = era === "home" ? 15.5 : 19.5;
+    var body = face === "back" ? "dg-body dg-glass" : "dg-body";
+    return '<ellipse class="dg-shadow" cx="60" cy="244" rx="' + (era === "home" ? 44 : 46) + '" ry="3.5"/>'
+      + buttons(era, face)
+      + rect(body, 10, 4, 100, 232, rx)
+      + rect("dg-frame", 12.5, 6.5, 95, 227, fr);
+  }
+  function cameraBack(era, lenses) {
+    if (era === "home") {
+      return '<circle class="dg-lens-ring" cx="28" cy="24" r="8.5"/><circle class="dg-lens" cx="28" cy="24" r="3.6"/>'
+        + '<circle class="dg-flash" cx="45" cy="24" r="2.4"/>'
+        + '<path class="dg-crack dg-crack--back" d="M80 104l-10 26 14 8-16 30 9 7-12 26"/>';
+    }
+    if (era === "plateau") {
+      return rect("dg-plateau", 13, 11, 94, 52, 16)
+        + rect("dg-module", 16, 14, 42, 46, 13)
+        + '<circle class="dg-lens-ring" cx="28" cy="25.5" r="8"/><circle class="dg-lens" cx="28" cy="25.5" r="3.4"/>'
+        + '<circle class="dg-lens-ring" cx="28" cy="48" r="8"/><circle class="dg-lens" cx="28" cy="48" r="3.4"/>'
+        + '<circle class="dg-lens-ring" cx="47.5" cy="36.75" r="8"/><circle class="dg-lens" cx="47.5" cy="36.75" r="3.4"/>'
+        + '<circle class="dg-flash" cx="90" cy="26" r="2.4"/><circle class="dg-lidar" cx="90" cy="47" r="3.2"/>'
+        + '<path class="dg-crack dg-crack--back" d="M80 110l-10 26 14 8-16 30 9 7-12 26"/>';
+    }
+    if (lenses === 2 && era === "island") {
+      return rect("dg-module", 18, 12, 27, 46, 13.5)
+        + '<circle class="dg-lens-ring" cx="31.5" cy="25.5" r="7.6"/><circle class="dg-lens" cx="31.5" cy="25.5" r="3.2"/>'
+        + '<circle class="dg-lens-ring" cx="31.5" cy="44.5" r="7.6"/><circle class="dg-lens" cx="31.5" cy="44.5" r="3.2"/>'
+        + '<circle class="dg-flash" cx="53" cy="20" r="2.4"/>'
+        + '<path class="dg-crack dg-crack--back" d="M80 104l-10 26 14 8-16 30 9 7-12 26"/>';
+    }
+    return rect("dg-module", 17, 11, 40, 40, 12)
+      + '<circle class="dg-lens-ring" cx="28.5" cy="22.5" r="7.2"/><circle class="dg-lens" cx="28.5" cy="22.5" r="3"/>'
+      + '<circle class="dg-lens-ring" cx="28.5" cy="39.5" r="7.2"/><circle class="dg-lens" cx="28.5" cy="39.5" r="3"/>'
+      + '<circle class="dg-flash" cx="46" cy="22.5" r="2.4"/>'
+      + '<path class="dg-crack dg-crack--back" d="M80 104l-10 26 14 8-16 30 9 7-12 26"/>';
+  }
+  function frontFace(era) {
+    var rx = era === "home" ? 2 : 16;
+    var screen = era === "home"
+      ? rect("dg-screen", 16, 36, 88, 166, rx) + '<path class="dg-sheen" d="M56 36h20L16 146v-36z"/>'
+      : rect("dg-screen", 16, 10, 88, 220, rx) + '<path class="dg-sheen" d="M58 10h20L16 134V96z"/>';
+    var top = era === "home"
+      ? '<path class="dg-earpiece" d="M50 21h20"/><circle class="dg-cam" cx="39" cy="21" r="2.6"/><circle class="dg-home" cx="60" cy="219" r="10"/>'
+      : era === "notch"
+        ? '<path class="dg-notch" d="M41 10h38v5.5a6.5 6.5 0 0 1-6.5 6.5h-25A6.5 6.5 0 0 1 41 15.5z"/><path class="dg-earpiece dg-earpiece--light" d="M53 14h14"/>'
+        : '<path class="dg-earpiece" d="M52 13.6h16"/>' + rect("dg-island", 45, 18, 30, 9, 4.5);
+    var battery = era === "home" ? rect("dg-battery", 30, 62, 60, 116, 8) : rect("dg-battery", 28, 64, 64, 120, 10);
+    var crack = era === "home"
+      ? '<path class="dg-crack" d="M74 50l-10 26 14 8-16 30 9 7-12 26"/>'
+      : '<path class="dg-crack" d="M76 38l-10 26 14 8-16 30 9 7-12 26"/>';
+    return '<svg class="dg__svg" viewBox="0 0 120 250" fill="none" focusable="false" aria-hidden="true">'
+      + shell(era, "front") + screen + top
+      + rect("dg-port", 50, 232, 20, 3, 1.5)
+      + '<path class="dg-grille dg-grille--dots" d="M30 233.5h.01M35 233.5h.01M40 233.5h.01M80 233.5h.01M85 233.5h.01M90 233.5h.01"/>'
+      + battery + crack + "</svg>";
+  }
+  function backFace(model) {
+    return '<svg class="dg__svg" viewBox="0 0 120 250" fill="none" focusable="false" aria-hidden="true">'
+      + shell(model.era, "back") + cameraBack(model.era, model.lenses) + "</svg>";
+  }
+  function issuesFor(fault, model) {
+    return fault.issues.filter(function (issue) {
+      return !issue.need || model.buttons.indexOf(issue.need) !== -1;
+    });
+  }
+  function currentIssue() {
+    if (hover) return hover;
+    if (!faultId || !issueId) return null;
+    var fault = FAULTS.filter(function (f) { return f.id === faultId; })[0];
+    var list = issuesFor(fault, MODELS[modelId]);
+    for (var i = 0; i < list.length; i++) if (list[i].id === issueId) return list[i];
+    return null;
+  }
+  function paint() {
+    var issue = currentIssue();
+    var part = issue ? issue.part : null;
+    var face = issue ? issue.face : "front";
+    document.querySelectorAll(".is-hl").forEach(function (el) { el.classList.remove("is-hl"); });
+    document.querySelectorAll(".dg").forEach(function (el) {
+      el.classList.remove("dg--part-screen", "dg--part-glass");
+    });
+    if (part === "screen") document.querySelector("#face-front .dg").classList.add("dg--part-screen");
+    if (part === "glass") document.querySelector("#face-back .dg").classList.add("dg--part-glass");
+    if (part && PART[part]) {
+      document.querySelectorAll(PART[part]).forEach(function (el) { el.classList.add("is-hl"); });
+    }
+    document.getElementById("stage").classList.toggle("is-back", face === "back");
+    document.getElementById("view-pill").textContent = face === "back" ? "Back" : "Front";
+    var model = MODELS[modelId];
+    var caption = issue ? issue.caption : "Full phone. Nothing selected yet.";
+    if (!model.buttons.length && faultId === "buttons") caption = "No button repair on this model.";
+    document.getElementById("caption").textContent = caption;
+    document.getElementById("sub").textContent = model.name + " · same drawing as the product page. Hover or choose a fault and that part turns blue.";
+  }
+  function drawPhone() {
+    var model = MODELS[modelId];
+    document.getElementById("face-front").innerHTML = '<div class="dg dg--iphone">' + frontFace(model.era) + "</div>";
+    document.getElementById("face-back").innerHTML = '<div class="dg dg--iphone">' + backFace(model) + "</div>";
+    paint();
+  }
+  function renderModels() {
+    document.getElementById("models").innerHTML = Object.keys(MODELS).map(function (id) {
+      var on = id === modelId ? "true" : "false";
+      return '<button type="button" id="model-' + id + '" aria-pressed="' + on + '">' + MODELS[id].name + "</button>";
+    }).join("");
+  }
+  function renderFaults() {
+    var model = MODELS[modelId];
+    document.getElementById("faults").innerHTML = FAULTS.map(function (fault) {
+      var off = fault.id === "buttons" && !model.buttons.length;
+      var on = fault.id === faultId ? "true" : "false";
+      var sub = off ? '<span class="fault-sub">Not on this model</span>' : "";
+      return '<button type="button" class="fault" id="fault-' + fault.id + '" data-fault="' + fault.id + '" aria-pressed="' + on + '"' + (off ? " disabled" : "") + ">"
+        + ICONS[fault.icon] + '<span class="fault-lbl">' + fault.label + "</span>" + sub + "</button>";
+    }).join("");
+  }
+  function renderIssues() {
+    var box = document.getElementById("issues");
+    if (!faultId) { box.innerHTML = ""; return; }
+    var fault = FAULTS.filter(function (f) { return f.id === faultId; })[0];
+    var list = issuesFor(fault, MODELS[modelId]);
+    box.innerHTML = list.map(function (issue) {
+      var on = issue.id === issueId ? "true" : "false";
+      return '<button type="button" class="issue" data-issue="' + issue.id + '" aria-pressed="' + on + '"><span class="issue-mark"></span><span class="issue-lbl">' + issue.label + "</span></button>";
+    }).join("");
+  }
+  function selectFault(id) {
+    var model = MODELS[modelId];
+    if (id === "buttons" && !model.buttons.length) return;
+    faultId = id;
+    var fault = FAULTS.filter(function (f) { return f.id === id; })[0];
+    var list = issuesFor(fault, model);
+    issueId = list.length === 1 ? list[0].id : (list[0] ? list[0].id : null);
+    hover = null;
+    renderFaults();
+    renderIssues();
+    paint();
+  }
+  function selectIssue(id) {
+    issueId = id;
+    hover = null;
+    renderIssues();
+    paint();
+  }
+  function bind() {
+    document.getElementById("models").onclick = function (e) {
+      var btn = e.target.closest("button");
+      if (!btn) return;
+      modelId = btn.id.replace("model-", "");
+      var model = MODELS[modelId];
+      if (faultId === "buttons") {
+        var fault = FAULTS.filter(function (f) { return f.id === "buttons"; })[0];
+        var list = issuesFor(fault, model);
+        if (!list.length) { faultId = null; issueId = null; }
+        else if (!list.some(function (i) { return i.id === issueId; })) issueId = list[0].id;
+      }
+      renderModels();
+      renderFaults();
+      renderIssues();
+      drawPhone();
+    };
+    document.getElementById("faults").onclick = function (e) {
+      var btn = e.target.closest("button");
+      if (!btn || btn.disabled) return;
+      selectFault(btn.getAttribute("data-fault"));
+    };
+    document.getElementById("faults").onmouseover = function (e) {
+      var btn = e.target.closest("button");
+      if (!btn || btn.disabled) return;
+      var fault = FAULTS.filter(function (f) { return f.id === btn.getAttribute("data-fault"); })[0];
+      var list = issuesFor(fault, MODELS[modelId]);
+      hover = list[0] || null;
+      paint();
+    };
+    document.getElementById("faults").onmouseout = function (e) {
+      if (e.relatedTarget && document.getElementById("faults").contains(e.relatedTarget)) return;
+      hover = null;
+      paint();
+    };
+    document.getElementById("issues").onclick = function (e) {
+      var btn = e.target.closest("button");
+      if (!btn) return;
+      selectIssue(btn.getAttribute("data-issue"));
+    };
+    document.getElementById("issues").onmouseover = function (e) {
+      var btn = e.target.closest("button");
+      if (!btn || !faultId) return;
+      var fault = FAULTS.filter(function (f) { return f.id === faultId; })[0];
+      var list = issuesFor(fault, MODELS[modelId]);
+      hover = list.filter(function (i) { return i.id === btn.getAttribute("data-issue"); })[0] || null;
+      paint();
+    };
+    document.getElementById("issues").onmouseout = function (e) {
+      if (e.relatedTarget && document.getElementById("issues").contains(e.relatedTarget)) return;
+      hover = null;
+      paint();
+    };
+  }
+  renderModels();
+  renderFaults();
+  drawPhone();
+  bind();
+})();
+</script>
+</body>
+</html>
