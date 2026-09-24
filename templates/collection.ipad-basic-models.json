@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "banner": {
@@ -303,23 +312,15 @@
     "contact_with_map_dXbbDU": {
       "type": "contact-with-map",
       "settings": {
-        "padding-top": 0,
-        "padding-bottom": 0,
-        "mob-padding-top": 0,
-        "mob-padding-bottom": 0,
-        "bg": "#fafafa",
-        "map": "shopify://shop_images/map-img.webp",
-        "heading": "Get In Touch",
-        "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>",
-        "hours": "<h3>Hours</h3><p>Mon–Thur: 9am–6pm </p><p>Fri: 10am–6pm </p><p>Sat: Closed </p><p>Sun: Closed</p>"
+        "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>"
       }
     },
     "quote_wizard_top": {
       "type": "quote-wizard",
       "settings": {
+        "show_map": false,
         "heading": "Get a repair quote",
         "subheading": "We'll collect your iPad same day in London, nationwide by courier.",
-        "show_map": false,
         "prefill_mode": "auto",
         "skip_to_service": false
       }
