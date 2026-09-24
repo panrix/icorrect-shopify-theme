@@ -81,8 +81,6 @@ Every era must draw these elements with these classes, adding `is-hl` when `part
 | Watch back: `dg-sensor`, `dg-leds` | `sensor` | Heart-rate sensor |
 | MacBook: `dg-keyboard`, `dg-keys`, `dg-fnrow`, `dg-trackpad`, `dg-touchbar-strip`, `dg-hinge`, `dg-dustbands` | `keyboard`, `trackpad`, `touchbar`, `hinge` (Flexgate: the screen fills black), `dust` (Dustgate: six wavy bands across the screen) | |
 
-On a product page the disc leans in on a small part (buttons, cameras, ports, speakers, the earpiece, the crown, the Touch Bar). The same drawing scales up from that part. Screen, battery, glass, keyboard and trackpad stay at the normal distance. Cards and model tiles do not lean in.
-
 ## Adding a new era (checklist)
 
 1. Collect front and back reference photos of the device. Note only what identifies it at small size (camera shape, notch or island, buttons, bezel width).
