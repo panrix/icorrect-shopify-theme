@@ -1,0 +1,103 @@
+{%- comment -%}
+  Part-quality badge for a repair product. One rule, no tags or settings:
+
+  1. The title's own quality note wins: "(Genuine OLED)", "(Original
+     Specification)" show as the green badge; any other note such as
+     "(Premium Aftermarket Battery)" or "(Soft OLED)" shows as a neutral note.
+  2. Otherwise the part is genuine: the badge comes from the repair type
+     ("Genuine screen", "Genuine keys", ...). Unlisted repair types fall back
+     to "Genuine parts".
+  3. Diagnostics, data recovery and liquid damage get no badge, and nothing
+     whose title says "aftermarket" is ever called genuine.
+
+  Accepts:
+  - product: {Object} product
+  - repair: {String} repair key from repair-meta
+  - qualifier: {String} qualifier from repair-meta
+
+  Outputs "kind|label" entries joined by "~" (kind: ok or note), or nothing.
+{%- endcomment -%}
+{%- liquid
+  assign out = ''
+  assign note = ''
+  assign title_l = product.title | downcase
+  assign aftermarket = false
+  if title_l contains 'aftermarket'
+    assign aftermarket = true
+  endif
+
+  if qualifier != blank
+    assign ql = qualifier | downcase
+    assign quality_note = false
+    if ql contains 'genuine' or ql contains 'original'
+      assign quality_note = true
+    endif
+    if aftermarket
+      assign quality_note = false
+    endif
+    if quality_note
+      assign out = 'ok|' | append: qualifier
+    else
+      assign note = 'note|' | append: qualifier
+    endif
+  endif
+
+  if out == blank and aftermarket == false
+    case repair
+      when 'diagnostic', 'data', 'liquid'
+        assign label = ''
+      when 'screen'
+        assign label = 'Genuine screen'
+      when 'display'
+        assign label = 'Genuine display'
+      when 'glass'
+        assign label = 'Genuine glass'
+      when 'battery'
+        assign label = 'Genuine battery'
+      when 'charging-port'
+        assign label = 'Genuine charging port'
+      when 'rear-glass'
+        assign label = 'Genuine rear glass'
+      when 'rear-camera'
+        assign label = 'Genuine rear camera'
+      when 'rear-camera-lens'
+        assign label = 'Genuine camera lens'
+      when 'front-camera'
+        assign label = 'Genuine front camera'
+      when 'face-id'
+        assign label = 'Genuine Face ID'
+      when 'earpiece'
+        assign label = 'Genuine earpiece speaker'
+      when 'loudspeaker'
+        assign label = 'Genuine loudspeaker'
+      when 'microphone'
+        assign label = 'Genuine microphone'
+      when 'button'
+        assign label = 'Genuine buttons'
+      when 'crown'
+        assign label = 'Genuine crown'
+      when 'heart-rate'
+        assign label = 'Genuine heart-rate sensor'
+      when 'keyboard'
+        assign label = 'Genuine keys'
+      when 'trackpad'
+        assign label = 'Genuine trackpad'
+      when 'touch-bar'
+        assign label = 'Genuine Touch Bar'
+      else
+        assign label = 'Genuine parts'
+    endcase
+    if label != blank
+      assign out = 'ok|' | append: label
+    endif
+  endif
+
+  if note != blank
+    if out != blank
+      assign out = out | append: '~' | append: note
+    else
+      assign out = note
+    endif
+  endif
+  echo out
+-%}

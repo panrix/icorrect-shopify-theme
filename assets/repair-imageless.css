@@ -1,0 +1,728 @@
+/*
+  Imageless repair UI: device diagrams, product-page repair panel, repair cards
+  and model tiles. Tokens mirror assets/quote-wizard.css so these components
+  sit naturally next to the Quote Wizard.
+*/
+:root {
+  --ri-ink: #1d1d1f;
+  --ri-ink-2: #6e6e73;
+  --ri-ink-3: #86868b;
+  --ri-line: rgba(0, 0, 0, 0.08);
+  --ri-line-strong: rgba(0, 0, 0, 0.14);
+  --ri-soft: #f5f5f7;
+  --ri-soft-2: #fafafa;
+  --ri-accent: #0070f3;
+  --ri-accent-soft: rgba(0, 112, 243, 0.1);
+  --ri-green: #1a6b34;
+  --ri-green-bg: #e6f6ec;
+  --ri-r-sm: 10px;
+  --ri-r-md: 16px;
+  --ri-r-lg: 24px;
+  --ri-shadow-lift: 0 1px 2px rgba(0, 0, 0, 0.04), 0 12px 32px -12px rgba(0, 0, 0, 0.18);
+  --ri-ease: 200ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* ---------- Device diagram ---------- */
+.dg {
+  --dg-w: 110px;
+  /* Highlight strokes and glow track the drawing size. A 34px phone on a
+     card would otherwise keep a 5px glow and a 4.5px port stroke. */
+  --dg-hl: clamp(0.42, (var(--dg-w) * var(--dg-scale, 1)) / 100px, 1);
+  display: inline-block;
+  width: calc(var(--dg-w) * var(--dg-scale, 1));
+  line-height: 0;
+}
+.dg__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.dg__svg * {
+  vector-effect: non-scaling-stroke;
+  stroke: var(--ri-ink);
+  stroke-width: 1.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.dg-body { fill: #fff; stroke-width: 1.75px; }
+.dg-btn,
+.dg-crown { fill: #fff; }
+.dg-base { fill: #fff; }
+.dg-band { fill: var(--ri-soft); }
+.dg-glass { fill: #fbfbfc; }
+.dg-frame { fill: none; stroke: rgba(29, 29, 31, 0.12); stroke-width: 1px; }
+.dg-screen { fill: #e9ebef; stroke: rgba(29, 29, 31, 0.22); }
+.dg-sheen { fill: #fff; stroke: none; opacity: 0.6; }
+.dg-shadow { fill: rgba(0, 0, 0, 0.07); stroke: none; }
+.dg-cam { fill: #3a3a3c; stroke: none; }
+.dg-island,
+.dg-notch { fill: var(--ri-ink); stroke: none; }
+.dg-earpiece--light { stroke: rgba(255, 255, 255, 0.35); }
+.dg-home { fill: #fff; stroke: rgba(29, 29, 31, 0.45); }
+.dg-plateau { fill: #f2f2f4; stroke: rgba(29, 29, 31, 0.55); }
+.dg-lidar { fill: #2c2c2e; stroke: none; }
+.dg-guard { fill: #fff; }
+.dg-frame--bold { stroke: rgba(29, 29, 31, 0.5); stroke-width: 2.5px; }
+.dg-slab { fill: #fff; }
+.dg-lip { stroke: rgba(29, 29, 31, 0.22); }
+.dg-touchbar-strip { fill: #2c2c2e; stroke: none; }
+.dg-fnrow { stroke: rgba(29, 29, 31, 0.22); stroke-width: 2.4px; stroke-dasharray: 9 2.4; stroke-linecap: butt; }
+.dg-grille--strip { stroke-width: 2px; stroke-dasharray: 0.1 3.2; }
+.dg-flash { fill: #ececee; stroke: rgba(29, 29, 31, 0.4); }
+.dg-module { fill: #f2f2f4; stroke: rgba(29, 29, 31, 0.55); }
+.dg-lens-ring { fill: #fff; }
+.dg-lens { fill: #2c2c2e; stroke: none; }
+.dg-earpiece { stroke: rgba(29, 29, 31, 0.28); stroke-width: 1.6px; }
+.dg-port { fill: #cfd1d5; stroke: none; }
+.dg-port-side { stroke: #b9bcc2; stroke-width: 3px; }
+.dg-grille,
+.dg-leds { stroke: rgba(29, 29, 31, 0.4); stroke-width: 2.6px; }
+.dg-hinge { stroke: rgba(29, 29, 31, 0.16); }
+.dg-keyboard,
+.dg-trackpad { fill: var(--ri-soft); stroke: rgba(29, 29, 31, 0.28); }
+.dg-keys { stroke: rgba(29, 29, 31, 0.22); stroke-width: 2.4px; stroke-dasharray: 6 2.4; stroke-linecap: butt; }
+.dg-sensor { fill: none; }
+.dg-shatter,
+.dg-fault,
+.dg-blot,
+.dg-fcam,
+.dg-touchbar,
+.dg-battery,
+.dg-dust,
+.dg-dustbands,
+.dg-crack,
+.dg-lens-crack,
+.dg-scan { display: none; }
+
+.dg .is-hl {
+  display: inline;
+  stroke: var(--ri-accent);
+  stroke-width: calc(1.5px * var(--dg-hl));
+  fill: var(--ri-accent-soft);
+  filter: drop-shadow(0 0 calc(5px * var(--dg-hl) * var(--dg-hl)) rgba(0, 112, 243, 0.4));
+}
+.dg .dg-cam.is-hl,
+.dg .dg-island.is-hl,
+.dg .dg-notch.is-hl,
+.dg .dg-touchbar-strip.is-hl,
+.dg .dg-fcam.is-hl,
+.dg .dg-lens.is-hl,
+.dg .dg-port.is-hl,
+.dg .dg-touchbar.is-hl { fill: var(--ri-accent); }
+/* The charging port is a 3-unit slot. On a phone-width drawing that is
+   about 1px tall, so grow it until it reads, and keep it near the current
+   size on a large desktop drawing. */
+.dg .dg-port.is-hl {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transform: scaleY(clamp(1.5, 200px / (var(--dg-w) * var(--dg-scale, 1)), 6));
+}
+.dg .dg-lens-ring.is-hl { fill: #fff; }
+.dg .dg-port-side.is-hl { stroke-width: calc(4.5px * var(--dg-hl)); }
+.dg .dg-grille.is-hl,
+.dg .dg-leds.is-hl { stroke-width: max(2.8px, calc(3.2px * var(--dg-hl))); }
+.dg .dg-dust.is-hl { stroke-width: calc(3.2px * var(--dg-hl)); }
+.dg .dg-earpiece.is-hl { stroke-width: max(2.2px, calc(2.6px * var(--dg-hl))); }
+.dg .dg-keys.is-hl,
+.dg .dg-fnrow.is-hl { fill: none; stroke-width: calc(2.4px * var(--dg-hl)); }
+.dg .dg-grille--strip.is-hl { stroke-width: calc(2.6px * var(--dg-hl)); }
+.dg .dg-earpiece--light.is-hl { stroke: #fff; }
+.dg .dg-battery.is-hl { stroke-dasharray: 4 3; }
+.dg .dg-hinge.is-hl { stroke-width: calc(2.4px * var(--dg-hl)); }
+.dg .dg-sensor.is-hl { fill: none; }
+.dg .dg-screen.is-hl ~ .dg-sheen { opacity: 0.35; }
+
+.dg--part-screen .dg-crack,
+.dg--part-glass .dg-crack--back,
+.dg--part-lens .dg-lens-crack {
+  display: inline;
+  fill: none;
+  stroke: var(--ri-accent);
+  stroke-width: calc(1.3px * var(--dg-hl));
+}
+.dg--part-glassfront .dg-screen { stroke: var(--ri-accent); stroke-width: calc(2px * var(--dg-hl)); }
+.dg--part-glassfront .dg-shatter {
+  display: inline;
+  fill: none;
+  stroke: var(--ri-accent);
+  stroke-width: calc(1.2px * var(--dg-hl));
+}
+.dg--part-display .dg-screen { fill: #dfe2e8; }
+.dg--part-display .dg-sheen { opacity: 0.7; }
+.dg--part-display .dg-fault {
+  display: inline;
+  stroke: var(--ri-accent);
+  stroke-width: calc(1.6px * var(--dg-hl));
+  opacity: 0.85;
+}
+.dg--part-display .dg-fault--alt { stroke: #30b85c; }
+.dg--part-display .dg-blot {
+  display: inline;
+  fill: #1d1d1f;
+  stroke: none;
+  opacity: 0.72;
+  filter: blur(calc(1.5px * var(--dg-hl)));
+}
+.dg--part-battery .dg-screen { fill: #f4f5f7; stroke-dasharray: 3 3; }
+.dg--part-battery .dg-sheen { display: none; }
+
+/* Flexgate: the backlight cable fails and the panel goes dark */
+.dg--part-hinge .dg-screen { fill: #1c1c1e; }
+.dg--part-hinge .dg-sheen { display: none; }
+.dg--part-hinge .dg-hinge.is-hl {
+  stroke: rgba(29, 29, 31, 0.18);
+  fill: none;
+  filter: none;
+}
+
+/* Dustgate: the coating breaks into uneven vertical bands of light */
+.dg-dustband { stroke: none; }
+.dg--part-dust .dg-dustbands { display: inline; }
+.dg--part-dust .dg-dust { display: none; }
+.dg--part-dust .dg-sheen { opacity: 0.2; }
+.dg--part-dust .dg-dustband:nth-child(odd) { fill: rgba(0, 112, 243, 0.22); }
+.dg--part-dust .dg-dustband:nth-child(even) { fill: rgba(0, 112, 243, 0.5); }
+.dg--part-scan .dg-scan {
+  display: inline;
+  fill: var(--ri-accent);
+  stroke: none;
+  opacity: 0.55;
+  filter: drop-shadow(0 0 6px rgba(0, 112, 243, 0.6));
+  animation: dg-scan 3.2s ease-in-out infinite;
+}
+.dg--iphone { --dg-scan-travel: 214px; }
+.dg--iphone-home { --dg-scan-travel: 160px; }
+.dg--ipad { --dg-scan-travel: 210px; }
+.dg--ipad-home { --dg-scan-travel: 180px; }
+.dg--macbook { --dg-scan-travel: 100px; }
+.dg--watch { --dg-scan-travel: 118px; }
+.dg--watch-rounded { --dg-scan-travel: 128px; }
+.dg--watch-s10 { --dg-scan-travel: 130px; }
+.dg--watch-ultra { --dg-scan-travel: 114px; }
+
+@keyframes dg-scan {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(var(--dg-scan-travel)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dg--part-scan .dg-scan { animation: none; transform: translateY(calc(var(--dg-scan-travel) / 2)); }
+}
+
+/* ---------- Product page repair panel ---------- */
+.rv {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  height: 100%;
+  min-height: 520px;
+  padding: 56px 32px 40px;
+  background: var(--ri-soft);
+  overflow: hidden;
+  isolation: isolate;
+}
+.rv::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.085) 1px, transparent 1.2px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(ellipse 60% 55% at 50% 42%, #000 20%, transparent 75%);
+  mask-image: radial-gradient(ellipse 60% 55% at 50% 42%, #000 20%, transparent 75%);
+}
+.rv__stage {
+  position: relative;
+  width: min(360px, 78%);
+  aspect-ratio: 1;
+}
+.rv__disc {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--ri-line), 0 40px 80px -40px rgba(0, 0, 0, 0.28);
+}
+.rv__disc::before {
+  content: "";
+  position: absolute;
+  inset: 16px;
+  border-radius: 50%;
+  border: 1px dashed var(--ri-line-strong);
+}
+.rv .dg--iphone { --dg-w: 104px; }
+.rv .dg--ipad { --dg-w: 168px; }
+.rv .dg--macbook { --dg-w: 250px; }
+.rv .dg--watch { --dg-w: 120px; }
+.rv__labels {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rv__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px 7px 11px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  color: var(--ri-ink);
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--ri-line);
+}
+.rv__chip--ink { color: #fff; background: var(--ri-ink); box-shadow: none; }
+.rv__chip--ok { color: var(--ri-green); background: var(--ri-green-bg); box-shadow: none; }
+.rv__facts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 22px;
+  margin: 0;
+  padding: 18px 0 0;
+  list-style: none;
+  border-top: 1px solid var(--ri-line);
+  width: min(560px, 100%);
+}
+.rv__fact {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--ri-ink-2);
+}
+.rv__fact .repair-icon { color: var(--ri-ink); flex: none; }
+.rv__fact--rating .repair-icon { color: #f5a623; fill: #f5a623; }
+.rv__fact--rating strong { color: var(--ri-ink); font-weight: 600; }
+
+/*
+  Split layout: the whole left column carries the panel colour so it always
+  matches the height of the info column (the wizard grows and shrinks), and
+  the panel content stays pinned under the sticky header while scrolling.
+*/
+@media screen and (min-width: 750px) {
+  .product--repair-visual .product__media-wrapper {
+    align-self: stretch;
+    background: var(--ri-soft);
+  }
+  .product--repair-visual .rv {
+    position: sticky;
+    top: var(--header-height, 64px);
+    height: calc(100vh - var(--header-height, 64px));
+    min-height: 540px;
+    max-height: 900px;
+    background: transparent;
+  }
+  .product--repair-visual .product__info-wrapper {
+    padding: 40px 16px 48px 20px;
+  }
+}
+@media screen and (min-width: 990px) {
+  .rv { gap: 32px; }
+  .rv__stage { width: min(430px, 74%); }
+  .rv .dg--iphone { --dg-w: 124px; }
+  .rv .dg--ipad { --dg-w: 196px; }
+  .rv .dg--macbook { --dg-w: 290px; }
+  .rv .dg--watch { --dg-w: 142px; }
+  .rv__chip { font-size: 15px; padding: 9px 16px 9px 13px; }
+  .rv__chip .repair-icon { width: 18px; height: 18px; }
+  .rv__fact { font-size: 14px; gap: 7px; }
+  .rv__fact .repair-icon { width: 18px; height: 18px; }
+  .rv__facts { gap: 10px 20px; padding-top: 22px; width: min(620px, 100%); }
+}
+@media screen and (min-width: 1600px) {
+  .rv__stage { width: min(500px, 74%); }
+  .rv .dg--iphone { --dg-w: 144px; }
+  .rv .dg--ipad { --dg-w: 226px; }
+  .rv .dg--macbook { --dg-w: 336px; }
+  .rv .dg--watch { --dg-w: 164px; }
+  .rv__fact { font-size: 15px; }
+}
+
+@media screen and (max-width: 749px) {
+  .rv {
+    min-height: 0;
+    gap: 18px;
+    padding: 32px 16px 24px;
+  }
+  .rv__stage { width: min(230px, 64vw); }
+  .rv__disc::before { inset: 10px; }
+  .rv .dg--iphone { --dg-w: 66px; }
+  .rv .dg--ipad { --dg-w: 106px; }
+  .rv .dg--macbook { --dg-w: 158px; }
+  .rv .dg--watch { --dg-w: 76px; }
+  .rv__chip { font-size: 12px; padding: 6px 12px 6px 9px; }
+  .rv__facts { display: none; }
+}
+
+/* ---------- Repair card ---------- */
+.rc {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: var(--ri-r-md);
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--ri-line);
+  transition: box-shadow var(--ri-ease), transform var(--ri-ease);
+}
+.rc:hover { box-shadow: 0 0 0 1px var(--ri-line-strong), var(--ri-shadow-lift); transform: translateY(-2px); }
+.rc:focus-within { box-shadow: 0 0 0 2px var(--ri-ink); }
+.rc__visual {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 168px;
+  margin: 6px 6px 0;
+  border-radius: calc(var(--ri-r-md) - 5px);
+  background: var(--ri-soft);
+  overflow: hidden;
+  isolation: isolate;
+}
+.rc__visual::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.07) 1px, transparent 1.2px);
+  background-size: 16px 16px;
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 10%, transparent 70%);
+  mask-image: radial-gradient(circle at 50% 50%, #000 10%, transparent 70%);
+}
+.rc .dg--iphone { --dg-w: 60px; }
+.rc .dg--ipad { --dg-w: 96px; }
+.rc .dg--macbook { --dg-w: 156px; }
+.rc .dg--watch { --dg-w: 70px; }
+.rc__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 10px;
+  padding: 18px 20px 20px;
+}
+.rc__title {
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--ri-ink);
+}
+.rc__title a {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: inherit;
+  text-decoration: none;
+}
+.rc--model .rc__title a { flex-direction: column-reverse; }
+.rc__name { display: block; }
+.rc__title a::after { content: ""; position: absolute; inset: 0; border-radius: inherit; z-index: 1; }
+.rc__eyebrow {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ri-ink-3);
+}
+.rc__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+}
+.rc__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--ri-ink-2);
+  background: var(--ri-soft);
+}
+.rc__chip--ok { color: var(--ri-green); background: var(--ri-green-bg); }
+.rc__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--ri-line);
+}
+.rc__price {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ri-ink);
+}
+.rc__price small {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ri-ink-3);
+}
+.rc__btn {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px 10px 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: #fff;
+  background: var(--ri-ink);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity var(--ri-ease);
+}
+.rc__btn:hover { opacity: 0.88; color: #fff; }
+.rc__btn .repair-icon { transition: transform var(--ri-ease); }
+.rc:hover .rc__btn .repair-icon { transform: translateX(2px); }
+
+@media screen and (min-width: 990px) {
+  .rc__visual { height: 212px; }
+  .rc .dg--iphone { --dg-w: 76px; }
+  .rc .dg--ipad { --dg-w: 120px; }
+  .rc .dg--macbook { --dg-w: 196px; }
+  .rc .dg--watch { --dg-w: 88px; }
+  .rc__body { gap: 12px; padding: 22px 24px 24px; }
+  .rc__title { font-size: 21px; }
+  .rc__title a { gap: 6px; }
+  .rc__eyebrow { font-size: 13px; }
+  .rc__chip { font-size: 13px; padding: 5px 12px 5px 9px; }
+  .rc__footer { padding-top: 18px; }
+  .rc__price { font-size: 26px; }
+  .rc__btn { font-size: 15px; padding: 12px 18px 12px 20px; }
+}
+@media screen and (min-width: 1200px) {
+  .rc__visual { height: 244px; }
+  .rc .dg--iphone { --dg-w: 90px; }
+  .rc .dg--ipad { --dg-w: 142px; }
+  .rc .dg--macbook { --dg-w: 230px; }
+  .rc .dg--watch { --dg-w: 104px; }
+}
+
+@media screen and (max-width: 749px) {
+  .rc {
+    display: grid;
+    grid-template-columns: 104px 1fr;
+    align-items: stretch;
+  }
+  .rc__visual {
+    height: auto;
+    min-height: 112px;
+    margin: 6px 0 6px 6px;
+  }
+  .rc .dg--iphone { --dg-w: 34px; }
+  .rc .dg--ipad { --dg-w: 56px; }
+  .rc .dg--macbook { --dg-w: 84px; }
+  .rc .dg--watch { --dg-w: 42px; }
+  .rc__body { gap: 8px; padding: 14px 14px 14px 16px; }
+  .rc__title { font-size: 16px; gap: 2px; }
+  .rc__eyebrow { font-size: 11px; }
+  .rc__footer { padding-top: 10px; }
+  .rc__price { font-size: 17px; }
+  .rc__btn { padding: 8px 12px 8px 14px; font-size: 13px; }
+}
+
+.repair-grid--imageless,
+.product-grid:has(> .grid__item > .rc) {
+  max-width: 1360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ---------- Model tile ---------- */
+.mt {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  padding: 26px 18px 22px;
+  border-radius: var(--ri-r-lg);
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--ri-line);
+  text-align: center;
+  transition: box-shadow var(--ri-ease), transform var(--ri-ease);
+}
+.mt:hover { box-shadow: 0 0 0 1px var(--ri-line-strong), var(--ri-shadow-lift); transform: translateY(-2px); }
+.mt:focus-within { box-shadow: 0 0 0 2px var(--ri-ink); }
+.mt__visual {
+  display: grid;
+  place-items: center;
+  width: 128px;
+  height: 128px;
+  margin-bottom: 18px;
+  border-radius: 50%;
+  color: var(--ri-ink);
+  background: var(--ri-soft);
+  box-shadow: inset 0 0 0 1px var(--ri-line);
+  transition: background var(--ri-ease);
+}
+.mt:hover .mt__visual { background: #eeeef1; }
+.mt .dg--iphone { --dg-w: 46px; }
+.mt .dg--ipad { --dg-w: 70px; }
+.mt .dg--macbook { --dg-w: 102px; }
+.mt .dg--watch { --dg-w: 54px; }
+.mt__title {
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--ri-ink);
+}
+.mt__meta {
+  margin: 6px 0 0;
+  padding: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ri-ink-2);
+}
+.mt__meta span { white-space: nowrap; }
+.mt__meta span + span::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  margin: 0 8px;
+  border-radius: 50%;
+  background: currentColor;
+  vertical-align: middle;
+  opacity: 0.6;
+}
+.mt__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding: 10px 16px 10px 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: #fff;
+  background: var(--ri-ink);
+  text-decoration: none;
+}
+.mt__btn:hover { color: #fff; opacity: 0.88; }
+.mt__btn::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.mt__spacer { flex: 1; min-height: 18px; }
+.mt__btn .repair-icon { transition: transform var(--ri-ease); }
+.mt:hover .mt__btn .repair-icon { transform: translateX(2px); }
+
+/* Headline prices under the tile drawing */
+.mt .mt__title {
+  padding: 0;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-align: inherit;
+}
+.mt__prices {
+  display: grid;
+  align-self: stretch;
+  gap: 0;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.mt__price-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 0;
+  border-top: 1px solid var(--ri-line);
+  font-size: 15px;
+  line-height: 1.3;
+  color: var(--ri-ink-2);
+}
+.mt__price-row .repair-icon { flex: none; color: var(--ri-ink); }
+.mt__price-row strong {
+  margin-left: auto;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ri-ink);
+}
+.mt__btn-short { display: none; }
+.mt__price-row small { font-size: 12px; font-weight: 500; color: var(--ri-ink-3); }
+
+@media screen and (min-width: 990px) {
+  .mt { padding: 34px 24px 28px; }
+  .mt__visual { width: 168px; height: 168px; margin-bottom: 22px; }
+  .mt .dg--iphone { --dg-w: 62px; }
+  .mt .dg--ipad { --dg-w: 94px; }
+  .mt .dg--macbook { --dg-w: 136px; }
+  .mt .dg--watch { --dg-w: 72px; }
+  .mt .mt__visual > .repair-icon { width: 52px; height: 52px; }
+  .mt__title { font-size: 21px; }
+  .mt__meta { margin-top: 8px; font-size: 15px; }
+  .mt__btn { padding: 12px 20px 12px 22px; font-size: 15px; }
+  .mt__price-row { font-size: 16px; padding: 13px 0; }
+  .mt__price-row strong { font-size: 19px; }
+}
+
+@media screen and (max-width: 749px) {
+  .mt { padding: 20px 12px 16px; border-radius: 20px; }
+  .mt__prices { margin-top: 10px; }
+  .mt__price-row { gap: 6px; padding: 8px 0; font-size: 13px; }
+  .mt__price-row strong { font-size: 14px; }
+  .mt__btn-full { display: none; }
+  .mt__btn-short { display: inline; }
+  .mt__visual { width: 96px; height: 96px; margin-bottom: 14px; }
+  .mt .dg--iphone { --dg-w: 32px; }
+  .mt .dg--ipad { --dg-w: 50px; }
+  .mt .dg--macbook { --dg-w: 76px; }
+  .mt .dg--watch { --dg-w: 38px; }
+  .mt__title { font-size: 15px; }
+  .mt__meta { font-size: 12px; }
+  .mt__meta span { display: block; }
+  .mt__meta span + span::before { display: none; }
+  .mt__btn { padding: 8px 12px 8px 14px; font-size: 13px; }
+}
+
+/* ---------- Quote Wizard inside the product info column ---------- */
+.repair-wizard-slot { margin-top: 24px; }
+.repair-wizard-slot:empty { display: none; }
+.repair-wizard-slot .qw-section {
+  padding: 0;
+  background: transparent;
+}
+.repair-wizard-slot .qw-wrap,
+.repair-wizard-slot .qw-page { max-width: none; margin: 0; }
+.repair-wizard-slot .qw-wrap > :not(.qw-wizard) { display: none; }
+.repair-wizard-slot .qw-wizard { max-width: none; width: 100%; }
+.repair-wizard-slot .qw-title { display: none; }
+.shopify-section.repair-wizard-moved { display: none; }
+@media screen and (min-width: 750px) {
+  .product--repair-visual .product__column-sticky { position: static; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rc, .mt, .rc__btn .repair-icon, .mt__btn .repair-icon { transition: none; }
+  .rc:hover, .mt:hover { transform: none; }
+}

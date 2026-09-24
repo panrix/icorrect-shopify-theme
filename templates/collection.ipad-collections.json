@@ -108,81 +108,6 @@
         "btn_text": ""
       }
     },
-    "parent_categories_F74hA8": {
-      "type": "parent-categories",
-      "blocks": {
-        "category_MRifi6": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/Diagnostic.png",
-            "title": "Diagnostic",
-            "price": "",
-            "link": "shopify://collections/ipad-diagnostic-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_EaDM6g": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/iPad_LCD.png",
-            "title": "LCD Display Repair",
-            "price": "",
-            "link": "shopify://collections/ipad-lcd-display-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_e8HVz6": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/iPad_glass_only.png",
-            "title": "Glass Screen Repair",
-            "price": "",
-            "link": "shopify://collections/ipad-screen-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_nqCihP": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/Battery.png",
-            "title": "Battery Repair",
-            "price": "",
-            "link": "shopify://collections/ipad-battery-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_ErKaEz": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/Charging_port.png",
-            "title": "Charging Port Repair",
-            "price": "",
-            "link": "shopify://collections/ipad-charging-port-repair-prices",
-            "btn": "View repairs"
-          }
-        }
-      },
-      "block_order": [
-        "category_MRifi6",
-        "category_EaDM6g",
-        "category_e8HVz6",
-        "category_nqCihP",
-        "category_ErKaEz"
-      ],
-      "settings": {
-        "column_per_row": 4,
-        "padding_top": 50,
-        "padding_bottom": 50,
-        "mob_padding_top": 35,
-        "mob_padding_bottom": 35,
-        "bg": "#ffffff",
-        "heading": "Choose your iPad Repair",
-        "heading_size": 28,
-        "details": "",
-        "btn_link": "",
-        "btn_text": ""
-      }
-    },
     "ipad_videos_8kczQT": {
       "type": "ipad-videos",
       "name": "iPad Videos",
@@ -385,7 +310,6 @@
     "main_banner_and_video_HjbmW9",
     "quote_wizard_top",
     "parent_categories_f6HGVL",
-    "parent_categories_F74hA8",
     "ipad_videos_8kczQT",
     "repair_services_nQkwFT",
     "icorrect_faqs_RVk3VL",

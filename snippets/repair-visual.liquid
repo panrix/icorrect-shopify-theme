@@ -1,0 +1,82 @@
+{%- comment -%}
+  Product-page repair panel that replaces the product media gallery.
+  Draws the repair from product data (device diagram with the repaired part
+  highlighted, labels, part badge), so a new model is ready the moment the
+  product exists.
+
+  Accepts:
+  - product: {Object} product
+
+  Uses theme settings repair_fact_1..3 for the trust row.
+
+  Usage:
+  {% render 'repair-visual', product: product %}
+{%- endcomment -%}
+{%- liquid
+  capture meta_raw
+    render 'repair-meta', title: product.title, repair_tags: product.tags, repair_context: product.type
+  endcapture
+  assign meta = meta_raw | strip | split: '|'
+  assign family = meta[0]
+  assign repair = meta[1]
+  assign scale = meta[2]
+  assign model = meta[3]
+  assign name = meta[4]
+  assign qualifier = meta[5]
+
+  capture badge_raw
+    render 'repair-badge', product: product, repair: repair, qualifier: qualifier
+  endcapture
+  assign badges = badge_raw | strip | split: '~'
+
+  assign fact_1 = settings.repair_fact_1
+  assign fact_2 = settings.repair_fact_2
+  assign fact_3 = settings.repair_fact_3
+  if fact_1 == nil
+    assign fact_1 = '2-year warranty'
+  endif
+  if fact_2 == nil
+    assign fact_2 = 'Genuine Apple parts'
+  endif
+  if fact_3 == nil
+    assign fact_3 = 'London collection & UK courier'
+  endif
+  assign rating = settings.repair_rating
+  if rating == nil
+    assign rating = '4.9'
+  endif
+  assign title_tags = product.title | append: ' ' | append: product.tags | downcase
+  if title_tags contains 'aftermarket'
+    assign fact_2 = ''
+  endif
+-%}
+<div class="rv rv--{{ family }}" data-repair="{{ repair }}">
+  <div class="rv__stage">
+    <div class="rv__disc">
+      {% render 'device-glyph', family: family, title: product.title, repair: repair, scale: scale %}
+    </div>
+  </div>
+
+  <ul class="rv__labels" aria-label="Repair summary">
+    {%- if name != blank -%}
+      <li class="rv__chip rv__chip--ink">{% render 'repair-icon', icon: repair, family: family, size: 16 %}{{ name | escape }}</li>
+    {%- endif -%}
+    {%- for badge_entry in badges -%}
+      {%- assign badge = badge_entry | split: '|' -%}
+      {%- if badge[0] == 'ok' -%}
+        <li class="rv__chip rv__chip--ok">{% render 'repair-icon', icon: 'check', size: 15 %}{{ badge[1] | escape }}</li>
+      {%- endif -%}
+    {%- endfor -%}
+  </ul>
+
+  {%- if fact_1 != blank or fact_2 != blank or fact_3 != blank -%}
+    <ul class="rv__facts">
+      {%- if rating != blank -%}
+        <li class="rv__fact rv__fact--rating">{% render 'repair-icon', icon: 'star', size: 17 %}<strong>{{ rating | escape }}</strong></li>
+      {%- endif -%}
+      {%- if fact_1 != blank -%}<li class="rv__fact">{% render 'repair-icon', icon: 'shield', size: 17 %}{{ fact_1 | escape }}</li>{%- endif -%}
+      {%- if fact_2 != blank -%}<li class="rv__fact">{% render 'repair-icon', icon: 'parts', size: 17 %}{{ fact_2 | escape }}</li>{%- endif -%}
+      {%- if fact_3 != blank -%}<li class="rv__fact">{% render 'repair-icon', icon: 'courier', size: 17 %}{{ fact_3 | escape }}</li>{%- endif -%}
+    </ul>
+  {%- endif -%}
+</div>

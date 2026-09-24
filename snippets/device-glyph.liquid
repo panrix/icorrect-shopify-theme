@@ -1,0 +1,139 @@
+{%- comment -%}
+  Line-art device drawing that highlights the part being repaired.
+  Picks the design-era drawing for the model (device-variant), then renders
+  the matching device-glyph-<era> snippet. Rear-facing repairs (rear camera,
+  rear glass, heart-rate sensor) switch to the back of the device.
+  Design language and how to add an era: docs/design/device-illustrations.md
+
+  Accepts:
+  - family: {String} iphone | ipad | macbook | watch | device
+  - title: {String} model or product title, used to pick the era
+  - repair: {String} repair key from repair-meta (optional; "repair" = no highlight)
+  - scale: {String|Number} relative size 0.78–1 (optional)
+  - repair_context: {String} optional page text for titles without a model
+  - class: {String} extra class names
+
+  Styling lives in assets/repair-imageless.css (.dg*).
+
+  Usage:
+  {% render 'device-glyph', family: 'iphone', title: product.title, repair: 'battery', scale: '0.92' %}
+{%- endcomment -%}
+{%- liquid
+  assign family = family | default: 'device'
+  if family == 'device'
+    assign family = 'iphone'
+  endif
+  assign repair = repair | default: 'repair'
+
+  assign view = 'front'
+  assign part = 'none'
+  case repair
+    when 'screen'
+      assign part = 'screen'
+    when 'glass'
+      assign part = 'glassfront'
+    when 'display'
+      assign part = 'display'
+    when 'dustgate'
+      assign part = 'dust'
+    when 'flexgate'
+      assign part = 'hinge'
+    when 'battery'
+      assign part = 'battery'
+    when 'charging-port'
+      assign part = 'port'
+    when 'rear-camera'
+      assign part = 'camera'
+      assign view = 'back'
+    when 'rear-camera-lens'
+      assign part = 'lens'
+      assign view = 'back'
+    when 'rear-glass'
+      assign part = 'glass'
+      assign view = 'back'
+    when 'front-camera', 'face-id'
+      assign part = 'fcam'
+    when 'earpiece'
+      assign part = 'earpiece'
+    when 'loudspeaker', 'microphone'
+      assign part = 'grille'
+    when 'button'
+      assign part = 'buttons'
+    when 'crown'
+      assign part = 'crown'
+    when 'keyboard'
+      assign part = 'keyboard'
+    when 'trackpad'
+      assign part = 'trackpad'
+    when 'touch-bar'
+      assign part = 'touchbar'
+    when 'heart-rate'
+      assign part = 'sensor'
+      assign view = 'back'
+    when 'diagnostic', 'liquid', 'data'
+      assign part = 'scan'
+  endcase
+
+  if family == 'macbook'
+    assign view = 'front'
+    if part == 'buttons'
+      assign part = 'keyboard'
+    elsif part == 'camera' or part == 'lens' or part == 'glass'
+      assign part = 'scan'
+    endif
+  endif
+  if family == 'watch' and part == 'buttons'
+    assign part = 'crown'
+  endif
+
+  assign scale = scale | default: 1
+
+  capture variant_raw
+    render 'device-variant', family: family, title: title, repair_context: repair_context
+  endcapture
+  assign variant_parts = variant_raw | strip | split: '|'
+  assign variant = variant_parts[0]
+  assign lenses = variant_parts[1] | plus: 0
+  assign touchbar = false
+  if variant_parts[2] == 'true'
+    assign touchbar = true
+  endif
+-%}
+<span
+  class="dg dg--{{ family }} dg--{{ variant }} dg--{{ view }} dg--part-{{ part }}{% if class %} {{ class }}{% endif %}"
+  style="--dg-scale: {{ scale }};"
+  aria-hidden="true"
+>
+  {%- case variant -%}
+    {%- when 'iphone-home' -%}
+      {% render 'device-glyph-iphone-home', view: view, part: part, lenses: lenses %}
+    {%- when 'iphone-notch' -%}
+      {% render 'device-glyph-iphone-notch', view: view, part: part, lenses: lenses %}
+    {%- when 'iphone-plateau' -%}
+      {% render 'device-glyph-iphone-plateau', view: view, part: part, lenses: lenses %}
+    {%- when 'macbook-wedge' -%}
+      {% render 'device-glyph-macbook-wedge', part: part %}
+    {%- when 'macbook-touchbar' -%}
+      {% render 'device-glyph-macbook-touchbar', part: part, touchbar: touchbar %}
+    {%- when 'macbook-notch-air' -%}
+      {% render 'device-glyph-macbook-notch', part: part, pro: false %}
+    {%- when 'macbook-notch-pro' -%}
+      {% render 'device-glyph-macbook-notch', part: part, pro: true %}
+    {%- when 'ipad-home' -%}
+      {% render 'device-glyph-ipad-home', view: view, part: part %}
+    {%- when 'ipad-allscreen' -%}
+      {% render 'device-glyph-ipad-allscreen', view: view, part: part, pro: false %}
+    {%- when 'ipad-pro' -%}
+      {% render 'device-glyph-ipad-allscreen', view: view, part: part, pro: true %}
+    {%- when 'watch-classic' -%}
+      {% render 'device-glyph-watch-classic', view: view, part: part %}
+    {%- when 'watch-rounded' -%}
+      {% render 'device-glyph-watch-rounded', view: view, part: part %}
+    {%- when 'watch-ultra' -%}
+      {% render 'device-glyph-watch-ultra', view: view, part: part %}
+    {%- when 'watch-s10' -%}
+      {% render 'device-glyph-watch-s10', view: view, part: part %}
+    {%- else -%}
+      {% render 'device-glyph-iphone-island', view: view, part: part, lenses: lenses %}
+  {%- endcase -%}
+</span>

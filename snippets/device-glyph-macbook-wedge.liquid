@@ -1,0 +1,32 @@
+{%- comment -%}
+  MacBook — Wedge Air era (2012 Air up to the M1 Air: A1466, A1932, A2179, A2337).
+  Thicker bezels, no notch, tapered base (no base slab), large trackpad.
+  Part contract and drawing rules: docs/design/device-illustrations.md
+  Accepts: part
+{%- endcomment -%}
+<svg class="dg__svg" viewBox="0 0 260 190" fill="none" focusable="false">
+  <defs><clipPath id="dg-screen-wedge"><rect x="41" y="15" width="178" height="99" rx="2"/></clipPath></defs>
+  <ellipse class="dg-shadow" cx="130" cy="183" rx="120" ry="3.5"/>
+  <rect class="dg-body" x="30" y="4" width="200" height="120" rx="10"/>
+  <rect class="dg-frame" x="32.5" y="6.5" width="195" height="115" rx="8"/>
+  <rect class="dg-screen{% if part == 'screen' %} is-hl{% endif %}" x="41" y="15" width="178" height="99" rx="2"/>
+  <path class="dg-sheen" d="M124 15h30L41 106V78z"/>
+  <g class="dg-dustbands" clip-path="url(#dg-screen-wedge)"><path class="dg-dustband" d="M42 16C46 50,38 84,42 113L71.3 113C67.3 84,75.3 50,71.3 16Z"/><path class="dg-dustband" d="M71.3 16C67.3 50,75.3 84,71.3 113L100.7 113C104.7 84,96.7 50,100.7 16Z"/><path class="dg-dustband" d="M100.7 16C104.7 50,96.7 84,100.7 113L130 113C126 84,134 50,130 16Z"/><path class="dg-dustband" d="M130 16C126 50,134 84,130 113L159.3 113C163.3 84,155.3 50,159.3 16Z"/><path class="dg-dustband" d="M159.3 16C163.3 50,155.3 84,159.3 113L188.7 113C184.7 84,192.7 50,188.7 16Z"/><path class="dg-dustband" d="M188.7 16C184.7 50,192.7 84,188.7 113L218 113C222 84,214 50,218 16Z"/></g>
+  <circle class="dg-cam{% if part == 'fcam' %} is-hl{% endif %}" cx="130" cy="10" r="1.6"/>
+  <path class="dg-hinge{% if part == 'hinge' %} is-hl{% endif %}" d="M46 120h168"/>
+  <path class="dg-dust{% if part == 'dust' %} is-hl{% endif %}" d="M62 107h.01M80 110h.01M98 106h.01M120 109h.01M140 107h.01M162 110h.01M184 106h.01M200 109h.01"/>
+  <path class="dg-body dg-base" d="M30 126h200l24 44a4 4 0 0 1-3.6 6H9.6a4 4 0 0 1-3.6-6z"/>
+  <path class="dg-lip" d="M112 176a18 4 0 0 0 36 0"/>
+  <path class="dg-keyboard{% if part == 'keyboard' %} is-hl{% endif %}" d="M52 134h156l7 17H45z"/>
+  <path class="dg-keys{% if part == 'keyboard' %} is-hl{% endif %}" d="M52 138h156M50.5 142.3h159M48.8 146.6h162.4"/>
+  <path class="dg-trackpad{% if part == 'trackpad' %} is-hl{% endif %}" d="M98 155h64l3 17h-70z"/>
+  <path class="dg-grille{% if part == 'grille' %} is-hl{% endif %}" d="M38 139l-4 10M222 139l4 10"/>
+  <path class="dg-port-side{% if part == 'port' %} is-hl{% endif %}" d="M27.3 131.8l-3.4 6.4"/>
+  <path class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" d="M58 130h144l14 40H44z"/>
+  <path class="dg-crack" d="M152 24l-10 22 14 8-18 26 8 6-12 22"/>
+  <path class="dg-shatter" d="M166 54l-14-24M166 54l22-18M166 54l28 8M166 54l12 30M166 54l-20 26M166 54l-30-2M156 44l14-6 12 10-2 16-14 6-12-10z"/>
+  <path class="dg-fault" d="M88 15v99M92 15v99"/>
+  <path class="dg-fault dg-fault--alt" d="M178 15v99"/>
+  <path class="dg-blot" d="M108 82c4-12 24-14 32-4 6 8 0 20-12 22-12 1-24-6-20-18z"/>
+  <rect class="dg-scan" x="41" y="15" width="178" height="3" rx="1.5"/>
+</svg>

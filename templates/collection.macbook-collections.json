@@ -232,126 +232,6 @@
         "btn_text": ""
       }
     },
-    "parent_categories_p3HjEg": {
-      "type": "parent-categories",
-      "blocks": {
-        "category_qVyzHp": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/Diagnostic.png",
-            "title": "Diagnostic",
-            "price": "",
-            "link": "shopify://collections/macbook-diagnostic-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_yqQexj": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/MacBook_screen.png",
-            "title": "Screen Repair",
-            "price": "",
-            "link": "shopify://collections/macbook-screen-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_eHgxiY": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/MacBook_Dustgate.png",
-            "title": "Dustgate Repair",
-            "price": "",
-            "link": "shopify://collections/macbook-dustgate-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_7XYw8T": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/MacBook_Flexgate.png",
-            "title": "Flexgate Repair",
-            "price": "",
-            "link": "shopify://collections/macbook-flexgate-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_9k7iVH": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/Battery_0d0f8ff5-c013-4949-a791-e80cb51fc86a.png",
-            "title": "Battery Repair",
-            "price": "",
-            "link": "shopify://collections/macbook-battery-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_VAxA46": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/Charging_port_891b419f-90c8-4f18-b2d7-e3775c949091.png",
-            "title": "Charging Port Repair",
-            "price": "",
-            "link": "shopify://collections/macbook-charging-port-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_F8khAm": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/MacBook_keyboard.png",
-            "title": "Keyboard Repair",
-            "price": "",
-            "link": "shopify://collections/macbook-keyboard-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_9TUmtn": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/MacBook_Touch_Bar.png",
-            "title": "Touch Bar Repair",
-            "price": "",
-            "link": "shopify://collections/macbook-touch-bar-repair-prices",
-            "btn": "View repairs"
-          }
-        },
-        "category_CGdCma": {
-          "type": "category",
-          "settings": {
-            "img": "shopify://shop_images/MacBook_trackpad.png",
-            "title": "Trackpad Repair",
-            "price": "",
-            "link": "shopify://collections/macbook-trackpad-repair-prices",
-            "btn": "View repairs"
-          }
-        }
-      },
-      "block_order": [
-        "category_qVyzHp",
-        "category_yqQexj",
-        "category_eHgxiY",
-        "category_7XYw8T",
-        "category_9k7iVH",
-        "category_VAxA46",
-        "category_F8khAm",
-        "category_9TUmtn",
-        "category_CGdCma"
-      ],
-      "name": "Parent Categories",
-      "settings": {
-        "column_per_row": 4,
-        "padding_top": 50,
-        "padding_bottom": 50,
-        "mob_padding_top": 40,
-        "mob_padding_bottom": 40,
-        "bg": "#ffffff",
-        "heading": "Choose your MacBook repair",
-        "heading_size": 28,
-        "details": "",
-        "btn_link": "",
-        "btn_text": ""
-      }
-    },
     "macbook_videos_tLnNVR": {
       "type": "macbook-videos",
       "name": "MacBook Videos",
@@ -560,7 +440,6 @@
     "macbook_matrix_UVLWWb",
     "parent_categories_nWCAYw",
     "parent_categories_FywRmd",
-    "parent_categories_p3HjEg",
     "macbook_videos_tLnNVR",
     "repair_services_nQkwFT",
     "icorrect_faqs_RVk3VL",

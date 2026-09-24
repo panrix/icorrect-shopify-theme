@@ -12,8 +12,53 @@
       </div>
     {% endif %}
 
-    <div class="repair-grid">
-      {%- for product in collection.products -%}
+    {%- liquid
+      assign imageless = true
+      if settings.repair_imageless == false
+        assign imageless = false
+      endif
+      if imageless
+        capture collection_meta
+          render 'repair-meta', title: collection.title
+        endcapture
+        assign collection_meta = collection_meta | strip | split: '|'
+        assign collection_repair = collection_meta[1]
+        assign emphasis = 'repair'
+        if collection_repair != 'repair'
+          assign emphasis = 'model'
+        endif
+      endif
+      assign model_order = blank
+      if imageless
+        assign grid_titles = collection.products | map: 'title' | join: '||'
+        if emphasis == 'model'
+          capture model_order
+            render 'model-order', titles: grid_titles
+          endcapture
+        else
+          capture model_order
+            render 'repair-order', titles: grid_titles
+          endcapture
+        endif
+        assign model_order = model_order | strip | split: ','
+      endif
+    -%}
+    {%- if imageless -%}
+      {{ 'repair-imageless.css' | asset_url | stylesheet_tag }}
+    {%- endif -%}
+    <div class="repair-grid{% if imageless %} repair-grid--imageless{% endif %}">
+      {%- for product_slot in collection.products -%}
+        {%- liquid
+          assign product = product_slot
+          if model_order != blank
+            assign product_index = model_order[forloop.index0] | plus: 0
+            assign product = collection.products[product_index]
+          endif
+        -%}
+        {%- if imageless -%}
+          {% render 'repair-card', product: product, emphasis: emphasis %}
+          {%- continue -%}
+        {%- endif -%}
         <div class="repair-card">
           
           <div class="repair-card__image-wrapper">
@@ -207,6 +252,10 @@
     opacity: 0.9;
   }
 
+  .repair-grid--imageless {
+    gap: 24px;
+  }
+
   /* --- Responsive --- */
   @media(max-width: 990px) {
     .repair-grid {
@@ -223,6 +272,9 @@
     .repair-grid {
       grid-template-columns: 1fr; 
       gap: 40px;
+    }
+    .repair-grid--imageless {
+      gap: 12px;
     }
     .repair-section-header h1 {
       font-size: 24px;

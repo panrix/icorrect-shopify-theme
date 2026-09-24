@@ -3,6 +3,9 @@
 
 {{ 'component-slider.css' | asset_url | stylesheet_tag }}
 {{ 'template-collection.css' | asset_url | stylesheet_tag }}
+{%- unless settings.repair_imageless == false -%}
+  {{ 'repair-imageless.css' | asset_url | stylesheet_tag }}
+{%- endunless -%}
 
 {% if section.settings.image_shape == 'blob' %}
   {{ 'mask-blobs.css' | asset_url | stylesheet_tag }}
@@ -145,9 +148,47 @@
         aria-label="{{ 'general.slider.name' | t }}"
       >
         {% assign skip_card_product_styles = false %}
+        {%- liquid
+          assign imageless = true
+          if settings.repair_imageless == false
+            assign imageless = false
+          endif
+          if imageless
+            capture collection_meta
+              render 'repair-meta', title: section.settings.collection.title
+            endcapture
+            assign collection_meta = collection_meta | strip | split: '|'
+            assign collection_repair = collection_meta[1]
+            assign emphasis = 'repair'
+            if collection_repair != 'repair'
+              assign emphasis = 'model'
+            endif
+          endif
+          assign model_order = blank
+          if imageless
+            assign fc_titles = section.settings.collection.products | map: 'title' | join: '||'
+            if emphasis == 'model'
+              capture model_order
+                render 'model-order', titles: fc_titles
+              endcapture
+            else
+              capture model_order
+                render 'repair-order', titles: fc_titles
+              endcapture
+            endif
+            assign model_order = model_order | strip | split: ','
+          endif
+        -%}
         
         {% comment %} Removed the limit here so it shows everything (capped at 50 for safety) {% endcomment %}
-        {%- for product in section.settings.collection.products limit: 50 -%}
+        {%- for product_slot in section.settings.collection.products limit: 50 -%}
+          {%- liquid
+            assign product = product_slot
+            if model_order != blank
+              assign product_index = model_order[forloop.index0] | plus: 0
+              assign product = section.settings.collection.products[product_index]
+            endif
+          -%}
           <li
             id="Slide-{{ section.id }}-{{ forloop.index }}"
             class="grid__item{% if show_mobile_slider or show_desktop_slider %} slider__slide{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
@@ -156,18 +197,22 @@
               style="--animation-order: {{ forloop.index }};"
             {% endif %}
           >
-            {% render 'card-product',
-              card_product: product,
-              media_aspect_ratio: 'adapt',
-              image_shape: section.settings.image_shape,
-              show_secondary_image: section.settings.show_secondary_image,
-              show_vendor: section.settings.show_vendor,
-              show_rating: section.settings.show_rating,
-              skip_styles: skip_card_product_styles,
-              section_id: section.id,
-              quick_add: section.settings.quick_add
-            %}
-            <a href="{{ product.url }}" class="repair-grid-btn">Book Repair</a>
+            {%- if imageless -%}
+              {% render 'repair-card', product: product, emphasis: emphasis %}
+            {%- else -%}
+              {% render 'card-product',
+                card_product: product,
+                media_aspect_ratio: 'adapt',
+                image_shape: section.settings.image_shape,
+                show_secondary_image: section.settings.show_secondary_image,
+                show_vendor: section.settings.show_vendor,
+                show_rating: section.settings.show_rating,
+                skip_styles: skip_card_product_styles,
+                section_id: section.id,
+                quick_add: section.settings.quick_add
+              %}
+              <a href="{{ product.url }}" class="repair-grid-btn">Book Repair</a>
+            {%- endif -%}
           </li>
           {%- assign skip_card_product_styles = true -%}
         {%- else -%}

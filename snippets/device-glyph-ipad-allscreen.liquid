@@ -1,0 +1,48 @@
+{%- comment -%}
+  iPad — All-screen era (Air 4+, mini 6+, iPad 10th+; Pro 2018+ with pro: true).
+  Even bezels, no home button, top button. Pro back: dual lens + LiDAR module.
+  Part contract and drawing rules: docs/design/device-illustrations.md
+  Accepts: view (front|back), part, pro (true|false)
+{%- endcomment -%}
+<svg class="dg__svg" viewBox="0 0 180 250" fill="none" focusable="false">
+  <ellipse class="dg-shadow" cx="90" cy="244" rx="72" ry="3.5"/>
+  {%- if view == 'back' -%}
+    <rect class="dg-btn" x="20" y="1.5" width="22" height="5" rx="2.5"/>
+    <rect class="dg-body dg-glass{% if part == 'glass' %} is-hl{% endif %}" x="6" y="6" width="168" height="230" rx="16"/>
+    <rect class="dg-frame" x="8.5" y="8.5" width="163" height="225" rx="13.5"/>
+    {%- if pro -%}
+      <rect class="dg-module{% if part == 'camera' %} is-hl{% endif %}" x="16" y="16" width="38" height="38" rx="11"/>
+      <circle class="dg-lens-ring{% if part == 'camera' or part == 'lens' %} is-hl{% endif %}" cx="27" cy="27" r="6.2"/>
+      <circle class="dg-lens{% if part == 'camera' or part == 'lens' %} is-hl{% endif %}" cx="27" cy="27" r="2.6"/>
+      <path class="dg-lens-crack" d="M22.5 23.5l9 6.5M22.8 30.5l8.5-6"/>
+      <circle class="dg-lens-ring{% if part == 'camera' %} is-hl{% endif %}" cx="43" cy="43" r="6.2"/>
+      <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="43" cy="43" r="2.6"/>
+      <circle class="dg-lidar" cx="43" cy="27" r="3.2"/>
+      <circle class="dg-flash" cx="27" cy="43" r="2.2"/>
+    {%- else -%}
+      <rect class="dg-module{% if part == 'camera' %} is-hl{% endif %}" x="16" y="16" width="26" height="26" rx="8"/>
+      <circle class="dg-lens-ring{% if part == 'camera' or part == 'lens' %} is-hl{% endif %}" cx="29" cy="29" r="6.5"/>
+      <circle class="dg-lens{% if part == 'camera' or part == 'lens' %} is-hl{% endif %}" cx="29" cy="29" r="2.7"/>
+      <path class="dg-lens-crack" d="M24.2 25l9.5 7M24.5 33l8.5-6.5"/>
+    {%- endif -%}
+    <path class="dg-crack dg-crack--back" d="M112 70l-12 30 16 10-20 34 10 8-14 30"/>
+  {%- else -%}
+    <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="138" y="1.5" width="22" height="5" rx="2.5"/>
+    <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="173.5" y="30" width="5" height="18" rx="2.5"/>
+    <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="173.5" y="52" width="5" height="18" rx="2.5"/>
+    <rect class="dg-body" x="6" y="6" width="168" height="230" rx="16"/>
+    <rect class="dg-frame" x="8.5" y="8.5" width="163" height="225" rx="13.5"/>
+    <rect class="dg-screen{% if part == 'screen' %} is-hl{% endif %}" x="13" y="13" width="154" height="216" rx="8"/>
+    <path class="dg-sheen" d="M92 13h24L13 158v-40z"/>
+    <circle class="dg-cam{% if part == 'fcam' %} is-hl{% endif %}" cx="90" cy="9.8" r="1.7"/>
+    <rect class="dg-port{% if part == 'port' %} is-hl{% endif %}" x="79" y="232" width="22" height="3" rx="1.5"/>
+    <path class="dg-grille{% if part == 'grille' %} is-hl{% endif %}" d="M30 233.5h.01M36 233.5h.01M42 233.5h.01M138 233.5h.01M144 233.5h.01M150 233.5h.01"/>
+    <rect class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" x="40" y="60" width="100" height="122" rx="10"/>
+    <path class="dg-crack" d="M108 38l-12 30 16 10-20 34 10 8-14 30"/>
+    <path class="dg-shatter" d="M118 78l-16-30M118 78l24-22M118 78l30 12M118 78l12 38M118 78l-22 32M118 78l-34-4M106 64l18-6 12 14-4 20-18 6-14-12z"/>
+    <path class="dg-fault" d="M52 13v216M56.5 13v216"/>
+    <path class="dg-fault dg-fault--alt" d="M126 13v216"/>
+    <path class="dg-blot" d="M70 160c4-14 26-18 36-6 8 10 2 26-12 28-14 2-28-8-24-22z"/>
+    <rect class="dg-scan" x="13" y="13" width="154" height="3" rx="1.5"/>
+  {%- endif -%}
+</svg>

@@ -42,63 +42,58 @@
     "parent_categories_nWCAYw": {
       "type": "parent-categories",
       "blocks": {
-        "category_rgfC7R": {
+        "category_17": {
           "type": "category",
           "settings": {
-            "img": "shopify://shop_images/iPhone_16E_relative_size.png",
-            "title": "iPhone 16E",
+            "title": "iPhone 17",
             "price": "",
-            "link": "shopify://collections/iphone-16e-repair-prices",
+            "link": "shopify://collections/iphone-17-repair-prices",
             "btn": "View repairs"
           }
         },
-        "category_Qe9Xda": {
+        "category_air": {
           "type": "category",
           "settings": {
-            "img": "shopify://shop_images/iPhone_16_Pro_Max_7ce9ff3f-3a97-4d29-8d3a-04d0d4facc43.png",
-            "title": "iPhone 16 Pro Max",
+            "title": "iPhone Air",
             "price": "",
-            "link": "shopify://collections/iphone-16-pro-max-repair-prices",
+            "link": "shopify://collections/iphone-air-repair-prices",
             "btn": "View repairs"
           }
         },
-        "category_7bnj7f": {
+        "category_17pro": {
           "type": "category",
           "settings": {
-            "img": "shopify://shop_images/iPhone_16_Pro_relative_size.png",
-            "title": "iPhone 16 Pro",
+            "title": "iPhone 17 Pro",
             "price": "",
-            "link": "shopify://collections/iphone-16-pro-repair-prices",
+            "link": "shopify://collections/iphone-17-pro-repair-prices",
             "btn": "View repairs"
           }
         },
-        "category_4CxAFe": {
+        "category_17pm": {
           "type": "category",
           "settings": {
-            "img": "shopify://shop_images/iPhone_16_Plus_relative_size.png",
-            "title": "iPhone 16 Plus",
+            "title": "iPhone 17 Pro Max",
             "price": "",
-            "link": "shopify://collections/iphone-16-plus-repair-prices",
+            "link": "shopify://collections/iphone-17-pro-max-repair-prices",
             "btn": "View repairs"
           }
         },
-        "category_Cf7R3y": {
+        "category_17e": {
           "type": "category",
           "settings": {
-            "img": "shopify://shop_images/iPhone_16_relative_size.png",
-            "title": "iPhone 16",
+            "title": "iPhone 17e",
             "price": "",
-            "link": "shopify://collections/iphone-16-repair-prices",
+            "link": "shopify://collections/iphone-17e-repair-prices",
             "btn": "View repairs"
           }
         }
       },
       "block_order": [
-        "category_rgfC7R",
-        "category_Qe9Xda",
-        "category_7bnj7f",
-        "category_4CxAFe",
-        "category_Cf7R3y"
+        "category_17",
+        "category_air",
+        "category_17pro",
+        "category_17pm",
+        "category_17e"
       ],
       "settings": {
         "column_per_row": 4,
@@ -107,7 +102,7 @@
         "mob_padding_top": 40,
         "mob_padding_bottom": 40,
         "bg": "#fafafa",
-        "heading": "iPhone 16 Models",
+        "heading": "iPhone 17 Models",
         "heading_size": 28,
         "details": "At iCorrect, we specialise in advanced microchip-level iPhone repairs and repair to original factory standards. In the industry we're known as the Brain Surgeons and can repair what others deem as not repairable. Our iPhone repairs have average turnaround of just 2 hours.",
         "btn_link": "",

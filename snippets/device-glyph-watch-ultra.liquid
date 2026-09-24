@@ -1,0 +1,34 @@
+{%- comment -%}
+  Apple Watch — Ultra era (Ultra, Ultra 2).
+  Squarer case, bold flat bezel ring, crown guard and action button.
+  Part contract and drawing rules: docs/design/device-illustrations.md
+  Accepts: view (front|back), part
+{%- endcomment -%}
+<svg class="dg__svg" viewBox="0 0 140 228" fill="none" focusable="false">
+  <ellipse class="dg-shadow" cx="70" cy="223" rx="36" ry="3"/>
+  <path class="dg-band" d="M40 44V10a8 8 0 0 1 8-8h44a8 8 0 0 1 8 8v34M40 176v34a8 8 0 0 0 8 8h44a8 8 0 0 0 8-8v-34"/>
+  {%- if view == 'back' -%}
+    <rect class="dg-body dg-glass{% if part == 'glass' %} is-hl{% endif %}" x="16" y="40" width="104" height="140" rx="22"/>
+    <rect class="dg-frame" x="21" y="45" width="94" height="130" rx="18"/>
+    <circle class="dg-sensor{% if part == 'sensor' %} is-hl{% endif %}" cx="68" cy="110" r="28"/>
+    <circle class="dg-sensor{% if part == 'sensor' %} is-hl{% endif %}" cx="68" cy="110" r="14"/>
+    <path class="dg-leds{% if part == 'sensor' %} is-hl{% endif %}" d="M68 89h.01M68 131h.01M47 110h.01M89 110h.01"/>
+  {%- else -%}
+    <path class="dg-guard" d="M120 70h5a4 4 0 0 1 4 4v34a4 4 0 0 1-4 4h-5"/>
+    <rect class="dg-btn{% if part == 'crown' %} is-hl{% endif %}" x="11" y="72" width="5" height="28" rx="2.5"/>
+    <rect class="dg-crown{% if part == 'crown' %} is-hl{% endif %}" x="121" y="80" width="8" height="22" rx="3"/>
+    <rect class="dg-btn{% if part == 'crown' %} is-hl{% endif %}" x="120.5" y="118" width="5" height="24" rx="2.5"/>
+    <rect class="dg-body" x="16" y="40" width="104" height="140" rx="22"/>
+    <rect class="dg-frame dg-frame--bold" x="21" y="45" width="94" height="130" rx="18"/>
+    <rect class="dg-screen{% if part == 'screen' %} is-hl{% endif %}" x="26" y="50" width="84" height="120" rx="14"/>
+    <path class="dg-sheen" d="M60 50h18L26 144v-28z"/>
+    <path class="dg-grille{% if part == 'grille' %} is-hl{% endif %}" d="M12 112v10M12 128v10"/>
+    <rect class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" x="40" y="72" width="56" height="76" rx="12"/>
+    <path class="dg-crack" d="M82 64l-10 22 12 8-14 24 8 6-10 18"/>
+    <path class="dg-shatter" d="M80 96l-10-22M80 96l16-14M80 96l18 8M80 96l8 24M80 96l-14 18M80 96l-22-2M73 88l10-4 8 7-1 10-10 4-9-7z"/>
+    <path class="dg-fault" d="M44 50v120M47.5 50v120"/>
+    <path class="dg-fault dg-fault--alt" d="M88 50v120"/>
+    <path class="dg-blot" d="M54 140c3-10 18-12 24-4 5 7 0 17-9 18-10 1-18-5-15-14z"/>
+    <rect class="dg-scan" x="26" y="50" width="84" height="3" rx="1.5"/>
+  {%- endif -%}
+</svg>
