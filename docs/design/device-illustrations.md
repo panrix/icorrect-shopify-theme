@@ -71,7 +71,7 @@ Every era must draw these elements with these classes, adding `is-hl` when `part
 | `dg-cam` / `dg-notch` / `dg-island` | `fcam` | Front camera / Face ID area |
 | `dg-earpiece` | `earpiece` | Top speaker slit (iPhone) |
 | `dg-port` / `dg-port-side` | `port` | Charging port (MacBook: side of the top case, near the top-left corner) |
-| `dg-grille` | `grille` | Loudspeaker / microphone (MacBook Air: hinge) |
+| `dg-grille` | `grille` | Loudspeaker / microphone (MacBook Air: hinge). iPhone and iPad holes use `dg-grille--dots`; the highlight draws them large enough to read on a card. |
 | `dg-battery` | `battery` | Hidden unless highlighted; dashed |
 | `dg-crack` | screen assembly | Zig-zag crack across the screen |
 | `dg-shatter` | glass only | Impact point with radial cracks |
