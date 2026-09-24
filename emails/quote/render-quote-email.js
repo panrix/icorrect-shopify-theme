@@ -325,45 +325,48 @@ function journeyHtml(model) {
     "</div></td></tr>";
 }
 
-function trustCell(cell) {
+function trustInner(cell) {
+  if (!cell) return "&nbsp;";
   var stars = cell.kind === "reviews"
     ? "<div style=\"color:#e6b800;font-size:11px;letter-spacing:1px;line-height:1;\">&#9733;&#9733;&#9733;&#9733;&#9733;</div>"
     : "";
   var titleStyle = cell.kind === "reviews"
     ? "font-size:28px;font-weight:700;letter-spacing:-1px;line-height:1;color:#171717;"
     : "font-size:13px;font-weight:600;line-height:1.25;color:#171717;";
-  return "<td valign=\"middle\" width=\"50%\" style=\"padding:14px 12px;border-bottom:1px solid #e6e6e6;border-right:1px solid #e6e6e6;font-family:Geist,Arial,Helvetica,sans-serif;\">" +
-    "<div style=\"" + titleStyle + "\">" + esc(cell.title) + "</div>" +
+  return "<div style=\"" + titleStyle + "\">" + esc(cell.title) + "</div>" +
     stars +
-    (cell.sub ? "<div style=\"margin-top:3px;font-size:12px;line-height:1.3;color:#808080;\">" + esc(cell.sub) + "</div>" : "") +
-    "</td>";
+    (cell.sub ? "<div style=\"margin-top:3px;font-size:12px;line-height:1.3;color:#808080;\">" + esc(cell.sub) + "</div>" : "");
+}
+
+function trustColumn(top, bottom) {
+  var bottomRule = bottom ? "border-bottom:1px solid #e6e6e6;" : "";
+  var lower = bottom
+    ? "<tr><td valign=\"middle\" style=\"padding:14px 12px;font-family:Geist,Arial,Helvetica,sans-serif;\">" + trustInner(bottom) + "</td></tr>"
+    : "";
+  return "<td width=\"33%\" valign=\"top\" style=\"width:33.33%;border-right:1px solid #e6e6e6;font-family:Geist,Arial,Helvetica,sans-serif;\">" +
+    "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"width:100%;\">" +
+    "<tr><td valign=\"middle\" style=\"padding:14px 12px;" + bottomRule + "font-family:Geist,Arial,Helvetica,sans-serif;\">" + trustInner(top) + "</td></tr>" +
+    lower +
+    "</table></td>";
 }
 
 function trustHtml(cells, priceLabel, total) {
   if (!cells.length && !total) return "";
   if (!cells.length) return "";
-  var rows = "";
-  for (var i = 0; i < cells.length; i += 2) {
-    var left = trustCell(cells[i]);
-    var right = cells[i + 1]
-      ? trustCell(cells[i + 1])
-      : "<td width=\"50%\" style=\"border-bottom:1px solid #e6e6e6;\">&nbsp;</td>";
-    rows += "<tr>" + left + right + "</tr>";
+  var columns = "";
+  var pairCount = Math.ceil(cells.length / 2);
+  for (var col = 0; col < pairCount; col++) {
+    columns += trustColumn(cells[col] || null, cells[col + pairCount] || null);
   }
   var price = total
-    ? "<td rowspan=\"" + Math.max(Math.ceil(cells.length / 2), 1) + "\" valign=\"middle\" align=\"center\" width=\"168\" style=\"width:168px;background:#f5f5f5;border-left:1px solid #e6e6e6;padding:16px 12px;font-family:Geist,Arial,Helvetica,sans-serif;\">" +
+    ? "<td width=\"33%\" valign=\"middle\" align=\"center\" style=\"width:33.33%;background:#f5f5f5;padding:16px 12px;font-family:Geist,Arial,Helvetica,sans-serif;\">" +
       (priceLabel ? "<div style=\"font-size:12px;font-weight:500;color:#808080;\">" + esc(priceLabel) + "</div>" : "") +
       "<div style=\"margin-top:4px;font-size:36px;font-weight:700;letter-spacing:-1.2px;line-height:1;color:#171717;\">" + esc(total) + "</div>" +
       "</td>"
     : "";
-  if (!rows && price) {
-    rows = "<tr>" + price + "</tr>";
-  } else if (rows && price) {
-    rows = rows.replace("</tr>", price + "</tr>");
-  }
   return "<tr><td style=\"padding:16px 28px 0 28px;\">" +
-    "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border:1px solid #e6e6e6;border-radius:12px;border-collapse:separate;\">" +
-    rows + "</table></td></tr>";
+    "<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"width:100%;table-layout:fixed;border:1px solid #e6e6e6;border-radius:12px;border-collapse:separate;border-spacing:0;\">" +
+    "<tr>" + columns + price + "</tr></table></td></tr>";
 }
 
 function priceHtml(label, total) {
