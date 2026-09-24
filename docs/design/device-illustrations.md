@@ -66,7 +66,7 @@ Every era must draw these elements with these classes, adding `is-hl` when `part
 | `dg-frame` | — | Inner frame line |
 | `dg-screen` | `screen` | Full screen assembly |
 | `dg-sheen` | — | Glass reflection |
-| `dg-btn` | `buttons` (`crown` on Watch) | Side, top and action buttons |
+| `dg-btn` | `buttons` (`crown` on Watch) | Every side button. iPhone also marks `dg-btn-mute`, `dg-btn-volume`, and `dg-btn-power` so a single repair highlights only that button. |
 | `dg-home` | `buttons` | Home button (home-button eras) |
 | `dg-cam` / `dg-notch` / `dg-island` | `fcam` | Front camera / Face ID area |
 | `dg-earpiece` | `earpiece` | Top speaker slit (iPhone) |

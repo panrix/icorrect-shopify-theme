@@ -2,7 +2,7 @@
   Orders the repairs of one model the same way on every model page:
   Diagnostic, screen / display / glass, battery, charging port, rear glass,
   rear camera, camera lens, front camera, Face ID, earpiece, loudspeaker,
-  microphone, buttons, crown, keyboard, trackpad, Touch Bar, Flexgate,
+  microphone, power button, volume buttons, mute switch, other buttons, crown, keyboard, trackpad, Touch Bar, Flexgate,
   Dustgate, heart-rate sensor, then anything else. Ties keep collection order.
 
   Accepts:
@@ -11,7 +11,7 @@
   Outputs comma-separated zero-based indices in display order.
 {%- endcomment -%}
 {%- liquid
-  assign ranking = 'diagnostic,screen,display,glass,battery,charging-port,rear-glass,rear-camera,rear-camera-lens,front-camera,face-id,earpiece,loudspeaker,microphone,button,crown,keyboard,trackpad,touch-bar,flexgate,dustgate,heart-rate,data,liquid' | split: ','
+  assign ranking = 'diagnostic,screen,display,glass,battery,charging-port,rear-glass,rear-camera,rear-camera-lens,front-camera,face-id,earpiece,loudspeaker,microphone,power-button,volume-button,mute-button,button,crown,keyboard,trackpad,touch-bar,flexgate,dustgate,heart-rate,data,liquid' | split: ','
   assign list = titles | split: '||'
   assign keys = ''
   for raw in list

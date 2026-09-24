@@ -28,10 +28,10 @@
     {%- endif -%}
     <path class="dg-crack dg-crack--back" d="M80 104l-10 26 14 8-16 30 9 7-12 26"/>
   {%- else -%}
-    <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="6.5" y="38" width="4.5" height="10" rx="2.25"/>
-    <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="6.5" y="56" width="4.5" height="18" rx="2.25"/>
-    <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="6.5" y="80" width="4.5" height="18" rx="2.25"/>
-    <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="109" y="58" width="4.5" height="26" rx="2.25"/>
+    <rect class="dg-btn dg-btn-mute{% if part == 'buttons' or part == 'mute' %} is-hl{% endif %}" x="6.5" y="38" width="4.5" height="10" rx="2.25"/>
+    <rect class="dg-btn dg-btn-volume{% if part == 'buttons' or part == 'volume' %} is-hl{% endif %}" x="6.5" y="56" width="4.5" height="18" rx="2.25"/>
+    <rect class="dg-btn dg-btn-volume{% if part == 'buttons' or part == 'volume' %} is-hl{% endif %}" x="6.5" y="80" width="4.5" height="18" rx="2.25"/>
+    <rect class="dg-btn dg-btn-power{% if part == 'buttons' or part == 'power' %} is-hl{% endif %}" x="109" y="58" width="4.5" height="26" rx="2.25"/>
     <rect class="dg-body" x="10" y="4" width="100" height="232" rx="18"/>
     <rect class="dg-frame" x="12.5" y="6.5" width="95" height="227" rx="15.5"/>
     <rect class="dg-screen{% if part == 'screen' %} is-hl{% endif %}" x="16" y="36" width="88" height="166" rx="2"/>
