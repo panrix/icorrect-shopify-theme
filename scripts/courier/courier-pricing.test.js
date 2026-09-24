@@ -295,3 +295,30 @@ describe('null-variant fallback', () => {
     assert.equal(resolveAdjustmentVariant(25, variantsAsset).variantId, variantsAsset.variants['25']);
   });
 });
+
+describe('repairTypeCartLabel', () => {
+  const { repairTypeCartLabel, isDiagnosticRepair } = require('../../assets/courier-pricing.js');
+
+  it('website diagnostic SKUs stamp Diagnostic for any device', () => {
+    assert.equal(repairTypeCartLabel({ repairType: 'diagnostic', device: 'iphone' }), 'Diagnostic');
+    assert.equal(repairTypeCartLabel({ route: 'diagnostic', device: 'ipad' }), 'Diagnostic');
+    assert.equal(
+      repairTypeCartLabel({ title: 'iPhone 15 Pro Diagnostic', handle: 'iphone-15-pro-diagnostic' }),
+      'Diagnostic'
+    );
+    assert.equal(
+      repairTypeCartLabel({
+        productTitle: "MacBook Air 13-inch 'M4' A3240 (2025) Diagnostic - No Power or Liquid Damage",
+        productHandle: 'macbook-air-13-m4-a3240-2025-diagnostic',
+      }),
+      'Diagnostic'
+    );
+    assert.equal(isDiagnosticRepair({ repairType: 'screen', title: 'iPhone 15 Pro Screen' }), false);
+  });
+
+  it('website repair SKUs stamp Repair, not Diagnostic', () => {
+    assert.equal(repairTypeCartLabel({ repairType: 'screen', title: 'iPhone 15 Pro Screen' }), 'Repair');
+    assert.equal(repairTypeCartLabel({ repairType: 'battery', device: 'macbook' }), 'Repair');
+    assert.equal(repairTypeCartLabel({}), 'Repair');
+  });
+});
