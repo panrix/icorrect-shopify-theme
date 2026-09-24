@@ -66,7 +66,7 @@ Every era must draw these elements with these classes, adding `is-hl` when `part
 | `dg-frame` | — | Inner frame line |
 | `dg-screen` | `screen` | Full screen assembly |
 | `dg-sheen` | — | Glass reflection |
-| `dg-btn` | `buttons` (`crown` on Watch) | Side, top and action buttons |
+| `dg-btn` | `buttons` (`crown` on Watch) | Side buttons. iPhone repairs highlight one control via `dg-btn-mute`, `dg-btn-volume`, or `dg-btn-power`. There is no repair that highlights every button. |
 | `dg-home` | `buttons` | Home button (home-button eras) |
 | `dg-cam` / `dg-notch` / `dg-island` | `fcam` | Front camera / Face ID area |
 | `dg-earpiece` | `earpiece` | Top speaker slit (iPhone) |
@@ -80,6 +80,8 @@ Every era must draw these elements with these classes, adding `is-hl` when `part
 | Back view: `dg-module`, `dg-plateau`, `dg-lens-ring`, `dg-lens`, `dg-flash`, `dg-lidar`, `dg-lens-crack` | `camera` highlights the camera block only (on a plateau phone, the left square, not the bar). `lens` highlights the top-left lens and shows `dg-lens-crack`. |
 | Watch back: `dg-sensor`, `dg-leds` | `sensor` | Heart-rate sensor |
 | MacBook: `dg-keyboard`, `dg-keys`, `dg-fnrow`, `dg-trackpad`, `dg-touchbar-strip`, `dg-hinge`, `dg-dustbands` | `keyboard`, `trackpad`, `touchbar`, `hinge` (Flexgate: the screen fills black), `dust` (Dustgate: six wavy bands across the screen) | |
+
+On a product page the disc leans in on a small part (buttons, cameras, ports, speakers, the earpiece, the crown, the Touch Bar). The same drawing scales up from that part. Screen, battery, glass, keyboard and trackpad stay at the normal distance. Cards and model tiles do not lean in.
 
 ## Adding a new era (checklist)
 

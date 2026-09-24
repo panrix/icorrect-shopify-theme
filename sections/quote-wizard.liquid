@@ -633,6 +633,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       { v: 'Power / Battery / Charging', icon: 'battery', label: 'Power / Battery / Charging' },
       { v: 'Camera', icon: 'camera', label: 'Camera' },
       { v: 'Audio / Mic / Speaker', icon: 'audio', label: 'Audio / Mic / Speaker' },
+      { v: 'Buttons', icon: 'iphone-buttons', label: 'Buttons' },
       { v: 'Connectivity', icon: 'connectivity', label: 'Connectivity' },
       { v: 'Rear Glass', icon: 'rear-glass', label: 'Rear Glass' },
       { v: 'Water Damage', icon: 'water', label: 'Water Damage' },
@@ -666,6 +667,10 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     'camera': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>',
     'rear-glass': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="6" r="1.5"/><path d="M10 18h4"/></svg>',
     'buttons': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="2"/><circle cx="12" cy="16" r="2"/><rect x="7" y="3" width="10" height="18" rx="3"/></svg>',
+    'iphone-buttons': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.6"/><path d="M4.6 6.2v2.2M4.6 10.2v3.2M4.6 15.2v3.2M19.4 8.5v5"/></svg>',
+    'mute-button': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.6"/><path d="M4.6 6.2v2.4"/></svg>',
+    'volume-button': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.6"/><path d="M4.6 9.4v3.4M4.6 14.4v3.4"/></svg>',
+    'power-button': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.6"/><path d="M19.4 8v6"/></svg>',
     'water': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>',
     'data': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>',
     'other': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>',
@@ -700,6 +705,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     'loudspeaker':'Audio / Mic / Speaker','earpiece':'Audio / Mic / Speaker','microphone':'Audio / Mic / Speaker',
     'rear-camera':'Camera','rear-camera-lens':'Camera','front-camera':'Camera','face-id':'Camera',
     'rear-glass':'Rear Glass','heart-rate-monitor':'Rear Glass',
+    'power-button':'Buttons','volume-button':'Buttons','mute-button':'Buttons',
     'crown':'Crown','diagnostic':'_diagnostic'
   };
 
@@ -1177,6 +1183,11 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: 'No sound or low volume from speaker', route: 'repair', repairType: 'loudspeaker', copy: 'The loudspeaker module has likely failed. We\'ll replace it to restore full volume and clarity.' },
         { label: 'Earpiece quiet or silent during calls', route: 'repair', repairType: 'earpiece', copy: 'The earpiece speaker needs replacing. A quick swap will fix this.' },
         { label: 'Microphone not picking up voice', route: 'repair', repairType: 'microphone', copy: 'We\'ll quote a microphone replacement. If more than one mic or a flex is involved, we\'ll confirm that once the phone is here.' }
+      ],
+      'Buttons': [
+        { label: 'Power button stuck or not responding', icon: 'power-button', route: 'repair', repairType: 'power-button', copy: 'The power button is stuck, loose, or does nothing. We\'ll replace the power button.' },
+        { label: 'Volume buttons stuck or not responding', icon: 'volume-button', route: 'repair', repairType: 'volume-button', copy: 'The volume buttons are stuck, loose, or do nothing. We\'ll replace the volume buttons.' },
+        { label: 'Mute switch stuck or not clicking', icon: 'mute-button', route: 'repair', repairType: 'mute-button', copy: 'The mute switch is stuck or will not click over. We\'ll replace the mute switch.' }
       ],
       'Rear Glass': [
         { label: 'Cracked back glass', route: 'repair', repairType: 'rear-glass', copy: 'We replace the rear glass with a genuine Apple housing in your original colour.' },
@@ -3476,7 +3487,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     if (subEl) subEl.textContent = 'Which best describes the problem?';
 
     var faultObj = (FAULTS[dev] || []).find(function(f) { return f.v === fault; });
-    var fi = FAULT_ICONS[(faultObj && faultObj.icon) || 'other'] || FAULT_ICONS.other;
+    var faultIcon = (faultObj && faultObj.icon) || 'other';
 
     if (issues.length === 0) {
       c.innerHTML = '<div class="qw-empty"><p>No specific issues found. Get in touch and we\'ll help.</p><a href="/pages/contact" class="qw-btn-book">Get in touch</a></div>';
@@ -3485,6 +3496,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     issues.forEach(function(iss) {
       var card = document.createElement('div');
       card.className = 'qw-t-card';
+      var fi = FAULT_ICONS[iss.icon || faultIcon] || FAULT_ICONS[faultIcon] || FAULT_ICONS.other;
       card.innerHTML = '<div class="qw-tw">' + fi + '</div><span class="qw-tt">' + esc(iss.label) + '</span>';
       wireA11y(card, iss.label);
       card.onclick = function() { pickIssue(iss, card); };

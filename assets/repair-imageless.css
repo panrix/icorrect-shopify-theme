@@ -247,7 +247,55 @@
   border-radius: 50%;
   background: #fff;
   box-shadow: 0 0 0 1px var(--ri-line), 0 40px 80px -40px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
 }
+/* Closer view, product disc only. The drawing stays the same and scales
+   from the repaired part, like leaning in. Screen, battery, glass,
+   keyboard and trackpad stay at the normal distance. Cards do not scale. */
+.rv .dg--iphone.dg--part-mute,
+.rv .dg--iphone.dg--part-volume,
+.rv .dg--iphone.dg--part-power,
+.rv .dg--iphone.dg--part-earpiece,
+.rv .dg--iphone.dg--part-grille,
+.rv .dg--iphone.dg--part-port,
+.rv .dg--iphone.dg--part-camera,
+.rv .dg--iphone.dg--part-lens,
+.rv .dg--iphone.dg--part-fcam { transform: scale(2.5); }
+.rv .dg--iphone.dg--part-mute { transform-origin: 8% 20%; }
+.rv .dg--iphone.dg--part-volume { transform-origin: 8% 34%; }
+.rv .dg--iphone.dg--part-power { transform-origin: 93% 34%; }
+.rv .dg--iphone.dg--part-earpiece,
+.rv .dg--iphone.dg--part-fcam { transform-origin: 50% 8%; }
+.rv .dg--iphone.dg--part-grille,
+.rv .dg--iphone.dg--part-port { transform-origin: 50% 93%; }
+.rv .dg--iphone.dg--part-camera,
+.rv .dg--iphone.dg--part-lens { transform-origin: 32% 16%; }
+.rv .dg--ipad.dg--part-camera,
+.rv .dg--ipad.dg--part-lens,
+.rv .dg--ipad.dg--part-fcam,
+.rv .dg--ipad.dg--part-port,
+.rv .dg--ipad.dg--part-grille,
+.rv .dg--ipad.dg--part-buttons { transform: scale(1.9); }
+.rv .dg--ipad.dg--part-camera,
+.rv .dg--ipad.dg--part-lens { transform-origin: 16% 12%; }
+.rv .dg--ipad.dg--part-fcam { transform-origin: 50% 7%; }
+.rv .dg--ipad.dg--part-port,
+.rv .dg--ipad.dg--part-grille { transform-origin: 50% 94%; }
+.rv .dg--ipad.dg--part-buttons { transform-origin: 94% 16%; }
+.rv .dg--macbook.dg--part-port,
+.rv .dg--macbook.dg--part-fcam { transform: scale(1.55); }
+.rv .dg--macbook.dg--part-grille,
+.rv .dg--macbook.dg--part-touchbar { transform: scale(1.45); }
+.rv .dg--macbook.dg--part-port { transform-origin: 11% 70%; }
+.rv .dg--macbook.dg--part-fcam { transform-origin: 50% 6%; }
+.rv .dg--macbook.dg--part-grille,
+.rv .dg--macbook.dg--part-touchbar { transform-origin: 50% 70%; }
+.rv .dg--watch.dg--part-crown,
+.rv .dg--watch.dg--part-grille { transform: scale(2.2); }
+.rv .dg--watch.dg--part-sensor { transform: scale(1.55); }
+.rv .dg--watch.dg--part-crown { transform-origin: 88% 46%; }
+.rv .dg--watch.dg--part-grille { transform-origin: 12% 46%; }
+.rv .dg--watch.dg--part-sensor { transform-origin: 49% 48%; }
 .rv__disc::before {
   content: "";
   position: absolute;
