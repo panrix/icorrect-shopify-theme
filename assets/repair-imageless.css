@@ -122,6 +122,9 @@
 .dg .dg-port-side.is-hl { stroke-width: calc(4.5px * var(--dg-hl)); }
 .dg .dg-grille.is-hl,
 .dg .dg-leds.is-hl { stroke-width: max(2.8px, calc(3.2px * var(--dg-hl))); }
+/* Bottom speaker holes are single points. A 3px dot disappears on a card,
+   so the highlighted row becomes a readable cluster. */
+.dg .dg-grille--dots.is-hl { stroke-width: max(10px, calc(11px * var(--dg-hl))); }
 .dg .dg-dust.is-hl { stroke-width: calc(3.2px * var(--dg-hl)); }
 .dg .dg-earpiece.is-hl { stroke-width: max(2.2px, calc(2.6px * var(--dg-hl))); }
 .dg .dg-keys.is-hl,
