@@ -105,6 +105,83 @@ describe('resolveCourierTier (tags beat price)', () => {
     assert.equal(resolveCourierTier(['courier:subsidised']), 'paid');
     assert.equal(resolveCourierTier(['courier:full']), 'paid');
   });
+  it('iPhone and iPad diagnostics include collection on every band', () => {
+    for (const device of ['iphone', 'ipad']) {
+      assert.equal(resolveCourierTier([], 69, { device, repairType: 'diagnostic' }), 'included');
+      for (const sample of SAMPLES) {
+        const q = quoteServiceAdjustment({
+          postcode: sample.postcode,
+          productTags: [],
+          bands: bandsAsset,
+          service: 'courier',
+          repairPrice: 69,
+          variants: variantsAsset,
+          device,
+          repairType: 'diagnostic',
+        });
+        assert.equal(q.tier, 'included');
+        assert.equal(q.service, 'courier');
+        assert.equal(q.adjustment, 0);
+        assert.equal(q.total, 69);
+      }
+      const posted = quoteServiceAdjustment({
+        postcode: OUTSIDE,
+        productTags: [],
+        bands: bandsAsset,
+        service: 'courier',
+        repairPrice: 69,
+        variants: variantsAsset,
+        productTitle: device === 'iphone' ? 'iPhone 13 Diagnostic' : 'iPad 9th Gen (2021) Diagnostic',
+        productHandle: device === 'iphone' ? 'iphone-13-diagnostic' : 'ipad-9-2021-diagnostic',
+      });
+      assert.equal(posted.service, 'mail-in');
+      assert.equal(posted.adjustment, 0);
+      assert.equal(posted.total, 69);
+    }
+  });
+  it('MacBook diagnostic stays on the free tier, outer London courier still adds', () => {
+    const central = quoteServiceAdjustment({
+      postcode: 'SW11 8BJ',
+      productTags: [],
+      bands: bandsAsset,
+      service: 'courier',
+      repairPrice: 49,
+      variants: variantsAsset,
+      device: 'macbook',
+      repairType: 'diagnostic',
+    });
+    assert.equal(central.tier, 'free');
+    assert.equal(central.adjustment, 0);
+    assert.equal(central.total, 49);
+    const outer = quoteServiceAdjustment({
+      postcode: 'N6 4AA',
+      productTags: [],
+      bands: bandsAsset,
+      service: 'courier',
+      repairPrice: 49,
+      variants: variantsAsset,
+      device: 'macbook',
+      repairType: 'diagnostic',
+    });
+    assert.equal(outer.adjustment, 15);
+    assert.equal(outer.total, 64);
+  });
+  it('an iPhone repair under £200 is still a paid collection', () => {
+    const q = quoteServiceAdjustment({
+      postcode: 'SW11 8BJ',
+      productTags: [],
+      bands: bandsAsset,
+      service: 'courier',
+      repairPrice: 129,
+      variants: variantsAsset,
+      device: 'iphone',
+      repairType: 'charging-port',
+      title: 'iPhone 13 Charging Port Repair',
+    });
+    assert.equal(q.tier, 'paid');
+    assert.equal(q.adjustment, 25);
+    assert.equal(q.total, 154);
+  });
 });
 
 describe('adjustment matrix — band × tag × service', () => {

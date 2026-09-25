@@ -1103,50 +1103,50 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   var TS = {
     macbook: {
       'Screen / Display': [
-        { label: 'Cracked or shattered screen', route: 'repair', repairType: 'screen', noTrueTone: true, copy: 'Your MacBook screen is damaged and needs replacing. We use genuine Apple displays.' },
-        { label: 'Cracked or shattered screen', route: 'repair', repairType: 'screen', trueToneOnly: true, copy: 'Your MacBook screen is damaged and needs replacing. We use genuine Apple displays and preserve True Tone calibration.' },
+        { label: 'Cracked or shattered screen', route: 'repair', repairType: 'screen', noTrueTone: true, copy: 'We replace your damaged MacBook screen with a genuine Apple display.' },
+        { label: 'Cracked or shattered screen', route: 'repair', repairType: 'screen', trueToneOnly: true, copy: 'We replace your damaged MacBook screen with a genuine Apple display and keep True Tone working.' },
         { label: 'Thick bands, artefacts, or distortion', route: 'repair', repairType: 'screen', copy: 'Lines or colour issues on your display typically mean the display panel needs replacing. We use genuine displays with full colour calibration.', dustgateCheck: true },
-        { label: 'Dead pixels or bright spots', route: 'repair', repairType: 'screen', copy: 'Dead or stuck pixels indicate panel failure. A genuine display replacement will restore your screen to full quality.' },
-        { label: 'No image, backlight on, external monitor works', route: 'repair', repairType: 'screen', copy: 'The backlight is on and an external monitor shows a picture, so the built-in display has failed. A screen replacement will fix this.' },
-        { label: 'No image, no backlight or no external picture', route: 'diagnostic', repairType: 'diagnostic', copy: 'There is no backlight glow, or an external monitor also has no picture. That can be the screen or the logic board. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Dead pixels or bright spots', route: 'repair', repairType: 'screen', copy: 'Dead or stuck pixels are a fault within the panel. We replace the display with a genuine Apple one.' },
+        { label: 'No image, backlight on, external monitor works', route: 'repair', repairType: 'screen', copy: 'The backlight is on and an external monitor still shows a picture, so the built-in display has failed. We replace it with a genuine Apple display.' },
+        { label: 'No image, no backlight or no external picture', route: 'diagnostic', repairType: 'diagnostic', copy: 'If your MacBook powers on but the screen stays completely black with no tint, no backlight, and nothing appears on an external monitor either, the fault could be with the display or the logic board.' },
         { label: 'Backlight fading or dim at angle', route: 'repair', repairType: 'screen', flexgateModelsOnly: true, flexgateCheck: true, copy: 'The backlight fading, or going dim when you tilt the screen, means the display panel has failed. We\'ll quote a display panel replacement.' },
         { label: 'Backlight fading or dim at angle', route: 'repair', repairType: 'screen', notFlexgateModels: true, copy: 'The backlight fading, or going dim when you tilt the screen, means the display panel has failed. We\'ll quote a display panel replacement. Flexgate only used to occur on the 13-inch A1706 (2016–2018), the 13-inch A1708 (2016–2017), and the 15-inch A1707 (2016–2017).' }
       ],
       'Power / Battery / Charging': [
-        { label: 'Battery draining quickly', route: 'repair', repairType: 'battery', copy: 'Your battery has degraded and isn\'t holding a full charge. We\'ll replace it with an original-spec battery and your MacBook will show accurate health monitoring again.' },
-        { label: '"Service Recommended" warning', route: 'repair', repairType: 'battery', copy: 'macOS is telling you the battery needs replacing. We use original-spec batteries and your health monitoring will report accurately after the swap.' },
-        { label: 'Battery swollen or expanding', route: 'repair', repairType: 'battery', copy: 'We\'ll safely remove the old battery and fit a new one.', urgent: true },
-        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'A MacBook that won\'t power on could be the battery, charging circuit, or logic board. We can\'t quote the full repair until we\'ve looked.' },
-        { label: 'Random shutdowns or reboots', route: 'diagnostic', repairType: 'diagnostic', copy: 'Unexpected shutdowns can be the battery or the logic board. We can\'t quote the full repair until we\'ve looked.' },
-        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The MacBook still turns on, so we\'ll quote a charging port replacement and test power delivery before it goes back.' }
+        { label: 'Battery draining quickly', route: 'repair', repairType: 'battery', copy: 'We fit an original-specification battery with working battery health reporting.' },
+        { label: '"Service Recommended" warning', route: 'repair', repairType: 'battery', copy: 'The "Service Recommended" warning means macOS has flagged the battery for replacement. We fit an original-specification battery with working battery health reporting.' },
+        { label: 'Battery swollen or expanding', route: 'repair', repairType: 'battery', copy: 'We safely remove the swollen battery and fit a replacement.', urgent: true },
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'A MacBook showing no signs of life can have a fault with the battery, charging ports or logic board. For this reason, we need to carry out a full diagnostic to confirm exactly what has failed before quoting the repair.' },
+        { label: 'Random shutdowns or reboots', route: 'diagnostic', repairType: 'diagnostic', copy: 'A MacBook that randomly shuts down or restarts can have several possible causes. Because the fault is intermittent, we need to run a full diagnostic and stress test the device to reproduce it and confirm the actual cause before quoting the repair.' },
+        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The MacBook turns on but will not charge. We\'ll replace the charging port and test it. If the logic board is the cause, we\'ll tell you before any extra work.' }
       ],
       'Trackpad / Keyboard': [
-        { label: 'Keys not responding', route: 'repair', repairType: 'keyboard', copy: 'Non-responsive keys usually mean the keyboard needs replacing. We\'ll quote a full top-case keyboard. If we find liquid damage after it arrives, we\'ll contact you before doing extra work.' },
-        { label: 'Sticky, stuck, or crunchy keys', route: 'repair', repairType: 'keyboard', copy: 'Sticky or crunchy keys are a keyboard fault. We\'ll quote a replacement. If we find liquid damage once it\'s here, we\'ll tell you before going further.' },
-        { label: 'Trackpad not clicking', route: 'repair', repairType: 'trackpad', copy: 'A trackpad that won\'t click is usually the trackpad or a swollen battery. We\'ll quote the trackpad repair. If the battery is the cause, we\'ll confirm that once we open it.' },
-        { label: 'Ghost typing or phantom input', route: 'repair', repairType: 'keyboard', copy: 'Phantom input is usually the keyboard. We\'ll quote a replacement. If we find liquid on the board after it arrives, we\'ll contact you first.' },
-        { label: 'Missing or broken keycap', route: 'repair', repairType: 'keyboard', copy: 'A physically broken or missing keycap means the keyboard mechanism is likely damaged too. We\'ll replace the full top case with a brand new keyboard.' },
-        { label: 'Physically damaged trackpad', route: 'repair', repairType: 'trackpad', copy: 'The trackpad is physically cracked or damaged. We\'ll replace the trackpad as part of a top case replacement.' }
+        { label: 'Keys not responding', route: 'repair', repairType: 'keyboard', copy: 'We replace the keyboard using genuine Apple keys. If testing reveals liquid damage, we\'ll contact you before any additional work.' },
+        { label: 'Sticky, stuck, or crunchy keys', route: 'repair', repairType: 'keyboard', copy: 'We replace the keyboard using genuine Apple keys. If testing reveals liquid damage, we\'ll contact you before any additional work.' },
+        { label: 'Trackpad not clicking', route: 'repair', repairType: 'trackpad', copy: 'A trackpad that won\'t click can be faulty or under pressure from a swollen battery. This quote covers the trackpad repair. We\'ll check the battery when the MacBook arrives and let you know if it is the cause.' },
+        { label: 'Ghost typing or phantom input', route: 'repair', repairType: 'keyboard', copy: 'We replace the keyboard using genuine Apple keys. If testing reveals liquid damage, we\'ll contact you before any additional work.' },
+        { label: 'Missing or broken keycap', route: 'repair', repairType: 'keyboard', copy: 'A physically broken or missing keycap means the keyboard mechanism is likely damaged too. We replace the keyboard using genuine Apple keys.' },
+        { label: 'Physically damaged trackpad', route: 'repair', repairType: 'trackpad', copy: 'We replace the damaged trackpad with a genuine Apple one.' }
       ],
       'Touch Bar': [
-        { label: 'Touch Bar not responding or frozen', route: 'repair', repairType: 'touch-bar', copy: 'A frozen Touch Bar is usually the module. We\'ll quote a Touch Bar replacement.' },
-        { label: 'Touch Bar flickering or displaying incorrectly', route: 'repair', repairType: 'touch-bar', copy: 'Flickering usually means the Touch Bar panel has failed. We\'ll quote a replacement.' },
-        { label: 'Touch Bar cracked or physically damaged', route: 'repair', repairType: 'touch-bar', copy: 'The Touch Bar glass is cracked and needs replacing. We\'ll fit a new Touch Bar module as part of a top case replacement.' }
+        { label: 'Touch Bar not responding or frozen', route: 'repair', repairType: 'touch-bar', copy: 'A frozen Touch Bar usually means that the module failed. We fix the issue by replacing it.' },
+        { label: 'Touch Bar flickering or displaying incorrectly', route: 'repair', repairType: 'touch-bar', copy: 'We replace the Touch Bar panel to fix flickering or display faults.' },
+        { label: 'Touch Bar cracked or physically damaged', route: 'repair', repairType: 'touch-bar', copy: 'We replace the cracked Touch Bar module.' }
       ],
       'Audio / Mic / Speaker': [
-        { label: 'No sound from speakers', route: 'contact', repairType: null, copy: 'Speaker faults vary by model. Tell us what you\'re hearing and we\'ll confirm the repair and price.' },
-        { label: 'Crackling or distorted audio', route: 'contact', repairType: null, copy: 'Distorted sound can be the speaker or the audio circuit. Get in touch and we\'ll confirm the right repair.' },
-        { label: 'Microphone not working', route: 'contact', repairType: null, copy: 'MacBook mic faults depend on the model. Get in touch and we\'ll confirm whether we can quote a parts repair.' }
+        { label: 'No sound from speakers', route: 'contact', repairType: null, copy: 'Tell us what happens when you try to play sound. We\'ll confirm the repair options and cost for your MacBook.' },
+        { label: 'Crackling or distorted audio', route: 'contact', repairType: null, copy: 'Distorted audio can come from the speaker or its circuit. Get in touch so we can check which repair you need.' },
+        { label: 'Microphone not working', route: 'contact', repairType: null, copy: 'Get in touch about the microphone fault. We\'ll confirm whether a parts replacement is available for your model.' }
       ],
       'Water Damage': [
         { label: 'Spilled liquid recently (within 24 hours)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Time is critical with liquid damage. We can\'t quote the full repair until we\'ve opened it, cleaned with ultrasonic, and seen what\'s affected.', urgent: true },
-        { label: 'Spilled liquid (more than 24 hours ago)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Liquid causes corrosion that spreads. We need to diagnose the device to quote — we\'ll open it, assess the corrosion, and tell you which parts need replacing.' },
+        { label: 'Spilled liquid (more than 24 hours ago)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Liquid causes corrosion to spread. We inspect the MacBook internally to see what needs repairing or replacing.' },
         { label: 'Partial failure after liquid exposure', route: 'diagnostic', repairType: 'diagnostic', copy: 'When some functions still work after a spill, specific circuits are damaged. We can\'t quote the full repair until we\'ve mapped what\'s affected.' },
         { label: 'MacBook was submerged', route: 'diagnostic', repairType: 'diagnostic', copy: 'Full submersion needs a strip-down before we can quote. Bring it in without charging or turning it on. We\'ll assess and email the repair options.', urgent: true }
       ],
       'Data Recovery': [
-        { label: 'Drive not mounting or not detected', route: 'diagnostic', repairType: 'diagnostic', copy: 'If your MacBook\'s drive isn\'t showing up, it could be the SSD, connector, or logic board. We need to diagnose the fault.' },
-        { label: 'Accidentally deleted files', route: 'contact', repairType: null, copy: 'Data recovery from accidental deletion depends on the drive type. Get in touch and we\'ll advise on your options.' },
+        { label: 'Drive not mounting or not detected', route: 'diagnostic', repairType: 'diagnostic', copy: 'We check the storage drive, its connection and the logic board to find out why the drive isn\'t being detected.' },
+        { label: 'Accidentally deleted files', route: 'contact', repairType: null, copy: 'Recovering deleted files depends on the type of storage in your MacBook. Get in touch so we can explain the options.' },
         { label: 'MacBook dead, need data', route: 'diagnostic', repairType: 'diagnostic', copy: 'If your MacBook won\'t turn on but you need the data, we\'ll diagnose the board. In many cases we can repair it enough to extract the data.' }
       ],
       'Other': [
@@ -1157,8 +1157,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     },
     iphone: {
       'Screen / Display': [
-        { label: 'Cracked glass (touch still works)', route: 'repair', repairType: 'screen', lcdOnly: true, copy: 'Your iPhone screen is cracked but still functional. We replace it with a genuine Apple LCD display that\'s verified in iOS Settings.' },
-        { label: 'Cracked glass (touch still works)', route: 'repair', repairType: 'screen', oledOnly: true, copy: 'Your iPhone screen is cracked but still functional. We replace it with a genuine Apple OLED display that\'s verified in iOS Settings.' },
+        { label: 'Cracked glass (touch still works)', route: 'repair', repairType: 'screen', lcdOnly: true, copy: 'We replace the cracked screen with a genuine Apple LCD display and configure it so it is recognised in iOS Settings.' },
+        { label: 'Cracked glass (touch still works)', route: 'repair', repairType: 'screen', oledOnly: true, copy: 'We replace the cracked screen with a genuine Apple OLED display and configure it so it is recognised in iOS Settings.' },
         { label: 'Touch not responding', route: 'repair', repairType: 'screen', copy: 'A dead touchscreen means the digitiser is damaged. A genuine screen replacement will restore full touch functionality.' },
         { label: 'Lines, discolouration, or green line', route: 'repair', repairType: 'screen', copy: 'Display lines or colour shifting indicate panel damage. A genuine screen replacement will fix it.' },
         { label: 'Black screen (phone still vibrates/rings)', route: 'repair', repairType: 'screen', copy: 'If your phone vibrates or makes sounds but the screen is black, the display has failed. A screen replacement will bring it back.' },
@@ -1169,14 +1169,15 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'An iPhone that won\'t power on could be the battery, charging circuit, or logic board. Try a hard reset first: press Volume Up, press Volume Down, then hold the side button until the Apple logo appears. We can\'t quote the full repair until we\'ve looked.' },
         { label: 'Random shutdowns or reboots', route: 'diagnostic', repairType: 'diagnostic', copy: 'Unexpected shutdowns can be the battery or the logic board. We can\'t quote the full repair until we\'ve looked.' },
         { label: 'Swollen battery', route: 'repair', repairType: 'battery', copy: 'We\'ll replace the battery safely.', urgent: true },
-        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The iPhone still turns on, so we\'ll quote a charging port replacement and test charging before it goes back.' }
+        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', faceIdOnly: true, copy: 'If the iPhone turns on and charges with a wireless charger, but the port does nothing, the charging port is the fault. We\'ll replace it and test charging.' },
+        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', noFaceIdOnly: true, copy: 'The iPhone turns on but will not charge from the port. We\'ll replace the charging port and test it. If the board is the cause, we\'ll tell you before any extra work.' }
       ],
       'Camera': [
         { label: 'Back camera blurry or shaking', route: 'repair', repairType: 'rear-camera', copy: 'A blurry or shaking back camera usually means the stabilisation system has failed. We\'ll replace the rear camera module.' },
         { label: 'Back camera: no preview or it freezes', route: 'diagnostic', repairType: 'diagnostic', copy: 'A black preview, or a back camera that freezes or crashes, can be the module or the board. We can\'t quote the full repair until we\'ve looked.' },
         { label: 'Front camera: Face ID error or TrueDepth message', route: 'repair', repairType: 'front-camera', faceIdOnly: true, copy: 'A TrueDepth camera message in Settings, or a Face ID error, means the front camera module needs replacing. We\'ll quote that repair.' },
-        { label: 'Front camera not working', route: 'repair', repairType: 'front-camera', noFaceIdOnly: true, copy: 'The front camera module has failed. We\'ll quote a front camera replacement.' },
-        { label: 'Front camera: no preview or it freezes', route: 'diagnostic', repairType: 'diagnostic', copy: 'A black preview, or a front camera that freezes or crashes, can be the module or the board. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Front camera not working', route: 'repair', repairType: 'front-camera', noFaceIdOnly: true, copy: 'We replace the faulty front camera module.' },
+        { label: 'Front camera: no preview or it freezes', route: 'diagnostic', repairType: 'diagnostic', copy: 'A black preview, or a front camera that freezes or crashes, can be the module or the board. We can\'t quote the full repair until we\'ve inspected both.' },
         { label: 'Condensation in camera', route: 'diagnostic', repairType: 'diagnostic', copy: 'Moisture inside the camera is a sign of liquid or a broken seal. We can\'t quote the full repair until we\'ve checked for internal corrosion.' }
       ],
       'Audio / Mic / Speaker': [
@@ -1198,7 +1199,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
         { label: 'Liquid damage (more than 24 hours ago)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Liquid causes corrosion that spreads over time. We need to open the phone, clean the corrosion, and check each circuit.' }
       ],
       'Data Recovery': [
-        { label: 'Phone dead, need data', route: 'diagnostic', repairType: 'diagnostic', copy: 'We can attempt a specialised repair to get the phone working long enough to back up. Success depends on the fault.' },
+        { label: 'Phone dead, need data', route: 'diagnostic', repairType: 'diagnostic', copy: 'We can attempt a data recovery repair to get the phone working long enough to back up. Success depends on the fault.' },
         { label: 'Forgotten passcode', route: 'dismiss', repairType: null, copy: 'We can\'t bypass an iPhone passcode or iCloud lock. If you\'re the original owner, Apple Support can help with account recovery.' }
       ],
       'Connectivity': [
@@ -1215,19 +1216,19 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     },
     ipad: {
       'Screen / Display': [
-        { label: 'Cracked glass only (display still works)', route: 'repair', repairType: 'screen-glass', copy: 'The picture is fine and the damage is only the outer glass. We\'ll quote a glass replacement.' },
-        { label: 'Cracked glass only (display still works)', route: 'repair', repairType: 'screen', onlyWhenMissing: 'screen-glass', copy: 'On this iPad the glass is bonded to the display, so a cracked screen is a display replacement.' },
-        { label: 'Touch not responding', route: 'repair', repairType: 'screen', copy: 'A dead touchscreen needs a display replacement. We use genuine panels.' },
-        { label: 'Blotches, lines, or a damaged display', route: 'repair', repairType: 'screen', copy: 'Blotches, lines, or a damaged picture need a display replacement, not glass only.' },
-        { label: 'Black screen (sound or buttons still work)', route: 'repair', repairType: 'screen', copy: 'The iPad still responds, so the display has failed. We\'ll quote a genuine screen replacement.' },
+        { label: 'Cracked glass only (display still works)', route: 'repair', repairType: 'screen-glass', copy: 'We replace the cracked outer glass while keeping the working display.' },
+        { label: 'Cracked glass only (display still works)', route: 'repair', repairType: 'screen', onlyWhenMissing: 'screen-glass', copy: 'The glass and display are bonded together on this model, so we replace the complete screen.' },
+        { label: 'Touch not responding', route: 'repair', repairType: 'screen', copy: 'We replace the faulty touchscreen with a genuine display to restore touch response.' },
+        { label: 'Blotches, lines, or a damaged display', route: 'repair', repairType: 'screen', copy: 'Blotches and lines affect the display itself. We need to replace the actual display panel.' },
+        { label: 'Black screen (sound or buttons still work)', route: 'repair', repairType: 'screen', copy: 'If the iPad still responds, it means the display has failed. We fix the issue by installing a genuine Apple screen.' },
         { label: 'No display, no response', route: 'diagnostic', repairType: 'diagnostic', copy: 'If the iPad shows no signs of life, it could be the display, battery, or logic board. We can\'t quote the full repair until we\'ve tested it.' }
       ],
       'Power / Battery / Charging': [
         { label: 'Battery drains quickly', route: 'repair', repairType: 'battery', copy: 'Your iPad battery has degraded. We\'ll replace it with an original-spec battery.' },
-        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', ipadHomeButton: true, copy: 'An iPad that won\'t power on could be the battery, charging circuit, or logic board. Try a hard reset first: hold the top button and the Home button until the Apple logo appears. We can\'t quote the full repair until we\'ve looked.' },
-        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', ipadNoHomeButton: true, copy: 'An iPad that won\'t power on could be the battery, charging circuit, or logic board. Try a hard reset first: press Volume Up, press Volume Down, then hold the top button until the Apple logo appears. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', ipadHomeButton: true, copy: 'An iPad that won\'t power on could be the battery, charging port, or logic board. Try a hard reset first: hold the top button and the Home button until the Apple logo appears. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', ipadNoHomeButton: true, copy: 'An iPad that won\'t power on could be the battery, charging port, or logic board. Try a hard reset first: press Volume Up, press Volume Down, then hold the top button until the Apple logo appears. We can\'t quote the full repair until we\'ve looked.' },
         { label: 'Battery swollen or screen lifting', route: 'repair', repairType: 'battery', copy: 'A swollen battery is pushing the screen away from the frame. We\'ll safely remove it and fit a replacement.', urgent: true },
-        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The iPad still turns on, so we\'ll quote a charging port replacement and test charging before it goes back.' }
+        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The iPad turns on but will not charge from the port. We\'ll replace the charging port and test it. If the board is the cause, we\'ll tell you before any extra work.' }
       ],
       'Camera': [],
       'Water Damage': [
@@ -1251,7 +1252,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       'Screen / Display': [
         { label: 'Cracked screen (display still works)', route: 'repair', repairType: 'screen-glass', copy: 'Your watch glass is cracked but the display works. We\'ll replace the glass and re-seal the watch.' },
         { label: 'Cracked screen (display damaged or bleeding)', route: 'repair', repairType: 'screen', copy: 'The OLED display is damaged. We\'ll fit a genuine panel and re-seal the watch.' },
-        { label: 'Display dead or unresponsive', route: 'repair', repairType: 'screen', copy: 'A dead watch display is usually the screen. We\'ll quote a genuine panel and re-seal. If we find a board or battery fault after it arrives, we\'ll contact you first.' }
+        { label: 'Display dead or unresponsive', route: 'repair', repairType: 'screen', copy: 'If the Apple Watch is still powering on but the display has no image or is unresponsive, the screen has likely failed. We replace it with a genuine display and re-seal the Watch afterwards. If we find any additional battery or logic board faults once it arrives, we’ll contact you.' }
       ],
       'Power / Battery / Charging': [
         { label: 'Won\'t charge', route: 'diagnostic', repairType: 'diagnostic', copy: 'Charging failure on Apple Watch can be the coil, battery, or main board. We can\'t quote the full repair until we\'ve tested it.' },
@@ -4078,11 +4079,13 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
     var diagVariantId = fullDiag ? fullDiag.variants[0].id : 0;
 
-    var guideLine = 'The prices below are a guide — diagnostic first, then the repair if the board or other parts need work.';
-    var repeatsQuoteLine = /can['\u2019]t quote the full repair/i.test(String(iss.copy || ''));
-    var guideCopy = repeatsQuoteLine
-      ? guideLine
-      : 'We can\'t quote the full repair until we\'ve looked. ' + guideLine;
+    var feeOff = '';
+    if (S.device === 'macbook') {
+      feeOff = ' Post is included, and central London collection is included. If you go ahead with the repair, we take the £49 off the repair price.';
+    } else if (S.device === 'iphone' || S.device === 'ipad') {
+      feeOff = ' Collection and return are included. If you go ahead with the repair, we take the £69 off the repair price.';
+    }
+    var guideCopy = 'The repair prices below are a guide. We\'ll complete the diagnostic within 1 working day of receiving your device and email you a quote. The device stays with us while you decide whether to proceed.' + feeOff;
 
     container.innerHTML = urgentHtml +
       '<div class="qw-res" id="qwResCard" data-base="' + diagPrice + '" data-vid="' + diagVariantId + '">' +
@@ -4091,7 +4094,6 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           '<h3 class="qw-res-h">Book a Diagnostic</h3>' +
           '<p class="qw-res-p">' + esc(iss.copy) + '</p>' +
           '<p class="qw-res-p">' + esc(guideCopy) + '</p>' +
-          '<p class="qw-res-p">Once your device arrives — by courier or mail-in — we diagnose within 1 working day and email your quote. The device stays with us until you decide.</p>' +
           likelyHtml +
         '</div>' +
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +

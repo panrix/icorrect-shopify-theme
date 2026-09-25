@@ -10,6 +10,9 @@
  *     B1–B2 → free collection & return
  *     B3 → +£15 · B4 → +£25 · or free mail-in
  *     Outside London → free tracked mail-in
+ *   iPhone / iPad diagnostic (any price):
+ *     collection and return included on every band, and by post
+ *     B1–B4 courier → £0 · outside London → free mail-in
  *   <£200 (untagged / paid):
  *     B1–B2 → +£25 courier today, or +£20 mail-in
  *     B3/B4 / outside → mail-in +£20 only
@@ -123,21 +126,43 @@
   }
 
   /**
+   * Device family for a diagnostic SKU. Title and handle cover product pages
+   * that do not pass the wizard device field.
+   * @param {{ device?: string, repairType?: string, route?: string, title?: string, handle?: string, productType?: string, productTitle?: string, productHandle?: string }} [opts]
+   * @returns {'macbook'|'iphone'|'ipad'|null}
+   */
+  function diagnosticFamily(opts) {
+    if (!isDiagnosticRepair(opts)) return null;
+    opts = opts || {};
+    var device = String(opts.device || opts.productType || '').toLowerCase();
+    var blob = (
+      String(opts.title || opts.productTitle || '') +
+      ' ' +
+      String(opts.handle || opts.productHandle || '')
+    ).toLowerCase();
+    if (device === 'macbook' || device === 'mac' || /macbook/.test(device) || /macbook/.test(blob)) {
+      return 'macbook';
+    }
+    if (device === 'iphone' || /iphone/.test(device) || /iphone/.test(blob)) return 'iphone';
+    if (device === 'ipad' || /ipad/.test(device) || /ipad/.test(blob)) return 'ipad';
+    return null;
+  }
+
+  /**
    * MacBook diagnostic is free-tier courier regardless of the £49 price.
    * @param {{ device?: string, repairType?: string, title?: string, handle?: string, productType?: string, productTitle?: string, productHandle?: string }} [opts]
    */
   function isMacbookDiagnostic(opts) {
-    opts = opts || {};
-    var device = String(opts.device || opts.productType || '').toLowerCase();
-    var title = String(opts.title || opts.productTitle || '');
-    var handle = String(opts.handle || opts.productHandle || '');
-    var blob = title + ' ' + handle;
-    var isMac =
-      device === 'macbook' ||
-      device === 'mac' ||
-      /macbook/.test(device) ||
-      /macbook/i.test(blob);
-    return !!(isMac && isDiagnosticRepair(opts));
+    return diagnosticFamily(opts) === 'macbook';
+  }
+
+  /**
+   * iPhone and iPad diagnostics include collection and return on every band.
+   * @param {{ device?: string, repairType?: string, title?: string, handle?: string, productType?: string, productTitle?: string, productHandle?: string }} [opts]
+   */
+  function isHandheldDiagnostic(opts) {
+    var family = diagnosticFamily(opts);
+    return family === 'iphone' || family === 'ipad';
   }
 
   /**
@@ -159,6 +184,7 @@
    * @returns {'free'|'one-leg'|'paid'}
    */
   function resolveCourierTier(productTags, repairPrice, opts) {
+    if (isHandheldDiagnostic(opts)) return 'included';
     if (isMacbookDiagnostic(opts)) return 'free';
     var tags = normalizeTags(productTags);
     var found = null;
@@ -178,7 +204,7 @@
   }
 
   function isFreeEligible(tier) {
-    return tier === 'free' || tier === 'one-leg';
+    return tier === 'free' || tier === 'one-leg' || tier === 'included';
   }
 
   /**
@@ -188,6 +214,15 @@
    * @returns {{ available: boolean, adjustment: number|null }}
    */
   function computeAdjustment(tier, band, service) {
+    /* iPhone/iPad diagnostic: courier is £0 on every London band, post is £0. */
+    if (tier === 'included') {
+      if (service === 'mail-in') return { available: true, adjustment: 0 };
+      if (band === 'B1' || band === 'B2' || band === 'B3' || band === 'B4') {
+        return { available: true, adjustment: 0 };
+      }
+      return { available: false, adjustment: null };
+    }
+
     var free = isFreeEligible(tier);
 
     if (service === 'mail-in') {
@@ -386,6 +421,8 @@
     extractOutwardCode: extractOutwardCode,
     lookupCourierBand: lookupCourierBand,
     isMacbookDiagnostic: isMacbookDiagnostic,
+    isHandheldDiagnostic: isHandheldDiagnostic,
+    diagnosticFamily: diagnosticFamily,
     isDiagnosticRepair: isDiagnosticRepair,
     repairTypeCartLabel: repairTypeCartLabel,
     resolveCourierTier: resolveCourierTier,
