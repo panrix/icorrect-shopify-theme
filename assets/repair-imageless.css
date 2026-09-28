@@ -142,36 +142,39 @@
   display: inline;
   fill: none;
   stroke: var(--ri-accent);
-  stroke-width: calc(1.15px * var(--dg-hl));
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  stroke-width: calc(1.65px * var(--dg-hl));
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+  stroke-miterlimit: 2.4;
 }
 .dg--part-glassfront .dg-screen { stroke: var(--ri-accent); stroke-width: calc(2px * var(--dg-hl)); }
 .dg--part-glassfront .dg-shatter {
   display: inline;
   fill: none;
   stroke: var(--ri-accent);
-  stroke-width: calc(1.15px * var(--dg-hl));
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  stroke-width: calc(1.65px * var(--dg-hl));
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+  stroke-miterlimit: 2.4;
 }
-.dg--part-display .dg-screen { fill: #dfe2e8; }
-.dg--part-display .dg-sheen { opacity: 0.7; }
-.dg--part-display .dg-fault,
+/* Display damage is a failing panel: two sharp horizontal lines and one
+   dead band. No crack, so an iPad or Watch screen stays distinct from a
+   display, and the lines stay distinct from Dustgate's vertical bands. */
+.dg--part-display .dg-screen { fill: #d8dbe1; }
+.dg--part-display .dg-sheen { opacity: 0.28; }
+.dg--part-display .dg-fault {
+  display: inline;
+  fill: none;
+  stroke: var(--ri-accent);
+  stroke-width: calc(1.75px * var(--dg-hl));
+  stroke-linecap: butt;
+}
 .dg--part-display .dg-fault--alt {
   display: inline;
-  stroke: var(--ri-accent);
-  stroke-width: calc(1.15px * var(--dg-hl));
-  stroke-linecap: butt;
-  opacity: 0.62;
-}
-.dg--part-display .dg-blot {
-  display: inline;
-  fill: #1d1d1f;
+  fill: rgba(0, 112, 243, 0.28);
   stroke: none;
-  opacity: 0.9;
-  filter: none;
 }
+.dg--part-display .dg-blot { display: none; }
 .dg--part-battery .dg-screen { fill: #f4f5f7; stroke-dasharray: 3 3; }
 .dg--part-battery .dg-sheen { display: none; }
 
