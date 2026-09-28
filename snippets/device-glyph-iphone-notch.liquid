@@ -38,7 +38,7 @@
         <circle class="dg-lens{% if part == 'camera' %} is-hl{% endif %}" cx="51" cy="35" r="3.4"/>
         <circle class="dg-flash" cx="51.5" cy="18.5" r="2.4"/>
     {%- endcase -%}
-    <path class="dg-crack dg-crack--back" d="M80 104l-10 26 14 8-16 30 9 7-12 26"/>
+    <path class="dg-crack dg-crack--back" d="M76 118L60 168L70 214M60 168L46 198"/>
   {%- else -%}
     <rect class="dg-btn dg-btn-mute{% if part == 'buttons' or part == 'mute' %} is-hl{% endif %}" x="6.5" y="50" width="4.5" height="12" rx="2.25"/>
     <rect class="dg-btn dg-btn-volume{% if part == 'buttons' or part == 'volume' %} is-hl{% endif %}" x="6.5" y="70" width="4.5" height="20" rx="2.25"/>
@@ -53,11 +53,10 @@
     <rect class="dg-port{% if part == 'port' %} is-hl{% endif %}" x="50" y="232" width="20" height="3" rx="1.5"/>
     <path class="dg-grille dg-grille--dots{% if part == 'grille' %} is-hl{% endif %}" d="M30 233.5h.01M35 233.5h.01M40 233.5h.01M80 233.5h.01M85 233.5h.01M90 233.5h.01"/>
     <rect class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" x="28" y="64" width="64" height="120" rx="10"/>
-    <path class="dg-crack" d="M76 38l-10 26 14 8-16 30 9 7-12 26"/>
-    <path class="dg-shatter" d="M72 74l-14-28M72 74l20-20M72 74l24 10M72 74l10 30M72 74l-18 24M72 74l-28-4M63 62l14-5 10 11-3 16-14 5-11-10z"/>
-    <path class="dg-fault" d="M38 10v220M41.5 10v220"/>
-    <path class="dg-fault dg-fault--alt" d="M80 10v220"/>
-    <path class="dg-blot" d="M46 150c4-12 22-15 30-5 7 9 1 22-11 24-12 1-23-7-19-19z"/>
+    <path class="dg-crack" d="M76 48L62 114L72 182M62 114L46 148"/>
+    <path class="dg-shatter" d="M60 108m-3.4 0a3.4 3.4 0 1 0 6.8 0a3.4 3.4 0 1 0-6.8 0M60 108l-12-12M60 108l12-12M60 108l12 12M60 108l-12 12"/>
+    <path class="dg-fault" d="M40 34V212M60 34V212M80 34V212"/>
+    <path class="dg-blot" d="M60 159.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9"/>
     <rect class="dg-scan" x="16" y="10" width="88" height="3" rx="1.5"/>
   {%- endif -%}
 </svg>

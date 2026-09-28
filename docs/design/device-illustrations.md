@@ -73,9 +73,9 @@ Every era must draw these elements with these classes, adding `is-hl` when `part
 | `dg-port` / `dg-port-side` | `port` | Charging port (MacBook: side of the top case, near the top-left corner) |
 | `dg-grille` | `grille` | Loudspeaker / microphone (MacBook Air: hinge). iPhone and iPad holes use `dg-grille--dots`; the highlight draws them large enough to read on a card. |
 | `dg-battery` | `battery` | Hidden unless highlighted; dashed |
-| `dg-crack` | screen assembly | Zig-zag crack across the screen |
-| `dg-shatter` | glass only | Impact point with radial cracks |
-| `dg-fault`, `dg-fault--alt`, `dg-blot` | display only | Vertical lines plus ink bleed |
+| `dg-crack` | screen assembly and rear glass | One hairline with a single short branch. Round caps. No lightning bolt. |
+| `dg-shatter` | glass only | Small ring and four equal diagonal rays |
+| `dg-fault`, `dg-blot` | display only | Three evenly spaced blue lines and one crisp dark disc. No green line, no blur. |
 | `dg-scan` | diagnostic | Scan line; set `--dg-scan-travel` for the era in CSS |
 | Back view: `dg-module`, `dg-plateau`, `dg-lens-ring`, `dg-lens`, `dg-flash`, `dg-lidar`, `dg-lens-crack` | `camera` highlights the camera block only (on a plateau phone, the left square, not the bar). `lens` highlights the top-left lens and shows `dg-lens-crack`. |
 | Watch back: `dg-sensor`, `dg-leds` | `sensor` | Heart-rate sensor |

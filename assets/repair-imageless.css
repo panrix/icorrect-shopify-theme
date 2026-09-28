@@ -142,30 +142,35 @@
   display: inline;
   fill: none;
   stroke: var(--ri-accent);
-  stroke-width: calc(1.3px * var(--dg-hl));
+  stroke-width: calc(1.15px * var(--dg-hl));
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 .dg--part-glassfront .dg-screen { stroke: var(--ri-accent); stroke-width: calc(2px * var(--dg-hl)); }
 .dg--part-glassfront .dg-shatter {
   display: inline;
   fill: none;
   stroke: var(--ri-accent);
-  stroke-width: calc(1.2px * var(--dg-hl));
+  stroke-width: calc(1.15px * var(--dg-hl));
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 .dg--part-display .dg-screen { fill: #dfe2e8; }
 .dg--part-display .dg-sheen { opacity: 0.7; }
-.dg--part-display .dg-fault {
+.dg--part-display .dg-fault,
+.dg--part-display .dg-fault--alt {
   display: inline;
   stroke: var(--ri-accent);
-  stroke-width: calc(1.6px * var(--dg-hl));
-  opacity: 0.85;
+  stroke-width: calc(1.15px * var(--dg-hl));
+  stroke-linecap: butt;
+  opacity: 0.62;
 }
-.dg--part-display .dg-fault--alt { stroke: #30b85c; }
 .dg--part-display .dg-blot {
   display: inline;
   fill: #1d1d1f;
   stroke: none;
-  opacity: 0.72;
-  filter: blur(calc(1.5px * var(--dg-hl)));
+  opacity: 0.9;
+  filter: none;
 }
 .dg--part-battery .dg-screen { fill: #f4f5f7; stroke-dasharray: 3 3; }
 .dg--part-battery .dg-sheen { display: none; }
