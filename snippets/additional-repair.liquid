@@ -704,6 +704,11 @@ window.__ADDITIONAL_REPAIR_COURIER = {
     "15": 71280436379901,
     "20": 71280436412669,
     "25": 71280436445437
+  },
+  serviceAdjustmentPrices: {
+    "15": 0,
+    "20": 0,
+    "25": 25
   }
 };
 </script>
@@ -741,7 +746,10 @@ document.addEventListener("DOMContentLoaded", () => {
       bands: __bands,
       service: courierActive ? 'courier' : 'mail-in',
       repairPrice: repairPrice,
-      variants: { variants: COURIER_CFG.serviceAdjustments || {} },
+      variants: {
+        variants: COURIER_CFG.serviceAdjustments || {},
+        prices: COURIER_CFG.serviceAdjustmentPrices || {}
+      },
       productType: COURIER_CFG.productType || '',
       productTitle: COURIER_CFG.productTitle || '',
       productHandle: COURIER_CFG.productHandle || ''
@@ -818,7 +826,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function applyServiceQuote(quote) {
     _courierQuote = quote;
-    _serviceAdjustment = quote && quote.adjustment != null ? Number(quote.adjustment) : 0;
+    _serviceAdjustment = quote && quote.charged != null ? Number(quote.charged) : (quote && quote.adjustment != null ? Number(quote.adjustment) : 0);
     const info = document.querySelector('.walk-in-service-content .walk-in-prod-info');
     if (info && quote && quote.service === 'courier' && quote.band) {
       const win = collectionWindowForBand(quote.band);

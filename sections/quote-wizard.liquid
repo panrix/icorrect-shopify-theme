@@ -126,6 +126,12 @@ window.WIZARD_CFG = {
     "20": 71280436412669,
     "25": 71280436445437
   },
+  /* Shopify shelf prices. £0 lines must not be added to the wizard total. */
+  serviceAdjustmentPrices: {
+    "15": 0,
+    "20": 0,
+    "25": 25
+  },
   mailIn: {
     title: {{ mail_in_prod.title | default: 'Mail-in pack' | json }},
     price: 0,
@@ -2006,7 +2012,16 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     if (!window.__QW_SERVICE_ADJUSTMENTS && CFG.serviceAdjustmentsUrl) {
       jobs.push(fetch(CFG.serviceAdjustmentsUrl).then(function(r){ return r.json(); }).then(function(j){
         window.__QW_SERVICE_ADJUSTMENTS = j;
+        if (j && !j.prices && CFG.serviceAdjustmentPrices) j.prices = CFG.serviceAdjustmentPrices;
         if (j && j.variants) CFG.serviceAdjustments = Object.assign({}, CFG.serviceAdjustments || {}, j.variants);
+        return fetch('/products/service-adjustment.js', { headers: { 'Accept': 'application/json' } })
+          .then(function(res){ return res.ok ? res.json() : null; })
+          .then(function(product){
+            if (product && window.ICorrectCourier && typeof window.ICorrectCourier.applyShelfPrices === 'function') {
+              window.ICorrectCourier.applyShelfPrices(window.__QW_SERVICE_ADJUSTMENTS, product);
+            }
+          })
+          .catch(function(){ /* seeded prices remain */ });
       }).catch(function(){ /* inline CFG IDs remain */ }));
     }
     if (!window.__QW_COLLECTION_PREFILL && CFG.collectionPrefillUrl) {
@@ -2104,7 +2119,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
             if (c.getAttribute('data-opt') === 'svc') return;
             total += parseFloat(c.dataset.add || 0);
           });
-          if (_courierQuote.adjustment) total += Number(_courierQuote.adjustment) || 0;
+          total += serviceCharge(_courierQuote);
           if (isFinite(base)) q.repair_price = base;
           if (isFinite(total)) q.total = total;
         }
@@ -2167,8 +2182,24 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   }
 
   function serviceVariantsAsset() {
-    if (window.__QW_SERVICE_ADJUSTMENTS) return window.__QW_SERVICE_ADJUSTMENTS;
-    return { variants: CFG.serviceAdjustments || {} };
+    if (window.__QW_SERVICE_ADJUSTMENTS) {
+      if (!window.__QW_SERVICE_ADJUSTMENTS.prices && CFG.serviceAdjustmentPrices) {
+        window.__QW_SERVICE_ADJUSTMENTS.prices = CFG.serviceAdjustmentPrices;
+      }
+      return window.__QW_SERVICE_ADJUSTMENTS;
+    }
+    return {
+      variants: CFG.serviceAdjustments || {},
+      prices: CFG.serviceAdjustmentPrices || {}
+    };
+  }
+
+  /* Pounds the basket adds. £0 Shopify variants stay off the wizard total. */
+  function serviceCharge(quote) {
+    if (!quote) return 0;
+    if (typeof quote.charged === 'number' && isFinite(quote.charged)) return quote.charged;
+    var n = Number(quote.adjustment);
+    return isFinite(n) ? n : 0;
   }
 
   function quoteForService(serviceKind, postcode) {
@@ -2192,18 +2223,21 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   function formatServiceCardHint(quote, kind) {
     if (!_postcodeResolved || !quote) return '—';
     if (kind === 'mailin') {
-      return quote.tier === 'paid' ? 'Tracked pack' : 'Free pack';
+      var mailQuote = quote.service === 'mail-in' ? quote : null;
+      if (!mailQuote) {
+        var pcInput = document.getElementById('qwPostcode');
+        mailQuote = quoteForService('mailin', pcInput ? pcInput.value : '');
+      }
+      return serviceCharge(mailQuote || quote) > 0 ? 'Tracked pack' : 'Free pack';
     }
     if (!quote.courierAvailable && quote.forcedMailIn) return 'Not in area';
-    if (quote.service === 'courier' && quote.adjustment === 0) return 'Included';
+    if (quote.service === 'courier' && serviceCharge(quote) === 0) return 'Included';
     if (quote.service === 'courier') return 'Available';
     return '—';
   }
 
-  /* Hide mail-in only when courier is free or strictly cheaper.
-     Paid B1/B2 (<£200) must keep BOTH options: courier +£25 or mail-in +£20.
-     Do not hide mail-in on mobile just because courier is available — that
-     removed the cheaper mail-in choice and broke the policy. */
+  /* Hide mail-in only when the basket charge for courier is £0 or lower
+     than mail-in. Under £200 B1/B2 courier is still +£25, so both stay. */
   function shouldHideMailInOption(quote, postcode) {
     if (!quote || quote.courierAvailable === false) return false;
     var pc = postcode || '';
@@ -2211,13 +2245,12 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       ? quote
       : quoteForService('courier', pc);
     if (!courierQ || courierQ.courierAvailable === false || courierQ.forcedMailIn) return false;
-    var courierAdj = Number(courierQ.adjustment);
-    if (!isFinite(courierAdj)) courierAdj = 0;
-    /* Free courier (B1/B2 ≥£200): mail-in adds nothing — solo courier is fine. */
+    var courierAdj = serviceCharge(courierQ);
+    /* Free courier (B1/B2 ≥£200, or a £0 variant): mail-in adds nothing. */
     if (courierAdj === 0) return true;
     var mailQuote = quoteForService('mailin', pc);
     if (!mailQuote) return false;
-    var mailAdj = Number(mailQuote.adjustment);
+    var mailAdj = serviceCharge(mailQuote);
     if (!isFinite(mailAdj)) mailAdj = 0;
     return courierAdj < mailAdj;
   }
@@ -2296,9 +2329,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       if (c.getAttribute('data-opt') === 'svc') return;
       total += parseFloat(c.dataset.add || 0);
     });
-    if (_courierQuote && _courierQuote.adjustment) {
-      total += Number(_courierQuote.adjustment) || 0;
-    }
+    total += serviceCharge(_courierQuote);
     var totalEl = document.getElementById('qwPriceTotal');
     if (totalEl) totalEl.textContent = gbp.format(total);
     var bigEl = document.getElementById('qwPriceBig');
