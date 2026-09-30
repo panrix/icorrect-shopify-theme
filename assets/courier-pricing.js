@@ -1,8 +1,10 @@
 /**
  * Courier / mail-in service adjustment helpers (#53 pricing policy v2).
  *
- * ALL-IN TOTALS — UI shows repair + adjustment as one total, never a
- * courier/repair breakdown.
+ * ALL-IN TOTALS — UI shows one payable total, never a courier/repair
+ * breakdown. The payable service amount is the Shopify variant price
+ * (charged). A £0 variant stays £0 on the quote. adjustment still names
+ * which variant the basket adds.
  *
  * Matrix (Ricky 2026-09-11):
  *   MacBook, iPhone, and iPad diagnostic (any price):
@@ -275,6 +277,52 @@
   }
 
   /**
+   * Pounds the basket will add for this policy amount.
+   * prices[key] is the Shopify variant price. Missing price → policy amount.
+   * @param {number} adjustment
+   * @param {{ prices?: Record<string, number> }|null} variantsAsset
+   */
+  function payableCharge(adjustment, variantsAsset) {
+    var amount = roundMoney(adjustment || 0);
+    if (!(amount > 0) || !variantsAsset || !variantsAsset.prices) return amount;
+    var key = String(Math.round(amount));
+    var raw = variantsAsset.prices[key];
+    if (raw == null || raw === '') return amount;
+    var shelf = Number(raw);
+    if (!Number.isFinite(shelf) || shelf < 0) return amount;
+    return roundMoney(shelf);
+  }
+
+  /**
+   * Copy Ajax /products/service-adjustment.js prices (integer pence) onto
+   * variantsAsset.prices, keyed by the policy amount ("15", "20", "25").
+   * @param {{ variants?: Record<string, number>, prices?: Record<string, number> }|null} variantsAsset
+   * @param {{ variants?: Array<{ id: number, price: number }> }|null} product
+   */
+  function applyShelfPrices(variantsAsset, product) {
+    if (!variantsAsset || !product || !Array.isArray(product.variants)) return variantsAsset;
+    var byId = {};
+    for (var i = 0; i < product.variants.length; i++) {
+      var variant = product.variants[i];
+      if (!variant || variant.id == null) continue;
+      var cents = Number(variant.price);
+      if (!Number.isFinite(cents)) continue;
+      byId[String(variant.id)] = roundMoney(cents / 100);
+    }
+    var map = variantsAsset.variants || {};
+    if (!variantsAsset.prices || typeof variantsAsset.prices !== 'object') {
+      variantsAsset.prices = {};
+    }
+    Object.keys(map).forEach(function (key) {
+      var id = String(map[key]);
+      if (Object.prototype.hasOwnProperty.call(byId, id)) {
+        variantsAsset.prices[key] = byId[id];
+      }
+    });
+    return variantsAsset;
+  }
+
+  /**
    * Full quote for the selected service preference.
    *
    * @param {{
@@ -321,7 +369,9 @@
       adjustment = 0;
     }
 
-    var total = repair != null ? roundMoney(repair + adjustment) : null;
+    /* Basket line price. £0 variants must not inflate the wizard total. */
+    var charged = payableCharge(adjustment, opts.variants || null);
+    var total = repair != null ? roundMoney(repair + charged) : null;
 
     return {
       service: chosen,
@@ -334,8 +384,9 @@
       rt_cost: lookup.service === 'courier' ? lookup.rt_cost : null,
       tier: tier,
       adjustment: adjustment,
-      /* wizard / tests still read customer_price as the service adjustment */
-      customer_price: adjustment,
+      /* Pounds added at checkout. Equals adjustment unless the variant is priced differently. */
+      charged: charged,
+      customer_price: charged,
       repair_price: repair,
       total: total,
       forcedMailIn: forcedMailIn,
@@ -413,6 +464,8 @@
     resolveCourierTier: resolveCourierTier,
     computeAdjustment: computeAdjustment,
     resolveAdjustmentVariant: resolveAdjustmentVariant,
+    payableCharge: payableCharge,
+    applyShelfPrices: applyShelfPrices,
     quoteServiceAdjustment: quoteServiceAdjustment,
     quoteCourierCollection: quoteCourierCollection,
     customerCourierPrice: customerCourierPrice,

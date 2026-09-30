@@ -17,6 +17,7 @@ const {
   resolveCourierTier,
   computeAdjustment,
   resolveAdjustmentVariant,
+  applyShelfPrices,
   quoteServiceAdjustment,
   quoteCourierCollection,
   ADJUSTMENT,
@@ -137,7 +138,8 @@ describe('adjustment matrix — band × tag × service', () => {
       variants: variantsAsset,
     });
     assert.equal(q.adjustment, 15);
-    assert.equal(q.total, 314);
+    assert.equal(q.charged, 0);
+    assert.equal(q.total, 299);
     assert.equal(q.variantId, variantsAsset.variants['15']);
     assert.equal(q.variantMode, 'ok');
   });
@@ -152,6 +154,7 @@ describe('adjustment matrix — band × tag × service', () => {
       variants: variantsAsset,
     });
     assert.equal(q.adjustment, 25);
+    assert.equal(q.charged, 25);
     assert.equal(q.total, 324);
     assert.equal(q.variantId, variantsAsset.variants['25']);
   });
@@ -217,7 +220,8 @@ describe('adjustment matrix — band × tag × service', () => {
       variants: variantsAsset,
     });
     assert.equal(q.adjustment, 20);
-    assert.equal(q.total, 109);
+    assert.equal(q.charged, 0);
+    assert.equal(q.total, 89);
     assert.equal(q.variantId, variantsAsset.variants['20']);
   });
 
@@ -234,7 +238,8 @@ describe('adjustment matrix — band × tag × service', () => {
       assert.equal(q.service, 'mail-in');
       assert.equal(q.forcedMailIn, true);
       assert.equal(q.adjustment, 20);
-      assert.equal(q.total, 109);
+      assert.equal(q.charged, 0);
+      assert.equal(q.total, 89);
     }
   });
 
@@ -247,7 +252,7 @@ describe('adjustment matrix — band × tag × service', () => {
 });
 
 describe('single all-in total (never courier breakdown field)', () => {
-  it('quote exposes total = repair + adjustment, not a separate courier fee line', () => {
+  it('quote exposes total = repair + basket charge, not a separate courier fee line', () => {
     const q = quoteCourierCollection({
       postcode: 'SW11 8BJ',
       productTags: [],
@@ -255,10 +260,52 @@ describe('single all-in total (never courier breakdown field)', () => {
       repairPrice: 89,
       variants: variantsAsset,
     });
-    assert.equal(q.total, q.repair_price + q.adjustment);
-    assert.equal(q.customer_price, q.adjustment);
+    assert.equal(q.charged, 25);
+    assert.equal(q.total, q.repair_price + q.charged);
+    assert.equal(q.customer_price, q.charged);
     assert.ok(!('courier_fee' in q));
     assert.ok(!('courier_breakdown' in q));
+  });
+
+  it('£0 Shopify variant is not added to the payable total', () => {
+    const b3 = quoteServiceAdjustment({
+      postcode: 'N6 4AA',
+      productTags: ['courier:free'],
+      bands: bandsAsset,
+      service: 'courier',
+      repairPrice: 299,
+      variants: variantsAsset,
+    });
+    assert.equal(b3.adjustment, 15);
+    assert.equal(b3.charged, 0);
+    assert.equal(b3.total, 299);
+
+    const mail = quoteServiceAdjustment({
+      postcode: 'SW11 8BJ',
+      productTags: [],
+      bands: bandsAsset,
+      service: 'mail-in',
+      repairPrice: 149,
+      variants: variantsAsset,
+    });
+    assert.equal(mail.adjustment, 20);
+    assert.equal(mail.charged, 0);
+    assert.equal(mail.total, 149);
+  });
+
+  it('applyShelfPrices reads Ajax product.js pence onto the price map', () => {
+    const asset = {
+      variants: { '25': 71280436445437, '20': 71280436412669 },
+      prices: { '25': 25, '20': 20 },
+    };
+    applyShelfPrices(asset, {
+      variants: [
+        { id: 71280436445437, price: 2500 },
+        { id: 71280436412669, price: 0 },
+      ],
+    });
+    assert.equal(asset.prices['25'], 25);
+    assert.equal(asset.prices['20'], 0);
   });
 });
 
@@ -293,5 +340,27 @@ describe('null-variant fallback', () => {
     assert.equal(resolveAdjustmentVariant(15, variantsAsset).variantId, variantsAsset.variants['15']);
     assert.equal(resolveAdjustmentVariant(20, variantsAsset).variantId, variantsAsset.variants['20']);
     assert.equal(resolveAdjustmentVariant(25, variantsAsset).variantId, variantsAsset.variants['25']);
+  });
+});
+
+describe('quote wizard total follows the basket charge', () => {
+  const wizard = fs.readFileSync(path.join(root, 'sections/quote-wizard.liquid'), 'utf8');
+
+  function sliceFn(startNeedle, endNeedle) {
+    const start = wizard.indexOf(startNeedle);
+    const end = wizard.indexOf(endNeedle);
+    assert.ok(start >= 0 && end > start, `missing ${startNeedle}`);
+    return wizard.slice(start, end);
+  }
+
+  it('all-in total adds serviceCharge, which is the Shopify shelf price', () => {
+    const fn = sliceFn('function refreshAllInTotal()', 'function selectServiceCard(');
+    assert.match(fn, /serviceCharge\(_courierQuote\)/);
+    assert.equal(fn.includes('_courierQuote.adjustment'), false);
+  });
+
+  it('cart still adds the adjustment variant when the policy amount is positive', () => {
+    const fn = sliceFn('function buildCartItems()', 'function getShopifyRoot()');
+    assert.match(fn, /_courierQuote\.adjustment > 0/);
   });
 });
