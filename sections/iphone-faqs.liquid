@@ -18,7 +18,29 @@
         >
           <h3 class="accordion-{{ section.id }}">{{ block.settings.heading }}</h3>
           <div class="panel-accordion">
-            {{ block.settings.sub_head }}
+            {% liquid
+              assign faq_answer = block.settings.sub_head
+              assign model_key = ''
+              if request.page_type == 'product'
+                assign model_key = product.handle | downcase
+              elsif request.page_type == 'collection'
+                assign model_key = collection.handle | downcase
+              endif
+              assign lcd_screen = false
+              if model_key contains 'series'
+                assign lcd_screen = false
+              elsif model_key contains 'iphone-8' or model_key contains 'iphone-se' or model_key contains 'iphone-xr'
+                assign lcd_screen = true
+              elsif model_key contains 'iphone-11'
+                unless model_key contains 'iphone-11-pro'
+                  assign lcd_screen = true
+                endunless
+              endif
+              if lcd_screen
+                assign faq_answer = faq_answer | replace: 'genuine Apple OLED', 'genuine Apple LCD'
+              endif
+            %}
+            {{ faq_answer }}
           </div>
         </div>
       {% endfor %}
