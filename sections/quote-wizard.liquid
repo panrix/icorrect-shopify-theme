@@ -1796,6 +1796,18 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     return DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()];
   }
 
+  /* Calendar day of the date rendered in the journey ETA. Same Date object as the visible label. */
+  function isoJourneyDate(d) {
+    if (!d || isNaN(d.getTime())) return '';
+    var month = d.getMonth() + 1;
+    var day = d.getDate();
+    return d.getFullYear() + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+  }
+
+  function journeyEtaDateHtml(d) {
+    return '<span class="qw-journey-eta-date" data-iso="' + esc(isoJourneyDate(d)) + '">' + esc(formatJourneyDate(d)) + '</span>';
+  }
+
   function londonWall(now) {
     var parts = new Intl.DateTimeFormat('en-GB', {
       timeZone: 'Europe/London',
@@ -1955,7 +1967,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     if (diagnostic && quoteDate) {
       eta = '<div class="qw-journey-eta">' +
           '<span class="qw-journey-eta-label">We\'ll tell you what\'s wrong by</span>' +
-          '<span class="qw-journey-eta-date">' + esc(formatJourneyDate(quoteDate)) + '</span>' +
+          journeyEtaDateHtml(quoteDate) +
           '<span class="qw-journey-eta-note">Device stays with us until you approve a repair</span>' +
         '</div>';
     } else if (diagnostic) {
@@ -1963,7 +1975,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     } else if (model.returnDate) {
       eta = '<div class="qw-journey-eta">' +
           '<span class="qw-journey-eta-label">Estimated return by</span>' +
-          '<span class="qw-journey-eta-date">' + esc(formatJourneyDate(model.returnDate)) + '</span>' +
+          journeyEtaDateHtml(model.returnDate) +
           '<span class="qw-journey-eta-note">Often sooner</span>' +
         '</div>';
     } else {
@@ -3778,6 +3790,13 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       });
     }
 
+    /* Snapshot the date already on screen. Do not recompute it at click time. */
+    var promiseEl = document.querySelector('#qwJourney:not([hidden]) .qw-journey-eta-date');
+    var promiseIso = promiseEl ? (promiseEl.getAttribute('data-iso') || '') : '';
+    if (promiseIso) {
+      items[0].properties[S.route === 'diagnostic' ? 'Quote by' : 'Return by'] = promiseIso;
+    }
+
     items[0].properties['Order summary'] = orderSummaryText(items[0].properties);
     return items;
   }
@@ -3797,6 +3816,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     add('Service', 'Service Type');
     add('Collection date', 'Collection Date');
     add('Collection window', 'Collection Window');
+    add('Return by', 'Return by');
+    add('Quote by', 'Quote by');
     add('Postcode', 'Postcode');
     add('Band', 'Band');
     return lines.join('\n');
