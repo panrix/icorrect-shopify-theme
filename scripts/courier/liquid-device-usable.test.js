@@ -19,7 +19,7 @@ const QUESTION = 'Is the device turning on and usable right now?';
 const YES = 'Yes (usable)';
 const NO = "No (won't turn on / isn't usable)";
 const COPY_USABLE = "If you can, please back up your device. Liquid damage is unpredictable and may still affect your data, though we'll still take every care with your device.";
-const COPY_NOT_USABLE = "Liquid damage can be unpredictable. There's a small chance data is affected. During the diagnostic we'll prioritise protecting your data wherever we can.";
+const COPY_NOT_USABLE = "Liquid damage can be unpredictable. There's a small chance your data could be affected. During the diagnostic we'll prioritise protecting your data wherever we can.";
 
 function count(hay, needle) {
   let n = 0;
