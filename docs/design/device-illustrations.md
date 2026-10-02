@@ -51,7 +51,7 @@ Within an era, the iPhone back view draws **1, 2 or 3 lenses** from the model na
   - Dark details (notch, island, lenses, camera dots) `#1d1d1f` / `#2c2c2e`.
 - **Shadow:** a soft ellipse under the device (`.dg-shadow`), 3–3.5px tall.
 - **Detail level:** only features that identify the era at card size (about 60–90px wide). No logos, text, screws, antenna lines or colours.
-- **Colour:** everything is monochrome except the highlight. The highlight is always the accent blue `#0070f3` (stroke) with a 10% blue fill and a soft glow. Display damage adds one green line and a dark ink blot.
+- **Colour:** everything is monochrome except the highlight. The highlight is always the accent blue `#0070f3` (stroke) with a 10% blue fill and a soft glow. Display damage is a dimmer panel with horizontal lines, never a crack.
 - **Corners:** body corner radius follows the real device's proportions; the screen radius is the body radius minus the bezel.
 - **Consistency:** reuse the coordinates of an existing era of the same family wherever the device hasn't changed (buttons, port, battery area), so eras line up in grids.
 
@@ -73,9 +73,9 @@ Every era must draw these elements with these classes, adding `is-hl` when `part
 | `dg-port` / `dg-port-side` | `port` | Charging port (MacBook: side of the top case, near the top-left corner) |
 | `dg-grille` | `grille` | Loudspeaker / microphone (MacBook Air: hinge). iPhone and iPad holes use `dg-grille--dots`; the highlight draws them large enough to read on a card. |
 | `dg-battery` | `battery` | Hidden unless highlighted; dashed |
-| `dg-crack` | screen assembly | Zig-zag crack across the screen |
-| `dg-shatter` | glass only | Impact point with radial cracks |
-| `dg-fault`, `dg-fault--alt`, `dg-blot` | display only | Vertical lines plus ink bleed |
+| `dg-crack` | screen assembly and rear glass | Shatter only: one impact, kinked cracks out to the glass edge, a few short branches. Sharp joins. Drawn under the camera, island and notch so those shapes stay intact. |
+| `dg-shatter` | front glass only | The same shatter, drawn on the front glass. |
+| `dg-fault`, `dg-fault--alt` | display only | Two horizontal panel lines and one dead band. No crack, so a display repair does not look like broken glass. |
 | `dg-scan` | diagnostic | Scan line; set `--dg-scan-travel` for the era in CSS |
 | Back view: `dg-module`, `dg-plateau`, `dg-lens-ring`, `dg-lens`, `dg-flash`, `dg-lidar`, `dg-lens-crack` | `camera` highlights the camera block only (on a plateau phone, the left square, not the bar). `lens` highlights the top-left lens and shows `dg-lens-crack`. |
 | Watch back: `dg-sensor`, `dg-leds` | `sensor` | Heart-rate sensor |
