@@ -11,10 +11,10 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('path');
 
-const liquid = fs.readFileSync(
-  path.join(__dirname, '../../sections/quote-wizard.liquid'),
-  'utf8'
-);
+const liquid = [
+  fs.readFileSync(path.join(__dirname, '../../sections/quote-wizard.liquid'), 'utf8'),
+  fs.readFileSync(path.join(__dirname, '../../assets/quote-wizard.js'), 'utf8'),
+].join('\n');
 
 const DIAGNOSTIC_CATEGORIES = new Set(['Water Damage', 'Data Recovery']);
 const DIAGNOSTIC_LABELS = new Set([

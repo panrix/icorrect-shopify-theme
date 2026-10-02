@@ -42,7 +42,10 @@ const HUB_REPAIR_TYPES = new Set([
 ]);
 
 const liquidPath = path.join(__dirname, '../../sections/quote-wizard.liquid');
-const liquid = fs.readFileSync(liquidPath, 'utf8');
+const liquid = [
+  fs.readFileSync(liquidPath, 'utf8'),
+  fs.readFileSync(path.join(__dirname, '../../assets/quote-wizard.js'), 'utf8'),
+].join('\n');
 
 function uniq(re) {
   return [...new Set([...liquid.matchAll(re)].map((m) => m[1]))].sort();

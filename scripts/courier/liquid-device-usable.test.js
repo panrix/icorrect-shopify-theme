@@ -12,7 +12,8 @@ const path = require('path');
 
 const root = path.join(__dirname, '../..');
 const liquid = fs.readFileSync(path.join(root, 'sections/quote-wizard.liquid'), 'utf8');
-const source = liquid.replace(/\\'/g, "'");
+const wizardJs = fs.readFileSync(path.join(root, 'assets/quote-wizard.js'), 'utf8');
+const source = wizardJs.replace(/\\'/g, "'");
 
 const QUESTION = 'Is the device turning on and usable right now?';
 const YES = 'Yes (usable)';
@@ -31,6 +32,11 @@ function count(hay, needle) {
 }
 
 describe('liquid-damage usable step', () => {
+  it('loads the wizard script from the theme asset', () => {
+    assert.match(liquid, /<script src="\{\{ 'quote-wizard\.js' \| asset_url \}\}" defer><\/script>/);
+    assert.ok(Buffer.byteLength(liquid) <= 262144, 'section must stay within Shopify’s 256 KB limit');
+  });
+
   it('asks the locked question after a water-damage detail, before the quote', () => {
     assert.equal(count(source, QUESTION), 1);
     assert.match(source, /if \(S\.fault === 'Water Damage'\) \{\s*showLiquidUsableQuestion\(iss\);/);

@@ -9,10 +9,10 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const wizard = fs.readFileSync(
-  path.join(__dirname, '../../sections/quote-wizard.liquid'),
-  'utf8'
-);
+const wizard = [
+  fs.readFileSync(path.join(__dirname, '../../sections/quote-wizard.liquid'), 'utf8'),
+  fs.readFileSync(path.join(__dirname, '../../assets/quote-wizard.js'), 'utf8'),
+].join('\n');
 
 function sliceFn(startNeedle, endNeedle) {
   const start = wizard.indexOf(startNeedle);

@@ -108,7 +108,10 @@ describe('courierFunnelExtra', () => {
 });
 
 describe('theme source: courier funnel events', () => {
-  const wizard = fs.readFileSync(path.join(root, 'sections/quote-wizard.liquid'), 'utf8');
+  const wizard = [
+    fs.readFileSync(path.join(root, 'sections/quote-wizard.liquid'), 'utf8'),
+    fs.readFileSync(path.join(root, 'assets/quote-wizard.js'), 'utf8'),
+  ].join('\n');
   const booker = fs.readFileSync(path.join(root, 'snippets/additional-repair.liquid'), 'utf8');
 
   it('quote-wizard fires all funnel events via trackWizardEvent*', () => {
