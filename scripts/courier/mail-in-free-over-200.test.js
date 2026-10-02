@@ -12,10 +12,10 @@ const fs = require('node:fs');
 const path = require('path');
 
 const root = path.join(__dirname, '../..');
-const wizard = fs.readFileSync(
-  path.join(root, 'sections/quote-wizard.liquid'),
-  'utf8'
-);
+const wizard = [
+  fs.readFileSync(path.join(root, 'sections/quote-wizard.liquid'), 'utf8'),
+  fs.readFileSync(path.join(root, 'assets/quote-wizard.js'), 'utf8'),
+].join('\n');
 const additional = fs.readFileSync(
   path.join(root, 'snippets/additional-repair.liquid'),
   'utf8'

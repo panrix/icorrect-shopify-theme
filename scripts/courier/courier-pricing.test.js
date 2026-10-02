@@ -344,7 +344,10 @@ describe('null-variant fallback', () => {
 });
 
 describe('quote wizard total follows the basket charge', () => {
-  const wizard = fs.readFileSync(path.join(root, 'sections/quote-wizard.liquid'), 'utf8');
+  const wizard = [
+    fs.readFileSync(path.join(root, 'sections/quote-wizard.liquid'), 'utf8'),
+    fs.readFileSync(path.join(root, 'assets/quote-wizard.js'), 'utf8'),
+  ].join('\n');
 
   function sliceFn(startNeedle, endNeedle) {
     const start = wizard.indexOf(startNeedle);

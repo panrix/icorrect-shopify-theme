@@ -117,10 +117,10 @@ describe('mail-in pack clock (UK, UPost +1 working day)', () => {
 describe('quote-wizard packShipDate fallback uses UK time', () => {
   const fs = require('node:fs');
   const path = require('node:path');
-  const wizard = fs.readFileSync(
-    path.join(__dirname, '../../sections/quote-wizard.liquid'),
-    'utf8'
-  );
+  const wizard = [
+    fs.readFileSync(path.join(__dirname, '../../sections/quote-wizard.liquid'), 'utf8'),
+    fs.readFileSync(path.join(__dirname, '../../assets/quote-wizard.js'), 'utf8'),
+  ].join('\n');
   const start = wizard.indexOf('function packShipDate(now)');
   const end = wizard.indexOf('function journeyStepHtml(');
   assert.ok(start >= 0 && end > start, 'packShipDate / journeyStepHtml markers missing');
