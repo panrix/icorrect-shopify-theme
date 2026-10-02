@@ -860,17 +860,22 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   /* =============================================
      STATE
      ============================================= */
-  var S = { device: null, model: null, modelGroup: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null, route: null, repairType: null, entrySource: null , preVariantId: null, preRepairType: null };
+  var S = { device: null, model: null, modelGroup: null, fault: null, issue: null, step: 1, collectionHandle: null, preFault: null, route: null, repairType: null, entrySource: null , preVariantId: null, preRepairType: null, liquidDeviceUsable: null };
   var _collectionCache = {}, _productCache = {}, _repairsMap = {}, _collectionProducts = [], _trackedSteps = {}, _trackedOps = {};
   var _stepStartTime = Date.now();
   var _suppressScroll = false;
   var _entryTracked = false;
   var _resolutionSeen = false;
   var _resolutionConverted = false;
+  var _liquidGate = null;
+  var _liquidIssue = null;
 
   function clearResolutionState() {
     _resolutionSeen = false;
     _resolutionConverted = false;
+    _liquidGate = null;
+    _liquidIssue = null;
+    S.liquidDeviceUsable = null;
   }
 
   function clearTrackedStepsAfter(step) {
@@ -2846,7 +2851,10 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var titleEl = document.getElementById('qw-s4t');
     if (titleEl && title) titleEl.textContent = title;
     var subEl = document.getElementById('qw-s4s');
-    if (subEl && sub !== undefined) subEl.textContent = sub;
+    if (subEl && sub !== undefined) {
+      subEl.textContent = sub;
+      subEl.hidden = !sub;
+    }
     updateProg(4);
     /* Don't scroll to progress pills — focusQuoteEntry runs after the card renders. */
   }
@@ -3516,7 +3524,10 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     var titleEl = document.getElementById('qw-s4t');
     if (titleEl) titleEl.textContent = fault;
     var subEl = document.getElementById('qw-s4s');
-    if (subEl) subEl.textContent = 'Which best describes the problem?';
+    if (subEl) {
+      subEl.hidden = false;
+      subEl.textContent = 'Which best describes the problem?';
+    }
 
     var faultObj = (FAULTS[dev] || []).find(function(f) { return f.v === fault; });
     var faultIcon = (faultObj && faultObj.icon) || 'other';
@@ -3557,14 +3568,84 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
     /* Advance to the service/pricing screen (same pattern as device → model). */
     setTimeout(function() {
-      if (iss.dustgateCheck && _repairsMap['dustgate']) {
+      if (S.fault === 'Water Damage') {
+        showLiquidUsableQuestion(iss);
+      } else if (iss.dustgateCheck && _repairsMap['dustgate']) {
         showDustgateQuestion(iss);
       } else if (iss.flexgateCheck && _repairsMap['flexgate'] && modelIsFlexgateModel(S.model)) {
         showFlexgateQuestion(iss);
       } else {
+        S.liquidDeviceUsable = null;
+        _liquidGate = null;
+        _liquidIssue = null;
         showResolution(iss);
       }
     }, 150);
+  }
+
+  /* Locked liquid-damage data note (Michael). Do not rewrite. */
+  var LIQUID_USABLE_QUESTION = 'Is the device turning on and usable right now?';
+  var LIQUID_YES_LABEL = 'Yes (usable)';
+  var LIQUID_NO_LABEL = 'No (won\'t turn on / isn\'t usable)';
+  var LIQUID_COPY_USABLE = 'If you can, please back up your device. Liquid damage is unpredictable and may still affect your data, though we\'ll still take every care with your device.';
+  var LIQUID_COPY_NOT_USABLE = 'Liquid damage can be unpredictable. There\'s a small chance data is affected. During the diagnostic we\'ll prioritise protecting your data wherever we can.';
+
+  function liquidUsableLabel() {
+    if (S.fault !== 'Water Damage') return '';
+    if (S.liquidDeviceUsable === true) return 'Yes';
+    if (S.liquidDeviceUsable === false) return 'No';
+    return '';
+  }
+
+  function liquidAcknowledgedCopy() {
+    if (S.liquidDeviceUsable === true) return LIQUID_COPY_USABLE;
+    if (S.liquidDeviceUsable === false) return LIQUID_COPY_NOT_USABLE;
+    return '';
+  }
+
+  function showLiquidUsableQuestion(iss) {
+    var p = document.getElementById('qw-rP');
+    if (!p) return;
+    _liquidGate = 'question';
+    _liquidIssue = iss;
+    S.liquidDeviceUsable = null;
+    openResolutionScreen(LIQUID_USABLE_QUESTION, '');
+    p.innerHTML =
+      '<div class="qw-res"><div class="qw-res-top" style="padding-bottom:24px;">' +
+        '<div class="qw-m-list qw-m-list--flat" role="group" aria-labelledby="qw-s4t">' +
+          '<button type="button" class="qw-m-item qw-choice-btn" id="qwLiqYes"><span class="qw-mn">' + esc(LIQUID_YES_LABEL) + '</span></button>' +
+          '<button type="button" class="qw-m-item qw-choice-btn" id="qwLiqNo"><span class="qw-mn">' + esc(LIQUID_NO_LABEL) + '</span></button>' +
+        '</div>' +
+      '</div></div>';
+    var yesBtn = document.getElementById('qwLiqYes');
+    var noBtn = document.getElementById('qwLiqNo');
+    wireA11y(yesBtn, LIQUID_YES_LABEL);
+    wireA11y(noBtn, LIQUID_NO_LABEL);
+    yesBtn.onclick = function() { showLiquidDataNotice(iss, true); };
+    noBtn.onclick = function() { showLiquidDataNotice(iss, false); };
+    if (!_suppressScroll) focusQuoteEntry();
+  }
+
+  function showLiquidDataNotice(iss, usable) {
+    var p = document.getElementById('qw-rP');
+    if (!p) return;
+    _liquidGate = 'notice';
+    _liquidIssue = iss;
+    S.liquidDeviceUsable = !!usable;
+    var copy = usable ? LIQUID_COPY_USABLE : LIQUID_COPY_NOT_USABLE;
+    openResolutionScreen('Water Damage', '');
+    p.innerHTML =
+      '<div class="qw-res"><div class="qw-res-top" style="padding-bottom:24px;">' +
+        '<p class="qw-res-p">' + esc(copy) + '</p>' +
+        '<div class="qw-res-cta" style="padding:0;">' +
+          '<button type="button" class="qw-btn-book" id="qwLiqOk">I understand</button>' +
+        '</div>' +
+      '</div></div>';
+    document.getElementById('qwLiqOk').onclick = function() {
+      _liquidGate = null;
+      showResolution(iss);
+    };
+    if (!_suppressScroll) focusQuoteEntry();
   }
 
   function showDustgateQuestion(originalIss) {
@@ -3677,6 +3758,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       'Repair Type': repairTypeLabel
     };
     if (selectedColor) mainProps['Device Color'] = selectedColor;
+    var usableLabel = liquidUsableLabel();
+    if (usableLabel) mainProps['Device usable'] = usableLabel;
 
     if (resCard.dataset.needsGlass === '1') {
       var glass = selectedChoice('glass');
@@ -3790,6 +3873,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     add('Device', '_model');
     add('Fault', '_fault');
     add('Issue', '_issue');
+    add('Device usable', 'Device usable');
     add('Repair', 'Repair Type');
     add('Colour', 'Device Color');
     add('Display glass', 'Display glass');
@@ -4329,6 +4413,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       var deviceParts = [];
       if (S.fault) deviceParts.push('Fault: ' + S.fault);
       if (S.issue && S.issue !== S.fault) deviceParts.push('Issue: ' + S.issue);
+      var usableLabel = liquidUsableLabel();
+      if (usableLabel) deviceParts.push('Device usable: ' + usableLabel);
       var fullBody = deviceParts.length ? deviceParts.join('\n') : '';
       if (userMsg) fullBody += (fullBody ? '\n\n' : '') + 'Message:\n' + userMsg;
 
@@ -4440,6 +4526,8 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       var t = qwText(p);
       if (t) paragraphs.push(t);
     });
+    var acknowledged = liquidAcknowledgedCopy();
+    if (acknowledged && paragraphs.indexOf(acknowledged) === -1) paragraphs.push(acknowledged);
     var svc = document.querySelector('.qw-opt-card.sel[data-opt="svc"]');
     var serviceName = '';
     var serviceMeta = '';
@@ -4837,6 +4925,10 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
   var b3 = document.getElementById('qw-back3'); if (b3) b3.onclick = function() { go(2); };
   var b4 = document.getElementById('qw-back4');
   if (b4) b4.onclick = function() {
+    if (_liquidGate === 'notice' && _liquidIssue) {
+      showLiquidUsableQuestion(_liquidIssue);
+      return;
+    }
     /* From pricing/service screen → back to issue list (same step shell). */
     if (resolutionScreenOpen() && S.fault && S.fault !== 'Other') {
       clearResolutionState();
