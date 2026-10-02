@@ -3110,7 +3110,7 @@
   var LIQUID_YES_LABEL = 'Yes (usable)';
   var LIQUID_NO_LABEL = 'No (won\'t turn on / isn\'t usable)';
   var LIQUID_COPY_USABLE = 'If you can, please back up your device. Liquid damage is unpredictable and may still affect your data, though we\'ll still take every care with your device.';
-  var LIQUID_COPY_NOT_USABLE = 'Liquid damage can be unpredictable. There\'s a small chance data is affected. During the diagnostic we\'ll prioritise protecting your data wherever we can.';
+  var LIQUID_COPY_NOT_USABLE = 'Liquid damage can be unpredictable. There\'s a small chance your data could be affected. During the diagnostic we\'ll prioritise protecting your data wherever we can.';
 
   function liquidUsableLabel() {
     if (S.fault !== 'Water Damage') return '';
