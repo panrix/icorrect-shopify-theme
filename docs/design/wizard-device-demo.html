@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quote wizard — device preview</title>
+<style>
+  :root {
+    --font-sans: Arial, Helvetica, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    --qw-text-2: #4d4d4d;
+    --qw-line: rgba(0,0,0,0.08);
+    --ri-ink: #1d1d1f;
+    --ri-accent: #0070f3;
+    --ri-accent-soft: rgba(0,112,243,0.1);
+    --ri-soft: #f5f5f7;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f4f4f5; color: #171717; font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+  .banner { max-width: 1180px; margin: 0 auto; padding: 18px 20px 0; font: 600 11px/1.4 var(--font-sans); letter-spacing: 0.04em; text-transform: uppercase; color: #666; }
+  .split { max-width: 1180px; margin: 0 auto; padding: 12px 20px 48px; display: grid; grid-template-columns: 300px 1fr; gap: 22px; align-items: start; }
+  .preview { position: sticky; top: 16px; background: #fafafa; border-radius: 16px; box-shadow: 0 0 0 1px rgba(0,0,0,0.08); padding: 16px 14px 14px; }
+  .preview h2 { margin: 0 0 4px; font: 600 15px/1.3 var(--font-sans); letter-spacing: -0.3px; }
+  .preview .who { min-height: 2.6em; margin: 0 0 8px; color: #4d4d4d; font: 400 13px/1.4 var(--font-sans); }
+  .art { min-height: 360px; display: flex; align-items: center; justify-content: center; }
+  .faces { position: relative; }
+  .face { transition: opacity 180ms ease; }
+  .face-back { position: absolute; inset: 0; opacity: 0; }
+  .preview.is-back .face-front { opacity: 0; }
+  .preview.is-back .face-back { opacity: 1; }
+  .pill { display: block; width: fit-content; margin: 8px auto 0; padding: 3px 8px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.08); font: 600 11px/1.4 var(--font-sans); letter-spacing: 0.04em; text-transform: uppercase; color: #666; }
+  .cap { min-height: 2.6em; margin: 8px 4px 0; text-align: center; color: #4d4d4d; font: 400 13px/1.4 var(--font-sans); }
+  .qw-wizard { background: #fff; border-radius: 18px; box-shadow: 0 0 0 1px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.04); padding: 28px 28px 32px; }
+  .qw-head { margin-bottom: 20px; }
+  .qw-title { margin: 0 0 8px; font: 600 34px/1.1 var(--font-sans); letter-spacing: -1.4px; }
+  .qw-sub { margin: 0; font: 400 15px/1.55 var(--font-sans); color: #4d4d4d; max-width: 36em; }
+  .qw-progress { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin-bottom: 20px; }
+  .qw-mono { font-family: var(--font-mono); font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; color: #666; }
+  .qw-dots { display: flex; flex-wrap: wrap; gap: 6px; }
+  .qw-dot { display: flex; align-items: center; gap: 6px; padding: 5px 10px 5px 5px; border-radius: 999px; box-shadow: 0 0 0 1px rgba(0,0,0,0.08); background: #fff; border: 0; cursor: pointer; font-family: var(--font-sans); color: #171717; }
+  .qw-dot:disabled { cursor: default; opacity: 0.55; }
+  .qw-dot.done { background: #171717; color: #fff; box-shadow: none; }
+  .qw-dot.current { box-shadow: 0 0 0 2px #171717; }
+  .qw-dot-num { width: 18px; height: 18px; border-radius: 50%; background: #fafafa; box-shadow: 0 0 0 1px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; font: 600 10px var(--font-mono); }
+  .qw-dot.done .qw-dot-num { background: #fff; color: #171717; box-shadow: none; }
+  .qw-dot-label { font: 500 12px var(--font-sans); }
+  .qw-crumb { display: flex; flex-wrap: wrap; gap: 2px; margin-bottom: 16px; min-height: 0; }
+  .qw-crumb:empty { margin: 0; }
+  .qw-crumb-btn { background: none; border: 0; font: 500 12px var(--font-sans); color: #666; cursor: pointer; padding: 2px 4px; border-radius: 4px; }
+  .qw-crumb-btn:hover { color: #171717; background: #fafafa; }
+  .qw-crumb-sep { color: #b8b8b8; font-size: 12px; }
+  .qw-step { display: none; }
+  .qw-step.on { display: block; }
+  .qw-step-title { margin: 0 0 6px; font: 600 28px/1.15 var(--font-sans); letter-spacing: -1.12px; }
+  .qw-step-sub { margin: 0 0 20px; font: 400 15px/1.5 var(--font-sans); color: #4d4d4d; }
+  .qw-back { display: inline-flex; align-items: center; gap: 5px; background: none; border: 0; font: 500 13px var(--font-sans); color: #666; cursor: pointer; padding: 0; margin-bottom: 12px; }
+  .qw-back svg { width: 15px; height: 15px; }
+  .qw-back:hover { color: #171717; }
+  .qw-dev-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .qw-dev { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 24px 12px; border: 0; background: #fff; border-radius: 12px; box-shadow: 0 0 0 1px rgba(0,0,0,0.08), 0 2px 2px rgba(0,0,0,0.04); cursor: pointer; font-family: var(--font-sans); min-height: 100px; }
+  .qw-dev:hover { box-shadow: 0 0 0 1px #171717, 0 2px 8px rgba(0,0,0,0.06); }
+  .qw-dev.sel { box-shadow: 0 0 0 2px #171717; }
+  .qw-dev-ico { width: 36px; height: 36px; }
+  .qw-dev-ico svg { width: 100%; height: 100%; }
+  .qw-dev-lbl { font: 600 14px/1.3 var(--font-sans); letter-spacing: -0.28px; }
+  .qw-series-grid, .qw-m-list { display: flex; flex-direction: column; gap: 8px; }
+  .qw-series-card, .qw-m-item { display: flex; align-items: center; gap: 12px; width: 100%; padding: 16px 18px; border: 0; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.08); cursor: pointer; text-align: left; font-family: var(--font-sans); color: #171717; }
+  .qw-m-item { border: 1px solid #e5e5e5; box-shadow: none; border-radius: 12px; }
+  .qw-series-card:hover, .qw-m-item:hover { box-shadow: 0 0 0 1px #171717; }
+  .qw-m-item.sel { border: 2px solid #171717; padding: 15px 17px; }
+  .qw-series-name, .qw-mn { flex: 1; font: 600 15px/1.3 var(--font-sans); letter-spacing: -0.3px; }
+  .qw-series-count { font: 500 12px var(--font-sans); color: #808080; }
+  .qw-series-chev { width: 18px; height: 18px; color: #808080; }
+  .qw-m-item--change .qw-mn { font-style: italic; font-weight: 500; color: #525252; }
+  .qw-hint { margin: 0 0 16px; padding: 14px 16px; border-radius: 12px; background: #f5f5f7; font: 400 13px/1.45 var(--font-sans); color: #6b6b6b; text-align: center; }
+  .qw-f-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .qw-f-card { display: flex; flex-direction: column; align-items: center; gap: 8px; min-height: 96px; padding: 16px 8px; border: 0; background: #fff; border-radius: 10px; box-shadow: 0 0 0 1px rgba(0,0,0,0.08); cursor: pointer; font-family: var(--font-sans); color: #171717; }
+  .qw-f-card:hover { box-shadow: 0 0 0 1px #171717; }
+  .qw-f-card.sel { box-shadow: 0 0 0 2px #171717; background: #fafafa; }
+  .qw-f-ico { width: 28px; height: 28px; color: #4d4d4d; }
+  .qw-f-ico svg, .qw-tw svg { width: 100%; height: 100%; }
+  .qw-f-lbl { font: 600 13px/1.3 var(--font-sans); letter-spacing: -0.26px; text-align: center; }
+  .qw-t-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .qw-t-card { display: flex; align-items: flex-start; gap: 12px; width: 100%; padding: 16px 18px; border: 0; background: #fff; border-radius: 10px; box-shadow: 0 0 0 1px rgba(0,0,0,0.08); cursor: pointer; text-align: left; font-family: var(--font-sans); color: #171717; }
+  .qw-t-card:hover { box-shadow: 0 0 0 1px rgba(0,0,0,0.3); }
+  .qw-t-card.sel { box-shadow: 0 0 0 2px #171717; background: #fafafa; }
+  .qw-tw { width: 36px; height: 36px; border-radius: 8px; background: #fafafa; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center; flex: none; color: #4d4d4d; }
+  .qw-tw svg { width: 18px; height: 18px; }
+  .qw-t-card.sel .qw-tw { background: #f0f7ff; }
+  .qw-tt { font: 600 14px/1.3 var(--font-sans); letter-spacing: -0.28px; }
+  button:focus-visible { outline: 2px solid #0070f3; outline-offset: 2px; }
+  .dg { --dg-hl: 1; display: inline-block; width: var(--dg-w); line-height: 0; }
+  .dg--iphone { --dg-w: 168px; } .dg--ipad { --dg-w: 210px; } .dg--macbook { --dg-w: 270px; } .dg--watch { --dg-w: 132px; }
+  .dg__svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .dg__svg * { vector-effect: non-scaling-stroke; stroke: var(--ri-ink); stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; }
+  .dg-body, .dg-btn, .dg-base, .dg-slab, .dg-guard { fill: #fff; } .dg-body { stroke-width: 1.75px; }
+  .dg-band, .dg-keyboard, .dg-trackpad { fill: var(--ri-soft); } .dg-keyboard, .dg-trackpad { stroke: rgba(29,29,31,0.28); }
+  .dg-glass { fill: #fbfbfc; } .dg-frame { fill: none; stroke: rgba(29,29,31,0.12); stroke-width: 1px; }
+  .dg-frame--bold { stroke: rgba(29,29,31,0.5); stroke-width: 2.5px; }
+  .dg-screen { fill: #e9ebef; stroke: rgba(29,29,31,0.22); } .dg-sheen { fill: #fff; stroke: none; opacity: 0.6; }
+  .dg-shadow { fill: rgba(0,0,0,0.07); stroke: none; } .dg-cam { fill: #3a3a3c; stroke: none; }
+  .dg-island, .dg-notch { fill: var(--ri-ink); stroke: none; } .dg-home { fill: #fff; stroke: rgba(29,29,31,0.45); }
+  .dg-flash { fill: #ececee; stroke: rgba(29,29,31,0.4); } .dg-module { fill: #f2f2f4; stroke: rgba(29,29,31,0.55); }
+  .dg-lens-ring { fill: #fff; } .dg-lens, .dg-lidar, .dg-touchbar-strip { fill: #2c2c2e; stroke: none; }
+  .dg-earpiece { stroke: rgba(29,29,31,0.28); stroke-width: 1.6px; } .dg-port { fill: #cfd1d5; stroke: none; }
+  .dg-port-side { stroke: #b9bcc2; stroke-width: 3px; } .dg-grille, .dg-leds { stroke: rgba(29,29,31,0.4); stroke-width: 2.6px; }
+  .dg-hinge { stroke: rgba(29,29,31,0.16); } .dg-lip { stroke: rgba(29,29,31,0.22); fill: none; }
+  .dg-fnrow, .dg-keys { fill: none; stroke: rgba(29,29,31,0.22); stroke-width: 2.4px; stroke-dasharray: 6 2.4; stroke-linecap: butt; }
+  .dg-fnrow { stroke-dasharray: 9 2.4; } .dg-sensor { fill: none; }
+  .dg-crack, .dg-shatter, .dg-fault, .dg-blot, .dg-battery, .dg-dust, .dg-scan, .dg-lens-crack { display: none; }
+  .dg .is-hl { display: inline; stroke: var(--ri-accent); stroke-width: calc(1.5px * var(--dg-hl)); fill: var(--ri-accent-soft); filter: drop-shadow(0 0 5px rgba(0,112,243,0.4)); }
+  .dg .dg-cam.is-hl, .dg .dg-island.is-hl, .dg .dg-notch.is-hl, .dg .dg-lens.is-hl, .dg .dg-port.is-hl, .dg .dg-touchbar-strip.is-hl { fill: var(--ri-accent); }
+  .dg .dg-port.is-hl { transform-box: fill-box; transform-origin: center bottom; transform: scaleY(1.8); }
+  .dg .dg-lens-ring.is-hl { fill: #fff; } .dg .dg-sensor.is-hl { fill: none; }
+  .dg .dg-grille--dots.is-hl { stroke-width: 11px; } .dg .dg-earpiece.is-hl { stroke-width: 2.6px; }
+  .dg .dg-port-side.is-hl { stroke-width: 4.5px; } .dg .dg-battery.is-hl { stroke-dasharray: 4 3; }
+  .dg .dg-keys.is-hl, .dg .dg-fnrow.is-hl { fill: none; stroke-width: 2.4px; }
+  .dg .dg-dust.is-hl { stroke-width: 3.2px; } .dg .dg-hinge.is-hl { stroke-width: 2.4px; }
+  .dg .dg-screen.is-hl ~ .dg-sheen { opacity: 0.35; }
+  .dg--part-screen .dg-crack, .dg--part-glass .dg-crack--back, .dg--part-lens .dg-lens-crack, .dg--part-glassfront .dg-shatter {
+    display: inline; fill: none; stroke: var(--ri-accent); stroke-width: 1.3px;
+  }
+  .dg--part-glassfront .dg-screen { stroke: var(--ri-accent); stroke-width: 2px; }
+  .dg--part-scan .dg-scan { display: inline; fill: var(--ri-accent); stroke: none; }
+  @media (max-width: 900px) {
+    .split { grid-template-columns: 1fr; }
+    .preview { position: static; }
+    .qw-f-grid { grid-template-columns: repeat(2, 1fr); }
+    .qw-dev-grid { grid-template-columns: repeat(2, 1fr); }
+    .qw-t-grid { grid-template-columns: 1fr; }
+    .qw-title { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+<p class="banner">Demo · current quote wizard, plus the device drawing</p>
+<div class="split">
+  <aside class="preview" id="preview">
+    <h2>Your device</h2>
+    <p class="who" id="who">Pick a model. The drawing uses that model’s shape.</p>
+    <div class="art" id="art"></div>
+    <span class="pill" id="pill" hidden>Front</span>
+    <p class="cap" id="cap"></p>
+  </aside>
+  <section class="qw-wizard" id="wizard">
+    <div class="qw-head">
+      <h1 class="qw-title">Get your repair quote</h1>
+      <p class="qw-sub" id="qw-sub">We'll collect your device same day in London, nationwide by courier.</p>
+    </div>
+    <div class="qw-progress" role="navigation" aria-label="Progress">
+      <div><span class="qw-mono" id="qwProgMono">Step 1 of 4</span></div>
+      <div class="qw-dots" id="dots"></div>
+    </div>
+    <div class="qw-crumb" id="crumb"></div>
+    <div class="qw-step on" id="qw-s1">
+      <h2 class="qw-step-title">What needs fixing?</h2>
+      <p class="qw-step-sub">Pick your device to get started.</p>
+      <div class="qw-dev-grid" id="devGrid"></div>
+    </div>
+    <div class="qw-step" id="qw-s2">
+      <button type="button" class="qw-back" id="back2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+      <h2 class="qw-step-title" id="s2t"></h2>
+      <p class="qw-step-sub" id="s2s"></p>
+      <div id="mC"></div>
+    </div>
+    <div class="qw-step" id="qw-s3">
+      <button type="button" class="qw-back" id="back3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+      <h2 class="qw-step-title" id="s3t"></h2>
+      <p class="qw-step-sub">Pick the category that fits best.</p>
+      <div class="qw-f-grid" id="fC"></div>
+    </div>
+    <div class="qw-step" id="qw-s4">
+      <button type="button" class="qw-back" id="back4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+      <h2 class="qw-step-title" id="s4t"></h2>
+      <p class="qw-step-sub" id="s4s"></p>
+      <div class="qw-t-grid" id="tC"></div>
+    </div>
+  </section>
+</div>
+<script>
+(function () {
+  var DN = { iphone: "iPhone", macbook: "MacBook", ipad: "iPad", watch: "Apple Watch" };
+  var CHEV = '<svg class="qw-series-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>';
+  var BACK_PARTS = { camera: 1, lens: 1, glass: 1, sensor: 1 };
+  function R() { var o = {}; for (var i = 0; i < arguments.length; i++) o[arguments[i]] = 1; return o; }
+  function I(label, route, type, flags, icon) {
+    var o = { label: label, route: route, repairType: type, icon: icon || null };
+    if (flags) flags.split(" ").forEach(function (f) { if (f) o[f] = true; });
+    return o;
+  }
+  var MODELS = {
+    iphone: [
+      { group: "iPhone 16", models: [{ name: "iPhone 16", kind: "iphone-island", lenses: 2, repairs: R("battery","charging-port","diagnostic","earpiece","front-camera","loudspeaker","microphone","power-button","rear-camera","rear-camera-lens","rear-glass","screen","volume-button") }] },
+      { group: "iPhone SE", models: [{ name: "iPhone SE 3rd Gen (2022)", kind: "iphone-home", lenses: 1, repairs: R("battery","charging-port","diagnostic","earpiece","front-camera","loudspeaker","microphone","mute-button","power-button","rear-camera","rear-camera-lens","rear-glass","screen","volume-button") }] }
+    ],
+    macbook: [
+      { group: "MacBook Air", models: [{ name: "MacBook Air 13-inch 'M3' A3113 (2024)", kind: "macbook-notch-air", repairs: R("battery","charging-port","diagnostic","keyboard","screen","trackpad") }] },
+      { group: "MacBook Pro", models: [{ name: "MacBook Pro 13-inch A2159 (2019)", kind: "macbook-touchbar", touchbar: true, repairs: R("battery","charging-port","diagnostic","dustgate","keyboard","screen","touch-bar","trackpad") }] }
+    ],
+    ipad: [
+      { group: "iPad", models: [{ name: "iPad 9th Gen (2021)", kind: "ipad-home", repairs: R("battery","charging-port","diagnostic","screen","screen-glass") }] },
+      { group: "iPad Pro", models: [{ name: "iPad Pro 11-inch M4 (2024)", kind: "ipad-pro", pro: true, repairs: R("battery","charging-port","diagnostic","screen") }] }
+    ],
+    watch: [
+      { group: "Apple Watch SE", models: [{ name: "Apple Watch SE 44MM", kind: "watch-classic", repairs: R("battery","crown","diagnostic","heart-rate-monitor","screen","screen-glass","side-button") }] },
+      { group: "Apple Watch Ultra", models: [{ name: "Apple Watch Ultra 2", kind: "watch-ultra", repairs: R("battery","diagnostic","heart-rate-monitor","screen","screen-glass","side-button") }] }
+    ]
+  };
+  var FAULTS = {
+    macbook: [["Screen / Display","screen"],["Power / Battery / Charging","battery"],["Trackpad / Keyboard","keyboard"],["Touch Bar","touch-bar"],["Audio / Mic / Speaker","audio"],["Water Damage","water"],["Data Recovery","data"],["Other","other"]],
+    iphone: [["Screen / Display","screen"],["Power / Battery / Charging","battery"],["Camera","camera"],["Audio / Mic / Speaker","audio"],["Buttons","iphone-buttons"],["Connectivity","connectivity"],["Rear Glass","rear-glass"],["Water Damage","water"],["Data Recovery","data"],["Other","other"]],
+    ipad: [["Screen / Display","screen"],["Power / Battery / Charging","battery"],["Camera","camera"],["Water Damage","water"],["Data Recovery","data"],["Other","other"]],
+    watch: [["Screen / Display","screen"],["Power / Battery / Charging","battery"],["Rear Glass","rear-glass"],["Crown","buttons"],["Water Damage","water"],["Other","other"]]
+  };
+  var MAP = { screen:"Screen / Display","screen-glass":"Screen / Display",dustgate:"Screen / Display",flexgate:"Screen / Display",battery:"Power / Battery / Charging","charging-port":"Power / Battery / Charging",keyboard:"Trackpad / Keyboard",trackpad:"Trackpad / Keyboard","touch-bar":"Touch Bar",loudspeaker:"Audio / Mic / Speaker",earpiece:"Audio / Mic / Speaker",microphone:"Audio / Mic / Speaker","rear-camera":"Camera","rear-camera-lens":"Camera","front-camera":"Camera","face-id":"Camera","rear-glass":"Rear Glass","heart-rate-monitor":"Rear Glass","power-button":"Buttons","volume-button":"Buttons","mute-button":"Buttons",crown:"Crown" };
+  var ICONS = {
+    screen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',
+    battery: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
+    keyboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 16h8"/></svg>',
+    "touch-bar": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="9" width="20" height="6" rx="3"/><circle cx="7" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="17" cy="12" r="1"/></svg>',
+    audio: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/></svg>',
+    camera: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>',
+    "rear-glass": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="6" r="1.5"/><path d="M10 18h4"/></svg>',
+    buttons: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="2"/><circle cx="12" cy="16" r="2"/><rect x="7" y="3" width="10" height="18" rx="3"/></svg>',
+    "iphone-buttons": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="7" y="2" width="10" height="20" rx="2.6"/><path d="M4.6 6.2v2.2M4.6 10.2v3.2M4.6 15.2v3.2M19.4 8.5v5"/></svg>',
+    "mute-button": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="7" y="2" width="10" height="20" rx="2.6"/><path d="M4.6 6.2v2.4"/></svg>',
+    "volume-button": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="7" y="2" width="10" height="20" rx="2.6"/><path d="M4.6 9.4v3.4M4.6 14.4v3.4"/></svg>',
+    "power-button": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="7" y="2" width="10" height="20" rx="2.6"/><path d="M19.4 8v6"/></svg>',
+    water: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>',
+    data: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>',
+    other: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>',
+    connectivity: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12.55a11 11 0 0114.08 0M8.53 16.11a6 6 0 016.95 0"/><circle cx="12" cy="20" r="1"/></svg>',
+    macbook: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M2 17h20M8 21h8M12 17v4"/></svg>',
+    iphone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="1" width="12" height="22" rx="2.5"/><path d="M10 19h4"/></svg>',
+    ipad: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M10 18h4"/></svg>',
+    watch: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="4" width="12" height="16" rx="6"/><path d="M9 1h6M9 23h6"/></svg>'
+  };
+  var TS = {
+    macbook: {
+      "Screen / Display": [I("Cracked or shattered screen","repair","screen","noTrueTone"), I("Cracked or shattered screen","repair","screen","trueToneOnly"), I("Thick bands, artefacts, or distortion","repair","screen"), I("Dead pixels or bright spots","repair","screen"), I("No image, backlight on, external monitor works","repair","screen"), I("No image, no backlight or no external picture","diagnostic","diagnostic"), I("Backlight fading or dim at angle","repair","screen","flexgateModelsOnly"), I("Backlight fading or dim at angle","repair","screen","notFlexgateModels")],
+      "Power / Battery / Charging": [I("Battery draining quickly","repair","battery"), I('"Service Recommended" warning',"repair","battery"), I("Battery swollen or expanding","repair","battery"), I("Won't turn on","diagnostic","diagnostic"), I("Random shutdowns or reboots","diagnostic","diagnostic"), I("Device powers on, but will not charge","repair","charging-port")],
+      "Trackpad / Keyboard": [I("Keys not responding","repair","keyboard"), I("Sticky, stuck, or crunchy keys","repair","keyboard"), I("Trackpad not clicking","repair","trackpad"), I("Ghost typing or phantom input","repair","keyboard"), I("Missing or broken keycap","repair","keyboard"), I("Physically damaged trackpad","repair","trackpad")],
+      "Touch Bar": [I("Touch Bar not responding or frozen","repair","touch-bar"), I("Touch Bar flickering or displaying incorrectly","repair","touch-bar"), I("Touch Bar cracked or physically damaged","repair","touch-bar")],
+      "Audio / Mic / Speaker": [I("No sound from speakers","contact",null), I("Crackling or distorted audio","contact",null), I("Microphone not working","contact",null)],
+      "Water Damage": [I("Spilled liquid recently (within 24 hours)","diagnostic","diagnostic"), I("Spilled liquid (more than 24 hours ago)","diagnostic","diagnostic"), I("Partial failure after liquid exposure","diagnostic","diagnostic"), I("MacBook was submerged","diagnostic","diagnostic")],
+      "Data Recovery": [I("Drive not mounting or not detected","diagnostic","diagnostic"), I("Accidentally deleted files","contact",null), I("MacBook dead, need data","diagnostic","diagnostic")],
+      "Other": [I("Overheating or fans running loud","contact",null), I("Slow performance","contact",null), I("Something else","contact",null)]
+    },
+    iphone: {
+      "Screen / Display": [I("Cracked glass (touch still works)","repair","screen","lcdOnly"), I("Cracked glass (touch still works)","repair","screen","oledOnly"), I("Touch not responding","repair","screen"), I("Lines, discolouration, or green line","repair","screen"), I("Black screen (phone still vibrates/rings)","repair","screen"), I("No display, no response","diagnostic","diagnostic")],
+      "Power / Battery / Charging": [I("Battery drains fast","repair","battery"), I("Won't turn on","diagnostic","diagnostic"), I("Random shutdowns or reboots","diagnostic","diagnostic"), I("Swollen battery","repair","battery"), I("Device powers on, but will not charge","repair","charging-port")],
+      "Camera": [I("Back camera blurry or shaking","repair","rear-camera"), I("Back camera: no preview or it freezes","diagnostic","diagnostic"), I("Front camera: Face ID error or TrueDepth message","repair","front-camera","faceIdOnly"), I("Front camera not working","repair","front-camera","noFaceIdOnly"), I("Front camera: no preview or it freezes","diagnostic","diagnostic"), I("Condensation in camera","diagnostic","diagnostic")],
+      "Audio / Mic / Speaker": [I("No sound or low volume from speaker","repair","loudspeaker"), I("Earpiece quiet or silent during calls","repair","earpiece"), I("Microphone not picking up voice","repair","microphone")],
+      "Buttons": [I("Power button stuck or not responding","repair","power-button","","power-button"), I("Volume buttons stuck or not responding","repair","volume-button","","volume-button"), I("Mute switch stuck or not clicking","repair","mute-button","","mute-button")],
+      "Rear Glass": [I("Cracked back glass","repair","rear-glass"), I("Camera lens cover cracked","repair","rear-camera-lens")],
+      "Water Damage": [I("Dropped in liquid (within 24 hours)","diagnostic","diagnostic"), I("Liquid damage (more than 24 hours ago)","diagnostic","diagnostic")],
+      "Data Recovery": [I("Phone dead, need data","diagnostic","diagnostic"), I("Forgotten passcode","dismiss",null)],
+      "Connectivity": [I('No signal / "No Service" / "SOS only"',"diagnostic","diagnostic"), I("eSIM not detected","diagnostic","diagnostic","esimOnly"), I("SIM not detected","diagnostic","diagnostic","simTrayOnly"), I("WiFi not connecting or greyed out","diagnostic","diagnostic"), I("Bluetooth not working","diagnostic","diagnostic")],
+      "Other": [I("Vibration not working","contact",null), I("Something else","contact",null)]
+    },
+    ipad: {
+      "Screen / Display": [I("Cracked glass only (display still works)","repair","screen-glass"), I("Cracked glass only (display still works)","repair","screen","onlyWhenMissing"), I("Touch not responding","repair","screen"), I("Blotches, lines, or a damaged display","repair","screen"), I("Black screen (sound or buttons still work)","repair","screen"), I("No display, no response","diagnostic","diagnostic")],
+      "Power / Battery / Charging": [I("Battery drains quickly","repair","battery"), I("Won't turn on","diagnostic","diagnostic","ipadHomeButton"), I("Won't turn on","diagnostic","diagnostic","ipadNoHomeButton"), I("Battery swollen or screen lifting","repair","battery"), I("Device powers on, but will not charge","repair","charging-port")],
+      "Camera": [],
+      "Water Damage": [I("Dropped in liquid (within 24 hours)","diagnostic","diagnostic"), I("Liquid damage (more than 24 hours ago)","diagnostic","diagnostic"), I("Partial failure after liquid exposure","diagnostic","diagnostic"), I("iPad was submerged","diagnostic","diagnostic")],
+      "Data Recovery": [I("Need data from broken iPad","diagnostic","diagnostic")],
+      "Other": [I("No sound from speakers","contact",null), I("Microphone not working","contact",null), I("WiFi not connecting","diagnostic","diagnostic"), I("Bluetooth not working","diagnostic","diagnostic"), I("Something else","contact",null)]
+    },
+    watch: {
+      "Screen / Display": [I("Cracked screen (display still works)","repair","screen-glass"), I("Cracked screen (display damaged or bleeding)","repair","screen"), I("Display dead or unresponsive","repair","screen")],
+      "Power / Battery / Charging": [I("Won't charge","diagnostic","diagnostic"), I("Battery drains fast","repair","battery"), I("Won't turn on","diagnostic","diagnostic"), I("Battery swollen or back popping off","repair","battery")],
+      "Rear Glass": [I("Cracked back crystal / sensor glass","repair","heart-rate-monitor","noBloodOxygen"), I("Cracked back crystal / sensor glass","repair","heart-rate-monitor","bloodOxygenOnly")],
+      "Crown": [I("Digital Crown stuck or not rotating","repair","crown")],
+      "Water Damage": [I("Water ingress despite water resistance","diagnostic","diagnostic"), I("Submerged beyond depth rating","diagnostic","diagnostic")],
+      "Other": [I("Bluetooth not connecting to phone","diagnostic","diagnostic"), I("WiFi not working","diagnostic","diagnostic"), I("Something else","contact",null)]
+    }
+  };
+  var LOOKUP = { screen:["screen","front","screen"], "screen-glass":["","front","glassfront"], dustgate:["dust","front"], flexgate:["hinge","front","hinge"], battery:["battery","front"], "charging-port":["port","front"], "rear-camera":["camera","back"], "rear-camera-lens":["lens","back","lens"], "rear-glass":["glass","back","glass"], "front-camera":["fcam","front"], "face-id":["fcam","front"], earpiece:["earpiece","front"], loudspeaker:["grille","front"], microphone:["grille","front"], "power-button":["power","front"], "volume-button":["volume","front"], "mute-button":["mute","front"], crown:["crown","front"], keyboard:["keyboard","front"], trackpad:["trackpad","front"], "touch-bar":["touchbar","front"], "heart-rate-monitor":["sensor","back"], diagnostic:["scan","front","scan"] };
+  var SEL = { screen:".dg-screen", dust:".dg-dust", hinge:".dg-hinge", battery:".dg-battery", port:".dg-port, .dg-port-side", camera:".dg-module, .dg-lens-ring, .dg-lens", lens:".dg-lens-ring, .dg-lens", glass:".dg-glass", fcam:".dg-island, .dg-notch, .dg-cam", earpiece:".dg-earpiece", grille:".dg-grille", power:".dg-btn-power", volume:".dg-btn-volume", mute:".dg-btn-mute", crown:".dg-crown, .dg-crown-mate", keyboard:".dg-keyboard, .dg-keys, .dg-fnrow", trackpad:".dg-trackpad", touchbar:".dg-touchbar-strip", sensor:".dg-sensor, .dg-leds" };
+
+  var S = { step: 1, device: null, group: null, model: null, fault: null, issue: null, showingModels: false };
+  var hover = null;
+  var STEPS = ["Device","Model","Fault","Service"];
+
+  function modelName() { return S.model ? S.model.name : ""; }
+  function hasFaceId(n) { return !/iPhone\s*SE\b/i.test(n) && !/\biPhone\s*8(\s*Plus)?\b/i.test(n); }
+  function hasLcd(n) { return /iPhone\s*SE\b|iPhone\s*XR\b|\biPhone\s*8(\s*Plus)?\b|iPhone\s*11(?!\s*Pro)\b/i.test(n); }
+  function esimOnly(n) { return /iPhone\s*Air\b/i.test(n); }
+  function trueTone(n) { return !/\bA1466\b|\bA1706\b|\bA1707\b|\bA1708\b/i.test(n); }
+  function bloodOx(n) { if (/Apple Watch SE\b|Series\s*(2|3|4|5)\b/i.test(n)) return false; return /Ultra|Series\s*(6|7|8|9|10)\b/i.test(n); }
+  function ipadHome(n) { return /iPad\s+Air\s+3|iPad\s+Mini\s+5/i.test(n) || (/iPad\s+(5|6|7|8|9)th\s+Gen/i.test(n) && !/Air|Mini|Pro/i.test(n)); }
+  function flexgate(n) { return /\bA1706\b|\bA1707\b|\bA1708\b/.test(n); }
+  function faultsFor() {
+    var map = S.model.repairs, allowed = {}, list = FAULTS[S.device];
+    list.forEach(function (f) { allowed[f[0]] = 1; });
+    var on = { "Water Damage": 1, "Data Recovery": 1, Other: 1 };
+    if (S.device === "iphone") on.Connectivity = 1;
+    Object.keys(map).forEach(function (rt) { var f = MAP[rt]; if (f && allowed[f]) on[f] = 1; });
+    return list.filter(function (f) { return on[f[0]]; });
+  }
+  function issuesFor(fault) {
+    var issues = (TS[S.device] && TS[S.device][fault]) || [];
+    var n = modelName(), map = S.model.repairs;
+    var face = hasFaceId(n), lcd = hasLcd(n), esim = esimOnly(n), tt = trueTone(n), ox = bloodOx(n), home = ipadHome(n), flex = flexgate(n);
+    return issues.filter(function (iss) {
+      if (iss.flexgateModelsOnly && !flex) return false;
+      if (iss.notFlexgateModels && flex) return false;
+      if (iss.faceIdOnly && !face) return false;
+      if (iss.noFaceIdOnly && face) return false;
+      if (iss.lcdOnly && !lcd) return false;
+      if (iss.oledOnly && lcd) return false;
+      if (iss.esimOnly && !esim) return false;
+      if (iss.simTrayOnly && esim) return false;
+      if (iss.trueToneOnly && !tt) return false;
+      if (iss.noTrueTone && tt) return false;
+      if (iss.bloodOxygenOnly && !ox) return false;
+      if (iss.noBloodOxygen && ox) return false;
+      if (iss.ipadHomeButton && !home) return false;
+      if (iss.ipadNoHomeButton && home) return false;
+      if (iss.onlyWhenMissing && map["screen-glass"]) return false;
+      if (iss.route === "contact" || iss.route === "dismiss") return true;
+      if (iss.route === "diagnostic") return !!map.diagnostic;
+      return !!map[iss.repairType];
+    });
+  }
+  function lookFor(iss) {
+    if (!iss || !iss.repairType || !LOOKUP[iss.repairType]) return null;
+    var row = LOOKUP[iss.repairType].slice();
+    if (S.device === "macbook" && (row[0] === "camera" || row[0] === "lens" || row[0] === "glass")) row = ["scan","front","scan"];
+    return { part: row[0], face: row[1], mod: row[2] || "", label: iss.label };
+  }
+
+  function rect(c,x,y,w,h,rx){return '<rect class="'+c+'" x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+rx+'"/>';}
+  function svg(vb, body){return '<svg class="dg__svg" viewBox="'+vb+'" fill="none" aria-hidden="true">'+body+"</svg>";}
+  function iphoneButtons(home, face) {
+    if (face === "back") return home ? rect("dg-btn",109,38,4.5,10,2.25)+rect("dg-btn",109,56,4.5,18,2.25)+rect("dg-btn",109,80,4.5,18,2.25)+rect("dg-btn",6.5,58,4.5,26,2.25) : rect("dg-btn",109,50,4.5,12,2.25)+rect("dg-btn",109,70,4.5,20,2.25)+rect("dg-btn",109,96,4.5,20,2.25)+rect("dg-btn",6.5,80,4.5,32,2.25);
+    return home ? rect("dg-btn dg-btn-mute",6.5,38,4.5,10,2.25)+rect("dg-btn dg-btn-volume",6.5,56,4.5,18,2.25)+rect("dg-btn dg-btn-volume",6.5,80,4.5,18,2.25)+rect("dg-btn dg-btn-power",109,58,4.5,26,2.25) : rect("dg-btn dg-btn-mute",6.5,50,4.5,12,2.25)+rect("dg-btn dg-btn-volume",6.5,70,4.5,20,2.25)+rect("dg-btn dg-btn-volume",6.5,96,4.5,20,2.25)+rect("dg-btn dg-btn-power",109,80,4.5,32,2.25);
+  }
+  function iphone(kind, face) {
+    var home = kind === "iphone-home", rx = home ? 18 : 22, fr = home ? 15.5 : 19.5;
+    var shell = '<ellipse class="dg-shadow" cx="60" cy="244" rx="'+(home?44:46)+'" ry="3.5"/>'+iphoneButtons(home, face)+rect(face==="back"?"dg-body dg-glass":"dg-body",10,4,100,232,rx)+rect("dg-frame",12.5,6.5,95,227,fr);
+    if (face === "back") {
+      var cam = home ? '<circle class="dg-lens-ring" cx="28" cy="24" r="8.5"/><circle class="dg-lens" cx="28" cy="24" r="3.6"/><circle class="dg-flash" cx="45" cy="24" r="2.4"/>' : rect("dg-module",18,12,27,46,13.5)+'<circle class="dg-lens-ring" cx="31.5" cy="25.5" r="7.6"/><circle class="dg-lens" cx="31.5" cy="25.5" r="3.2"/><circle class="dg-lens-ring" cx="31.5" cy="44.5" r="7.6"/><circle class="dg-lens" cx="31.5" cy="44.5" r="3.2"/><circle class="dg-flash" cx="53" cy="20" r="2.4"/>';
+      return svg("0 0 120 250", shell+cam+'<path class="dg-crack dg-crack--back" d="M80 104l-10 26 14 8-16 30 9 7-12 26"/>');
+    }
+    var screen = home ? rect("dg-screen",16,36,88,166,2)+'<path class="dg-sheen" d="M56 36h20L16 146v-36z"/>' : rect("dg-screen",16,10,88,220,16)+'<path class="dg-sheen" d="M58 10h20L16 134V96z"/>';
+    var top = home ? '<path class="dg-earpiece" d="M50 21h20"/><circle class="dg-cam" cx="39" cy="21" r="2.6"/><circle class="dg-home" cx="60" cy="219" r="10"/>' : '<path class="dg-earpiece" d="M52 13.6h16"/>'+rect("dg-island",45,18,30,9,4.5);
+    var crack = home ? '<path class="dg-crack" d="M74 50l-10 26 14 8-16 30 9 7-12 26"/>' : '<path class="dg-crack" d="M76 38l-10 26 14 8-16 30 9 7-12 26"/>';
+    return svg("0 0 120 250", shell+screen+top+rect("dg-port",50,232,20,3,1.5)+'<path class="dg-grille dg-grille--dots" d="M30 233.5h.01M35 233.5h.01M40 233.5h.01M80 233.5h.01M85 233.5h.01M90 233.5h.01"/>'+(home?rect("dg-battery",30,62,60,116,8):rect("dg-battery",28,64,64,120,10))+crack+'<rect class="dg-scan" x="'+(home?16:16)+'" y="'+(home?36:10)+'" width="88" height="3" rx="1.5"/>');
+  }
+  function macbook(kind) {
+    var touch = kind === "macbook-touchbar";
+    var screen = touch ? rect("dg-screen",38,12,184,104,2) : rect("dg-screen",36,10,188,106,4);
+    var top = touch ? '<circle class="dg-cam" cx="130" cy="8.5" r="1.6"/>' : '<path class="dg-notch" d="M120 10h20v4.5a2.5 2.5 0 0 1-2.5 2.5h-15a2.5 2.5 0 0 1-2.5-2.5z"/>';
+    var row = touch ? '<path class="dg-touchbar-strip" d="M52 130h156l1.6 3.8H50.4z"/>' : '<path class="dg-fnrow dg-fnrow--full" d="M52.5 132.5h155"/>';
+    return svg("0 0 260 190", '<ellipse class="dg-shadow" cx="130" cy="183" rx="120" ry="3.5"/>'+rect("dg-body",30,4,200,120,9)+rect("dg-frame",32.5,6.5,195,115,7)+screen+'<path class="dg-sheen" d="M124 '+(touch?12:10)+'h30L'+(touch?38:36)+' 104V74z"/>'+top+'<path class="dg-hinge" d="M44 120h172"/><path class="dg-dust" d="M60 108h.01M78 111h.01M96 107h.01M118 110h.01M140 108h.01M162 111h.01M184 107h.01M202 110h.01"/><path class="dg-body dg-base" d="M30 126h200l24 44a4 4 0 0 1-3.6 6H9.6a4 4 0 0 1-3.6-6z"/><path class="dg-lip" d="M112 176a18 4 0 0 0 36 0"/>'+row+'<path class="dg-keyboard" d="M49 137h162l7 15H42z"/><path class="dg-keys" d="M49.5 141h161M47.8 144.8h164.4M46 148.6h168"/><path class="dg-trackpad" d="M94 156h72l3 16h-78z"/><path class="dg-port-side" d="M27.3 131.8l-3.4 6.4"/><path class="dg-battery" d="M58 130h144l14 40H44z"/><path class="dg-crack" d="M152 22l-10 22 14 8-18 26 8 6-12 22"/><rect class="dg-scan" x="'+(touch?38:36)+'" y="'+(touch?12:10)+'" width="'+(touch?184:188)+'" height="3" rx="1.5"/>');
+  }
+  function ipad(kind, face) {
+    var home = kind === "ipad-home", pro = kind === "ipad-pro", rx = home ? 14 : 16;
+    var shell = '<ellipse class="dg-shadow" cx="90" cy="244" rx="72" ry="3.5"/>'+rect("dg-btn", home||face==="front" ? 138 : 20, 1.5, 22, 5, 2.5)+(face==="front"?rect("dg-btn",173.5,30,5,18,2.5)+rect("dg-btn",173.5,52,5,18,2.5):"")+rect(face==="back"?"dg-body dg-glass":"dg-body",6,6,168,230,rx)+rect("dg-frame",8.5,8.5,163,225,home?11.5:13.5);
+    if (face === "back") {
+      var cam = pro ? rect("dg-module",16,16,38,38,11)+'<circle class="dg-lens-ring" cx="27" cy="27" r="6.2"/><circle class="dg-lens" cx="27" cy="27" r="2.6"/><circle class="dg-lens-ring" cx="43" cy="43" r="6.2"/><circle class="dg-lens" cx="43" cy="43" r="2.6"/><circle class="dg-lidar" cx="43" cy="27" r="3.2"/>' : '<circle class="dg-lens-ring" cx="24" cy="24" r="6"/><circle class="dg-lens" cx="24" cy="24" r="2.5"/>';
+      return svg("0 0 180 250", shell+cam+'<path class="dg-crack dg-crack--back" d="M112 70l-12 30 16 10-20 34 10 8-14 30"/>');
+    }
+    var screen = home ? rect("dg-screen",20,28,140,186,2)+'<circle class="dg-cam" cx="90" cy="17" r="1.8"/><circle class="dg-home" cx="90" cy="225" r="7"/>' : rect("dg-screen",13,13,154,216,8)+'<circle class="dg-cam" cx="90" cy="9.8" r="1.7"/>';
+    return svg("0 0 180 250", shell+screen+rect("dg-port",79,232,22,3,1.5)+'<path class="dg-grille dg-grille--dots" d="M30 233.5h.01M36 233.5h.01M42 233.5h.01M138 233.5h.01M144 233.5h.01M150 233.5h.01"/>'+(home?rect("dg-battery",42,64,96,114,10):rect("dg-battery",40,60,100,122,10))+'<path class="dg-crack" d="M108 44l-12 30 16 10-20 34 10 8-14 30"/><path class="dg-shatter" d="M116 84l-16-30M116 84l24-22M116 84l30 12M116 84l-22 32"/><rect class="dg-scan" x="'+(home?20:13)+'" y="'+(home?28:13)+'" width="'+(home?140:154)+'" height="3" rx="1.5"/>');
+  }
+  function watch(kind, face) {
+    var ultra = kind === "watch-ultra";
+    var band = '<ellipse class="dg-shadow" cx="70" cy="223" rx="36" ry="3"/><path class="dg-band" d="M40 44V10a8 8 0 0 1 8-8h44a8 8 0 0 1 8 8v34M40 176v34a8 8 0 0 0 8 8h44a8 8 0 0 0 8-8v-34"/>';
+    if (face === "back") return svg("0 0 140 228", band+rect("dg-body dg-glass", ultra?16:18, ultra?40:38, ultra?104:100, ultra?140:144, ultra?22:30)+'<circle class="dg-sensor" cx="68" cy="110" r="28"/><circle class="dg-sensor" cx="68" cy="110" r="14"/><path class="dg-leds" d="M68 89h.01M68 131h.01M47 110h.01M89 110h.01"/>');
+    var controls = ultra ? '<path class="dg-guard" d="M120 70h5a4 4 0 0 1 4 4v34a4 4 0 0 1-4 4h-5"/>'+rect("dg-btn dg-crown-mate",11,72,5,28,2.5)+rect("dg-crown",121,80,8,22,3)+rect("dg-btn dg-crown-mate",120.5,118,5,24,2.5) : rect("dg-crown",116,76,10,24,3.5)+rect("dg-btn dg-crown-mate",117,112,5,28,2.5);
+    var body = ultra ? rect("dg-body",16,40,104,140,22)+rect("dg-frame dg-frame--bold",21,45,94,130,18)+rect("dg-screen",26,50,84,120,14) : rect("dg-body",18,38,100,144,30)+rect("dg-frame",20.5,40.5,95,139,27.5)+rect("dg-screen",28,48,80,124,20);
+    return svg("0 0 140 228", band+controls+body+rect("dg-battery",40,72,56,76,ultra?12:14)+'<path class="dg-crack" d="M82 64l-10 22 12 8-14 24 8 6-10 18"/><rect class="dg-scan" x="'+(ultra?26:28)+'" y="'+(ultra?50:48)+'" width="'+(ultra?84:80)+'" height="3" rx="1.5"/>');
+  }
+  function drawing(face) {
+    var m = S.model; if (!m) return "";
+    if (m.kind.indexOf("iphone") === 0) return iphone(m.kind, face);
+    if (m.kind.indexOf("macbook") === 0) return face === "front" ? macbook(m.kind) : "";
+    if (m.kind.indexOf("ipad") === 0) return ipad(m.kind, face);
+    return watch(m.kind, face);
+  }
+  function family() {
+    if (!S.model) return "";
+    if (S.model.kind.indexOf("iphone") === 0) return "iphone";
+    if (S.model.kind.indexOf("mac") === 0) return "macbook";
+    if (S.model.kind.indexOf("ipad") === 0) return "ipad";
+    return "watch";
+  }
+  function paint() {
+    var look = hover || (S.issue ? lookFor(S.issue) : null);
+    var face = look ? look.face : "front";
+    if (family() === "macbook") face = "front";
+    document.querySelectorAll(".is-hl").forEach(function (el) { el.classList.remove("is-hl"); });
+    document.querySelectorAll(".dg").forEach(function (el) { el.className = "dg dg--" + family(); });
+    if (look && look.mod) {
+      var host = document.querySelector(face === "back" ? ".face-back .dg" : ".face-front .dg");
+      if (host) host.classList.add("dg--part-" + look.mod);
+    }
+    if (look && look.part && SEL[look.part]) document.querySelectorAll(SEL[look.part]).forEach(function (el) { el.classList.add("is-hl"); });
+    document.getElementById("preview").classList.toggle("is-back", face === "back" && !!S.model && family() !== "macbook");
+    var pill = document.getElementById("pill");
+    pill.hidden = !S.model;
+    pill.textContent = face === "back" ? "Back" : "Front";
+    document.getElementById("who").textContent = S.model ? S.model.name : "Pick a model. The drawing uses that model’s shape.";
+    document.getElementById("cap").textContent = look ? look.label : (S.model ? "Full device. Pick a fault to light a part." : "");
+  }
+  function mountArt() {
+    var art = document.getElementById("art");
+    if (!S.model) { art.innerHTML = ""; paint(); return; }
+    var back = drawing("back");
+    art.innerHTML = '<div class="faces"><div class="face face-front"><div class="dg dg--'+family()+'">'+drawing("front")+'</div></div>'+(back?'<div class="face face-back"><div class="dg dg--'+family()+'">'+back+"</div></div>":"")+"</div>";
+    paint();
+  }
+
+  function go(n) {
+    S.step = n;
+    document.querySelectorAll(".qw-step").forEach(function (el) { el.classList.remove("on"); });
+    document.getElementById("qw-s" + n).classList.add("on");
+    document.getElementById("qwProgMono").textContent = "Step " + n + " of 4";
+    document.getElementById("dots").innerHTML = STEPS.map(function (label, i) {
+      var s = i + 1, cls = s < n ? "done" : s === n ? "current" : "";
+      return '<button type="button" class="qw-dot '+cls+'" data-s="'+s+'"'+(s>n?" disabled":"")+'><span class="qw-dot-num">'+s+'</span><span class="qw-dot-label">'+label+"</span></button>";
+    }).join("");
+    var parts = [];
+    if (S.device) parts.push([DN[S.device], 1]);
+    if (S.model) parts.push([S.model.name, 2]);
+    if (S.fault && n >= 4) parts.push([S.fault, 3]);
+    document.getElementById("crumb").innerHTML = parts.map(function (p, i) {
+      return (i ? '<span class="qw-crumb-sep">›</span>' : "") + '<button type="button" class="qw-crumb-btn" data-go="'+p[1]+'">'+p[0]+"</button>";
+    }).join("");
+    var noun = S.device ? DN[S.device] : "device";
+    document.getElementById("qw-sub").textContent = "We'll collect your " + noun + " same day in London, nationwide by courier.";
+    paint();
+  }
+  function renderSeries() {
+    S.showingModels = false;
+    document.getElementById("s2t").textContent = "Which " + DN[S.device] + " is it?";
+    document.getElementById("s2s").textContent = "Choose the series first, then we’ll show the exact models.";
+    document.getElementById("mC").innerHTML = '<div class="qw-series-grid">' + MODELS[S.device].map(function (g, i) {
+      return '<button type="button" class="qw-series-card" data-group="'+i+'"><span class="qw-series-name">'+g.group+'</span><span class="qw-series-count">'+g.models.length+" model"+(g.models.length===1?"":"s")+"</span>"+CHEV+"</button>";
+    }).join("") + "</div>";
+  }
+  function renderModelList() {
+    S.showingModels = true;
+    var g = MODELS[S.device][S.group];
+    document.getElementById("s2t").textContent = "Which model is it?";
+    document.getElementById("s2s").textContent = "Choose the exact " + DN[S.device] + " model from " + g.group + ".";
+    var hint = S.device === "macbook" ? '<p class="qw-hint">Turn the MacBook over. The model number starts with A and is printed near the hinge.</p>' : "";
+    document.getElementById("mC").innerHTML = hint + '<div class="qw-m-list">' + g.models.map(function (m, i) {
+      return '<button type="button" class="qw-m-item'+(S.model&&S.model.name===m.name?" sel":"")+'" data-model="'+i+'"><span class="qw-mn">'+m.name+"</span></button>";
+    }).join("") + '<button type="button" class="qw-m-item qw-m-item--change" id="changeModel"><span class="qw-mn">Choose a different model</span></button></div>';
+  }
+  function renderFaults() {
+    document.getElementById("s3t").textContent = "What's wrong with your " + DN[S.device] + "?";
+    document.getElementById("fC").innerHTML = faultsFor().map(function (f) {
+      return '<button type="button" class="qw-f-card" data-fault="'+f[0].replace(/"/g,"&quot;")+'"><span class="qw-f-ico">'+(ICONS[f[1]]||ICONS.other)+'</span><span class="qw-f-lbl">'+f[0]+"</span></button>";
+    }).join("");
+  }
+  function renderIssues() {
+    document.getElementById("s4t").textContent = S.fault;
+    document.getElementById("s4s").textContent = "Which best describes the problem?";
+    var fault = FAULTS[S.device].filter(function (f) { return f[0] === S.fault; })[0];
+    var icon = fault ? fault[1] : "other";
+    document.getElementById("tC").innerHTML = issuesFor(S.fault).map(function (iss, i) {
+      var on = S.issue && S.issue.label === iss.label && S.issue.repairType === iss.repairType;
+      return '<button type="button" class="qw-t-card'+(on?" sel":"")+'" data-issue="'+i+'"><span class="qw-tw">'+(ICONS[iss.icon||icon]||ICONS.other)+'</span><span class="qw-tt">'+iss.label+"</span></button>";
+    }).join("");
+  }
+  function renderDevices() {
+    document.getElementById("devGrid").innerHTML = ["macbook","iphone","ipad","watch"].map(function (id) {
+      return '<button type="button" class="qw-dev" data-dev="'+id+'"><span class="qw-dev-ico">'+ICONS[id]+'</span><span class="qw-dev-lbl">'+(id==="watch"?"Watch":DN[id])+"</span></button>";
+    }).join("");
+  }
+
+  document.getElementById("wizard").addEventListener("click", function (e) {
+    var t = e.target.closest("button"); if (!t) return;
+    if (t.dataset.s) { var s = +t.dataset.s; if (s < S.step) { if (s === 2 && S.device) renderModelList(); go(s); } return; }
+    if (t.dataset.go) { var g = +t.dataset.go; if (g < S.step) { if (g === 2) renderModelList(); go(g); } return; }
+    if (t.dataset.dev) {
+      S.device = t.dataset.dev; S.group = null; S.model = null; S.fault = null; S.issue = null; hover = null;
+      renderSeries(); mountArt(); go(2); return;
+    }
+    if (t.dataset.group != null) { S.group = +t.dataset.group; renderModelList(); return; }
+    if (t.id === "changeModel") { S.model = null; S.fault = null; S.issue = null; hover = null; renderSeries(); mountArt(); return; }
+    if (t.dataset.model != null) {
+      S.model = MODELS[S.device][S.group].models[+t.dataset.model];
+      S.fault = null; S.issue = null; hover = null;
+      renderFaults(); mountArt(); go(3); return;
+    }
+    if (t.dataset.fault) {
+      S.fault = t.dataset.fault; S.issue = null; hover = null;
+      renderIssues(); go(4); return;
+    }
+    if (t.dataset.issue != null) {
+      S.issue = issuesFor(S.fault)[+t.dataset.issue]; hover = null;
+      renderIssues(); paint(); return;
+    }
+    if (t.id === "back2") {
+      if (S.showingModels) { S.model = null; hover = null; renderSeries(); mountArt(); return; }
+      S.device = null; S.group = null; S.model = null; hover = null; mountArt(); go(1); return;
+    }
+    if (t.id === "back3") { hover = null; renderModelList(); go(2); return; }
+    if (t.id === "back4") { S.issue = null; hover = null; renderFaults(); go(3); }
+  });
+  document.getElementById("fC").addEventListener("mouseover", function (e) {
+    var b = e.target.closest("[data-fault]"); if (!b || !S.model) return;
+    var list = issuesFor(b.dataset.fault); hover = list[0] ? lookFor(list[0]) : null; paint();
+  });
+  document.getElementById("fC").addEventListener("mouseout", function (e) {
+    if (e.relatedTarget && document.getElementById("fC").contains(e.relatedTarget)) return;
+    hover = null; paint();
+  });
+  document.getElementById("tC").addEventListener("mouseover", function (e) {
+    var b = e.target.closest("[data-issue]"); if (!b) return;
+    hover = lookFor(issuesFor(S.fault)[+b.dataset.issue]); paint();
+  });
+  document.getElementById("tC").addEventListener("mouseout", function (e) {
+    if (e.relatedTarget && document.getElementById("tC").contains(e.relatedTarget)) return;
+    hover = null; paint();
+  });
+
+  document.getElementById("dots").innerHTML = STEPS.map(function (label, i) {
+    return '<button type="button" class="qw-dot'+(i===0?" current":"")+'" data-s="'+(i+1)+'"'+(i?" disabled":"")+'><span class="qw-dot-num">'+(i+1)+'</span><span class="qw-dot-label">'+label+"</span></button>";
+  }).join("");
+  renderDevices();
+})();
+</script>
+</body>
+</html>
