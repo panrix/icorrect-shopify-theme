@@ -1052,6 +1052,25 @@ a.qw-d-val:hover { text-decoration: underline; text-underline-offset: 2px; }
   margin: 0 0 20px;
   max-width: 480px;
 }
+/* Water-damage acknowledgement (usable and not usable).
+   24px matches .qw-res-top; 16px is the gap between message and button.
+   Copy is 16px in --qw-text so it leads the black qw-btn-book. */
+.qw-liq-ack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  padding: 24px;
+}
+.qw-liq-ack-copy {
+  margin: 0;
+  max-width: none;
+  font: 400 16px/1.5 var(--font-sans);
+  color: var(--qw-text);
+}
+.qw-liq-ack .qw-btn-book {
+  margin: 0;
+}
 .qw-res-badge {
   display: inline-flex;
   align-items: center;
