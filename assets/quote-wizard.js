@@ -3156,13 +3156,13 @@
     S.liquidDeviceUsable = !!usable;
     var copy = usable ? LIQUID_COPY_USABLE : LIQUID_COPY_NOT_USABLE;
     openResolutionScreen('Water Damage', '');
+    /* One panel for both answers. Shared .qw-res-p is a 480px quote column;
+       this card must keep the message and button on the same left/right edge. */
     p.innerHTML =
-      '<div class="qw-res"><div class="qw-res-top" style="padding-bottom:24px;">' +
-        '<p class="qw-res-p">' + esc(copy) + '</p>' +
-        '<div class="qw-res-cta" style="padding:0;">' +
-          '<button type="button" class="qw-btn-book" id="qwLiqOk">I understand</button>' +
-        '</div>' +
-      '</div></div>';
+      '<div class="qw-res qw-liq-ack">' +
+        '<p class="qw-liq-ack-copy">' + esc(copy) + '</p>' +
+        '<button type="button" class="qw-btn-book" id="qwLiqOk">I understand</button>' +
+      '</div>';
     document.getElementById('qwLiqOk').onclick = function() {
       _liquidGate = null;
       showResolution(iss);
