@@ -2137,6 +2137,76 @@
     trackSlotSelected();
   }
 
+  /* UK display form the postcode field already uses: upper case, outward
+     then a space then the inward code. Incomplete codes stay as typed. */
+  function formatDisplayPostcode(value) {
+    var upper = String(value || '').trim().toUpperCase().replace(/\s+/g, ' ');
+    if (!upper) return '';
+    var compact = upper.replace(/ /g, '');
+    if (/^[A-Z]{1,2}[0-9][A-Z0-9]?[0-9][A-Z]{2}$/.test(compact)) {
+      return compact.slice(0, -3) + ' ' + compact.slice(-3);
+    }
+    return upper;
+  }
+
+  function outwardFromPostcode(postcode) {
+    var courier = (typeof window !== 'undefined' && window.ICorrectCourier) ? window.ICorrectCourier : null;
+    if (courier && typeof courier.extractOutwardCode === 'function') {
+      return courier.extractOutwardCode(postcode);
+    }
+    var cleaned = String(postcode || '').trim().toUpperCase().replace(/\s+/g, ' ');
+    if (!cleaned) return null;
+    return cleaned.split(' ')[0] || null;
+  }
+
+  function shouldShowCollectionNotice(postcodeResolved, quote, selectedKind, postcode) {
+    if (!postcodeResolved || !quote) return false;
+    if (quote.forcedMailIn || quote.service !== 'courier') return false;
+    if (selectedKind !== 'courier') return false;
+    var pc = String(postcode || '').trim();
+    if (!pc || pc.replace(/\s+/g, '').length < 5) return false;
+    if (quote.outward && outwardFromPostcode(pc) !== quote.outward) return false;
+    return true;
+  }
+
+  function collectionNoticePostcode() {
+    var pcInput = document.getElementById('qwPostcode');
+    return pcInput ? String(pcInput.value || '').trim() : '';
+  }
+
+  var COLLECT_PIN_SVG = '<svg class="qw-collect-pin" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2.4a7 7 0 0 0-7 7c0 5.2 7 12.2 7 12.2s7-7 7-12.2a7 7 0 0 0-7-7z"/><circle cx="12" cy="9.4" r="2.35" fill="#FFF7E6"/></svg>';
+
+  function updateCollectionNotice() {
+    var el = document.getElementById('qwCollectionNotice');
+    var res = document.getElementById('qwResCard');
+    var pc = collectionNoticePostcode();
+    var show = shouldShowCollectionNotice(_postcodeResolved, _courierQuote, selectedServiceKind(), pc);
+    if (res) res.classList.toggle('qw-res--collect-note', !!show);
+    if (!el) return;
+    if (!show) {
+      el.hidden = true;
+      if (el.getAttribute('data-pc')) {
+        el.removeAttribute('data-pc');
+        el.innerHTML = '';
+      }
+      return;
+    }
+    var formatted = formatDisplayPostcode(pc);
+    if (!formatted) {
+      el.hidden = true;
+      el.removeAttribute('data-pc');
+      el.innerHTML = '';
+      if (res) res.classList.remove('qw-res--collect-note');
+      return;
+    }
+    if (el.getAttribute('data-pc') !== formatted) {
+      el.innerHTML = COLLECT_PIN_SVG +
+        '<p class="qw-collect-copy"><strong class="qw-collect-strong">Collecting from ' + esc(formatted) + '.</strong><span class="qw-collect-rest">Please use this address as your shipping address at checkout.</span></p>';
+      el.setAttribute('data-pc', formatted);
+    }
+    el.hidden = false;
+  }
+
   function applyCourierQuoteToUI(quote) {
     _courierQuote = quote;
     var reveal = document.getElementById('qwDeliveryReveal');
@@ -2172,6 +2242,7 @@
       setPriceVisibility(false);
       hideServiceJourney();
       closeCollectionCalendar();
+      updateCollectionNotice();
       return;
     }
 
@@ -2237,6 +2308,7 @@
     }
 
     refreshAllInTotal();
+    updateCollectionNotice();
     if (!_suppressScroll) focusPriceAndProceed();
     trackCourierQuoteEvents(_courierQuote);
   }
@@ -2278,6 +2350,7 @@
           c.classList.remove('sel', 'active');
         });
         card.classList.add('sel', 'active');
+        updateCollectionNotice();
         setTimeout(syncFromSelection, 0);
       });
     });
@@ -2317,7 +2390,11 @@
       var quote = quoteForService(kind, pc);
       applyCourierQuoteToUI(quote);
     }
-    input.addEventListener('input', function(){ clearTimeout(timer); timer = setTimeout(function () { runLookup(false); }, 220); });
+    input.addEventListener('input', function(){
+      clearTimeout(timer);
+      updateCollectionNotice();
+      timer = setTimeout(function () { runLookup(false); }, 220);
+    });
     input.addEventListener('blur', function(){ clearTimeout(timer); runLookup(true); });
     input.addEventListener('keydown', function(e){
       if (e.key === 'Enter') { e.preventDefault(); clearTimeout(timer); runLookup(true); }
@@ -3687,6 +3764,7 @@
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
         '<div class="qw-res-extras" style="padding:0 24px 8px;">' + colorHtml + glassHtml + connectHtml + turnaroundHtml + '</div>' +
         '<div class="qw-res-cta">' +
+          '<div class="qw-collect-notice" id="qwCollectionNotice" role="note" hidden></div>' +
           '<button class="qw-btn-book" id="qwBookBtn" disabled>Proceed to checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
           '<button class="qw-btn-email" id="qwEmailQuote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email me this quote</button>' +
           '<button class="qw-btn-q" id="qwToggleCF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>I have a question first</button>' +
@@ -3809,6 +3887,7 @@
         '</div>' +
         '<div class="qw-res-service" style="padding:0 24px 8px;">' + serviceHtml + '</div>' +
         '<div class="qw-res-cta">' +
+          '<div class="qw-collect-notice" id="qwCollectionNotice" role="note" hidden></div>' +
           '<button class="qw-btn-book" id="qwBookBtn" disabled>Proceed to checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
           '<button class="qw-btn-email" id="qwEmailQuote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>Email me this quote</button>' +
           '<button class="qw-btn-q" id="qwToggleCF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>I have a question first</button>' +

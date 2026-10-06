@@ -2549,3 +2549,85 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 
 /* Neutral hint while the postcode is incomplete (shown on blur or Enter only). */
 .qw-postcode-wait { display: block; margin-top: 6px; font: 400 12px var(--font-sans); color: #808080; }
+
+/* Courier collection address note. Between the all-in price and Proceed.
+   Axiforma is the storefront face (theme custom font: Axiforma-R / Axiforma-M). */
+.qw-collect-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 14px 0 4px;
+  padding: 10px 12px;
+  background: #FFF7E6;
+  border: 1px solid #F5C46B;
+  border-radius: 10px;
+  color: #4d4d4d;
+  font-family: "Axiforma-R", "Axiforma-M", Axiforma, var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 400;
+  font-synthesis: weight;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+.qw-collect-notice[hidden] {
+  display: none !important;
+}
+.qw-collect-pin {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  color: #C4891A;
+}
+.qw-collect-notice .qw-collect-copy {
+  margin: 0;
+  min-width: 0;
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+.qw-collect-notice .qw-collect-strong {
+  font-weight: 700;
+  color: #171717;
+}
+.qw-collect-notice .qw-collect-rest::before {
+  content: " ";
+}
+@media (max-width: 719px) {
+  .qw-collect-notice {
+    margin: 12px 0 2px;
+    font-size: 13.5px;
+  }
+  .qw-collect-notice .qw-collect-strong {
+    display: block;
+  }
+  .qw-collect-notice .qw-collect-rest::before {
+    content: none;
+  }
+}
+.qw-res--collect-note .qw-res-service {
+  padding-bottom: 0 !important;
+}
+.qw-res--collect-note .qw-service-mapper {
+  margin-bottom: 0;
+}
+.qw-res--collect-note .qw-res-extras:empty {
+  display: none !important;
+}
+.qw-res--collect-note .qw-res-extras {
+  padding-bottom: 0 !important;
+}
+.qw-res--collect-note .qw-courier-err:empty {
+  display: none;
+}
+.qw-res--collect-note .qw-res-price {
+  margin-bottom: 0;
+}
+.qw-res--collect-note .qw-res-cta {
+  padding-top: 0;
+}
+.qw-res--collect-note .qw-res-extras:not(:empty) + .qw-res-cta .qw-collect-notice {
+  margin-top: 0;
+}
