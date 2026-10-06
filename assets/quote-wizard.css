@@ -2589,10 +2589,8 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
   font-weight: 700;
   color: #171717;
 }
-@media (min-width: 720px) {
-  .qw-collect-notice .qw-collect-rest {
-    margin-left: 0.28em;
-  }
+.qw-collect-notice .qw-collect-rest::before {
+  content: " ";
 }
 @media (max-width: 719px) {
   .qw-collect-notice {
@@ -2602,9 +2600,15 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
   .qw-collect-notice .qw-collect-strong {
     display: block;
   }
+  .qw-collect-notice .qw-collect-rest::before {
+    content: none;
+  }
 }
 .qw-res--collect-note .qw-res-service {
   padding-bottom: 0 !important;
+}
+.qw-res--collect-note .qw-service-mapper {
+  margin-bottom: 0;
 }
 .qw-res--collect-note .qw-res-extras:empty {
   display: none !important;
