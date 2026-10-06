@@ -2546,3 +2546,6 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
     display: none;
   }
 }
+
+/* Neutral hint while the postcode is incomplete (shown on blur or Enter only). */
+.qw-postcode-wait { display: block; margin-top: 6px; font: 400 12px var(--font-sans); color: #808080; }

@@ -15,12 +15,15 @@
     var h = String(handle || '').toLowerCase();
     var out = { device: null, fault: null };
     if (!h || !rulesAsset || !Array.isArray(rulesAsset.rules)) return out;
+    /* Longest matching rule wins per field, so "rear-glass" beats "glass" and
+       "earpiece" beats "speaker". Equal lengths keep the earlier rule. */
+    var devLen = 0, faultLen = 0;
     for (var i = 0; i < rulesAsset.rules.length; i++) {
       var rule = rulesAsset.rules[i];
       var m = String(rule.match || '').toLowerCase();
       if (!m || h.indexOf(m) === -1) continue;
-      if (rule.device && !out.device) out.device = rule.device;
-      if (rule.fault && !out.fault) out.fault = rule.fault;
+      if (rule.device && m.length > devLen) { out.device = rule.device; devLen = m.length; }
+      if (rule.fault && m.length > faultLen) { out.fault = rule.fault; faultLen = m.length; }
     }
     return out;
   }

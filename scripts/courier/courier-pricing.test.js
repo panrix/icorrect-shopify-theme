@@ -13,6 +13,8 @@ const path = require('node:path');
 const root = path.join(__dirname, '../..');
 const {
   extractOutwardCode,
+  parseFullPostcode,
+  isFullPostcode,
   lookupCourierBand,
   resolveCourierTier,
   computeAdjustment,
@@ -42,6 +44,65 @@ describe('extractOutwardCode', () => {
   it('takes the uppercased prefix before the space', () => {
     assert.equal(extractOutwardCode('sw11 8bj'), 'SW11');
     assert.equal(extractOutwardCode('W1B 4BD'), 'W1B');
+  });
+
+  it('parses full postcodes with or without a space, in any case', () => {
+    const cases = {
+      W1F0DP: 'W1F',
+      'w1f 0dp': 'W1F',
+      w1f0dp: 'W1F',
+      SW114GG: 'SW11',
+      'SW11 4GG': 'SW11',
+      EC1A1BB: 'EC1A',
+      'ec1a 1bb': 'EC1A',
+      'W1W 8JQ': 'W1W',
+      W1W8JQ: 'W1W',
+      ' w1w   8jq ': 'W1W',
+      M11AE: 'M1',
+      'B33 8TH': 'B33',
+      CR26XH: 'CR2',
+      SE260AB: 'SE26',
+    };
+    for (const [input, outward] of Object.entries(cases)) {
+      assert.equal(extractOutwardCode(input), outward, input);
+    }
+  });
+
+  it('keeps an outward code typed on its own or before a half-typed inward', () => {
+    assert.equal(extractOutwardCode('SW11'), 'SW11');
+    assert.equal(extractOutwardCode('sw1a'), 'SW1A');
+    assert.equal(extractOutwardCode('SW11 4'), 'SW11');
+  });
+
+  it('returns null for text that is not a UK postcode', () => {
+    for (const input of ['', '   ', null, undefined, '12 Margaret Street', 'SW114', 'W1F0D', 'LONDON', '123456']) {
+      assert.equal(extractOutwardCode(input), null, String(input));
+    }
+  });
+});
+
+describe('no-space postcodes reach the courier band', () => {
+  it('W1F0DP → W1F courier band', () => {
+    const spaced = lookupCourierBand('W1F 0DP', bandsAsset);
+    const compact = lookupCourierBand('W1F0DP', bandsAsset);
+    assert.equal(compact.service, 'courier');
+    assert.equal(compact.outward, 'W1F');
+    assert.equal(compact.band, spaced.band);
+  });
+
+  it('SW114GG → SW11 B2', () => {
+    const result = lookupCourierBand('SW114GG', bandsAsset);
+    assert.equal(result.service, 'courier');
+    assert.equal(result.outward, 'SW11');
+    assert.equal(result.band, 'B2');
+  });
+
+  it('EC1A1BB → EC1 via district fallback, same as EC1A 1BB', () => {
+    const spaced = lookupCourierBand('EC1A 1BB', bandsAsset);
+    const compact = lookupCourierBand('ec1a1bb', bandsAsset);
+    assert.equal(compact.outward, 'EC1A');
+    assert.equal(compact.service, spaced.service);
+    assert.equal(compact.band, spaced.band);
   });
 });
 
@@ -365,5 +426,34 @@ describe('quote wizard total follows the basket charge', () => {
   it('cart still adds the adjustment variant when the policy amount is positive', () => {
     const fn = sliceFn('function buildCartItems()', 'function getShopifyRoot()');
     assert.match(fn, /_courierQuote\.adjustment > 0/);
+  });
+});
+
+describe('full postcode required before any courier or mail-in result', () => {
+  const PARTIAL = ['W1W', 'w1w', 'W1W ', 'W1W 8', 'W1W 8J', 'W1W8', 'W1W8J', 'SW11 8B', 'EC1A 1', 'E14 5A', 'W10 6H', '', '   ', null];
+  const FULL = { 'W1W 8JQ': 'W1W', W1W8JQ: 'W1W', 'w1w 8jq': 'W1W', ' W1W  8JQ ': 'W1W', 'EC1A 1BB': 'EC1A', SW114GG: 'SW11', 'M1 1AE': 'M1' };
+
+  it('treats half-typed postcodes as incomplete', () => {
+    for (const input of PARTIAL) {
+      assert.equal(isFullPostcode(input), false, String(input));
+      assert.equal(parseFullPostcode(input), null, String(input));
+    }
+  });
+
+  it('accepts complete postcodes with or without a space, in any case', () => {
+    for (const [input, outward] of Object.entries(FULL)) {
+      const parsed = parseFullPostcode(input);
+      assert.ok(parsed, input);
+      assert.equal(parsed.outward, outward, input);
+      assert.equal(parsed.formatted, outward + ' ' + parsed.inward, input);
+    }
+  });
+
+  it('W1W 8JQ and W1W8JQ quote courier (B1)', () => {
+    for (const input of ['W1W 8JQ', 'W1W8JQ']) {
+      const result = lookupCourierBand(input, bandsAsset);
+      assert.equal(result.service, 'courier', input);
+      assert.equal(result.band, 'B1', input);
+    }
   });
 });
