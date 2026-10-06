@@ -1,7 +1,13 @@
+{%- liquid
+  assign heading_text = section.settings.heading
+  if section.settings.heading_tag == 'h1' and collection.title != blank
+    assign heading_text = collection.title | escape
+  endif
+-%}
 <section class="about-info-{{ section.id }}">
   <div class="about-info-wrapper page-width">
     <div class="about-info-row">
-      <h2>{{ section.settings.heading }}</h2>
+      {%- if section.settings.heading_tag == 'h1' -%}<h1>{{ heading_text }}</h1>{%- else -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}
 
       <div class="about-details">
         {{ section.settings.details }}
@@ -35,7 +41,7 @@
     margin: 0 auto;
   }
 
-  .about-info-{{ section.id }} .about-info-row h2{
+  .about-info-{{ section.id }} .about-info-row h1, .about-info-{{ section.id }} .about-info-row h2{
     color: #1D1D1F;
     font-size: {{ section.settings.heading_size_desktop }}px;
     font-weight: 600;
@@ -92,7 +98,7 @@
       padding-bottom: {{ section.settings.mob_padding_bottom }}px;
     }
 
-    .about-info-{{ section.id }} .about-info-row h2{
+    .about-info-{{ section.id }} .about-info-row h1, .about-info-{{ section.id }} .about-info-row h2{
       font-size: {{ section.settings.heading_size_mobile }}px;
       line-height: {{ section.settings.heading_line_height_mobile }}px;
       padding: 0 0 20px;
@@ -176,6 +182,17 @@
       "id": "bg",
       "label": "Section BG Color",
       "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Heading level",
+      "options": [
+        { "value": "h2", "label": "H2" },
+        { "value": "h1", "label": "H1, collection title" }
+      ],
+      "default": "h2",
+      "info": "Use H1 only on the first section of a page that has no other H1."
     },
     {
       "type": "text",

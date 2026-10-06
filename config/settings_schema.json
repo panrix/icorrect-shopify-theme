@@ -1478,6 +1478,13 @@
       },
       {
         "type": "checkbox",
+        "id": "repair_diagram_images",
+        "label": "Serve repair drawings as image files",
+        "info": "Uses the exported drawings in assets/repair-diagram-*.svg as <img> with alt text, so search engines can index them. Untick to draw them inline as before. Drawings without an exported file are always drawn inline.",
+        "default": true
+      },
+      {
+        "type": "checkbox",
         "id": "repair_wizard_in_header",
         "label": "Quote Wizard beside the repair panel",
         "info": "Product pages only, with the imageless design on. Moves the Quote Wizard under the product description so the repair panel, title and wizard share the first screen.",

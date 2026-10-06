@@ -12,6 +12,13 @@
   - scale: {String|Number} relative size 0.78–1 (optional)
   - repair_context: {String} optional page text for titles without a model
   - class: {String} extra class names
+  - alt: {String} alt text. With alt, the drawing is served as an indexable
+    <img> (assets/repair-diagram-<key>.svg) when that file exists; without
+    alt it stays decorative.
+  - eager: {Boolean} product-page hero: load first, no lazy loading
+  - key_only: {Boolean} output only the drawing's file key
+  - export: {Boolean} always inline the SVG and expose data-dg-key (used to
+    regenerate the image files, see docs/seo/repair-diagram-images.md)
 
   Styling lives in assets/repair-imageless.css (.dg*).
 
@@ -104,12 +111,44 @@
   if variant_parts[2] == 'true'
     assign touchbar = true
   endif
+
+  assign dg_key = variant | append: '-' | append: view | append: '-' | append: part
+  if lenses > 0
+    assign dg_key = dg_key | append: '-l' | append: lenses
+  endif
+  if touchbar
+    assign dg_key = dg_key | append: '-tb'
+  endif
+  assign dg_img = false
+  if export != true and key_only != true and settings.repair_diagram_images != false
+    capture dg_manifest
+      render 'repair-diagram-keys'
+    endcapture
+    assign dg_needle = ',' | append: dg_key | append: '@'
+    if dg_manifest contains dg_needle
+      assign dg_img = true
+      assign dg_dims = dg_manifest | split: dg_needle | last | split: ',' | first | split: '@'
+    endif
+  endif
 -%}
+{%- if key_only -%}{{ dg_key }}{%- else -%}
 <span
   class="dg dg--{{ family }} dg--{{ variant }} dg--{{ view }} dg--part-{{ part }}{% if class %} {{ class }}{% endif %}"
   style="--dg-scale: {{ scale }};"
-  aria-hidden="true"
+  {%- if dg_img == false or alt == blank %} aria-hidden="true"{% endif -%}
+  {%- if export %} data-dg-key="{{ dg_key }}"{% endif %}
 >
+  {%- if dg_img -%}
+    <img
+      class="dg__img"
+      src="{{ 'repair-diagram-' | append: dg_key | append: '.svg' | asset_url }}"
+      alt="{{ alt | escape }}"
+      width="{{ dg_dims[0] }}"
+      height="{{ dg_dims[1] }}"
+      {% if eager %}fetchpriority="high"{% else %}loading="lazy"{% endif %}
+      decoding="async"
+    >
+  {%- else -%}
   {%- case variant -%}
     {%- when 'iphone-home' -%}
       {% render 'device-glyph-iphone-home', view: view, part: part, lenses: lenses %}
@@ -142,4 +181,6 @@
     {%- else -%}
       {% render 'device-glyph-iphone-island', view: view, part: part, lenses: lenses %}
   {%- endcase -%}
+  {%- endif -%}
 </span>
+{%- endif -%}

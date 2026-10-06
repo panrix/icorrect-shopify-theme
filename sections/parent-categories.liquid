@@ -1,7 +1,13 @@
+{%- liquid
+  assign heading_text = section.settings.heading
+  if section.settings.heading_tag == 'h1' and collection.title != blank
+    assign heading_text = collection.title | escape
+  endif
+-%}
 <section class="parent-categories-{{ section.id }}">
   <div class="parent-categories-wrapper page-width">
     <div class="parent-categories-info">
-      <h2>{{ section.settings.heading }}</h2>
+      {%- if section.settings.heading_tag == 'h1' -%}<h1>{{ heading_text }}</h1>{%- else -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}
       {% if section.settings.details != blank %}
         <p>{{ section.settings.details }}</p>
       {% endif %}
@@ -109,7 +115,7 @@
                 {%- if tile_repair != 'repair' -%}
                   {% render 'repair-icon', icon: tile_repair, family: tile_family, size: 40 %}
                 {%- else -%}
-                  {% render 'device-glyph', family: tile_family, title: block.settings.title, repair_context: tile_context, scale: tile_scale %}
+                  {%- assign tile_alt = block.settings.title | strip_html | append: ' diagram' -%}{% render 'device-glyph', family: tile_family, title: block.settings.title, repair_context: tile_context, scale: tile_scale, alt: tile_alt %}
                 {%- endif -%}
               </span>
               <h3 class="mt__title">{{ block.settings.title | escape }}</h3>
@@ -182,7 +188,7 @@
     margin: 0 auto;
     padding-bottom: 40px;
   }
-  .parent-categories-info h2{
+  .parent-categories-info h1,  .parent-categories-info h2{
     color: #1d1d1f;
     font-size: {{ section.settings.heading_size }}px;
     font-weight: 600;
@@ -345,7 +351,7 @@ margin: 0;
       padding-top: {{ section.settings.mob_padding_top }}px;
       padding-bottom: {{ section.settings.mob_padding_bottom }}px;
     }
-   .parent-categories-info h2{
+   .parent-categories-info h1,   .parent-categories-info h2{
       font-size: 24px;
       font-weight: 600;
       line-height: 36px;
@@ -445,6 +451,17 @@ margin: 0;
          "label": "Section BG Color",
          "default": "#fff"
        },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Heading level",
+      "options": [
+        { "value": "h2", "label": "H2" },
+        { "value": "h1", "label": "H1, collection title" }
+      ],
+      "default": "h2",
+      "info": "Use H1 only on the first section of a page that has no other H1."
+    },
       {
   "type": "text",
   "id": "heading",

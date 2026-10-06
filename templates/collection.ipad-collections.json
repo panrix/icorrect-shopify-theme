@@ -112,7 +112,82 @@
         "bg": "#ffffff",
         "heading": "Choose your iPad model",
         "heading_size": 28,
-        "details": "At iCorrect, we specialise in iPad repairs, from cracked glass and full display replacements to charging-port, battery, and logic board faults. Whether the screen is shattered, the battery no longer holds charge, or the iPad has suffered liquid damage, we restore it using original parts. Quote online and we’ll collect your device, same day in most of London, or a free tracked mail-in pack for the rest of the UK.",
+        "details": "At iCorrect, we specialise in iPad repairs, from cracked glass and full display replacements to charging-port, battery, and logic board faults. Whether the screen is shattered, the battery no longer holds charge, or the iPad has suffered liquid damage, we restore it using original parts. Quote online and we’ll collect your device, same day in most of London, or use tracked mail-in from the rest of the UK.",
+        "btn_link": "",
+        "btn_text": ""
+      }
+    },
+    "parent_categories_F74hA8": {
+      "type": "parent-categories",
+      "blocks": {
+        "category_MRifi6": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/Diagnostic.png",
+            "title": "Diagnostic",
+            "price": "",
+            "link": "shopify://collections/ipad-diagnostic-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_EaDM6g": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/iPad_LCD.png",
+            "title": "LCD Display Repair",
+            "price": "",
+            "link": "shopify://collections/ipad-lcd-display-repair-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_e8HVz6": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/iPad_glass_only.png",
+            "title": "Glass Screen Repair",
+            "price": "",
+            "link": "shopify://collections/ipad-screen-repair-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_nqCihP": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/Battery.png",
+            "title": "Battery Repair",
+            "price": "",
+            "link": "shopify://collections/ipad-battery-repair-prices",
+            "btn": "View repairs"
+          }
+        },
+        "category_ErKaEz": {
+          "type": "category",
+          "settings": {
+            "img": "shopify://shop_images/Charging_port.png",
+            "title": "Charging Port Repair",
+            "price": "",
+            "link": "shopify://collections/ipad-charging-port-repair-prices",
+            "btn": "View repairs"
+          }
+        }
+      },
+      "block_order": [
+        "category_MRifi6",
+        "category_EaDM6g",
+        "category_e8HVz6",
+        "category_nqCihP",
+        "category_ErKaEz"
+      ],
+      "settings": {
+        "column_per_row": 4,
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "mob_padding_top": 35,
+        "mob_padding_bottom": 35,
+        "bg": "#ffffff",
+        "heading": "Choose your iPad Repair",
+        "heading_size": 28,
+        "details": "",
         "btn_link": "",
         "btn_text": ""
       }
@@ -139,7 +214,7 @@
           "settings": {
             "icon": "shopify://shop_images/Service_icon_Courier.png",
             "heading": "London Collection",
-            "details": "We collect from your door — same-day in most of London. Book online and we arrange tracked, insured collection and return. Outside London, use our free mail-in pack.",
+            "details": "We collect from your door across London, same day in most areas. Book online and we arrange tracked, insured collection and return. Outside London, use our tracked mail-in service.",
             "btn": "Learn more",
             "link": "shopify://pages/our-services"
           }
@@ -301,7 +376,8 @@
         "heading": "Get a repair quote",
         "subheading": "We'll collect your iPad same day in London, nationwide by courier.",
         "prefill_mode": "auto",
-        "skip_to_service": false
+        "skip_to_service": false,
+        "page_title": true
       }
     }
   },
@@ -311,6 +387,7 @@
     "main_banner_and_video_HjbmW9",
     "quote_wizard_top",
     "parent_categories_f6HGVL",
+    "parent_categories_F74hA8",
     "ipad_videos_8kczQT",
     "repair_services_nQkwFT",
     "icorrect_faqs_RVk3VL",

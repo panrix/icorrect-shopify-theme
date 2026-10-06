@@ -1,0 +1,32 @@
+{%- comment -%}
+  Absolute URL of the product's repair drawing as a 1200x900 PNG
+  (assets/repair-diagram-<key>.png), for og:image and the Product schema
+  image, so shares and rich results show our own drawing instead of the old
+  product media. Outputs nothing when there is no exported file or the
+  imageless design / diagram images setting is off.
+
+  Accepts:
+  - product: {Object} product
+
+  Usage:
+  {%- capture diagram_url -%}{% render 'repair-diagram-image-url', product: product %}{%- endcapture -%}
+{%- endcomment -%}
+{%- if product and settings.repair_imageless != false and settings.repair_diagram_images != false -%}
+  {%- liquid
+    capture rdi_meta
+      render 'repair-meta', title: product.title, repair_tags: product.tags, repair_context: product.type
+    endcapture
+    assign rdi_meta = rdi_meta | strip | split: '|'
+    capture rdi_key
+      render 'device-glyph', family: rdi_meta[0], title: product.title, repair: rdi_meta[1], key_only: true
+    endcapture
+    assign rdi_key = rdi_key | strip
+    capture rdi_manifest
+      render 'repair-diagram-keys'
+    endcapture
+    assign rdi_needle = ',' | append: rdi_key | append: '@'
+  -%}
+  {%- if rdi_key != blank and rdi_manifest contains rdi_needle -%}
+    https:{{ 'repair-diagram-' | append: rdi_key | append: '.png' | asset_url }}
+  {%- endif -%}
+{%- endif -%}
