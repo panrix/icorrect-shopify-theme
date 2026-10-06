@@ -225,6 +225,34 @@
     'crown':'Crown','diagnostic':'_diagnostic'
   };
 
+  /* Repair types that share another type's issue cards. */
+  var REPAIR_TYPE_ALIASES = { 'dustgate': 'screen', 'flexgate': 'screen' };
+
+  /* Repair type key (screen, rear-camera-lens, ...) or fault name to the fault
+     name this device uses in TS. Reads TS so each device keeps its own grouping
+     (iPhone rear-camera-lens sits under Rear Glass, not Camera). Null if none. */
+  function faultForRepairType(device, key) {
+    if (!key) return null;
+    var faults = TS[device] || {};
+    var raw = String(key).trim();
+    if (faults[raw]) return raw;
+    var k = raw.toLowerCase();
+    var names = Object.keys(faults);
+    for (var n = 0; n < names.length; n++) { if (names[n].toLowerCase() === k) return names[n]; }
+    var want = [k];
+    if (REPAIR_TYPE_ALIASES[k]) want.push(REPAIR_TYPE_ALIASES[k]);
+    for (var w = 0; w < want.length; w++) {
+      for (var f = 0; f < names.length; f++) {
+        var list = faults[names[f]] || [];
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].repairType === want[w] && list[i].route === 'repair') return names[f];
+        }
+      }
+    }
+    var mapped = REPAIR_TYPE_TO_FAULT[k];
+    return (mapped && faults[mapped]) ? mapped : null;
+  }
+
   /* =============================================
      DEVICE COLOUR DATA
      ============================================= */
@@ -2710,8 +2738,11 @@
 
     trackWizardStep(3);
 
-    if (S.preFault) {
-      var pf = S.preFault; S.preFault = null; S.fault = pf;
+    var pf = S.preFault; S.preFault = null;
+    /* Prefilled fault only if this model has issues for it; otherwise show the fault picker. */
+    if (pf && !getAvailableIssues(S.device, pf, _repairsMap).length) pf = null;
+    if (pf) {
+      S.fault = pf;
       syncIcorrectQuote();
       renderFaults(S.device);
       renderIssues(S.device, pf);
@@ -4701,9 +4732,8 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
       if (hit) {
         S.device = hit.device;
         S.preRepairType = hit.fault;
-        S.preFault = REPAIR_TYPE_TO_FAULT[hit.fault] || hit.fault;
+        S.preFault = faultForRepairType(hit.device, hit.fault);
         S.preVariantId = hit.variantId || null;
-        if (S.preFault === '_diagnostic') S.preFault = null;
         trackWizardEntry('product_catalogue', { productHandle: ctx.productHandle, fault: hit.fault, modelName: hit.modelName || null });
         renderDevices();
         var modelMatch = resolveModelFromContext(ctx, {
@@ -4728,13 +4758,13 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
       var modelMatch = resolveModelFromContext(ctx, { includeAllCollections: true });
       if (modelMatch) {
         var rt = deriveRepairTypeFromHandle(ctx.productHandle);
-        var faultName = rt ? REPAIR_TYPE_TO_FAULT[rt] : null;
+        var faultName = rt ? faultForRepairType(modelMatch.device, rt) : null;
         S.device = modelMatch.device;
         trackWizardEntry('product', {
           collectionHandle: modelMatch.model.collectionHandle,
           productHandle: ctx.productHandle
         });
-        if (faultName && faultName !== '_diagnostic') S.preFault = faultName;
+        if (faultName) S.preFault = faultName;
         renderDevices();
         pickModel(modelMatch.model.name, modelMatch.model.collectionHandle, null).then(function() {
           _suppressScroll = false;
@@ -4772,7 +4802,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
           collectionHandle: ctx.collectionHandle,
           deviceContextOnly: true
         });
-        if (ctx.fault) S.preFault = ctx.fault;
+        if (ctx.fault) { S.preFault = faultForRepairType(ctx.device, ctx.fault); S.preRepairType = S.preFault ? ctx.fault : null; }
         openDeviceModels(ctx.device, ctx);
         _suppressScroll = false;
         return;
@@ -4784,7 +4814,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
       trackWizardEntry('device_context', {
         faultPrefill: ctx.fault || null
       });
-      if (ctx.fault) S.preFault = ctx.fault;
+      if (ctx.fault) { S.preFault = faultForRepairType(ctx.device, ctx.fault); S.preRepairType = S.preFault ? ctx.fault : null; }
       openDeviceModels(ctx.device, ctx);
       _suppressScroll = false;
       return;
