@@ -1,5 +1,5 @@
 {
-  "note": "Handle → wizard prefill for collection templates (#53 slice 3). Matched by longest handle substring / prefix. device ids match quote-wizard DEVICES.",
+  "note": "Handle to wizard prefill for collection templates (#53 slice 3). The longest matching rule wins for device and for fault. fault is a repair type key; the wizard maps it to each device's fault group. device ids match quote-wizard DEVICES.",
   "default": {},
   "rules": [
     { "match": "macbook-pro-16", "device": "macbook" },
@@ -26,6 +26,22 @@
     { "match": "diagnostic", "fault": "diagnostic" },
     { "match": "glass", "fault": "screen-glass" },
     { "match": "camera", "fault": "rear-camera" },
-    { "match": "speaker", "fault": "loudspeaker" }
+    { "match": "speaker", "fault": "loudspeaker" },
+    { "match": "touch-bar-repair", "fault": "touch-bar" },
+    { "match": "dustgate", "fault": "dustgate" },
+    { "match": "flexgate", "fault": "flexgate" },
+    { "match": "microphone", "fault": "microphone" },
+    { "match": "earpiece", "fault": "earpiece" },
+    { "match": "loudspeaker", "fault": "loudspeaker" },
+    { "match": "front-camera", "fault": "front-camera" },
+    { "match": "rear-camera", "fault": "rear-camera" },
+    { "match": "rear-camera-lens", "fault": "rear-camera-lens" },
+    { "match": "rear-glass", "fault": "rear-glass" },
+    { "match": "heart-rate", "fault": "heart-rate-monitor" },
+    { "match": "screen-glass", "fault": "screen-glass" },
+    { "match": "glass-only", "fault": "screen-glass" },
+    { "match": "lcd", "fault": "screen" },
+    { "match": "oled", "fault": "screen" },
+    { "match": "charging-port", "fault": "charging-port" }
   ]
 }

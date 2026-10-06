@@ -2547,6 +2547,9 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
   }
 }
 
+/* Neutral hint while the postcode is incomplete (shown on blur or Enter only). */
+.qw-postcode-wait { display: block; margin-top: 6px; font: 400 12px var(--font-sans); color: #808080; }
+
 /* Courier collection address note. Between the all-in price and Proceed.
    Axiforma is the storefront face (theme custom font: Axiforma-R / Axiforma-M). */
 .qw-collect-notice {
