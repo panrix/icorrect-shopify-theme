@@ -53,7 +53,14 @@
 <div class="rv rv--{{ family }}" data-repair="{{ repair }}">
   <div class="rv__stage">
     <div class="rv__disc">
-      {% render 'device-glyph', family: family, title: product.title, repair: repair, scale: scale %}
+      {%- liquid
+        assign dg_alt = product.title
+        if name != blank and model != blank
+          assign dg_alt = model | append: ' ' | append: name
+        endif
+        assign dg_alt = dg_alt | append: ' diagram'
+      -%}
+      {% render 'device-glyph', family: family, title: product.title, repair: repair, scale: scale, alt: dg_alt, eager: true %}
     </div>
   </div>
 

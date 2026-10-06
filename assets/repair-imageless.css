@@ -38,6 +38,16 @@
   height: auto;
   overflow: visible;
 }
+/* Indexable image version of the same drawing (assets/repair-diagram-*.svg).
+   The file's viewBox has 5% padding on every side so highlight glows are
+   not clipped; the negative margin puts the drawing back on the same box. */
+.dg__img {
+  display: block;
+  width: 110%;
+  max-width: none;
+  height: auto;
+  margin: -5%;
+}
 .dg__svg * {
   vector-effect: non-scaling-stroke;
   stroke: var(--ri-ink);
