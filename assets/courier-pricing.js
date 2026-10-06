@@ -50,6 +50,29 @@
   var INWARD_RE = /^[0-9][A-Z]{2}$/;
 
   /**
+   * A complete UK postcode (outward + inward), with or without a space,
+   * in any case. Returns null while the postcode is partial or invalid,
+   * e.g. "W1W", "W1W 8", "W1W 8J", "W1W8J". An inward code always ends in
+   * two letters and an outward code never does, so a half-typed postcode
+   * can never pass.
+   * @param {string} postcode
+   * @returns {{ outward: string, inward: string, formatted: string }|null}
+   */
+  function parseFullPostcode(postcode) {
+    if (postcode == null) return null;
+    var compact = String(postcode).toUpperCase().replace(/\s+/g, '');
+    if (compact.length < 5 || compact.length > 7) return null;
+    var outward = compact.slice(0, -3);
+    var inward = compact.slice(-3);
+    if (!OUTWARD_RE.test(outward) || !INWARD_RE.test(inward)) return null;
+    return { outward: outward, inward: inward, formatted: outward + ' ' + inward };
+  }
+
+  function isFullPostcode(postcode) {
+    return parseFullPostcode(postcode) !== null;
+  }
+
+  /**
    * Outward code of a UK postcode, uppercased, with or without a space.
    * Full postcode: whitespace removed, the outward code is everything
    * except the last 3 characters (W1F0DP, w1f 0dp -> W1F; SW114GG -> SW11;
@@ -64,12 +87,8 @@
     if (postcode == null) return null;
     var upper = String(postcode).toUpperCase().trim();
     if (!upper) return null;
-    var compact = upper.replace(/\s+/g, '');
-    if (compact.length >= 5 && compact.length <= 7) {
-      var outward = compact.slice(0, -3);
-      var inward = compact.slice(-3);
-      if (OUTWARD_RE.test(outward) && INWARD_RE.test(inward)) return outward;
-    }
+    var full = parseFullPostcode(upper);
+    if (full) return full.outward;
     var first = upper.split(/\s+/)[0];
     if (OUTWARD_RE.test(first)) return first;
     return null;
@@ -472,6 +491,8 @@
     TIER_TAGS: TIER_TAGS,
     ADJUSTMENT: ADJUSTMENT,
     extractOutwardCode: extractOutwardCode,
+    parseFullPostcode: parseFullPostcode,
+    isFullPostcode: isFullPostcode,
     lookupCourierBand: lookupCourierBand,
     isMacbookDiagnostic: isMacbookDiagnostic,
     isHandheldDiagnostic: isHandheldDiagnostic,

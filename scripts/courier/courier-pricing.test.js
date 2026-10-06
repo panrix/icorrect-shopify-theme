@@ -13,6 +13,8 @@ const path = require('node:path');
 const root = path.join(__dirname, '../..');
 const {
   extractOutwardCode,
+  parseFullPostcode,
+  isFullPostcode,
   lookupCourierBand,
   resolveCourierTier,
   computeAdjustment,
@@ -424,5 +426,34 @@ describe('quote wizard total follows the basket charge', () => {
   it('cart still adds the adjustment variant when the policy amount is positive', () => {
     const fn = sliceFn('function buildCartItems()', 'function getShopifyRoot()');
     assert.match(fn, /_courierQuote\.adjustment > 0/);
+  });
+});
+
+describe('full postcode required before any courier or mail-in result', () => {
+  const PARTIAL = ['W1W', 'w1w', 'W1W ', 'W1W 8', 'W1W 8J', 'W1W8', 'W1W8J', 'SW11 8B', 'EC1A 1', 'E14 5A', 'W10 6H', '', '   ', null];
+  const FULL = { 'W1W 8JQ': 'W1W', W1W8JQ: 'W1W', 'w1w 8jq': 'W1W', ' W1W  8JQ ': 'W1W', 'EC1A 1BB': 'EC1A', SW114GG: 'SW11', 'M1 1AE': 'M1' };
+
+  it('treats half-typed postcodes as incomplete', () => {
+    for (const input of PARTIAL) {
+      assert.equal(isFullPostcode(input), false, String(input));
+      assert.equal(parseFullPostcode(input), null, String(input));
+    }
+  });
+
+  it('accepts complete postcodes with or without a space, in any case', () => {
+    for (const [input, outward] of Object.entries(FULL)) {
+      const parsed = parseFullPostcode(input);
+      assert.ok(parsed, input);
+      assert.equal(parsed.outward, outward, input);
+      assert.equal(parsed.formatted, outward + ' ' + parsed.inward, input);
+    }
+  });
+
+  it('W1W 8JQ and W1W8JQ quote courier (B1)', () => {
+    for (const input of ['W1W 8JQ', 'W1W8JQ']) {
+      const result = lookupCourierBand(input, bandsAsset);
+      assert.equal(result.service, 'courier', input);
+      assert.equal(result.band, 'B1', input);
+    }
   });
 });

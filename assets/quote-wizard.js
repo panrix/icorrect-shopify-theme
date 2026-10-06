@@ -548,6 +548,7 @@
 
   function trackCourierQuoteEvents(quote) {
     if (!quote || !quote.outward) return;
+    if (!isFullPostcodeValue(currentPostcodeValue())) return;
     var extra = courierTrackExtra(quote);
     var outward = extra.outward;
     trackWizardEventOnce('pc:' + outward + ':' + String(extra.band), 'wizard_postcode_entered', {
@@ -1578,6 +1579,20 @@
     return 0;
   }
 
+  /* Full UK postcode only (outward + inward, space optional). Partial input
+     such as "W1W 8J" must not show a courier or mail-in result or fire events. */
+  function isFullPostcodeValue(value) {
+    var lib = window.ICorrectCourier;
+    if (lib && typeof lib.isFullPostcode === 'function') return lib.isFullPostcode(value);
+    var compact = String(value || '').toUpperCase().replace(/\s+/g, '');
+    return /^(?:[A-Z]{1,2}[0-9]{1,2}|[A-Z]{1,2}[0-9][A-Z])[0-9][A-Z]{2}$/.test(compact);
+  }
+
+  function currentPostcodeValue() {
+    var el = document.getElementById('qwPostcode');
+    return el ? String(el.value || '').trim() : '';
+  }
+
   function selectedServiceKind() {
     var card = document.querySelector('.qw-opt-card.sel[data-opt="svc"]');
     return card ? (card.getAttribute('data-svc') || 'courier') : 'courier';
@@ -1893,8 +1908,9 @@
           '<span class="qw-postcode-hint">London postcodes unlock courier collection windows. Outside London we use tracked mail-in.</span>' +
         '</label>' +
         '<div class="qw-postcode-row">' +
-          '<input type="text" id="qwPostcode" class="qw-postcode-input qw-courier-inp" placeholder="e.g. SW11 8BJ" autocomplete="postal-code" inputmode="text">' +
+          '<input type="text" id="qwPostcode" class="qw-postcode-input qw-courier-inp" placeholder="e.g. SW11 8BJ" autocomplete="postal-code" inputmode="text" enterkeyhint="done">' +
         '</div>' +
+        '<span class="qw-postcode-wait" id="qwPostcodeWait" style="display:none">Enter your full postcode, for example W1W 8JQ.</span>' +
         '<div class="qw-courier-result" id="qwCourierResult" hidden></div>' +
       '</div>' +
       '<div class="qw-delivery-reveal" id="qwDeliveryReveal" hidden>' +
@@ -2239,20 +2255,29 @@
     });
 
     var timer = null;
-    function runLookup() {
+    function showPostcodeWait(show) {
+      var wait = document.getElementById('qwPostcodeWait');
+      if (wait) wait.style.display = show ? '' : 'none';
+    }
+    /* settled = blur or Enter: a partial postcode then gets a neutral hint.
+       While typing, a partial postcode shows nothing. */
+    function runLookup(settled) {
       var pc = String(input.value || '').trim();
       if (!pc) {
+        showPostcodeWait(false);
         applyCourierQuoteToUI(null);
         return;
       }
-      /* Need a reasonably complete UK postcode before quoting */
-      var compact = pc.replace(/\s+/g, '');
-      if (compact.length < 5) {
-        applyCourierQuoteToUI(null);
+      /* Full UK postcode only (outward + inward, space optional). No courier
+         or mail-in result and no funnel events until then. */
+      if (!isFullPostcodeValue(pc)) {
+        showPostcodeWait(settled === true);
+        if (_postcodeResolved || _courierQuote) applyCourierQuoteToUI(null);
         return;
       }
+      showPostcodeWait(false);
       if (!window.ICorrectCourier || !window.__QW_BANDS) {
-        ensureCourierAssets().then(runLookup); return;
+        ensureCourierAssets().then(function () { runLookup(settled); }); return;
       }
       var kind = selectedServiceKind();
       /* Always probe courier first so we can auto-route to mail-in when forced */
@@ -2264,8 +2289,11 @@
       var quote = quoteForService(kind, pc);
       applyCourierQuoteToUI(quote);
     }
-    input.addEventListener('input', function(){ clearTimeout(timer); timer = setTimeout(runLookup, 220); });
-    input.addEventListener('blur', runLookup);
+    input.addEventListener('input', function(){ clearTimeout(timer); timer = setTimeout(function () { runLookup(false); }, 220); });
+    input.addEventListener('blur', function(){ clearTimeout(timer); runLookup(true); });
+    input.addEventListener('keydown', function(e){
+      if (e.key === 'Enter') { e.preventDefault(); clearTimeout(timer); runLookup(true); }
+    });
     setTimeout(function(){ try { input.focus(); } catch (e) {} }, 120);
   }
 
@@ -3313,6 +3341,12 @@
     var svcCard = document.querySelector('.qw-opt-card.sel[data-opt="svc"]');
     var svcKind = svcCard ? (svcCard.getAttribute('data-svc') || 'courier') : 'courier';
     var errBox = document.getElementById('qwServiceErr') || err;
+
+    var enteredPostcode = currentPostcodeValue();
+    if (enteredPostcode && !isFullPostcodeValue(enteredPostcode)) {
+      if (errBox) errBox.textContent = 'Enter your full postcode, for example W1W 8JQ.';
+      return null;
+    }
 
     if (svcKind === 'courier') {
       var postcodeInput = document.getElementById('qwPostcode');
