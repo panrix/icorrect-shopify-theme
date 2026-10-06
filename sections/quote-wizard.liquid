@@ -208,11 +208,11 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   function captureQuoteProceeded() {
     var body = quotePayload({ proceeded: true });
     if (!body.session_id) return;
-    var blob = new Blob([JSON.stringify(body)], { type: "application/json" });
-    if (navigator.sendBeacon) {
-      navigator.sendBeacon(ENDPOINT, blob);
-      return;
-    }
+    // Same path as captureQuoteEmailRequested: fetch keepalive, credentials omitted.
+    // sendBeacon always sends credentials, and a JSON beacon needs a CORS preflight.
+    // The endpoint does not return Access-Control-Allow-Credentials, so the browser
+    // dropped every proceed POST (0 proceeded rows in quote_events, 14 Sep to 5 Oct).
+    // keepalive lets the request finish while the page moves on to checkout.
     fetch(ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
