@@ -45,17 +45,34 @@
     return Math.round(Number(value) * 100) / 100;
   }
 
+  /* UK outward code: A9, A99, AA9, AA99, A9A, AA9A. Inward code: 9AA. */
+  var OUTWARD_RE = /^(?:[A-Z]{1,2}[0-9]{1,2}|[A-Z]{1,2}[0-9][A-Z])$/;
+  var INWARD_RE = /^[0-9][A-Z]{2}$/;
+
   /**
-   * Outward code = postcode prefix before the space, uppercased.
+   * Outward code of a UK postcode, uppercased, with or without a space.
+   * Full postcode: whitespace removed, the outward code is everything
+   * except the last 3 characters (W1F0DP, w1f 0dp -> W1F; SW114GG -> SW11;
+   * EC1A1BB -> EC1A). Both halves must match the UK format.
+   * Outward code alone, or a half-typed inward after a space, still
+   * returns the outward code (SW11, "SW11 4" -> SW11).
+   * Anything else returns null (caller falls back to mail-in).
    * @param {string} postcode
    * @returns {string|null}
    */
   function extractOutwardCode(postcode) {
     if (postcode == null) return null;
-    var cleaned = String(postcode).trim().toUpperCase().replace(/\s+/g, ' ');
-    if (!cleaned) return null;
-    var outward = cleaned.split(' ')[0];
-    return outward || null;
+    var upper = String(postcode).toUpperCase().trim();
+    if (!upper) return null;
+    var compact = upper.replace(/\s+/g, '');
+    if (compact.length >= 5 && compact.length <= 7) {
+      var outward = compact.slice(0, -3);
+      var inward = compact.slice(-3);
+      if (OUTWARD_RE.test(outward) && INWARD_RE.test(inward)) return outward;
+    }
+    var first = upper.split(/\s+/)[0];
+    if (OUTWARD_RE.test(first)) return first;
+    return null;
   }
 
   /**

@@ -43,6 +43,65 @@ describe('extractOutwardCode', () => {
     assert.equal(extractOutwardCode('sw11 8bj'), 'SW11');
     assert.equal(extractOutwardCode('W1B 4BD'), 'W1B');
   });
+
+  it('parses full postcodes with or without a space, in any case', () => {
+    const cases = {
+      W1F0DP: 'W1F',
+      'w1f 0dp': 'W1F',
+      w1f0dp: 'W1F',
+      SW114GG: 'SW11',
+      'SW11 4GG': 'SW11',
+      EC1A1BB: 'EC1A',
+      'ec1a 1bb': 'EC1A',
+      'W1W 8JQ': 'W1W',
+      W1W8JQ: 'W1W',
+      ' w1w   8jq ': 'W1W',
+      M11AE: 'M1',
+      'B33 8TH': 'B33',
+      CR26XH: 'CR2',
+      SE260AB: 'SE26',
+    };
+    for (const [input, outward] of Object.entries(cases)) {
+      assert.equal(extractOutwardCode(input), outward, input);
+    }
+  });
+
+  it('keeps an outward code typed on its own or before a half-typed inward', () => {
+    assert.equal(extractOutwardCode('SW11'), 'SW11');
+    assert.equal(extractOutwardCode('sw1a'), 'SW1A');
+    assert.equal(extractOutwardCode('SW11 4'), 'SW11');
+  });
+
+  it('returns null for text that is not a UK postcode', () => {
+    for (const input of ['', '   ', null, undefined, '12 Margaret Street', 'SW114', 'W1F0D', 'LONDON', '123456']) {
+      assert.equal(extractOutwardCode(input), null, String(input));
+    }
+  });
+});
+
+describe('no-space postcodes reach the courier band', () => {
+  it('W1F0DP → W1F courier band', () => {
+    const spaced = lookupCourierBand('W1F 0DP', bandsAsset);
+    const compact = lookupCourierBand('W1F0DP', bandsAsset);
+    assert.equal(compact.service, 'courier');
+    assert.equal(compact.outward, 'W1F');
+    assert.equal(compact.band, spaced.band);
+  });
+
+  it('SW114GG → SW11 B2', () => {
+    const result = lookupCourierBand('SW114GG', bandsAsset);
+    assert.equal(result.service, 'courier');
+    assert.equal(result.outward, 'SW11');
+    assert.equal(result.band, 'B2');
+  });
+
+  it('EC1A1BB → EC1 via district fallback, same as EC1A 1BB', () => {
+    const spaced = lookupCourierBand('EC1A 1BB', bandsAsset);
+    const compact = lookupCourierBand('ec1a1bb', bandsAsset);
+    assert.equal(compact.outward, 'EC1A');
+    assert.equal(compact.service, spaced.service);
+    assert.equal(compact.band, spaced.band);
+  });
 });
 
 describe('outward → band lookup', () => {
