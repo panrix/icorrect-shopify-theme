@@ -6,7 +6,12 @@
 
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { applyVariantPrices, collectVariantIds, toCents } = require('./sync-catalogue-prices.js');
+const {
+  applyVariantPrices,
+  applyCourierTiers,
+  collectVariantIds,
+  toCents,
+} = require('./sync-catalogue-prices.js');
 
 function sample() {
   return {
@@ -70,5 +75,104 @@ describe('applyVariantPrices', () => {
     const { changes } = applyVariantPrices(map, { 11: '119.50', 12: '249.00' });
     assert.equal(changes[0].to, 119.5);
     assert.equal(map.models['iphone::iphone-15'].repairs.battery.price, 119.5);
+  });
+});
+
+describe('applyCourierTiers (#119: under £200 always pays courier)', () => {
+  function row(price, tags) {
+    return { variantId: 1, handle: 'h', title: 't', price, tags };
+  }
+  function mapOf(repairs) {
+    return { models: { 'iphone::iphone-17': { repairs } } };
+  }
+
+  it('strips a stale courier:free tag when the price is below £200', () => {
+    const map = sample();
+    const battery = map.models['iphone::iphone-15'].repairs.battery;
+    battery.price = 179;
+    const { tagChanges } = applyCourierTiers(map);
+    assert.deepEqual(battery.tags, []);
+    const stripped = tagChanges.find((c) => c.type === 'battery');
+    assert.deepEqual(stripped.from, ['courier:free']);
+    assert.deepEqual(stripped.to, []);
+    assert.equal(stripped.price, 179);
+  });
+
+  it('strips the tag in the same pass as a price drop below £200', () => {
+    const map = sample();
+    applyVariantPrices(map, { 11: '179.00', 12: '249.00' });
+    const battery = map.models['iphone::iphone-15'].repairs.battery;
+    assert.equal(battery.price, 179);
+    assert.deepEqual(battery.tags, ['courier:free']);
+    applyCourierTiers(map);
+    assert.deepEqual(battery.tags, []);
+  });
+
+  it('adds courier:free when the price is £200 or more and no tier tag exists', () => {
+    const map = sample();
+    const { tagChanges } = applyCourierTiers(map);
+    assert.deepEqual(map.models['iphone::iphone-15'].repairs.screen.tags, ['courier:free']);
+    assert.ok(tagChanges.some((c) => c.type === 'screen' && c.to.includes('courier:free')));
+  });
+
+  it('strips courier:one-leg too, and keeps unrelated tags, below £200', () => {
+    const map = mapOf({ a: row(179, ['courier:one-leg', 'COURIER:FREE', 'other']) });
+    applyCourierTiers(map);
+    assert.deepEqual(map.models['iphone::iphone-17'].repairs.a.tags, ['other']);
+  });
+
+  it('treats exactly £200 as free and £199.99 as paid', () => {
+    const map = mapOf({ a: row(200, []), b: row(199.99, ['courier:free']) });
+    applyCourierTiers(map);
+    assert.deepEqual(map.models['iphone::iphone-17'].repairs.a.tags, ['courier:free']);
+    assert.deepEqual(map.models['iphone::iphone-17'].repairs.b.tags, []);
+  });
+
+  it('leaves an explicit one-leg tag in place at £200 or more', () => {
+    const map = mapOf({ a: row(249, ['courier:one-leg']) });
+    const { tagChanges } = applyCourierTiers(map);
+    assert.equal(tagChanges.length, 0);
+    assert.deepEqual(map.models['iphone::iphone-17'].repairs.a.tags, ['courier:one-leg']);
+  });
+
+  it('reports no change when tags already match the price', () => {
+    const map = mapOf({ a: row(249, ['courier:free']), b: row(89, []) });
+    const { tagChanges } = applyCourierTiers(map);
+    assert.equal(tagChanges.length, 0);
+  });
+
+  it('adds a tags array to a £200+ row that has none', () => {
+    const map = mapOf({ a: { variantId: 1, price: 249 } });
+    applyCourierTiers(map);
+    assert.deepEqual(map.models['iphone::iphone-17'].repairs.a.tags, ['courier:free']);
+  });
+
+  it('leaves rows with no usable price alone', () => {
+    const map = mapOf({
+      a: row(null, ['courier:free']),
+      b: row('', ['courier:free']),
+      c: row('n/a', ['courier:free']),
+    });
+    const { tagChanges } = applyCourierTiers(map);
+    assert.equal(tagChanges.length, 0);
+    assert.deepEqual(map.models['iphone::iphone-17'].repairs.a.tags, ['courier:free']);
+  });
+
+  it('no row under £200 in the committed catalogue keeps a free-courier tag', () => {
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const map = JSON.parse(
+      fs.readFileSync(path.join(__dirname, '../../assets/repair-catalogue-map.json'), 'utf8')
+    );
+    const offenders = [];
+    for (const [modelKey, model] of Object.entries(map.models || {})) {
+      for (const [type, r] of Object.entries(model.repairs || {})) {
+        const tags = Array.isArray(r.tags) ? r.tags : [];
+        if (Number(r.price) < 200 && tags.some((t) => /^courier:(free|one-leg)$/i.test(t))) {
+          offenders.push(modelKey + ' ' + type + ' £' + r.price + ' ' + (r.handle || ''));
+        }
+      }
+    }
+    assert.deepEqual(offenders, []);
   });
 });
