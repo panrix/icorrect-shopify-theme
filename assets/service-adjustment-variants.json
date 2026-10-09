@@ -1,14 +1,9 @@
 {
-  "note": "Service adjustment variants on i-correct-final. prices are the Shopify shelf prices the basket charges. \u00a30 means the wizard must not add that amount to the total. adjustment key still selects the variant.",
+  "note": "Service adjustment variants on i-correct-final. Keys select the variant; they are not prices. The wizard reads the price from WIZARD_CFG.serviceAdjustmentPrices (Liquid, from the service-adjustment product) and refreshes it from /products/service-adjustment.js.",
   "product_id": 15333834653949,
   "variants": {
     "15": 71280436379901,
     "20": 71280436412669,
     "25": 71280436445437
-  },
-  "prices": {
-    "15": 0,
-    "20": 0,
-    "25": 25
   }
 }

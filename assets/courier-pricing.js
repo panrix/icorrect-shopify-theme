@@ -11,8 +11,11 @@
  *     collection and return included on every band, and by post
  *     B1–B4 courier → £0 · outside London → free mail-in
  *   <£200 (untagged / paid):
- *     B1–B2 → +£25 courier today, or +£20 mail-in
- *     B3/B4 / outside → mail-in +£20 only
+ *     B1–B2 → courier (variant key 25) or mail-in (variant key 20)
+ *     B3/B4 / outside → mail-in (variant key 20) only
+ *
+ * ADJUSTMENT numbers are variant keys, not pounds. The customer pays the
+ * Shopify price of that variant. Keys 15 and 20 are £0 today; key 25 is £25.
  *
  * Theme assets: courier-london-bands.json, service-adjustment-variants.json
  * No secrets. Safe for browser (theme asset) and Node (tests).
