@@ -256,3 +256,182 @@ describe('service adjustment prices come from the Shopify product', () => {
     );
   });
 });
+
+const catalogue = require(path.join(root, 'assets/repair-catalogue.js'));
+const miniCatalogue = {
+  models: {
+    'iphone::iphone-13': {
+      device: 'iphone',
+      name: 'iPhone 13',
+      repairs: {
+        screen: {
+          title: 'iPhone 13 Screen Repair',
+          handle: 'iphone-13-screen-repair',
+          variantId: 99001,
+          price: 179,
+          tags: [],
+        },
+      },
+    },
+  },
+};
+
+function loadCards(env) {
+  const loaded = loadHelpers(env);
+  loaded.window.ICorrectCatalogue = catalogue;
+  const buttons = {};
+  const document = {
+    getElementById(id) { return buttons[id] || null; },
+  };
+  const node = {
+    _html: '',
+    classList: { add() {}, remove() {}, toggle() {} },
+    dataset: {},
+    querySelector(sel) {
+      if (sel === '#qwBookBtn' && node._html.includes('id="qwBookBtn"')) {
+        return { disabled: true, classList: { add() {}, remove() {}, toggle() {} } };
+      }
+      return null;
+    },
+    querySelectorAll() { return []; },
+  };
+  Object.defineProperty(node, 'innerHTML', {
+    get() { return node._html; },
+    set(value) {
+      node._html = String(value);
+      buttons.qwPricingRetry = node._html.includes('id="qwPricingRetry"')
+        ? { disabled: false, onclick: null }
+        : null;
+    },
+  });
+  const src = [
+    between('  function applyModelRepairsFromCatalogue(modelName)', '  async function pickModel(name, handle, el)'),
+    between('  function resolveRepairProduct(repairType, issueLabel)', '  async function fetchProduct(handle)'),
+    between('  async function showRepairCard(iss, container)', '  /* ---- DIAGNOSTIC CARD ---- */'),
+    between('  function showContactCard(iss, container, opts)', '  /* ---- SHARED CONTACT FORM BUILDERS ---- */'),
+  ].join('\n');
+  const api = new Function(
+    'window', 'document', 'state', 'ensureCourierAssets', 'pricingLoadErrorHtml',
+    `var S = state;
+     var _repairsMap = {};
+     var _collectionProducts = [];
+     function esc(s) { return String(s == null ? '' : s); }
+     function getProductsForRepairType() { return []; }
+     function detectExpressFromPage() { return Promise.resolve(null); }
+     function buildTurnaroundCards() { return ''; }
+     function getDeviceColors() { return null; }
+     function buildColorSelector() { return ''; }
+     function modelHasNanoTexture() { return false; }
+     function buildChoiceCards() { return ''; }
+     function buildPriceTrustBlock() { return ''; }
+     function injectServicePrice(serviceHtml, priceHtml) {
+       var block = priceHtml ? ('<div class="qw-res-price" id="qwResPrice">' + priceHtml + '</div>') : '';
+       return String(serviceHtml || '') + block;
+     }
+     function buildServiceCards() { return '<div class="qw-service"></div>'; }
+     function wireOptCards() {}
+     function wireColorSelector() {}
+     function wireCourierService() {}
+     function wireCFToggle() {}
+     function wireRestart() {}
+     function wireEmailQuote() {}
+     function setPriceVisibility() {}
+     function buildContactAccordion() { return ''; }
+     function buildContactSummary() { return '<div class="qw-c-sum"></div>'; }
+     function buildContactFormHTML() { return '<form class="qw-cf"></form>'; }
+     function wireContactForm() {}
+     function trackWizardFormStart() {}
+     function fetchProduct() { return Promise.resolve(null); }
+     async function showDiagnosticCard() { throw new Error('diagnostic card not expected'); }
+     var gbp = { format: function (n) { return '£' + Number(n).toFixed(2); } };
+     ${src}
+     return { showRepairCard: showRepairCard, repairs: function () { return { map: _repairsMap, products: _collectionProducts }; } };`
+  )(loaded.window, document, env.S, loaded.api.ensureCourierAssets, loaded.api.pricingLoadErrorHtml);
+  return Object.assign(loaded, { cards: api, container: node, buttons: buttons });
+}
+
+async function until(pred) {
+  for (let i = 0; i < 40; i++) {
+    if (pred()) return;
+    await new Promise((resolve) => setTimeout(resolve, 15));
+  }
+  throw new Error('timed out waiting for the card');
+}
+
+describe('contact-card retry rebuilds the model repairs map', () => {
+  const iss = {
+    route: 'repair',
+    repairType: 'screen',
+    label: 'Cracked screen',
+    copy: 'We replace the screen.',
+  };
+
+  function harness(catalogueOk) {
+    return loadCards({
+      S: { device: 'iphone', model: 'iPhone 13' },
+      fetch: (url) => {
+        if (String(url).includes('catalogue')) {
+          return Promise.resolve(catalogueOk() ? jsonRes(miniCatalogue) : jsonRes(null, 500));
+        }
+        return Promise.resolve(jsonRes({ variants: [] }));
+      },
+    });
+  }
+
+  it('shows the priced repair card after Try again, without picking the model again', async () => {
+    let ok = false;
+    const { api, cards, container, events, buttons } = harness(() => ok);
+    await assert.rejects(api.ensureCourierAssets());
+    assert.equal(events.length, 1);
+    assert.equal(events[0].props.asset, 'repair-catalogue-map.json');
+    await cards.showRepairCard(iss, container);
+    assert.match(container.innerHTML, /Get in Touch/);
+    assert.match(container.innerHTML, /id="qwPricingRetry"/);
+    assert.doesNotMatch(container.innerHTML, /We can fix this/);
+    ok = true;
+    buttons.qwPricingRetry.onclick();
+    await until(() => container.innerHTML.includes('data-base="179"'));
+    assert.match(container.innerHTML, /We can fix this/);
+    assert.match(container.innerHTML, /£179\.00/);
+    assert.doesNotMatch(container.innerHTML, /Get in Touch/);
+    assert.equal(events.length, 1);
+    const repairs = cards.repairs();
+    assert.equal(repairs.map.screen.handle, 'iphone-13-screen-repair');
+    assert.equal(repairs.map.screen.variants[0].price, '179.00');
+    assert.equal(repairs.products.length, 1);
+  });
+
+  it('shows the error card again and fires once more when the retry also fails', async () => {
+    const { api, cards, container, events, buttons } = harness(() => false);
+    await assert.rejects(api.ensureCourierAssets());
+    await cards.showRepairCard(iss, container);
+    assert.equal(events.length, 1);
+    buttons.qwPricingRetry.onclick();
+    await until(() => events.length === 2 && container.innerHTML.includes('Get in Touch'));
+    assert.match(container.innerHTML, /id="qwPricingRetry"/);
+    assert.doesNotMatch(container.innerHTML, /We can fix this/);
+    assert.equal(Object.keys(cards.repairs().map).length, 0);
+    assert.equal(events[1].props.asset, 'repair-catalogue-map.json');
+    assert.equal(events[1].props.attempt, 2);
+  });
+
+  it('uses one helper from pickModel and from the retry', () => {
+    const pick = between('async function pickModel(name, handle, el)', 'function autoPickIssueForPrefill');
+    const card = between('function showContactCard(iss, container, opts)', 'function buildContactSummary');
+    assert.match(pick, /applyModelRepairsFromCatalogue\(name\)/);
+    assert.match(card, /applyModelRepairsFromCatalogue\(S\.model\)/);
+    assert.equal(wizard.split('repairsMapForModel(').length - 1, 1);
+  });
+});
+
+describe('courier-pricing comment stays clear of the #121 hunk', () => {
+  it('adopts the #121 under-£200 line and parks the variant-key note on ADJUSTMENT', () => {
+    const src = fs.readFileSync(path.join(root, 'assets/courier-pricing.js'), 'utf8');
+    const header = src.slice(0, src.indexOf('var ADJUSTMENT'));
+    assert.match(header, /<£200 \(always paid, whatever courier:\* tags say — Rick 2026-10-09, #119\):/);
+    assert.match(header, /B1–B2 → \+£25 courier today, or \+£20 mail-in/);
+    assert.doesNotMatch(header, /Keys above select the Shopify variant/);
+    const adj = src.slice(src.indexOf('var ADJUSTMENT'), src.indexOf('function roundMoney'));
+    assert.match(adj, /Keys above select the Shopify variant/);
+  });
+});

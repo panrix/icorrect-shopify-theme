@@ -2973,6 +2973,21 @@
     c.appendChild(list);
   }
 
+  /* Catalogue rows for the model already picked. pickModel and the pricing
+     error retry both use this, so a reload does not send the customer back
+     to the model step (#122). */
+  function applyModelRepairsFromCatalogue(modelName) {
+    var name = modelName || S.model;
+    var cat = window.ICorrectCatalogue;
+    if (cat && window.__QW_CATALOGUE && S.device && name && typeof cat.repairsMapForModel === 'function') {
+      _repairsMap = cat.repairsMapForModel(window.__QW_CATALOGUE, S.device, name) || {};
+      _collectionProducts = Object.keys(_repairsMap).map(function (k) { return _repairsMap[k]; });
+      return;
+    }
+    _repairsMap = {};
+    _collectionProducts = [];
+  }
+
   async function pickModel(name, handle, el) {
     S.model = name; S.collectionHandle = handle; S.fault = null; S.issue = null; S.route = null; S.repairType = null;
     syncIcorrectQuote();
@@ -2987,14 +3002,7 @@
     if (fGrid) fGrid.innerHTML = '<div class="qw-loading"><div class="qw-spinner"></div><p>Loading repairs for ' + esc(name) + '...</p></div>';
 
     await ensureCourierAssets().catch(function () { /* catalogue failure is shown on the repair card */ });
-    var cat = window.ICorrectCatalogue;
-    if (cat && window.__QW_CATALOGUE) {
-      _repairsMap = cat.repairsMapForModel(window.__QW_CATALOGUE, S.device, name) || {};
-      _collectionProducts = Object.keys(_repairsMap).map(function(k){ return _repairsMap[k]; });
-    } else {
-      _repairsMap = {};
-      _collectionProducts = [];
-    }
+    applyModelRepairsFromCatalogue(name);
     /* Catalogue map is authoritative — no collection HTML scrape (#53). */
     trackWizardStart({
       start_step: 'model',
@@ -4186,6 +4194,7 @@
         container.innerHTML = '<div class="qw-loading"><div class="qw-spinner"></div></div>';
         window.__QW_CATALOGUE = null;
         ensureCourierAssets().then(function () {
+          applyModelRepairsFromCatalogue(S.model);
           if (iss.route === 'diagnostic') return showDiagnosticCard(iss, container);
           return showRepairCard(iss, container);
         }).catch(function () {
