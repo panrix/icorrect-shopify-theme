@@ -131,6 +131,11 @@ window.WIZARD_CFG = {
   collectionPrefillUrl: {{ 'wizard-collection-prefill.json' | asset_url | json }},
   serviceAdjustmentsUrl: {{ 'service-adjustment-variants.json' | asset_url | json }},
   macbookModelHintUrl: {{ 'macbook-model-number.svg' | asset_url | json }},
+  themeId: {{ theme.id | json }},
+  themeName: {{ theme.name | json }},
+  themeRole: {{ theme.role | json }},
+  /* Git SHA is not available in Liquid. Stays null until a stamp is committed. */
+  themeBuild: null,
   /* Inline IDs so checkout never waits on a fetch for money-path (#53) */
   serviceAdjustments: {
     "15": 71280436379901,

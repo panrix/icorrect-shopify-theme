@@ -1557,8 +1557,9 @@
     return { headline: 'Collection', detail: 'Choose a collection window below.' };
   }
 
-  /* Pricing asset loads (#120). 4s timeout, res.ok, one retry. A failed
-     fetch fires quote_wizard_pricing_load_failed. No-op without PostHog. */
+  /* Pricing asset loads (#120, diagnostics on the stacked PR). 4s timeout,
+     res.ok, one retry. Failures and a bounded recovery fire
+     quote_wizard_pricing_load_failed. No-op without PostHog. */
   var PRICING_FETCH_TIMEOUT_MS = 4000;
   var PRICING_FETCH_RETRY_DELAY_MS = 400;
   var PRICING_FETCH_ATTEMPTS = 2;
@@ -1567,29 +1568,147 @@
   var COURIER_PRICING_WAIT_MS = 500;
   var _pricingInflight = {};
   var _fallbackFreeTracked = false;
+  var _pricingRecovered = {};
+  var PRICING_FETCH_TARGETS = {
+    'repair-catalogue-map.json': 'catalogue_map',
+    'courier-london-bands.json': 'courier_bands',
+    'service-adjustment-variants.json': 'service_adjustment_variants',
+    'service-adjustment.js': 'service_adjustment_product',
+    'courier-pricing.js': 'courier_pricing_script',
+    'cart/add.js': 'cart_add',
+    'wizard-collection-prefill.json': 'collection_prefill',
+    'service-adjustment-variants': 'service_variant_fallback'
+  };
+  /* Keys allowed on the PostHog event. Anything else (postcode, email, query) is dropped. */
+  var PRICING_EVENT_ALLOW = {
+    asset: 1, status: 1, duration_ms: 1, attempt: 1, attempts: 1,
+    page: 1, url: 1, page_path: 1, reason: 1, stage: 1,
+    fetch_target: 1, failure_kind: 1, http_status: 1, retry_outcome: 1, severity: 1,
+    product_handle: 1, theme_id: 1, theme_name: 1, theme_role: 1, theme_build: 1,
+    device_type: 1, browser_family: 1, online: 1,
+    device: 1, model: 1, fault: 1, issue: 1, route: 1, repairType: 1, entrySource: 1
+  };
+
+  function pricingPagePath() {
+    try {
+      var path = window.location && window.location.pathname;
+      if (typeof path !== 'string' || !path || path.indexOf('?') !== -1 || path.indexOf('#') !== -1) return null;
+      return path;
+    } catch (e) { return null; }
+  }
+
+  function pricingDeviceType() {
+    try {
+      var w = window.innerWidth;
+      if (typeof w === 'number' && w > 0) {
+        if (w < 768) return 'mobile';
+        if (w < 1024) return 'tablet';
+        return 'desktop';
+      }
+      var ua = window.navigator && window.navigator.userAgentData;
+      if (ua && ua.mobile === true) return 'mobile';
+      if (ua && ua.mobile === false) return 'desktop';
+    } catch (e) {}
+    return null;
+  }
+
+  function pricingBrowserFamily() {
+    try {
+      var nav = window.navigator || {};
+      var brands = nav.userAgentData && nav.userAgentData.brands;
+      var blob = '';
+      if (brands && brands.length) {
+        blob = brands.map(function (b) { return String((b && b.brand) || ''); }).join(' ');
+      }
+      var s = (blob + ' ' + String(nav.userAgent || '')).toLowerCase();
+      if (s.indexOf('edge') !== -1 || s.indexOf('edg/') !== -1) return 'edge';
+      if (s.indexOf('firefox') !== -1) return 'firefox';
+      if (s.indexOf('chrome') !== -1 || s.indexOf('crios') !== -1) return 'chrome';
+      if (s.indexOf('safari') !== -1) return 'safari';
+    } catch (e) {}
+    return 'other';
+  }
+
+  function pricingOnline() {
+    try {
+      if (window.navigator && typeof window.navigator.onLine === 'boolean') return window.navigator.onLine;
+    } catch (e) {}
+    return null;
+  }
+
+  function pricingProductHandle() {
+    try {
+      if (typeof S === 'undefined' || !S || !S.repairType) return null;
+      if (typeof _repairsMap === 'undefined' || !_repairsMap) return null;
+      var row = _repairsMap[S.repairType];
+      var handle = row && row.handle ? String(row.handle) : '';
+      if (!/^[a-z0-9][a-z0-9-]{0,120}$/.test(handle)) return null;
+      return handle;
+    } catch (e2) { return null; }
+  }
+
+  function pricingFailureKind(reason) {
+    if (reason === 'timeout' || reason === 'http' || reason === 'network' || reason === 'parse') return reason;
+    if (reason === 'wait_cap') return 'wait_cap';
+    if (reason === 'fallback_free_mail_in' || reason === 'fallback') return 'fallback';
+    if (reason === 'cart_add' || reason === 'cart_error') return 'cart_error';
+    return null;
+  }
+
+  function pricingEventBody(payload) {
+    var merged = payload;
+    try {
+      if (typeof buildWizardTrackPayload === 'function') merged = buildWizardTrackPayload(payload) || payload;
+    } catch (e) { merged = payload; }
+    var out = {};
+    Object.keys(PRICING_EVENT_ALLOW).forEach(function (key) {
+      if (merged[key] !== undefined) out[key] = merged[key];
+    });
+    return out;
+  }
 
   function trackPricingLoadFailed(props) {
     var p = props || {};
-    var page = (window.location && window.location.pathname) || null;
+    if (p.retry_outcome === 'retried_succeeded') {
+      var recKey = p.asset || p.fetch_target || 'unknown';
+      if (_pricingRecovered[recKey]) return;
+      _pricingRecovered[recKey] = true;
+    }
+    var page = pricingPagePath();
+    var kind = p.failure_kind || pricingFailureKind(p.reason);
     var payload = {
       asset: p.asset || null,
       status: p.status != null ? p.status : null,
       duration_ms: p.duration_ms != null ? p.duration_ms : null,
       attempt: p.attempt != null ? p.attempt : null,
+      attempts: p.attempts != null ? p.attempts : (p.attempt != null ? p.attempt : null),
       page: page,
       url: page,
+      page_path: page,
       reason: p.reason || null,
-      stage: p.stage || null
+      stage: p.stage || null,
+      fetch_target: p.fetch_target || PRICING_FETCH_TARGETS[p.asset] || null,
+      failure_kind: kind,
+      http_status: p.http_status != null ? p.http_status : (kind === 'http' && p.status != null ? p.status : null),
+      retry_outcome: p.retry_outcome || (p.attempt > 1 ? 'retried_failed' : 'no_retry'),
+      severity: p.severity || null,
+      product_handle: p.product_handle || pricingProductHandle(),
+      theme_id: CFG.themeId != null ? CFG.themeId : null,
+      theme_name: CFG.themeName || null,
+      theme_role: CFG.themeRole || null,
+      theme_build: CFG.themeBuild || null,
+      device_type: pricingDeviceType(),
+      browser_family: pricingBrowserFamily(),
+      online: pricingOnline()
     };
     try {
       if (window.console && typeof console.warn === 'function') {
-        console.warn('[quote-wizard] pricing load failed', payload.asset, payload.status, payload.reason);
+        console.warn('[quote-wizard] pricing load failed', payload.asset, payload.failure_kind, payload.retry_outcome);
       }
     } catch (e) {}
     try {
       if (!window.posthog || typeof window.posthog.capture !== 'function') return;
-      var body = typeof buildWizardTrackPayload === 'function' ? buildWizardTrackPayload(payload) : payload;
-      window.posthog.capture('quote_wizard_pricing_load_failed', body);
+      window.posthog.capture('quote_wizard_pricing_load_failed', pricingEventBody(payload));
     } catch (e2) {}
   }
 
@@ -1623,8 +1742,32 @@
   function fetchPricingJson(asset, url, init, track) {
     var started = Date.now();
     var attempt = 1;
+    var firstKind = null;
+    var firstStatus = null;
+    function succeed(json) {
+      if (firstKind && track !== false) {
+        trackPricingLoadFailed({
+          asset: asset,
+          status: firstStatus,
+          http_status: firstKind === 'http' ? firstStatus : null,
+          duration_ms: Date.now() - started,
+          attempt: attempt,
+          attempts: attempt,
+          reason: 'recovered',
+          failure_kind: firstKind,
+          retry_outcome: 'retried_succeeded',
+          severity: 'recovered',
+          stage: asset
+        });
+      }
+      return json;
+    }
     function run() {
-      return pricingFetchOnce(url, init).catch(function (err) {
+      return pricingFetchOnce(url, init).then(succeed, function (err) {
+        if (!firstKind) {
+          firstKind = err.reason || 'network';
+          firstStatus = err.status != null ? err.status : null;
+        }
         if (attempt < PRICING_FETCH_ATTEMPTS) {
           attempt += 1;
           return new Promise(function (resolve) { setTimeout(resolve, PRICING_FETCH_RETRY_DELAY_MS); }).then(run);
@@ -1636,9 +1779,13 @@
           trackPricingLoadFailed({
             asset: asset,
             status: err.status,
+            http_status: err.reason === 'http' ? err.status : null,
             duration_ms: err.duration_ms,
             attempt: attempt,
+            attempts: attempt,
             reason: err.reason || 'failed',
+            failure_kind: err.reason || null,
+            retry_outcome: attempt > 1 ? 'retried_failed' : 'no_retry',
             stage: asset
           });
         }
@@ -2353,9 +2500,14 @@
       trackPricingLoadFailed({
         asset: 'service-adjustment-variants',
         status: null,
+        http_status: null,
         duration_ms: null,
         attempt: null,
+        attempts: null,
         reason: 'fallback_free_mail_in',
+        failure_kind: 'fallback',
+        fetch_target: 'service_variant_fallback',
+        retry_outcome: 'no_retry',
         stage: 'service_variant'
       });
     }
@@ -2538,9 +2690,13 @@
           trackPricingLoadFailed({
             asset: window.__QW_BANDS ? 'courier-pricing.js' : 'courier-london-bands.json',
             status: null,
+            http_status: null,
             duration_ms: COURIER_PRICING_MAX_WAITS * COURIER_PRICING_WAIT_MS,
             attempt: COURIER_PRICING_MAX_WAITS,
+            attempts: COURIER_PRICING_MAX_WAITS,
             reason: 'wait_cap',
+            failure_kind: 'wait_cap',
+            retry_outcome: 'no_retry',
             stage: window.__QW_BANDS ? 'courier_pricing_script' : 'bands'
           });
           showPricingLoadError();
@@ -3880,9 +4036,14 @@
       trackPricingLoadFailed({
         asset: 'cart/add.js',
         status: err && err.cartStatus != null ? err.cartStatus : null,
+        http_status: err && err.cartStatus != null ? err.cartStatus : null,
         duration_ms: null,
         attempt: 1,
+        attempts: 1,
         reason: 'cart_add',
+        failure_kind: 'cart_error',
+        fetch_target: 'cart_add',
+        retry_outcome: 'no_retry',
         stage: 'cart_add'
       });
       alert(err.message || 'Something went wrong. Please try again.');
