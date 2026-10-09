@@ -44,7 +44,7 @@ function loadHelpers(env) {
   }, env.CFG || {});
   const api = new Function(
     'window', 'fetch', 'CFG', 'console', 'AbortController', 'setTimeout', 'clearTimeout',
-    src + '\nreturn { ensureCourierAssets, fetchPricingJson, trackPricingLoadFailed, ensureServiceShelfPrices, pricingLoadErrorHtml };'
+    (env.prelude || '') + '\n' + src + '\nreturn { ensureCourierAssets, fetchPricingJson, trackPricingLoadFailed, ensureServiceShelfPrices, pricingLoadErrorHtml };'
   )(window, env.fetch, CFG, { warn() {} }, AbortController, setTimeout, clearTimeout);
   return { api, events, window, CFG };
 }
@@ -66,18 +66,27 @@ function hangingFetch(url, opts) {
 }
 
 describe('fetchPricingJson', () => {
-  it('retries a failed response once and then succeeds with no event', async () => {
+  it('retries a failed response once and records one recovery for that asset', async () => {
     let calls = 0;
     const { api, events } = loadHelpers({
       fetch: () => {
         calls += 1;
-        return Promise.resolve(calls === 1 ? jsonRes(null, 503) : jsonRes({ ok: 1 }));
+        return Promise.resolve(calls % 2 === 1 ? jsonRes(null, 503) : jsonRes({ ok: 1 }));
       },
     });
     const out = await api.fetchPricingJson('courier-london-bands.json', '/b.json');
     assert.deepEqual(out, { ok: 1 });
     assert.equal(calls, 2);
-    assert.equal(events.length, 0);
+    assert.equal(events.length, 1);
+    assert.equal(events[0].props.retry_outcome, 'retried_succeeded');
+    assert.equal(events[0].props.severity, 'recovered');
+    assert.equal(events[0].props.failure_kind, 'http');
+    assert.equal(events[0].props.http_status, 503);
+    assert.equal(events[0].props.fetch_target, 'courier_bands');
+    assert.equal(events[0].props.attempts, 2);
+    await api.fetchPricingJson('courier-london-bands.json', '/b.json');
+    assert.equal(calls, 4);
+    assert.equal(events.length, 1);
   });
 
   it('stops after one retry on HTTP errors and reports the brief properties', async () => {
@@ -101,7 +110,13 @@ describe('fetchPricingJson', () => {
     assert.equal(typeof props.duration_ms, 'number');
     assert.equal(props.page, '/pages/quote');
     assert.equal(props.url, '/pages/quote');
+    assert.equal(props.page_path, '/pages/quote');
     assert.equal(props.reason, 'http');
+    assert.equal(props.failure_kind, 'http');
+    assert.equal(props.http_status, 404);
+    assert.equal(props.retry_outcome, 'retried_failed');
+    assert.equal(props.attempts, 2);
+    assert.equal(props.fetch_target, 'courier_bands');
   });
 
   it('aborts a hung fetch at the timeout', async () => {
@@ -235,6 +250,10 @@ describe('customer-facing copy and caps', () => {
 describe('service adjustment prices come from the Shopify product', () => {
   it('Liquid reads service-adjustment variant prices and does not hard-type 0/0/25', () => {
     const block = liquid.slice(liquid.indexOf('serviceAdjustmentPrices'), liquid.indexOf('mailIn:'));
+    assert.match(liquid, /themeId: \{\{ theme\.id \| json \}\}/);
+    assert.match(liquid, /themeName: \{\{ theme\.name \| json \}\}/);
+    assert.match(liquid, /themeRole: \{\{ theme\.role \| json \}\}/);
+    assert.match(liquid, /themeBuild: null/);
     assert.match(liquid, /all_products\['service-adjustment'\]/);
     assert.match(liquid, /v\.price \| divided_by: 100\.0/);
     assert.match(block, /qw_price_15/);
@@ -421,6 +440,76 @@ describe('contact-card retry rebuilds the model repairs map', () => {
     assert.match(pick, /applyModelRepairsFromCatalogue\(name\)/);
     assert.match(card, /applyModelRepairsFromCatalogue\(S\.model\)/);
     assert.equal(wizard.split('repairsMapForModel(').length - 1, 1);
+  });
+});
+
+describe('pricing failure payload stays diagnosable and free of customer data', () => {
+  const allowed = new Set([
+    'asset', 'status', 'duration_ms', 'attempt', 'attempts', 'page', 'url', 'page_path',
+    'reason', 'stage', 'fetch_target', 'failure_kind', 'http_status', 'retry_outcome', 'severity',
+    'product_handle', 'theme_id', 'theme_name', 'theme_role', 'theme_build',
+    'device_type', 'browser_family', 'online',
+    'device', 'model', 'fault', 'issue', 'route', 'repairType', 'entrySource',
+  ]);
+
+  it('drops postcode, contact fields and the query string', () => {
+    const { api, events } = loadHelpers({
+      fetch: () => Promise.resolve(jsonRes({})),
+      window: {
+        location: {
+          pathname: '/pages/quote',
+          search: '?postcode=SW1A1AA',
+          hash: '#x',
+          href: 'https://www.icorrect.co.uk/pages/quote?postcode=SW1A1AA',
+        },
+        innerWidth: 390,
+        navigator: { userAgent: 'Mozilla/5.0 Chrome/120.0 Safari/537.36', onLine: false },
+      },
+      CFG: { themeId: 158358438141, themeName: 'iCorrect', themeRole: 'main', themeBuild: null },
+      prelude: 'function buildWizardTrackPayload(extra){ return Object.assign({ postcode: "SW1A 1AA", email: "a@b.co", phone: "07000", name: "Rick", address: "12 Margaret Street", href: "https://www.icorrect.co.uk/pages/quote?postcode=SW1A1AA" }, extra || {}); }',
+    });
+    api.trackPricingLoadFailed({
+      asset: 'repair-catalogue-map.json',
+      status: 500,
+      http_status: 500,
+      duration_ms: 12,
+      attempt: 2,
+      attempts: 2,
+      reason: 'http',
+      failure_kind: 'http',
+      retry_outcome: 'retried_failed',
+      stage: 'repair-catalogue-map.json',
+      postcode: 'W1W 8JQ',
+      email: 'secret@icorrect.co.uk',
+    });
+    const props = events[0].props;
+    Object.keys(props).forEach((key) => assert.ok(allowed.has(key), key));
+    const blob = JSON.stringify(props);
+    assert.equal(blob.includes('SW1A'), false);
+    assert.equal(blob.includes('W1W'), false);
+    assert.equal(blob.includes('?'), false);
+    assert.equal(blob.includes('@'), false);
+    assert.equal(blob.includes('Margaret'), false);
+    assert.equal(blob.includes('07000'), false);
+    assert.equal(props.page_path, '/pages/quote');
+    assert.equal(props.page, '/pages/quote');
+    assert.equal(props.fetch_target, 'catalogue_map');
+    assert.equal(props.device_type, 'mobile');
+    assert.equal(props.browser_family, 'chrome');
+    assert.equal(props.online, false);
+    assert.equal(props.theme_id, 158358438141);
+    assert.equal(props.theme_role, 'main');
+    assert.equal(props.theme_build, null);
+    assert.equal(props.product_handle, null);
+  });
+
+  it('names the failure kind on the wait cap, the free-mail fallback and cart add', () => {
+    assert.match(wizard, /failure_kind: 'wait_cap'/);
+    assert.match(wizard, /failure_kind: 'fallback'/);
+    assert.match(wizard, /failure_kind: 'cart_error'/);
+    assert.match(wizard, /fetch_target: 'service_variant_fallback'/);
+    assert.match(wizard, /fetch_target: 'cart_add'/);
+    assert.match(wizard, /retry_outcome: 'retried_succeeded'/);
   });
 });
 
