@@ -105,6 +105,17 @@ window.WIZARD_CONTEXT = {
 <!-- Service products + courier assets (#53) — PURE collection & delivery, no walk-in -->
 {%- assign mail_in_prod = all_products['mail-in-service'] -%}
 {%- assign home_addr_prod = all_products['shipping'] -%}
+{%- assign svc_adj_prod = all_products['service-adjustment'] -%}
+{%- assign qw_price_15 = 0 -%}
+{%- assign qw_price_20 = 0 -%}
+{%- assign qw_price_25 = 25 -%}
+{%- if svc_adj_prod != blank -%}
+  {%- for v in svc_adj_prod.variants -%}
+    {%- if v.id == 71280436379901 -%}{%- assign qw_price_15 = v.price | divided_by: 100.0 -%}{%- endif -%}
+    {%- if v.id == 71280436412669 -%}{%- assign qw_price_20 = v.price | divided_by: 100.0 -%}{%- endif -%}
+    {%- if v.id == 71280436445437 -%}{%- assign qw_price_25 = v.price | divided_by: 100.0 -%}{%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
 <script src="{{ 'courier-pricing.js' | asset_url }}" defer></script>
 <script src="{{ 'courier-slots.js' | asset_url }}" defer></script>
 <script src="{{ 'wizard-prefill.js' | asset_url }}" defer></script>
@@ -126,11 +137,14 @@ window.WIZARD_CFG = {
     "20": 71280436412669,
     "25": 71280436445437
   },
-  /* Shopify shelf prices. £0 lines must not be added to the wizard total. */
+  /* Shopify shelf prices for the variant ids above, rendered from the
+     service-adjustment product. Keys select the variant; they are not pounds.
+     Falls back to today's shelf (0, 0, 25) only if that product is missing.
+     The browser fetch of /products/service-adjustment.js refreshes these. */
   serviceAdjustmentPrices: {
-    "15": 0,
-    "20": 0,
-    "25": 25
+    "15": {{ qw_price_15 }},
+    "20": {{ qw_price_20 }},
+    "25": {{ qw_price_25 }}
   },
   mailIn: {
     title: {{ mail_in_prod.title | default: 'Mail-in pack' | json }},

@@ -1803,6 +1803,19 @@ a.qw-d-val:hover { text-decoration: underline; text-underline-offset: 2px; }
   font: 400 12px/1.35 var(--font-sans);
   color: #4d4d4d;
 }
+.qw-pricing-error { background: #fff7e6; box-shadow: inset 0 0 0 1px rgba(181,113,0,0.28); }
+.qw-pricing-error-actions { margin-top: 8px; }
+.qw-pricing-error-btn {
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 6px;
+  background: #171717;
+  color: #fff;
+  font: 600 12px/1.2 var(--font-sans);
+  cursor: pointer;
+}
+.qw-pricing-error-btn:disabled { opacity: 0.6; cursor: default; }
+.qw-pricing-error-link { color: #171717; }
 
 .qw-slot-panel { margin-top: 16px; }
 .qw-date-row {

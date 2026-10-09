@@ -1557,31 +1557,169 @@
     return { headline: 'Collection', detail: 'Choose a collection window below.' };
   }
 
+  /* Pricing asset loads (#120). 4s timeout, res.ok, one retry. A failed
+     fetch fires quote_wizard_pricing_load_failed. No-op without PostHog. */
+  var PRICING_FETCH_TIMEOUT_MS = 4000;
+  var PRICING_FETCH_RETRY_DELAY_MS = 400;
+  var PRICING_FETCH_ATTEMPTS = 2;
+  /* courier-pricing.js wait: 20 × 500ms ≈ 10s, then the customer sees an error. */
+  var COURIER_PRICING_MAX_WAITS = 20;
+  var COURIER_PRICING_WAIT_MS = 500;
+  var _pricingInflight = {};
+  var _fallbackFreeTracked = false;
+
+  function trackPricingLoadFailed(props) {
+    var p = props || {};
+    var page = (window.location && window.location.pathname) || null;
+    var payload = {
+      asset: p.asset || null,
+      status: p.status != null ? p.status : null,
+      duration_ms: p.duration_ms != null ? p.duration_ms : null,
+      attempt: p.attempt != null ? p.attempt : null,
+      page: page,
+      url: page,
+      reason: p.reason || null,
+      stage: p.stage || null
+    };
+    try {
+      if (window.console && typeof console.warn === 'function') {
+        console.warn('[quote-wizard] pricing load failed', payload.asset, payload.status, payload.reason);
+      }
+    } catch (e) {}
+    try {
+      if (!window.posthog || typeof window.posthog.capture !== 'function') return;
+      var body = typeof buildWizardTrackPayload === 'function' ? buildWizardTrackPayload(payload) : payload;
+      window.posthog.capture('quote_wizard_pricing_load_failed', body);
+    } catch (e2) {}
+  }
+
+  function pricingFetchOnce(url, init) {
+    var ctrl = typeof AbortController === 'function' ? new AbortController() : null;
+    var timedOut = false;
+    var timer = ctrl ? setTimeout(function () { timedOut = true; ctrl.abort(); }, PRICING_FETCH_TIMEOUT_MS) : null;
+    var opts = Object.assign({}, init || {});
+    if (ctrl) opts.signal = ctrl.signal;
+    function clearTimer() { if (timer) clearTimeout(timer); }
+    function fail(type, status, cause) {
+      var err = new Error(type);
+      err.failureType = type;
+      err.reason = type;
+      err.status = status == null ? null : status;
+      if (cause && cause.message) err.message = type + ' ' + String(cause.message).slice(0, 120);
+      return err;
+    }
+    return fetch(url, opts).then(function (res) {
+      if (!res || !res.ok) { clearTimer(); throw fail('http', res ? res.status : 0); }
+      return res.json().then(function (json) { clearTimer(); return json; }, function (cause) {
+        clearTimer();
+        throw fail(timedOut ? 'timeout' : 'parse', res.status, cause);
+      });
+    }, function (cause) {
+      clearTimer();
+      throw fail(timedOut || (cause && cause.name === 'AbortError') ? 'timeout' : 'network', null, cause);
+    });
+  }
+
+  function fetchPricingJson(asset, url, init, track) {
+    var started = Date.now();
+    var attempt = 1;
+    function run() {
+      return pricingFetchOnce(url, init).catch(function (err) {
+        if (attempt < PRICING_FETCH_ATTEMPTS) {
+          attempt += 1;
+          return new Promise(function (resolve) { setTimeout(resolve, PRICING_FETCH_RETRY_DELAY_MS); }).then(run);
+        }
+        err.attempt = attempt;
+        err.asset = asset;
+        err.duration_ms = Date.now() - started;
+        if (track !== false) {
+          trackPricingLoadFailed({
+            asset: asset,
+            status: err.status,
+            duration_ms: err.duration_ms,
+            attempt: attempt,
+            reason: err.reason || 'failed',
+            stage: asset
+          });
+        }
+        throw err;
+      });
+    }
+    return run();
+  }
+
+  function inflightPricingJob(key, factory) {
+    if (_pricingInflight[key]) return _pricingInflight[key];
+    var job = factory();
+    _pricingInflight[key] = job;
+    var clearJob = function () { delete _pricingInflight[key]; };
+    job.then(clearJob, clearJob);
+    return job;
+  }
+
+  function applyServiceShelfPrices() {
+    var product = window.__QW_SERVICE_SHELF;
+    var lib = window.ICorrectCourier;
+    if (!product || !lib || typeof lib.applyShelfPrices !== 'function') return;
+    if (window.__QW_SERVICE_ADJUSTMENTS) lib.applyShelfPrices(window.__QW_SERVICE_ADJUSTMENTS, product);
+    if (!CFG.serviceAdjustmentPrices) CFG.serviceAdjustmentPrices = {};
+    lib.applyShelfPrices({ variants: CFG.serviceAdjustments || {}, prices: CFG.serviceAdjustmentPrices }, product);
+  }
+
+  /* Not chained inside the variants job, so a slow shelf fetch cannot hold
+     the first quote. Failure keeps the Liquid-rendered prices. */
+  function ensureServiceShelfPrices() {
+    if (window.__QW_SERVICE_SHELF) { applyServiceShelfPrices(); return Promise.resolve(); }
+    return inflightPricingJob('shelf', function () {
+      return fetchPricingJson('service-adjustment.js', '/products/service-adjustment.js', {
+        headers: { 'Accept': 'application/json' }
+      }).then(function (product) {
+        window.__QW_SERVICE_SHELF = product || null;
+        applyServiceShelfPrices();
+      });
+    }).catch(function () { return null; });
+  }
+
+  function pricingLoadErrorHtml() {
+    return '<div class="qw-courier-confirm qw-courier-confirm--compact qw-pricing-error" role="alert">' +
+      '<div class="qw-courier-confirm-title">We couldn\'t load prices.</div>' +
+      '<div class="qw-courier-confirm-detail">Please try again or <a class="qw-pricing-error-link" href="/pages/contact">contact us</a>.</div>' +
+      '<div class="qw-pricing-error-actions"><button type="button" class="qw-pricing-error-btn" id="qwPricingRetry">Try again</button></div>' +
+    '</div>';
+  }
+
   function ensureCourierAssets() {
     var jobs = [];
     if (!window.__QW_BANDS && CFG.bandsUrl) {
-      jobs.push(fetch(CFG.bandsUrl).then(function(r){ return r.json(); }).then(function(j){ window.__QW_BANDS = j; }));
+      jobs.push(inflightPricingJob('bands', function () {
+        return fetchPricingJson('courier-london-bands.json', CFG.bandsUrl).then(function (j) { window.__QW_BANDS = j; });
+      }));
     }
     if (!window.__QW_CATALOGUE && CFG.catalogueUrl) {
-      jobs.push(fetch(CFG.catalogueUrl).then(function(r){ return r.json(); }).then(function(j){ window.__QW_CATALOGUE = j; }));
+      jobs.push(inflightPricingJob('catalogue', function () {
+        return fetchPricingJson('repair-catalogue-map.json', CFG.catalogueUrl).then(function (j) { window.__QW_CATALOGUE = j; });
+      }));
     }
     if (!window.__QW_SERVICE_ADJUSTMENTS && CFG.serviceAdjustmentsUrl) {
-      jobs.push(fetch(CFG.serviceAdjustmentsUrl).then(function(r){ return r.json(); }).then(function(j){
-        window.__QW_SERVICE_ADJUSTMENTS = j;
-        if (j && !j.prices && CFG.serviceAdjustmentPrices) j.prices = CFG.serviceAdjustmentPrices;
-        if (j && j.variants) CFG.serviceAdjustments = Object.assign({}, CFG.serviceAdjustments || {}, j.variants);
-        return fetch('/products/service-adjustment.js', { headers: { 'Accept': 'application/json' } })
-          .then(function(res){ return res.ok ? res.json() : null; })
-          .then(function(product){
-            if (product && window.ICorrectCourier && typeof window.ICorrectCourier.applyShelfPrices === 'function') {
-              window.ICorrectCourier.applyShelfPrices(window.__QW_SERVICE_ADJUSTMENTS, product);
-            }
-          })
-          .catch(function(){ /* seeded prices remain */ });
-      }).catch(function(){ /* inline CFG IDs remain */ }));
+      jobs.push(inflightPricingJob('variants', function () {
+        return fetchPricingJson('service-adjustment-variants.json', CFG.serviceAdjustmentsUrl).then(function (j) {
+          if (j && !j.prices && CFG.serviceAdjustmentPrices) j.prices = CFG.serviceAdjustmentPrices;
+          if (j && j.variants) CFG.serviceAdjustments = Object.assign({}, CFG.serviceAdjustments || {}, j.variants);
+          window.__QW_SERVICE_ADJUSTMENTS = j;
+          applyServiceShelfPrices();
+        });
+      }).catch(function () {
+        /* Reported by fetchPricingJson. Inline CFG ids still select the variant. */
+        return null;
+      }));
     }
+    ensureServiceShelfPrices();
     if (!window.__QW_COLLECTION_PREFILL && CFG.collectionPrefillUrl) {
-      jobs.push(fetch(CFG.collectionPrefillUrl).then(function(r){ return r.json(); }).then(function(j){ window.__QW_COLLECTION_PREFILL = j; }));
+      jobs.push(inflightPricingJob('prefill', function () {
+        return fetchPricingJson('wizard-collection-prefill.json', CFG.collectionPrefillUrl, null, false).then(function (j) {
+          window.__QW_COLLECTION_PREFILL = j;
+        });
+      }).catch(function () { return null; }));
     }
     return Promise.all(jobs);
   }
@@ -1774,6 +1912,7 @@
 
   function quoteForService(serviceKind, postcode) {
     if (!window.ICorrectCourier || !window.__QW_BANDS) return null;
+    applyServiceShelfPrices();
     var mapped = S.repairType && _repairsMap[S.repairType] ? _repairsMap[S.repairType] : null;
     return window.ICorrectCourier.quoteServiceAdjustment({
       postcode: postcode || '',
@@ -2209,6 +2348,17 @@
 
   function applyCourierQuoteToUI(quote) {
     _courierQuote = quote;
+    if (quote && quote.variantMode === 'fallback-free-mail-in' && !_fallbackFreeTracked) {
+      _fallbackFreeTracked = true;
+      trackPricingLoadFailed({
+        asset: 'service-adjustment-variants',
+        status: null,
+        duration_ms: null,
+        attempt: null,
+        reason: 'fallback_free_mail_in',
+        stage: 'service_variant'
+      });
+    }
     var reveal = document.getElementById('qwDeliveryReveal');
     var slotPanel = document.getElementById('qwSlotPanel');
     var mailPanel = document.getElementById('qwMailinPanel');
@@ -2314,7 +2464,7 @@
   }
 
   function wireCourierService(container) {
-    ensureCourierAssets().catch(function(){});
+    ensureCourierAssets().catch(function () { /* event already sent; runLookup shows the message */ });
     _postcodeResolved = false;
     setPriceVisibility(false);
     var input = document.getElementById('qwPostcode');
@@ -2360,6 +2510,46 @@
       var wait = document.getElementById('qwPostcodeWait');
       if (wait) wait.style.display = show ? '' : 'none';
     }
+    var _courierWaits = 0;
+    function showPricingLoadError() {
+      applyCourierQuoteToUI(null);
+      var result = document.getElementById('qwCourierResult');
+      if (!result) return;
+      result.innerHTML = pricingLoadErrorHtml();
+      result.hidden = false;
+      var retry = document.getElementById('qwPricingRetry');
+      if (retry) retry.onclick = function () {
+        retry.disabled = true;
+        result.innerHTML = '';
+        result.hidden = true;
+        runLookup(true);
+      };
+    }
+    function waitForCourierPricing(settled) {
+      ensureCourierAssets().then(afterAssets, function () {
+        if (window.__QW_BANDS) { afterAssets(); return; }
+        _courierWaits = 0;
+        showPricingLoadError();
+      });
+      function afterAssets() {
+        if (window.ICorrectCourier && window.__QW_BANDS) { runLookup(settled); return; }
+        if (_courierWaits >= COURIER_PRICING_MAX_WAITS) {
+          _courierWaits = 0;
+          trackPricingLoadFailed({
+            asset: window.__QW_BANDS ? 'courier-pricing.js' : 'courier-london-bands.json',
+            status: null,
+            duration_ms: COURIER_PRICING_MAX_WAITS * COURIER_PRICING_WAIT_MS,
+            attempt: COURIER_PRICING_MAX_WAITS,
+            reason: 'wait_cap',
+            stage: window.__QW_BANDS ? 'courier_pricing_script' : 'bands'
+          });
+          showPricingLoadError();
+          return;
+        }
+        _courierWaits += 1;
+        setTimeout(function () { runLookup(settled); }, COURIER_PRICING_WAIT_MS);
+      }
+    }
     /* settled = blur or Enter: a partial postcode then gets a neutral hint.
        While typing, a partial postcode shows nothing. */
     function runLookup(settled) {
@@ -2378,8 +2568,10 @@
       }
       showPostcodeWait(false);
       if (!window.ICorrectCourier || !window.__QW_BANDS) {
-        ensureCourierAssets().then(function () { runLookup(settled); }); return;
+        waitForCourierPricing(settled);
+        return;
       }
+      _courierWaits = 0;
       var kind = selectedServiceKind();
       /* Always probe courier first so we can auto-route to mail-in when forced */
       var courierQuote = quoteForService('courier', pc);
@@ -2781,6 +2973,21 @@
     c.appendChild(list);
   }
 
+  /* Catalogue rows for the model already picked. pickModel and the pricing
+     error retry both use this, so a reload does not send the customer back
+     to the model step (#122). */
+  function applyModelRepairsFromCatalogue(modelName) {
+    var name = modelName || S.model;
+    var cat = window.ICorrectCatalogue;
+    if (cat && window.__QW_CATALOGUE && S.device && name && typeof cat.repairsMapForModel === 'function') {
+      _repairsMap = cat.repairsMapForModel(window.__QW_CATALOGUE, S.device, name) || {};
+      _collectionProducts = Object.keys(_repairsMap).map(function (k) { return _repairsMap[k]; });
+      return;
+    }
+    _repairsMap = {};
+    _collectionProducts = [];
+  }
+
   async function pickModel(name, handle, el) {
     S.model = name; S.collectionHandle = handle; S.fault = null; S.issue = null; S.route = null; S.repairType = null;
     syncIcorrectQuote();
@@ -2794,15 +3001,8 @@
     var fGrid = document.querySelector('#qw-s3 .qw-f-grid');
     if (fGrid) fGrid.innerHTML = '<div class="qw-loading"><div class="qw-spinner"></div><p>Loading repairs for ' + esc(name) + '...</p></div>';
 
-    await ensureCourierAssets().catch(function(){});
-    var cat = window.ICorrectCatalogue;
-    if (cat && window.__QW_CATALOGUE) {
-      _repairsMap = cat.repairsMapForModel(window.__QW_CATALOGUE, S.device, name) || {};
-      _collectionProducts = Object.keys(_repairsMap).map(function(k){ return _repairsMap[k]; });
-    } else {
-      _repairsMap = {};
-      _collectionProducts = [];
-    }
+    await ensureCourierAssets().catch(function () { /* catalogue failure is shown on the repair card */ });
+    applyModelRepairsFromCatalogue(name);
     /* Catalogue map is authoritative — no collection HTML scrape (#53). */
     trackWizardStart({
       start_step: 'model',
@@ -3490,8 +3690,8 @@
       var postcodeMi = postcodeInputMi ? String(postcodeInputMi.value || '').trim() : '';
       if (postcodeMi) items[0].properties['Postcode'] = postcodeMi.toUpperCase();
       if (_courierQuote && _courierQuote.band) items[0].properties['Band'] = _courierQuote.band;
-      /* Do not add mail-in-service (Shopify £20). ≥£200 postage is already
-         in the all-in quote (adjustment 0). Paid postage is the adjustment variant. */
+      /* Do not add the mail-in-service product. Postage, when there is any,
+         is the service-adjustment variant below, at that variant's Shopify price. */
     }
 
     /* Service adjustment variant — null-safe: missing ID already forced free mail-in in quote */
@@ -3638,7 +3838,9 @@
       if (!addRes.ok) {
         var errData = null;
         try { errData = await addRes.json(); } catch (e) {}
-        throw new Error((errData && (errData.description || errData.message)) || 'Cart error');
+        var cartErr = new Error((errData && (errData.description || errData.message)) || 'Cart error');
+        cartErr.cartStatus = addRes.status;
+        throw cartErr;
       }
 
       await addRes.json();
@@ -3675,6 +3877,14 @@
       window.location.href = checkoutUrlWithHomeAddress(homePostcode);
     } catch (err) {
       if (btn) { btn.disabled = false; btn.textContent = 'Proceed to checkout'; }
+      trackPricingLoadFailed({
+        asset: 'cart/add.js',
+        status: err && err.cartStatus != null ? err.cartStatus : null,
+        duration_ms: null,
+        attempt: 1,
+        reason: 'cart_add',
+        stage: 'cart_add'
+      });
       alert(err.message || 'Something went wrong. Please try again.');
     }
   }
@@ -3712,7 +3922,7 @@
   /* ---- REPAIR CARD ---- */
   async function showRepairCard(iss, container) {
     var product = resolveRepairProduct(iss.repairType, iss.label);
-    if (!product) { showContactCard(iss, container); return; }
+    if (!product) { showContactCard(iss, container, { pricingFailed: !window.__QW_CATALOGUE }); return; }
 
     /* Price + variant from catalogue map; optional fetch only for express upsell HTML. */
     var basePrice = product.variants && product.variants[0] ? parseFloat(product.variants[0].price) : 0;
@@ -3818,7 +4028,7 @@
   /* ---- DIAGNOSTIC CARD ---- */
   async function showDiagnosticCard(iss, container) {
     var diagProduct = _repairsMap['diagnostic'];
-    if (!diagProduct) { showContactCard(iss, container); return; }
+    if (!diagProduct) { showContactCard(iss, container, { pricingFailed: !window.__QW_CATALOGUE }); return; }
 
     var fullDiag = await fetchProduct(diagProduct.handle);
     var diagPrice = fullDiag ? parseFloat(fullDiag.variants[0].price) : 0;
@@ -3956,9 +4166,10 @@
   }
 
   /* ---- CONTACT CARD ---- */
-  function showContactCard(iss, container) {
+  function showContactCard(iss, container, opts) {
     var urgentHtml = iss.urgent ? '<div class="qw-urgent" role="alert"><span>\u26A0\uFE0F Safety concern: stop using the device and don\'t charge it.</span></div>' : '';
-    container.innerHTML = urgentHtml +
+    var pricingNote = opts && opts.pricingFailed ? pricingLoadErrorHtml() : '';
+    container.innerHTML = urgentHtml + pricingNote +
       '<div class="qw-res">' +
         '<div class="qw-res-top">' +
           '<div class="qw-res-badge qw-badge-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>Let\'s chat about this</div>' +
@@ -3976,6 +4187,21 @@
       form_context: 'contact'
     });
     wireRestart(container);
+    if (opts && opts.pricingFailed) {
+      var pricingRetry = document.getElementById('qwPricingRetry');
+      if (pricingRetry) pricingRetry.onclick = function () {
+        pricingRetry.disabled = true;
+        container.innerHTML = '<div class="qw-loading"><div class="qw-spinner"></div></div>';
+        window.__QW_CATALOGUE = null;
+        ensureCourierAssets().then(function () {
+          applyModelRepairsFromCatalogue(S.model);
+          if (iss.route === 'diagnostic') return showDiagnosticCard(iss, container);
+          return showRepairCard(iss, container);
+        }).catch(function () {
+          showContactCard(iss, container, { pricingFailed: !window.__QW_CATALOGUE });
+        });
+      };
+    }
   }
 
   /* ---- SHARED CONTACT FORM BUILDERS ---- */
@@ -4968,7 +5194,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
     }
     /* Homepage / no context: paint step 1 immediately; fetch bands+map in the background. */
     initPrefill();
-    ensureCourierAssets().catch(function(){});
+    ensureCourierAssets().catch(function () { /* event already sent */ });
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', bootPrefill);
