@@ -9,8 +9,8 @@ and product pages.
 1. Crawlable links
    - Restored the "Choose your iPhone, MacBook, iPad, Apple Watch repair"
      grids on the four hubs (revert of 250fa1a), below the wizard.
-   - Re-enabled the iPhone link section to /pages/iphone-repairs (off since
-     #58) on 26 iPhone templates, below the first grid after the wizard.
+   - The iPhone link section to /pages/iphone-repairs stays disabled (off since
+     #58) on the iPhone templates, as on main.
    - New `snippets/repair-index.liquid`, rendered by the new `repair-index`
      section on collections: a compact list of plain links, one per
      product, with full model and repair names and the from price
