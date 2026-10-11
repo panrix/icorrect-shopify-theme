@@ -9,6 +9,23 @@
  */
 {
   "sections": {
+    "parent_categories_hubintro": {
+      "type": "parent-categories",
+      "settings": {
+        "column_per_row": 3,
+        "padding_top": 30,
+        "padding_bottom": 10,
+        "mob_padding_top": 25,
+        "mob_padding_bottom": 0,
+        "bg": "#ffffff",
+        "heading": "iPad",
+        "heading_size": 28,
+        "details": "Repair prices for every iPad model, covering screen, battery, charging port and logic board faults. Choose your iPad in the quote tool below to see the exact price. Every repair comes with a 2-year warranty. Courier collection across London, tracked mail-in nationwide.",
+        "btn_link": "",
+        "btn_text": "",
+        "heading_tag": "h1"
+      }
+    },
     "banner": {
       "type": "main-collection-banner",
       "disabled": true,
@@ -377,7 +394,7 @@
         "subheading": "We'll collect your iPad same day in London, nationwide by courier.",
         "prefill_mode": "auto",
         "skip_to_service": false,
-        "page_title": true
+        "page_title": false
       }
     },
     "repair_index": {
@@ -388,6 +405,7 @@
     "banner",
     "product-grid",
     "main_banner_and_video_HjbmW9",
+    "parent_categories_hubintro",
     "quote_wizard_top",
     "parent_categories_f6HGVL",
     "parent_categories_F74hA8",
