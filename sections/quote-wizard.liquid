@@ -102,7 +102,7 @@ window.WIZARD_CONTEXT = {
 <script>window.WIZARD_CUSTOMER = { name: {{ customer.name | json }}, email: {{ customer.email | json }} };</script>
 {%- endif -%}
 
-<!-- Service products + courier assets (#53) — PURE collection & delivery, no walk-in -->
+{%- comment -%}Service products + courier assets (#53): collection and delivery only.{%- endcomment -%}
 {%- assign mail_in_prod = all_products['mail-in-service'] -%}
 {%- assign home_addr_prod = all_products['shipping'] -%}
 <script src="{{ 'courier-pricing.js' | asset_url }}" defer></script>
@@ -304,7 +304,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
               <span class="qw-hrs-d">Sat</span><span class="qw-hrs-t">{{ section.settings.hours_sat | default: 'Closed' }}</span>
               <span class="qw-hrs-d">Sun</span><span class="qw-hrs-t">{{ section.settings.hours_sun | default: 'Closed' }}</span>
             </div>
-            <p class="qw-no-walkin">Collection or mail-in only — no walk-ins.</p>
+            <p class="qw-no-walkin">Courier collection or tracked mail-in only.</p>
           </div>
         </div>
       </div>
@@ -313,6 +313,9 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 
     <!-- RIGHT: WIZARD -->
     <div class="qw-wizard" aria-label="Repair quote wizard">
+      {%- if section.settings.page_title and request.page_type == 'collection' and collection.title != blank -%}
+        <h1 class="qw-page-title">{{ collection.title | escape }}</h1>
+      {%- endif -%}
       <div class="qw-head">
         {% if request.page_type == 'page' and page.handle == 'contact' %}
           <h1 class="qw-title">Contact iCorrect London</h1>
@@ -466,6 +469,10 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   </div>
 </div>
 
+{%- if request.page_type == 'collection' and section.settings.show_repair_index != false -%}
+  {% render 'repair-index', collection: collection %}
+{%- endif -%}
+
 {%- comment -%}
   Product pages with the imageless repair design render a slot under the
   product description; move the wizard there before its script initialises.
@@ -512,6 +519,14 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 }
 .quote-wizard-section .qw-wrap--solo { max-width: 820px; margin-left: auto; margin-right: auto; }
 .qw-slot-panel[hidden] { display: none !important; }
+.quote-wizard-section .qw-page-title {
+  margin: 0 0 6px;
+  font-size: 14px !important;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: #6e6e73;
+}
 .qw-delivery-card { width: 100%; }
 .qw-opt-disabled, .qw-card-disabled { opacity: 0.45; pointer-events: none; }
 </style>
@@ -522,6 +537,19 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   "tag": "section",
   "class": "quote-wizard-section",
   "settings": [
+    {
+      "type": "checkbox",
+      "id": "page_title",
+      "label": "Show the collection title as the page H1",
+      "default": false,
+      "info": "Turn on for collection templates where the wizard is the first section and nothing else renders an H1. The wizard heading itself stays an H2."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_repair_index",
+      "label": "Show the repair price index under the wizard (collection pages)",
+      "default": true
+    },
     {
       "type": "checkbox",
       "id": "show_map",

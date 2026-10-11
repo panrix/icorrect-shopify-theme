@@ -15,7 +15,7 @@
             {%- liquid
               assign repair_details = block.settings.details
               if repair_details contains 'walk-in drop-off service by appointment'
-                assign repair_details = 'We collect from your door — same-day in most of London. Book online and we arrange tracked, insured collection and return. Outside London, use our free mail-in pack.'
+                assign repair_details = 'We collect from your door across London, same day in most areas. Book online and we arrange tracked, insured collection and return. Outside London, use our tracked mail-in service.'
               endif
             -%}
             <p>{{ repair_details }}</p>
@@ -252,7 +252,7 @@ text-align: left;
             "type": "text",
             "id": "details",
             "label": "Details",
-            "default": "We collect from your door — same-day in most of London. Book online and we arrange tracked, insured collection and return. Outside London, use our free mail-in pack."
+            "default": "We collect from your door across London, same day in most areas. Book online and we arrange tracked, insured collection and return. Outside London, use our tracked mail-in service."
           },
           {
             "type": "text",

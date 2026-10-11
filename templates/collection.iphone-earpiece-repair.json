@@ -70,7 +70,8 @@
         "heading_size_desktop": 38,
         "heading_size_mobile": 24,
         "heading_line_height_desktop": 46,
-        "heading_line_height_mobile": 36
+        "heading_line_height_mobile": 36,
+        "heading_tag": "h1"
       }
     },
     "iphone_model_search_WWXzYz": {
@@ -156,7 +157,7 @@
           "settings": {
             "icon": "shopify://shop_images/Service_icon_Courier.png",
             "heading": "London Collection",
-            "details": "We collect from your door — same-day in most of London. Book online and we arrange tracked, insured collection and return. Outside London, use our free mail-in pack.",
+            "details": "We collect from your door across London, same day in most areas. Book online and we arrange tracked, insured collection and return. Outside London, use our tracked mail-in service.",
             "btn": "Learn more",
             "link": "shopify://pages/our-services"
           }
@@ -321,8 +322,7 @@
     },
     "iphone_repair_link_EZvfF": {
       "type": "iphone-repair-link",
-      "settings": {},
-      "disabled": true
+      "settings": {}
     },
     "quote_wizard_top": {
       "type": "quote-wizard",
@@ -338,12 +338,12 @@
   "order": [
     "banner",
     "product-grid",
-    "iphone_repair_link_EZvfF",
     "main_banner_and_video_HjbmW9",
     "about_info_RWbQxj",
     "quote_wizard_top",
     "iphone_model_search_WWXzYz",
     "featured_collection_AfhUDd",
+    "iphone_repair_link_EZvfF",
     "about_info_XAqnaH",
     "iphone_videos_qHhHXU",
     "repair_services_nQkwFT",

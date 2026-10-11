@@ -381,7 +381,7 @@
           "settings": {
             "icon": "shopify://shop_images/Service_icon_Courier.png",
             "heading": "London Collection",
-            "details": "We collect from your door — same-day in most of London. Book online and we arrange tracked, insured collection and return. Outside London, use our free mail-in pack.",
+            "details": "We collect from your door across London, same day in most areas. Book online and we arrange tracked, insured collection and return. Outside London, use our tracked mail-in service.",
             "btn": "Learn more",
             "link": ""
           }
@@ -581,22 +581,22 @@
       "settings": {
         "address": "<h3>Address</h3><p>iCorrect 12 Margaret Street Fitzrovia London W1W 8JQ</p>",
         "show_map": false,
-        "prefill_mode": "auto"
+        "prefill_mode": "auto",
+        "page_title": true
       }
     },
     "iphone_repair_link_L2Fmo": {
       "type": "iphone-repair-link",
-      "settings": {},
-      "disabled": true
+      "settings": {}
     }
   },
   "order": [
     "banner",
     "contact_with_map_dXbbDU",
     "product-grid",
-    "iphone_repair_link_L2Fmo",
     "main_banner_and_video_HjbmW9",
     "parent_categories_F74hA8",
+    "iphone_repair_link_L2Fmo",
     "parent_categories_nWCAYw",
     "parent_categories_FywRmd",
     "parent_categories_Xpicin",

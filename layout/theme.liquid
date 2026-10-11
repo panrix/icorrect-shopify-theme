@@ -40,18 +40,24 @@
         assign seo_page_description = 'Apple repair advice and news from iCorrect London, covering MacBook, iPhone and iPad faults, diagnostics, parts, maintenance and repair options.'
       elsif request.page_type == 'page'
         if page.handle == 'our-services'
-          assign seo_page_description = 'Specialist Apple repairs: courier collection in London, or a free tracked mail-in pack for the rest of the UK. Original parts and a 2-year warranty.'
+          assign seo_page_description = 'Specialist Apple repairs: courier collection across London, or tracked mail-in for the rest of the UK. Original parts and a 2-year warranty.'
         elsif page.handle == 'iphone-repairs'
-          assign seo_page_description = 'Specialist iPhone repairs with original parts and a 2-year warranty. Courier collection in London, or a free tracked mail-in pack across the UK.'
+          assign seo_page_description = 'Specialist iPhone repairs with original parts and a 2-year warranty. Courier collection across London, tracked mail-in nationwide.'
         elsif page.handle == 'ipad-repairs'
-          assign seo_page_description = 'Specialist iPad repairs with original parts and a 2-year warranty. Courier collection in London, or a free tracked mail-in pack across the UK.'
+          assign seo_page_description = 'Specialist iPad repairs with original parts and a 2-year warranty. Courier collection across London, tracked mail-in nationwide.'
         elsif page.handle == 'apple-watch-repairs'
-          assign seo_page_description = 'Specialist Apple Watch repairs with original parts and a 2-year warranty. Courier collection in London, or a free tracked mail-in pack across the UK.'
+          assign seo_page_description = 'Specialist Apple Watch repairs with original parts and a 2-year warranty. Courier collection across London, tracked mail-in nationwide.'
         elsif page.handle == 'macbook-repairs'
-          assign seo_page_description = 'Specialist MacBook repairs including board-level work. Courier collection in London, or a free tracked mail-in pack across the UK.'
+          assign seo_page_description = 'Specialist MacBook repairs including board-level work. Courier collection across London, tracked mail-in nationwide.'
         elsif page.handle == 'contact'
-          assign seo_page_description = 'Contact iCorrect London. Collection or mail-in only — no walk-ins. Call, email, or book a repair online.'
+          assign seo_page_description = 'Contact iCorrect London. Courier collection or tracked mail-in only. Call, email, or book a repair online.'
         endif
+      endif
+
+      # Walk-in retired (#53): rewrite the location sentence that admin SEO
+      # descriptions still carry. Title tags are untouched.
+      if seo_page_description contains 'London'
+        assign seo_page_description = seo_page_description | replace: ' replacement in Central London.', ' replacement with London courier collection or UK mail-in.' | replace: 'Central London walk-in service.', 'Courier collection across London, tracked mail-in nationwide.' | replace: 'Central London walk-in.', 'Courier collection across London, tracked mail-in nationwide.' | replace: 'London walk-in.', 'Courier collection across London, tracked mail-in nationwide.' | replace: 'Central London, 2-year warranty.', 'London courier collection or UK mail-in, 2-year warranty.' | replace: 'Central London.', 'Courier collection across London, tracked mail-in nationwide.'
       endif
     -%}
 

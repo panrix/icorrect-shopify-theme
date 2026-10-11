@@ -111,7 +111,6 @@
     },
     "iphone_repair_link_wudnk": {
       "type": "iphone-repair-link",
-      "disabled": true,
       "settings": {}
     },
     "main_banner_and_video_HjbmW9": {
@@ -256,7 +255,8 @@
         "subheading": "We'll collect your iPhone same day in London, nationwide by courier.",
         "show_map": false,
         "prefill_mode": "auto",
-        "skip_to_service": false
+        "skip_to_service": false,
+        "page_title": true
       }
     }
   },

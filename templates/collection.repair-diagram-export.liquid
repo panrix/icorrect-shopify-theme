@@ -1,0 +1,26 @@
+{%- layout none -%}
+{%- comment -%}
+  Source sheet for scripts/seo/export-repair-diagrams.py: every repair drawing
+  the catalogue uses (each product's repair, plus its plain model drawing for
+  model tiles), drawn inline with its file key. Not linked anywhere; noindex.
+  Open /collections/all?view=repair-diagram-export&page=1 (100 products/page).
+{%- endcomment -%}
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex, nofollow"><title>Repair diagram export</title></head>
+<body>
+{%- paginate collection.products by 100 -%}
+<p id="pages" data-current="{{ paginate.current_page }}" data-pages="{{ paginate.pages }}"></p>
+{%- for product in collection.products -%}
+  {%- liquid
+    capture meta_raw
+      render 'repair-meta', title: product.title, repair_tags: product.tags, repair_context: product.type
+    endcapture
+    assign meta = meta_raw | strip | split: '|'
+  -%}
+  <div class="x" data-handle="{{ product.handle }}">
+    {% render 'device-glyph', family: meta[0], title: product.title, repair: meta[1], export: true %}
+    {% render 'device-glyph', family: meta[0], title: product.title, repair: 'repair', export: true %}
+  </div>
+{%- endfor -%}
+{%- endpaginate -%}
+</body></html>

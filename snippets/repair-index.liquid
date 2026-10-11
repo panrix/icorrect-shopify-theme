@@ -1,0 +1,72 @@
+{%- comment -%}
+  Compact price index under the Quote Wizard on model and repair-type
+  collection pages: one plain link per repair product, with its price.
+  Crawlable internal links that name the model and the repair in the link
+  text, without repeating long titles on screen. On a repair-type page the
+  model shows and the repair is visually hidden; on a model page it is the
+  other way round (same rule as repair-card).
+
+  Accepts:
+  - collection: {Object} collection
+
+  Usage:
+  {% render 'repair-index', collection: collection %}
+{%- endcomment -%}
+{%- if collection and collection.products_count > 0 -%}
+  {%- liquid
+    capture ri_collection_meta
+      render 'repair-meta', title: collection.title
+    endcapture
+    assign ri_collection_meta = ri_collection_meta | strip | split: '|'
+    assign ri_emphasis = 'repair'
+    if ri_collection_meta[1] != 'repair'
+      assign ri_emphasis = 'model'
+    endif
+    assign ri_subject = collection.title | remove: ' Repair Prices' | remove: ' Prices' | strip
+    if ri_emphasis == 'model'
+      assign ri_heading = ri_subject | append: ' repair prices by model'
+    else
+      assign ri_heading = ri_subject | append: ' repair prices'
+    endif
+  -%}
+  <nav class="ri page-width" aria-labelledby="ri-heading-{{ collection.id }}">
+    <h2 class="ri__heading" id="ri-heading-{{ collection.id }}">{{ ri_heading | escape }}</h2>
+    <ul class="ri__list" role="list">
+      {%- paginate collection.products by 100 -%}
+        {%- for product in collection.products -%}
+          {%- liquid
+            capture ri_meta_raw
+              render 'repair-meta', title: product.title, repair_tags: product.tags, repair_context: product.type
+            endcapture
+            assign ri_meta = ri_meta_raw | strip | split: '|'
+            assign ri_model = ri_meta[3] | strip
+            assign ri_name = ri_meta[4] | strip
+            assign ri_price = product.price_min | money_without_trailing_zeros
+          -%}
+          <li class="ri__item">
+            <a class="ri__link" href="{{ product.url }}">
+              {%- if ri_name == blank or ri_model == blank -%}
+                {{- product.title | escape -}}
+              {%- elsif ri_emphasis == 'model' -%}
+                {{- ri_model | escape -}}<span class="visually-hidden"> {{ ri_name | escape }}</span>
+              {%- else -%}
+                <span class="visually-hidden">{{ ri_model | escape }} </span>{{- ri_name | escape -}}
+              {%- endif -%}
+              <span class="ri__price"><span class="visually-hidden">, </span>from {{ ri_price }}</span>
+            </a>
+          </li>
+        {%- endfor -%}
+      {%- endpaginate -%}
+    </ul>
+  </nav>
+  <style>
+    .ri { max-width: 820px; margin: 0 auto; padding-top: 4px; padding-bottom: 36px; font-family: "Geist", Arial, sans-serif; }
+    .ri__heading { margin: 0 0 10px; font-size: 14px; line-height: 1.4; font-weight: 600; letter-spacing: 0; color: #1d1d1f; text-align: left; }
+    .ri__list { list-style: none; margin: 0; padding: 0; columns: 3 220px; column-gap: 28px; }
+    .ri__item { break-inside: avoid; margin: 0; padding: 0; }
+    .ri__link { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.06); font-size: 13px; line-height: 1.35; color: #424245; text-decoration: none; }
+    .ri__link:hover, .ri__link:focus-visible { color: #0070f3; }
+    .ri__price { flex: none; color: #6e6e73; font-variant-numeric: tabular-nums; }
+    @media (max-width: 749px) { .ri { padding-left: 20px; padding-right: 20px; } .ri__list { columns: 1; } }
+  </style>
+{%- endif -%}

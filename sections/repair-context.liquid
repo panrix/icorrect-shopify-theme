@@ -1,0 +1,203 @@
+{%- comment -%}
+  Contextual repair content (SEO recovery phase 1): symptoms, model number
+  finder, process, parts and calibration, warranty and FAQs, placed below the
+  quote wizard and the model/price index. Adapted from the signed design
+  handoff (2026-07-11) for courier collection and tracked mail-in. Only claims
+  already published on the site are used.
+
+  Pages: shows on collections and products listed in the allowlists below, or
+  on every page using the template when "Show on every page" is ticked.
+  Family: "macbook-screen" for now; other families are phase 2.
+{%- endcomment -%}
+{%- liquid
+  assign rc_show = false
+  if section.settings.show_everywhere
+    assign rc_show = true
+  else
+    assign rc_handles = section.settings.collection_handles | append: ',' | append: section.settings.product_handles | split: ','
+    assign rc_current = ''
+    if request.page_type == 'collection'
+      assign rc_current = collection.handle
+    elsif request.page_type == 'product'
+      assign rc_current = product.handle
+    endif
+    for h in rc_handles
+      assign h2 = h | strip
+      if h2 != blank and h2 == rc_current
+        assign rc_show = true
+        break
+      endif
+    endfor
+  endif
+
+  assign rc_device = 'MacBook'
+  assign rc_subject = 'your MacBook'
+  if request.page_type == 'product' and product.title contains 'MacBook'
+    assign rc_device = product.title | split: ' Display Screen Repair' | first | split: ' Screen Repair' | first | strip
+    assign rc_subject = 'your ' | append: rc_device
+  elsif request.page_type == 'collection' and collection.handle contains '-repair-prices' and collection.handle != 'macbook-screen-repair-prices'
+    assign rc_device = collection.title | remove: ' Repair Prices' | remove: ' Repairs' | strip
+    assign rc_subject = 'your ' | append: rc_device
+  endif
+-%}
+{%- if rc_show -%}
+{%- style -%}
+  .rc{max-width:980px;margin:0 auto;padding:40px 20px 8px;color:#1d1d1f}
+  .rc section{padding:28px 0;border-top:1px solid #e5e5ea}
+  .rc section:first-child{border-top:0}
+  .rc h2{font-size:24px;line-height:1.25;margin:0 0 10px;font-weight:600;letter-spacing:-.01em}
+  .rc h3{font-size:16px;margin:0 0 6px;font-weight:600}
+  .rc p,.rc li,.rc dd{font-size:15px;line-height:1.6;color:#3a3a3c}
+  .rc .rc__label{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#6e6e73;margin:0 0 6px}
+  .rc__symptoms{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;padding:0;margin:14px 0 0;list-style:none}
+  .rc__symptoms li{background:#f5f5f7;border-radius:10px;padding:12px 14px;margin:0}
+  .rc__symptoms strong{display:block;color:#1d1d1f;font-size:14px}
+  .rc__finder{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+  .rc__plate{background:#f5f5f7;border-radius:12px;padding:20px;font-size:13px;line-height:1.7;color:#6e6e73}
+  .rc__plate b{color:#1d1d1f;background:#e3eefc;border-radius:4px;padding:0 4px}
+  .rc__form{display:flex;gap:8px;margin-top:12px}
+  .rc__form input{flex:1;min-width:0;padding:11px 12px;border:1px solid rgba(0,0,0,.2);border-radius:8px;font-size:14px}
+  .rc__form button{padding:11px 16px;border-radius:8px;border:0;background:#1d1d1f;color:#fff;font-size:14px;cursor:pointer}
+  .rc__result{margin-top:8px;font-size:14px;min-height:20px}
+  .rc__steps{counter-reset:rc;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;padding:0;margin:14px 0 0;list-style:none}
+  .rc__steps li{border:1px solid #e5e5ea;border-radius:12px;padding:16px;margin:0}
+  .rc__steps li::before{counter-increment:rc;content:"0" counter(rc);display:block;font-size:12px;color:#6e6e73;margin-bottom:6px;font-variant-numeric:tabular-nums}
+  .rc__dl{display:grid;grid-template-columns:160px 1fr;gap:8px 18px;margin:14px 0 0}
+  .rc__dl dt{font-weight:600;font-size:14px}
+  .rc__dl dd{margin:0}
+  .rc__faq details{border-bottom:1px solid #e5e5ea;padding:12px 0}
+  .rc__faq summary{cursor:pointer;font-weight:600;font-size:15px;list-style:none}
+  .rc__faq summary::-webkit-details-marker{display:none}
+  .rc__faq details p{margin:8px 0 0}
+  .ri__item.rc-hit a{background:#e3eefc;border-radius:6px}
+  @media (max-width:749px){.rc__finder{grid-template-columns:1fr}.rc__dl{grid-template-columns:1fr}.rc h2{font-size:21px}}
+{%- endstyle -%}
+<div class="rc" id="screen-repair-guide">
+  <section aria-labelledby="rc-symptoms-{{ section.id }}">
+    <p class="rc__label">MacBook screen repair</p>
+    <h2 id="rc-symptoms-{{ section.id }}">Is {{ rc_subject | escape }} screen cracked, flickering or dark?</h2>
+    <p>These are the screen faults we repair most often. We replace only the damaged display panel with a genuine Apple display, so {{ rc_subject | escape }} keeps its original lid, webcam and hinge.</p>
+    <ul class="rc__symptoms">
+      <li><strong>Cracked or shattered glass</strong>Visible cracks, spreading ink blots or black patches after a drop or pressure on the lid.</li>
+      <li><strong>Lines or flickering</strong>Vertical or horizontal lines, flicker or colour bands, often worse at certain lid angles.</li>
+      <li><strong>Dim or dark screen</strong>The picture is faint or missing but the Mac still chimes, lights the keyboard or shows on an external monitor.</li>
+      <li><strong>Stage light glow</strong>A glow along the bottom edge or a screen that turns black when the lid is opened past a certain angle.</li>
+    </ul>
+  </section>
+
+  {%- if section.settings.show_finder -%}
+  <section aria-labelledby="rc-finder-{{ section.id }}">
+    <div class="rc__finder">
+      <div>
+        <p class="rc__label">Not sure which model you have?</p>
+        <h2 id="rc-finder-{{ section.id }}">Find your MacBook model number</h2>
+        <p>Turn your MacBook over and look at the small print on the underside. The model number starts with the letter "A" followed by four digits, for example A2338. You can also open the Apple menu and choose About This Mac to see the model name and year.</p>
+        <form class="rc__form" data-rc-finder role="search" onsubmit="return false">
+          <label for="rc-model-{{ section.id }}" class="visually-hidden">Model number, for example A2338</label>
+          <input id="rc-model-{{ section.id }}" inputmode="text" autocomplete="off" placeholder="Model number, for example A2338">
+          <button type="submit">Find</button>
+        </form>
+        <p class="rc__result" aria-live="polite"></p>
+      </div>
+      <div class="rc__plate" aria-hidden="true">
+        Designed by Apple in California<br>
+        Assembled in China<br>
+        Model <b>A2338</b><br>
+        <span>Look on the underside, near the hinge</span>
+      </div>
+    </div>
+  </section>
+  {%- endif -%}
+
+  <section aria-labelledby="rc-process-{{ section.id }}">
+    <p class="rc__label">How it works</p>
+    <h2 id="rc-process-{{ section.id }}">How a courier or mail-in screen repair works</h2>
+    <p>Courier collection across London, tracked mail-in nationwide. Standard screen repairs take two to three working days once your MacBook reaches our workshop at 12 Margaret Street, London W1W 8JQ. Express service can reduce this to one working day when booked in advance.</p>
+    <ol class="rc__steps">
+      <li><h3>Book and send</h3><p>Get your price in the quote tool above, then choose courier collection in London or a tracked mail-in from anywhere in the UK.</p></li>
+      <li><h3>Intake checks</h3><p>We check for deeper faults before any screen repair. If your MacBook does not power on or show a picture, we upgrade the job to a full diagnostic first and give you a clear quote before we begin.</p></li>
+      <li><h3>Display replaced</h3><p>We replace only the display panel. Your original housing, webcam, hinge and lid structure are retained.</p></li>
+      <li><h3>Calibration and return</h3><p>Every display is recalibrated in-house to match factory colour, brightness and tone, tested, then returned to you by courier or tracked delivery.</p></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="rc-parts-{{ section.id }}">
+    <p class="rc__label">Parts and calibration</p>
+    <h2 id="rc-parts-{{ section.id }}">Genuine Apple displays, recalibrated in-house</h2>
+    <p>Cheaper online prices usually mean aftermarket panels, which often cause True Tone and brightness issues and rarely fit the housing properly. We never fit aftermarket panels.</p>
+    <dl class="rc__dl">
+      <dt>Source</dt><dd>Original Apple displays reclaimed from genuine MacBooks and tested before fitting.</dd>
+      <dt>Calibration</dt><dd>Recalibrated to Apple factory specifications, so True Tone, full brightness, native resolution and colour accuracy are preserved.</dd>
+      <dt>What we replace</dt><dd>The damaged display panel only.</dd>
+      <dt>What you keep</dt><dd>Your original lid, housing, webcam and hinge, which keeps working parts out of landfill.</dd>
+    </dl>
+  </section>
+
+  <section aria-labelledby="rc-warranty-{{ section.id }}">
+    <p class="rc__label">Warranty</p>
+    <h2 id="rc-warranty-{{ section.id }}">Two-year warranty on every screen we fit</h2>
+    <p>Your screen repair is covered by our own two-year warranty on the display we fitted and our workmanship. If anything goes wrong because of the original fault, we will put it right. The warranty does not cover accidental damage, liquid exposure after the repair, or new faults unrelated to our work.</p>
+  </section>
+
+  <section class="rc__faq" aria-labelledby="rc-faq-{{ section.id }}">
+    <p class="rc__label">Screen repair questions</p>
+    <h2 id="rc-faq-{{ section.id }}">MacBook screen repair FAQs</h2>
+    <details>
+      <summary>How do I know which MacBook screen repair to choose?</summary>
+      <p>Check the model number on the underside of your MacBook. It starts with "A" followed by four digits. Enter it in the finder above or pick your model in the quote tool, and the price shown is for that exact model.</p>
+    </details>
+    <details>
+      <summary>My screen has lines or flickers but is not cracked. Is it still a screen repair?</summary>
+      <p>Often it is, but lines, flicker and a stage light glow can also come from the display cable. We check for deeper faults during intake and confirm the right repair and price with you before we begin.</p>
+    </details>
+    <details>
+      <summary>Does a screen repair affect my data?</summary>
+      <p>Replacing the display does not involve your storage, so your files stay on your MacBook. We still recommend a backup before sending any device for repair.</p>
+    </details>
+    <details>
+      <summary>How do I get my MacBook to you?</summary>
+      <p>Courier collection across London, tracked mail-in nationwide. Book in the quote tool at the top of this page and choose the option that suits you. We return your MacBook the same way once it has been repaired and tested.</p>
+    </details>
+    <details>
+      <summary>Can I spread the cost?</summary>
+      <p>Yes. Klarna and PayPal Pay in 3 are available at checkout for standard repairs.</p>
+    </details>
+  </section>
+</div>
+<script>
+  (function () {
+    var f = document.querySelector('#shopify-section-{{ section.id }} [data-rc-finder]');
+    if (!f) return;
+    var out = f.parentNode.querySelector('.rc__result');
+    f.addEventListener('submit', function () {
+      var q = (f.querySelector('input').value || '').toUpperCase().replace(/\s+/g, '');
+      if (!/^A\d{4}$/.test(q)) { out.textContent = 'Enter the model number as "A" followed by four digits, for example A2338.'; return; }
+      var hits = [];
+      document.querySelectorAll('.ri__item').forEach(function (li) {
+        li.classList.remove('rc-hit');
+        if (li.textContent.toUpperCase().indexOf(q) > -1) { li.classList.add('rc-hit'); hits.push(li.querySelector('a')); }
+      });
+      out.textContent = '';
+      if (!hits.length) { out.textContent = 'No match for ' + q + ' on this page. Pick your model in the quote tool or call us on 020 7099 8517.'; return; }
+      out.appendChild(document.createTextNode(hits.length + ' match' + (hits.length > 1 ? 'es' : '') + ': '));
+      var a = document.createElement('a'); a.href = hits[0].href; a.textContent = hits[0].textContent.replace(/\s+/g, ' ').trim(); out.appendChild(a);
+      hits[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
+    });
+  })();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Repair guide (context)",
+  "tag": "div",
+  "class": "section-repair-context",
+  "settings": [
+    { "type": "checkbox", "id": "show_everywhere", "label": "Show on every page using this template", "default": false },
+    { "type": "checkbox", "id": "show_finder", "label": "Show model number finder", "default": true },
+    { "type": "textarea", "id": "collection_handles", "label": "Collection handles (comma separated)", "default": "macbook-screen-repair-prices,macbook-pro-13-m2-a2338-2022-repair-prices" },
+    { "type": "textarea", "id": "product_handles", "label": "Product handles (comma separated)", "default": "macbook-pro-13-m2-2022-a2338-screen-repair" }
+  ],
+  "presets": [{ "name": "Repair guide (context)" }]
+}
+{% endschema %}

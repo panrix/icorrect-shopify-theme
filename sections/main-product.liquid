@@ -897,7 +897,20 @@
     -%}
 
     <script type="application/ld+json">
-      {{ product | structured_data }}
+      {%- liquid
+        capture product_ld
+          echo product | structured_data
+        endcapture
+        capture ld_diagram
+          render 'repair-diagram-image-url', product: product
+        endcapture
+        assign ld_diagram = ld_diagram | strip
+        if ld_diagram != blank and product_ld contains '"image":"'
+          assign ld_old_image = product_ld | split: '"image":"' | last | split: '"' | first
+          assign product_ld = product_ld | replace: ld_old_image, ld_diagram
+        endif
+      -%}
+      {{ product_ld }}
     </script>
   </div>
 </product-info>

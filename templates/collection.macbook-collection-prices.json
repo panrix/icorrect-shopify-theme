@@ -73,7 +73,7 @@
           "settings": {
             "icon": "shopify://shop_images/Service_icon_Courier.png",
             "heading": "London Collection",
-            "details": "We collect from your door — same-day in most of London. Book online and we arrange tracked, insured collection and return. Outside London, use our free mail-in pack.",
+            "details": "We collect from your door across London, same day in most areas. Book online and we arrange tracked, insured collection and return. Outside London, use our tracked mail-in service.",
             "btn": "Learn more",
             "link": ""
           }
@@ -256,6 +256,15 @@
         "mob_padding_top": 32,
         "mob_padding_bottom": 4
       }
+    },
+    "repair_context": {
+      "type": "repair-context",
+      "settings": {
+        "collection_handles": "macbook-screen-repair-prices,macbook-pro-13-m2-a2338-2022-repair-prices",
+        "product_handles": "macbook-pro-13-m2-2022-a2338-screen-repair",
+        "show_everywhere": false,
+        "show_finder": true
+      }
     }
   },
   "order": [
@@ -264,6 +273,7 @@
     "quote_wizard_top",
     "product-grid",
     "icorrect_product_grid_AAVQCj",
+    "repair_context",
     "macbook_videos_BkK8G8",
     "repair_services_nQkwFT",
     "macbook_faqs_kLL4Yp",
