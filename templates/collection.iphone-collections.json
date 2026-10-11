@@ -55,6 +55,15 @@
     "parent_categories_nWCAYw": {
       "type": "parent-categories",
       "blocks": {
+        "category_iphone17": {
+          "type": "category",
+          "settings": {
+            "title": "iPhone 17 Series",
+            "price": "",
+            "link": "shopify://collections/iphone-17-series-repair-prices",
+            "btn": "View models"
+          }
+        },
         "category_LqJyLa": {
           "type": "category",
           "settings": {
@@ -147,6 +156,7 @@
         }
       },
       "block_order": [
+        "category_iphone17",
         "category_LqJyLa",
         "category_74pW43",
         "category_NEEHTP",
