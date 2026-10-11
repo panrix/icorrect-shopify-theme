@@ -328,10 +328,10 @@ text-align: left;
                     </div>
                      {% if block.settings.facebook != blank %}
                      <div class="footer-social-icons-row">
-  <a href="{{ block.settings.facebook }}"><img src="{{ block.settings.facebook-icon | img_url: 'master' }}" alt="Facebook"></a>
-  <a href="{{ block.settings.google }}"><img src="{{ block.settings.google-icon | img_url: 'master' }}" alt="Instagram"></a>
-  <a href="{{ block.settings.in }}"><img src="{{ block.settings.in-icon | img_url: 'master' }}" alt="TikTok"></a>
-  <a href="{{ block.settings.twitter }}"><img src="{{ block.settings.twitter-icon | img_url: 'master' }}" alt="YouTube"></a>
+  <a href="{{ block.settings.facebook }}"><img src="{{ block.settings.facebook-icon | img_url: '96x' }}" alt="Facebook" width="96" height="96" loading="lazy"></a>
+  <a href="{{ block.settings.google }}"><img src="{{ block.settings.google-icon | img_url: '96x' }}" alt="Instagram" width="96" height="96" loading="lazy"></a>
+  <a href="{{ block.settings.in }}"><img src="{{ block.settings.in-icon | img_url: '96x' }}" alt="TikTok" width="96" height="96" loading="lazy"></a>
+  <a href="{{ block.settings.twitter }}"><img src="{{ block.settings.twitter-icon | img_url: '96x' }}" alt="YouTube" width="96" height="96" loading="lazy"></a>
 </div>
                     {% endif %}
                 {%- endcase -%}

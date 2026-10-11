@@ -8,7 +8,7 @@
       {% for block in section.blocks %}
         <div class="repair-service-col">
           <div class="title-icon-row">
-            <img src="{{ block.settings.icon | img_url: 'master' }}" alt="{{ block.settings.heading }}">
+            <img src="{{ block.settings.icon | img_url: 'master' }}" alt="{{ block.settings.heading }}"{% if block.settings.icon.width %} width="{{ block.settings.icon.width }}" height="{{ block.settings.icon.height }}"{% endif %}>
             <h3>{{ block.settings.heading }}</h3>
           </div>
           <div class="repair-details">

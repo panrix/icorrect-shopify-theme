@@ -107,7 +107,7 @@
 
       {% if section.settings.video_url != blank %}
         <div class="video-embed">
-          <iframe
+          <iframe loading="lazy"
             src="{{ section.settings.video_url }}"
             frameborder="0"
             allowfullscreen>

@@ -80,8 +80,11 @@
     {%- endif -%}
     {{ content_for_header }}
 
+    {%- comment -%}Axiforma (custom-font section) is served from cdn.shopify.com: open the connection early.{%- endcomment -%}
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+
     {%- if request.page_type == 'index' or request.page_type == 'collection' or request.page_type == 'product' or request.page_type == 'page' -%}
-      <link rel="preload" href="{{ 'courier-london-bands.json' | asset_url }}" as="fetch">
+      <link rel="preload" href="{{ 'courier-london-bands.json' | asset_url }}" as="fetch" crossorigin>
     {%- endif -%}
 
     {%- liquid
