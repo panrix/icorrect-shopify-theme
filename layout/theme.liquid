@@ -331,6 +331,14 @@
       >
     {%- endif -%}
 
+    {%- comment -%}
+      Brand layer v1 (preview branch only). Loaded last so it wins the cascade, and the one
+      critical font (Geist, used by every heading and body line) is preloaded. The preload URL
+      has the ?v= stripped so it matches the URL the @font-face in ic-brand.css requests.
+    {%- endcomment -%}
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ 'Geist-Variable.woff2' | asset_url | split: '?' | first }}">
+    {{ 'ic-brand.css' | asset_url | stylesheet_tag }}
+
     <script>
       if (Shopify.designMode) {
         document.documentElement.classList.add('shopify-design-mode');
