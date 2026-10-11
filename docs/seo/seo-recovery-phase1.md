@@ -11,11 +11,13 @@ and product pages.
      grids on the four hubs (revert of 250fa1a), below the wizard.
    - Re-enabled the iPhone link section to /pages/iphone-repairs (off since
      #58) on 26 iPhone templates, below the first grid after the wizard.
-   - New `snippets/repair-index.liquid`, rendered by the quote wizard section
-     on collections: a compact list of plain links under the wizard, one per
+   - New `snippets/repair-index.liquid`, rendered by the new `repair-index`
+     section on collections: a compact list of plain links, one per
      product, with full model and repair names and the from price
-     ("MacBook Pro 13-inch M2 A2338 Screen Repair, from £429"). Turn off per
-     template with the wizard setting "Show the repair price index under the wizard".
+     ("MacBook Pro 13-inch M2 A2338 Screen Repair, from £429"). The section
+     sits low on the page, after the main content and before the FAQs, so the
+     wizard, H1 and repair-type grid keep the top of the page. Remove the
+     `repair_index` section from a template to turn it off.
 2. One H1 per page
    - `about-info` and `parent-categories` gain a heading tag setting
      ("H1, collection title"); the quote wizard gains "Show the collection title as the page H1" for

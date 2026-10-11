@@ -3,8 +3,7 @@
 The imageless repair design (#95) draws every device as inline SVG inside
 `<span class="dg" aria-hidden="true">`. Google Images does not index inline
 SVG, so those pages had no indexable images: no file, no alt text, no
-dimensions. Product og:image, Product schema `image` and the image sitemap
-still pointed at the old product media.
+dimensions.
 
 ## What changed
 
@@ -18,12 +17,12 @@ still pointed at the old product media.
   The product panel image loads eagerly with `fetchpriority="high"`; the rest
   are lazy.
 - `snippets/repair-diagram-image-url.liquid` returns the 1200x900 PNG for a
-  product. `snippets/meta-tags.liquid` uses it for og:image (with width,
-  height and alt) and `sections/main-product.liquid` swaps it into the
-  Product JSON-LD `image`.
+  product. It is not wired into og:image or the Product JSON-LD: both keep the
+  live branded product image (`snippets/meta-tags.liquid` and
+  `sections/main-product.liquid` are unchanged from main).
 - Rollback switch: Theme settings, Repair pages, "Serve repair drawings as
   image files" (`repair_diagram_images`). Unticked, everything returns to
-  inline SVG and the old og:image.
+  inline SVG.
 
 ## Regenerating the files
 
