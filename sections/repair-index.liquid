@@ -1,0 +1,18 @@
+{%- comment -%}
+  Repair price index (SEO recovery phase 1): plain crawlable links with prices,
+  one per repair product in the collection. Sits low on the page, after the
+  main content and before the FAQs. The quote wizard stays at the top.
+{%- endcomment -%}
+{%- if request.page_type == 'collection' -%}
+  {% render 'repair-index', collection: collection %}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Repair price index",
+  "tag": "div",
+  "class": "section-repair-index",
+  "settings": [],
+  "presets": [{ "name": "Repair price index" }]
+}
+{% endschema %}

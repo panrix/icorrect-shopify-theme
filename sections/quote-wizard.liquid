@@ -469,10 +469,6 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   </div>
 </div>
 
-{%- if request.page_type == 'collection' and section.settings.show_repair_index != false -%}
-  {% render 'repair-index', collection: collection %}
-{%- endif -%}
-
 {%- comment -%}
   Product pages with the imageless repair design render a slot under the
   product description; move the wizard there before its script initialises.
@@ -543,12 +539,6 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       "label": "Show the collection title as the page H1",
       "default": false,
       "info": "Turn on for collection templates where the wizard is the first section and nothing else renders an H1. The wizard heading itself stays an H2."
-    },
-    {
-      "type": "checkbox",
-      "id": "show_repair_index",
-      "label": "Show the repair price index under the wizard (collection pages)",
-      "default": true
     },
     {
       "type": "checkbox",
