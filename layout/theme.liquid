@@ -298,6 +298,22 @@
       }
     {% endstyle %}
 
+    {%- comment -%}
+      Cart drawer layout-shift fix. The drawer stylesheet loads non-blocking (media=print swap), and
+      until it arrives the empty drawer is an in-flow block about 470px tall that then jumps out of
+      the flow and shoves the header and main down. Take it out of flow and hide it from first paint.
+      The same values live in component-cart-drawer.css (.drawer, .drawer.active) and win once loaded.
+    {%- endcomment -%}
+    <style>
+      cart-drawer.drawer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100%;
+        visibility: hidden;
+      }
+    </style>
     {{ 'base.css' | asset_url | stylesheet_tag }}
     <link rel="stylesheet" href="{{ 'component-cart-items.css' | asset_url }}" media="print" onload="this.media='all'">
 
