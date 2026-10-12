@@ -37,6 +37,11 @@ body {
 [data-variant="b"] .lp-only-a { display: none !important; }   /* contract-allow: variant switch must beat component display rules */
 #MainContent:focus { outline: none; }
 
+/* The consent bar sits above the sticky bar on phones and tablets, never on top of it. */
+@media (max-width: 1023px) {
+  [data-variant="a"] body { --ic-consent-offset: var(--bar-h); }
+}
+
 /* The live wizard's Liquid writes "We'll collect your MacBook same day in London" whatever the
    section setting says. Same-day is not on this page's claims list (BRIEF-v3 section 4), so the
    line is hidden here only. The wizard itself is unchanged. */
