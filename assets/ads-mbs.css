@@ -1,0 +1,735 @@
+/* ==========================================================================
+   Ads page: MacBook screen repair. Page styles (v3, the six-chapter story).
+   Import order: ads-mbs-tokens.css, ads-mbs-components.css (the design contract,
+   copied verbatim by docs/ads-mbs-copy-contract.sh), then this file.
+   Marketing scale (DESIGN.md section 4). Tokens only, except the few layout
+   sizes marked "no token" below, which the PR lists as proposals.
+   Motion is transform and opacity only. Reduced motion shows final states.
+   ========================================================================== */
+
+/* The diagram kit drives every drawing with one number, --p. Registered here at
+   document level so the kit's own transition on --p also runs inside the
+   shadow roots the diagrams are mounted in. */
+@property --p {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+/* ---- Page ---------------------------------------------------------------- */
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  font-size: var(--body-size);
+  line-height: var(--body-leading);
+  overflow-x: clip;
+  --bar-h: 100px;                 /* no token: phone bar, dots row plus button row */
+}
+[data-variant="a"] body { padding-bottom: calc(var(--bar-h) + env(safe-area-inset-bottom)); }
+@media (min-width: 1024px) {
+  body { --bar-h: var(--space-16); }
+  [data-variant="a"] body { padding-bottom: 0; padding-top: var(--bar-h); }
+}
+
+/* A/B: both variants are in the HTML. The head script sets data-variant before first paint. */
+[data-variant="a"] .lp-only-b,
+[data-variant="b"] .lp-only-a { display: none !important; }   /* contract-allow: variant switch must beat component display rules */
+#MainContent:focus { outline: none; }
+
+/* The consent bar sits above the sticky bar on phones and tablets, never on top of it. */
+@media (max-width: 1023px) {
+  [data-variant="a"] body { --ic-consent-offset: var(--bar-h); }
+}
+
+/* The live wizard's Liquid writes "We'll collect your MacBook same day in London" whatever the
+   section setting says. Same-day is not on this page's claims list (BRIEF-v3 section 4), so the
+   line is hidden here only. The wizard itself is unchanged. */
+#get-free-quote .qw-sub { display: none; }
+
+.lp-wrap {
+  max-width: var(--page-max-site);
+  margin: 0 auto;
+  padding: 0 var(--pad-page-site);
+}
+@media (min-width: 640px) {
+  .lp-wrap { padding: 0 var(--pad-page-site-wide); }
+}
+
+.lp-section { padding: var(--section-site-phone) 0; }
+@media (min-width: 880px) {
+  .lp-section { padding: var(--section-site) 0; }
+}
+
+.lp-link {
+  color: var(--text-link);
+  font-weight: var(--weight-medium);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+/* Placeholder for any value that is read live in the build (price, rating, count, phone).
+   Kept under ?clean on purpose (brief v2, 3.7 item 6). */
+.lp-live {
+  text-decoration: underline dotted var(--attention-ink);
+  text-underline-offset: 0.2em;
+}
+
+/* Held claim: a visible marker in previews, not rendered in production. */
+.lp-hold {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-xs);
+  background: var(--attention-tint);
+  color: var(--attention-text);
+  font-family: var(--font-mono);
+  font-size: var(--label-size);
+  font-weight: var(--chip-weight);
+  letter-spacing: var(--chip-tracking);
+  line-height: var(--label-leading);
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.lp-skip {
+  position: fixed;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 30;
+  transform: translateY(-200%);
+}
+.lp-skip:focus-visible { transform: none; }
+
+/* White frame for drawings (brief 3.1): card surface, hairline edge, hero radius. */
+.lp-frame {
+  margin: 0;
+  padding: var(--space-4);
+  border-radius: var(--radius-2xl);
+  background: var(--surface-card);
+  box-shadow: var(--edge);
+}
+
+/* ---- Diagram host ----------------------------------------------------------
+   Holds a kit SVG. Without script it shows the <img> fallback (the file's own
+   final state). With script the SVG is mounted in a shadow root, so its styles
+   and ids stay its own, and the page only sets --p. The box reserves its height. */
+.dg {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--ar);
+  margin-inline: auto;
+}
+.dg img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+@media (max-width: 600px) {
+  .dg { aspect-ratio: var(--ar-phone, var(--ar)); }
+}
+
+/* ---- Sticky bar: one bar, line on top ------------------------------------- */
+.lp-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--surface-card);
+  box-shadow: var(--rule-top);
+  transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease), visibility 0s linear 0s;
+}
+.lp-bar.is-hidden {
+  transform: translateY(100%);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease), visibility 0s linear var(--dur);
+}
+.lp-bar__in {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "prog prog" "now btn";
+  align-items: center;
+  column-gap: var(--space-3);
+  max-width: var(--page-max-site);
+  margin: 0 auto;
+  padding: 0 var(--pad-page-site) var(--space-2);
+}
+.lp-mark,
+.lp-phone {
+  display: none;
+  align-items: center;
+  min-height: var(--target-min);
+  color: var(--text-heading);
+  text-decoration: none;
+}
+.lp-mark {
+  font-size: var(--h4-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--h4-tracking);
+}
+.lp-phone {
+  font-size: var(--body-sm-size);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+.lp-phone:hover { color: var(--text-link); }
+.lp-bar__now {
+  grid-area: now;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.lp-bar__count { color: var(--text-heading); }
+.lp-bar__btn { grid-area: btn; text-decoration: none; }
+
+/* Progress: a 2px line with six chapter dots. The line fills to 100% at the quote. */
+.lp-prog {
+  grid-area: prog;
+  position: relative;
+  --track-y: calc(var(--target-min) / 2 - 1px);   /* the line runs through the dot centres */
+}
+.lp-prog__track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--track-y);
+  height: 2px;                    /* no token: progress line weight, brief 3.2 */
+  background: var(--black-alpha-8);
+  overflow: hidden;
+  pointer-events: none;
+}
+.lp-prog__fill {
+  display: block;
+  height: 100%;
+  background: var(--action);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+.lp-prog__dots {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lp-prog__dots li { flex: 1 1 0; }
+.lp-prog__dot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target-min);
+  padding-top: calc(var(--track-y) + 1px - var(--space-3) / 2);
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+.lp-prog__mark {
+  width: var(--space-3);
+  height: var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--surface-card);
+  box-shadow: var(--edge-input-hover);
+}
+.lp-prog__dot[data-state="done"] .lp-prog__mark {
+  background: var(--action);
+  box-shadow: none;
+}
+.lp-prog__dot[aria-current="step"] .lp-prog__mark {
+  background: var(--surface-card);
+  box-shadow: 0 0 0 2px var(--action);
+}
+@media (hover: hover) and (pointer: fine) {
+  .lp-prog__dot:hover .lp-prog__mark { box-shadow: 0 0 0 2px var(--text-heading); }
+}
+.lp-prog__label {
+  position: absolute;             /* phone: names live in the "now" line, not under each dot */
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (min-width: 1024px) {
+  .lp-bar {
+    top: 0;
+    bottom: auto;
+    padding-bottom: 0;
+    box-shadow: var(--rule-bottom);
+  }
+  .lp-bar.is-hidden { transform: translateY(-100%); }
+  .lp-bar__in {
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    grid-template-areas: "mark prog phone btn";
+    column-gap: var(--space-8);
+    min-height: var(--bar-h);
+    padding: 0 var(--pad-page-site-wide);
+  }
+  .lp-mark { display: inline-flex; grid-area: mark; }
+  .lp-phone { display: inline-flex; grid-area: phone; }
+  .lp-bar__now { display: none; }
+  .lp-bar__btn { min-height: var(--target-min); }
+  .lp-prog { --track-y: calc(var(--space-5) - 1px); }
+  .lp-prog__label {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    font-family: var(--font-mono);
+    font-size: var(--label-size);
+    letter-spacing: var(--label-tracking);
+    line-height: var(--label-leading);
+    text-transform: uppercase;
+    opacity: 0;
+  }
+  .lp-prog__dot[aria-current="step"] .lp-prog__label { opacity: 1; color: var(--text-heading); }
+  .lp-prog__dot:focus-visible .lp-prog__label { opacity: 1; }
+}
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .lp-prog__dot:hover .lp-prog__label { opacity: 1; }
+}
+@media (min-width: 1280px) {
+  .lp-prog__label { opacity: 1; }
+}
+
+/* ---- Hero ------------------------------------------------------------------ */
+.lp-hero { padding: var(--space-8) 0 var(--section-site-phone); }
+.lp-hero__grid {
+  display: grid;
+  gap: var(--space-10);
+}
+.lp-hero__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+.lp-hero__title { max-width: 13em; }
+.lp-hero__title-2 { color: var(--text-secondary); }
+.lp-hero__sub { max-width: 34em; }
+.lp-hero__cta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  margin-top: var(--space-2);
+}
+.lp-hero__btn { width: 100%; text-decoration: none; }
+.lp-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+  color: var(--text-body);
+  font-size: var(--body-size);
+  line-height: var(--body-leading);
+}
+@media (min-width: 640px) {
+  .lp-facts > span + span {
+    padding-left: var(--space-4);
+    box-shadow: inset 1px 0 0 var(--black-alpha-12);
+  }
+}
+.lp-hero__art { padding: var(--space-6); }
+
+@media (min-width: 640px) {
+  .lp-hero__cta { width: auto; }
+  .lp-hero__btn { width: auto; align-self: flex-start; }
+}
+@media (min-width: 1024px) {
+  .lp-hero { padding: var(--space-16) 0 var(--section-site); }
+  .lp-hero__grid {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    align-items: center;
+    gap: var(--space-16);
+  }
+  .lp-hero__art { padding: var(--space-10); }
+}
+
+/* ---- Story: six chapters -------------------------------------------------- */
+.lp-story { padding-bottom: var(--section-site-phone); }
+.lp-ch {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-8) 0;
+  box-shadow: var(--rule-top);
+  scroll-margin-top: var(--space-4);
+}
+.lp-ch__q {
+  margin: 0;
+  color: var(--text-heading);
+  font-size: var(--h2-size-phone);
+  font-weight: var(--weight-semibold);
+  line-height: var(--h2-leading);
+  letter-spacing: var(--h2-tracking);
+  max-width: 16em;
+}
+.lp-ch__q:focus { outline: none; }
+.lp-ch__fig { margin: var(--space-3) 0 var(--space-2); }
+.lp-ch__fig--ui { padding: 0; background: none; box-shadow: none; }
+.lp-ch__a {
+  margin: 0;
+  max-width: 30em;
+  color: var(--text-body);
+  font-size: var(--body-lg-size);
+  line-height: var(--body-lg-leading);
+}
+.lp-ch__link { margin: 0; }
+.lp-ch__link .lp-link { display: inline-flex; align-items: center; min-height: var(--target-min); }
+.lp-ch__note {
+  margin: 0;
+  max-width: 34em;
+  color: var(--text-secondary);
+  font-size: var(--body-sm-size);
+  line-height: var(--body-sm-leading);
+}
+.lp-proof {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+  color: var(--action-tint-text);
+  font-family: var(--font-mono);
+  font-size: var(--label-size-lg);
+  letter-spacing: var(--label-tracking);
+  line-height: var(--label-leading);
+  text-transform: uppercase;
+}
+.lp-proof .lp-link,
+.lp-foot__row .lp-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+}
+.lp-proof .lp-link {
+  font-family: var(--font-sans);
+  font-size: var(--body-sm-size);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+/* Phone legend for the numbered markers in the kit's phone crops. One quiet line, not rows. */
+.lp-legend {
+  display: none;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  box-shadow: var(--rule-top);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--label-size);
+  letter-spacing: var(--label-tracking);
+  line-height: var(--label-leading);
+  text-transform: uppercase;
+}
+.lp-legend__acc { color: var(--action-tint-text); }
+@media (max-width: 600px) {
+  .lp-legend { display: flex; }
+  #ch-1 .dg { max-width: calc(var(--space-20) * 3); }   /* no token: tall D1 crop on phone, 240px wide */
+}
+@media (min-width: 601px) and (max-width: 1023px) {
+  .lp-ch__fig .dg { max-width: calc(var(--space-20) * 7); }   /* no token: 560px drawing cap on tablet */
+  #ch-1 .dg { max-width: calc(var(--space-20) * 4); }
+}
+
+/* Example test record (D5). Built from ic-rows, not drawn. */
+.lp-record {
+  padding: var(--space-4) var(--space-4) var(--space-2);
+  border-radius: var(--radius-xl);
+  background: var(--surface-card);
+  box-shadow: var(--edge);
+}
+.lp-record__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-bottom: var(--space-3);
+}
+.lp-record__title {
+  margin: 0;
+  color: var(--text-heading);
+  font-size: var(--app-item-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--app-item-tracking);
+}
+.lp-record__cell { display: grid; justify-items: end; }
+.lp-record__cell > * { grid-area: 1 / 1; }
+.lp-record__wait { opacity: 0; }
+.lp-record__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin: 0;
+  padding-top: var(--space-3);
+  box-shadow: var(--rule-top);
+}
+
+/* Trust block (D6). Hairline rows, not cards. */
+.lp-trust {
+  display: grid;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  background: var(--surface-card);
+  box-shadow: var(--edge);
+}
+.lp-trust__art {
+  display: grid;
+  place-items: center;
+  padding: var(--space-4) var(--space-6) 0;
+}
+.lp-trust__art .dg { max-width: calc(var(--space-20) * 3); }   /* no token: 240px seal */
+.lp-trust__body { padding: var(--space-2) var(--space-5) var(--space-3); }
+.lp-trust__score {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-3);
+  margin: var(--space-2) 0 var(--space-3);
+  color: var(--text-body);
+  font-size: var(--body-sm-size);
+}
+.lp-trust__score b {
+  color: var(--text-heading);
+  font-size: var(--h2-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--h2-tracking);
+  line-height: 1;
+}
+
+/* Desktop: answers left, one pinned stage right, crossfading between chapters. */
+.lp-stage { display: none; }
+
+@media (min-width: 1024px) {
+  .lp-story__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: var(--space-16);
+  }
+  .lp-ch {
+    min-height: calc(var(--space-20) * 5);   /* no token: 400px per chapter, keeps six chapters at 2,400px (brief 3.1) */
+    justify-content: center;
+    padding: var(--space-10) 0;
+    scroll-margin-top: calc(var(--bar-h) + var(--space-8));
+  }
+  .lp-ch__q { font-size: var(--h2-size); }
+  .lp-ch .lp-ch__fig { display: none; }
+  .lp-stage {
+    display: block;
+    position: sticky;
+    top: calc(var(--bar-h) + (100svh - var(--bar-h) - var(--stage-h)) / 2);
+    align-self: start;
+    --stage-h: min(calc(100svh - var(--bar-h) - var(--space-16)), calc(var(--space-20) * 9));   /* no token: 720px cap */
+    height: var(--stage-h);
+  }
+  .lp-stage__frame {
+    display: grid;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+    height: 100%;
+    overflow: hidden;
+    padding: var(--space-8);
+    border-radius: var(--radius-2xl);
+    background: var(--surface-card);
+    box-shadow: var(--edge);
+  }
+  .lp-scene {
+    grid-area: 1 / 1;
+    display: grid;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+    place-items: center;
+    min-height: 0;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--dur) var(--ease), visibility 0s linear var(--dur);
+  }
+  .lp-scene.is-on {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity var(--dur) var(--ease), visibility 0s linear 0s;
+  }
+  .lp-scene .dg {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+  }
+  /* In the stage the frame is the card, so the record and trust block drop their own
+     edge and surface (no card inside a card). */
+  .lp-scene--ui .lp-ch__fig { display: block; width: min(100%, calc(var(--space-20) * 6)); margin: 0; }   /* no token: 480px reading width */
+  .lp-scene--ui .lp-record,
+  .lp-scene--ui .lp-trust { padding: 0; background: none; box-shadow: none; border-radius: 0; }
+  .lp-scene--ui .lp-trust__art { padding: 0 var(--space-10) var(--space-4); }
+  .lp-scene--ui .lp-trust__body { padding: 0; }
+}
+
+/* Motion for the test record: rows tick to Pass in turn when chapter 5 is reached.
+   Without script, and with reduced motion, every row already shows Pass. */
+.js-motion .lp-record__pass,
+.js-motion .lp-record__wait {
+  transition: opacity var(--dur) var(--ease) calc(var(--i, 0) * var(--dur-fast)),
+              transform var(--dur) var(--ease) calc(var(--i, 0) * var(--dur-fast));
+}
+.js-motion .lp-record:not(.is-on) .lp-record__pass { opacity: 0; transform: translateY(var(--space-1)); }
+.js-motion .lp-record:not(.is-on) .lp-record__wait { opacity: 1; }
+
+/* ---- Close: the hand-off into the quote ------------------------------------ */
+.lp-close { padding: var(--space-12) 0 0; }
+.lp-close__line {
+  margin: 0;
+  max-width: 20em;
+  color: var(--text-heading);
+  font-size: var(--h3-size-phone);
+  font-weight: var(--weight-semibold);
+  line-height: var(--h3-leading);
+  letter-spacing: var(--h3-tracking);
+}
+.lp-close__line span { color: var(--text-secondary); }
+@media (min-width: 1024px) {
+  .lp-close { padding-top: var(--space-16); }
+  .lp-close__line { font-size: var(--h3-size); }
+}
+
+/* ---- Quote (stub) ------------------------------------------------------------ */
+.lp-quote:focus { outline: none; }
+.lp-quote__in {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.lp-quote__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: calc(var(--space-20) * 7);   /* no token: 560px, quote card width */
+  margin-top: var(--space-3);
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card-lift);
+}
+.lp-quote__ask {
+  margin: 0;
+  color: var(--text-heading);
+  font-size: var(--h4-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--h4-tracking);
+  line-height: var(--h4-leading);
+}
+.lp-quote__choices { display: grid; gap: var(--gap); }
+.lp-quote__note {
+  margin: 0;
+  max-width: 40em;
+  color: var(--text-secondary);
+  font-size: var(--body-sm-size);
+  line-height: var(--body-sm-leading);
+}
+
+/* ---- FAQ ----------------------------------------------------------------------- */
+.lp-faq__in { display: flex; flex-direction: column; gap: var(--space-3); }
+.lp-faq__list { max-width: calc(var(--space-20) * 9); margin-top: var(--space-3); }   /* no token: 720px reading width */
+.lp-faq__item { box-shadow: var(--rule-top); }
+.lp-faq__item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: var(--target-min);
+  padding: var(--space-3) 0;
+  color: var(--text-heading);
+  font-size: var(--body-size);
+  font-weight: var(--weight-semibold);
+  list-style: none;
+  cursor: pointer;
+}
+.lp-faq__item summary::-webkit-details-marker { display: none; }
+.lp-faq__item summary::after {
+  content: "+";
+  flex: 0 0 auto;
+  color: var(--text-secondary);
+  font-weight: var(--weight-regular);
+  transition: transform var(--dur) var(--ease);
+}
+.lp-faq__item[open] summary::after { transform: rotate(45deg); }
+.lp-faq__item p {
+  margin: 0;
+  padding: 0 0 var(--space-4);
+  max-width: 36em;
+  color: var(--text-body);
+}
+
+/* ---- Variant B: header, quote first, plain list ---------------------------- */
+.lp-top__in {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--space-16);
+}
+.lp-top .lp-mark,
+.lp-top .lp-phone { display: inline-flex; }
+[data-variant="b"] .lp-hero { padding-bottom: var(--space-8); }
+.lp-qa__in { display: flex; flex-direction: column; gap: var(--space-3); }
+.lp-qa__list {
+  max-width: calc(var(--space-20) * 9);   /* no token: 720px reading width */
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.lp-qa__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-6) 0;
+  box-shadow: var(--rule-top);
+}
+.lp-qa__q {
+  margin: 0;
+  color: var(--text-heading);
+  font-size: var(--h4-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--h4-tracking);
+  line-height: var(--h4-leading);
+}
+.lp-qa__a { margin: 0; max-width: 34em; color: var(--text-body); font-size: var(--body-lg-size); line-height: var(--body-lg-leading); }
+.lp-qa__note { margin: 0; max-width: 34em; color: var(--text-secondary); font-size: var(--body-sm-size); line-height: var(--body-sm-leading); }
+.lp-qa-trust .lp-trust { max-width: calc(var(--space-20) * 7); margin-top: var(--space-3); }
+.lp-qa-trust .lp-trust__body { padding: var(--space-5); }
+
+/* ---- Footer ------------------------------------------------------------------- */
+.lp-foot {
+  padding: var(--space-12) 0;
+  box-shadow: var(--rule-top);
+}
+.lp-foot__in { display: flex; flex-direction: column; gap: var(--space-3); }
+.lp-foot__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-5);
+  margin: 0;
+  color: var(--text-body);
+}
+.lp-foot__small {
+  margin: 0;
+  max-width: 44em;
+  color: var(--text-secondary);
+  font-size: var(--body-sm-size);
+  line-height: var(--body-sm-leading);
+}
+.lp-foot__design {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-6);
+  padding-top: var(--space-6);
+  box-shadow: var(--rule-top);
+}
+.lp-clean .lp-foot__design { display: none; }

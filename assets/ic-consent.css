@@ -1,0 +1,119 @@
+/* ==========================================================================
+   iCorrect consent bar. Loaded only when the theme setting is on.
+   Tokens come from ic-consent-tokens.css, which scopes the design contract's
+   custom properties to .ic-consent. Nothing here styles anything outside the bar.
+   Motion: none. The bar appears in place.
+   ========================================================================== */
+
+/* Shopify's own banner never shows while this bar is in use. */
+#shopify-pc__banner,
+.shopify-pc__banner__dialog { display: none !important; }   /* contract-allow: hides the platform banner this bar replaces */
+
+.ic-consent {
+  position: fixed;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: calc(var(--space-3) + var(--ic-consent-offset, 0px) + env(safe-area-inset-bottom));
+  z-index: 2147483000;            /* no token: above every theme layer, below browser UI */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: calc(var(--space-20) * 7);   /* no token: 560px */
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-xl);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-menu);
+  color: var(--text-body);
+  font-family: var(--font-sans);
+  font-size: var(--app-body-size);
+  line-height: var(--app-body-leading);
+  -webkit-font-smoothing: antialiased;
+}
+.ic-consent[hidden] { display: none; }
+.ic-consent *, .ic-consent *::before, .ic-consent *::after { box-sizing: border-box; }
+
+.ic-consent__main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+.ic-consent__text { margin: 0; flex: 1 1 14em; color: var(--text-body); }
+.ic-consent__link {
+  color: var(--text-link);
+  font-weight: var(--weight-medium);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.ic-consent__actions { display: flex; gap: var(--gap); flex: 0 0 auto; }
+
+/* Accept and Decline look the same on purpose: equal weight for both answers. */
+.ic-consent__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--target-min);
+  min-width: calc(var(--space-20) + var(--space-4));   /* no token: 96px, both buttons the same width */
+  padding: 0 var(--space-4);
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--surface-card);
+  box-shadow: var(--edge-input);
+  color: var(--text-heading);
+  font: inherit;
+  font-size: var(--app-button-size);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  transition: box-shadow var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
+}
+.ic-consent__btn:hover { background: var(--surface-quiet); box-shadow: var(--edge-input-hover); }
+.ic-consent__btn:focus-visible,
+.ic-consent__more:focus-visible,
+.ic-consent__link:focus-visible { outline: var(--focus-outline); outline-offset: var(--focus-offset); }
+
+.ic-consent__more {
+  align-self: flex-start;
+  min-height: var(--target-min);
+  margin: calc(var(--space-2) * -1) 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: var(--app-secondary-size);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.ic-consent__choose {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+  box-shadow: var(--rule-top);
+}
+.ic-consent__choose[hidden] { display: none; }
+.ic-consent__opt {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-height: var(--target-min);
+  padding: var(--space-2) 0;
+  color: var(--text-secondary);
+  font-size: var(--app-secondary-size);
+  line-height: var(--app-secondary-leading);
+  cursor: pointer;
+}
+.ic-consent__opt input { width: var(--space-5); height: var(--space-5); margin: 0; flex: 0 0 auto; accent-color: var(--text-heading); }
+.ic-consent__opt b { display: block; color: var(--text-heading); font-weight: var(--weight-semibold); }
+.ic-consent__choose .ic-consent__btn { align-self: flex-end; }
+
+@media (max-width: 639px) {
+  .ic-consent__actions { flex: 1 1 100%; }
+  .ic-consent__actions .ic-consent__btn { flex: 1 1 0; }
+}
+@media (min-width: 640px) {
+  .ic-consent { left: var(--space-4); right: auto; bottom: calc(var(--space-4) + var(--ic-consent-offset, 0px)); }
+}
