@@ -1,0 +1,172 @@
+/* ==========================================================================
+   iCorrect brand layer v1: ic-brand.css  (PREVIEW BRANCH ONLY)
+   Source of truth: panrix/icorrect-design-system (DESIGN.md, tokens.css).
+   Six rules from Claude Design, applied to the Liquid theme as an overlay.
+
+   Rules for this file:
+   - It only sets font family, weight, tracking, colour, smoothing and text-wrap.
+     It never sets font-size, line-height, margin, padding, display or position
+     on theme elements, so it cannot move the layout.
+   - The quote wizard is excluded everywhere with :not(.qw-section *).
+     assets/quote-wizard.css is untouched and keeps its own Geist rules.
+   - Variables are prefixed --ic- so they never collide with the wizard's
+     --font-sans / --font-mono on :root.
+   - Fonts: assets/Geist-Variable.woff2 and assets/GeistMono-Variable.woff2 are the same
+     files (same URLs) the wizard already loads, so nothing is downloaded twice.
+   ========================================================================== */
+
+@font-face {
+  font-family: "Geist";
+  src: url("Geist-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist Mono";
+  src: url("GeistMono-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+/* Metric-matched fallbacks (from tokens.css) so the swap does not move text.
+   Two faces, because a single regular Arial face gets a synthesised bold when a heading
+   asks for 600: that synthetic bold is about 5% narrower than Geist 600, and on the home
+   hero it wrapped one line fewer than the real font, shifting the layout on swap.
+   Measured in headless Chrome (Liberation Sans, which matches Arial metrics):
+   Geist 400 to 500 is 101.1 to 102.8% of Arial (body sentences 102.4 to 102.8%), Geist 600 is 99.0 to 100.3% of Arial Bold. */
+@font-face {
+  font-family: "Geist Fallback";
+  src: local("Arial"), local("Helvetica"), local("Liberation Sans");
+  font-weight: 100 599;
+  size-adjust: 103%;
+  ascent-override: 97.6%;
+  descent-override: 28.6%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Geist Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT"), local("Helvetica Bold"), local("Helvetica-Bold"), local("Liberation Sans Bold");
+  font-weight: 600 900;
+  size-adjust: 99.8%;
+  ascent-override: 100.7%;
+  descent-override: 29.6%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Geist Mono Fallback";
+  src: local("Courier New"), local("Courier"), local("Liberation Mono");
+  size-adjust: 100%;
+  ascent-override: 100.5%;
+  descent-override: 29.5%;
+  line-gap-override: 0%;
+}
+
+:root {
+  --ic-font-sans: "Geist", "Geist Fallback", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  --ic-font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, SFMono-Regular, Menlo, Monaco, "Liberation Mono", "Courier New", monospace;
+  --ic-ink: #171717;        /* headings */
+  --ic-body: #4d4d4d;       /* body */
+  --ic-muted: #666666;      /* labels, secondary (5.7:1 on white, passes AA) */
+  --ic-page: #f5f5f5;       /* neutral light grey page */
+  --ic-hairline: rgba(0, 0, 0, 0.08);
+
+  /* The theme builds all of its text from these two variables, so one override moves the lot. */
+  --font-body-family: var(--ic-font-sans);
+  --font-heading-family: var(--ic-font-sans);
+  --font-heading-weight: 600;
+}
+
+/* Light colour schemes: ink #171717 (was #1d1d1f). Dark schemes are untouched. */
+.color-scheme-1,
+.color-scheme-5 {
+  --color-foreground: 23, 23, 23;
+}
+
+/* ---- Rule 2: smoothing, no Inter feature settings ------------------------ */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+html body {
+  font-family: var(--ic-font-sans);
+  font-feature-settings: normal;
+  letter-spacing: 0;           /* was +0.06rem; Geist is set with no added tracking */
+  text-rendering: optimizeLegibility;
+}
+
+/* ---- Rule 3: neutral light grey page. Sections paint their own scheme background,
+        so this only shows where the theme leaves the page unpainted. ---------- */
+html body.gradient {
+  background: var(--ic-page);
+}
+
+/* ---- Rule 5: body 400 in #4d4d4d on light schemes ------------------------- */
+html body :is(.color-scheme-1, .color-scheme-5) {
+  color: var(--ic-body);
+}
+
+/* ---- Rule 2 + 5: ONE heading face, Geist 600 loaded properly (replaces
+        Axiforma, whose "bold" was a synthesised regular). Overrides the
+        custom-font section, which sets family with !important on bare tags. --- */
+body :is(h1, h2, h3, h4, h5, h6):not(.qw-section *) {
+  font-family: var(--ic-font-sans) !important;
+  font-weight: 600;
+  text-wrap: balance;          /* rule 6 */
+}
+body :is(p, span, li, a, label, summary, dt, dd, blockquote, figcaption, td, th):not(.qw-section *) {
+  font-family: var(--ic-font-sans) !important;   /* custom-font set Axiforma-R on p and span with !important */
+}
+body :is(p):not(.qw-section *) {
+  text-wrap: pretty;           /* rule 6 */
+}
+body :is(button, input, select, textarea):not(.qw-section *) {
+  font-family: var(--ic-font-sans);
+  font-feature-settings: normal;
+}
+
+/* ---- Rule 1: tight tracking. Sizes and line-heights stay as the theme sets
+        them, only the tracking changes. -------------------------------------- */
+body h1:not(.qw-section *) { letter-spacing: -0.045em; }
+body h2:not(.qw-section *) { letter-spacing: -0.04em; }
+body :is(h3, h4, h5, h6):not(.qw-section *) { letter-spacing: -0.01em; }
+
+/* Some headings are styled with a higher-specificity rule in their own section
+   (hero 700, footer 400 with +0.05em tracking). One more class here lets the brand
+   weight and tracking win without !important. Sizes stay as the theme sets them. */
+body .hero-heading:not(.qw-section *) { font-weight: 600; }
+body .footer .footer-block__heading { font-weight: 500; letter-spacing: -0.01em; }
+
+/* ---- Rule 4: mono labels. Section labels and metadata only, never content.
+        11 to 12px, uppercase, 0.06 to 0.08em, #666, 400. The old #86868b
+        was 3.6:1 on white and failed WCAG AA. --------------------------------- */
+body :is(.rc__eyebrow, .ic-stat-label, .ic-section__eyebrow, .hero-eyebrow, .mega-menu-enhanced__section-title):not(.qw-section *) {
+  font-family: var(--ic-font-mono) !important;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ic-muted);
+}
+body :is(.rc__eyebrow, .ic-stat-label):not(.qw-section *) {
+  font-size: 12px;
+}
+/* The mega menu title is set with !important in component-mega-menu-enhanced.css
+   (13px, 600, #86868b, +1px), so it needs !important here. It lives in the menu panel,
+   not in the page flow. */
+body .mega-menu-enhanced__section-title {
+  font-family: var(--ic-font-mono) !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.07em !important;
+  color: var(--ic-muted) !important;
+}
+/* On a dark scheme the muted grey would vanish: keep the theme's light text there. */
+body :is(.color-scheme-3, .color-scheme-4) :is(.rc__eyebrow, .ic-stat-label, .ic-section__eyebrow, .hero-eyebrow) {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* ---- Rule 5: 500 on buttons and labels ------------------------------------ */
+body :is(.button, .field__label, .ic-model-search__btn):not(.qw-section *) {
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}

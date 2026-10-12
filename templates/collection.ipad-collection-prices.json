@@ -64,7 +64,7 @@
           "settings": {
             "icon": "shopify://shop_images/Service_icon_Courier.png",
             "heading": "London Collection",
-            "details": "We collect from your door — same-day in most of London. Book online and we arrange tracked, insured collection and return. Outside London, use our free mail-in pack.",
+            "details": "We collect from your door across London, same day in most areas. Book online and we arrange tracked, insured collection and return. Outside London, use our free mail-in pack.",
             "btn": "Learn more",
             "link": ""
           }
@@ -248,6 +248,9 @@
         "mob_padding_top": 32,
         "mob_padding_bottom": 4
       }
+    },
+    "repair_index": {
+      "type": "repair-index"
     }
   },
   "order": [
@@ -258,6 +261,7 @@
     "icorrect_product_grid_AAVQCj",
     "ipad_videos_fjY9ew",
     "repair_services_nQkwFT",
+    "repair_index",
     "ipad_faqs_cLJJjE",
     "contact_with_map_dXbbDU"
   ]

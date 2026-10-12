@@ -144,7 +144,7 @@
           "settings": {
             "icon": "shopify://shop_images/Service_icon_Courier.png",
             "heading": "London Collection",
-            "details": "We collect from your door — same-day in most of London. Book online and we arrange tracked, insured collection and return. Outside London, use our free mail-in pack.",
+            "details": "We collect from your door across London, same day in most areas. Book online and we arrange tracked, insured collection and return. Outside London, use our free mail-in pack.",
             "btn": "Learn more",
             "link": "shopify://pages/our-services"
           }
@@ -297,8 +297,12 @@
       "type": "quote-wizard",
       "settings": {
         "show_map": false,
-        "prefill_mode": "auto"
+        "prefill_mode": "auto",
+        "page_title": true
       }
+    },
+    "repair_index": {
+      "type": "repair-index"
     }
   },
   "order": [
@@ -311,6 +315,7 @@
     "about_info_XAqnaH",
     "apple_watch_videos_VgkXik",
     "repair_services_nQkwFT",
+    "repair_index",
     "icorrect_faqs_RVk3VL"
   ]
 }

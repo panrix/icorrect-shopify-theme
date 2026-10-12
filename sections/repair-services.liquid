@@ -8,14 +8,14 @@
       {% for block in section.blocks %}
         <div class="repair-service-col">
           <div class="title-icon-row">
-            <img src="{{ block.settings.icon | img_url: 'master' }}" alt="{{ block.settings.heading }}">
+            <img src="{{ block.settings.icon | img_url: 'master' }}" alt="{{ block.settings.heading }}"{% if block.settings.icon.width %} width="{{ block.settings.icon.width }}" height="{{ block.settings.icon.height }}"{% endif %}>
             <h3>{{ block.settings.heading }}</h3>
           </div>
           <div class="repair-details">
             {%- liquid
               assign repair_details = block.settings.details
               if repair_details contains 'walk-in drop-off service by appointment'
-                assign repair_details = 'We collect from your door — same-day in most of London. Book online and we arrange tracked, insured collection and return. Outside London, use our free mail-in pack.'
+                assign repair_details = 'We collect from your door across London, same day in most areas. Book online and we arrange tracked, insured collection and return. Outside London, use our free mail-in pack.'
               endif
             -%}
             <p>{{ repair_details }}</p>
@@ -252,7 +252,7 @@ text-align: left;
             "type": "text",
             "id": "details",
             "label": "Details",
-            "default": "We collect from your door — same-day in most of London. Book online and we arrange tracked, insured collection and return. Outside London, use our free mail-in pack."
+            "default": "We collect from your door across London, same day in most areas. Book online and we arrange tracked, insured collection and return. Outside London, use our free mail-in pack."
           },
           {
             "type": "text",

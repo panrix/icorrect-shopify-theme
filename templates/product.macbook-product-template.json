@@ -153,7 +153,7 @@
           "type": "heading",
           "settings": {
             "heading": "<strong>MacBook Repair Services in the UK</strong>",
-            "heading_size": "h1"
+            "heading_size": "h2"
           }
         },
         "text_bez4LA": {
@@ -460,11 +460,21 @@
         "skip_to_service": false,
         "prefill_mode": "auto"
       }
+    },
+    "repair_context": {
+      "type": "repair-context",
+      "settings": {
+        "collection_handles": "macbook-screen-repair-prices,macbook-pro-13-m2-a2338-2022-repair-prices",
+        "product_handles": "macbook-pro-13-m2-2022-a2338-screen-repair",
+        "show_everywhere": false,
+        "show_finder": true
+      }
     }
   },
   "order": [
     "main",
     "contact_with_map_RfErQT",
+    "repair_context",
     "related-products",
     "pdp_sustain_repair_info_9EePrK",
     "about_info_A8a6YY",

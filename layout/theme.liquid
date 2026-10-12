@@ -50,8 +50,14 @@
         elsif page.handle == 'macbook-repairs'
           assign seo_page_description = 'Specialist MacBook repairs including board-level work. Courier collection in London, or a free tracked mail-in pack across the UK.'
         elsif page.handle == 'contact'
-          assign seo_page_description = 'Contact iCorrect London. Collection or mail-in only — no walk-ins. Call, email, or book a repair online.'
+          assign seo_page_description = 'Contact iCorrect London. Courier collection or tracked mail-in only. Call, email, or book a repair online.'
         endif
+      endif
+
+      # Walk-in retired (#53): rewrite the location sentence that admin SEO
+      # descriptions still carry. Title tags are untouched.
+      if seo_page_description contains 'London'
+        assign seo_page_description = seo_page_description | replace: ' replacement in Central London.', ' replacement with London courier collection or UK mail-in.' | replace: 'Central London walk-in service.', 'Courier collection across London, tracked mail-in nationwide.' | replace: 'Central London walk-in.', 'Courier collection across London, tracked mail-in nationwide.' | replace: 'London walk-in.', 'Courier collection across London, tracked mail-in nationwide.' | replace: 'Central London, 2-year warranty.', 'London courier collection or UK mail-in, 2-year warranty.' | replace: 'Central London.', 'Courier collection across London, tracked mail-in nationwide.'
       endif
     -%}
 
@@ -80,8 +86,11 @@
     {%- endif -%}
     {{ content_for_header }}
 
+    {%- comment -%}Axiforma (custom-font section) is served from cdn.shopify.com: open the connection early.{%- endcomment -%}
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+
     {%- if request.page_type == 'index' or request.page_type == 'collection' or request.page_type == 'product' or request.page_type == 'page' -%}
-      <link rel="preload" href="{{ 'courier-london-bands.json' | asset_url }}" as="fetch">
+      <link rel="preload" href="{{ 'courier-london-bands.json' | asset_url }}" as="fetch" crossorigin>
     {%- endif -%}
 
     {%- liquid
@@ -298,6 +307,22 @@
       }
     {% endstyle %}
 
+    {%- comment -%}
+      Cart drawer layout-shift fix. The drawer stylesheet loads non-blocking (media=print swap), and
+      until it arrives the empty drawer is an in-flow block about 470px tall that then jumps out of
+      the flow and shoves the header and main down. Take it out of flow and hide it from first paint.
+      The same values live in component-cart-drawer.css (.drawer, .drawer.active) and win once loaded.
+    {%- endcomment -%}
+    <style>
+      cart-drawer.drawer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100%;
+        visibility: hidden;
+      }
+    </style>
     {{ 'base.css' | asset_url | stylesheet_tag }}
     <link rel="stylesheet" href="{{ 'component-cart-items.css' | asset_url }}" media="print" onload="this.media='all'">
 
@@ -330,6 +355,14 @@
         onload="this.media='all'"
       >
     {%- endif -%}
+
+    {%- comment -%}
+      Brand layer v1 (preview branch only). Loaded last so it wins the cascade, and the one
+      critical font (Geist, used by every heading and body line) is preloaded. The preload URL
+      has the ?v= stripped so it matches the URL the @font-face in ic-brand.css requests.
+    {%- endcomment -%}
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ 'Geist-Variable.woff2' | asset_url | split: '?' | first }}">
+    {{ 'ic-brand.css' | asset_url | stylesheet_tag }}
 
     <script>
       if (Shopify.designMode) {
