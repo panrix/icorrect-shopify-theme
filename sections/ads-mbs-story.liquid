@@ -1,0 +1,184 @@
+{%- comment -%}
+  Ads page: MacBook screen repair (page.ads-macbook-screen, layout "ads").
+  Hero for both variants, then the six-chapter story (Variant A only).
+  HOLD: noindex, not linked from the site, no ads running. See docs/ads-macbook-screen.md.
+  Live values carry data-live and must be read from their source before any traffic is sent.
+{%- endcomment -%}
+{%- liquid
+  assign d1 = 'macbook-display-assembly-transparent.svg' | asset_url
+  assign d1_phone = 'macbook-display-assembly-mobile-transparent.svg' | asset_url
+  assign d1_assembled = 'macbook-display-assembly-assembled.svg' | asset_url
+  assign d2 = 'courier-route-transparent.svg' | asset_url
+  assign d2_phone = 'courier-route-mobile-transparent.svg' | asset_url
+  assign d3 = 'repair-bench-transparent.svg' | asset_url
+  assign d3_phone = 'repair-bench-mobile-transparent.svg' | asset_url
+  assign d6 = 'warranty-seal-closed.svg' | asset_url
+  assign warranty_url = '/pages/our-warranty'
+  assign alt_d1 = 'Exploded MacBook display: the polarizer and panel in blue, the part we replace, above the backlight, cable, shell and hinges.'
+  assign alt_d2 = 'A bike courier in blue collects a MacBook and rides a short route to our workshop.'
+  assign alt_d3w = 'Inside our workshop: benches, a microscope, parts shelves and a test station, with your MacBook in blue on the bench.'
+  assign alt_d4 = 'Our repair bench: an open MacBook on an anti-static mat, a solder station and a microscope in blue.'
+-%}
+
+<a class="lp-skip ic-btn ic-btn--secondary" href="#get-free-quote">Skip to the quote</a>
+
+{%- comment -%} Sticky bar (Variant A). Desktop: fixed top. Phone and tablet: fixed bottom, line on top. {%- endcomment -%}
+<div class="lp-bar lp-only-a" id="lp-bar">
+  <div class="lp-bar__in">
+    <a class="lp-mark" href="#top" aria-label="iCorrect, back to top">iCorrect</a>
+    <nav class="lp-prog" aria-label="How close you are to your price">
+      <span class="lp-prog__track" aria-hidden="true"><span class="lp-prog__fill"></span></span>
+      <ol class="lp-prog__dots">
+        <li><a class="lp-prog__dot" href="#ch-1" data-dot="1"><span class="lp-prog__mark" aria-hidden="true"></span><span class="lp-prog__label">What</span></a></li>
+        <li><a class="lp-prog__dot" href="#ch-2" data-dot="2"><span class="lp-prog__mark" aria-hidden="true"></span><span class="lp-prog__label">Getting it to us</span></a></li>
+        <li><a class="lp-prog__dot" href="#ch-3" data-dot="3"><span class="lp-prog__mark" aria-hidden="true"></span><span class="lp-prog__label">Where</span></a></li>
+        <li><a class="lp-prog__dot" href="#ch-4" data-dot="4"><span class="lp-prog__mark" aria-hidden="true"></span><span class="lp-prog__label">How</span></a></li>
+        <li><a class="lp-prog__dot" href="#ch-5" data-dot="5"><span class="lp-prog__mark" aria-hidden="true"></span><span class="lp-prog__label">Why this way</span></a></li>
+        <li><a class="lp-prog__dot" href="#ch-6" data-dot="6"><span class="lp-prog__mark" aria-hidden="true"></span><span class="lp-prog__label">Trust</span></a></li>
+      </ol>
+    </nav>
+    <p class="lp-bar__now ic-label" aria-hidden="true"><span class="lp-bar__count">0 of 6</span> <span class="lp-bar__name">How it works</span></p>
+    <a class="lp-phone" href="tel:+442070998517"><span class="lp-live" data-live="contact.phone" title="Read from the same source as the live site (claim C21)">020 7099 8517</span></a>
+    <a class="ic-btn lp-bar__btn" href="#get-free-quote" data-cta="sticky">Get my price</a>
+  </div>
+</div>
+
+{%- comment -%} Variant B header: wordmark and phone, not sticky. {%- endcomment -%}
+<header class="lp-top lp-only-b">
+  <div class="lp-wrap lp-top__in">
+    <a class="lp-mark" href="#top" aria-label="iCorrect, back to top">iCorrect</a>
+    <a class="lp-phone" href="tel:+442070998517"><span class="lp-live" data-live="contact.phone" title="Read from the same source as the live site (claim C21)">020 7099 8517</span></a>
+  </div>
+</header>
+
+<div id="top"></div>
+
+<section class="lp-hero" id="hero" aria-labelledby="hero-title">
+  <div class="lp-wrap lp-hero__grid">
+    <div class="lp-hero__copy">
+      <p class="ic-label">London · Courier collection</p>
+      <h1 class="t-display-xl lp-hero__title" id="hero-title">MacBook screen repair, <span class="lp-hero__title-2">collected from your door.</span></h1>
+      <p class="t-body-lg lp-hero__sub">Cracked, lined or not showing a picture? Collected from your office or home. We repair the screen at our London workshop and bring it back. You see a fixed price for your exact model before you pay.</p>
+      <div class="lp-hero__cta">
+        <a class="ic-btn lp-hero__btn lp-only-a" href="#ch-1" data-cta="hero_scroll">Scroll to see how it works</a>
+        <p class="lp-facts">
+          <span>From <span class="lp-live" data-live="shopify.macbook_screen.min_price" title="Read live from Shopify (claim C8)">£299</span></span>
+          <span>2 year warranty, <a class="lp-link" href="{{ warranty_url }}">terms</a></span>
+          <span><span class="lp-live" data-live="reviews.google.rating" title="Read live from the approved review source (claim C10)">4.8</span> from <span class="lp-live" data-live="reviews.google.count" title="Read live from the approved review source (claim C10)">700+</span> Google reviews</span>
+        </p>
+      </div>
+    </div>
+    <figure class="lp-frame lp-hero__art lp-only-a">
+      <div class="dg" data-eager data-src="{{ d1 }}" data-viewbox="155 315 448 325" data-from="0" data-to="0" style="--ar: 448 / 325">
+        <img src="{{ d1_assembled }}" width="700" height="880" alt="Line drawing of a MacBook display, assembled. The blue top layers are the polarizer and panel we replace." decoding="async">
+      </div>
+    </figure>
+  </div>
+</section>
+
+<section class="lp-story lp-only-a" id="story" aria-label="How it works">
+  <div class="lp-wrap lp-story__grid">
+    <div class="lp-story__chapters">
+
+      <article class="lp-ch" id="ch-1" data-ch="1" aria-labelledby="ch-1-q">
+        <p class="ic-label">What</p>
+        <h2 class="lp-ch__q" id="ch-1-q" tabindex="-1">What are you actually replacing?</h2>
+        <figure class="lp-frame lp-ch__fig">
+          <div class="dg" data-ch="1" data-src="{{ d1 }}" data-viewbox="7 115 651 728" data-src-phone="{{ d1_phone }}" data-hide-phone="markers" data-from="0" data-to="1" data-replay style="--ar: 651 / 728; --ar-phone: 500 / 880">
+            <picture><source media="(max-width: 600px)" srcset="{{ d1_phone }}"><img src="{{ d1 }}" width="700" height="880" alt="{{ alt_d1 }}" loading="lazy" decoding="async"></picture>
+          </div>
+          <figcaption class="lp-legend"><span class="lp-legend__acc">Polarizer</span> <span class="lp-legend__acc">Panel</span> <span>Backlight</span> <span>Cable</span> <span>Shell</span> <span>Hinge</span></figcaption>
+        </figure>
+        <p class="lp-ch__a">Your MacBook screen is a stack of layers. When it cracks or fails, we replace the polarizer and the panel together, then rebuild it on the backlight and shell you already have.</p>
+      </article>
+
+      <article class="lp-ch" id="ch-2" data-ch="2" aria-labelledby="ch-2-q">
+        <p class="ic-label">Getting it to us</p>
+        <h2 class="lp-ch__q" id="ch-2-q" tabindex="-1">How do I get it to you?</h2>
+        <figure class="lp-frame lp-ch__fig">
+          <div class="dg" data-ch="2" data-src="{{ d2 }}" data-viewbox="18 27 658 370" data-src-phone="{{ d2_phone }}" data-hide-phone="markers" data-from="0" data-to="0.28" style="--ar: 658 / 370; --ar-phone: 482 / 370">
+            <picture><source media="(max-width: 600px)" srcset="{{ d2_phone }}"><img src="{{ d2 }}" width="720" height="420" alt="{{ alt_d2 }}" loading="lazy" decoding="async"></picture>
+          </div>
+          <figcaption class="lp-legend"><span>Your office or home</span> <span class="lp-legend__acc">Courier</span> <span>Our workshop</span></figcaption>
+        </figure>
+        <p class="lp-ch__a">Collected from your office or home. Book online and a bike courier picks it up in London, then rides it straight to our workshop. No packing, no trip across town.</p>
+      </article>
+
+      <article class="lp-ch" id="ch-3" data-ch="3" aria-labelledby="ch-3-q">
+        <p class="ic-label">Where</p>
+        <h2 class="lp-ch__q" id="ch-3-q" tabindex="-1">Where is it fixed?</h2>
+        <figure class="lp-frame lp-ch__fig">
+          <div class="dg" data-ch="3" data-src="{{ d2 }}" data-viewbox="284 159 235 188" data-hide="workshop" data-from="0.5" data-to="0.5" style="--ar: 235 / 188">
+            <img src="{{ d2 }}" width="720" height="420" alt="{{ alt_d3w }}" loading="lazy" decoding="async">
+          </div>
+        </figure>
+        <p class="lp-ch__a">In our own workshop in London, by our own technicians. Not sent away, not a franchise.</p>
+      </article>
+
+      <article class="lp-ch" id="ch-4" data-ch="4" aria-labelledby="ch-4-q">
+        <p class="ic-label">How</p>
+        <h2 class="lp-ch__q" id="ch-4-q" tabindex="-1">How do you do it?</h2>
+        <figure class="lp-frame lp-ch__fig">
+          <div class="dg" data-ch="4" data-src="{{ d3 }}" data-viewbox="0 103 740 399" data-src-phone="{{ d3_phone }}" data-hide-phone="markers" data-from="0" data-to="1" style="--ar: 740 / 399; --ar-phone: 540 / 409">
+            <picture><source media="(max-width: 600px)" srcset="{{ d3_phone }}"><img src="{{ d3 }}" width="760" height="480" alt="{{ alt_d4 }}" loading="lazy" decoding="async"></picture>
+          </div>
+          <figcaption class="lp-legend"><span class="lp-legend__acc">Microscope</span> <span>Solder station</span> <span>Logic board</span> <span>Laptop</span> <span>Mat</span> <span>Bench</span></figcaption>
+        </figure>
+        <p class="lp-ch__a">A technician fits the replacement polarizer and panel at our bench, and the screen is recalibrated in-house so it looks right before it leaves.</p>
+      </article>
+
+      <article class="lp-ch" id="ch-5" data-ch="5" aria-labelledby="ch-5-q">
+        <p class="ic-label">Why this way</p>
+        <h2 class="lp-ch__q" id="ch-5-q" tabindex="-1">How do I know it's done properly?</h2>
+        <figure class="lp-ch__fig lp-ch__fig--ui">
+          <article class="lp-record" aria-label="Example test record">
+            <div class="lp-record__head"><p class="ic-label">Example record</p><p class="lp-record__title">Tested after the repair</p></div>
+            <div class="ic-rows">
+              {%- assign tests = 'Display,True Tone,Camera,Keyboard,Trackpad,Battery,Charging' | split: ',' -%}
+              {%- for t in tests -%}
+                <div class="ic-row" style="--i: {{ forloop.index0 }}"><span class="ic-row-name">{{ t }}</span><span class="lp-record__cell"><span class="lp-record__wait ic-label" aria-hidden="true">Testing</span><span class="ic-chip ic-chip--ok lp-record__pass">Pass</span></span></div>
+              {%- endfor -%}
+            </div>
+            <p class="lp-record__foot"><span class="ic-label">Example only</span><span class="lp-hold" title="Claim C26: the list must match what is tested on every MacBook screen job">To confirm · C26</span></p>
+          </article>
+        </figure>
+        <p class="lp-ch__a">Every screen goes through our test list before it comes back to you, and the repair is covered by our 2 year warranty.</p>
+        <p class="lp-ch__link"><a class="lp-link" href="{{ warranty_url }}">Warranty terms</a></p>
+      </article>
+
+      <article class="lp-ch" id="ch-6" data-ch="6" aria-labelledby="ch-6-q">
+        <p class="ic-label">Trust</p>
+        <h2 class="lp-ch__q" id="ch-6-q" tabindex="-1">Why should I trust you?</h2>
+        <figure class="lp-ch__fig lp-ch__fig--ui">
+          {%- render 'ads-mbs-trust', seal: d6, warranty_url: warranty_url -%}
+        </figure>
+        <p class="lp-ch__a">Read what our customers say on Google, and check exactly who we are before you pay anything.</p>
+      </article>
+
+    </div>
+
+    <div class="lp-stage">
+      <div class="lp-stage__frame">
+        <div class="lp-scene" data-scene-for="1"><div class="dg" data-ch="1" data-alt="{{ alt_d1 }}" data-src="{{ d1 }}" data-viewbox="7 115 651 728" data-from="0" data-to="1" data-replay style="--ar: 651 / 728"></div></div>
+        <div class="lp-scene" data-scene-for="2"><div class="dg" data-ch="2" data-alt="{{ alt_d2 }}" data-src="{{ d2 }}" data-viewbox="18 27 658 370" data-from="0" data-to="0.28" style="--ar: 658 / 370"></div></div>
+        <div class="lp-scene" data-scene-for="3"><div class="dg" data-ch="3" data-alt="{{ alt_d3w }}" data-src="{{ d2 }}" data-viewbox="284 159 235 188" data-hide="workshop" data-from="0.5" data-to="0.5" style="--ar: 235 / 188"></div></div>
+        <div class="lp-scene" data-scene-for="4"><div class="dg" data-ch="4" data-alt="{{ alt_d4 }}" data-src="{{ d3 }}" data-viewbox="0 103 740 399" data-from="0" data-to="1" style="--ar: 740 / 399"></div></div>
+        <div class="lp-scene lp-scene--ui" data-scene-for="5"></div>
+        <div class="lp-scene lp-scene--ui" data-scene-for="6"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lp-close lp-only-a" aria-label="Back to you">
+  <div class="lp-wrap">
+    <p class="lp-close__line">It comes back to your office or home.</p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Ads: MacBook screen story",
+  "settings": []
+}
+{% endschema %}

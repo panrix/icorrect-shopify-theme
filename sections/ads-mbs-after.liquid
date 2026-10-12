@@ -1,0 +1,89 @@
+{%- comment -%}
+  Ads page: MacBook screen repair. Everything after the quote wizard.
+  Variant A ends on the price, so only the footer shows. Variant B: the same six
+  questions and answers as a plain list, the trust block and the short FAQ.
+{%- endcomment -%}
+{%- assign warranty_url = '/pages/our-warranty' -%}
+
+<section class="lp-section lp-qa lp-only-b" id="how" aria-labelledby="how-title">
+  <div class="lp-wrap lp-qa__in">
+    <p class="ic-label">How it works</p>
+    <h2 class="t-h2" id="how-title">What happens to your MacBook</h2>
+    <ol class="lp-qa__list">
+      <li class="lp-qa__item">
+        <h3 class="lp-qa__q">What are you actually replacing?</h3>
+        <p class="lp-qa__a">Your MacBook screen is a stack of layers. When it cracks or fails, we replace the polarizer and the panel together, then rebuild it on the backlight and shell you already have.</p>
+      </li>
+      <li class="lp-qa__item">
+        <h3 class="lp-qa__q">How do I get it to you?</h3>
+        <p class="lp-qa__a">Collected from your office or home. Book online and a bike courier picks it up in London, then rides it straight to our workshop. No packing, no trip across town.</p>
+      </li>
+      <li class="lp-qa__item">
+        <h3 class="lp-qa__q">Where is it fixed?</h3>
+        <p class="lp-qa__a">In our own workshop in London, by our own technicians. Not sent away, not a franchise.</p>
+      </li>
+      <li class="lp-qa__item">
+        <h3 class="lp-qa__q">How do you do it?</h3>
+        <p class="lp-qa__a">A technician fits the replacement polarizer and panel at our bench, and the screen is recalibrated in-house so it looks right before it leaves.</p>
+      </li>
+      <li class="lp-qa__item">
+        <h3 class="lp-qa__q">How do I know it's done properly?</h3>
+        <p class="lp-qa__a">Every screen goes through our test list before it comes back to you, and the repair is covered by our 2 year warranty.</p>
+        <p class="lp-ch__link"><a class="lp-link" href="{{ warranty_url }}">Warranty terms</a></p>
+      </li>
+      <li class="lp-qa__item">
+        <h3 class="lp-qa__q">Why should I trust you?</h3>
+        <p class="lp-qa__a">Read what our customers say on Google, and check exactly who we are before you pay anything.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="lp-section lp-qa-trust lp-only-b" aria-labelledby="trust-title">
+  <div class="lp-wrap lp-qa__in">
+    <p class="ic-label">Trust</p>
+    <h2 class="t-h2" id="trust-title">Who we are</h2>
+    {%- render 'ads-mbs-trust', seal: blank, warranty_url: warranty_url -%}
+  </div>
+</section>
+
+<section class="lp-section lp-faq lp-only-b" id="faq" aria-labelledby="faq-title">
+  <div class="lp-wrap lp-faq__in">
+    <p class="ic-label">Questions</p>
+    <h2 class="t-h2" id="faq-title">Before you book</h2>
+    <div class="lp-faq__list">
+      <details class="lp-faq__item">
+        <summary>Can I spread the cost?</summary>
+        <p>Yes. Klarna is available at checkout for standard repairs.</p>
+      </details>
+      <details class="lp-faq__item">
+        <summary>What does the warranty cover?</summary>
+        <p>2 years on the repair. It does not cover accidental damage, liquid damage after the repair, unrelated faults or normal wear. <a class="lp-link" href="{{ warranty_url }}">Read the full terms</a>.</p>
+      </details>
+      <details class="lp-faq__item">
+        <summary>What if it is not just the screen?</summary>
+        <p>If we find another fault, we tell you before doing anything else.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<footer class="lp-foot">
+  <div class="lp-wrap lp-foot__in">
+    <p class="lp-foot__row"><a class="lp-link" href="tel:+442070998517"><span class="lp-live" data-live="contact.phone">020 7099 8517</span></a> <span>Monday to Friday, 9 to 6</span></p>
+    <p class="lp-foot__row"><a class="lp-link" href="{{ warranty_url }}">Warranty terms</a> <a class="lp-link" href="/policies/terms-of-service">Terms</a> <a class="lp-link" href="/policies/privacy-policy">Privacy notice</a></p>
+    <p class="lp-foot__small">ICX Repair Ltd, trading as iCorrect. Company number 15656949.</p>
+    <p class="lp-foot__small">Apple, MacBook and Mac are trademarks of Apple Inc. iCorrect is an independent repairer and is not affiliated with Apple.</p>
+    <div class="lp-foot__design">
+      <p class="ic-label">Design preview · <span class="lp-only-a">Variant A</span><span class="lp-only-b">Variant B (fast)</span> · not for publish · noindex</p>
+      <p class="lp-foot__small">Values with an orange dotted underline are placeholders and are read live before launch. Orange "To confirm" chips are held claims and are not shown in production. Switch with <code>?variant=a</code> or <code>?variant=b</code>.</p>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Ads: MacBook screen after",
+  "settings": []
+}
+{% endschema %}

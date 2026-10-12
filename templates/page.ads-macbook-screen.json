@@ -1,0 +1,30 @@
+{
+  "layout": "ads",
+  "sections": {
+    "story": {
+      "type": "ads-mbs-story",
+      "settings": {}
+    },
+    "quote": {
+      "type": "quote-wizard",
+      "settings": {
+        "prefill_mode": "manual",
+        "prefill_device": "macbook",
+        "prefill_fault": "screen",
+        "skip_to_service": false,
+        "show_map": false,
+        "page_title": false,
+        "heading": "Get your exact price"
+      }
+    },
+    "after": {
+      "type": "ads-mbs-after",
+      "settings": {}
+    }
+  },
+  "order": [
+    "story",
+    "quote",
+    "after"
+  ]
+}
