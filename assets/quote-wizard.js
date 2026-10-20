@@ -763,6 +763,7 @@
         { label: 'WiFi not connecting or greyed out', route: 'diagnostic', repairType: 'diagnostic', copy: 'A greyed-out WiFi toggle usually means a hardware fault on the logic board. Book a diagnostic and we\'ll confirm it before quoting a repair.' },
         { label: 'Bluetooth not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth and WiFi share the same chip on iPhones. Book a diagnostic and we\'ll confirm the fault before quoting a repair.' },
         { label: 'Apple Pay / NFC not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'We\'ll run a diagnostic to find the cause and send you a quote before doing any work.' },
+        { label: 'NFC / Apple Pay not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'We\'ll run a diagnostic to find the cause and send you a quote before doing any work.' },
         { label: 'Won\'t activate', route: 'diagnostic', repairType: 'diagnostic', copy: 'We\'ll run a diagnostic to find out what\'s causing it and send you a quote before doing any work.' }
       ],
       'Other': [
@@ -806,6 +807,7 @@
         { label: 'Microphone not working', route: 'contact', repairType: null, copy: 'iPad mic faults depend on the model. Get in touch and we\'ll confirm whether we can quote a parts repair.' },
         { label: 'WiFi not connecting', route: 'diagnostic', repairType: 'diagnostic', copy: 'WiFi issues can be the antenna, wireless chip, or software. We need to diagnose the device to quote the repair.' },
         { label: 'Bluetooth not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth and WiFi share components on iPads. We need to diagnose the device to quote the repair.' },
+        { label: 'NFC / Apple Pay not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'We\'ll run a diagnostic to find the cause and send you a quote before doing any work.' },
         { label: 'General diagnostic', route: 'diagnostic', repairType: 'diagnostic', copy: 'Not sure what\'s wrong, or want a second opinion? We\'ll run a full diagnostic and send you our findings with a quote before doing any work.' },
         { label: 'Board fault confirmed elsewhere', route: 'diagnostic', repairType: 'diagnostic', copy: 'We\'ll run our own diagnostic to confirm the fault and whether it can be repaired. You\'ll get our findings and a quote before we do anything.' },
         { label: 'Several parts damaged', route: 'contact', repairType: null, copy: 'If your device has a bent frame or more than one broken part, get in touch and we\'ll put together a quote for everything it needs.' },
