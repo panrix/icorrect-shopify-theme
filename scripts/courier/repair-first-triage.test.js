@@ -34,6 +34,12 @@ const DIAGNOSTIC_LABELS = new Set([
   'Random shutdowns or reboots',
   'Back camera: no preview or it freezes',
   'Front camera: no preview or it freezes',
+  /* Michael approved these iPhone/iPad diagnostics (Oct 2026). */
+  'General diagnostic',
+  'Board fault confirmed elsewhere',
+  'Software issue',
+  'Apple Pay / NFC not working',
+  'No signal or won\'t activate',
 ]);
 
 const MUST_BE_REPAIR = [
