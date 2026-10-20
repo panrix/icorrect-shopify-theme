@@ -183,15 +183,16 @@ describe('iPhone connectivity diagnostics', () => {
     assert.equal(iss.copy, NFC_COPY);
   });
 
-  it('NFC / Apple Pay not working books a diagnostic on iPhone and iPad', () => {
-    const iphone = findOne(issues, 'iphone', 'Connectivity', 'NFC / Apple Pay not working');
+  it('NFC / Apple Pay not working is the iPad option, and iPhone keeps a single Apple Pay label', () => {
     const ipad = findOne(issues, 'ipad', 'Other', 'NFC / Apple Pay not working');
-    for (const iss of [iphone, ipad]) {
-      assert.equal(iss.route, 'diagnostic');
-      assert.equal(iss.repairType, 'diagnostic');
-      assert.equal(iss.copy, NFC_COPY);
-    }
-    const elsewhere = issues.filter((i) => i.label === 'NFC / Apple Pay not working' && i.device !== 'iphone' && i.device !== 'ipad');
+    assert.equal(ipad.route, 'diagnostic');
+    assert.equal(ipad.repairType, 'diagnostic');
+    assert.equal(ipad.copy, NFC_COPY);
+    const iphoneSwap = issues.filter((i) => i.device === 'iphone' && i.label === 'NFC / Apple Pay not working');
+    assert.deepEqual(iphoneSwap, []);
+    const iphone = findOne(issues, 'iphone', 'Connectivity', 'Apple Pay / NFC not working');
+    assert.equal(iphone.route, 'diagnostic');
+    const elsewhere = issues.filter((i) => i.label === 'NFC / Apple Pay not working' && i.device !== 'ipad');
     assert.deepEqual(elsewhere, []);
   });
 
