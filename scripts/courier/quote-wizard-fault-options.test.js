@@ -207,6 +207,28 @@ describe('sample catalogue routes', () => {
     assert.equal(map.diagnostic.handle, 'iphone-15-pro-diagnostic');
   });
 
+  it('iPad Pro 11 2019 short name books the same products as 1st Gen', () => {
+    const names = [
+      'iPad Pro 11" 1st Gen (2019)',
+      'iPad Pro 11-inch 1st Gen (2019)',
+      'iPad Pro 11-inch (2019)',
+      'iPad Pro 11 (2019)',
+    ];
+    for (const name of names) {
+      const map = repairsMapForModel(catalogue, 'ipad', name);
+      assert.equal(map['charging-port'].handle, 'ipad-pro-11-2019-charging-port-repair', name);
+      assert.equal(map.diagnostic.handle, 'ipad-pro-11-2019-diagnostic', name);
+      assert.equal(map.battery.handle, 'ipad-pro-11-2019-battery-repair', name);
+      assert.equal(map.screen.handle, 'ipad-pro-11-1st-gen-2019-lcd-display-repair', name);
+    }
+    const full = catalogue.models['ipad::ipad-pro-11-inch-1st-gen-2019'].repairs;
+    const short = catalogue.models['ipad::ipad-pro-11-inch-2019'].repairs;
+    assert.deepEqual(
+      Object.keys(short).sort().map((key) => short[key].handle),
+      Object.keys(full).sort().map((key) => full[key].handle)
+    );
+  });
+
   it('iPad Pro 11-inch 3rd Gen M1 resolves charging port and diagnostic, not a lens', () => {
     const map = repairsMapForModel(catalogue, 'ipad', 'iPad Pro 11-inch 3rd Gen M1 (2021)');
     assert.equal(map['charging-port'].handle, 'ipad-pro-11-2021-m1-charging-port-repair');

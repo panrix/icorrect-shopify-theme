@@ -3,7 +3,7 @@
   "generated_for": "courier-first-pivot #53",
   "generated_at": "2026-09-18",
   "model_count": 115,
-  "repair_count": 917,
+  "repair_count": 920,
   "models": {
     "watch::apple-watch-se-2-40mm": {
       "device": "watch",
@@ -1799,15 +1799,36 @@
         }
       }
     },
-    "ipad::ipad-pro-11-inch-2019": {
+    "ipad::ipad-pro-11-inch-1st-gen-2019": {
       "device": "ipad",
-      "name": "iPad Pro 11-inch (2019)",
-      "slug": "ipad-pro-11-inch-2019",
+      "name": "iPad Pro 11-inch 1st Gen (2019)",
+      "slug": "ipad-pro-11-inch-1st-gen-2019",
       "repairs": {
+        "battery": {
+          "variantId": 46150018760957,
+          "handle": "ipad-pro-11-2019-battery-repair",
+          "title": "iPad Pro 11 1st Gen (2019) Battery Replacement (Original Specification)",
+          "price": 179,
+          "tags": []
+        },
+        "charging-port": {
+          "variantId": 46150018695421,
+          "handle": "ipad-pro-11-2019-charging-port-repair",
+          "title": "iPad Pro 11 1st Gen (2019) Charging Port Repair",
+          "price": 179,
+          "tags": []
+        },
+        "diagnostic": {
+          "variantId": 46150018531581,
+          "handle": "ipad-pro-11-2019-diagnostic",
+          "title": "iPad Pro 11 1st Gen (2019) Diagnostic",
+          "price": 69,
+          "tags": []
+        },
         "screen": {
-          "variantId": 46150018498813,
-          "handle": "ipad-pro-11-2019-lcd-display-repair",
-          "title": "iPad Pro 11 (2019) Display Repair (Genuine LCD)",
+          "variantId": 46361689489661,
+          "handle": "ipad-pro-11-1st-gen-2019-lcd-display-repair",
+          "title": "iPad Pro 11 1st Gen (2019) Display Repair",
           "price": 249,
           "tags": [
             "courier:free"
@@ -1815,10 +1836,10 @@
         }
       }
     },
-    "ipad::ipad-pro-11-inch-1st-gen-2019": {
+    "ipad::ipad-pro-11-inch-2019": {
       "device": "ipad",
-      "name": "iPad Pro 11-inch 1st Gen (2019)",
-      "slug": "ipad-pro-11-inch-1st-gen-2019",
+      "name": "iPad Pro 11-inch (2019)",
+      "slug": "ipad-pro-11-inch-2019",
       "repairs": {
         "battery": {
           "variantId": 46150018760957,
