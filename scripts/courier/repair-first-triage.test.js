@@ -39,7 +39,7 @@ const DIAGNOSTIC_LABELS = new Set([
   'Board fault confirmed elsewhere',
   'Software issue',
   'Apple Pay / NFC not working',
-  'No signal or won\'t activate',
+  'Won\'t activate',
 ]);
 
 const MUST_BE_REPAIR = [

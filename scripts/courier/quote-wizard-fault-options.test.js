@@ -183,8 +183,8 @@ describe('iPhone connectivity diagnostics', () => {
     assert.equal(iss.copy, NFC_COPY);
   });
 
-  it('No signal or won\'t activate books a diagnostic', () => {
-    const iss = findOne(issues, 'iphone', 'Connectivity', "No signal or won't activate");
+  it('Won\'t activate books a diagnostic', () => {
+    const iss = findOne(issues, 'iphone', 'Connectivity', "Won't activate");
     assert.equal(iss.route, 'diagnostic');
     assert.equal(iss.repairType, 'diagnostic');
     assert.equal(iss.copy, SIGNAL_COPY);

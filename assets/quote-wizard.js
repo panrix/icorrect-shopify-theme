@@ -763,7 +763,7 @@
         { label: 'WiFi not connecting or greyed out', route: 'diagnostic', repairType: 'diagnostic', copy: 'A greyed-out WiFi toggle usually means a hardware fault on the logic board. Book a diagnostic and we\'ll confirm it before quoting a repair.' },
         { label: 'Bluetooth not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth and WiFi share the same chip on iPhones. Book a diagnostic and we\'ll confirm the fault before quoting a repair.' },
         { label: 'Apple Pay / NFC not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'We\'ll run a diagnostic to find the cause and send you a quote before doing any work.' },
-        { label: 'No signal or won\'t activate', route: 'diagnostic', repairType: 'diagnostic', copy: 'We\'ll run a diagnostic to find out what\'s causing it and send you a quote before doing any work.' }
+        { label: 'Won\'t activate', route: 'diagnostic', repairType: 'diagnostic', copy: 'We\'ll run a diagnostic to find out what\'s causing it and send you a quote before doing any work.' }
       ],
       'Other': [
         { label: 'Vibration not working', route: 'contact', repairType: null, copy: 'The Taptic Engine may have failed. Get in touch and we\'ll confirm whether we can repair it for your model.' },
