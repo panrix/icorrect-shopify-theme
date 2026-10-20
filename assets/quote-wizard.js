@@ -147,7 +147,7 @@
     iphone: [
       { v: 'Screen / Display', icon: 'screen', label: 'Screen / Display' },
       { v: 'Power / Battery / Charging', icon: 'battery', label: 'Power / Battery / Charging' },
-      { v: 'Camera', icon: 'camera', label: 'Camera' },
+      { v: 'Camera', icon: 'camera', label: 'Front or Rear Camera' },
       { v: 'Audio / Mic / Speaker', icon: 'audio', label: 'Audio / Mic / Speaker' },
       { v: 'Buttons', icon: 'iphone-buttons', label: 'Buttons' },
       { v: 'Connectivity', icon: 'connectivity', label: 'Connectivity' },
@@ -159,7 +159,7 @@
     ipad: [
       { v: 'Screen / Display', icon: 'screen', label: 'Screen / Display' },
       { v: 'Power / Battery / Charging', icon: 'battery', label: 'Power / Battery / Charging' },
-      { v: 'Camera', icon: 'camera', label: 'Camera' },
+      { v: 'Camera', icon: 'camera', label: 'Front or Rear Camera' },
       { v: 'Water Damage', icon: 'water', label: 'Water Damage' },
       { v: 'Data Recovery', icon: 'data', label: 'Data Recovery' },
       { v: 'Other', icon: 'other', label: 'Other' }
@@ -230,7 +230,8 @@
 
   /* Repair type key (screen, rear-camera-lens, ...) or fault name to the fault
      name this device uses in TS. Reads TS so each device keeps its own grouping
-     (iPhone rear-camera-lens sits under Rear Glass, not Camera). Null if none. */
+     (iPhone rear-camera-lens price pages stay on Rear Glass). alsoListed marks a
+     second copy of the same repair, such as the lens under Camera. Null if none. */
   function faultForRepairType(device, key) {
     if (!key) return null;
     var faults = TS[device] || {};
@@ -245,6 +246,7 @@
       for (var f = 0; f < names.length; f++) {
         var list = faults[names[f]] || [];
         for (var i = 0; i < list.length; i++) {
+          if (list[i].alsoListed) continue;
           if (list[i].repairType === want[w] && list[i].route === 'repair') return names[f];
         }
       }
@@ -720,7 +722,8 @@
         { label: 'Random shutdowns or reboots', route: 'diagnostic', repairType: 'diagnostic', copy: 'Unexpected shutdowns can be the battery or the logic board. We can\'t quote the full repair until we\'ve looked.' },
         { label: 'Swollen battery', route: 'repair', repairType: 'battery', copy: 'We\'ll replace the battery safely.', urgent: true },
         { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', faceIdOnly: true, copy: 'If the iPhone turns on and charges with a wireless charger, but the port does nothing, the charging port is the fault. We\'ll replace it and test charging.' },
-        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', noFaceIdOnly: true, copy: 'The iPhone turns on but will not charge from the port. We\'ll replace the charging port and test it. If the board is the cause, we\'ll tell you before any extra work.' }
+        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', noFaceIdOnly: true, copy: 'The iPhone turns on but will not charge from the port. We\'ll replace the charging port and test it. If the board is the cause, we\'ll tell you before any extra work.' },
+        { label: 'Charges, but won\'t connect to a computer', route: 'repair', repairType: 'charging-port', copy: 'We\'ll replace the charging port, which usually fixes this, and confirm the fault during the repair. If it turns out the issue is with the logic board instead, we\'ll let you know and send you a quote before doing anything further. Nothing extra is ever done without your go-ahead.' }
       ],
       'Camera': [
         { label: 'Back camera blurry or shaking', route: 'repair', repairType: 'rear-camera', copy: 'A blurry or shaking back camera usually means the stabilisation system has failed. We\'ll replace the rear camera module.' },
@@ -728,7 +731,8 @@
         { label: 'Front camera: Face ID error or TrueDepth message', route: 'repair', repairType: 'front-camera', faceIdOnly: true, copy: 'A TrueDepth camera message in Settings, or a Face ID error, means the front camera module needs replacing. We\'ll quote that repair.' },
         { label: 'Front camera not working', route: 'repair', repairType: 'front-camera', noFaceIdOnly: true, copy: 'We replace the faulty front camera module.' },
         { label: 'Front camera: no preview or it freezes', route: 'diagnostic', repairType: 'diagnostic', copy: 'A black preview, or a front camera that freezes or crashes, can be the module or the board. We can\'t quote the full repair until we\'ve inspected both.' },
-        { label: 'Condensation in camera', route: 'diagnostic', repairType: 'diagnostic', copy: 'Moisture inside the camera is a sign of liquid or a broken seal. We can\'t quote the full repair until we\'ve checked for internal corrosion.' }
+        { label: 'Condensation in camera', route: 'diagnostic', repairType: 'diagnostic', copy: 'Moisture inside the camera is a sign of liquid or a broken seal. We can\'t quote the full repair until we\'ve checked for internal corrosion.' },
+        { label: 'Camera lens cover cracked', route: 'repair', repairType: 'rear-camera-lens', alsoListed: true, copy: 'A cracked camera lens cover lets dust and moisture in. We\'ll replace the lens cover to protect your cameras.' }
       ],
       'Audio / Mic / Speaker': [
         { label: 'No sound or low volume from speaker', route: 'repair', repairType: 'loudspeaker', copy: 'The loudspeaker module has likely failed. We\'ll replace it to restore full volume and clarity.' },
@@ -757,10 +761,16 @@
         { label: 'eSIM not detected', route: 'diagnostic', repairType: 'diagnostic', esimOnly: true, copy: 'A missing eSIM or "No SIM" message can be the eSIM profile or the board. There is no SIM tray on this iPhone. Book a diagnostic and we\'ll identify it before quoting a repair.' },
         { label: 'SIM not detected', route: 'diagnostic', repairType: 'diagnostic', simTrayOnly: true, copy: 'A missing SIM or "No SIM" message can be the tray, the reader, or the board. Book a diagnostic and we\'ll identify it before quoting a repair.' },
         { label: 'WiFi not connecting or greyed out', route: 'diagnostic', repairType: 'diagnostic', copy: 'A greyed-out WiFi toggle usually means a hardware fault on the logic board. Book a diagnostic and we\'ll confirm it before quoting a repair.' },
-        { label: 'Bluetooth not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth and WiFi share the same chip on iPhones. Book a diagnostic and we\'ll confirm the fault before quoting a repair.' }
+        { label: 'Bluetooth not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth and WiFi share the same chip on iPhones. Book a diagnostic and we\'ll confirm the fault before quoting a repair.' },
+        { label: 'Apple Pay / NFC not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'We\'ll run a diagnostic to find the cause and send you a quote before doing any work.' },
+        { label: 'Won\'t activate', route: 'diagnostic', repairType: 'diagnostic', copy: 'We\'ll run a diagnostic to find out what\'s causing it and send you a quote before doing any work.' }
       ],
       'Other': [
         { label: 'Vibration not working', route: 'contact', repairType: null, copy: 'The Taptic Engine may have failed. Get in touch and we\'ll confirm whether we can repair it for your model.' },
+        { label: 'General diagnostic', route: 'diagnostic', repairType: 'diagnostic', copy: 'Not sure what\'s wrong, or want a second opinion? We\'ll run a full diagnostic and send you our findings with a quote before doing any work.' },
+        { label: 'Board fault confirmed elsewhere', route: 'diagnostic', repairType: 'diagnostic', copy: 'We\'ll run our own diagnostic to confirm the fault and whether it can be repaired. You\'ll get our findings and a quote before we do anything.' },
+        { label: 'Several parts damaged', route: 'contact', repairType: null, copy: 'If your device has a bent frame or more than one broken part, get in touch and we\'ll put together a quote for everything it needs.' },
+        { label: 'Software issue', route: 'diagnostic', repairType: 'diagnostic', copy: 'Stuck on the Apple logo, restarting, or showing a restore or update error? We\'ll diagnose the cause and confirm the fix and price before going ahead.' },
         { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe the issue and we\'ll get back to you with the best repair option.' }
       ]
     },
@@ -778,7 +788,8 @@
         { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', ipadHomeButton: true, copy: 'An iPad that won\'t power on could be the battery, charging port, or logic board. Try a hard reset first: hold the top button and the Home button until the Apple logo appears. We can\'t quote the full repair until we\'ve looked.' },
         { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', ipadNoHomeButton: true, copy: 'An iPad that won\'t power on could be the battery, charging port, or logic board. Try a hard reset first: press Volume Up, press Volume Down, then hold the top button until the Apple logo appears. We can\'t quote the full repair until we\'ve looked.' },
         { label: 'Battery swollen or screen lifting', route: 'repair', repairType: 'battery', copy: 'A swollen battery is pushing the screen away from the frame. We\'ll safely remove it and fit a replacement.', urgent: true },
-        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The iPad turns on but will not charge from the port. We\'ll replace the charging port and test it. If the board is the cause, we\'ll tell you before any extra work.' }
+        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The iPad turns on but will not charge from the port. We\'ll replace the charging port and test it. If the board is the cause, we\'ll tell you before any extra work.' },
+        { label: 'Charges, but won\'t connect to a computer', route: 'repair', repairType: 'charging-port', copy: 'We\'ll replace the charging port, which usually fixes this, and confirm the fault during the repair. If it turns out the issue is with the logic board instead, we\'ll let you know and send you a quote before doing anything further. Nothing extra is ever done without your go-ahead.' }
       ],
       'Camera': [],
       'Water Damage': [
@@ -795,6 +806,11 @@
         { label: 'Microphone not working', route: 'contact', repairType: null, copy: 'iPad mic faults depend on the model. Get in touch and we\'ll confirm whether we can quote a parts repair.' },
         { label: 'WiFi not connecting', route: 'diagnostic', repairType: 'diagnostic', copy: 'WiFi issues can be the antenna, wireless chip, or software. We need to diagnose the device to quote the repair.' },
         { label: 'Bluetooth not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth and WiFi share components on iPads. We need to diagnose the device to quote the repair.' },
+        { label: 'NFC / Apple Pay not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'We\'ll run a diagnostic to find the cause and send you a quote before doing any work.' },
+        { label: 'General diagnostic', route: 'diagnostic', repairType: 'diagnostic', copy: 'Not sure what\'s wrong, or want a second opinion? We\'ll run a full diagnostic and send you our findings with a quote before doing any work.' },
+        { label: 'Board fault confirmed elsewhere', route: 'diagnostic', repairType: 'diagnostic', copy: 'We\'ll run our own diagnostic to confirm the fault and whether it can be repaired. You\'ll get our findings and a quote before we do anything.' },
+        { label: 'Several parts damaged', route: 'contact', repairType: null, copy: 'If your device has a bent frame or more than one broken part, get in touch and we\'ll put together a quote for everything it needs.' },
+        { label: 'Software issue', route: 'diagnostic', repairType: 'diagnostic', copy: 'Stuck on the Apple logo, restarting, or showing a restore or update error? We\'ll diagnose the cause and confirm the fix and price before going ahead.' },
         { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe the issue and we\'ll get back to you with the best repair option.' }
       ]
     },
@@ -1046,6 +1062,15 @@
     available['Other'] = true;
     if (device === 'iphone') available['Connectivity'] = true;
     return list.filter(function(f) { return available[f.v]; });
+  }
+
+  /* Card, heading, and breadcrumb text. S.fault stays the internal key (v). */
+  function faultDisplayLabel(device, fault) {
+    var list = FAULTS[device] || [];
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].v === fault) return list[i].label;
+    }
+    return fault || '';
   }
 
   function modelHasFaceId(model) {
@@ -2556,7 +2581,7 @@
     var parts = [];
     if (S.device) parts.push({ label: DN[S.device] || S.device, step: 1 });
     if (S.model) parts.push({ label: S.model, step: 2 });
-    if (S.fault && S.step >= 4) parts.push({ label: S.fault, step: 3 });
+    if (S.fault && S.step >= 4) parts.push({ label: faultDisplayLabel(S.device, S.fault), step: 3 });
     if (parts.length === 0) { el.innerHTML = ''; return; }
     el.innerHTML = parts.map(function(p, i) {
       var sep = i > 0 ? '<span class="qw-crumb-sep">&rsaquo;</span>' : '';
@@ -3148,8 +3173,9 @@
     });
     trackWizardStep(4);
 
-    /* "Other" skips issues and goes straight to contact */
-    if (v === 'Other') {
+    /* MacBook and Watch Other stays a contact shortcut.
+       iPhone and iPad open the Other list (diagnostics and contact options). */
+    if (v === 'Other' && (S.device === 'macbook' || S.device === 'watch')) {
       S.issue = 'Other';
       syncIcorrectQuote();
       setTimeout(function() {
@@ -3180,7 +3206,7 @@
 
     var issues = getAvailableIssues(dev, fault, _repairsMap);
     var titleEl = document.getElementById('qw-s4t');
-    if (titleEl) titleEl.textContent = fault;
+    if (titleEl) titleEl.textContent = faultDisplayLabel(dev, fault);
     var subEl = document.getElementById('qw-s4s');
     if (subEl) {
       subEl.hidden = false;
@@ -3980,7 +4006,7 @@
 
   /* ---- SHARED CONTACT FORM BUILDERS ---- */
   function buildContactSummary() {
-    return '<div class="qw-c-sum"><strong>Device:</strong> ' + esc(DN[S.device] || '') + ' &bull; <strong>Model:</strong> ' + esc(S.model || 'N/A') + ' &bull; <strong>Fault:</strong> ' + esc(S.fault || 'N/A') + ' &bull; <strong>Issue:</strong> ' + esc(S.issue || 'N/A') + '</div>';
+    return '<div class="qw-c-sum"><strong>Device:</strong> ' + esc(DN[S.device] || '') + ' &bull; <strong>Model:</strong> ' + esc(S.model || 'N/A') + ' &bull; <strong>Fault:</strong> ' + esc(faultDisplayLabel(S.device, S.fault) || 'N/A') + ' &bull; <strong>Issue:</strong> ' + esc(S.issue || 'N/A') + '</div>';
   }
 
   function buildContactFormHTML(prefix, visible) {
@@ -4086,7 +4112,7 @@
 
       /* Build structured body: device context + customer message */
       var deviceParts = [];
-      if (S.fault) deviceParts.push('Fault: ' + S.fault);
+      if (S.fault) deviceParts.push('Fault: ' + faultDisplayLabel(S.device, S.fault));
       if (S.issue && S.issue !== S.fault) deviceParts.push('Issue: ' + S.issue);
       var usableLabel = liquidUsableLabel();
       if (usableLabel) deviceParts.push('Device usable: ' + usableLabel);
