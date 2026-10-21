@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="400" height="300" fill="#171717"/><g transform="translate(120,105)"><rect x="0" y="0" width="160" height="26" rx="13" fill="#fafafa"/><rect x="0" y="38" width="112" height="26" rx="13" fill="#BC6A2C"/></g></svg></template>
+<helmet>
+<link rel="stylesheet" href="_ds/icorrect-design-system-ddcb232d-aa8e-4a69-b3c3-6e09c5f94b43/colors_and_type.css">
+<link rel="stylesheet" href="_ds/icorrect-design-system-ddcb232d-aa8e-4a69-b3c3-6e09c5f94b43/icorrect/icorrect.css">
+<link rel="stylesheet" href="_ds/icorrect-design-system-ddcb232d-aa8e-4a69-b3c3-6e09c5f94b43/ui_kits/website/colors_and_type.css">
+<link rel="stylesheet" href="_ds/icorrect-design-system-ddcb232d-aa8e-4a69-b3c3-6e09c5f94b43/ui_kits/website/primitives.css">
+<link rel="stylesheet" href="_ds/icorrect-design-system-ddcb232d-aa8e-4a69-b3c3-6e09c5f94b43/styles.css">
+<script src="_ds/icorrect-design-system-ddcb232d-aa8e-4a69-b3c3-6e09c5f94b43/_ds_bundle.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; background: #fafafa; -webkit-font-smoothing: antialiased; }
+  a { color: #171717; text-decoration: underline; text-underline-offset: 2px; }
+  a:hover { color: #666666; }
+  input { font-family: inherit; }
+  input:focus-visible, button:focus-visible { outline: 2px solid hsla(212,100%,48%,1); outline-offset: 2px; }
+  @keyframes qReveal { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</helmet>
+<div style="min-height:100%; background:#fafafa; padding:20px 16px 64px; font-family:var(--font-sans,'Geist',system-ui,sans-serif); color:#171717;">
+
+<div style="max-width:780px; margin:0 auto 14px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:10px 14px; border-radius:10px; background:#ffffff; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08);">
+  <span style="font-family:var(--font-mono,'Geist Mono',monospace); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:#808080;">Preview &middot; fault the client picked</span>
+  <div style="display:flex; flex-wrap:wrap; gap:6px;">
+    <sc-for list="{{ faultOptions }}" as="opt" hint-placeholder-count="3">
+      <button type="button" onClick="{{ opt.onClick }}" style="border:0; padding:6px 12px; border-radius:9999px; background:{{ opt.bg }}; color:{{ opt.fg }}; box-shadow:{{ opt.ring }}; font-family:inherit; font-size:12px; font-weight:500; cursor:pointer;">{{ opt.label }}</button>
+    </sc-for>
+  </div>
+</div>
+
+<div style="max-width:780px; margin:0 auto; background:#ffffff; border-radius:18px; padding:clamp(20px,4vw,40px); box-shadow:0 0 0 1px rgba(0,0,0,0.08), 0 2px 2px rgba(0,0,0,0.04), 0 8px 8px -8px rgba(0,0,0,0.04), inset 0 0 0 1px #fafafa;">
+
+  <sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}">
+    <button type="button" onClick="{{ onBack }}" style="display:inline-flex; align-items:center; gap:8px; margin-bottom:14px; border:0; background:transparent; padding:6px 10px 6px 0; font-family:inherit; font-size:14px; font-weight:500; color:#171717; cursor:pointer;" style-hover="color:#666666;"><span style="font-family:var(--font-mono,'Geist Mono',monospace);">&larr;</span> Back</button>
+  </sc-if>
+
+  <h1 style="margin:0; font-size:clamp(30px,5vw,44px); font-weight:600; letter-spacing:-2px; line-height:1.02;">{{ pageTitle }}</h1>
+  <p style="margin:10px 0 0; font-size:16px; line-height:1.5; color:#4d4d4d; text-wrap:pretty;">{{ pageLede }}</p>
+
+  <div style="margin-top:26px; font-family:var(--font-mono,'Geist Mono',monospace); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:#808080;">{{ stepCounter }}</div>
+  <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px;">
+    <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+      <div style="display:flex; align-items:center; gap:8px; padding:7px 14px 7px 7px; border-radius:9999px; background:{{ s.bg }}; color:{{ s.fg }}; box-shadow:{{ s.ring }};">
+        <span style="display:grid; place-items:center; width:20px; height:20px; border-radius:9999px; background:{{ s.dotBg }}; color:{{ s.dotFg }}; font-family:var(--font-mono,'Geist Mono',monospace); font-size:11px;">{{ s.n }}</span>
+        <span style="font-size:14px; font-weight:500;">{{ s.label }}</span>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="margin-top:18px; display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-size:13px; color:#666666;">
+    <span>MacBook</span><span style="color:#a3a3a3;">&rsaquo;</span><span>MacBook Pro 14&rdquo; &lsquo;M4 Pro&rsquo; A3401 (2024)</span><span style="color:#a3a3a3;">&rsaquo;</span><span>{{ faultCrumb }}</span>
+  </div>
+
+  <div style="margin-top:24px; padding-top:24px; box-shadow:inset 0 1px 0 rgba(0,0,0,0.08);">
+    <x-import component-from-global-scope="ICorrectDesignSystem_ddcb23.Badge" variant="{{ faultBadgeVariant }}" hint-size="auto,26px">{{ faultBadge }}</x-import>
+    <h2 style="margin:14px 0 0; font-size:clamp(22px,3.4vw,28px); font-weight:600; letter-spacing:-1.1px; line-height:1.2; text-wrap:pretty;">{{ faultTitle }}</h2>
+    <p style="margin:10px 0 0; max-width:60ch; font-size:15px; line-height:1.55; color:#4d4d4d; text-wrap:pretty;">{{ faultBlurb }}</p>
+  </div>
+
+  
+
+  <sc-if value="{{ onTriage }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:qReveal 360ms cubic-bezier(0.16,1,0.3,1) both;">
+      <sc-if value="{{ repairTriage }}" hint-placeholder-val="{{ true }}">
+
+      <div style="margin-top:26px; padding:clamp(18px,3vw,26px); border-radius:14px; background:#fafafa; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08);">
+        <div style="font-family:var(--font-mono,'Geist Mono',monospace); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:#808080;">Required &middot; it changes how we price this</div>
+
+        <h3 style="margin:14px 0 0; font-size:18px; font-weight:600; letter-spacing:-0.5px;">Has it already been to Apple?</h3>
+        <p style="margin:6px 0 0; max-width:56ch; font-size:13px; line-height:1.55; color:#666666;">If they have already opened it or quoted you, that tells us where to start.</p>
+        <div style="margin-top:12px; display:flex; flex-wrap:wrap; gap:8px;">
+          <sc-for list="{{ appleOptions }}" as="opt" hint-placeholder-count="3">
+            <button type="button" onClick="{{ opt.onClick }}" style="position:relative; display:flex; gap:9px; align-items:center; padding:11px 16px; border:0; border-radius:10px; background:#ffffff; box-shadow:{{ opt.ring }}; font-family:inherit; font-size:14px; font-weight:500; color:#171717; cursor:pointer; transition:box-shadow 150ms;">
+              <span style="position:relative; display:grid; place-items:center; flex:none; width:16px; height:16px; border-radius:9999px; box-shadow:inset 0 0 0 1.5px rgba(0,0,0,0.25);">
+                <sc-if value="{{ opt.selected }}" hint-placeholder-val="{{ false }}"><span style="width:9px; height:9px; border-radius:9999px; background:#171717;"></span></sc-if>
+              </span>
+              {{ opt.label }}
+            </button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ errAppleBeen }}" hint-placeholder-val="{{ false }}"><div style="margin-top:8px; font-size:12px; color:#A84B44;">Pick one so we know where to start.</div></sc-if>
+
+        <sc-if value="{{ showAppleDetail }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:18px; padding-top:18px; box-shadow:inset 0 1px 0 rgba(0,0,0,0.08);">
+            <h4 style="margin:0; font-size:16px; font-weight:600; letter-spacing:-0.3px;">What did they say?</h4>
+            <div style="margin-top:12px; display:grid; gap:8px;">
+              <sc-for list="{{ verdictOptions }}" as="opt" hint-placeholder-count="4">
+                <button type="button" onClick="{{ opt.onClick }}" style="position:relative; display:flex; gap:10px; align-items:flex-start; padding:13px 16px; border:0; border-radius:10px; background:#ffffff; box-shadow:{{ opt.ring }}; font-family:inherit; font-size:14px; font-weight:500; color:#171717; cursor:pointer; text-align:left; transition:box-shadow 150ms;">
+                  <span style="position:relative; margin-top:1px; display:grid; place-items:center; flex:none; width:16px; height:16px; border-radius:9999px; box-shadow:inset 0 0 0 1.5px rgba(0,0,0,0.25);">
+                    <sc-if value="{{ opt.selected }}" hint-placeholder-val="{{ false }}"><span style="width:9px; height:9px; border-radius:9999px; background:#171717;"></span></sc-if>
+                  </span>
+                  <span style="min-width:0;">{{ opt.label }}</span>
+                </button>
+              </sc-for>
+            </div>
+            <sc-if value="{{ errVerdict }}" hint-placeholder-val="{{ false }}"><div style="margin-top:8px; font-size:12px; color:#A84B44;">Tell us what they said.</div></sc-if>
+
+            <label style="margin-top:12px; display:flex; flex-direction:column; gap:7px; max-width:280px;">
+              <span style="font-size:13px; font-weight:500;">What did they quote? <span style="font-weight:400; color:#808080;">Optional</span></span>
+              <input type="text" placeholder="&pound;1,400" defaultValue="{{ appleQuote }}" onInput="{{ onAppleQuote }}" style="padding:12px 14px; border:0; border-radius:8px; background:#ffffff; font-size:15px; color:#171717; box-shadow:0 0 0 1px rgba(0,0,0,0.12);">
+            </label>
+
+            <sc-if value="{{ wantThisJob }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:16px; padding:16px; border-radius:10px; background:#ffffff; box-shadow:0 0 0 1px rgba(0,0,0,0.08);">
+                <x-import component-from-global-scope="ICorrectDesignSystem_ddcb23.Badge" variant="green" hint-size="auto,26px">We want this job</x-import>
+                <div style="margin-top:10px; font-size:15px; font-weight:600; letter-spacing:-0.2px;">This is the work we exist for</div>
+                <p style="margin:6px 0 0; max-width:58ch; font-size:13px; line-height:1.55; color:#4d4d4d; text-wrap:pretty;">Apple replace the whole logic board. We repair the component on it under a microscope. {{ contrastLine }}</p>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="margin-top:14px; padding:clamp(18px,3vw,26px); border-radius:14px; background:#fafafa; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08);">
+        <h3 style="margin:0; font-size:18px; font-weight:600; letter-spacing:-0.5px;">Is the data on this device important to keep?</h3>
+        <p style="margin:6px 0 0; max-width:56ch; font-size:13px; line-height:1.55; color:#666666;">It changes the order we work in. Data recovery comes before anything irreversible.</p>
+        <div style="margin-top:12px; display:grid; gap:8px;">
+          <sc-for list="{{ dataOptions }}" as="opt" hint-placeholder-count="3">
+            <button type="button" onClick="{{ opt.onClick }}" style="position:relative; display:flex; gap:10px; align-items:flex-start; padding:13px 16px; border:0; border-radius:10px; background:#ffffff; box-shadow:{{ opt.ring }}; font-family:inherit; font-size:14px; font-weight:500; color:#171717; cursor:pointer; text-align:left; transition:box-shadow 150ms;">
+              <span style="position:relative; margin-top:1px; display:grid; place-items:center; flex:none; width:16px; height:16px; border-radius:9999px; box-shadow:inset 0 0 0 1.5px rgba(0,0,0,0.25);">
+                <sc-if value="{{ opt.selected }}" hint-placeholder-val="{{ false }}"><span style="width:9px; height:9px; border-radius:9999px; background:#171717;"></span></sc-if>
+              </span>
+              <span style="min-width:0;">{{ opt.label }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ errData }}" hint-placeholder-val="{{ false }}"><div style="margin-top:8px; font-size:12px; color:#A84B44;">Pick one so we work in the right order.</div></sc-if>
+
+        <label style="margin-top:16px; display:flex; flex-direction:column; gap:7px;">
+          <span style="font-size:13px; font-weight:500;">Serial number <span style="font-weight:400; color:#808080;">Optional</span></span>
+          <input type="text" placeholder="Underside of the case, or About This Mac" defaultValue="{{ serial }}" onInput="{{ onSerial }}" style="padding:12px 14px; border:0; border-radius:8px; background:#ffffff; font-size:15px; color:#171717; box-shadow:0 0 0 1px rgba(0,0,0,0.12);">
+          <span style="font-size:12px; color:#808080;">If you can read it we can check the exact build before we collect. Skipping it is fine.</span>
+        </label>
+      </div>
+
+      </sc-if>
+
+      <sc-if value="{{ recoveryTriage }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:26px; padding:clamp(18px,3vw,26px); border-radius:14px; background:#fafafa; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08);">
+          <div style="font-family:var(--font-mono,'Geist Mono',monospace); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:#808080;">Required &middot; it tells us whether we can get your data back</div>
+          <sc-for list="{{ recQs }}" as="q" hint-placeholder-count="4">
+            <div style="margin-top:18px; padding-top:18px; box-shadow:{{ q.rule }};">
+              <h3 style="margin:0; font-size:{{ q.size }}; font-weight:600; letter-spacing:-0.4px;">{{ q.title }}</h3>
+              <sc-if value="{{ q.hasHelp }}" hint-placeholder-val="{{ false }}"><p style="margin:6px 0 0; max-width:58ch; font-size:13px; line-height:1.55; color:#666666; text-wrap:pretty;">{{ q.help }}</p></sc-if>
+              <div style="margin-top:12px; display:grid; gap:8px;">
+              <sc-for list="{{ q.options }}" as="opt" hint-placeholder-count="3">
+                <button type="button" onClick="{{ opt.onClick }}" style="position:relative; display:flex; gap:10px; align-items:flex-start; padding:13px 16px; border:0; border-radius:10px; background:#ffffff; box-shadow:{{ opt.ring }}; font-family:inherit; font-size:14px; font-weight:500; color:#171717; cursor:pointer; text-align:left; transition:box-shadow 150ms;">
+                  <span style="position:relative; margin-top:1px; display:grid; place-items:center; flex:none; width:16px; height:16px; border-radius:9999px; box-shadow:inset 0 0 0 1.5px rgba(0,0,0,0.25);">
+                    <sc-if value="{{ opt.selected }}" hint-placeholder-val="{{ false }}"><span style="width:9px; height:9px; border-radius:9999px; background:#171717;"></span></sc-if>
+                  </span>
+                  <span style="min-width:0;">{{ opt.label }}</span>
+                </button>
+              </sc-for>
+              </div>
+              <sc-if value="{{ q.err }}" hint-placeholder-val="{{ false }}"><div style="margin-top:8px; font-size:12px; color:#A84B44;">{{ q.errText }}</div></sc-if>
+            </div>
+          </sc-for>
+          <label style="margin-top:18px; padding-top:18px; display:flex; flex-direction:column; gap:7px; box-shadow:inset 0 1px 0 rgba(0,0,0,0.08);">
+            <span style="font-size:13px; font-weight:500;">What matters most to get back? <span style="font-weight:400; color:#808080;">Optional</span></span>
+            <input type="text" placeholder="e.g. Photos from 2019 onwards, the Clients folder on the desktop" defaultValue="{{ recPriority }}" onInput="{{ onRecPriority }}" style="padding:12px 14px; border:0; border-radius:8px; background:#ffffff; font-size:15px; color:#171717; box-shadow:0 0 0 1px rgba(0,0,0,0.12);">
+            <span style="font-size:12px; color:#808080;">We copy these first, before anything else on the drive.</span>
+          </label>
+        </div>
+
+        <sc-if value="{{ recAssessShow }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:14px; display:grid; gap:10px;">
+            <sc-for list="{{ recAssess }}" as="a" hint-placeholder-count="1">
+              <div style="padding:16px 18px; border-radius:12px; background:#ffffff; box-shadow:0 0 0 1px rgba(0,0,0,0.08), 0 2px 2px rgba(0,0,0,0.04);">
+                <div style="display:inline-flex; padding:3px 9px; border-radius:9999px; background:{{ a.tint }}; color:{{ a.ink }}; font-family:var(--font-mono,'Geist Mono',monospace); font-size:10px; letter-spacing:0.06em; text-transform:uppercase;">{{ a.tag }}</div>
+                <div style="margin-top:10px; font-size:15px; font-weight:600; letter-spacing:-0.2px;">{{ a.title }}</div>
+                <p style="margin:6px 0 0; max-width:60ch; font-size:13px; line-height:1.55; color:#4d4d4d; text-wrap:pretty;">{{ a.body }}</p>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </sc-if>
+
+      <button type="button" onClick="{{ onTriageNext }}" style="margin-top:20px; width:100%; display:inline-flex; align-items:center; justify-content:center; gap:10px; border:0; padding:18px 28px; border-radius:10px; background:#171717; color:#ffffff; font-family:inherit; font-size:16px; font-weight:500; cursor:pointer; transition:background 150ms;" style-hover="background:#333333;">Continue <span style="font-family:var(--font-mono,'Geist Mono',monospace);">&rarr;</span></button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ onDetails }}" hint-placeholder-val="{{ true }}">
+    <div style="margin-top:28px; padding:clamp(18px,3vw,26px); border-radius:14px; background:#fafafa; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08); animation:qReveal 360ms cubic-bezier(0.16,1,0.3,1) both;">
+      <div style="font-family:var(--font-mono,'Geist Mono',monospace); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:#808080;">{{ gateEyebrow }}</div>
+      <h3 style="margin:12px 0 0; font-size:21px; font-weight:600; letter-spacing:-0.7px;">We need a few details for the quote</h3>
+      <p style="margin:8px 0 0; max-width:54ch; font-size:14px; line-height:1.55; color:#4d4d4d; text-wrap:pretty;">{{ gateLede }}</p>
+
+      <div style="margin-top:20px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px;">
+        <label style="display:flex; flex-direction:column; gap:7px;">
+          <span style="font-size:13px; font-weight:500; color:#171717;">Full name</span>
+          <input type="text" placeholder="Jane Whitfield" defaultValue="{{ name }}" onInput="{{ onName }}" style="padding:12px 14px; border:0; border-radius:8px; background:#ffffff; font-size:15px; color:#171717; box-shadow:0 0 0 1px rgba(0,0,0,0.12);">
+          <sc-if value="{{ errName }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px; color:#A84B44;">Tell us who the repair is for.</span></sc-if>
+        </label>
+        <label style="display:flex; flex-direction:column; gap:7px;">
+          <span style="font-size:13px; font-weight:500; color:#171717;">Email</span>
+          <input type="email" placeholder="jane@company.co.uk" defaultValue="{{ email }}" onInput="{{ onEmail }}" style="padding:12px 14px; border:0; border-radius:8px; background:#ffffff; font-size:15px; color:#171717; box-shadow:0 0 0 1px rgba(0,0,0,0.12);">
+          <sc-if value="{{ errEmail }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px; color:#A84B44;">We need a working email to send the quote.</span></sc-if>
+        </label>
+        <label style="display:flex; flex-direction:column; gap:7px;">
+          <span style="font-size:13px; font-weight:500; color:#171717;">Mobile</span>
+          <input type="tel" placeholder="07700 900 812" defaultValue="{{ mobile }}" onInput="{{ onMobile }}" style="padding:12px 14px; border:0; border-radius:8px; background:#ffffff; font-size:15px; color:#171717; box-shadow:0 0 0 1px rgba(0,0,0,0.12);">
+          <sc-if value="{{ errMobile }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px; color:#A84B44;">A mobile number, so the driver can reach you.</span></sc-if>
+        </label>
+        <label style="display:flex; flex-direction:column; gap:7px;">
+          <span style="font-size:13px; font-weight:500; color:#171717;">Collection postcode</span>
+          <input type="text" placeholder="W1W 8JQ" defaultValue="{{ postcode }}" onInput="{{ onPostcode }}" style="padding:12px 14px; border:0; border-radius:8px; background:#ffffff; font-size:15px; text-transform:uppercase; color:#171717; box-shadow:0 0 0 1px rgba(0,0,0,0.12);">
+          <span style="font-size:12px; line-height:1.5; color:#808080;"><strong style="font-weight:600; color:#171717;">We come to you and collect</strong> the MacBook, then bring it back once it&rsquo;s repaired. Outside London we send a free tracked mail-in pack instead.</span>
+          <sc-if value="{{ errPostcode }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px; color:#A84B44;">Enter a UK postcode, e.g. W1W 8JQ.</span></sc-if>
+        </label>
+      </div>
+
+      <button type="button" onClick="{{ onSubmitGate }}" style="margin-top:20px; width:100%; display:inline-flex; align-items:center; justify-content:center; gap:10px; border:0; padding:16px 28px; border-radius:10px; background:#171717; color:#ffffff; font-family:inherit; font-size:16px; font-weight:500; cursor:pointer; transition:background 150ms;" style-hover="background:#333333;">{{ gateCta }} <span style="font-family:var(--font-mono,'Geist Mono',monospace);">&rarr;</span></button>
+
+      <div style="margin-top:14px; font-size:12px; color:#666666;">No obligation to book. We use these details for your quote and to answer any questions about it.</div>
+      <div style="margin-top:14px; padding-top:14px; display:flex; flex-wrap:wrap; gap:18px; align-items:center; box-shadow:inset 0 1px 0 rgba(0,0,0,0.08);">
+        <x-import component-from-global-scope="ICorrectDesignSystem_ddcb23.Stars" rating="{{ 4.9 }}" size="{{ 14 }}" show-value="{{ true }}" hint-size="110px,18px"></x-import>
+        <span style="font-size:12px; color:#666666;">719 Google reviews</span>
+        <span style="font-size:12px; color:#666666;">2-yr warranty on every repair</span>
+        <span style="font-size:12px; color:#666666;">12 Margaret Street, W1W 8JQ</span>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ onQuote }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:qReveal 420ms cubic-bezier(0.16,1,0.3,1) both;">
+
+      <div style="margin-top:26px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; padding:12px 16px; border-radius:10px; background:#fafafa; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08);">
+        <div style="font-size:13px; color:#4d4d4d;">Quote for <strong style="font-weight:500; color:#171717;">{{ nameDisplay }}</strong> &middot; {{ email }} &middot; {{ postcodeDisplay }}</div>
+        <button type="button" onClick="{{ onEditDetails }}" style="border:0; background:transparent; padding:4px 8px; border-radius:6px; font-family:inherit; font-size:13px; font-weight:500; color:#171717; cursor:pointer; text-decoration:underline; text-underline-offset:2px;" style-hover="background:rgba(0,0,0,0.04);">Change</button>
+      </div>
+
+      <sc-if value="{{ diag.show }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:26px; padding:clamp(18px,3vw,24px); border-radius:14px; background:#ffffff; box-shadow:0 0 0 1px rgba(0,0,0,0.08), 0 2px 2px rgba(0,0,0,0.04), inset 0 0 0 1px #fafafa;">
+          <div style="font-family:var(--font-mono,'Geist Mono',monospace); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:#808080;">{{ diag.eyebrow }}</div>
+          <h3 style="margin:12px 0 0; font-size:clamp(22px,3vw,26px); font-weight:600; letter-spacing:-0.9px; line-height:1.2; text-wrap:balance;">{{ diag.headline }}</h3>
+          <p style="margin:8px 0 0; max-width:52ch; font-size:15px; line-height:1.55; color:#4d4d4d; text-wrap:pretty;">{{ diag.sub }}</p>
+
+          <div style="margin-top:22px; padding-top:20px; display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:18px; box-shadow:inset 0 1px 0 rgba(0,0,0,0.08);">
+            <sc-for list="{{ diag.steps }}" as="s" hint-placeholder-count="3">
+              <div style="display:flex; gap:10px; align-items:flex-start;">
+                <span style="display:grid; place-items:center; flex:none; width:22px; height:22px; border-radius:9999px; background:#171717; color:#ffffff; font-family:var(--font-mono,'Geist Mono',monospace); font-size:11px;">{{ s.n }}</span>
+                <span style="min-width:0;">
+                  <span style="display:block; font-size:14px; font-weight:500;">{{ s.title }}</span>
+                  <span style="display:block; margin-top:2px; font-size:13px; line-height:1.45; color:#4d4d4d;">{{ s.meta }}</span>
+                </span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="margin-top:20px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1px; border-radius:12px; overflow:hidden; background:rgba(0,0,0,0.08); box-shadow:0 0 0 1px rgba(0,0,0,0.08);">
+            <sc-for list="{{ diag.outcomes }}" as="o" hint-placeholder-count="2">
+              <div style="padding:16px; background:{{ o.bg }};">
+                <div style="font-family:var(--font-mono,'Geist Mono',monospace); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:{{ o.labelColor }};">{{ o.label }}</div>
+                <div style="margin-top:8px; font-size:16px; font-weight:600; letter-spacing:-0.3px;">{{ o.title }}</div>
+                <div style="margin-top:4px; font-size:13px; line-height:1.5; color:#4d4d4d;">{{ o.body }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="margin-top:14px; padding:clamp(18px,3vw,24px); border-radius:14px; background:#fafafa; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08);">
+          <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:baseline; justify-content:space-between;">
+            <div style="font-family:var(--font-mono,'Geist Mono',monospace); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:#171717;">Guide prices &middot; {{ diag.guideLabel }}</div>
+            <div style="font-size:12px; color:#666666;">A guide, not your quote</div>
+          </div>
+          <div style="margin-top:14px; display:grid; gap:1px; background:rgba(0,0,0,0.08); border-radius:10px; overflow:hidden; box-shadow:0 0 0 1px rgba(0,0,0,0.08);">
+            <sc-for list="{{ diag.guide }}" as="row" hint-placeholder-count="4">
+              <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:baseline; justify-content:space-between; padding:14px 16px; background:#ffffff;">
+                <span style="min-width:0; font-size:14px; line-height:1.45; color:#171717;">{{ row.label }}</span>
+                <span style="flex:none; font-family:var(--font-mono,'Geist Mono',monospace); font-size:14px; font-weight:500; font-feature-settings:'tnum'; color:#171717;">{{ row.price }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <p style="margin:12px 0 0; max-width:62ch; font-size:13px; line-height:1.55; color:#4d4d4d; text-wrap:pretty;">{{ diag.guideNote }}</p>
+          <div style="margin-top:14px; padding-top:14px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; box-shadow:inset 0 1px 0 rgba(0,0,0,0.08);">
+            <span style="display:inline-flex; padding:4px 10px; border-radius:9999px; background:#FFB3C7; color:#171717; font-family:var(--font-mono,'Geist Mono',monospace); font-size:10px; letter-spacing:0.08em; text-transform:uppercase;">Klarna</span>
+            <span style="font-size:13px; color:#4d4d4d;">{{ diag.klarnaNote }}</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="margin-top:26px; font-family:var(--font-mono,'Geist Mono',monospace); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:#808080;">{{ serviceLabel }}</div>
+      <div style="margin-top:10px; display:flex; gap:14px; align-items:flex-start; padding:16px; border-radius:12px; background:#ffffff; box-shadow:0 0 0 1px rgba(0,0,0,0.08), 0 2px 2px rgba(0,0,0,0.04);">
+        <x-import component-from-global-scope="ICorrectDesignSystem_ddcb23.Icon" name="{{ serviceIcon }}" size="{{ 22 }}" tile="{{ true }}" hint-size="36px,36px"></x-import>
+        <div style="flex:1; min-width:0;">
+          <div style="font-size:15px; font-weight:600; letter-spacing:-0.2px;">{{ serviceTitle }}</div>
+          <div style="margin-top:3px; font-size:13px; line-height:1.5; color:#4d4d4d;">{{ serviceMeta }}</div>
+        </div>
+        <div style="font-family:var(--font-mono,'Geist Mono',monospace); font-size:12px; color:#4d4d4d; white-space:nowrap;">Included</div>
+      </div>
+
+      <sc-if value="{{ isCourier }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top:26px;">
+          <div style="font-family:var(--font-mono,'Geist Mono',monospace); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:#808080;">When should we collect?</div>
+          <div style="margin-top:10px; display:grid; grid-template-columns:repeat(auto-fit,minmax(96px,1fr)); gap:8px;">
+            <sc-for list="{{ days }}" as="day" hint-placeholder-count="5">
+              <button type="button" onClick="{{ day.onClick }}" style="position:relative; display:flex; flex-direction:column; align-items:flex-start; gap:2px; padding:12px; border:0; border-radius:10px; background:#ffffff; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.1); cursor:pointer; text-align:left; font-family:inherit; transition:box-shadow 150ms;" style-hover="box-shadow:inset 0 0 0 1px rgba(0,0,0,0.3);">
+                <span style="font-family:var(--font-mono,'Geist Mono',monospace); font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:#808080;">{{ day.head }}</span>
+                <span style="font-size:19px; font-weight:600; letter-spacing:-0.5px; color:#171717;">{{ day.num }}</span>
+                <span style="font-size:12px; color:#4d4d4d;">{{ day.mon }}</span>
+                <sc-if value="{{ day.selected }}" hint-placeholder-val="{{ false }}">
+                  <span style="position:absolute; inset:0; border-radius:10px; box-shadow:inset 0 0 0 2px #171717; background:rgba(0,0,0,0.03); pointer-events:none;"></span>
+                </sc-if>
+              </button>
+            </sc-for>
+          </div>
+
+          <div style="margin-top:8px; display:grid; gap:8px;">
+            <sc-for list="{{ windows }}" as="w" hint-placeholder-count="4">
+              <button type="button" onClick="{{ w.onClick }}" style="position:relative; display:flex; gap:12px; align-items:center; padding:14px 16px; border:0; border-radius:10px; background:#ffffff; box-shadow:{{ w.ring }}; cursor:pointer; font-family:inherit; text-align:left; transition:box-shadow 150ms;">
+                <span style="position:relative; display:grid; place-items:center; flex:none; width:16px; height:16px; border-radius:9999px; box-shadow:inset 0 0 0 1.5px rgba(0,0,0,0.25);">
+                  <sc-if value="{{ w.selected }}" hint-placeholder-val="{{ false }}"><span style="width:9px; height:9px; border-radius:9999px; background:#171717;"></span></sc-if>
+                </span>
+                <span style="flex:1; min-width:0;">
+                  <span style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+                    <span style="font-size:15px; font-weight:500; color:#171717;">{{ w.label }}</span>
+                    <sc-if value="{{ w.express }}" hint-placeholder-val="{{ false }}">
+                      <span style="display:inline-flex; padding:3px 9px; border-radius:9999px; background:var(--ic-blue-tint,#EAF0F8); color:var(--ic-blue-text,#2B4570); font-family:var(--font-mono,'Geist Mono',monospace); font-size:10px; letter-spacing:0.06em; text-transform:uppercase; white-space:nowrap;">{{ w.tag }}</span>
+                    </sc-if>
+                  </span>
+                  <span style="display:block; margin-top:3px; font-family:var(--font-mono,'Geist Mono',monospace); font-size:12px; color:#666666;">{{ w.detail }}</span>
+                </span>
+                <span style="flex:none; font-family:var(--font-mono,'Geist Mono',monospace); font-size:13px; font-weight:500; color:#4d4d4d; font-feature-settings:'tnum';">{{ w.price }}</span>
+                <sc-if value="{{ w.selected }}" hint-placeholder-val="{{ false }}">
+                  <span style="position:absolute; inset:0; border-radius:10px; box-shadow:0 0 0 2px #171717; pointer-events:none;"></span>
+                </sc-if>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="margin-top:26px;">
+        <div style="font-family:var(--font-mono,'Geist Mono',monospace); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:#808080;">{{ speedHeading }}</div>
+
+        <button type="button" onClick="{{ std.onClick }}" style="position:relative; margin-top:10px; width:100%; display:flex; gap:14px; align-items:flex-start; padding:18px; border:0; border-radius:12px; background:#ffffff; box-shadow:0 0 0 1px rgba(0,0,0,0.1); cursor:pointer; text-align:left; font-family:inherit; transition:box-shadow 180ms cubic-bezier(0.16,1,0.3,1);" style-hover="box-shadow:0 0 0 1px rgba(0,0,0,0.3);">
+          <span style="position:relative; margin-top:2px; display:grid; place-items:center; flex:none; width:18px; height:18px; border-radius:9999px; box-shadow:inset 0 0 0 1.5px rgba(0,0,0,0.25);">
+            <sc-if value="{{ std.selected }}" hint-placeholder-val="{{ true }}"><span style="width:10px; height:10px; border-radius:9999px; background:#171717;"></span></sc-if>
+          </span>
+          <span style="flex:1; min-width:0;">
+            <span style="display:block; font-size:16px; font-weight:600; letter-spacing:-0.3px;">Standard</span>
+            <span style="display:block; margin-top:2px; font-size:15px; font-weight:500; color:#171717;">{{ std.back }}</span>
+            <span style="display:block; margin-top:4px; font-size:13px; line-height:1.5; color:#4d4d4d;">{{ std.meta }}</span>
+          </span>
+          <span style="flex:none; font-family:var(--font-mono,'Geist Mono',monospace); font-size:13px; color:#4d4d4d;">Included</span>
+          <sc-if value="{{ std.selected }}" hint-placeholder-val="{{ true }}">
+            <span style="position:absolute; inset:0; border-radius:12px; box-shadow:0 0 0 2px #171717; pointer-events:none;"></span>
+          </sc-if>
+        </button>
+
+        <div style="margin-top:12px; border-radius:14px; background:#fafafa; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08); padding:14px;">
+          <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:baseline; justify-content:space-between;">
+            <div style="font-family:var(--font-mono,'Geist Mono',monospace); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:#171717;">{{ upgradeHeading }}</div>
+            <div style="font-size:12px; color:#666666;">{{ upgradeHint }}</div>
+          </div>
+
+          <button type="button" onClick="{{ fast.onClick }}" style="position:relative; margin-top:12px; width:100%; display:flex; gap:14px; align-items:flex-start; padding:18px; border:0; border-radius:12px; background:#ffffff; box-shadow:0 0 0 1px rgba(0,0,0,0.1); cursor:pointer; text-align:left; font-family:inherit; transition:box-shadow 180ms cubic-bezier(0.16,1,0.3,1);" style-hover="box-shadow:0 0 0 1px rgba(0,0,0,0.3);">
+            <span style="position:relative; margin-top:2px; display:grid; place-items:center; flex:none; width:18px; height:18px; border-radius:9999px; box-shadow:inset 0 0 0 1.5px rgba(0,0,0,0.25);">
+              <sc-if value="{{ fast.selected }}" hint-placeholder-val="{{ false }}"><span style="width:10px; height:10px; border-radius:9999px; background:#171717;"></span></sc-if>
+            </span>
+            <span style="flex:1; min-width:0;">
+              <span style="display:block; font-size:16px; font-weight:600; letter-spacing:-0.3px;">{{ fast.title }}</span>
+              <span style="display:block; margin-top:2px; font-size:15px; font-weight:500; color:#171717;">{{ fast.back }}</span>
+              <span style="display:block; margin-top:4px; font-size:13px; line-height:1.5; color:#4d4d4d;">{{ fast.meta }}</span>
+            </span>
+            <span style="flex:none; font-family:var(--font-mono,'Geist Mono',monospace); font-size:14px; font-weight:500; color:#171717; font-feature-settings:'tnum';">{{ fast.price }}</span>
+            <sc-if value="{{ fast.selected }}" hint-placeholder-val="{{ false }}">
+              <span style="position:absolute; inset:0; border-radius:12px; box-shadow:0 0 0 2px #171717; pointer-events:none;"></span>
+            </sc-if>
+          </button>
+
+          <sc-if value="{{ sameday.show }}" hint-placeholder-val="{{ true }}">
+            <button type="button" onClick="{{ sameday.onClick }}" style="position:relative; margin-top:10px; width:100%; display:flex; gap:14px; align-items:flex-start; padding:18px; border:0; border-radius:12px; background:#ffffff; box-shadow:0 0 0 1px rgba(0,0,0,0.1); cursor:pointer; text-align:left; font-family:inherit; transition:box-shadow 180ms cubic-bezier(0.16,1,0.3,1);" style-hover="box-shadow:0 0 0 1px rgba(0,0,0,0.3);">
+              <span style="position:relative; margin-top:2px; display:grid; place-items:center; flex:none; width:18px; height:18px; border-radius:9999px; box-shadow:inset 0 0 0 1.5px rgba(0,0,0,0.25);">
+                <sc-if value="{{ sameday.selected }}" hint-placeholder-val="{{ false }}"><span style="width:10px; height:10px; border-radius:9999px; background:#171717;"></span></sc-if>
+              </span>
+              <span style="flex:1; min-width:0;">
+                <span style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+                  <span style="font-size:16px; font-weight:600; letter-spacing:-0.3px;">{{ sameday.title }}</span>
+                  <span style="display:inline-flex; align-items:center; gap:6px; padding:3px 9px; border-radius:9999px; background:var(--ic-orange-tint,#F6EADD); color:var(--ic-orange-text,#8F4E1C); font-family:var(--font-mono,'Geist Mono',monospace); font-size:10px; letter-spacing:0.06em; text-transform:uppercase; white-space:nowrap;">{{ sameday.slotsLabel }}</span>
+                </span>
+                <span style="display:block; margin-top:2px; font-size:15px; font-weight:500; color:#171717;">{{ sameday.back }}</span>
+                <span style="display:block; margin-top:4px; font-size:13px; line-height:1.5; color:#4d4d4d;">{{ sameday.meta }}</span>
+                <span style="margin-top:10px; display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
+                  <span style="display:inline-flex; gap:5px; align-items:center;">
+                    <sc-for list="{{ sameday.dots }}" as="dot" hint-placeholder-count="3">
+                      <sc-if value="{{ dot.filled }}" hint-placeholder-val="{{ true }}"><span style="width:8px; height:8px; border-radius:9999px; background:var(--ic-orange,#BC6A2C);"></span></sc-if>
+                      <sc-if value="{{ dot.empty }}" hint-placeholder-val="{{ false }}"><span style="width:8px; height:8px; border-radius:9999px; box-shadow:inset 0 0 0 1.5px rgba(0,0,0,0.18);"></span></sc-if>
+                    </sc-for>
+                  </span>
+                  <span style="font-family:var(--font-mono,'Geist Mono',monospace); font-size:11px; letter-spacing:0.04em; color:#666666;">{{ sameday.cutoffLabel }}</span>
+                </span>
+              </span>
+              <span style="flex:none; font-family:var(--font-mono,'Geist Mono',monospace); font-size:14px; font-weight:500; color:#171717; font-feature-settings:'tnum';">{{ sameday.price }}</span>
+              <sc-if value="{{ sameday.selected }}" hint-placeholder-val="{{ false }}">
+                <span style="position:absolute; inset:0; border-radius:12px; box-shadow:0 0 0 2px #171717; pointer-events:none;"></span>
+              </sc-if>
+              <sc-if value="{{ sameday.locked }}" hint-placeholder-val="{{ false }}">
+                <span style="position:absolute; inset:0; border-radius:12px; background:rgba(255,255,255,0.55); pointer-events:none;"></span>
+              </sc-if>
+            </button>
+          </sc-if>
+        </div>
+      </div>
+
+      <div style="margin-top:22px; padding:18px; border-radius:12px; background:#ffffff; box-shadow:0 0 0 1px rgba(0,0,0,0.08), 0 2px 2px rgba(0,0,0,0.04), inset 0 0 0 1px #fafafa;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px;">
+          <sc-for list="{{ journey }}" as="step" hint-placeholder-count="3">
+            <div style="display:flex; gap:10px; align-items:flex-start;">
+              <span style="display:grid; place-items:center; flex:none; width:22px; height:22px; border-radius:9999px; background:#171717; color:#ffffff; font-family:var(--font-mono,'Geist Mono',monospace); font-size:11px;">{{ step.n }}</span>
+              <span style="min-width:0;">
+                <span style="display:block; font-size:14px; font-weight:500; letter-spacing:-0.1px;">{{ step.title }}</span>
+                <span style="display:block; margin-top:2px; font-size:13px; line-height:1.4; color:#4d4d4d;">{{ step.meta }}</span>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="margin-top:16px; padding:14px; border-radius:10px; background:#fafafa; text-align:center; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.06);">
+          <div style="font-family:var(--font-mono,'Geist Mono',monospace); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:#808080;">{{ returnLabel }}</div>
+          <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:10px; align-items:baseline; justify-content:center;">
+            <span style="font-size:24px; font-weight:600; letter-spacing:-1px; white-space:nowrap;">{{ returnHeadline }}</span>
+            <span style="font-size:13px; color:#666666;">{{ returnNote }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:22px; display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; align-items:stretch;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1px; border-radius:12px; overflow:hidden; background:rgba(0,0,0,0.08); box-shadow:0 0 0 1px rgba(0,0,0,0.08);">
+          <div style="background:#ffffff; padding:14px;">
+            <x-import component-from-global-scope="ICorrectDesignSystem_ddcb23.Stars" rating="{{ 4.9 }}" size="{{ 13 }}" show-value="{{ true }}" hint-size="100px,18px"></x-import>
+            <div style="margin-top:4px; font-size:12px; color:#666666;">719 Google reviews</div>
+          </div>
+          <div style="background:#ffffff; padding:14px;">
+            <div style="font-size:13px; font-weight:500;">Genuine Apple parts</div>
+            <div style="margin-top:4px; font-size:12px; color:#666666;">Calibrated in-house</div>
+          </div>
+          <div style="background:#ffffff; padding:14px;">
+            <div style="font-size:13px; font-weight:500;">{{ turnaroundBadgeTitle }}</div>
+            <div style="margin-top:4px; font-size:12px; color:#666666;">{{ turnaroundBadgeSub }}</div>
+          </div>
+          <div style="background:#ffffff; padding:14px;">
+            <div style="font-size:13px; font-weight:500;">2-yr warranty</div>
+            <div style="margin-top:4px; font-size:12px; color:#666666;">Double the standard</div>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; justify-content:center; gap:6px; padding:18px; border-radius:12px; background:#fafafa; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08);">
+          <div style="font-family:var(--font-mono,'Geist Mono',monospace); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:#808080;">{{ totalLabel }}</div>
+          <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:baseline;">
+            <span style="font-size:40px; font-weight:600; letter-spacing:-2px; font-feature-settings:'tnum';">{{ total }}</span>
+            <sc-if value="{{ apple.show }}" hint-placeholder-val="{{ false }}">
+              <span style="display:block;">
+                <span style="display:block; font-family:var(--font-mono,'Geist Mono',monospace); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:#808080;">Apple: <span style="text-decoration:line-through;">{{ apple.price }}</span></span>
+                <span style="display:block; margin-top:2px; font-family:var(--font-mono,'Geist Mono',monospace); font-size:12px; color:var(--ic-blue,#38598C);">You save {{ apple.saving }}</span>
+              </span>
+            </sc-if>
+          </div>
+          <div style="font-size:12px; line-height:1.5; color:#666666;">{{ totalBreakdown }}</div>
+          <sc-if value="{{ klarna.show }}" hint-placeholder-val="{{ true }}">
+            <div style="margin-top:8px; padding-top:12px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; box-shadow:inset 0 1px 0 rgba(0,0,0,0.08);">
+              <span style="display:inline-flex; padding:4px 10px; border-radius:9999px; background:#FFB3C7; color:#171717; font-family:var(--font-mono,'Geist Mono',monospace); font-size:10px; letter-spacing:0.08em; text-transform:uppercase;">Klarna</span>
+              <span style="font-size:13px; color:#4d4d4d;">or 3 interest-free payments of <strong style="font-weight:600; color:#171717; font-feature-settings:'tnum';">{{ klarna.each }}</strong></span>
+            </div>
+            <div style="font-size:12px; color:#808080;">{{ klarna.note }}</div>
+          </sc-if>
+        </div>
+      </div>
+
+      <button type="button" onClick="{{ onBook }}" style="margin-top:20px; width:100%; display:inline-flex; align-items:center; justify-content:center; gap:10px; border:0; padding:18px 28px; border-radius:10px; background:#171717; color:#ffffff; font-family:inherit; font-size:16px; font-weight:500; cursor:pointer; transition:background 150ms;" style-hover="background:#333333;">{{ bookLabel }} <span style="font-family:var(--font-mono,'Geist Mono',monospace);">&rarr;</span></button>
+      <div style="margin-top:12px; display:flex; justify-content:center;">
+        <x-import component-from-global-scope="ICorrectDesignSystem_ddcb23.Button" variant="ghost" size="sm" on-click="{{ onSendQuote }}" hint-size="200px,34px">{{ sendQuoteLabel }}</x-import>
+      </div>
+      <p style="margin:14px 0 0; text-align:center; font-size:12px; line-height:1.5; color:#808080;">{{ footnote }}</p>
+    </div>
+  </sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:880,&quot;height&quot;:1300},&quot;fault&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Screen replacement&quot;,&quot;Liquid damage&quot;,&quot;No power&quot;,&quot;Data recovery&quot;],&quot;default&quot;:&quot;Screen replacement&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Flow&quot;},&quot;slotsLeft&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:3,&quot;unit&quot;:&quot;slots&quot;,&quot;section&quot;:&quot;Same-day&quot;},&quot;timeOfDay&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Mid-morning (before cut-off)&quot;,&quot;Afternoon (after cut-off)&quot;],&quot;default&quot;:&quot;Mid-morning (before cut-off)&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Same-day&quot;},&quot;sameDayFee&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:149,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:400,&quot;unit&quot;:&quot;£&quot;,&quot;section&quot;:&quot;Pricing&quot;},&quot;fastFee&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:79,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:300,&quot;unit&quot;:&quot;£&quot;,&quot;section&quot;:&quot;Pricing&quot;},&quot;expressFee&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:25,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:100,&quot;unit&quot;:&quot;£&quot;,&quot;section&quot;:&quot;Pricing&quot;},&quot;diagnosticFee&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:79,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:200,&quot;unit&quot;:&quot;£&quot;,&quot;section&quot;:&quot;Pricing&quot;},&quot;recoveryDiagnosticFee&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:99,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:300,&quot;unit&quot;:&quot;£&quot;,&quot;section&quot;:&quot;Pricing&quot;},&quot;priorityDiagnosticFee&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:39,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:200,&quot;unit&quot;:&quot;£&quot;,&quot;section&quot;:&quot;Pricing&quot;},&quot;appleQuote&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:1049,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:3000,&quot;unit&quot;:&quot;£&quot;,&quot;section&quot;:&quot;Pricing&quot;},&quot;showKlarna&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Pricing&quot;}}">
+class Component extends DCLogic {
+  state = {
+    fault: null, screen: null, triageTouched: false,
+    recWhat: null, recState: null, recTried: null, recTriedSaid: null, recPassword: null, recPriority: '',
+    name: '', email: '', mobile: '', postcode: '', touched: false,
+    appleBeen: null, verdict: null, appleQuote: '', dataAnswer: null, serial: '',
+    dayIdx: 0, win: 'AM', speed: 'standard', sent: false
+  };
+
+  // --- date / money helpers (working-day clock mirrors repair-journey.js) ---
+  sod(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+  addDays(d, n) { const x = this.sod(d); x.setDate(x.getDate() + n); return x; }
+  isWD(d) { const g = d.getDay(); return g !== 0 && g !== 6; }
+  addWD(from, n) { let d = this.sod(from), left = n; while (left > 0) { d = this.addDays(d, 1); if (this.isWD(d)) left--; } return d; }
+  fmt(d) { return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }); }
+  money(n) { return '\u00a3' + Math.round(n).toLocaleString('en-GB'); }
+  hhmm(d) { return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); }
+
+  isLondon(pc) {
+    const s = String(pc || '').toUpperCase().replace(/\s+/g, '');
+    return /^(E|EC|N|NW|SE|SW|W|WC|BR|CR|DA|EN|HA|IG|KT|RM|SM|TW|UB|WD)\d/.test(s);
+  }
+  validPostcode(pc) { return /^[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2}$/i.test(String(pc || '').trim()); }
+
+  ring(sel) { return sel ? '0 0 0 2px #171717' : '0 0 0 1px rgba(0,0,0,0.1)'; }
+
+  lane(fault) { return fault === 'Screen replacement' ? 'priced' : 'diagnostic'; }
+
+  renderVals() {
+    const p = this.props, st = this.state;
+    const set = o => this.setState(o);
+
+    const fault = st.fault || p.fault || 'Screen replacement';
+    const lane = this.lane(fault);
+    const screen = st.screen || (lane === 'diagnostic' ? 'triage' : 'details');
+
+    const isRec = fault === 'Data recovery';
+    const basePrice = 799;
+    const diagFee = isRec ? (p.recoveryDiagnosticFee ?? 99) : (p.diagnosticFee ?? 79);
+    const fastFee = p.fastFee ?? 79;
+    const sdFee = p.sameDayFee ?? 149;
+    const priorityDiagFee = p.priorityDiagnosticFee ?? 39;
+    const slots = Math.max(0, Math.min(3, p.slotsLeft ?? 3));
+    const beforeCutoff = (p.timeOfDay ?? 'Mid-morning (before cut-off)') === 'Mid-morning (before cut-off)';
+
+    // simulated clock so the demo is deterministic
+    const nowD = new Date();
+    nowD.setHours(beforeCutoff ? 9 : 13, beforeCutoff ? 40 : 55, 0, 0);
+    const nowHour = nowD.getHours() + nowD.getMinutes() / 60;
+
+    // ---------- fault copy ----------
+    const faults = {
+      'Screen replacement': {
+        crumb: 'Screen / Display', badge: 'We can fix this', badgeVariant: 'green',
+        title: 'Screen replacement with a genuine Apple display',
+        blurb: 'Your panel is damaged and needs replacing. We fit a genuine Apple display and re-run True Tone calibration on the bench before it goes back to you.'
+      },
+      'Liquid damage': {
+        crumb: 'Liquid damage', badge: 'Board-level work', badgeVariant: 'blue',
+        title: 'Liquid damage recovery',
+        blurb: 'Liquid keeps corroding the board while the device sits. We open it, clean it ultrasonically, and repair the components that have been attacked. Most of these come back.',
+        safety: { title: 'Stop using it and do not charge it', body: 'Power through a wet board is what turns a repairable job into a replacement. Leave it off until it reaches us.' }
+      },
+      'No power': {
+        crumb: 'No power', badge: 'Board-level work', badgeVariant: 'blue',
+        title: 'Not powering on',
+        blurb: 'No power is a symptom, not a fault. It is usually a power line, a charge IC or a single failed component, and we find it with a scope rather than guessing at parts.',
+        safety: { title: 'Do not keep trying to charge it', body: 'If a power line is shorted, repeated charging can take more of the board with it. Leave it off until we have it.' }
+      },
+      'Data recovery': {
+        crumb: 'Data recovery', badge: 'Data recovery', badgeVariant: 'orange',
+        title: 'Getting your data back',
+        blurb: 'On this MacBook the storage is soldered to the logic board and encrypted by it, so the drive cannot simply be pulled out and read. Recovery means getting the original board running again, which is board-level work under a microscope.',
+        safety: { title: 'Leave it switched off', body: 'Every attempt to power a failing board risks the data on it. Do not keep trying to start it, and do not let anyone else open it before we see it.' }
+      }
+    };
+    const F = faults[fault];
+
+    // ---------- steps ----------
+    const stepNames = lane === 'diagnostic'
+      ? ['Device', 'Model', 'Fault', 'Questions', 'Quote']
+      : ['Device', 'Model', 'Fault', 'Service'];
+    const activeIdx = lane === 'diagnostic'
+      ? (screen === 'triage' ? 3 : 4)
+      : 3;
+    const steps = stepNames.map((label, i) => {
+      const active = i === activeIdx;
+      return {
+        label, n: String(i + 1),
+        bg: active ? '#ffffff' : (i < activeIdx ? '#171717' : '#fafafa'),
+        fg: active ? '#171717' : (i < activeIdx ? '#ffffff' : '#808080'),
+        ring: active ? '0 0 0 1.5px #171717' : (i < activeIdx ? 'none' : 'inset 0 0 0 1px rgba(0,0,0,0.08)'),
+        dotBg: active ? '#171717' : (i < activeIdx ? '#ffffff' : 'rgba(0,0,0,0.06)'),
+        dotFg: active ? '#ffffff' : (i < activeIdx ? '#171717' : '#808080')
+      };
+    });
+
+    // ---------- triage ----------
+    const beenOpts = ['Yes', 'No', 'Not sure'].map(l => ({
+      label: l, selected: st.appleBeen === l, ring: this.ring(st.appleBeen === l),
+      onClick: () => set({ appleBeen: l, verdict: l === 'Yes' ? st.verdict : null })
+    }));
+    const verdicts = [
+      'They quoted a logic board or a whole replacement',
+      'They said it cannot be repaired',
+      'They told me to buy a new one',
+      'They would not look at it',
+      'They diagnosed it and I have not decided'
+    ].map(l => ({
+      label: l, selected: st.verdict === l, ring: this.ring(st.verdict === l),
+      onClick: () => set({ verdict: l })
+    }));
+    const writeOff = ['They quoted a logic board or a whole replacement', 'They said it cannot be repaired', 'They told me to buy a new one'].indexOf(st.verdict) > -1;
+    const dataOpts = [
+      'Yes, repair it to keep the data if you can',
+      'No, I have a backup',
+      'Not sure'
+    ].map(l => ({
+      label: l, selected: st.dataAnswer === l, ring: this.ring(st.dataAnswer === l),
+      onClick: () => set({ dataAnswer: l })
+    }));
+
+    // ---------- data recovery triage ----------
+    const pick = (key, vals, extra) => vals.map(l => ({
+      label: l, selected: st[key] === l, ring: this.ring(st[key] === l),
+      onClick: () => set(Object.assign({ [key]: l }, extra ? extra(l) : {}))
+    }));
+    const triedYes = !!st.recTried && st.recTried !== 'No, nobody has opened it';
+    const recQsRaw = [
+      { key: 'recWhat', title: 'What happened to it?', help: '', errText: 'Pick the closest one.',
+        opts: ['Liquid got on it', 'It was dropped or knocked', 'It stopped working on its own', 'It failed during or after an update', 'Something else'] },
+      { key: 'recState', title: 'How dead is it right now?', help: 'Tell us what it does when you press the power button. This is the question that tells us most.', errText: 'Pick the one that matches what you see.',
+        opts: ['Nothing at all: no lights, no sound, no fan', 'Some sign of life, but no picture', 'It turns on, but gets stuck on the logo or a folder with a question mark', 'It starts up, but the files or the drive are missing'] },
+      { key: 'recTried', title: 'Has anyone tried to repair it or recover the data?', help: 'Including you. Previous work changes what we look for when we open it.', errText: 'Let us know either way.',
+        opts: ['No, nobody has opened it', 'Yes, Apple', 'Yes, another repair shop', 'Yes, I tried myself'],
+        extra: l => (l === 'No, nobody has opened it' ? { recTriedSaid: null } : {}) }
+    ];
+    if (triedYes) recQsRaw.push({ key: 'recTriedSaid', title: 'What did they tell you?', help: '', errText: 'Tell us what they said.', sub: true,
+      opts: ['The data cannot be recovered', 'They replaced the logic board or parts', 'They opened it and gave up', 'They quoted, and I did not go ahead'] });
+    recQsRaw.push({ key: 'recPassword', title: 'Do you know the login password for this Mac?', help: 'The data is locked to it. Even once the board runs again, we can only read your files with the password.', errText: 'We need to know this before we start.',
+      opts: ['Yes', 'No', 'It is not my Mac, but the owner knows it'] });
+    const recQs = recQsRaw.map((q, i) => ({
+      title: q.title, help: q.help, hasHelp: !!q.help, errText: q.errText,
+      size: q.sub ? '16px' : '18px',
+      rule: i === 0 ? 'none' : 'inset 0 1px 0 rgba(0,0,0,0.08)',
+      err: st.triageTouched && !st[q.key],
+      options: pick(q.key, q.opts, q.extra)
+    }));
+    const recOk = recQsRaw.every(q => !!st[q.key]);
+
+    const tone = {
+      green: { tint: 'var(--ic-green-tint,#E6EFE9)', ink: 'var(--ic-green-text,#2F5240)' },
+      orange: { tint: 'var(--ic-orange-tint,#F6EADD)', ink: 'var(--ic-orange-text,#8F4E1C)' },
+      blue: { tint: 'var(--ic-blue-tint,#EAF0F8)', ink: 'var(--ic-blue-text,#2B4570)' }
+    };
+    const recAssess = [];
+    if (st.recTriedSaid === 'They replaced the logic board or parts') recAssess.push(Object.assign({ tag: 'Worth checking', title: 'Do you still have the original logic board?', body: 'The data lives on the board it was written to. If the board was swapped, your files went with the old one. If you still have it, send it with the Mac and we work on that.' }, tone.orange));
+    if (st.recPassword === 'No') recAssess.push(Object.assign({ tag: 'Worth checking', title: 'We will need that password', body: 'Getting the board running is only half of it; the files stay locked without the login. Check a password manager or iCloud Keychain before you book.' }, tone.orange));
+    if (st.recTriedSaid === 'The data cannot be recovered' || st.recTriedSaid === 'They opened it and gave up') recAssess.push(Object.assign({ tag: 'We want this job', title: 'This is the job we are set up for', body: 'Most Macs written off for data have a board fault, not a dead drive. Bringing the original board back to life is what gets the files out, and it is what we do all day.' }, tone.green));
+    if (!recAssess.length && st.recState) recAssess.push(Object.assign({ tag: 'Good sign', title: st.recState.indexOf('Nothing at all') === 0 ? 'Completely dead is often still recoverable' : 'This sounds recoverable', body: 'Nothing you have told us rules it out. The diagnostic confirms it, and you hear the recovery price before we go further.' }, tone.blue));
+
+    let contrastLine = 'On this device that is usually a component repair rather than a board swap, and the difference is hundreds of pounds.';
+    if (st.appleQuote.trim()) contrastLine = 'You were quoted ' + st.appleQuote.trim() + '. Our board-level repairs on this model start at ' + this.money(249) + '.';
+
+    // ---------- collection ----------
+    let cur = new Date(), days = [];
+    while (days.length < 5) { if (this.isWD(cur)) days.push(this.sod(cur)); cur = this.addDays(cur, 1); }
+    const todayStr = this.sod(new Date()).toDateString();
+    const dayIdx = Math.min(st.dayIdx, days.length - 1);
+    const collect = days[dayIdx];
+    const isToday = collect.toDateString() === todayStr;
+
+    const expressOk = isToday && nowHour >= 8.5 && nowHour <= 16;
+    const bookBy = mins => this.hhmm(new Date(nowD.getTime() + mins * 60000));
+    const expressFee = p.expressFee ?? 25;
+
+    const winDefs = [];
+    if (expressOk) {
+      winDefs.push({ id: 'now1', label: 'Within the next hour', detail: 'Book by ' + bookBy(15) + ' \u00b7 driver arrives by ' + bookBy(75), fee: expressFee, express: true, tag: 'Fastest', cutHour: nowHour + 1.25 });
+      winDefs.push({ id: 'now2', label: 'Within 2 hours', detail: 'Book by ' + bookBy(45) + ' \u00b7 driver arrives by ' + bookBy(135), fee: Math.round(expressFee * 0.6), express: true, tag: 'Today', cutHour: nowHour + 2.25 });
+    }
+    winDefs.push({ id: 'AM', label: 'Morning', detail: '9am \u2013 12pm', fee: 0, cutHour: 12 });
+    winDefs.push({ id: 'PM', label: 'Afternoon', detail: '12pm \u2013 5pm', fee: 0, cutHour: 17 });
+
+    let winId = st.win;
+    if (winDefs.map(w => w.id).indexOf(winId) < 0) winId = 'AM';
+    const win = winDefs.filter(w => w.id === winId)[0];
+
+    const windows = winDefs.map(w => ({
+      label: w.label, detail: w.detail, express: !!w.express, tag: w.tag || '',
+      price: w.fee ? '+' + this.money(w.fee) : 'Included',
+      selected: w.id === winId, ring: this.ring(w.id === winId),
+      onClick: () => set({ win: w.id })
+    }));
+
+    // ---------- service ----------
+    const gateDone = screen === 'quote';
+    const london = gateDone ? this.isLondon(st.postcode) : true;
+    const courier = london;
+
+    // ---------- speed ----------
+    const sdEligible = courier && isToday && win.cutHour <= 12 && slots > 0 && beforeCutoff;
+    let lockReason = '';
+    if (courier && !sdEligible) {
+      if (slots <= 0) lockReason = 'Fully booked today';
+      else if (!beforeCutoff) lockReason = 'Cut-off passed, book before 11:00 tomorrow';
+      else if (!isToday) lockReason = 'Today\u2019s collection only';
+      else lockReason = 'Needs a collection that reaches us before midday';
+    }
+    let speed = st.speed;
+    if (speed === 'sameday' && !sdEligible) speed = 'fast';
+
+    const minsToCutoff = Math.max(0, Math.round((11 - nowHour) * 60));
+    const cdH = Math.floor(minsToCutoff / 60), cdM = minsToCutoff % 60;
+    const countdown = cdH > 0 ? cdH + 'h ' + cdM + 'm' : cdM + 'm';
+
+    const winLabel = (isToday ? 'today' : this.fmt(collect)) + ', ' + (win.express ? 'by ' + bookBy(win.id === 'now1' ? 75 : 135) : win.label.toLowerCase());
+
+    let std, fast, sameday, journey, ret, fee, speedHeading, upgradeHeading, returnLabel, returnHeadline, returnNote, badgeTitle, badgeSub;
+
+    if (lane === 'priced') {
+      const stdReturn = courier ? this.addWD(collect, 2) : this.addWD(new Date(), 4);
+      const fastReturn = courier ? this.addWD(collect, 1) : this.addWD(new Date(), 3);
+      ret = speed === 'sameday' ? collect : speed === 'fast' ? fastReturn : stdReturn;
+      fee = speed === 'fast' ? fastFee : speed === 'sameday' ? sdFee : 0;
+      speedHeading = 'How fast do you need it back?';
+      upgradeHeading = 'Upgrade \u00b7 get it back sooner';
+      std = { selected: speed === 'standard', back: 'Back ' + this.fmt(stdReturn), meta: courier ? 'We collect ' + winLabel + ' and repair in 2 working days.' : 'Pack out today, repair in 2 working days once it reaches the bench.', onClick: () => set({ speed: 'standard' }) };
+      fast = { selected: speed === 'fast', title: 'Fast, back in 1 working day', back: 'Back ' + this.fmt(fastReturn), meta: courier ? 'Straight onto a bench the day it lands with us.' : 'Jumps the queue the day it reaches us. The post is the only wait.', price: '+' + this.money(fastFee), onClick: () => set({ speed: 'fast' }) };
+      sameday = { title: 'Same day', back: sdEligible ? 'Back with you today, by 6pm' : 'Back the same day we collect', meta: sdEligible ? 'Collected this morning, on the bench by lunchtime, couriered back before 6pm.' : lockReason, price: '+' + this.money(sdFee) };
+      returnLabel = 'Back with you';
+      returnHeadline = speed === 'sameday' ? 'Today, by 6pm' : this.fmt(ret);
+      returnNote = speed === 'sameday' ? 'Three slots a day, no exceptions' : 'Often sooner';
+      badgeTitle = speed === 'sameday' ? 'Same day' : speed === 'fast' ? '1 working day' : '2 working days';
+      badgeSub = speed === 'sameday' ? 'Collected and returned today' : speed === 'fast' ? 'Upgraded turnaround' : 'Typical repair time';
+      journey = courier
+        ? [
+          { n: '1', title: 'We collect', meta: (isToday ? 'Today' : this.fmt(collect)) + ', ' + (win.express ? win.label.toLowerCase() : win.detail) },
+          { n: '2', title: 'We repair', meta: speed === 'sameday' ? 'Today, straight to the bench' : speed === 'fast' ? '1 working day' : '2 working days' },
+          { n: '3', title: 'Back to you', meta: speed === 'sameday' ? 'Today, by 6pm' : this.fmt(ret) }
+        ]
+        : [
+          { n: '1', title: 'We send packaging', meta: this.fmt(this.sod(new Date())) },
+          { n: '2', title: 'You post it', meta: 'With us ' + this.fmt(this.addWD(new Date(), 1)) },
+          { n: '3', title: 'We repair', meta: speed === 'fast' ? '1 working day' : '2 working days' },
+          { n: '4', title: 'Back to you', meta: this.fmt(ret) }
+        ];
+    } else {
+      const reportStd = courier ? this.addWD(collect, 1) : this.addWD(new Date(), 2);
+      ret = speed === 'sameday' || speed === 'fast' ? collect : reportStd;
+      fee = speed === 'fast' ? priorityDiagFee : speed === 'sameday' ? priorityDiagFee : 0;
+      speedHeading = 'How fast do you need the answer?';
+      upgradeHeading = 'Upgrade \u00b7 hear back sooner';
+      std = { selected: speed === 'standard', back: 'You hear from us ' + this.fmt(reportStd), meta: 'On the bench the day it arrives. We call with the full price and a photo of the board the next working day.', onClick: () => set({ speed: 'standard' }) };
+      fast = { selected: speed === 'fast', title: isRec ? 'Priority recovery diagnostic' : 'Priority diagnostic', back: 'You hear from us today', meta: 'It skips the queue the moment it lands. Diagnosis and price back the same day, by phone and email.', price: '+' + this.money(priorityDiagFee), onClick: () => set({ speed: 'fast' }) };
+      sameday = { title: isRec ? 'Priority diagnostic, same-day recovery held' : 'Priority diagnostic, same-day repair held', back: sdEligible ? (isRec ? 'Diagnosed today, data copied today where we can' : 'Diagnosed today, repaired today where we can') : 'Diagnosed and repaired the day we collect', meta: sdEligible ? (isRec ? 'We hold one of today\u2019s same-day benches for you. If the board comes back on the bench, we copy your priority files the same day.' : 'We hold one of today\u2019s same-day benches for you. If the fault is on our common list we repair it and return it tonight.') : lockReason, price: '+' + this.money(priorityDiagFee + sdFee) };
+      returnLabel = 'You hear from us';
+      returnHeadline = speed === 'standard' ? this.fmt(reportStd) : 'Today';
+      returnNote = speed === 'standard' ? 'With the full price, before we touch anything' : 'Diagnosis and price the same day';
+      badgeTitle = speed === 'standard' ? 'Next working day' : 'Same day';
+      badgeSub = 'Diagnosis and price';
+      journey = courier
+        ? [
+          { n: '1', title: 'We collect', meta: (isToday ? 'Today' : this.fmt(collect)) + ', ' + (win.express ? win.label.toLowerCase() : win.detail) },
+          { n: '2', title: 'Bench diagnostic', meta: 'Opened, cleaned, scoped' },
+          { n: '3', title: 'We call with the price', meta: speed === 'standard' ? this.fmt(reportStd) : 'Same day' },
+          { n: '4', title: isRec ? 'Recover and return' : 'Repair and return', meta: 'Only once you approve it' }
+        ]
+        : [
+          { n: '1', title: 'We send packaging', meta: this.fmt(this.sod(new Date())) },
+          { n: '2', title: 'Bench diagnostic', meta: 'Opened, cleaned, scoped' },
+          { n: '3', title: 'We call with the price', meta: this.fmt(reportStd) },
+          { n: '4', title: isRec ? 'Recover and return' : 'Repair and return', meta: 'Only once you approve it' }
+        ];
+    }
+
+    sameday.show = courier;
+    sameday.selected = speed === 'sameday';
+    sameday.locked = !sdEligible;
+    sameday.slotsLabel = slots > 0 ? slots + ' slots left today' : 'Fully booked';
+    sameday.dots = [0, 1, 2].map(i => ({ filled: i < slots, empty: i >= slots }));
+    sameday.cutoffLabel = beforeCutoff ? 'Book within ' + countdown + ' \u00b7 cut-off 11:00' : 'Cut-off was 11:00 \u00b7 next slots tomorrow';
+    sameday.onClick = () => { if (sdEligible) set({ speed: 'sameday' }); };
+
+    // ---------- totals ----------
+    const winFee = courier ? win.fee : 0;
+    const payNow = lane === 'priced' ? basePrice + fee + winFee : diagFee + fee + winFee;
+    const klarnaEach = payNow / 3;
+    const appleCompare = p.appleQuote ?? 1049;
+
+    const guides = {
+      'Liquid damage': [
+        { label: 'Ultrasonic clean and board recovery', price: 'from \u00a3249' },
+        { label: 'Top case or keyboard after a spill', price: 'from \u00a3329' },
+        { label: 'Trackpad or flex cable replacement', price: 'from \u00a3149' },
+        { label: 'Battery with corrosion damage', price: 'from \u00a3129' }
+      ],
+      'Data recovery': [
+        { label: 'Board repaired far enough to boot and copy', price: 'from \u00a3349' },
+        { label: 'Liquid-damaged board, recovered for data', price: 'from \u00a3449' },
+        { label: 'Board previously worked on by someone else', price: 'from \u00a3549' },
+        { label: 'Your data returned on a new external SSD', price: 'from \u00a369' }
+      ],
+      'No power': [
+        { label: 'Power line or charge IC repair', price: 'from \u00a3249' },
+        { label: 'USB-C port rebuild', price: 'from \u00a3179' },
+        { label: 'Battery and power management', price: 'from \u00a3129' },
+        { label: 'Backlight or display power fault', price: 'from \u00a3279' }
+      ]
+    };
+
+    const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(st.email);
+    const mobileOk = String(st.mobile).replace(/\D/g, '').length >= 10;
+    const pcOk = this.validPostcode(st.postcode);
+
+    return {
+      faultOptions: ['Screen replacement', 'Liquid damage', 'No power', 'Data recovery'].map(l => ({
+        label: l, bg: l === fault ? '#171717' : '#ffffff', fg: l === fault ? '#ffffff' : '#4d4d4d',
+        ring: l === fault ? 'none' : '0 0 0 1px rgba(0,0,0,0.08)',
+        onClick: () => set({ fault: l, screen: this.lane(l) === 'diagnostic' ? 'triage' : 'details', speed: 'standard', touched: false, triageTouched: false })
+      })),
+
+      pageTitle: screen === 'quote' ? (isRec ? 'Your data recovery quote' : 'Your repair quote') : 'Get a repair quote',
+      pageLede: screen === 'triage'
+        ? (isRec ? 'A few questions so we can tell you straight whether the data is recoverable.' : 'Two questions, then your details and your price.')
+        : screen === 'details'
+          ? 'Courier collection across London, or free tracked mail-in nationwide.'
+          : 'Fixed collection windows, a real turnaround, and the price you actually pay.',
+      stepCounter: 'Step ' + (activeIdx + 1) + ' of ' + stepNames.length,
+      steps,
+      showBack: screen !== (lane === 'diagnostic' ? 'triage' : 'details'),
+      onBack: () => set({ screen: screen === 'quote' ? (lane === 'diagnostic' ? 'triage' : 'details') : 'triage' }),
+
+      faultCrumb: F.crumb, faultBadge: F.badge, faultBadgeVariant: F.badgeVariant,
+      faultTitle: F.title, faultBlurb: F.blurb,
+      safety: F.safety ? { show: true, title: F.safety.title, body: F.safety.body } : { show: false, title: '', body: '' },
+
+      onTriage: screen === 'triage',
+      onDetails: screen === 'details',
+      onQuote: screen === 'quote',
+
+      appleOptions: beenOpts,
+      showAppleDetail: st.appleBeen === 'Yes',
+      verdictOptions: verdicts,
+      appleQuote: st.appleQuote,
+      onAppleQuote: e => set({ appleQuote: e.target.value }),
+      wantThisJob: writeOff,
+      contrastLine,
+      dataOptions: dataOpts,
+      serial: st.serial,
+      onSerial: e => set({ serial: e.target.value }),
+      errAppleBeen: st.triageTouched && !st.appleBeen,
+      errVerdict: st.triageTouched && st.appleBeen === 'Yes' && !st.verdict,
+      errData: st.triageTouched && !st.dataAnswer,
+      repairTriage: !isRec,
+      recoveryTriage: isRec,
+      recQs, recAssess, recAssessShow: recAssess.length > 0,
+      recPriority: st.recPriority,
+      onRecPriority: e => set({ recPriority: e.target.value }),
+      onTriageNext: () => {
+        const ok = isRec ? recOk : (st.appleBeen && (st.appleBeen !== 'Yes' || st.verdict) && st.dataAnswer);
+        set({ triageTouched: true, screen: ok ? 'details' : 'triage' });
+      },
+
+      gateEyebrow: lane === 'priced' ? 'Your fixed price \u00b7 one step left' : 'Your diagnostic booking \u00b7 one step left',
+      gateLede: lane === 'priced'
+        ? 'It\u2019s instant. Your all-in price appears on the next screen.'
+        : 'It\u2019s instant. The next screen shows what today costs, what the repair is likely to cost, and when you hear back.',
+      gateCta: lane === 'priced' ? 'Show my price and turnaround time' : 'Show my options and turnaround time',
+      name: st.name, nameDisplay: st.name.trim() || 'you', email: st.email, mobile: st.mobile, postcode: st.postcode,
+      postcodeDisplay: String(st.postcode).toUpperCase(),
+      errName: st.touched && !st.name.trim(),
+      errEmail: st.touched && !emailOk,
+      errMobile: st.touched && !mobileOk,
+      errPostcode: st.touched && !pcOk,
+      onName: e => set({ name: e.target.value }),
+      onEmail: e => set({ email: e.target.value }),
+      onMobile: e => set({ mobile: e.target.value }),
+      onPostcode: e => set({ postcode: e.target.value }),
+      onSubmitGate: () => {
+        const ok = st.name.trim() && emailOk && mobileOk && pcOk;
+        set({ touched: true, screen: ok ? 'quote' : 'details' });
+      },
+      onEditDetails: () => set({ screen: 'details', sent: false }),
+
+      diag: lane === 'diagnostic'
+        ? {
+          show: true,
+          eyebrow: isRec ? 'How the recovery diagnostic works' : 'How the diagnostic works',
+          headline: this.money(diagFee) + (isRec ? ' recovery diagnostic, deducted from your recovery.' : ' diagnostic, deducted from your repair.'),
+          sub: isRec ? 'We find out exactly why the board won\u2019t run and give you a fixed recovery price before any work starts.' : 'We find out exactly what\u2019s wrong and give you a fixed price before any work starts.',
+          steps: [
+            { n: '1', title: 'We find the fault', meta: 'On the bench the day it arrives' },
+            { n: '2', title: 'We call with a fixed price', meta: (speed === 'standard' ? 'Next working day' : 'The same day') + (isRec ? ', with our odds' : ', with photos') },
+            { n: '3', title: 'You decide', meta: 'No work starts without your yes' }
+          ],
+          outcomes: [
+            { label: 'If you go ahead', title: 'The ' + this.money(diagFee) + ' comes off the bill', body: isRec ? 'You only ever pay the recovery price we quoted.' : 'You only ever pay the repair price we quoted.', bg: '#ffffff', labelColor: 'var(--ic-green-text,#2F5240)' },
+            { label: 'If you decide not to', title: 'You pay ' + this.money(diagFee) + ', nothing more', body: 'We send it back to you as it came.', bg: '#fafafa', labelColor: '#808080' }
+          ],
+          guideLabel: fault,
+          guide: guides[fault] || [],
+          guideNote: isRec ? 'Data recovery is priced separately from a repair, because the goal is your files, not a working Mac. Your own price comes from the diagnostic, not from this list.' : 'Apple\u2019s answer to most of these is a whole logic board. Ours is the component on it, which is why the numbers look nothing alike. Your own price comes from the diagnostic, not from this list.',
+          klarnaNote: 'Any repair over ' + this.money(100) + ' can be split into 3 interest-free payments.'
+        }
+        : { show: false, eyebrow: '', headline: '', sub: '', steps: [], outcomes: [], guideLabel: '', guide: [], guideNote: '', klarnaNote: '' },
+
+      serviceLabel: courier ? 'Your service' : 'Your service \u00b7 outside London',
+      serviceIcon: courier ? 'courier' : 'mail',
+      serviceTitle: courier ? 'Courier collection across London' : 'Free tracked mail-in',
+      serviceMeta: courier
+        ? 'We collect from your door and return it the same way, insured both ways.'
+        : 'We post a tracked, padded pack to you today, and return the device insured.',
+      isCourier: courier,
+
+      days: days.map((d, i) => ({
+        head: d.toDateString() === todayStr ? 'Today' : d.toLocaleDateString('en-GB', { weekday: 'short' }),
+        num: String(d.getDate()), mon: d.toLocaleDateString('en-GB', { month: 'short' }),
+        selected: i === dayIdx,
+        onClick: () => set({ dayIdx: i, win: i === 0 ? st.win : (st.win === 'now1' || st.win === 'now2' ? 'AM' : st.win) })
+      })),
+      windows,
+
+      speedHeading, upgradeHeading,
+      upgradeHint: courier ? 'London courier \u00b7 collected and returned by us' : 'Mail-in \u00b7 same-day is London courier only',
+      std, fast, sameday,
+      journey,
+      returnLabel, returnHeadline, returnNote,
+      turnaroundBadgeTitle: badgeTitle, turnaroundBadgeSub: badgeSub,
+
+      totalLabel: lane === 'priced' ? 'All-in total' : 'To book today',
+      total: this.money(payNow),
+      totalBreakdown: lane === 'priced'
+        ? 'Repair ' + this.money(basePrice) + (fee ? ' + ' + (speed === 'sameday' ? 'same-day ' : 'fast ') + this.money(fee) : '') + (winFee ? ' + express collection ' + this.money(winFee) : '') + ', collection and return included'
+        : this.money(diagFee) + (isRec ? ' recovery diagnostic' : ' diagnostic') + (fee ? ' + priority ' + this.money(fee) : '') + (winFee ? ' + express collection ' + this.money(winFee) : '') + (isRec ? '. Deducted from your recovery price if you go ahead.' : '. Deducted from your repair price if you go ahead.'),
+      apple: lane === 'priced' && appleCompare > payNow
+        ? { show: true, price: this.money(appleCompare), saving: this.money(appleCompare - payNow) }
+        : { show: false, price: '', saving: '' },
+      klarna: (p.showKlarna ?? true) && payNow >= 100
+        ? { show: true, each: this.money(klarnaEach), note: 'Nothing to pay until the repair is done. Subject to status.' }
+        : { show: false, each: '', note: '' },
+
+      bookLabel: lane === 'priced' ? 'Book this repair' : (isRec ? 'Book the collection and recovery diagnostic' : 'Book the collection and diagnostic'),
+      onBook: () => {},
+      sendQuoteLabel: st.sent ? 'Quote sent to ' + st.email : 'Email me this quote',
+      onSendQuote: () => set({ sent: true }),
+      footnote: lane === 'priced'
+        ? 'Fixed price. If the board tells a different story once it\u2019s open, we call you before we spend a penny.'
+        : (isRec ? 'You approve the recovery price before we start. If we cannot get the data back, you pay the diagnostic and nothing else.' : 'You approve the repair price before we start. If we cannot fix it, you pay the diagnostic and nothing else.')
+    };
+  }
+}
+</script>
+</body>
+</html>
