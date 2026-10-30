@@ -10,6 +10,7 @@
     <rect class="dg-btn" x="20" y="1.5" width="22" height="5" rx="2.5"/>
     <rect class="dg-body dg-glass{% if part == 'glass' %} is-hl{% endif %}" x="6" y="6" width="168" height="230" rx="16"/>
     <rect class="dg-frame" x="8.5" y="8.5" width="163" height="225" rx="13.5"/>
+    <path class="dg-crack dg-crack--back" d="M85.1 128.4L96.2 79.3L47.9 58.1M96.2 79.3L92.7 62.6M85.1 128.4L84.2 80.7L129.5 58.1M85.1 128.4L135.9 142.9L171.8 100.0M135.9 142.9L125.3 101.6M85.1 128.4L144.5 120.6L171.8 177.6M85.1 128.4L64.9 183.1L100.5 233.8M64.9 183.1L50.8 223.3M85.1 128.4L66.9 181.1L8.2 186.2M66.9 181.1L45.2 217.8M85.1 128.4L55.1 93.9L8.2 105.8"/>
     {%- if pro -%}
       <rect class="dg-module{% if part == 'camera' %} is-hl{% endif %}" x="16" y="16" width="38" height="38" rx="11"/>
       <circle class="dg-lens-ring{% if part == 'camera' or part == 'lens' %} is-hl{% endif %}" cx="27" cy="27" r="6.2"/>
@@ -25,7 +26,6 @@
       <circle class="dg-lens{% if part == 'camera' or part == 'lens' %} is-hl{% endif %}" cx="29" cy="29" r="2.7"/>
       <path class="dg-lens-crack" d="M24.2 25l9.5 7M24.5 33l8.5-6.5"/>
     {%- endif -%}
-    <path class="dg-crack dg-crack--back" d="M112 70l-12 30 16 10-20 34 10 8-14 30"/>
   {%- else -%}
     <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="138" y="1.5" width="22" height="5" rx="2.5"/>
     <rect class="dg-btn{% if part == 'buttons' %} is-hl{% endif %}" x="173.5" y="30" width="5" height="18" rx="2.5"/>
@@ -34,15 +34,16 @@
     <rect class="dg-frame" x="8.5" y="8.5" width="163" height="225" rx="13.5"/>
     <rect class="dg-screen{% if part == 'screen' %} is-hl{% endif %}" x="13" y="13" width="154" height="216" rx="8"/>
     <path class="dg-sheen" d="M92 13h24L13 158v-40z"/>
+    <path class="dg-crack" d="M85.4 99.4L95.2 45.5L47.2 13.2M95.2 45.5L94.4 13.5M85.4 99.4L85.0 46.7L130.1 13.2M85.4 99.4L136.9 104.5L166.8 58.4M136.9 104.5L122.3 67.2M85.4 99.4L145.5 103.9L166.8 164.0M85.4 99.4L66.7 164.6L100.7 228.8M66.7 164.6L48.8 200.4M85.4 99.4L72.0 156.2L13.2 175.8M72.0 156.2L60.2 194.4M85.4 99.4L60.3 62.5L13.2 66.2"/>
+    <path class="dg-shatter" d="M85.4 99.4L95.2 45.5L47.2 13.2M95.2 45.5L94.4 13.5M85.4 99.4L85.0 46.7L130.1 13.2M85.4 99.4L136.9 104.5L166.8 58.4M136.9 104.5L122.3 67.2M85.4 99.4L145.5 103.9L166.8 164.0M85.4 99.4L66.7 164.6L100.7 228.8M66.7 164.6L48.8 200.4M85.4 99.4L72.0 156.2L13.2 175.8M72.0 156.2L60.2 194.4M85.4 99.4L60.3 62.5L13.2 66.2"/>
+    <path class="dg-fault" d="M23.0 82.1H157.0"/>
+    <rect class="dg-fault dg-fault--alt" x="23.0" y="112.4" width="134.0" height="15.1"/>
+    <path class="dg-fault" d="M23.0 164.2H157.0"/>
     <circle class="dg-cam{% if part == 'fcam' %} is-hl{% endif %}" cx="90" cy="9.8" r="1.7"/>
     <rect class="dg-port{% if part == 'port' %} is-hl{% endif %}" x="79" y="232" width="22" height="3" rx="1.5"/>
     <path class="dg-grille dg-grille--dots{% if part == 'grille' %} is-hl{% endif %}" d="M30 233.5h.01M36 233.5h.01M42 233.5h.01M138 233.5h.01M144 233.5h.01M150 233.5h.01"/>
     <rect class="dg-battery{% if part == 'battery' %} is-hl{% endif %}" x="40" y="60" width="100" height="122" rx="10"/>
-    <path class="dg-crack" d="M108 38l-12 30 16 10-20 34 10 8-14 30"/>
-    <path class="dg-shatter" d="M118 78l-16-30M118 78l24-22M118 78l30 12M118 78l12 38M118 78l-22 32M118 78l-34-4M106 64l18-6 12 14-4 20-18 6-14-12z"/>
-    <path class="dg-fault" d="M52 13v216M56.5 13v216"/>
-    <path class="dg-fault dg-fault--alt" d="M126 13v216"/>
-    <path class="dg-blot" d="M70 160c4-14 26-18 36-6 8 10 2 26-12 28-14 2-28-8-24-22z"/>
+    <path class="dg-blot" d="M90 162a6 6 0 1 1 0 12a6 6 0 1 1 0-12"/>
     <rect class="dg-scan" x="13" y="13" width="154" height="3" rx="1.5"/>
   {%- endif -%}
 </svg>
