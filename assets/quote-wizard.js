@@ -728,7 +728,7 @@
       'Camera': [
         { label: 'Back camera blurry or shaking', route: 'repair', repairType: 'rear-camera', copy: 'A blurry or shaking back camera usually means the stabilisation system has failed. We\'ll replace the rear camera module.' },
         { label: 'Back camera: no preview or it freezes', route: 'diagnostic', repairType: 'diagnostic', copy: 'A black preview, or a back camera that freezes or crashes, can be the module or the board. We can\'t quote the full repair until we\'ve looked.' },
-        { label: 'Front camera: Face ID error or TrueDepth message', route: 'repair', repairType: 'front-camera', faceIdOnly: true, copy: 'A TrueDepth camera message in Settings, or a Face ID error, means the front camera module needs replacing. We\'ll quote that repair.' },
+        { label: 'Front camera: Face ID error or TrueDepth message', route: 'repair', repairType: 'front-camera', faceIdOnly: true, copy: 'A TrueDepth camera message in Settings, or a Face ID error, means the front camera module needs replacing. The Face ID module needs to be ordered directly from Apple, so this repair takes 5-7 working days.' },
         { label: 'Front camera not working', route: 'repair', repairType: 'front-camera', noFaceIdOnly: true, copy: 'We replace the faulty front camera module.' },
         { label: 'Front camera: no preview or it freezes', route: 'diagnostic', repairType: 'diagnostic', copy: 'A black preview, or a front camera that freezes or crashes, can be the module or the board. We can\'t quote the full repair until we\'ve inspected both.' },
         { label: 'Condensation in camera', route: 'diagnostic', repairType: 'diagnostic', copy: 'Moisture inside the camera is a sign of liquid or a broken seal. We can\'t quote the full repair until we\'ve checked for internal corrosion.' },
@@ -1217,7 +1217,7 @@
   function buildRepairBadges(device, model) {
     var h = svcBadge('warranty', CFG.warrantyLabel || '2-year warranty');
     /* Same source as journey ETA + trust card (#53). */
-    h += svcBadge('turnaround', turnaroundClaimLabel(device));
+    h += svcBadge('turnaround', turnaroundClaimLabel(device, { model: model }));
     h += svcBadge('parts', partsClaimLabel(device, model));
     return h;
   }
@@ -1227,18 +1227,51 @@
       svcBadge('diagnostic', 'Full report and quote sent via email');
   }
 
+  /* Repair type + model for the turnaround clock. iPhone front camera /
+     Face ID = 5-7 working days (Face ID module ordered from Apple). */
+  var APPLE_FACE_ID_NOTE = 'The Face ID module needs to be ordered directly from Apple.';
+
+  function repairClockOpts(opts) {
+    opts = opts || {};
+    var o = {
+      diagnostic: !!(opts.diagnostic || S.route === 'diagnostic'),
+      repairType: opts.repairType !== undefined ? opts.repairType : S.repairType,
+      model: opts.model !== undefined ? opts.model : S.model
+    };
+    if (opts.repairTypes) o.repairTypes = opts.repairTypes;
+    return o;
+  }
+
+  function needsAppleFaceIdModule(device, opts) {
+    var o = repairClockOpts(opts);
+    if (window.ICorrectRepairJourney && window.ICorrectRepairJourney.needsAppleFaceIdModule) {
+      return window.ICorrectRepairJourney.needsAppleFaceIdModule(device, o);
+    }
+    if (o.diagnostic || device !== 'iphone' || (o.model && !modelHasFaceId(o.model))) return false;
+    var types = [o.repairType].concat(o.repairTypes || []);
+    for (var i = 0; i < types.length; i++) {
+      var t = String(types[i] || '').toLowerCase();
+      if (t === 'front-camera' || t === 'face-id') return true;
+    }
+    return false;
+  }
+
+  /* Client line explaining a longer clock, or ''. */
+  function turnaroundNote(device, opts) {
+    return needsAppleFaceIdModule(device, opts) ? APPLE_FACE_ID_NOTE : '';
+  }
+
   /* Device bench days → label shared by journey ETA + repair badges. */
   function turnaroundClaimLabel(device, opts) {
-    opts = opts || {};
+    var o = repairClockOpts(opts);
     if (window.ICorrectRepairJourney) {
-      return window.ICorrectRepairJourney.turnaroundClaimLabel(device, {
-        diagnostic: !!(opts.diagnostic || S.route === 'diagnostic')
-      });
+      return window.ICorrectRepairJourney.turnaroundClaimLabel(device, o);
     }
-    if (opts.diagnostic || S.route === 'diagnostic') {
+    if (o.diagnostic) {
       return CFG.diagnosticTurnaround || 'Quote in 1 working day';
     }
-    var days = repairBenchDays(device, opts);
+    if (needsAppleFaceIdModule(device, o)) return '5-7 working days';
+    var days = repairBenchDays(device, o);
     if (days === 1) return '1 working day';
     return days + ' working days';
   }
@@ -1248,7 +1281,7 @@
   function buildPriceTrustBlock(device, model, opts) {
     opts = opts || {};
     var parts = partsClaimLabel(device, model);
-    var turnaround = turnaroundClaimLabel(device, opts);
+    var turnaround = turnaroundClaimLabel(device, { diagnostic: opts.diagnostic, model: model });
     var starSvg = '<svg width="12" height="12" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1l1.8 3.8 4.2.6-3 2.9.7 4.1L7 10.5 3.3 12.4l.7-4.1-3-2.9 4.2-.6z" fill="currentColor"/></svg>';
     var stars = starSvg + starSvg + starSvg + starSvg + starSvg;
     var monitorSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>';
@@ -1283,7 +1316,7 @@
           '<span class="qw-trust-ico" aria-hidden="true">' + clockSvg + '</span>' +
           '<span class="qw-trust-copy">' +
             '<span class="qw-trust-title">' + esc(turnaround) + '</span>' +
-            '<span class="qw-trust-sub">' + (opts.diagnostic ? 'Diagnosis emailed to you' : 'Typical repair time') + '</span>' +
+            '<span class="qw-trust-sub">' + (opts.diagnostic ? 'Diagnosis emailed to you' : (needsAppleFaceIdModule(device, { model: model }) ? 'Face ID module from Apple' : 'Typical repair time')) + '</span>' +
           '</span>' +
         '</li>' +
         '<li class="qw-trust-cell qw-trust-warranty" aria-label="2-year warranty">' +
@@ -1315,10 +1348,12 @@
   /* ---------- Service journey / estimated return (Ricky 2026-09-14) ---------- */
   var PACK_CUTOFF_HOUR = (window.ICorrectRepairJourney && window.ICorrectRepairJourney.PACK_CUTOFF_HOUR) || 15;
 
+  /* Dates use the upper bound (7 for iPhone front camera / Face ID). */
   function repairBenchDays(device, opts) {
-    if (window.ICorrectRepairJourney) return window.ICorrectRepairJourney.repairBenchDays(device, opts);
-    opts = opts || {};
-    if (opts.diagnostic) return 1;
+    var o = repairClockOpts(opts);
+    if (window.ICorrectRepairJourney) return window.ICorrectRepairJourney.repairBenchDays(device, o);
+    if (o.diagnostic) return 1;
+    if (needsAppleFaceIdModule(device, o)) return 7;
     if (device === 'iphone') return 1;
     if (device === 'watch') return 3;
     return 2;
@@ -1427,7 +1462,7 @@
     var lib = window.ICorrectRepairJourney;
     var model = diagnostic
       ? (lib ? lib.courierDiagnosticJourney(collect) : null)
-      : (lib ? lib.courierRepairJourney(S.device, collect) : null);
+      : (lib ? lib.courierRepairJourney(S.device, collect, repairClockOpts({ diagnostic: false })) : null);
     if (model) return formatJourneyModel(model);
     if (diagnostic) {
       return {
@@ -1463,7 +1498,8 @@
         { title: 'Back to you', meta: formatJourneyDate(returnDate) }
       ],
       returnDate: returnDate,
-      quoteDate: null
+      quoteDate: null,
+      note: turnaroundNote(S.device)
     };
   }
 
@@ -1479,7 +1515,8 @@
         return { title: s.title, meta: fmt(s.meta) };
       }),
       returnDate: model.returnDate || null,
-      quoteDate: model.quoteDate || null
+      quoteDate: model.quoteDate || null,
+      note: model.note || ''
     };
   }
 
@@ -1488,7 +1525,7 @@
     var lib = window.ICorrectRepairJourney;
     var model = diagnostic
       ? (lib ? lib.mailinDiagnosticJourney(new Date()) : null)
-      : (lib ? lib.mailinRepairJourney(S.device, new Date()) : null);
+      : (lib ? lib.mailinRepairJourney(S.device, new Date(), repairClockOpts({ diagnostic: false })) : null);
     if (model) return formatJourneyModel(model);
     var bench = repairBenchDays(S.device, { diagnostic: diagnostic });
     var ship = packShipDate(new Date());
@@ -1519,7 +1556,8 @@
         { title: 'Back to you', meta: formatJourneyDate(returnDate) }
       ],
       returnDate: returnDate,
-      quoteDate: null
+      quoteDate: null,
+      note: turnaroundNote(S.device)
     };
   }
 
@@ -1545,7 +1583,7 @@
       eta = '<div class="qw-journey-eta">' +
           '<span class="qw-journey-eta-label">Estimated return by</span>' +
           journeyEtaDateHtml(model.returnDate) +
-          '<span class="qw-journey-eta-note">Often sooner</span>' +
+          '<span class="qw-journey-eta-note">' + esc(model.note || 'Often sooner') + '</span>' +
         '</div>';
     } else {
       eta = '<div class="qw-journey-eta qw-journey-eta--pending"><span class="qw-journey-eta-note">Select a collection window to see your return estimate</span></div>';
@@ -2462,6 +2500,8 @@
 
   function buildTurnaroundCards(expressData) {
     if (!expressData || !expressData.price) return '';
+    /* No Fast option when the Face ID module has to come from Apple. */
+    if (needsAppleFaceIdModule(S.device)) return '';
     var standardMeta = turnaroundClaimLabel(S.device);
     var fastMeta = repairBenchDays(S.device) <= 1 ? 'Priority' : '1 working day';
     return '<div class="qw-opt-section">' +
