@@ -10,7 +10,7 @@
  *   MacBook, iPhone, and iPad diagnostic (any price):
  *     collection and return included on every band, and by post
  *     B1–B4 courier → £0 · outside London → free mail-in
- *   <£200 (untagged / paid):
+ *   <£200 (always paid, whatever courier:* tags say — Rick 2026-10-09, #119):
  *     B1–B2 → +£25 courier today, or +£20 mail-in
  *     B3/B4 / outside → mail-in +£20 only
  *
@@ -33,6 +33,10 @@
     'courier:subsidised': 'paid',
     'courier:full': 'paid',
   };
+
+  /* Repairs at or above this price get free courier (B1–B2). Below it,
+     courier is always paid, whatever the tags say (#119). */
+  var FREE_COURIER_MIN_PRICE = 200;
 
   var ADJUSTMENT = {
     B3_ONE_LEG: 15,
@@ -199,16 +203,36 @@
   }
 
   /**
+   * Pounds the wizard will charge for the repair variant, or null when the
+   * price is missing or not a number. Empty string is missing, not £0.
+   * @param {number|string|null|undefined} repairPrice
+   * @returns {number|null}
+   */
+  function pricePounds(repairPrice) {
+    if (repairPrice == null || repairPrice === '') return null;
+    var price = Number(repairPrice);
+    return Number.isFinite(price) ? price : null;
+  }
+
   /**
-   * Tag beats price threshold. included diagnostic > free > one-leg > paid.
+   * Price beats a free-courier tag (#119, Rick 2026-10-09).
+   *
+   * Order: included diagnostic > missing or under £200 → paid > tag
+   * (free > one-leg > paid) > price ≥ £200 → free.
+   *
+   * A repair under £200 always pays for courier, whatever courier:* tag it
+   * carries. A missing or unknown price fails safe to paid, never free.
+   * Tags only choose the tier when the price is £200 or more.
    * MacBook, iPhone, and iPad diagnostics include collection on every band.
    * @param {string[]|string} productTags
-   * @param {number} [repairPrice] optional — ≥£200 → free when untagged
+   * @param {number} [repairPrice] variant price the wizard charges
    * @param {object} [opts]
    * @returns {'included'|'free'|'one-leg'|'paid'}
    */
   function resolveCourierTier(productTags, repairPrice, opts) {
     if (isHandheldDiagnostic(opts) || isMacbookDiagnostic(opts)) return 'included';
+    var price = pricePounds(repairPrice);
+    if (price == null || price < FREE_COURIER_MIN_PRICE) return 'paid';
     var tags = normalizeTags(productTags);
     var found = null;
     var rank = { free: 3, 'one-leg': 2, paid: 1 };
@@ -220,10 +244,7 @@
     }
     if (found === 'free' || found === 'one-leg') return found;
     if (found === 'paid') return 'paid';
-    if (Number.isFinite(Number(repairPrice)) && Number(repairPrice) >= 200) {
-      return 'free';
-    }
-    return 'paid';
+    return 'free';
   }
 
   function isFreeEligible(tier) {
@@ -500,6 +521,7 @@
     isDiagnosticRepair: isDiagnosticRepair,
     repairTypeCartLabel: repairTypeCartLabel,
     resolveCourierTier: resolveCourierTier,
+    FREE_COURIER_MIN_PRICE: FREE_COURIER_MIN_PRICE,
     computeAdjustment: computeAdjustment,
     resolveAdjustmentVariant: resolveAdjustmentVariant,
     payableCharge: payableCharge,
