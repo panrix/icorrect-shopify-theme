@@ -136,3 +136,54 @@ describe('quote-wizard packShipDate fallback uses UK time', () => {
     assert.match(fallback, /wall\.hour >= PACK_CUTOFF_HOUR/);
   });
 });
+
+/** iPhone front camera / Face ID: module ordered from Apple (Michael 2026-10-30). */
+describe('iPhone front camera / Face ID turnaround', () => {
+  const collect = new Date(2026, 8, 14); // Mon 14 Sep 2026
+
+  it('label is 5-7 working days; dates use 7', () => {
+    for (const repairType of ['front-camera', 'face-id']) {
+      assert.equal(J.turnaroundClaimLabel('iphone', { repairType }), '5-7 working days');
+      assert.equal(J.repairBenchDays('iphone', { repairType }), 7);
+      assert.deepEqual(J.repairBenchRange('iphone', { repairType }), { min: 5, max: 7 });
+    }
+  });
+
+  it('courier return date is 7 working days after collection with the Apple note', () => {
+    const j = J.courierRepairJourney('iphone', collect, { repairType: 'front-camera', model: 'iPhone 15 Pro' });
+    assert.equal(iso(j.returnDate), '2026-09-23');
+    assert.equal(j.steps[1].meta, '5-7 working days');
+    assert.equal(j.note, 'The Face ID module needs to be ordered directly from Apple.');
+  });
+
+  it('mail-in: receive +1, bench 7, return +1', () => {
+    const mon = new Date('2026-09-14T08:00:00Z'); // 09:00 London, before pack cut-off
+    const base = J.mailinRepairJourney('iphone', mon);
+    const fc = J.mailinRepairJourney('iphone', mon, { repairType: 'front-camera' });
+    assert.equal(fc.steps[2].meta, '5-7 working days');
+    assert.match(fc.note, /ordered directly from Apple/);
+    assert.equal(base.note, '');
+    // 6 extra bench days over a standard iPhone repair (Mon-Fri only).
+    const diffDays = Math.round((fc.returnDate - base.returnDate) / 86400000);
+    assert.ok(diffDays >= 6, `expected at least 6 days later, got ${diffDays}`);
+  });
+
+  it('mixed booking takes the longest', () => {
+    assert.equal(J.repairBenchDays('iphone', { repairTypes: ['screen', 'front-camera'] }), 7);
+    assert.equal(J.turnaroundClaimLabel('iphone', { repairTypes: ['battery', 'face-id'] }), '5-7 working days');
+  });
+
+  it('other iPhone repairs, other devices, diagnostics stay as before', () => {
+    assert.equal(J.turnaroundClaimLabel('iphone', { repairType: 'screen' }), '1 working day');
+    assert.equal(J.turnaroundClaimLabel('iphone'), '1 working day');
+    assert.equal(J.repairBenchDays('ipad', { repairType: 'front-camera' }), 2);
+    assert.equal(J.turnaroundClaimLabel('iphone', { repairType: 'front-camera', diagnostic: true }), 'Quote in 1 working day');
+    assert.equal(iso(J.courierRepairJourney('iphone', collect, { repairType: 'screen' }).returnDate), '2026-09-15');
+  });
+
+  it('iPhone SE and iPhone 8 have no Face ID so stay at 1 working day', () => {
+    assert.equal(J.turnaroundClaimLabel('iphone', { repairType: 'front-camera', model: 'iPhone SE 3rd Gen (2022)' }), '1 working day');
+    assert.equal(J.turnaroundClaimLabel('iphone', { repairType: 'front-camera', model: 'iPhone 8 Plus' }), '1 working day');
+    assert.equal(J.turnaroundNote('iphone', { repairType: 'front-camera', model: 'iPhone 8' }), '');
+  });
+});

@@ -6,6 +6,9 @@
  * iPhone known repair: 1 working day (collect Mon → back Tue).
  * MacBook / iPad known repair: 2 working days (collect Mon → back Wed).
  * Watch stays 3 (adhesive cure — physical constraint).
+ * iPhone front camera on a Face ID model: 5-7 working days (Michael 2026-10-30).
+ * The Face ID module is ordered from Apple for each device. Dates use the
+ * upper bound (7) so the promise holds. Labels show the range.
  * Diagnostic: collect/receive → diagnose + email quote in 1 working day.
  * Device stays with us. No return until the customer approves a repair.
  *
@@ -53,13 +56,60 @@
     };
   }
 
-  function repairBenchDays(device, opts) {
+  /* iPhone front camera / Face ID: the module is ordered from Apple per device. */
+  var APPLE_FACE_ID_REPAIR_TYPES = { 'front-camera': true, 'face-id': true };
+  var APPLE_FACE_ID_DAYS = { min: 5, max: 7 };
+  var APPLE_FACE_ID_NOTE = 'The Face ID module needs to be ordered directly from Apple.';
+
+  /* iPhone SE and iPhone 8 / 8 Plus have no Face ID. No model = assume Face ID. */
+  function modelHasFaceId(model) {
+    var name = String(model || '');
+    if (!name) return true;
+    if (/iPhone\s*SE\b/i.test(name)) return false;
+    if (/\biPhone\s*8(\s*Plus)?\b/i.test(name)) return false;
+    return true;
+  }
+
+  function repairTypesOf(opts) {
+    var list = [];
+    if (opts.repairType) list.push(opts.repairType);
+    if (opts.repairTypes && opts.repairTypes.length) list = list.concat(opts.repairTypes);
+    return list.map(function (t) { return String(t || '').toLowerCase(); });
+  }
+
+  /* True when any repair in the booking needs the Apple Face ID module. */
+  function needsAppleFaceIdModule(device, opts) {
     opts = opts || {};
-    if (opts.diagnostic) return 1;
-    if (device === 'iphone') return 1;
-    if (device === 'watch') return 3;
+    if (opts.diagnostic || device !== 'iphone') return false;
+    if (!modelHasFaceId(opts.model)) return false;
+    var types = repairTypesOf(opts);
+    for (var i = 0; i < types.length; i++) {
+      if (APPLE_FACE_ID_REPAIR_TYPES[types[i]]) return true;
+    }
+    return false;
+  }
+
+  /* { min, max } working days on the bench. Mixed bookings take the longest. */
+  function repairBenchRange(device, opts) {
+    opts = opts || {};
+    if (opts.diagnostic) return { min: 1, max: 1 };
+    if (needsAppleFaceIdModule(device, opts)) {
+      return { min: APPLE_FACE_ID_DAYS.min, max: APPLE_FACE_ID_DAYS.max };
+    }
+    if (device === 'iphone') return { min: 1, max: 1 };
+    if (device === 'watch') return { min: 3, max: 3 };
     // MacBook / iPad: 2 working days (Ricky 2026-09-14 confirm).
-    return 2;
+    return { min: 2, max: 2 };
+  }
+
+  /* Days used for dates. Always the upper bound of the range. */
+  function repairBenchDays(device, opts) {
+    return repairBenchRange(device, opts).max;
+  }
+
+  /* Client line explaining a longer clock, or ''. */
+  function turnaroundNote(device, opts) {
+    return needsAppleFaceIdModule(device, opts) ? APPLE_FACE_ID_NOTE : '';
   }
 
   function startOfDay(d) {
@@ -94,23 +144,35 @@
   function turnaroundClaimLabel(device, opts) {
     opts = opts || {};
     if (opts.diagnostic) return 'Quote in 1 working day';
-    var days = repairBenchDays(device, opts);
-    if (days === 1) return '1 working day';
-    return days + ' working days';
+    var range = repairBenchRange(device, opts);
+    if (range.min !== range.max) return range.min + '-' + range.max + ' working days';
+    if (range.max === 1) return '1 working day';
+    return range.max + ' working days';
   }
 
-  function courierRepairJourney(device, collectDate) {
-    var bench = repairBenchDays(device, { diagnostic: false });
+  function repairOpts(opts) {
+    var o = {};
+    opts = opts || {};
+    for (var k in opts) if (Object.prototype.hasOwnProperty.call(opts, k)) o[k] = opts[k];
+    o.diagnostic = false;
+    return o;
+  }
+
+  function courierRepairJourney(device, collectDate, opts) {
+    var ro = repairOpts(opts);
+    var bench = repairBenchDays(device, ro);
+    var note = turnaroundNote(device, ro);
     if (!collectDate) {
       return {
         kind: 'repair',
         steps: [
           { title: 'We collect', meta: 'Pick a collection window' },
-          { title: 'We repair', meta: turnaroundClaimLabel(device) },
+          { title: 'We repair', meta: turnaroundClaimLabel(device, ro) },
           { title: 'Back to you', meta: 'After repair' }
         ],
         returnDate: null,
-        quoteDate: null
+        quoteDate: null,
+        note: note
       };
     }
     var returnDate = addWorkingDays(collectDate, bench);
@@ -118,11 +180,12 @@
       kind: 'repair',
       steps: [
         { title: 'We collect', meta: collectDate },
-        { title: 'We repair', meta: turnaroundClaimLabel(device) },
+        { title: 'We repair', meta: turnaroundClaimLabel(device, ro) },
         { title: 'Back to you', meta: returnDate }
       ],
       returnDate: returnDate,
-      quoteDate: null
+      quoteDate: null,
+      note: note
     };
   }
 
@@ -152,8 +215,9 @@
     };
   }
 
-  function mailinRepairJourney(device, now) {
-    var bench = repairBenchDays(device, { diagnostic: false });
+  function mailinRepairJourney(device, now, opts) {
+    var ro = repairOpts(opts);
+    var bench = repairBenchDays(device, ro);
     var ship = packShipDate(now);
     var weReceive = addWorkingDays(ship, 1);
     var repairDone = addWorkingDays(weReceive, bench);
@@ -163,11 +227,12 @@
       steps: [
         { title: 'We send packaging', meta: ship },
         { title: 'You post the device', meta: weReceive },
-        { title: 'We repair', meta: turnaroundClaimLabel(device) },
+        { title: 'We repair', meta: turnaroundClaimLabel(device, ro) },
         { title: 'Back to you', meta: returnDate }
       ],
       returnDate: returnDate,
-      quoteDate: null
+      quoteDate: null,
+      note: turnaroundNote(device, ro)
     };
   }
 
@@ -190,7 +255,11 @@
 
   return {
     PACK_CUTOFF_HOUR: PACK_CUTOFF_HOUR,
+    APPLE_FACE_ID_NOTE: APPLE_FACE_ID_NOTE,
     repairBenchDays: repairBenchDays,
+    repairBenchRange: repairBenchRange,
+    needsAppleFaceIdModule: needsAppleFaceIdModule,
+    turnaroundNote: turnaroundNote,
     addWorkingDays: addWorkingDays,
     packShipDate: packShipDate,
     turnaroundClaimLabel: turnaroundClaimLabel,
