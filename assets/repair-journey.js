@@ -3,13 +3,15 @@
  *
  * Conversion bias: shortest honest working-day clock when parts are in stock.
  * Courier collection day is day 1 of the clock.
- * iPhone known repair: 1 working day (collect Mon → back Tue).
- * MacBook / iPad known repair: 2 working days (collect Mon → back Wed).
+ * Every clock below carries +1 working day (Michael and Ricky, Slack,
+ * 2026-11-11): the workshop can't keep up with repair volume.
+ * iPhone known repair: 2 working days (collect Mon → back Wed).
+ * MacBook / iPad known repair: 3 working days (collect Mon → back Thu).
  * Watch stays 3 (adhesive cure — physical constraint).
  * iPhone front camera on a Face ID model: 5-7 working days (Michael 2026-10-30).
- * The Face ID module is ordered from Apple for each device. Dates use the
- * upper bound (7) so the promise holds. Labels show the range.
- * Diagnostic: collect/receive → diagnose + email quote in 1 working day.
+ * Unchanged by the +1 day. The Face ID module is ordered from Apple for each
+ * device. Dates use the upper bound (7) so the promise holds. Labels show the range.
+ * Diagnostic: collect/receive → diagnose + email quote in 2 working days.
  * Device stays with us. No return until the customer approves a repair.
  *
  * Mail-in: pack ships same UK working day until 15:00 Europe/London.
@@ -56,6 +58,8 @@
     };
   }
 
+  var DIAGNOSTIC_DAYS = 2;
+
   /* iPhone front camera / Face ID: the module is ordered from Apple per device. */
   var APPLE_FACE_ID_REPAIR_TYPES = { 'front-camera': true, 'face-id': true };
   var APPLE_FACE_ID_DAYS = { min: 5, max: 7 };
@@ -92,14 +96,14 @@
   /* { min, max } working days on the bench. Mixed bookings take the longest. */
   function repairBenchRange(device, opts) {
     opts = opts || {};
-    if (opts.diagnostic) return { min: 1, max: 1 };
+    if (opts.diagnostic) return { min: DIAGNOSTIC_DAYS, max: DIAGNOSTIC_DAYS };
     if (needsAppleFaceIdModule(device, opts)) {
       return { min: APPLE_FACE_ID_DAYS.min, max: APPLE_FACE_ID_DAYS.max };
     }
-    if (device === 'iphone') return { min: 1, max: 1 };
+    if (device === 'iphone') return { min: 2, max: 2 };
     if (device === 'watch') return { min: 3, max: 3 };
-    // MacBook / iPad: 2 working days (Ricky 2026-09-14 confirm).
-    return { min: 2, max: 2 };
+    // MacBook / iPad: 3 working days (was 2, +1 on 2026-11-11).
+    return { min: 3, max: 3 };
   }
 
   /* Days used for dates. Always the upper bound of the range. */
@@ -143,7 +147,7 @@
 
   function turnaroundClaimLabel(device, opts) {
     opts = opts || {};
-    if (opts.diagnostic) return 'Quote in 1 working day';
+    if (opts.diagnostic) return 'Quote in ' + DIAGNOSTIC_DAYS + ' working days';
     var range = repairBenchRange(device, opts);
     if (range.min !== range.max) return range.min + '-' + range.max + ' working days';
     if (range.max === 1) return '1 working day';
@@ -195,14 +199,14 @@
         kind: 'diagnostic',
         steps: [
           { title: 'We collect', meta: 'Pick a collection window' },
-          { title: 'We diagnose & email your quote', meta: '1 working day after collection' },
+          { title: 'We diagnose & email your quote', meta: DIAGNOSTIC_DAYS + ' working days after collection' },
           { title: 'You decide next', meta: 'Device stays with us until you approve' }
         ],
         returnDate: null,
         quoteDate: null
       };
     }
-    var quoteDate = addWorkingDays(collectDate, 1);
+    var quoteDate = addWorkingDays(collectDate, DIAGNOSTIC_DAYS);
     return {
       kind: 'diagnostic',
       steps: [
@@ -239,7 +243,7 @@
   function mailinDiagnosticJourney(now) {
     var ship = packShipDate(now);
     var weReceive = addWorkingDays(ship, 1);
-    var quoteDate = addWorkingDays(weReceive, 1);
+    var quoteDate = addWorkingDays(weReceive, DIAGNOSTIC_DAYS);
     return {
       kind: 'diagnostic',
       steps: [
@@ -255,6 +259,7 @@
 
   return {
     PACK_CUTOFF_HOUR: PACK_CUTOFF_HOUR,
+    DIAGNOSTIC_DAYS: DIAGNOSTIC_DAYS,
     APPLE_FACE_ID_NOTE: APPLE_FACE_ID_NOTE,
     repairBenchDays: repairBenchDays,
     repairBenchRange: repairBenchRange,

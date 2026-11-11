@@ -1223,7 +1223,7 @@
   }
 
   function buildDiagnosticBadges(device) {
-    return svcBadge('turnaround', CFG.diagnosticTurnaround || 'Quote in 1 working day') +
+    return svcBadge('turnaround', CFG.diagnosticTurnaround || 'Quote in 2 working days') +
       svcBadge('diagnostic', 'Full report and quote sent via email');
   }
 
@@ -1268,7 +1268,7 @@
       return window.ICorrectRepairJourney.turnaroundClaimLabel(device, o);
     }
     if (o.diagnostic) {
-      return CFG.diagnosticTurnaround || 'Quote in 1 working day';
+      return CFG.diagnosticTurnaround || 'Quote in 2 working days';
     }
     if (needsAppleFaceIdModule(device, o)) return '5-7 working days';
     var days = repairBenchDays(device, o);
@@ -1352,11 +1352,11 @@
   function repairBenchDays(device, opts) {
     var o = repairClockOpts(opts);
     if (window.ICorrectRepairJourney) return window.ICorrectRepairJourney.repairBenchDays(device, o);
-    if (o.diagnostic) return 1;
+    if (o.diagnostic) return 2;
     if (needsAppleFaceIdModule(device, o)) return 7;
-    if (device === 'iphone') return 1;
+    if (device === 'iphone') return 2;
     if (device === 'watch') return 3;
-    return 2;
+    return 3;
   }
 
   function parseISODate(iso) {
@@ -1469,11 +1469,11 @@
         kind: 'diagnostic',
         steps: [
           { title: 'We collect', meta: collect ? formatJourneyDate(collect) : 'Pick a collection window' },
-          { title: 'We diagnose & email your quote', meta: collect ? formatJourneyDate(addWorkingDays(collect, 1)) : '1 working day after collection' },
+          { title: 'We diagnose & email your quote', meta: collect ? formatJourneyDate(addWorkingDays(collect, 2)) : '2 working days after collection' },
           { title: 'You decide next', meta: 'Device stays with us until you approve' }
         ],
         returnDate: null,
-        quoteDate: collect ? addWorkingDays(collect, 1) : null
+        quoteDate: collect ? addWorkingDays(collect, 2) : null
       };
     }
     var bench = repairBenchDays(S.device);
@@ -1532,7 +1532,7 @@
     var weReceive = addWorkingDays(ship, 1);
     var youPostBy = weReceive;
     if (diagnostic) {
-      var quoteDate = addWorkingDays(weReceive, 1);
+      var quoteDate = addWorkingDays(weReceive, 2);
       return {
         kind: 'diagnostic',
         steps: [
@@ -3940,7 +3940,7 @@
     } else if (S.device === 'iphone' || S.device === 'ipad') {
       feeOff = ' Collection and return are included. If you go ahead with the repair, we take the £69 off the repair price.';
     }
-    var guideCopy = 'The repair prices below are a guide. We\'ll complete the diagnostic within 1 working day of receiving your device and email you a quote. The device stays with us while you decide whether to proceed.' + feeOff;
+    var guideCopy = 'The repair prices below are a guide. We\'ll complete the diagnostic within 2 working days of receiving your device and email you a quote. The device stays with us while you decide whether to proceed.' + feeOff;
 
     container.innerHTML = urgentHtml +
       '<div class="qw-res" id="qwResCard" data-base="' + diagPrice + '" data-vid="' + diagVariantId + '">' +

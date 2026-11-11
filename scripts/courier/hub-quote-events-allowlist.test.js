@@ -75,11 +75,11 @@ describe('hub #432 allowlist contract', () => {
   it('diagnostic card copy is service-neutral (no bare “We collect”)', () => {
     assert.doesNotMatch(
       liquid,
-      /We collect, diagnose within 1 working day/
+      /We collect, diagnose within 2 working days/
     );
     assert.match(
       liquid,
-      /Once your device arrives — by courier or mail-in — we diagnose within 1 working day/
+      /Once your device arrives — by courier or mail-in — we diagnose within 2 working days/
     );
   });
 });
