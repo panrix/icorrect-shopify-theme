@@ -7,10 +7,10 @@
  * 2026-11-11): the workshop can't keep up with repair volume.
  * iPhone known repair: 2 working days (collect Mon → back Wed).
  * MacBook / iPad known repair: 3 working days (collect Mon → back Thu).
- * Watch: 4 (adhesive cure — physical constraint).
- * iPhone front camera on a Face ID model: 6-8 working days (was 5-7, Michael 2026-10-30).
- * The Face ID module is ordered from Apple for each device. Dates use the
- * upper bound (8) so the promise holds. Labels show the range.
+ * Watch stays 3 (adhesive cure — physical constraint).
+ * iPhone front camera on a Face ID model: 5-7 working days (Michael 2026-10-30).
+ * Unchanged by the +1 day. The Face ID module is ordered from Apple for each
+ * device. Dates use the upper bound (7) so the promise holds. Labels show the range.
  * Diagnostic: collect/receive → diagnose + email quote in 2 working days.
  * Device stays with us. No return until the customer approves a repair.
  *
@@ -62,7 +62,7 @@
 
   /* iPhone front camera / Face ID: the module is ordered from Apple per device. */
   var APPLE_FACE_ID_REPAIR_TYPES = { 'front-camera': true, 'face-id': true };
-  var APPLE_FACE_ID_DAYS = { min: 6, max: 8 };
+  var APPLE_FACE_ID_DAYS = { min: 5, max: 7 };
   var APPLE_FACE_ID_NOTE = 'The Face ID module needs to be ordered directly from Apple.';
 
   /* iPhone SE and iPhone 8 / 8 Plus have no Face ID. No model = assume Face ID. */
@@ -101,7 +101,7 @@
       return { min: APPLE_FACE_ID_DAYS.min, max: APPLE_FACE_ID_DAYS.max };
     }
     if (device === 'iphone') return { min: 2, max: 2 };
-    if (device === 'watch') return { min: 4, max: 4 };
+    if (device === 'watch') return { min: 3, max: 3 };
     // MacBook / iPad: 3 working days (was 2, +1 on 2026-11-11).
     return { min: 3, max: 3 };
   }

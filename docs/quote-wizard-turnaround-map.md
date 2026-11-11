@@ -33,11 +33,11 @@ These come from `assets/repair-journey.js`. They are examples of what `Return by
 
 Repair time on the journey step **We repair** (not the return date):
 
-- iPhone, every known repair: 2 working days, except front camera / Face ID below (all clocks +1 working day from 2026-11-11, Michael and Ricky)
-- iPhone front camera or Face ID on a Face ID model: 6-8 working days (was 5-7, Michael 2026-10-30). The Face ID module is ordered directly from Apple for each device. Labels show "6-8 working days". `Return by` uses 8, the upper bound. iPhone SE and iPhone 8 / 8 Plus have no Face ID so stay at the standard 2 working days. A cart with any front camera or Face ID repair takes the longer clock.
+- iPhone, every known repair: 2 working days, except front camera / Face ID below (iPhone, MacBook, iPad and diagnostics are +1 working day from 2026-11-11, Michael and Ricky)
+- iPhone front camera or Face ID on a Face ID model: 5-7 working days (Michael 2026-10-30, not changed by the +1 day). The Face ID module is ordered directly from Apple for each device. Labels show "5-7 working days". `Return by` uses 7, the upper bound. iPhone SE and iPhone 8 / 8 Plus have no Face ID so stay at the standard 2 working days. A cart with any front camera or Face ID repair takes the longer clock.
 - MacBook, every known repair: 3 working days
 - iPad, every known repair: 3 working days
-- Apple Watch, every known repair: 4 working days
+- Apple Watch, every known repair: 3 working days (not changed by the +1 day)
 
 Known-repair types that share that device number:
 
@@ -53,10 +53,10 @@ Contact issues have no date. Do not set a deadline from this map.
 | Device | We repair | Return by | Tech deadline | Client deadline |
 |---|---|---|---|---|
 | iPhone | 2 working days | 2026-09-16 | 2026-09-16 | 2026-09-16 |
-| iPhone front camera / Face ID | 6-8 working days | 2026-09-24 | 2026-09-24 | 2026-09-24 |
+| iPhone front camera / Face ID | 5-7 working days | 2026-09-23 | 2026-09-23 | 2026-09-23 |
 | MacBook | 3 working days | 2026-09-17 | 2026-09-17 | 2026-09-17 |
 | iPad | 3 working days | 2026-09-17 | 2026-09-17 | 2026-09-17 |
-| Watch | 4 working days | 2026-09-18 | 2026-09-18 | 2026-09-18 |
+| Watch | 3 working days | 2026-09-17 | 2026-09-17 | 2026-09-17 |
 
 ### Royal Mail, pack sent Monday 14 Sep 2026 before 15:00 London
 
@@ -65,10 +65,10 @@ The pack ships that working day until 15:00 Europe/London, otherwise the next wo
 | Device | Received | Return by | Tech deadline | Client deadline |
 |---|---|---|---|---|
 | iPhone | 2026-09-15 | 2026-09-18 | 2026-09-17 | 2026-09-17 16:00 |
-| iPhone front camera / Face ID | 2026-09-15 | 2026-09-28 | 2026-09-25 | 2026-09-25 16:00 |
+| iPhone front camera / Face ID | 2026-09-15 | 2026-09-25 | 2026-09-24 | 2026-09-24 16:00 |
 | MacBook | 2026-09-15 | 2026-09-21 | 2026-09-18 | 2026-09-18 16:00 |
 | iPad | 2026-09-15 | 2026-09-21 | 2026-09-18 | 2026-09-18 16:00 |
-| Watch | 2026-09-15 | 2026-09-22 | 2026-09-21 | 2026-09-21 16:00 |
+| Watch | 2026-09-15 | 2026-09-21 | 2026-09-18 | 2026-09-18 16:00 |
 
 ### Diagnostic
 

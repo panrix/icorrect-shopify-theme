@@ -556,7 +556,7 @@
         {% if turn_arround %}
           <label for="one_day-btn" class="trt-btn">
             <p>Fast</p>
-            <small>2 Working Days <span>+{{ turn_arround.price | money }}</span></small>
+            <small>1 Working Day <span>+{{ turn_arround.price | money }}</span></small>
             <input class="hidden" id="one_day-btn" type="radio" name="turnArroundTime" value="{{ turn_arround.selected_or_first_available_variant.id }}" data-price="{{ turn_arround.price | money_without_trailing_zeros | remove:cart.currency.symbol }}">
           </label>
         {% endif %}

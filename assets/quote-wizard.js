@@ -728,7 +728,7 @@
       'Camera': [
         { label: 'Back camera blurry or shaking', route: 'repair', repairType: 'rear-camera', copy: 'A blurry or shaking back camera usually means the stabilisation system has failed. We\'ll replace the rear camera module.' },
         { label: 'Back camera: no preview or it freezes', route: 'diagnostic', repairType: 'diagnostic', copy: 'A black preview, or a back camera that freezes or crashes, can be the module or the board. We can\'t quote the full repair until we\'ve looked.' },
-        { label: 'Front camera: Face ID error or TrueDepth message', route: 'repair', repairType: 'front-camera', faceIdOnly: true, copy: 'A TrueDepth camera message in Settings, or a Face ID error, means the front camera module needs replacing. The Face ID module needs to be ordered directly from Apple, so this repair takes 6-8 working days.' },
+        { label: 'Front camera: Face ID error or TrueDepth message', route: 'repair', repairType: 'front-camera', faceIdOnly: true, copy: 'A TrueDepth camera message in Settings, or a Face ID error, means the front camera module needs replacing. The Face ID module needs to be ordered directly from Apple, so this repair takes 5-7 working days.' },
         { label: 'Front camera not working', route: 'repair', repairType: 'front-camera', noFaceIdOnly: true, copy: 'We replace the faulty front camera module.' },
         { label: 'Front camera: no preview or it freezes', route: 'diagnostic', repairType: 'diagnostic', copy: 'A black preview, or a front camera that freezes or crashes, can be the module or the board. We can\'t quote the full repair until we\'ve inspected both.' },
         { label: 'Condensation in camera', route: 'diagnostic', repairType: 'diagnostic', copy: 'Moisture inside the camera is a sign of liquid or a broken seal. We can\'t quote the full repair until we\'ve checked for internal corrosion.' },
@@ -1228,7 +1228,7 @@
   }
 
   /* Repair type + model for the turnaround clock. iPhone front camera /
-     Face ID = 6-8 working days (Face ID module ordered from Apple). */
+     Face ID = 5-7 working days (Face ID module ordered from Apple). */
   var APPLE_FACE_ID_NOTE = 'The Face ID module needs to be ordered directly from Apple.';
 
   function repairClockOpts(opts) {
@@ -1270,7 +1270,7 @@
     if (o.diagnostic) {
       return CFG.diagnosticTurnaround || 'Quote in 2 working days';
     }
-    if (needsAppleFaceIdModule(device, o)) return '6-8 working days';
+    if (needsAppleFaceIdModule(device, o)) return '5-7 working days';
     var days = repairBenchDays(device, o);
     if (days === 1) return '1 working day';
     return days + ' working days';
@@ -1348,14 +1348,14 @@
   /* ---------- Service journey / estimated return (Ricky 2026-09-14) ---------- */
   var PACK_CUTOFF_HOUR = (window.ICorrectRepairJourney && window.ICorrectRepairJourney.PACK_CUTOFF_HOUR) || 15;
 
-  /* Dates use the upper bound (8 for iPhone front camera / Face ID). */
+  /* Dates use the upper bound (7 for iPhone front camera / Face ID). */
   function repairBenchDays(device, opts) {
     var o = repairClockOpts(opts);
     if (window.ICorrectRepairJourney) return window.ICorrectRepairJourney.repairBenchDays(device, o);
     if (o.diagnostic) return 2;
-    if (needsAppleFaceIdModule(device, o)) return 8;
+    if (needsAppleFaceIdModule(device, o)) return 7;
     if (device === 'iphone') return 2;
-    if (device === 'watch') return 4;
+    if (device === 'watch') return 3;
     return 3;
   }
 
@@ -2503,7 +2503,7 @@
     /* No Fast option when the Face ID module has to come from Apple. */
     if (needsAppleFaceIdModule(S.device)) return '';
     var standardMeta = turnaroundClaimLabel(S.device);
-    var fastMeta = repairBenchDays(S.device) <= 2 ? 'Priority' : '2 working days';
+    var fastMeta = repairBenchDays(S.device) <= 1 ? 'Priority' : '1 working day';
     return '<div class="qw-opt-section">' +
       '<div class="qw-opt-label">Repair turnaround</div>' +
       '<div class="qw-opt-row">' +

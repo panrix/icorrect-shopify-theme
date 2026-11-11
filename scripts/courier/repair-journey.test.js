@@ -16,11 +16,11 @@ function iso(d) {
 }
 
 describe('repairBenchDays', () => {
-  it('iphone 2, macbook/ipad 3, watch 4, diagnostic 2', () => {
+  it('iphone 2, macbook/ipad 3, watch 3, diagnostic 2', () => {
     assert.equal(J.repairBenchDays('iphone'), 2);
     assert.equal(J.repairBenchDays('macbook'), 3);
     assert.equal(J.repairBenchDays('ipad'), 3);
-    assert.equal(J.repairBenchDays('watch'), 4);
+    assert.equal(J.repairBenchDays('watch'), 3);
     assert.equal(J.repairBenchDays('macbook', { diagnostic: true }), 2);
   });
 });
@@ -34,8 +34,8 @@ describe('courier clocks from Monday collection', () => {
     assert.equal(iso(J.courierRepairJourney('ipad', collect).returnDate), '2026-09-17');
   });
 
-  it('watch back Friday (4 working days)', () => {
-    assert.equal(iso(J.courierRepairJourney('watch', collect).returnDate), '2026-09-18');
+  it('watch back Thursday (3 working days)', () => {
+    assert.equal(iso(J.courierRepairJourney('watch', collect).returnDate), '2026-09-17');
   });
 
   it('diagnostic quotes Wednesday and does not return the device', () => {
@@ -142,26 +142,26 @@ describe('quote-wizard packShipDate fallback uses UK time', () => {
 describe('iPhone front camera / Face ID turnaround', () => {
   const collect = new Date(2026, 8, 14); // Mon 14 Sep 2026
 
-  it('label is 6-8 working days; dates use 8', () => {
+  it('label is 5-7 working days; dates use 7', () => {
     for (const repairType of ['front-camera', 'face-id']) {
-      assert.equal(J.turnaroundClaimLabel('iphone', { repairType }), '6-8 working days');
-      assert.equal(J.repairBenchDays('iphone', { repairType }), 8);
-      assert.deepEqual(J.repairBenchRange('iphone', { repairType }), { min: 6, max: 8 });
+      assert.equal(J.turnaroundClaimLabel('iphone', { repairType }), '5-7 working days');
+      assert.equal(J.repairBenchDays('iphone', { repairType }), 7);
+      assert.deepEqual(J.repairBenchRange('iphone', { repairType }), { min: 5, max: 7 });
     }
   });
 
-  it('courier return date is 8 working days after collection with the Apple note', () => {
+  it('courier return date is 7 working days after collection with the Apple note', () => {
     const j = J.courierRepairJourney('iphone', collect, { repairType: 'front-camera', model: 'iPhone 15 Pro' });
-    assert.equal(iso(j.returnDate), '2026-09-24');
-    assert.equal(j.steps[1].meta, '6-8 working days');
+    assert.equal(iso(j.returnDate), '2026-09-23');
+    assert.equal(j.steps[1].meta, '5-7 working days');
     assert.equal(j.note, 'The Face ID module needs to be ordered directly from Apple.');
   });
 
-  it('mail-in: receive +1, bench 8, return +1', () => {
+  it('mail-in: receive +1, bench 7, return +1', () => {
     const mon = new Date('2026-09-14T08:00:00Z'); // 09:00 London, before pack cut-off
     const base = J.mailinRepairJourney('iphone', mon);
     const fc = J.mailinRepairJourney('iphone', mon, { repairType: 'front-camera' });
-    assert.equal(fc.steps[2].meta, '6-8 working days');
+    assert.equal(fc.steps[2].meta, '5-7 working days');
     assert.match(fc.note, /ordered directly from Apple/);
     assert.equal(base.note, '');
     // 6 extra bench days over a standard iPhone repair (Mon-Fri only).
@@ -170,8 +170,8 @@ describe('iPhone front camera / Face ID turnaround', () => {
   });
 
   it('mixed booking takes the longest', () => {
-    assert.equal(J.repairBenchDays('iphone', { repairTypes: ['screen', 'front-camera'] }), 8);
-    assert.equal(J.turnaroundClaimLabel('iphone', { repairTypes: ['battery', 'face-id'] }), '6-8 working days');
+    assert.equal(J.repairBenchDays('iphone', { repairTypes: ['screen', 'front-camera'] }), 7);
+    assert.equal(J.turnaroundClaimLabel('iphone', { repairTypes: ['battery', 'face-id'] }), '5-7 working days');
   });
 
   it('other iPhone repairs, other devices, diagnostics stay as before', () => {
