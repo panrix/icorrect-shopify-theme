@@ -549,14 +549,14 @@
       
         <label for="three_day-btn" class="trt-btn active">
           <p>Standard</p>
-          <small>2-3 Working Days</small>
+          <small>3-4 Working Days</small>
           <input class="hidden" id="three_day-btn" type="radio" name="turnArroundTime" value="200000" data-price="0" checked>
         </label>
         
         {% if turn_arround %}
           <label for="one_day-btn" class="trt-btn">
             <p>Fast</p>
-            <small>1 Working Day <span>+{{ turn_arround.price | money }}</span></small>
+            <small>2 Working Days <span>+{{ turn_arround.price | money }}</span></small>
             <input class="hidden" id="one_day-btn" type="radio" name="turnArroundTime" value="{{ turn_arround.selected_or_first_available_variant.id }}" data-price="{{ turn_arround.price | money_without_trailing_zeros | remove:cart.currency.symbol }}">
           </label>
         {% endif %}

@@ -114,7 +114,7 @@ window.WIZARD_CONTEXT = {
 <script>
 window.WIZARD_CFG = {
   warrantyLabel: {{ section.settings.warranty_label | default: '2-year warranty' | json }},
-  diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: 'Quote in 1 working day' | json }},
+  diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: 'Quote in 2 working days' | json }},
   bandsUrl: {{ 'courier-london-bands.json' | asset_url | json }},
   catalogueUrl: {{ 'repair-catalogue-map.json' | asset_url | json }},
   collectionPrefillUrl: {{ 'wizard-collection-prefill.json' | asset_url | json }},
@@ -575,7 +575,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       "type": "text",
       "id": "diagnostic_turnaround",
       "label": "Diagnostic turnaround label",
-      "default": "Quote in 1 working day"
+      "default": "Quote in 2 working days"
     },
     {
       "type": "text",

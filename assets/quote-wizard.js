@@ -728,7 +728,7 @@
       'Camera': [
         { label: 'Back camera blurry or shaking', route: 'repair', repairType: 'rear-camera', copy: 'A blurry or shaking back camera usually means the stabilisation system has failed. We\'ll replace the rear camera module.' },
         { label: 'Back camera: no preview or it freezes', route: 'diagnostic', repairType: 'diagnostic', copy: 'A black preview, or a back camera that freezes or crashes, can be the module or the board. We can\'t quote the full repair until we\'ve looked.' },
-        { label: 'Front camera: Face ID error or TrueDepth message', route: 'repair', repairType: 'front-camera', faceIdOnly: true, copy: 'A TrueDepth camera message in Settings, or a Face ID error, means the front camera module needs replacing. The Face ID module needs to be ordered directly from Apple, so this repair takes 5-7 working days.' },
+        { label: 'Front camera: Face ID error or TrueDepth message', route: 'repair', repairType: 'front-camera', faceIdOnly: true, copy: 'A TrueDepth camera message in Settings, or a Face ID error, means the front camera module needs replacing. The Face ID module needs to be ordered directly from Apple, so this repair takes 6-8 working days.' },
         { label: 'Front camera not working', route: 'repair', repairType: 'front-camera', noFaceIdOnly: true, copy: 'We replace the faulty front camera module.' },
         { label: 'Front camera: no preview or it freezes', route: 'diagnostic', repairType: 'diagnostic', copy: 'A black preview, or a front camera that freezes or crashes, can be the module or the board. We can\'t quote the full repair until we\'ve inspected both.' },
         { label: 'Condensation in camera', route: 'diagnostic', repairType: 'diagnostic', copy: 'Moisture inside the camera is a sign of liquid or a broken seal. We can\'t quote the full repair until we\'ve checked for internal corrosion.' },
@@ -1223,12 +1223,12 @@
   }
 
   function buildDiagnosticBadges(device) {
-    return svcBadge('turnaround', CFG.diagnosticTurnaround || 'Quote in 1 working day') +
+    return svcBadge('turnaround', CFG.diagnosticTurnaround || 'Quote in 2 working days') +
       svcBadge('diagnostic', 'Full report and quote sent via email');
   }
 
   /* Repair type + model for the turnaround clock. iPhone front camera /
-     Face ID = 5-7 working days (Face ID module ordered from Apple). */
+     Face ID = 6-8 working days (Face ID module ordered from Apple). */
   var APPLE_FACE_ID_NOTE = 'The Face ID module needs to be ordered directly from Apple.';
 
   function repairClockOpts(opts) {
@@ -1268,9 +1268,9 @@
       return window.ICorrectRepairJourney.turnaroundClaimLabel(device, o);
     }
     if (o.diagnostic) {
-      return CFG.diagnosticTurnaround || 'Quote in 1 working day';
+      return CFG.diagnosticTurnaround || 'Quote in 2 working days';
     }
-    if (needsAppleFaceIdModule(device, o)) return '5-7 working days';
+    if (needsAppleFaceIdModule(device, o)) return '6-8 working days';
     var days = repairBenchDays(device, o);
     if (days === 1) return '1 working day';
     return days + ' working days';
@@ -1348,15 +1348,15 @@
   /* ---------- Service journey / estimated return (Ricky 2026-09-14) ---------- */
   var PACK_CUTOFF_HOUR = (window.ICorrectRepairJourney && window.ICorrectRepairJourney.PACK_CUTOFF_HOUR) || 15;
 
-  /* Dates use the upper bound (7 for iPhone front camera / Face ID). */
+  /* Dates use the upper bound (8 for iPhone front camera / Face ID). */
   function repairBenchDays(device, opts) {
     var o = repairClockOpts(opts);
     if (window.ICorrectRepairJourney) return window.ICorrectRepairJourney.repairBenchDays(device, o);
-    if (o.diagnostic) return 1;
-    if (needsAppleFaceIdModule(device, o)) return 7;
-    if (device === 'iphone') return 1;
-    if (device === 'watch') return 3;
-    return 2;
+    if (o.diagnostic) return 2;
+    if (needsAppleFaceIdModule(device, o)) return 8;
+    if (device === 'iphone') return 2;
+    if (device === 'watch') return 4;
+    return 3;
   }
 
   function parseISODate(iso) {
@@ -1469,11 +1469,11 @@
         kind: 'diagnostic',
         steps: [
           { title: 'We collect', meta: collect ? formatJourneyDate(collect) : 'Pick a collection window' },
-          { title: 'We diagnose & email your quote', meta: collect ? formatJourneyDate(addWorkingDays(collect, 1)) : '1 working day after collection' },
+          { title: 'We diagnose & email your quote', meta: collect ? formatJourneyDate(addWorkingDays(collect, 2)) : '2 working days after collection' },
           { title: 'You decide next', meta: 'Device stays with us until you approve' }
         ],
         returnDate: null,
-        quoteDate: collect ? addWorkingDays(collect, 1) : null
+        quoteDate: collect ? addWorkingDays(collect, 2) : null
       };
     }
     var bench = repairBenchDays(S.device);
@@ -1532,7 +1532,7 @@
     var weReceive = addWorkingDays(ship, 1);
     var youPostBy = weReceive;
     if (diagnostic) {
-      var quoteDate = addWorkingDays(weReceive, 1);
+      var quoteDate = addWorkingDays(weReceive, 2);
       return {
         kind: 'diagnostic',
         steps: [
@@ -2503,7 +2503,7 @@
     /* No Fast option when the Face ID module has to come from Apple. */
     if (needsAppleFaceIdModule(S.device)) return '';
     var standardMeta = turnaroundClaimLabel(S.device);
-    var fastMeta = repairBenchDays(S.device) <= 1 ? 'Priority' : '1 working day';
+    var fastMeta = repairBenchDays(S.device) <= 2 ? 'Priority' : '2 working days';
     return '<div class="qw-opt-section">' +
       '<div class="qw-opt-label">Repair turnaround</div>' +
       '<div class="qw-opt-row">' +
@@ -3940,7 +3940,7 @@
     } else if (S.device === 'iphone' || S.device === 'ipad') {
       feeOff = ' Collection and return are included. If you go ahead with the repair, we take the £69 off the repair price.';
     }
-    var guideCopy = 'The repair prices below are a guide. We\'ll complete the diagnostic within 1 working day of receiving your device and email you a quote. The device stays with us while you decide whether to proceed.' + feeOff;
+    var guideCopy = 'The repair prices below are a guide. We\'ll complete the diagnostic within 2 working days of receiving your device and email you a quote. The device stays with us while you decide whether to proceed.' + feeOff;
 
     container.innerHTML = urgentHtml +
       '<div class="qw-res" id="qwResCard" data-base="' + diagPrice + '" data-vid="' + diagVariantId + '">' +
