@@ -1,0 +1,6 @@
+/* iCorrect Design System — root entry point. Consumers link THIS one file.
+   Imports only; every rule lives in an imported file.
+   Fonts (Geist + Geist Mono) are declared in colors_and_type.css, self-hosted from /fonts. */
+@import url("colors_and_type.css");
+@import url("icorrect/icorrect.css");
+@import url("ui_kits/website/primitives.css");
