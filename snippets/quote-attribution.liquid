@@ -1,0 +1,160 @@
+<script>
+/**
+ * Quote source tracking (first touch for the browser session).
+ *
+ * On the first page view of a tab session we record where the visitor came
+ * from: landing path, referrer host, utm_* tags, click-ID presence and a
+ * derived channel. Stored in sessionStorage (session first touch) and
+ * localStorage (first-ever touch, cheap extra). The quote wizard reads it via
+ * window.icorrectAttribution and:
+ *   - adds it to the quote_events record (attribution jsonb), and
+ *   - writes it as hidden cart attributes (_source, _medium, ...) so it lands
+ *     on the Shopify order's note attributes.
+ *
+ * No personal data: path only (no query string), referrer host only, click IDs
+ * stored as true/false. Every storage call is wrapped; if storage is blocked
+ * the wizard carries on with no attribution. No UI, price or checkout change.
+ */
+(function () {
+  var S_KEY = 'icq_attr_s1';
+  var F_KEY = 'icq_attr_f1';
+  var OWN_HOSTS = /(^|\.)icorrect\.co\.uk$|(^|\.)myshopify\.com$|(^|\.)shopify\.com$|(^|\.)shop\.app$/i;
+  var SEARCH = /(^|\.)(google|bing|duckduckgo|yahoo|ecosia|baidu|yandex|brave|qwant|startpage|aol)\.[a-z.]+$/i;
+  var SOCIAL = /(^|\.)(facebook|fb|instagram|messenger|t|x|twitter|linkedin|lnkd|tiktok|youtube|youtu|reddit|pinterest|snapchat|threads|whatsapp)\.(com|co|be|net|in|it)$/i;
+  var AI = /(^|\.)(chatgpt\.com|openai\.com|perplexity\.ai|claude\.ai|gemini\.google\.com|copilot\.microsoft\.com|grok\.com|you\.com|phind\.com)$/i;
+  var MAIL = /(^|\.)(mail\.google\.com|outlook\.live\.com|outlook\.office\.com|mail\.yahoo\.com|mail\.aol\.com)$/i;
+  var CLICK_IDS = ['gclid', 'gbraid', 'wbraid', 'fbclid', 'msclkid', 'ttclid'];
+  var UTMS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+
+  function clip(v, n) {
+    if (v == null) return '';
+    v = String(v).trim();
+    // Drop anything that looks like an email address or a phone number (no PII).
+    if (/[^\s@]+@[^\s@]+\.[^\s@]+/.test(v)) return '';
+    if ((v.replace(/\D/g, '').length >= 10) && /^[\d\s+().-]+$/.test(v)) return '';
+    return v.length > n ? v.slice(0, n) : v;
+  }
+
+  function readJSON(store, key) {
+    try { var raw = store && store.getItem(key); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+  }
+  function writeJSON(store, key, value) {
+    try { if (store) store.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+  function storage(name) {
+    try { var s = window[name]; return s || null; } catch (e) { return null; }
+  }
+
+  function channelFor(a) {
+    var src = (a.utm_source || '').toLowerCase();
+    var med = (a.utm_medium || '').toLowerCase();
+    var ref = (a.referrer_host || '').toLowerCase();
+    var paidClick = a.gclid || a.gbraid || a.wbraid || a.msclkid;
+    var socialSrc = /facebook|instagram|^fb$|^ig$|meta|tiktok|linkedin|twitter|^x$|pinterest|snapchat|reddit|youtube|whatsapp/.test(src);
+    if (/^(cpc|ppc|paid|paidsearch|paid_search|paid-search|sem|search_ads)$/.test(med)) return socialSrc ? 'paid_social' : 'paid_search';
+    if (/^(paid_social|paidsocial|paid-social|social_paid|cpm)$/.test(med)) return 'paid_social';
+    if (paidClick) return 'paid_search';
+    if (/e-?mail|newsletter/.test(med) || /klaviyo|mailchimp|newsletter|e-?mail/.test(src)) return 'email';
+    if (/social/.test(med) || socialSrc || a.fbclid || a.ttclid) return 'social';
+    if (/chatgpt|openai|perplexity|claude|gemini|copilot/.test(src) || (ref && AI.test(ref))) return 'ai_assistant';
+    if (/organic/.test(med)) return 'organic_search';
+    if (ref && MAIL.test(ref)) return 'email';
+    if (ref && SEARCH.test(ref)) return 'organic_search';
+    if (ref && SOCIAL.test(ref)) return 'social';
+    if (src || med) return 'referral';
+    if (ref) return 'referral';
+    return 'direct';
+  }
+
+  function captureTouch(href, referrer) {
+    var a = { seen_at: new Date().toISOString() };
+    var url;
+    try { url = new URL(href); } catch (e) { url = null; }
+    a.landing_path = clip(url ? url.pathname : '', 300) || '/';
+    if (url) {
+      for (var i = 0; i < UTMS.length; i++) {
+        var v = clip(url.searchParams.get(UTMS[i]), 150);
+        if (v) a[UTMS[i]] = v;
+      }
+      for (var j = 0; j < CLICK_IDS.length; j++) {
+        if (url.searchParams.get(CLICK_IDS[j])) a[CLICK_IDS[j]] = true;
+      }
+    }
+    var refHost = '';
+    try { refHost = referrer ? new URL(referrer).hostname.toLowerCase() : ''; } catch (e) { refHost = ''; }
+    if (refHost && !OWN_HOSTS.test(refHost)) a.referrer_host = clip(refHost, 200);
+    a.channel = channelFor(a);
+    return a;
+  }
+
+  var session = null;
+  var first = null;
+  try {
+    var ss = storage('sessionStorage');
+    var ls = storage('localStorage');
+    session = readJSON(ss, S_KEY);
+    if (!session || !session.channel) {
+      session = captureTouch(window.location.href, document.referrer || '');
+      writeJSON(ss, S_KEY, session);
+    }
+    first = readJSON(ls, F_KEY);
+    if (!first || !first.channel) {
+      first = session;
+      writeJSON(ls, F_KEY, {
+        seen_at: first.seen_at, landing_path: first.landing_path, referrer_host: first.referrer_host,
+        utm_source: first.utm_source, utm_medium: first.utm_medium, utm_campaign: first.utm_campaign,
+        channel: first.channel
+      });
+    }
+  } catch (e) {}
+
+  /* Flat object for quote_events.attribution (keys allow-listed by the hub). */
+  function forQuote() {
+    if (!session) return null;
+    var out = {};
+    var keys = ['landing_path', 'referrer_host', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'channel'];
+    for (var i = 0; i < keys.length; i++) if (session[keys[i]]) out[keys[i]] = session[keys[i]];
+    for (var j = 0; j < CLICK_IDS.length; j++) if (session[CLICK_IDS[j]]) out[CLICK_IDS[j]] = true;
+    if (session.seen_at) out.first_seen_at = session.seen_at;
+    if (first) {
+      if (first.landing_path) out.first_landing_path = first.landing_path;
+      if (first.referrer_host) out.first_referrer_host = first.referrer_host;
+      if (first.utm_source) out.first_utm_source = first.utm_source;
+      if (first.utm_medium) out.first_utm_medium = first.utm_medium;
+      if (first.utm_campaign) out.first_utm_campaign = first.utm_campaign;
+      if (first.channel) out.first_channel = first.channel;
+      if (first.seen_at) out.first_ever_seen_at = first.seen_at;
+    }
+    return out;
+  }
+
+  /* Hidden (underscore) cart attributes, copied by Shopify onto the order. */
+  function forCart() {
+    if (!session) return {};
+    var clicks = [];
+    for (var j = 0; j < CLICK_IDS.length; j++) if (session[CLICK_IDS[j]]) clicks.push(CLICK_IDS[j]);
+    var out = {
+      _landing_page: session.landing_path || '',
+      _referrer: session.referrer_host || '',
+      _source: session.utm_source || '',
+      _medium: session.utm_medium || '',
+      _campaign: session.utm_campaign || '',
+      _term: session.utm_term || '',
+      _content: session.utm_content || '',
+      _channel: session.channel || '',
+      _click_id: clicks.join(','),
+      _first_channel: first && first.channel ? first.channel : '',
+      _first_landing_page: first && first.landing_path ? first.landing_path : ''
+    };
+    Object.keys(out).forEach(function (k) { if (!out[k]) delete out[k]; });
+    return out;
+  }
+
+  window.icorrectAttribution = {
+    forQuote: forQuote,
+    forCart: forCart,
+    _channelFor: channelFor,
+    _captureTouch: captureTouch
+  };
+})();
+</script>
