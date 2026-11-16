@@ -325,7 +325,8 @@
         "bg": "#1d1d1f",
         "heading": "FAQs",
         "details": "Learn more about iCorrect, the essential repair services that we offer and the warranties that come with each repair.",
-        "txt-clr": "#ffffff"
+        "txt-clr": "#ffffff",
+        "emit_faq_schema": true
       }
     },
     "contact_with_map_dXbbDU": {
@@ -354,6 +355,10 @@
     },
     "repair_index": {
       "type": "repair-index"
+    },
+    "google_reviews_mb": {
+      "type": "google-reviews",
+      "settings": {}
     }
   },
   "order": [
@@ -368,6 +373,7 @@
     "macbook_videos_ePFw3q",
     "repair_services_nQkwFT",
     "repair_index",
+    "google_reviews_mb",
     "icorrect_faqs_RVk3VL",
     "contact_with_map_dXbbDU"
   ]

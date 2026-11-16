@@ -70,3 +70,8 @@
     @media (max-width: 749px) { .ri { padding-left: 20px; padding-right: 20px; } .ri__list { columns: 1; } }
   </style>
 {%- endif -%}
+{%- if collection.handle contains 'macbook' -%}
+  {%- unless collection.handle contains 'london' -%}
+    {% render 'macbook-related-links' %}
+  {%- endunless -%}
+{%- endif -%}

@@ -132,6 +132,20 @@
         "skip_to_service": false,
         "prefill_device": "macbook"
       }
+    },
+    "google_reviews_mb": {
+      "type": "google-reviews",
+      "settings": {}
+    },
+    "macbook_related_links": {
+      "type": "custom-liquid",
+      "name": "MacBook links",
+      "settings": {
+        "custom_liquid": "{% render 'macbook-related-links' %}",
+        "color_scheme": "",
+        "padding_top": 12,
+        "padding_bottom": 0
+      }
     }
   },
   "order": [
@@ -140,6 +154,8 @@
     "rich_text_YRKr4q",
     "custom_liquid_DmTYFc",
     "macbook_videos_fkKFxY",
+    "macbook_related_links",
+    "google_reviews_mb",
     "custom_liquid_g7nppQ",
     "main"
   ]

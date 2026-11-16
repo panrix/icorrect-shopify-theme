@@ -1,0 +1,22 @@
+{% doc %}
+  Lowest positive variant price, in cents, for one collection.
+  Prints nothing when no priced product is found.
+  Shopify exposes at most 50 products here unless the page paginates,
+  so this is the minimum among those products.
+
+  @param {collection} [price_collection] - Collection to scan. Defaults to the current collection.
+{% enddoc %}
+{%- liquid
+  assign price_source = price_collection | default: collection
+  assign min_cents = 0
+  if price_source != blank and price_source.products_count > 0
+    for priced_product in price_source.products
+      if priced_product.price_min > 0
+        if min_cents == 0 or priced_product.price_min < min_cents
+          assign min_cents = priced_product.price_min
+        endif
+      endif
+    endfor
+  endif
+-%}
+{%- if min_cents > 0 -%}{{ min_cents }}{%- endif -%}

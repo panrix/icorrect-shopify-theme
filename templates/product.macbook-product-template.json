@@ -358,7 +358,8 @@
         "bg": "#1d1d1f",
         "heading": "FAQs",
         "details": "Learn more about our MacBook repair service, parts, diagnostics, turnaround times, and warranty.",
-        "txt-clr": "#ffffff"
+        "txt-clr": "#ffffff",
+        "emit_faq_schema": true
       }
     },
     "icorrect_faqs_RVk3VL": {
@@ -469,6 +470,20 @@
         "show_everywhere": false,
         "show_finder": true
       }
+    },
+    "google_reviews_mb": {
+      "type": "google-reviews",
+      "settings": {}
+    },
+    "macbook_related_links": {
+      "type": "custom-liquid",
+      "name": "MacBook links",
+      "settings": {
+        "custom_liquid": "{% render 'macbook-related-links' %}",
+        "color_scheme": "",
+        "padding_top": 12,
+        "padding_bottom": 0
+      }
     }
   },
   "order": [
@@ -481,6 +496,8 @@
     "rich_text_wHThqd",
     "macbook_videos_DiRzn3",
     "video_multicolumn_TRzgaY",
+    "macbook_related_links",
+    "google_reviews_mb",
     "macbook_faqs_zpJfcD",
     "icorrect_faqs_RVk3VL"
   ]

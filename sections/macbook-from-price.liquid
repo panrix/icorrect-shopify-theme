@@ -1,0 +1,21 @@
+{% comment %}
+  Starting price under the quote-wizard H1 on MacBook collections
+  that have no other heading section. Uses the existing price element.
+{% endcomment %}
+<div class="page-width">
+  {% render 'macbook-from-price' %}
+</div>
+
+{% schema %}
+{
+  "name": "MacBook from price",
+  "tag": "section",
+  "class": "macbook-from-price-section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "MacBook from price"
+    }
+  ]
+}
+{% endschema %}

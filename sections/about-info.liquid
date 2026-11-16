@@ -7,7 +7,12 @@
 <section class="about-info-{{ section.id }}">
   <div class="about-info-wrapper page-width">
     <div class="about-info-row">
-      {%- if section.settings.heading_tag == 'h1' -%}<h1>{{ heading_text }}</h1>{%- else -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.heading_tag == 'h1' -%}
+        <h1>{{ heading_text }}</h1>
+        {% render 'macbook-from-price', align: 'center' %}
+      {%- else -%}
+        <h2>{{ section.settings.heading }}</h2>
+      {%- endif -%}
 
       <div class="about-details">
         {{ section.settings.details }}

@@ -1,0 +1,151 @@
+{% doc %}
+  Search title and meta description for MacBook repair pages.
+  Prints "title|||description", or nothing for London pages and other templates.
+  Any "from" price is the lowest positive variant price, not a fixed number.
+{% enddoc %}
+{%- liquid
+  assign mb_scope = false
+  assign mb_handle = ''
+  assign mb_title_source = ''
+
+  if request.page_type == 'collection'
+    assign mb_handle = collection.handle
+    assign mb_title_source = collection.title
+  elsif request.page_type == 'page'
+    assign mb_handle = page.handle
+    assign mb_title_source = page.title
+  elsif request.page_type == 'product' and template.suffix == 'macbook-product-template'
+    assign mb_handle = product.handle
+    assign mb_title_source = product.title
+  endif
+
+  if mb_handle contains 'london' or template.suffix contains 'london'
+    assign mb_scope = false
+  elsif mb_handle contains 'macbook' or template.suffix contains 'macbook'
+    assign mb_scope = true
+  endif
+
+  if mb_scope
+    assign model_code = ''
+    assign handle_parts = mb_handle | split: '-'
+    for part in handle_parts
+      if part.size == 5
+        assign part_prefix = part | slice: 0, 1
+        assign part_digits = part | slice: 1, 4
+        assign part_num = part_digits | plus: 0
+        if part_prefix == 'a' and part_num > 999 and model_code == blank
+          assign model_code = part | upcase
+        endif
+      endif
+    endfor
+
+    assign repair_label = ''
+    if mb_handle contains 'screen'
+      assign repair_label = 'Screen Replacement'
+    elsif mb_handle contains 'keyboard'
+      assign repair_label = 'Keyboard Replacement'
+    elsif mb_handle contains 'battery'
+      assign repair_label = 'Battery Replacement'
+    elsif mb_handle contains 'trackpad'
+      assign repair_label = 'Trackpad Repair'
+    elsif mb_handle contains 'flexgate'
+      assign repair_label = 'Flexgate Repair'
+    elsif mb_handle contains 'dustgate'
+      assign repair_label = 'Dustgate Repair'
+    elsif mb_handle contains 'touch-bar' or mb_handle contains 'touchbar'
+      assign repair_label = 'Touch Bar Repair'
+    elsif mb_handle contains 'charging' or mb_handle contains 'c-port'
+      assign repair_label = 'Charging Port Repair'
+    elsif mb_handle contains 'diagnostic'
+      assign repair_label = 'Diagnostic'
+    endif
+
+    assign family = 'MacBook'
+    if mb_handle contains 'macbook-air' or mb_handle contains '-air-'
+      assign family = 'MacBook Air'
+    elsif mb_handle contains 'macbook-pro' or mb_handle contains '-pro-'
+      assign family = 'MacBook Pro'
+    endif
+
+    assign seo_title = ''
+    if request.page_type == 'page'
+      assign seo_title = 'MacBook Repair Cost UK | iCorrect'
+    elsif request.page_type == 'product' and model_code != blank and repair_label != blank
+      assign seo_title = model_code | append: ' ' | append: repair_label | append: ' Cost UK | iCorrect'
+    elsif request.page_type == 'product' and model_code != blank
+      assign seo_title = model_code | append: ' MacBook Repair Cost UK | iCorrect'
+    elsif repair_label != blank and model_code == blank
+      assign seo_title = 'MacBook ' | append: repair_label | append: ' Cost UK | iCorrect'
+    elsif model_code != blank
+      assign seo_title = model_code | append: ' ' | append: family | append: ' Repair Cost UK | iCorrect'
+    else
+      assign short_title = mb_title_source | replace: ' Repair Prices', '' | replace: ' Prices', '' | strip
+      assign seo_title = short_title | append: ' Cost UK | iCorrect'
+      if short_title == blank or seo_title.size > 60
+        assign seo_title = family | append: ' Repair Cost UK | iCorrect'
+      endif
+    endif
+
+    if seo_title.size > 60
+      assign seo_title = 'MacBook Repair Cost UK | iCorrect'
+    endif
+
+    assign price_cents = 0
+    if request.page_type == 'product'
+      assign price_cents = product.price_min
+    elsif request.page_type == 'page'
+      capture price_raw
+        render 'macbook-min-price', price_collection: collections['macbook-screen-repair-prices']
+      endcapture
+      assign price_cents = price_raw | strip | plus: 0
+    else
+      capture price_raw
+        render 'macbook-min-price', price_collection: collection
+      endcapture
+      assign price_cents = price_raw | strip | plus: 0
+    endif
+
+    assign from_phrase = ''
+    if price_cents > 0
+      assign price_text = price_cents | money_without_trailing_zeros
+      assign from_phrase = ' from ' | append: price_text
+    endif
+
+    assign courier_line = ' Courier collection in London, tracked mail-in across the UK. 2-year warranty.'
+    assign seo_description = ''
+
+    if request.page_type == 'page'
+      if from_phrase != blank
+        assign seo_description = 'MacBook repair in the UK. Screen replacement' | append: from_phrase | append: '. Courier collection in London, tracked mail-in nationwide. 2-year warranty.'
+      else
+        assign seo_description = 'MacBook repair in the UK, including screen, keyboard, battery and board work. Courier collection in London, tracked mail-in nationwide. 2-year warranty.'
+      endif
+    elsif request.page_type == 'product'
+      assign repair_lower = repair_label | downcase
+      if model_code != blank and repair_lower != blank
+        assign seo_description = model_code | append: ' ' | append: repair_lower | append: from_phrase | append: '.' | append: courier_line
+      elsif model_code != blank
+        assign seo_description = model_code | append: ' MacBook repair' | append: from_phrase | append: '.' | append: courier_line
+      else
+        assign seo_description = mb_title_source | append: from_phrase | append: '.' | append: courier_line
+      endif
+    elsif repair_label == 'Screen Replacement' and model_code == blank
+      assign seo_description = 'MacBook screen replacement' | append: from_phrase | append: '. Genuine displays, True Tone kept.' | append: courier_line
+    elsif repair_label == 'Keyboard Replacement' and model_code == blank
+      assign seo_description = 'MacBook keyboard replacement' | append: from_phrase | append: '. No full top-case swap.' | append: courier_line
+    elsif repair_label == 'Battery Replacement' and model_code == blank
+      assign seo_description = 'MacBook battery replacement' | append: from_phrase | append: '. Original-specification cells.' | append: courier_line
+    elsif model_code != blank and repair_label == blank
+      assign seo_description = model_code | append: ' ' | append: family | append: ' repairs' | append: from_phrase | append: '. Screen, keyboard, battery and board work.' | append: courier_line
+    elsif repair_label != blank
+      assign repair_lower = repair_label | downcase
+      assign seo_description = 'MacBook ' | append: repair_lower | append: from_phrase | append: '.' | append: courier_line
+    else
+      assign seo_description = family | append: ' repairs' | append: from_phrase | append: '. Screen, keyboard, battery and board-level work.' | append: courier_line
+    endif
+
+    echo seo_title
+    echo '|||'
+    echo seo_description
+  endif
+-%}

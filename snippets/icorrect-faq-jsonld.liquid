@@ -1,0 +1,43 @@
+{% doc %}
+  FAQPage JSON-LD from the questions already rendered by an FAQ section.
+  Question and answer text are the visible heading and answer, with HTML removed.
+
+  @param {section} faq_section - FAQ section whose accordion blocks are on the page.
+{% enddoc %}
+{%- assign faq_emitted = 0 -%}
+{%- for block in faq_section.blocks -%}
+  {%- if block.type == 'accordion' and block.settings.heading != blank and block.settings.sub_head != blank -%}
+    {%- assign faq_emitted = faq_emitted | plus: 1 -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- if faq_emitted > 0 -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {%- assign faq_written = 0 -%}
+    {%- for block in faq_section.blocks -%}
+      {%- if block.type == 'accordion' and block.settings.heading != blank and block.settings.sub_head != blank -%}
+        {%- liquid
+          assign faq_question = block.settings.heading | strip_html | strip
+          assign faq_answer = block.settings.sub_head | replace: '</p>', ' ' | replace: '<br>', ' ' | replace: '<br/>', ' ' | replace: '<br />', ' ' | strip_html | strip_newlines | strip
+        -%}
+        {%- if faq_question != blank and faq_answer != blank -%}
+          {%- if faq_written > 0 -%},{%- endif -%}
+          {
+            "@type": "Question",
+            "name": {{ faq_question | json }},
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": {{ faq_answer | json }}
+            }
+          }
+          {%- assign faq_written = faq_written | plus: 1 -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+  ]
+}
+</script>
+{%- endif -%}

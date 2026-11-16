@@ -35,6 +35,12 @@
     {%- assign service_url = 'https://icorrect.co.uk/pages/apple-watch-repairs' -%}
   {%- endif -%}
 
+  {%- assign mb_low_cents = 0 -%}
+  {%- if device_type == 'macbook' -%}
+    {%- capture mb_low_raw -%}{%- render 'macbook-min-price', price_collection: collection -%}{%- endcapture -%}
+    {%- assign mb_low_cents = mb_low_raw | strip | plus: 0 -%}
+  {%- endif -%}
+
   {%- if device_type != '' -%}
   <script type="application/ld+json">
   {
@@ -49,15 +55,31 @@
       "@id": "https://icorrect.co.uk/#localbusiness",
       "name": "iCorrect"
     },
-    "areaServed": {
+    "areaServed": {%- if device_type == 'macbook' -%}[
+      {
+        "@type": "City",
+        "name": "London"
+      },
+      {
+        "@type": "Country",
+        "name": "United Kingdom"
+      }
+    ]{%- else -%}{
       "@type": "City",
       "name": "London"
-    },
+    }{%- endif -%},
     "availableChannel": {
       "@type": "ServiceChannel",
       "serviceUrl": {{ service_url | json }},
       "availableLanguage": "English"
-    }
+    }{%- if device_type == 'macbook' and mb_low_cents > 0 -%},
+    "offers": {
+      "@type": "AggregateOffer",
+      "priceCurrency": "GBP",
+      "lowPrice": {{ mb_low_cents | divided_by: 100.0 | json }},
+      "offerCount": {{ collection.products_count | json }},
+      "availability": "https://schema.org/InStock"
+    }{%- endif -%}
   }
   </script>
   {%- endif -%}
@@ -166,6 +188,46 @@
         "item": {{ request.origin | append: request.path | json }}
       }
     ]
+  }
+  </script>
+  {%- endif -%}
+
+  {%- if page.handle == 'macbook-repairs' or page.handle == 'macbook-repair-page' -%}
+    {%- capture hub_low_raw -%}{%- render 'macbook-listed-min-price' -%}{%- endcapture -%}
+    {%- assign hub_low_cents = hub_low_raw | strip | plus: 0 -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": "MacBook Repair",
+    "serviceType": "Electronics Repair",
+    "url": {{ request.origin | append: request.path | json }},
+    "provider": {
+      "@type": "LocalBusiness",
+      "@id": "https://icorrect.co.uk/#localbusiness",
+      "name": "iCorrect"
+    },
+    "areaServed": [
+      {
+        "@type": "City",
+        "name": "London"
+      },
+      {
+        "@type": "Country",
+        "name": "United Kingdom"
+      }
+    ],
+    "availableChannel": {
+      "@type": "ServiceChannel",
+      "serviceUrl": "https://icorrect.co.uk/pages/macbook-repairs",
+      "availableLanguage": "English"
+    }{%- if hub_low_cents > 0 -%},
+    "offers": {
+      "@type": "AggregateOffer",
+      "priceCurrency": "GBP",
+      "lowPrice": {{ hub_low_cents | divided_by: 100.0 | json }},
+      "availability": "https://schema.org/InStock"
+    }{%- endif -%}
   }
   </script>
   {%- endif -%}

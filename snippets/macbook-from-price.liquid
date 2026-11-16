@@ -1,0 +1,54 @@
+{% doc %}
+  Starting price for a MacBook collection, using the theme price element.
+  Renders nothing on London pages or when the collection has no positive price.
+
+  @param {string} [align] - Pass "center" under a centred heading.
+{% enddoc %}
+{%- liquid
+  assign show_from_price = false
+  if collection.handle contains 'macbook'
+    unless collection.handle contains 'london'
+      assign show_from_price = true
+    endunless
+  endif
+-%}
+{%- if show_from_price -%}
+  {%- capture from_cents_raw -%}{%- render 'macbook-min-price', price_collection: collection -%}{%- endcapture -%}
+  {%- assign from_cents = from_cents_raw | strip | plus: 0 -%}
+  {%- if from_cents > 0 -%}
+    {%- liquid
+      assign from_label = 'Repairs from'
+      if collection.handle contains 'screen'
+        assign from_label = 'Screen replacement from'
+      elsif collection.handle contains 'keyboard'
+        assign from_label = 'Keyboard replacement from'
+      elsif collection.handle contains 'battery'
+        assign from_label = 'Battery replacement from'
+      elsif collection.handle contains 'trackpad'
+        assign from_label = 'Trackpad repair from'
+      elsif collection.handle contains 'flexgate'
+        assign from_label = 'Flexgate repair from'
+      elsif collection.handle contains 'dustgate'
+        assign from_label = 'Dustgate repair from'
+      elsif collection.handle contains 'touch-bar' or collection.handle contains 'touchbar'
+        assign from_label = 'Touch Bar repair from'
+      elsif collection.handle contains 'charging' or collection.handle contains 'c-port'
+        assign from_label = 'Charging port repair from'
+      elsif collection.handle contains 'diagnostic'
+        assign from_label = 'Diagnostic from'
+      endif
+      assign from_money = from_cents | money_without_trailing_zeros
+    -%}
+    {{ 'component-price.css' | asset_url | stylesheet_tag }}
+    <div class="price{% if align == 'center' %} macbook-from-price--center{% endif %}">
+      <div class="price__container">
+        <div class="price__regular">
+          <span class="price-item price-item--regular">{{ from_label }} {{ from_money }}</span>
+        </div>
+      </div>
+    </div>
+    {%- if align == 'center' -%}
+      <style>.macbook-from-price--center{text-align:center;margin:0 0 12px}</style>
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}

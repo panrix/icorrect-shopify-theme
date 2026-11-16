@@ -1,0 +1,23 @@
+{% doc %}
+  Lowest positive variant price, in cents, across the MacBook price
+  collections linked from the repairs hub. Prints nothing if none resolve.
+{% enddoc %}
+{%- liquid
+  assign listed_min = 0
+  assign listed_handles = 'macbook-screen-repair-prices,macbook-keyboard-repair-prices,macbook-battery-repair-prices,macbook-diagnostic-prices,macbook-trackpad-repair-prices,macbook-flexgate-repair-prices,macbook-dustgate-repair-prices' | split: ','
+  for listed_handle in listed_handles
+    assign listed_collection = collections[listed_handle]
+    if listed_collection != blank
+      capture listed_raw
+        render 'macbook-min-price', price_collection: listed_collection
+      endcapture
+      assign listed_cents = listed_raw | strip | plus: 0
+      if listed_cents > 0
+        if listed_min == 0 or listed_cents < listed_min
+          assign listed_min = listed_cents
+        endif
+      endif
+    endif
+  endfor
+-%}
+{%- if listed_min > 0 -%}{{ listed_min }}{%- endif -%}

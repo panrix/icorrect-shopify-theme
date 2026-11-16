@@ -198,12 +198,23 @@
   })();
 </script>
 
+{%- if section.settings.emit_faq_schema -%}
+  {% render 'icorrect-faq-jsonld', faq_section: section %}
+{%- endif -%}
+
 {% schema %}
 {
   "name": "MacBook FAQs",
   "class": "section",
   "tag": "section",
   "settings": [
+    {
+      "type": "checkbox",
+      "id": "emit_faq_schema",
+      "label": "Output FAQ structured data",
+      "default": false,
+      "info": "Turn on for the one FAQ section on a MacBook page. Uses these questions and answers."
+    },
     {
       "type": "range",
       "id": "padding-top",

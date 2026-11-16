@@ -1,0 +1,48 @@
+{% doc %}
+  Crawlable links between the MacBook hub, the price pages and two model
+  collections. Same list pattern as snippets/repair-index.liquid.
+{% enddoc %}
+{%- liquid
+  assign related_here = request.path
+  assign related_count = 0
+-%}
+<nav class="ri ri--related page-width" aria-label="Related MacBook repairs">
+  <h2 class="ri__heading">Related MacBook repairs</h2>
+  <ul class="ri__list" role="list">
+    {%- if related_here != '/pages/macbook-repairs' -%}
+      {%- assign related_count = related_count | plus: 1 -%}
+      <li class="ri__item"><a class="ri__link" href="/pages/macbook-repairs">MacBook repairs</a></li>
+    {%- endif -%}
+    {%- if related_here != '/collections/macbook-screen-repair-prices' -%}
+      {%- assign related_count = related_count | plus: 1 -%}
+      <li class="ri__item"><a class="ri__link" href="{{ routes.collections_url }}/macbook-screen-repair-prices">MacBook screen replacement prices</a></li>
+    {%- endif -%}
+    {%- if related_here != '/collections/macbook-keyboard-repair-prices' -%}
+      {%- assign related_count = related_count | plus: 1 -%}
+      <li class="ri__item"><a class="ri__link" href="{{ routes.collections_url }}/macbook-keyboard-repair-prices">MacBook keyboard replacement prices</a></li>
+    {%- endif -%}
+    {%- if related_here != '/collections/macbook-battery-repair-prices' -%}
+      {%- assign related_count = related_count | plus: 1 -%}
+      <li class="ri__item"><a class="ri__link" href="{{ routes.collections_url }}/macbook-battery-repair-prices">MacBook battery replacement prices</a></li>
+    {%- endif -%}
+    {%- if related_here != '/collections/macbook-pro-13-m1-a2338-2020-repair-prices' -%}
+      {%- assign related_count = related_count | plus: 1 -%}
+      <li class="ri__item"><a class="ri__link" href="{{ routes.collections_url }}/macbook-pro-13-m1-a2338-2020-repair-prices">MacBook Pro 13-inch M1 (A2338) prices</a></li>
+    {%- endif -%}
+    {%- if related_here != '/collections/macbook-air-13-m1-a2337-2020-repair-prices' -%}
+      {%- assign related_count = related_count | plus: 1 -%}
+      <li class="ri__item"><a class="ri__link" href="{{ routes.collections_url }}/macbook-air-13-m1-a2337-2020-repair-prices">MacBook Air 13-inch M1 (A2337) prices</a></li>
+    {%- endif -%}
+  </ul>
+</nav>
+{%- if related_count > 0 -%}
+  <style>
+    .ri--related { max-width: 820px; margin: 0 auto; padding-top: 4px; padding-bottom: 36px; font-family: "Geist", Arial, sans-serif; }
+    .ri--related .ri__heading { margin: 0 0 10px; font-size: 14px; line-height: 1.4; font-weight: 600; letter-spacing: 0; color: #1d1d1f; text-align: left; }
+    .ri--related .ri__list { list-style: none; margin: 0; padding: 0; columns: 2 240px; column-gap: 28px; }
+    .ri--related .ri__item { break-inside: avoid; margin: 0; padding: 0; }
+    .ri--related .ri__link { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.06); font-size: 13px; line-height: 1.35; color: #424245; text-decoration: none; }
+    .ri--related .ri__link:hover, .ri--related .ri__link:focus-visible { color: #0070f3; }
+    @media (max-width: 749px) { .ri--related { padding-left: 20px; padding-right: 20px; } .ri--related .ri__list { columns: 1; } }
+  </style>
+{%- endif -%}

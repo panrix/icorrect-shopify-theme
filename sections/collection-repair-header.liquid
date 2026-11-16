@@ -6,6 +6,7 @@
   <div class="page-width">
     <div class="repair-section-header">
       <h1>{{ collection.title | escape }}</h1>
+      {% render 'macbook-from-price', align: 'center' %}
       {% if collection.description != blank %}
         <div class="repair-section-desc">
           {{ collection.description }}

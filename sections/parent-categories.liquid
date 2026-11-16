@@ -7,7 +7,12 @@
 <section class="parent-categories-{{ section.id }}">
   <div class="parent-categories-wrapper page-width">
     <div class="parent-categories-info">
-      {%- if section.settings.heading_tag == 'h1' -%}<h1>{{ heading_text }}</h1>{%- else -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.heading_tag == 'h1' -%}
+        <h1>{{ heading_text }}</h1>
+        {% render 'macbook-from-price', align: 'center' %}
+      {%- else -%}
+        <h2>{{ section.settings.heading }}</h2>
+      {%- endif -%}
       {% if section.settings.details != blank %}
         <p>{{ section.settings.details }}</p>
       {% endif %}
@@ -155,7 +160,12 @@
           {%- continue -%}
         {%- endif -%}
         <div class="parent-category-col col-{{ section.settings.column_per_row }}">
-          <img src="{{ block.settings.img | img_url: 'master' }}" alt="{{ block.settings.title }}">
+          <img
+            src="{{ block.settings.img | image_url: width: 800 }}"
+            alt="{{ block.settings.title | escape }}"
+            width="{{ block.settings.img.width }}"
+            height="{{ block.settings.img.height }}"
+          >
           <h3>{{ block.settings.title }}</h3>
           <div class="repair-services-btn">
             <p>{{ block.settings.price }}</p>
