@@ -57,7 +57,7 @@ test("mail-in email keeps the trust block and a generic clock", function () {
   assert.match(html, /We send packaging/);
   assert.match(html, /The following working day/);
   assert.match(html, /Typically 5 working days/);
-  assert.match(html, /719 Google reviews/);
+  assert.match(html, /750\+ Google reviews/);
   assert.match(html, /Calibrated in-house/);
   assert.match(html, /Typical repair time/);
   assert.match(html, /2-yr warranty/);
@@ -77,7 +77,7 @@ test("courier email uses collection-relative working days", function () {
   assert.match(html, /We collect/);
   assert.match(html, /From your door/);
   assert.match(html, /2 working days from collection/);
-  assert.match(html, /719 Google reviews/);
+  assert.match(html, /750\+ Google reviews/);
   assert.match(html, /£549/);
   assert.match(html, /Book this repair/);
   assert.doesNotMatch(html, /Free pack/);
@@ -95,7 +95,7 @@ test("diagnostic email names the model once and prices the diagnostic", function
   assert.match(html, /We diagnose &amp; email your quote/);
   assert.match(html, /1 working day after it arrives/);
   assert.match(html, /Device stays with us until you approve/);
-  assert.match(html, /719 Google reviews/);
+  assert.match(html, /750\+ Google reviews/);
   assert.match(html, />Diagnostic</);
   assert.match(html, /£49/);
   assert.match(html, /Book the diagnostic/);
@@ -152,7 +152,7 @@ test("a quote without card extras does not invent them", function () {
   assert.match(html, /£0/);
   assert.doesNotMatch(html, /We can fix this/);
   assert.doesNotMatch(html, /Your repair quote/);
-  assert.doesNotMatch(html, /719 Google reviews/);
+  assert.doesNotMatch(html, /750\+ Google reviews/);
   assert.doesNotMatch(html, /Free pack/);
 });
 
@@ -167,8 +167,8 @@ test("parts and warranty still build the screenshot trust block", function () {
     warranty: "2-year warranty",
     totalPrice: "£329"
   });
-  assert.match(html, /4\.9/);
-  assert.match(html, /719 Google reviews/);
+  assert.match(html, /4\.8/);
+  assert.match(html, /750\+ Google reviews/);
   assert.match(html, /Original parts/);
   assert.match(html, /Calibrated in-house/);
   assert.match(html, /1 working day/);
