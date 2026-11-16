@@ -390,6 +390,9 @@
   {% comment %} Keep Meta attribution early (tiny, first-party cookies only). {% endcomment %}
   {% render 'meta-pixel-attribution' %}
 
+  {% comment %} Quote source tracking: session first touch for quote_events + hidden cart attributes. {% endcomment %}
+  {% render 'quote-attribution' %}
+
   {% comment %}
     Defer GA4 + PostHog until idle/load so their network fetch does not compete with
     the homepage LCP image (PSI: ~890ms resource load delay on MacBook_Repair hero).

@@ -1223,7 +1223,7 @@
   }
 
   function buildDiagnosticBadges(device) {
-    return svcBadge('turnaround', CFG.diagnosticTurnaround || 'Quote in 2 working days') +
+    return svcBadge('turnaround', CFG.diagnosticTurnaround || 'Quote in 1 working day') +
       svcBadge('diagnostic', 'Full report and quote sent via email');
   }
 
@@ -1268,7 +1268,7 @@
       return window.ICorrectRepairJourney.turnaroundClaimLabel(device, o);
     }
     if (o.diagnostic) {
-      return CFG.diagnosticTurnaround || 'Quote in 2 working days';
+      return CFG.diagnosticTurnaround || 'Quote in 1 working day';
     }
     if (needsAppleFaceIdModule(device, o)) return '5-7 working days';
     var days = repairBenchDays(device, o);
@@ -1352,11 +1352,11 @@
   function repairBenchDays(device, opts) {
     var o = repairClockOpts(opts);
     if (window.ICorrectRepairJourney) return window.ICorrectRepairJourney.repairBenchDays(device, o);
-    if (o.diagnostic) return 2;
+    if (o.diagnostic) return 1;
     if (needsAppleFaceIdModule(device, o)) return 7;
-    if (device === 'iphone') return 2;
+    if (device === 'iphone') return 1;
     if (device === 'watch') return 3;
-    return 3;
+    return 2;
   }
 
   function parseISODate(iso) {
@@ -1469,11 +1469,11 @@
         kind: 'diagnostic',
         steps: [
           { title: 'We collect', meta: collect ? formatJourneyDate(collect) : 'Pick a collection window' },
-          { title: 'We diagnose & email your quote', meta: collect ? formatJourneyDate(addWorkingDays(collect, 2)) : '2 working days after collection' },
+          { title: 'We diagnose & email your quote', meta: collect ? formatJourneyDate(addWorkingDays(collect, 1)) : '1 working day after collection' },
           { title: 'You decide next', meta: 'Device stays with us until you approve' }
         ],
         returnDate: null,
-        quoteDate: collect ? addWorkingDays(collect, 2) : null
+        quoteDate: collect ? addWorkingDays(collect, 1) : null
       };
     }
     var bench = repairBenchDays(S.device);
@@ -1532,7 +1532,7 @@
     var weReceive = addWorkingDays(ship, 1);
     var youPostBy = weReceive;
     if (diagnostic) {
-      var quoteDate = addWorkingDays(weReceive, 2);
+      var quoteDate = addWorkingDays(weReceive, 1);
       return {
         kind: 'diagnostic',
         steps: [
@@ -3712,14 +3712,23 @@
         var phId = window.icorrectQuoteEvents && typeof window.icorrectQuoteEvents.phDistinctId === 'function'
           ? window.icorrectQuoteEvents.phDistinctId()
           : '';
-        if (phId) {
+        // Hidden cart attributes (copied onto the order's note attributes):
+        // PostHog id plus the session traffic source from snippets/quote-attribution.
+        var cartAttrs = {};
+        try {
+          if (window.icorrectAttribution && typeof window.icorrectAttribution.forCart === 'function') {
+            cartAttrs = window.icorrectAttribution.forCart() || {};
+          }
+        } catch (e) { cartAttrs = {}; }
+        if (phId) cartAttrs._ph_distinct_id = phId;
+        if (Object.keys(cartAttrs).length) {
           await fetch(getShopifyRoot() + 'cart/update.js', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'Accept': 'application/json'
             },
-            body: JSON.stringify({ attributes: { _ph_distinct_id: phId } })
+            body: JSON.stringify({ attributes: cartAttrs })
           }).catch(function () {});
         }
       } catch (e) {}
@@ -3940,7 +3949,7 @@
     } else if (S.device === 'iphone' || S.device === 'ipad') {
       feeOff = ' Collection and return are included. If you go ahead with the repair, we take the £69 off the repair price.';
     }
-    var guideCopy = 'The repair prices below are a guide. We\'ll complete the diagnostic within 2 working days of receiving your device and email you a quote. The device stays with us while you decide whether to proceed.' + feeOff;
+    var guideCopy = 'The repair prices below are a guide. We\'ll complete the diagnostic within 1 working day of receiving your device and email you a quote. The device stays with us while you decide whether to proceed.' + feeOff;
 
     container.innerHTML = urgentHtml +
       '<div class="qw-res" id="qwResCard" data-base="' + diagPrice + '" data-vid="' + diagVariantId + '">' +
