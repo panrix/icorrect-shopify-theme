@@ -62,7 +62,7 @@
         "mob_padding_bottom": 40,
         "bg": "#fafafa",
         "heading": "MacBook Flexgate Repair Prices",
-        "details": "<p>If your MacBook screen turns black when opened past a certain angle, or you see stage light patterns glowing across the bottom edge of the screen, there is a strong chance you are experiencing Flexgate. This issue was most common on MacBook Pro models from 2016 to 2018, where the original backlight cable was manufactured a few millimetres too short. Over time, the cable frays or tears, cutting off the backlight when the lid is opened normally.</p><p><br/>At iCorrect, we repair Flexgate by replacing and lengthening the backlight flex cable itself. This repair is carried out under a microscope by our microelectronics team, and avoids the need to replace the entire screen assembly. Our method is sustainable, cost-effective, and fully covered under a two-year warranty.</p>",
+        "details": "",
         "btn": "",
         "link": "",
         "btn_2": "",
@@ -356,6 +356,28 @@
     },
     "repair_index": {
       "type": "repair-index"
+    },
+    "about_this_repair": {
+      "type": "about-info",
+      "name": "About this repair",
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 12,
+        "mob_padding_top": 28,
+        "mob_padding_bottom": 8,
+        "bg": "#ffffff",
+        "heading": "About this repair",
+        "details": "<p>If your MacBook screen turns black when opened past a certain angle, or you see stage light patterns glowing across the bottom edge of the screen, there is a strong chance you are experiencing Flexgate. This issue was most common on MacBook Pro models from 2016 to 2018, where the original backlight cable was manufactured a few millimetres too short. Over time, the cable frays or tears, cutting off the backlight when the lid is opened normally.</p><p><br/>At iCorrect, we repair Flexgate by replacing and lengthening the backlight flex cable itself. This repair is carried out under a microscope by our microelectronics team, and avoids the need to replace the entire screen assembly. Our method is sustainable, cost-effective, and fully covered under a two-year warranty.</p>",
+        "btn": "",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 28,
+        "heading_size_mobile": 22,
+        "heading_line_height_desktop": 34,
+        "heading_line_height_mobile": 28,
+        "heading_tag": "h2"
+      }
     }
   },
   "order": [
@@ -364,6 +386,7 @@
     "main_banner_and_video_HjbmW9",
     "about_info_RWbQxj",
     "quote_wizard_top",
+    "about_this_repair",
     "model_number_search_rRtqjQ",
     "featured_collection_AfhUDd",
     "about_info_XAqnaH",

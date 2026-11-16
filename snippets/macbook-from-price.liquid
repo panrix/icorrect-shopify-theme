@@ -1,54 +1,79 @@
 {% doc %}
-  Starting price for a MacBook collection, using the theme price element.
-  Renders nothing on London pages or when the collection has no positive price.
+  Starting price and one courier line for a MacBook page.
+  Same 14px size on every page, including under the smaller wizard H1.
+  Courier wording matches the site. Collection is not described as free,
+  because that only applies once the repair is £200 or more.
 
   @param {string} [align] - Pass "center" under a centred heading.
+  @param {collection} [price_collection] - Collection to price. Defaults to the current collection, or the screen price list on the MacBook repairs page.
 {% enddoc %}
 {%- liquid
-  assign show_from_price = false
-  if collection.handle contains 'macbook'
-    unless collection.handle contains 'london'
-      assign show_from_price = true
+  assign price_source = price_collection
+  if price_source == blank and request.page_type == 'page' and page.handle == 'macbook-repairs'
+    assign price_source = collections['macbook-screen-repair-prices']
+  endif
+  if price_source == blank
+    assign price_source = collection
+  endif
+
+  assign show_offer = false
+  assign offer_handle = price_source.handle | default: ''
+  if request.page_type == 'page' and page.handle == 'macbook-repairs'
+    assign show_offer = true
+    assign offer_handle = 'macbook-repairs'
+  elsif offer_handle contains 'macbook'
+    unless offer_handle contains 'london'
+      assign show_offer = true
     endunless
   endif
 -%}
-{%- if show_from_price -%}
-  {%- capture from_cents_raw -%}{%- render 'macbook-from-cents', price_collection: collection -%}{%- endcapture -%}
+{%- if show_offer -%}
+  {%- capture from_cents_raw -%}{%- render 'macbook-from-cents', price_collection: price_source -%}{%- endcapture -%}
   {%- assign from_cents = from_cents_raw | strip | plus: 0 -%}
   {%- if from_cents > 0 -%}
     {%- liquid
       assign from_label = 'Repairs from'
-      if collection.handle contains 'screen'
+      if offer_handle contains 'screen' or offer_handle == 'macbook-repairs'
         assign from_label = 'Screen replacement from'
-      elsif collection.handle contains 'keyboard'
+      elsif offer_handle contains 'keyboard'
         assign from_label = 'Keyboard replacement from'
-      elsif collection.handle contains 'battery'
+      elsif offer_handle contains 'battery'
         assign from_label = 'Battery replacement from'
-      elsif collection.handle contains 'trackpad'
+      elsif offer_handle contains 'trackpad'
         assign from_label = 'Trackpad repair from'
-      elsif collection.handle contains 'flexgate'
+      elsif offer_handle contains 'flexgate'
         assign from_label = 'Flexgate repair from'
-      elsif collection.handle contains 'dustgate'
+      elsif offer_handle contains 'dustgate'
         assign from_label = 'Dustgate repair from'
-      elsif collection.handle contains 'touch-bar' or collection.handle contains 'touchbar'
+      elsif offer_handle contains 'touch-bar' or offer_handle contains 'touchbar'
         assign from_label = 'Touch Bar repair from'
-      elsif collection.handle contains 'charging' or collection.handle contains 'c-port'
+      elsif offer_handle contains 'charging' or offer_handle contains 'c-port'
         assign from_label = 'Charging port repair from'
-      elsif collection.handle contains 'diagnostic'
+      elsif offer_handle contains 'diagnostic'
         assign from_label = 'Diagnostic from'
       endif
       assign from_money = from_cents | money_without_trailing_zeros
     -%}
-    {{ 'component-price.css' | asset_url | stylesheet_tag }}
-    <div class="price{% if align == 'center' %} macbook-from-price--center{% endif %}">
-      <div class="price__container">
-        <div class="price__regular">
-          <span class="price-item price-item--regular">{{ from_label }} {{ from_money }}</span>
-        </div>
-      </div>
-    </div>
-    {%- if align == 'center' -%}
-      <style>.macbook-from-price--center{text-align:center;margin:0 0 12px}</style>
-    {%- endif -%}
+    <p class="macbook-from-price{% if align == 'center' %} macbook-from-price--center{% endif %}">{{ from_label }} {{ from_money }}</p>
   {%- endif -%}
+  <p class="macbook-benefit{% if align == 'center' %} macbook-from-price--center{% endif %}">Courier collection across London, tracked mail-in nationwide.</p>
+  <style>
+    .macbook-from-price,
+    .macbook-benefit {
+      margin: 0 0 6px;
+      font-size: 14px;
+      line-height: 1.4;
+      letter-spacing: 0;
+      font-weight: 600;
+      color: #1d1d1f;
+    }
+    .macbook-benefit {
+      font-weight: 400;
+      color: #6e6e73;
+      margin-bottom: 0;
+    }
+    .macbook-from-price--center {
+      text-align: center;
+    }
+  </style>
 {%- endif -%}

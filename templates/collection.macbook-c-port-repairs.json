@@ -62,7 +62,7 @@
         "mob_padding_bottom": 40,
         "bg": "#fafafa",
         "heading": "MacBook Charging Port Repair Prices",
-        "details": "<p>If your MacBook has stopped charging, only powers on when the charger is angled a certain way, or does not detect power at all, the charging port may be worn, blocked, or damaged. This is one of the most common faults we see.</p><p><br/>At iCorrect, we specialise in MacBook charging port repairs across both MacBook Air and MacBook Pro models. Whether your device uses MagSafe or USB-C, we carry out precision repairs using original components and factory-level techniques. Every charging port is tested for power draw, voltage stability, and thermal performance before we return the device to you.</p><p><br/>If we find the fault goes beyond the charging port itself, we do not simply label it unrepairable or recommend a full logic board replacement. We go deeper, identifying the power delivery fault on the board and completing the repair at micro level when required. That is what sets us apart. We repair what others write off.</p>",
+        "details": "",
         "btn": "",
         "link": "",
         "btn_2": "",
@@ -413,6 +413,28 @@
     },
     "repair_index": {
       "type": "repair-index"
+    },
+    "about_this_repair": {
+      "type": "about-info",
+      "name": "About this repair",
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 12,
+        "mob_padding_top": 28,
+        "mob_padding_bottom": 8,
+        "bg": "#ffffff",
+        "heading": "About this repair",
+        "details": "<p>If your MacBook has stopped charging, only powers on when the charger is angled a certain way, or does not detect power at all, the charging port may be worn, blocked, or damaged. This is one of the most common faults we see.</p><p><br/>At iCorrect, we specialise in MacBook charging port repairs across both MacBook Air and MacBook Pro models. Whether your device uses MagSafe or USB-C, we carry out precision repairs using original components and factory-level techniques. Every charging port is tested for power draw, voltage stability, and thermal performance before we return the device to you.</p><p><br/>If we find the fault goes beyond the charging port itself, we do not simply label it unrepairable or recommend a full logic board replacement. We go deeper, identifying the power delivery fault on the board and completing the repair at micro level when required. That is what sets us apart. We repair what others write off.</p>",
+        "btn": "",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 28,
+        "heading_size_mobile": 22,
+        "heading_line_height_desktop": 34,
+        "heading_line_height_mobile": 28,
+        "heading_tag": "h2"
+      }
     }
   },
   "order": [
@@ -421,6 +443,7 @@
     "main_banner_and_video_HjbmW9",
     "about_info_RWbQxj",
     "quote_wizard_top",
+    "about_this_repair",
     "model_number_search_E6ekrC",
     "featured_collection_AfhUDd",
     "about_info_XAqnaH",

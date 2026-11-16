@@ -62,7 +62,7 @@
         "mob_padding_bottom": 40,
         "bg": "#f5f5f7",
         "heading": "MacBook Battery Repair Prices",
-        "details": "<p>If your MacBook battery is draining fast, shutting down unexpectedly, or no longer holding charge, it is probably time for a replacement. At iCorrect, we complete battery replacements with care, precision, and the right part for your model. For newer models, we use original batteries pulled from donor MacBooks and tested in-house. For older models, where original batteries are no longer available, we use only the highest-grade OEM batteries available.</p><p><br/>This is not just a part swap. Every MacBook battery replacement includes pre-repair diagnostics, proper discharge, calibrated fitting, and post-repair rundown testing. We do not just fit a battery and hope for the best. We test, verify, and ensure that it performs exactly as it should. Our goal is to restore your MacBook’s battery life and reliability, just as it was when you first bought it.</p>",
+        "details": "",
         "btn": "",
         "link": "",
         "btn_2": "",
@@ -413,6 +413,28 @@
     },
     "repair_index": {
       "type": "repair-index"
+    },
+    "about_this_repair": {
+      "type": "about-info",
+      "name": "About this repair",
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 12,
+        "mob_padding_top": 28,
+        "mob_padding_bottom": 8,
+        "bg": "#ffffff",
+        "heading": "About this repair",
+        "details": "<p>If your MacBook battery is draining fast, shutting down unexpectedly, or no longer holding charge, it is probably time for a replacement. At iCorrect, we complete battery replacements with care, precision, and the right part for your model. For newer models, we use original batteries pulled from donor MacBooks and tested in-house. For older models, where original batteries are no longer available, we use only the highest-grade OEM batteries available.</p><p><br/>This is not just a part swap. Every MacBook battery replacement includes pre-repair diagnostics, proper discharge, calibrated fitting, and post-repair rundown testing. We do not just fit a battery and hope for the best. We test, verify, and ensure that it performs exactly as it should. Our goal is to restore your MacBook’s battery life and reliability, just as it was when you first bought it.</p>",
+        "btn": "",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 28,
+        "heading_size_mobile": 22,
+        "heading_line_height_desktop": 34,
+        "heading_line_height_mobile": 28,
+        "heading_tag": "h2"
+      }
     }
   },
   "order": [
@@ -421,6 +443,7 @@
     "main_banner_and_video_HjbmW9",
     "about_info_RWbQxj",
     "quote_wizard_top",
+    "about_this_repair",
     "model_number_search_QM97Db",
     "featured_collection_AfhUDd",
     "about_info_XAqnaH",

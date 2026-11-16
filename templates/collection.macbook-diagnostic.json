@@ -53,7 +53,7 @@
         "mob_padding_bottom": 40,
         "bg": "#ffffff",
         "heading": "MacBook Diagnostic Prices",
-        "details": "<p>If your MacBook is not turning on, behaving erratically, or has suffered liquid damage, the first step is a proper diagnostic. This is not a quick surface-level check. At iCorrect, we run a full inspection of your MacBook’s battery, charging system, logic board, and internal circuitry, right down to microchip level.</p><p><br/>We specialise in the faults that Apple and other shops cannot or will not fix. Devices that are declared unrepairable elsewhere are where our work begins. We disassemble your MacBook, perform detailed power tests, inspect the logic board under a microscope, and pinpoint the exact cause of the issue. This allows us to offer a precise, targeted repair that restores function without unnecessary part replacements.</p><p><br/>You will receive a full report and a fixed-price quote. Then it is your call. If the repair cost is high, we will advise you clearly on the pros and cons. We believe repair is nearly always better than replacement, and we are one of the few teams who can actually prove that.</p>",
+        "details": "",
         "btn": "",
         "link": "",
         "btn_2": "",
@@ -355,6 +355,28 @@
     },
     "repair_index": {
       "type": "repair-index"
+    },
+    "about_this_repair": {
+      "type": "about-info",
+      "name": "About this repair",
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 12,
+        "mob_padding_top": 28,
+        "mob_padding_bottom": 8,
+        "bg": "#ffffff",
+        "heading": "About this repair",
+        "details": "<p>If your MacBook is not turning on, behaving erratically, or has suffered liquid damage, the first step is a proper diagnostic. This is not a quick surface-level check. At iCorrect, we run a full inspection of your MacBook’s battery, charging system, logic board, and internal circuitry, right down to microchip level.</p><p><br/>We specialise in the faults that Apple and other shops cannot or will not fix. Devices that are declared unrepairable elsewhere are where our work begins. We disassemble your MacBook, perform detailed power tests, inspect the logic board under a microscope, and pinpoint the exact cause of the issue. This allows us to offer a precise, targeted repair that restores function without unnecessary part replacements.</p><p><br/>You will receive a full report and a fixed-price quote. Then it is your call. If the repair cost is high, we will advise you clearly on the pros and cons. We believe repair is nearly always better than replacement, and we are one of the few teams who can actually prove that.</p>",
+        "btn": "",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 28,
+        "heading_size_mobile": 22,
+        "heading_line_height_desktop": 34,
+        "heading_line_height_mobile": 28,
+        "heading_tag": "h2"
+      }
     }
   },
   "order": [
@@ -363,6 +385,7 @@
     "main_banner_and_video_HjbmW9",
     "about_info_RWbQxj",
     "quote_wizard_top",
+    "about_this_repair",
     "model_number_search_xHYbGj",
     "featured_collection_AfhUDd",
     "about_info_XAqnaH",

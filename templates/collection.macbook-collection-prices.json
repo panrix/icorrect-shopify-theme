@@ -269,12 +269,17 @@
     },
     "repair_index": {
       "type": "repair-index"
+    },
+    "macbook_about_repair": {
+      "type": "macbook-about-repair",
+      "settings": {}
     }
   },
   "order": [
     "banner",
     "collection_repair_header_top",
     "quote_wizard_top",
+    "macbook_about_repair",
     "product-grid",
     "icorrect_product_grid_AAVQCj",
     "repair_context",

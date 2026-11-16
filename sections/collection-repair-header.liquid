@@ -7,7 +7,7 @@
     <div class="repair-section-header">
       <h1>{{ collection.title | escape }}</h1>
       {% render 'macbook-from-price', align: 'center' %}
-      {% if collection.description != blank %}
+      {% if collection.description != blank and template.suffix != 'macbook-collection-prices' %}
         <div class="repair-section-desc">
           {{ collection.description }}
         </div>

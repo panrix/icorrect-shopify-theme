@@ -1,0 +1,44 @@
+{% comment %}
+  Long collection description, placed below the quote wizard.
+  The header above the wizard keeps the H1, price and one courier line.
+{% endcomment %}
+{%- if collection.handle contains 'macbook' and collection.description != blank -%}
+  {%- unless collection.handle contains 'london' -%}
+    <section class="macbook-about-repair page-width" id="about-repair-{{ section.id }}">
+      <h2>About this repair</h2>
+      <div class="rte">{{ collection.description }}</div>
+    </section>
+    <style>
+      #about-repair-{{ section.id }} {
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 28px 20px 8px;
+      }
+      #about-repair-{{ section.id }} h2 {
+        margin: 0 0 12px;
+        font-size: 28px;
+        line-height: 1.2;
+        color: #1d1d1f;
+      }
+      #about-repair-{{ section.id }} p {
+        margin: 0 0 1rem;
+        font-size: 16px;
+        line-height: 1.6;
+        color: #333;
+      }
+    </style>
+  {%- endunless -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "About this repair",
+  "tag": "section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "About this repair"
+    }
+  ]
+}
+{% endschema %}

@@ -3,8 +3,24 @@
   if section.settings.heading_tag == 'h1' and collection.title != blank
     assign heading_text = collection.title | escape
   endif
+  assign macbook_compact = false
+  if section.settings.heading_tag == 'h1' and collection.handle contains 'macbook'
+    unless collection.handle contains 'london'
+      assign macbook_compact = true
+    endunless
+  endif
+  assign pad_top = section.settings.padding_top
+  assign pad_bottom = section.settings.padding_bottom
+  assign mob_pad_top = section.settings.mob_padding_top
+  assign mob_pad_bottom = section.settings.mob_padding_bottom
+  if macbook_compact
+    assign pad_top = 24
+    assign pad_bottom = 8
+    assign mob_pad_top = 16
+    assign mob_pad_bottom = 4
+  endif
 -%}
-<section class="about-info-{{ section.id }}">
+<section class="about-info-{{ section.id }}{% if macbook_compact %} macbook-compact-intro{% endif %}">
   <div class="about-info-wrapper page-width">
     <div class="about-info-row">
       {%- if section.settings.heading_tag == 'h1' -%}
@@ -14,9 +30,11 @@
         <h2>{{ section.settings.heading }}</h2>
       {%- endif -%}
 
+      {%- unless macbook_compact -%}
       <div class="about-details">
         {{ section.settings.details }}
       </div>
+      {%- endunless -%}
 
       {% if section.settings.btn != blank %}
         <div class="read-more-btn">
@@ -35,8 +53,8 @@
 
 <style>
   .about-info-{{ section.id }}{
-    padding-top: {{ section.settings.padding_top }}px;
-    padding-bottom: {{ section.settings.padding_bottom }}px;
+    padding-top: {{ pad_top }}px;
+    padding-bottom: {{ pad_bottom }}px;
     width: 100%;
     background-color: {{ section.settings.bg }};
   }
@@ -46,14 +64,14 @@
     margin: 0 auto;
   }
 
-  .about-info-{{ section.id }} .about-info-row h1, .about-info-{{ section.id }} .about-info-row h2{
+    .about-info-{{ section.id }} .about-info-row h1, .about-info-{{ section.id }} .about-info-row h2{
     color: #1D1D1F;
     font-size: {{ section.settings.heading_size_desktop }}px;
     font-weight: 600;
     line-height: {{ section.settings.heading_line_height_desktop }}px;
     text-align: center;
     margin: 0;
-    padding: 0 0 24px;
+    padding: 0 0 {% if macbook_compact %}8px{% else %}24px{% endif %};
   }
 
   .about-info-{{ section.id }} .about-details{
@@ -99,14 +117,14 @@
 
   @media (max-width: 767px){
     .about-info-{{ section.id }}{
-      padding-top: {{ section.settings.mob_padding_top }}px;
-      padding-bottom: {{ section.settings.mob_padding_bottom }}px;
+      padding-top: {{ mob_pad_top }}px;
+      padding-bottom: {{ mob_pad_bottom }}px;
     }
 
     .about-info-{{ section.id }} .about-info-row h1, .about-info-{{ section.id }} .about-info-row h2{
       font-size: {{ section.settings.heading_size_mobile }}px;
       line-height: {{ section.settings.heading_line_height_mobile }}px;
-      padding: 0 0 20px;
+      padding: 0 0 {% if macbook_compact %}8px{% else %}20px{% endif %};
     }
 
     .about-info-{{ section.id }} .about-info-row p{

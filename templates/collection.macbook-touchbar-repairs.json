@@ -62,7 +62,7 @@
         "mob_padding_bottom": 40,
         "bg": "#fafafa",
         "heading": "MacBook Touch Bar Repair Prices",
-        "details": "<p>If your MacBook Touch Bar has gone dark, become unresponsive, or started glitching, it is likely a fault with the sensor module, the display strip, or the connection into the logic board. This is a common issue on models with Touch Bar, especially following light liquid exposure or impact around the top case.</p><p><br/>At iCorrect, we carry out precise MacBook Touch Bar repairs by replacing the specific component at fault. That could be the Touch Bar itself or a damaged component on the logic board. Unlike Apple, we do not replace the full top case or the full logic board. Our approach is more sustainable, avoids unnecessary cost, and restores your MacBook to full working condition.</p><p><br/>Every Touch Bar repair is tested thoroughly for brightness, response accuracy, and touch input before your MacBook is returned. It will look and feel exactly as it did before the fault developed.</p>",
+        "details": "",
         "btn": "",
         "link": "",
         "btn_2": "",
@@ -365,6 +365,28 @@
     },
     "repair_index": {
       "type": "repair-index"
+    },
+    "about_this_repair": {
+      "type": "about-info",
+      "name": "About this repair",
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 12,
+        "mob_padding_top": 28,
+        "mob_padding_bottom": 8,
+        "bg": "#ffffff",
+        "heading": "About this repair",
+        "details": "<p>If your MacBook Touch Bar has gone dark, become unresponsive, or started glitching, it is likely a fault with the sensor module, the display strip, or the connection into the logic board. This is a common issue on models with Touch Bar, especially following light liquid exposure or impact around the top case.</p><p><br/>At iCorrect, we carry out precise MacBook Touch Bar repairs by replacing the specific component at fault. That could be the Touch Bar itself or a damaged component on the logic board. Unlike Apple, we do not replace the full top case or the full logic board. Our approach is more sustainable, avoids unnecessary cost, and restores your MacBook to full working condition.</p><p><br/>Every Touch Bar repair is tested thoroughly for brightness, response accuracy, and touch input before your MacBook is returned. It will look and feel exactly as it did before the fault developed.</p>",
+        "btn": "",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 28,
+        "heading_size_mobile": 22,
+        "heading_line_height_desktop": 34,
+        "heading_line_height_mobile": 28,
+        "heading_tag": "h2"
+      }
     }
   },
   "order": [
@@ -373,6 +395,7 @@
     "main_banner_and_video_HjbmW9",
     "about_info_RWbQxj",
     "quote_wizard_top",
+    "about_this_repair",
     "model_number_search_pqcJaL",
     "featured_collection_AfhUDd",
     "about_info_XAqnaH",

@@ -62,7 +62,7 @@
         "mob_padding_bottom": 40,
         "bg": "#fafafa",
         "heading": "MacBook Flexgate Repair Prices",
-        "details": "<p>If your MacBook screen only works at certain angles or shows flickering, strange bars, or colour distortion, you may be experiencing a fault known as Dustgate. It is caused by dust particles entering the gap between your screen and the housing. Over time, this dust imprints onto the screen’s flex cables and causes signal failure.</p><p><br/>At iCorrect, we pioneered the Dustgate repair. We do not replace the entire screen like Apple or most third-party shops. Instead, we repair or replace the affected flex cables under a microscope, restoring your original screen without waste. It is a proper, sustainable repair that saves money, extends the life of your MacBook, and comes with a two-year warranty.</p>",
+        "details": "",
         "btn": "",
         "link": "",
         "btn_2": "",
@@ -356,6 +356,28 @@
     },
     "repair_index": {
       "type": "repair-index"
+    },
+    "about_this_repair": {
+      "type": "about-info",
+      "name": "About this repair",
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 12,
+        "mob_padding_top": 28,
+        "mob_padding_bottom": 8,
+        "bg": "#ffffff",
+        "heading": "About this repair",
+        "details": "<p>If your MacBook screen only works at certain angles or shows flickering, strange bars, or colour distortion, you may be experiencing a fault known as Dustgate. It is caused by dust particles entering the gap between your screen and the housing. Over time, this dust imprints onto the screen’s flex cables and causes signal failure.</p><p><br/>At iCorrect, we pioneered the Dustgate repair. We do not replace the entire screen like Apple or most third-party shops. Instead, we repair or replace the affected flex cables under a microscope, restoring your original screen without waste. It is a proper, sustainable repair that saves money, extends the life of your MacBook, and comes with a two-year warranty.</p>",
+        "btn": "",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 28,
+        "heading_size_mobile": 22,
+        "heading_line_height_desktop": 34,
+        "heading_line_height_mobile": 28,
+        "heading_tag": "h2"
+      }
     }
   },
   "order": [
@@ -364,6 +386,7 @@
     "main_banner_and_video_HjbmW9",
     "about_info_RWbQxj",
     "quote_wizard_top",
+    "about_this_repair",
     "model_number_search_Bm7aTy",
     "featured_collection_AfhUDd",
     "about_info_XAqnaH",

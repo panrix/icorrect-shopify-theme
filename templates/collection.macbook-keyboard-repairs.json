@@ -62,7 +62,7 @@
         "mob_padding_bottom": 40,
         "bg": "#fafafa",
         "heading": "MacBook Keyboard Repair Prices",
-        "details": "<p>MacBook keyboard faults can start with just one sticky key or a missed press. Sometimes keys feel crunchy or misfire. Other times, they register multiple times or do nothing at all. </p><p><br/>At iCorrect, we test every keyboard under load before we begin. If we spot liquid under the backlight or key matrix, we will recommend a diagnostic to make sure the logic board and internal components are still safe. We only proceed once we are confident the issue is isolated.</p><p><br/>We replace the keyboard itself, not the entire top case. That allows us to retain the original battery and trackpad, avoid unnecessary waste, and keep your costs down. Once fitted, every keyboard is type-tested and approved by a senior technician before it goes out the door. Your MacBook will feel like new again.</p>",
+        "details": "",
         "btn": "",
         "link": "",
         "btn_2": "",
@@ -353,6 +353,28 @@
     },
     "repair_index": {
       "type": "repair-index"
+    },
+    "about_this_repair": {
+      "type": "about-info",
+      "name": "About this repair",
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 12,
+        "mob_padding_top": 28,
+        "mob_padding_bottom": 8,
+        "bg": "#ffffff",
+        "heading": "About this repair",
+        "details": "<p>MacBook keyboard faults can start with just one sticky key or a missed press. Sometimes keys feel crunchy or misfire. Other times, they register multiple times or do nothing at all. </p><p><br/>At iCorrect, we test every keyboard under load before we begin. If we spot liquid under the backlight or key matrix, we will recommend a diagnostic to make sure the logic board and internal components are still safe. We only proceed once we are confident the issue is isolated.</p><p><br/>We replace the keyboard itself, not the entire top case. That allows us to retain the original battery and trackpad, avoid unnecessary waste, and keep your costs down. Once fitted, every keyboard is type-tested and approved by a senior technician before it goes out the door. Your MacBook will feel like new again.</p>",
+        "btn": "",
+        "link": "",
+        "btn_2": "",
+        "link_2": "",
+        "heading_size_desktop": 28,
+        "heading_size_mobile": 22,
+        "heading_line_height_desktop": 34,
+        "heading_line_height_mobile": 28,
+        "heading_tag": "h2"
+      }
     }
   },
   "order": [
@@ -361,6 +383,7 @@
     "main_banner_and_video_HjbmW9",
     "about_info_RWbQxj",
     "quote_wizard_top",
+    "about_this_repair",
     "model_number_search_amJLmF",
     "featured_collection_AfhUDd",
     "about_info_XAqnaH",

@@ -199,6 +199,23 @@ describe('MacBook from-prices match catalogue variants', () => {
   }
 });
 
+describe('MacBook intro stays short above the wizard', () => {
+  it('puts the screen essay below the quote wizard and keeps a short courier line', () => {
+    const screen = JSON.parse(read('templates/collection.macbook-screen-repair.json').replace(/^\s*\/\*[\s\S]*?\*\/\s*/, ''));
+    const order = screen.order;
+    const wizard = order.indexOf('quote_wizard_top');
+    const about = order.indexOf('about_this_repair');
+    assert.ok(wizard > 0 && about > wizard);
+    assert.equal(screen.sections.about_info_RWbQxj.settings.details, '');
+    assert.match(screen.sections.about_this_repair.settings.details, /If your MacBook screen is cracked/);
+    const offer = read('snippets/macbook-from-price.liquid');
+    assert.match(offer, /Courier collection across London, tracked mail-in nationwide\./);
+    assert.match(offer, /font-size: 14px/);
+    assert.equal(offer.includes('Free courier'), false);
+    assert.equal(offer.includes('—'), false);
+  });
+});
+
 describe('sample JSON-LD is structurally valid', () => {
   it('accepts a FAQPage and a Service AggregateOffer built the way the snippets do', () => {
     const faq = {
