@@ -27,6 +27,11 @@
     assign child_handles = 'macbook-air-15-m4-a3241-2025-repair-prices,macbook-air-15-m3-a3114-2024-repair-prices,macbook-air-15-m2-a2941-2023-repair-prices'
   endif
 
+  assign include_diagnostics = false
+  if child_handles == blank and cents_handle contains 'diagnostic'
+    assign include_diagnostics = true
+  endif
+
   assign rolled_cents = 0
   if child_handles != blank
     assign child_list = child_handles | split: ','
@@ -46,7 +51,7 @@
     endfor
   else
     capture child_raw
-      render 'macbook-min-price', price_collection: cents_source
+      render 'macbook-min-price', price_collection: cents_source, include_diagnostics: include_diagnostics
     endcapture
     assign rolled_cents = child_raw | strip | plus: 0
   endif

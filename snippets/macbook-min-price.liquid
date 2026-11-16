@@ -1,30 +1,34 @@
 {% doc %}
   Lowest positive variant price, in cents, for one collection.
-  Diagnostic products are skipped so a £49 diagnostic is not the "from" price.
-  Prints nothing when no priced repair is found.
+  Diagnostic products are skipped unless include_diagnostics is true.
+  Only the diagnostic collection itself should pass that flag.
+  Prints nothing when no priced product is found.
   Shopify exposes at most 50 products here unless the page paginates.
 
   @param {collection} [price_collection] - Collection to scan. Defaults to the current collection.
+  @param {boolean} [include_diagnostics] - Count diagnostic products. Default false.
 {% enddoc %}
 {%- liquid
   assign price_source = price_collection | default: collection
   assign min_cents = 0
   if price_source != blank and price_source.products_count > 0
     for priced_product in price_source.products
-      assign priced_handle = priced_product.handle | downcase
-      assign priced_title = priced_product.title | downcase
-      assign priced_type = priced_product.type | downcase
       assign is_diagnostic = false
-      if priced_handle contains 'diagnostic' or priced_title contains 'diagnostic' or priced_type contains 'diagnostic'
-        assign is_diagnostic = true
-      endif
-      unless is_diagnostic
-        for priced_tag in priced_product.tags
-          assign priced_tag_down = priced_tag | downcase
-          if priced_tag_down contains 'diagnostic'
-            assign is_diagnostic = true
-          endif
-        endfor
+      unless include_diagnostics
+        assign priced_handle = priced_product.handle | downcase
+        assign priced_title = priced_product.title | downcase
+        assign priced_type = priced_product.type | downcase
+        if priced_handle contains 'diagnostic' or priced_title contains 'diagnostic' or priced_type contains 'diagnostic'
+          assign is_diagnostic = true
+        endif
+        unless is_diagnostic
+          for priced_tag in priced_product.tags
+            assign priced_tag_down = priced_tag | downcase
+            if priced_tag_down contains 'diagnostic'
+              assign is_diagnostic = true
+            endif
+          endfor
+        endunless
       endunless
       unless is_diagnostic
         if priced_product.price_min > 0

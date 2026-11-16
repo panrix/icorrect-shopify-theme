@@ -104,10 +104,14 @@ describe('reviews, FAQ schema and links are wired', () => {
     assert.match(read('templates/index.json'), /"type": "google-reviews"/);
   });
 
-  it('skips diagnostic products when calculating a from price', () => {
+  it('skips diagnostic products except on the diagnostic collection', () => {
     const min = read('snippets/macbook-min-price.liquid');
-    assert.match(min, /diagnostic/);
-    assert.match(min, /priced_product\.price_min > 0/);
+    const fromCents = read('snippets/macbook-from-cents.liquid');
+    assert.match(min, /unless include_diagnostics/);
+    assert.match(min, /priced_handle contains 'diagnostic'/);
+    assert.match(fromCents, /cents_handle contains 'diagnostic'/);
+    assert.match(fromCents, /include_diagnostics: include_diagnostics/);
+    assert.equal(fromCents.includes('macbook-diagnostic-prices'), false);
   });
 
   it('puts a space between list items when flattening FAQ HTML', () => {
@@ -140,6 +144,59 @@ describe('reviews, FAQ schema and links are wired', () => {
     assert.match(schema, /priceCurrency": "GBP"/);
     assert.equal(schema.includes('Same-day and next-day service available'), true);
   });
+});
+
+describe('MacBook from-prices match catalogue variants', () => {
+  const map = JSON.parse(read('assets/repair-catalogue-map.json'));
+  const catalogue = JSON.parse(read('data/shopify-catalogue-2026-09-11.json'));
+  const products = Array.isArray(catalogue) ? catalogue : catalogue.products;
+
+  function cheapest(repairKey) {
+    let best = null;
+    for (const model of Object.values(map.models || map)) {
+      if (!model || model.device !== 'macbook' || !model.repairs) continue;
+      const row = model.repairs[repairKey];
+      if (!row || typeof row.price !== 'number') continue;
+      if (!best || row.price < best.price) best = row;
+    }
+    return best;
+  }
+
+  function variantPrice(variantId) {
+    let found = null;
+    function walk(node) {
+      if (!node || typeof node !== 'object' || found) return;
+      if (node.id === variantId && node.price != null) found = Number(node.price);
+      for (const value of Object.values(node)) {
+        if (value && typeof value === 'object') walk(value);
+      }
+    }
+    walk(products);
+    return found;
+  }
+
+  const cases = [
+    ['keyboard', 'templates/collection.macbook-keyboard-repairs.json', /start from £(\d+)/],
+    ['flexgate', 'templates/collection.macbook-flexgate-repairs.json', /start from £(\d+)/],
+    ['trackpad', 'templates/collection.macbook-trackpad-repair.json', /start from £(\d+)/],
+    ['dustgate', 'templates/collection.macbook-dustgate-repair.json', /start from £(\d+)/],
+    ['touch-bar', 'templates/collection.macbook-touchbar-repairs.json', /start from £(\d+)/],
+    ['charging-port', 'templates/collection.macbook-c-port-repairs.json', /starts from £(\d+)/],
+    ['diagnostic', 'templates/collection.macbook-diagnostic.json', /We charge £(\d+)/],
+  ];
+
+  for (const [repairKey, file, pattern] of cases) {
+    it(`${repairKey} FAQ matches the cheapest catalogue variant`, () => {
+      const row = cheapest(repairKey);
+      assert.ok(row, repairKey);
+      assert.equal(variantPrice(row.variantId), row.price);
+      const copy = read(file);
+      const match = copy.match(pattern);
+      assert.ok(match, `${file} has no from-price`);
+      assert.equal(Number(match[1]), row.price);
+      assert.equal(match[0].includes('—'), false);
+    });
+  }
 });
 
 describe('sample JSON-LD is structurally valid', () => {
