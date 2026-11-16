@@ -59,8 +59,11 @@ describe('homepage Trustindex Google reviews', () => {
     assert.match(schema, /"@type": "LocalBusiness"/);
   });
 
-  it('removes the homepage hero 700+ reviews claim', () => {
-    assert.doesNotMatch(hero, /700\+\s*<\/strong>\s*Reviews|700\+<\/strong> Reviews/);
+  it('shows the homepage hero badge as 4.8 from 750+ Google reviews', () => {
+    assert.match(hero, /"default": "4\.8 from 750\+ Google reviews"/);
+    assert.match(index, /"review_badge_text": "4\.8 from 750\+ Google reviews"/);
+    assert.match(hero, /section\.settings\.review_badge_text \| escape/);
+    assert.doesNotMatch(hero, /700\+<\/strong> Reviews|719 Google reviews/);
   });
 
   it('does not let other templates render the google-reviews section', () => {

@@ -1298,11 +1298,11 @@
         '<div class="qw-price-big" id="qwPriceBig">' + (opts.priceHtml || '') + '</div>';
     return '<div class="qw-price-trust" id="qwPriceTrust">' +
       '<ul class="qw-trust-cross" role="list" aria-label="Trust signals">' +
-        '<li class="qw-trust-cell qw-trust-reviews" aria-label="4.9 out of 5 from 719 Google reviews">' +
-          '<span class="qw-trust-score">4.9</span>' +
+        '<li class="qw-trust-cell qw-trust-reviews" aria-label="4.8 out of 5 from 750+ Google reviews">' +
+          '<span class="qw-trust-score">4.8</span>' +
           '<span class="qw-trust-reviews-meta">' +
             '<span class="qw-trust-stars" aria-hidden="true">' + stars + '</span>' +
-            '<span class="qw-trust-sub">719 Google reviews</span>' +
+            '<span class="qw-trust-sub">750+ Google reviews</span>' +
           '</span>' +
         '</li>' +
         '<li class="qw-trust-cell qw-trust-parts">' +
