@@ -37,7 +37,7 @@
 
   {%- assign mb_low_cents = 0 -%}
   {%- if device_type == 'macbook' -%}
-    {%- capture mb_low_raw -%}{%- render 'macbook-min-price', price_collection: collection -%}{%- endcapture -%}
+    {%- capture mb_low_raw -%}{%- render 'macbook-from-cents', price_collection: collection -%}{%- endcapture -%}
     {%- assign mb_low_cents = mb_low_raw | strip | plus: 0 -%}
   {%- endif -%}
 
@@ -192,8 +192,8 @@
   </script>
   {%- endif -%}
 
-  {%- if page.handle == 'macbook-repairs' or page.handle == 'macbook-repair-page' -%}
-    {%- capture hub_low_raw -%}{%- render 'macbook-listed-min-price' -%}{%- endcapture -%}
+  {%- if page.handle == 'macbook-repairs' -%}
+    {%- capture hub_low_raw -%}{%- render 'macbook-min-price', price_collection: collections['macbook-screen-repair-prices'] -%}{%- endcapture -%}
     {%- assign hub_low_cents = hub_low_raw | strip | plus: 0 -%}
   <script type="application/ld+json">
   {

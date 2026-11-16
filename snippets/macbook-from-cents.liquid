@@ -1,0 +1,54 @@
+{% doc %}
+  Non-diagnostic "from" price in cents.
+  Model and repair-type collections use their own products.
+  Size hubs and /collections/macbook-repair-prices have no repair products of
+  their own, so the price is the minimum across the collections they link to.
+
+  @param {collection} [price_collection] - Collection to price. Defaults to the current collection.
+{% enddoc %}
+{%- liquid
+  assign cents_source = price_collection | default: collection
+  assign cents_handle = cents_source.handle
+  assign child_handles = ''
+
+  if cents_handle == 'macbook-repair-prices'
+    assign child_handles = 'macbook-screen-repair-prices,macbook-keyboard-repair-prices,macbook-battery-repair-prices,macbook-charging-port-repair-prices,macbook-trackpad-repair-prices,macbook-touch-bar-repair-prices,macbook-flexgate-repair-prices,macbook-dustgate-repair-prices'
+  elsif cents_handle == 'macbook-pro-13-repair-prices'
+    assign child_handles = 'macbook-pro-13-m2-a2338-2022-repair-prices,macbook-pro-13-m1-a2338-2020-repair-prices,macbook-pro-13-4tb-3-a2251-2020-repair-prices,macbook-pro-13-2tb-3-a2289-2020-repair-prices,macbook-pro-13-2tb-3-a2159-2019-repair-prices,macbook-pro-13-touch-bar-a1989-2018-2019-repair-prices,macbook-pro-13-touch-bar-a1706-2016-2018-repair-prices,macbook-pro-13-a1708-2016-2017-repair-prices'
+  elsif cents_handle == 'macbook-pro-14-repair-prices'
+    assign child_handles = 'macbook-pro-14-m4-max-a3185-2024-repair-prices,macbook-pro-14-m4-pro-a3401-2024-repair-prices,macbook-pro-14-m4-a3312-2024-repair-prices,macbook-pro-14-m3-m3-pro-max-a2918-a2992-2023-repair-prices,macbook-pro-14-m2-pro-max-a2779-2023-repair-prices,macbook-pro-14-m1-pro-max-a2442-2021-repair-prices'
+  elsif cents_handle == 'macbook-pro-15-repair-prices'
+    assign child_handles = 'macbook-pro-15-a1990-2018-2019-repair-prices,macbook-pro-15-retina-a1707-2016-2017-repair-prices'
+  elsif cents_handle == 'macbook-pro-16-repair-prices'
+    assign child_handles = 'macbook-pro-16-m4-max-a3186-2024-repair-prices,macbook-pro-16-m4-pro-a3403-2024-repair-prices,macbook-pro-16-m3-pro-max-a2991-2023-repair-prices,macbook-pro-16-m2-pro-max-a2780-2023-repair-prices,macbook-pro-16-m1-pro-max-a2485-2021-repair-prices,macbook-pro-16-a2141-2019-repair-prices'
+  elsif cents_handle == 'macbook-air-13-repair-prices'
+    assign child_handles = 'macbook-air-13-m4-a3240-2025-repair-prices,macbook-air-13-m3-a3113-2024-repair-prices,macbook-air-13-m2-a2681-2022-repair-prices,macbook-air-13-m1-a2337-2020-repair-prices,macbook-air-13-a2179-2020-repair-prices,macbook-air-13-a1932-2018-2019-repair-prices'
+  elsif cents_handle == 'macbook-air-15-repair-prices'
+    assign child_handles = 'macbook-air-15-m4-a3241-2025-repair-prices,macbook-air-15-m3-a3114-2024-repair-prices,macbook-air-15-m2-a2941-2023-repair-prices'
+  endif
+
+  assign rolled_cents = 0
+  if child_handles != blank
+    assign child_list = child_handles | split: ','
+    for child_handle in child_list
+      assign child_collection = collections[child_handle]
+      if child_collection != blank
+        capture child_raw
+          render 'macbook-min-price', price_collection: child_collection
+        endcapture
+        assign child_cents = child_raw | strip | plus: 0
+        if child_cents > 0
+          if rolled_cents == 0 or child_cents < rolled_cents
+            assign rolled_cents = child_cents
+          endif
+        endif
+      endif
+    endfor
+  else
+    capture child_raw
+      render 'macbook-min-price', price_collection: cents_source
+    endcapture
+    assign rolled_cents = child_raw | strip | plus: 0
+  endif
+-%}
+{%- if rolled_cents > 0 -%}{{ rolled_cents }}{%- endif -%}

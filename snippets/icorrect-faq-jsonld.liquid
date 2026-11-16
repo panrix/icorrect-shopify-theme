@@ -21,7 +21,7 @@
       {%- if block.type == 'accordion' and block.settings.heading != blank and block.settings.sub_head != blank -%}
         {%- liquid
           assign faq_question = block.settings.heading | strip_html | strip
-          assign faq_answer = block.settings.sub_head | replace: '</p>', ' ' | replace: '<br>', ' ' | replace: '<br/>', ' ' | replace: '<br />', ' ' | strip_html | strip_newlines | strip
+          assign faq_answer = block.settings.sub_head | replace: '</li>', ' ' | replace: '</p>', ' ' | replace: '</ul>', ' ' | replace: '</ol>', ' ' | replace: '</div>', ' ' | replace: '</h2>', ' ' | replace: '</h3>', ' ' | replace: '<br>', ' ' | replace: '<br/>', ' ' | replace: '<br />', ' ' | replace: '><', '> <' | strip_html | strip_newlines | strip
         -%}
         {%- if faq_question != blank and faq_answer != blank -%}
           {%- if faq_written > 0 -%},{%- endif -%}

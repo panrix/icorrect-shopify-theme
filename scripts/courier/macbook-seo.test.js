@@ -38,6 +38,9 @@ describe('MacBook search titles stay within the snippet limit', () => {
     'A2338 Keyboard Replacement Cost UK | iCorrect',
     'MacBook Pro Repair Cost UK | iCorrect',
     'MacBook Air Repair Cost UK | iCorrect',
+    'MacBook Pro 14" Repair Cost UK | iCorrect',
+    'MacBook Air 13" Repair Cost UK | iCorrect',
+    'MacBook Pro 16" Repair Cost UK | iCorrect',
   ];
 
   for (const title of titles) {
@@ -53,6 +56,7 @@ describe('MacBook search titles stay within the snippet limit', () => {
     assert.match(seo, /MacBook Repair Cost UK \| iCorrect/);
     assert.match(seo, /append: repair_label \| append: ' Cost UK \| iCorrect'/);
     assert.match(seo, /append: family \| append: ' Repair Cost UK \| iCorrect'/);
+    assert.match(seo, /'" Repair Cost UK \| iCorrect'/);
     assert.equal(seo.includes('£350'), false);
     assert.equal(seo.includes('—'), false);
     assert.equal(seo.includes('free mail-in'), false);
@@ -61,17 +65,23 @@ describe('MacBook search titles stay within the snippet limit', () => {
 });
 
 describe('MacBook pages keep the turnaround test copy', () => {
-  it('does not edit the quote wizard, cart, or London templates', () => {
+  it('does not edit wizard script, cart, or London templates', () => {
     const diff = execFileSync('git', ['diff', '--name-only', 'HEAD'], { cwd: root, encoding: 'utf8' });
     const files = diff.split('\n').filter(Boolean);
     const blocked = files.filter((file) =>
       /london/.test(file) ||
-      file.includes('quote-wizard') ||
+      file.endsWith('quote-wizard.js') ||
       file.includes('assets/cart') ||
       file.endsWith('cart.js') ||
       file.includes('checkout')
     );
     assert.deepEqual(blocked, []);
+  });
+
+  it('keeps the wizard H1 and only adds the from-price under it', () => {
+    const wizard = read('sections/quote-wizard.liquid');
+    assert.match(wizard, /<h1 class="qw-page-title">\{\{ collection\.title \| escape \}\}<\/h1>\n\s*\{% render 'macbook-from-price' %\}/);
+    assert.equal(read('assets/quote-wizard.js').includes("render 'macbook-from-price'"), false);
   });
 
   it('keeps the hub FAQ timing sentences', () => {
@@ -83,13 +93,36 @@ describe('MacBook pages keep the turnaround test copy', () => {
 });
 
 describe('reviews, FAQ schema and links are wired', () => {
-  it('adds the homepage reviews section to the screen template and not the London pages', () => {
+  it('does not put the homepage reviews widget on MacBook templates', () => {
     const screen = read('templates/collection.macbook-screen-repair.json');
     const london = read('templates/page.macbook-pro-screen-replacement-london.json');
-    assert.match(screen, /"type": "google-reviews"/);
+    const hub = read('templates/page.macbook-repairs.json');
+    assert.equal(screen.includes('google-reviews'), false);
+    assert.equal(hub.includes('google-reviews'), false);
     assert.match(screen, /"emit_faq_schema": true/);
     assert.equal(london.includes('google-reviews'), false);
-    assert.equal(london.includes('emit_faq_schema'), false);
+    assert.match(read('templates/index.json'), /"type": "google-reviews"/);
+  });
+
+  it('skips diagnostic products when calculating a from price', () => {
+    const min = read('snippets/macbook-min-price.liquid');
+    assert.match(min, /diagnostic/);
+    assert.match(min, /priced_product\.price_min > 0/);
+  });
+
+  it('puts a space between list items when flattening FAQ HTML', () => {
+    const faq = read('snippets/icorrect-faq-jsonld.liquid');
+    assert.match(faq, /replace: '<\/li>', ' '/);
+    const sample = '<ul><li>Battery draining unusually fast</li><li>macOS showing “Service Recommended”</li></ul>';
+    const flat = sample
+      .replaceAll('</li>', ' ')
+      .replaceAll('</ul>', ' ')
+      .replaceAll('><', '> <')
+      .replace(/<[^>]+>/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    assert.match(flat, /fast macOS/);
+    assert.equal(flat.includes('fastmacOS'), false);
   });
 
   it('builds FAQPage JSON-LD from the visible FAQ blocks', () => {

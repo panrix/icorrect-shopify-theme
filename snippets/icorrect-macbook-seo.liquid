@@ -68,7 +68,11 @@
     endif
 
     assign seo_title = ''
+    assign mb_size_hub = false
+    assign size_token = ''
     if request.page_type == 'page'
+      assign seo_title = 'MacBook Repair Cost UK | iCorrect'
+    elsif mb_handle == 'macbook-repair-prices'
       assign seo_title = 'MacBook Repair Cost UK | iCorrect'
     elsif request.page_type == 'product' and model_code != blank and repair_label != blank
       assign seo_title = model_code | append: ' ' | append: repair_label | append: ' Cost UK | iCorrect'
@@ -79,10 +83,22 @@
     elsif model_code != blank
       assign seo_title = model_code | append: ' ' | append: family | append: ' Repair Cost UK | iCorrect'
     else
-      assign short_title = mb_title_source | replace: ' Repair Prices', '' | replace: ' Prices', '' | strip
-      assign seo_title = short_title | append: ' Cost UK | iCorrect'
-      if short_title == blank or seo_title.size > 60
-        assign seo_title = family | append: ' Repair Cost UK | iCorrect'
+      if mb_handle contains '-repair-prices' and family != 'MacBook'
+        for part in handle_parts
+          if part == '13' or part == '14' or part == '15' or part == '16'
+            assign size_token = part
+          endif
+        endfor
+      endif
+      if size_token != blank
+        assign mb_size_hub = true
+        assign seo_title = family | append: ' ' | append: size_token | append: '" Repair Cost UK | iCorrect'
+      else
+        assign short_title = mb_title_source | replace: ' Repair Prices', '' | replace: ' Prices', '' | replace: '’’', '"' | replace: "''", '"' | replace: '″', '"' | replace: '“', '"' | replace: '”', '"' | replace: '’', "'" | replace: '‘', "'" | strip
+        assign seo_title = short_title | append: ' Cost UK | iCorrect'
+        if short_title == blank or seo_title.size > 60
+          assign seo_title = family | append: ' Repair Cost UK | iCorrect'
+        endif
       endif
     endif
 
@@ -100,7 +116,7 @@
       assign price_cents = price_raw | strip | plus: 0
     else
       capture price_raw
-        render 'macbook-min-price', price_collection: collection
+        render 'macbook-from-cents', price_collection: collection
       endcapture
       assign price_cents = price_raw | strip | plus: 0
     endif
@@ -137,11 +153,15 @@
       assign seo_description = 'MacBook battery replacement' | append: from_phrase | append: '. Original-specification cells.' | append: courier_line
     elsif model_code != blank and repair_label == blank
       assign seo_description = model_code | append: ' ' | append: family | append: ' repairs' | append: from_phrase | append: '. Screen, keyboard, battery and board work.' | append: courier_line
+    elsif mb_handle == 'macbook-repair-prices'
+      assign seo_description = 'MacBook repairs' | append: from_phrase | append: '. Screen, keyboard, battery and board work.' | append: courier_line
+    elsif mb_size_hub
+      assign seo_description = family | append: ' ' | append: size_token | append: '" repairs' | append: from_phrase | append: '. Screen, keyboard, battery and board work.' | append: courier_line
     elsif repair_label != blank
       assign repair_lower = repair_label | downcase
       assign seo_description = 'MacBook ' | append: repair_lower | append: from_phrase | append: '.' | append: courier_line
     else
-      assign seo_description = family | append: ' repairs' | append: from_phrase | append: '. Screen, keyboard, battery and board-level work.' | append: courier_line
+      assign seo_description = family | append: ' repairs' | append: from_phrase | append: '. Screen, keyboard, battery and board work.' | append: courier_line
     endif
 
     echo seo_title

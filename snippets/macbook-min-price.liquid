@@ -1,8 +1,8 @@
 {% doc %}
   Lowest positive variant price, in cents, for one collection.
-  Prints nothing when no priced product is found.
-  Shopify exposes at most 50 products here unless the page paginates,
-  so this is the minimum among those products.
+  Diagnostic products are skipped so a £49 diagnostic is not the "from" price.
+  Prints nothing when no priced repair is found.
+  Shopify exposes at most 50 products here unless the page paginates.
 
   @param {collection} [price_collection] - Collection to scan. Defaults to the current collection.
 {% enddoc %}
@@ -11,11 +11,28 @@
   assign min_cents = 0
   if price_source != blank and price_source.products_count > 0
     for priced_product in price_source.products
-      if priced_product.price_min > 0
-        if min_cents == 0 or priced_product.price_min < min_cents
-          assign min_cents = priced_product.price_min
-        endif
+      assign priced_handle = priced_product.handle | downcase
+      assign priced_title = priced_product.title | downcase
+      assign priced_type = priced_product.type | downcase
+      assign is_diagnostic = false
+      if priced_handle contains 'diagnostic' or priced_title contains 'diagnostic' or priced_type contains 'diagnostic'
+        assign is_diagnostic = true
       endif
+      unless is_diagnostic
+        for priced_tag in priced_product.tags
+          assign priced_tag_down = priced_tag | downcase
+          if priced_tag_down contains 'diagnostic'
+            assign is_diagnostic = true
+          endif
+        endfor
+      endunless
+      unless is_diagnostic
+        if priced_product.price_min > 0
+          if min_cents == 0 or priced_product.price_min < min_cents
+            assign min_cents = priced_product.price_min
+          endif
+        endif
+      endunless
     endfor
   endif
 -%}
