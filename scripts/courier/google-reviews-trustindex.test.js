@@ -43,7 +43,8 @@ describe('homepage Trustindex Google reviews', () => {
       )
     );
     assert.match(section, new RegExp(`"default": "${WIDGET_ID}"`));
-    assert.match(section, /min-height:\s*420px/);
+    assert.match(section, /\.google-reviews__widget\s*\{[^}]*min-height:\s*420px/);
+    assert.match(section, /@media screen and \(min-width:\s*990px\)\s*\{[^}]*\.google-reviews__widget\s*\{[^}]*min-height:\s*320px/);
     assert.match(section, /"default": "Google reviews"/);
     assert.doesNotMatch(section, /700\+|4\.8|MOCK DATA|seo-fallback|author_name|William|Noah|Rainer|Mark Evans/);
   });
