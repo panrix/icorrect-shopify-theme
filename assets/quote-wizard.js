@@ -3712,14 +3712,23 @@
         var phId = window.icorrectQuoteEvents && typeof window.icorrectQuoteEvents.phDistinctId === 'function'
           ? window.icorrectQuoteEvents.phDistinctId()
           : '';
-        if (phId) {
+        // Hidden cart attributes (copied onto the order's note attributes):
+        // PostHog id plus the session traffic source from snippets/quote-attribution.
+        var cartAttrs = {};
+        try {
+          if (window.icorrectAttribution && typeof window.icorrectAttribution.forCart === 'function') {
+            cartAttrs = window.icorrectAttribution.forCart() || {};
+          }
+        } catch (e) { cartAttrs = {}; }
+        if (phId) cartAttrs._ph_distinct_id = phId;
+        if (Object.keys(cartAttrs).length) {
           await fetch(getShopifyRoot() + 'cart/update.js', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'Accept': 'application/json'
             },
-            body: JSON.stringify({ attributes: { _ph_distinct_id: phId } })
+            body: JSON.stringify({ attributes: cartAttrs })
           }).catch(function () {});
         }
       } catch (e) {}

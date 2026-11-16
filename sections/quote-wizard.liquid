@@ -183,6 +183,12 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       collection_window: q.collection_window || q.collectionWindow || null,
       proceeded: false
     };
+    try {
+      var attr = window.icorrectAttribution && typeof window.icorrectAttribution.forQuote === "function"
+        ? window.icorrectAttribution.forQuote()
+        : null;
+      if (attr && Object.keys(attr).length) payload.attribution = attr;
+    } catch (e) {}
     if (extra) {
       for (var k in extra) payload[k] = extra[k];
     }
