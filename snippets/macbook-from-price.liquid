@@ -1,10 +1,9 @@
 {% doc %}
   Starting price and one courier line for a MacBook page.
-  Same 14px size on every page, including under the smaller wizard H1.
-  Courier wording matches the site. Collection is not described as free,
-  because that only applies once the repair is £200 or more.
+  Price line is 14px semi-bold in the brand colour. Courier line is 14px regular.
+  Both are centred under the H1. Courier wording matches the site.
+  Collection is not described as free, because that only applies once the repair is £200 or more.
 
-  @param {string} [align] - Pass "center" under a centred heading.
   @param {collection} [price_collection] - Collection to price. Defaults to the current collection, or the screen price list on the MacBook repairs page.
 {% enddoc %}
 {%- liquid
@@ -54,26 +53,40 @@
       endif
       assign from_money = from_cents | money_without_trailing_zeros
     -%}
-    <p class="macbook-from-price{% if align == 'center' %} macbook-from-price--center{% endif %}">{{ from_label }} {{ from_money }}</p>
+    <p class="macbook-from-price">{{ from_label }} {{ from_money }}</p>
   {%- endif -%}
-  <p class="macbook-benefit{% if align == 'center' %} macbook-from-price--center{% endif %}">Courier collection across London, tracked mail-in nationwide.</p>
+  <p class="macbook-benefit">Courier collection across London, tracked mail-in nationwide.</p>
   <style>
-    .macbook-from-price,
-    .macbook-benefit {
+    /* Beat section paragraph rules (.about-info-row p is 0,2,1).
+       body p in base.css no longer matches these classes, so the 16px and 17px sizes do not apply. */
+    .about-info-row p.macbook-from-price.macbook-from-price,
+    .parent-categories-info p.macbook-from-price.macbook-from-price,
+    .repair-section-header p.macbook-from-price.macbook-from-price,
+    .qw-section p.macbook-from-price.macbook-from-price,
+    .page-width p.macbook-from-price.macbook-from-price,
+    .about-info-row p.macbook-benefit.macbook-benefit,
+    .parent-categories-info p.macbook-benefit.macbook-benefit,
+    .repair-section-header p.macbook-benefit.macbook-benefit,
+    .qw-section p.macbook-benefit.macbook-benefit,
+    .page-width p.macbook-benefit.macbook-benefit {
+      display: block;
+      width: 100%;
       margin: 0 0 6px;
       font-size: 14px;
       line-height: 1.4;
       letter-spacing: 0;
       font-weight: 600;
       color: #1d1d1f;
+      text-align: center;
     }
-    .macbook-benefit {
+    .about-info-row p.macbook-benefit.macbook-benefit,
+    .parent-categories-info p.macbook-benefit.macbook-benefit,
+    .repair-section-header p.macbook-benefit.macbook-benefit,
+    .qw-section p.macbook-benefit.macbook-benefit,
+    .page-width p.macbook-benefit.macbook-benefit {
       font-weight: 400;
       color: #6e6e73;
       margin-bottom: 0;
-    }
-    .macbook-from-price--center {
-      text-align: center;
     }
   </style>
 {%- endif -%}

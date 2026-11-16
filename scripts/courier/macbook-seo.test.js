@@ -80,7 +80,7 @@ describe('MacBook pages keep the turnaround test copy', () => {
 
   it('keeps the wizard H1 and only adds the from-price under it', () => {
     const wizard = read('sections/quote-wizard.liquid');
-    assert.match(wizard, /<h1 class="qw-page-title">\{\{ collection\.title \| escape \}\}<\/h1>\n\s*\{% render 'macbook-from-price' %\}/);
+    assert.match(wizard, /<h1 class="qw-page-title">\{\{ collection\.title \| escape \}\}<\/h1>\n\s*\{% render 'macbook-from-price', align: 'center' %\}/);
     assert.equal(read('assets/quote-wizard.js').includes("render 'macbook-from-price'"), false);
   });
 
@@ -211,8 +211,120 @@ describe('MacBook intro stays short above the wizard', () => {
     const offer = read('snippets/macbook-from-price.liquid');
     assert.match(offer, /Courier collection across London, tracked mail-in nationwide\./);
     assert.match(offer, /font-size: 14px/);
+    assert.match(offer, /font-weight: 600/);
+    assert.match(offer, /text-align: center/);
+    assert.match(offer, /color: #1d1d1f/);
+    assert.equal(offer.includes('!important'), false);
     assert.equal(offer.includes('Free courier'), false);
     assert.equal(offer.includes('—'), false);
+    const base = read('assets/base.css');
+    assert.match(base, /body p:not\(\.macbook-from-price\):not\(\.macbook-benefit\)/);
+    assert.equal(screen.sections.about_this_repair.settings.padding_top, 35);
+    assert.equal(screen.sections.about_this_repair.settings.padding_bottom, 10);
+    assert.equal(screen.sections.about_this_repair.settings.mob_padding_top, 30);
+    assert.equal(screen.sections.about_this_repair.settings.mob_padding_bottom, 10);
+  });
+});
+
+describe('MacBook template settings fit their section schema', () => {
+  const schemaCache = new Map();
+
+  function parseSchemaJson(text) {
+    let out = '';
+    let quote = null;
+    for (let i = 0; i < text.length; i += 1) {
+      const char = text[i];
+      if (quote) {
+        out += char;
+        if (char === '\\') {
+          out += text[i + 1] || '';
+          i += 1;
+        } else if (char === quote) {
+          quote = null;
+        }
+        continue;
+      }
+      if (char === '"') {
+        quote = char;
+        out += char;
+        continue;
+      }
+      if (char === '/' && text[i + 1] === '/') {
+        while (i < text.length && text[i] !== '\n') i += 1;
+        continue;
+      }
+      if (char === '/' && text[i + 1] === '*') {
+        i += 2;
+        while (i < text.length && !(text[i] === '*' && text[i + 1] === '/')) i += 1;
+        i += 1;
+        continue;
+      }
+      out += char;
+    }
+    return JSON.parse(out.replace(/,\s*([}\]])/g, '$1'));
+  }
+
+  function schemaFor(type) {
+    if (schemaCache.has(type)) return schemaCache.get(type);
+    const file = path.join(root, 'sections', `${type}.liquid`);
+    if (!fs.existsSync(file)) {
+      schemaCache.set(type, null);
+      return null;
+    }
+    const source = fs.readFileSync(file, 'utf8');
+    const match = source.match(/\{%\s*schema\s*%\}([\s\S]*?)\{%\s*endschema\s*%\}/);
+    if (!match) {
+      schemaCache.set(type, null);
+      return null;
+    }
+    const schema = parseSchemaJson(match[1]);
+    schemaCache.set(type, schema);
+    return schema;
+  }
+
+  function rangeProblem(value, setting) {
+    if (setting.type !== 'range' || typeof value !== 'number' || !Number.isFinite(value)) return null;
+    if (typeof setting.min === 'number' && value < setting.min) return `below min ${setting.min}`;
+    if (typeof setting.max === 'number' && value > setting.max) return `above max ${setting.max}`;
+    if (typeof setting.step === 'number' && setting.step > 0 && typeof setting.min === 'number') {
+      const steps = (value - setting.min) / setting.step;
+      if (Math.abs(steps - Math.round(steps)) > 1e-9) return `off step ${setting.step} from ${setting.min}`;
+    }
+    return null;
+  }
+
+  function checkSettings(values, definitions, where, problems) {
+    if (!values || !definitions) return;
+    for (const [id, value] of Object.entries(values)) {
+      const setting = definitions.find((item) => item.id === id);
+      if (!setting) continue;
+      const problem = rangeProblem(value, setting);
+      if (problem) problems.push(`${where}.${id}=${value} (${problem})`);
+    }
+  }
+
+  const templates = fs.readdirSync(path.join(root, 'templates'))
+    .filter((name) => /macbook/i.test(name) && name.endsWith('.json') && !/london/i.test(name));
+
+  it('keeps every range setting on its min, max and step', () => {
+    const problems = [];
+    for (const name of templates) {
+      const raw = read(`templates/${name}`).replace(/^\s*\/\*[\s\S]*?\*\/\s*/, '');
+      const template = JSON.parse(raw);
+      for (const [sectionId, section] of Object.entries(template.sections || {})) {
+        if (!section || !section.type) continue;
+        const schema = schemaFor(section.type);
+        if (!schema) continue;
+        checkSettings(section.settings, schema.settings, `${name} ${sectionId}`, problems);
+        const blockDefs = schema.blocks || [];
+        for (const [blockId, block] of Object.entries(section.blocks || {})) {
+          const def = blockDefs.find((item) => item.type === block.type);
+          if (!def) continue;
+          checkSettings(block.settings, def.settings, `${name} ${sectionId}.${blockId}`, problems);
+        }
+      }
+    }
+    assert.deepEqual(problems, []);
   });
 });
 

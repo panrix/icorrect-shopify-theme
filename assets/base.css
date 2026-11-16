@@ -3723,7 +3723,7 @@ a.visit-button:hover,
 /* v5 Typography Fixes - Improved readability */
 .rte p,
 .rte li,
-body p,
+body p:not(.macbook-from-price):not(.macbook-benefit),
 .accordion__content p,
 .product__description p,
 .collection-description p {
@@ -3734,7 +3734,7 @@ body p,
 @media screen and (min-width: 750px) {
   .rte p,
   .rte li,
-  body p,
+  body p:not(.macbook-from-price):not(.macbook-benefit),
   .accordion__content p,
   .product__description p,
   .collection-description p {

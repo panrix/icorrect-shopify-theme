@@ -79,7 +79,7 @@
     margin: 0 auto;
   }
 
-  .about-info-{{ section.id }} .about-info-row p{
+  .about-info-{{ section.id }} .about-info-row p:not(.macbook-from-price):not(.macbook-benefit){
     color: #333;
     font-size: 17px;
     font-weight: 400;
@@ -90,7 +90,7 @@
     margin: 0 0 1.25rem;
   }
 
-  .about-info-{{ section.id }} .about-info-row p:last-child{
+  .about-info-{{ section.id }} .about-info-row p:not(.macbook-from-price):not(.macbook-benefit):last-child{
     margin-bottom: 0;
   }
 
@@ -127,7 +127,7 @@
       padding: 0 0 {% if macbook_compact %}8px{% else %}20px{% endif %};
     }
 
-    .about-info-{{ section.id }} .about-info-row p{
+    .about-info-{{ section.id }} .about-info-row p:not(.macbook-from-price):not(.macbook-benefit){
       font-size: 16px;
       line-height: 1.65;
     }
