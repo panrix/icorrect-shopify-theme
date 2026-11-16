@@ -81,3 +81,41 @@ describe('homepage Trustindex Google reviews', () => {
     assert.deepEqual(offenders, []);
   });
 });
+
+describe('storefront rating copy', () => {
+  const roots = ['sections', 'snippets', 'templates', 'layout', 'blocks', 'config', 'locales', 'assets', 'emails'];
+  const exts = new Set(['.liquid', '.json', '.js', '.css', '.html']);
+  const claims = [
+    { name: '4.9 rating', re: /4\.9\s*\/\s*5|★\s*4\.9|4\.9\s+Rating|4\.9\s+out of|rating\s*=\s*'4\.9'|"default"\s*:\s*"4\.9"|title"\s*:\s*"4\.9"|>(?:4\.9)<|qw-trust-score">4\.9/ },
+    { name: '719 review count', re: /719\s*\+?\s*Google reviews/i },
+    { name: '700+ review count', re: /700\+\s*(?:Google\s+)?reviews/i },
+    { name: 'aggregateRating JSON-LD', re: /aggregateRating|AggregateRating|"reviewCount"\s*:\s*"700"/ },
+  ];
+
+  function filesUnder(dir, acc) {
+    if (!fs.existsSync(dir)) return acc;
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        filesUnder(full, acc);
+      } else if (exts.has(path.extname(entry.name))) {
+        acc.push(full);
+      }
+    }
+    return acc;
+  }
+
+  it('does not render a 4.9 rating, a 719 or 700+ review count, or AggregateRating', () => {
+    const hits = [];
+    for (const relRoot of roots) {
+      for (const file of filesUnder(path.join(root, relRoot), [])) {
+        const rel = path.relative(root, file);
+        const text = fs.readFileSync(file, 'utf8');
+        for (const claim of claims) {
+          if (claim.re.test(text)) hits.push(`${rel}: ${claim.name}`);
+        }
+      }
+    }
+    assert.deepEqual(hits, []);
+  });
+});

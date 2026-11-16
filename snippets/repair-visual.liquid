@@ -43,7 +43,7 @@
   endif
   assign rating = settings.repair_rating
   if rating == nil
-    assign rating = '4.9'
+    assign rating = '4.8'
   endif
   assign title_tags = product.title | append: ' ' | append: product.tags | downcase
   if title_tags contains 'aftermarket'
