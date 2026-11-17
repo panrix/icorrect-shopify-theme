@@ -2,7 +2,7 @@
   Klarna On-Site Messaging credit-promotion badge.
   The klarna-on-site-messaging app embed already loads the script.
   data-purchase-amount is the from-price in minor units. No monthly figure is written here.
-  If the script has not defined the element, the fallback sentence stays visible.
+  The fallback sentence shows only when that placement has not rendered.
 
   @param {number} purchase_amount - Price in minor units (pence).
 {% enddoc %}
@@ -19,23 +19,90 @@
 {% stylesheet %}
   .macbook-klarna {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    min-height: 24px;
-    max-height: 36px;
-    margin: 2px 0 4px;
-    overflow: hidden;
+    justify-content: center;
+    min-height: 48px;
+    margin: 2px 0 6px;
     text-align: center;
   }
   .macbook-klarna-fallback {
     margin: 0;
     font-size: 13px;
-    line-height: 24px;
+    line-height: 1.4;
     font-weight: 400;
     letter-spacing: 0;
     color: #6e6e73;
   }
-  .macbook-klarna klarna-placement:defined + .macbook-klarna-fallback {
+  .macbook-klarna--script .macbook-klarna-fallback,
+  .macbook-klarna--ready .macbook-klarna-fallback {
     display: none;
   }
+  .macbook-klarna--empty .macbook-klarna-fallback {
+    display: block;
+  }
 {% endstylesheet %}
+{% javascript %}
+(function () {
+  function osmScriptPresent() {
+    var scripts = document.scripts;
+    for (var i = 0; i < scripts.length; i++) {
+      var src = scripts[i].src || '';
+      if (src.indexOf('production-klarna') !== -1) return true;
+      if (src.indexOf('klarna') !== -1 && src.indexOf('osm') !== -1) return true;
+    }
+    return !!(window.customElements && customElements.get('klarna-placement'));
+  }
+
+  function placementRendered(el) {
+    if (!el) return false;
+    var shadow = el.shadowRoot;
+    if (shadow && shadow.textContent && shadow.textContent.trim()) return true;
+    if (el.offsetHeight > 8) return true;
+    return false;
+  }
+
+  function watch(root) {
+    if (root.getAttribute('data-klarna-watched') === 'true') return;
+    root.setAttribute('data-klarna-watched', 'true');
+    var placement = root.querySelector('klarna-placement');
+    if (!placement) return;
+    if (osmScriptPresent()) root.classList.add('macbook-klarna--script');
+
+    function settle() {
+      if (!placementRendered(placement)) return false;
+      root.classList.add('macbook-klarna--ready');
+      root.classList.remove('macbook-klarna--empty');
+      return true;
+    }
+
+    if (settle()) return;
+
+    var tries = 0;
+    var timer = setInterval(function () {
+      tries += 1;
+      if (settle() || tries > 24) {
+        clearInterval(timer);
+        if (!placementRendered(placement)) root.classList.add('macbook-klarna--empty');
+      }
+    }, 150);
+
+    if (window.customElements && customElements.whenDefined) {
+      customElements.whenDefined('klarna-placement').then(function () {
+        settle();
+      }).catch(function () {});
+    }
+  }
+
+  function boot() {
+    var nodes = document.querySelectorAll('.macbook-klarna');
+    for (var i = 0; i < nodes.length; i++) watch(nodes[i]);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+})();
+{% endjavascript %}

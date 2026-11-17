@@ -16,7 +16,8 @@
             </thead>
             <tbody>
               {%- for product in priced_products -%}
-                {%- if product.title contains 'Air' or product.title contains 'air' or product.handle contains '-air-' -%}
+                {%- assign row_title = product.title | downcase -%}
+                {%- if row_title contains 'macbook air' -%}
                   {%- render 'macbook-price-row', product: product -%}
                 {%- endif -%}
               {%- endfor -%}
@@ -38,7 +39,8 @@
             </thead>
             <tbody>
               {%- for product in priced_products -%}
-                {%- if product.title contains 'Pro' or product.title contains 'pro' or product.handle contains '-pro-' -%}
+                {%- assign row_title = product.title | downcase -%}
+                {%- if row_title contains 'macbook pro' -%}
                   {%- render 'macbook-price-row', product: product -%}
                 {%- endif -%}
               {%- endfor -%}
@@ -75,7 +77,6 @@
   }
   .macbook-price-table table {
     width: 100%;
-    min-width: 560px;
     border-collapse: collapse;
   }
   .macbook-price-table th,
@@ -87,6 +88,11 @@
     line-height: 1.4;
     color: #1d1d1f;
     white-space: nowrap;
+  }
+  .macbook-price-table tbody th {
+    white-space: normal;
+    min-width: 9rem;
+    padding-right: 16px;
   }
   .macbook-price-table thead th {
     font-size: 12px;

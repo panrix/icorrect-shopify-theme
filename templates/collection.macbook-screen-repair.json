@@ -441,7 +441,8 @@
         "heading_size_mobile": 22,
         "heading_line_height_desktop": 34,
         "heading_line_height_mobile": 28,
-        "heading_tag": "h2"
+        "heading_tag": "h2",
+        "anchor_id": "macbook-process"
       }
     },
     "macbook_trust_row": {
@@ -451,7 +452,8 @@
           "type": "chip",
           "settings": {
             "label": "4.8 from 750+ Google reviews",
-            "link": "https://maps.google.com/?q=iCorrect+12+Margaret+Street+London+W1W+8JQ"
+            "link": "https://maps.google.com/?q=iCorrect+12+Margaret+Street+London+W1W+8JQ",
+            "new_tab": true
           }
         },
         "chip_displays": {
@@ -472,7 +474,7 @@
           "type": "chip",
           "settings": {
             "label": "Microelectronics specialists",
-            "link": "#shopify-section-about_info_XAqnaH"
+            "link": "#macbook-process"
           }
         }
       },

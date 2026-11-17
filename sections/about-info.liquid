@@ -20,7 +20,7 @@
     assign mob_pad_bottom = 4
   endif
 -%}
-<section class="about-info-{{ section.id }}{% if macbook_compact %} macbook-compact-intro{% endif %}">
+<section class="about-info-{{ section.id }}{% if macbook_compact %} macbook-compact-intro{% endif %}"{% if section.settings.anchor_id != blank %} id="{{ section.settings.anchor_id | escape }}"{% endif %}>
   <div class="about-info-wrapper page-width">
     <div class="about-info-row">
       {%- if section.settings.heading_tag == 'h1' -%}
@@ -223,6 +223,12 @@
       "label": "Klarna placement under the from-price",
       "default": false,
       "info": "Uses the Klarna On-Site Messaging script already loaded by the app embed. The amount is the live from-price in pence."
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Anchor id",
+      "info": "Optional id so other sections can link to this block, for example macbook-process."
     },
     {
       "type": "text",

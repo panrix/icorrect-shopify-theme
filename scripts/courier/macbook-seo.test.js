@@ -350,12 +350,19 @@ describe('MacBook screen page additions', () => {
       'Microelectronics specialists',
     ]);
     assert.match(screen.sections.macbook_trust_row.blocks.chip_warranty.settings.link, /our-warranty/);
-    assert.match(screen.sections.macbook_trust_row.blocks.chip_specialists.settings.link, /about_info_XAqnaH/);
+    assert.equal(screen.sections.macbook_trust_row.blocks.chip_specialists.settings.link, '#macbook-process');
+    assert.equal(screen.sections.about_this_repair.settings.anchor_id, 'macbook-process');
+    assert.match(screen.sections.macbook_trust_row.blocks.chip_reviews.settings.link, /maps\.google\.com/);
+    assert.equal(screen.sections.macbook_trust_row.blocks.chip_reviews.settings.new_tab, true);
     const klarna = read('snippets/macbook-klarna-placement.liquid');
     assert.match(klarna, /data-key="credit-promotion-badge"/);
     assert.match(klarna, /data-locale="en-GB"/);
     assert.match(klarna, /data-purchase-amount="\{\{ purchase_amount \}\}"/);
     assert.match(klarna, /or spread the cost with Klarna, subject to status\./);
+    assert.match(klarna, /customElements\.whenDefined\('klarna-placement'\)/);
+    assert.match(klarna, /macbook-klarna--script/);
+    assert.equal(klarna.includes('max-height'), false);
+    assert.equal(klarna.includes('overflow: hidden'), false);
     assert.equal(/£\d/.test(klarna), false);
     assert.equal(klarna.includes('per month'), false);
     const tableSource = read('sections/macbook-price-table.liquid') + read('snippets/macbook-price-row.liquid');
@@ -363,6 +370,22 @@ describe('MacBook screen page additions', () => {
     assert.match(tableSource, /collection\.products/);
     assert.equal(/£\s*\d/.test(tableSource), false);
     assert.equal(tableSource.includes('—'), false);
+    assert.match(tableSource, /contains 'macbook air'/);
+    assert.match(tableSource, /contains 'macbook pro'/);
+    assert.equal(tableSource.includes("contains 'air'"), false);
+    assert.match(tableSource, /white-space: normal/);
+    const titles = [
+      'MacBook Air 13-inch M1 Screen Repair',
+      'MacBook Pro 14-inch M4 Screen Repair',
+    ];
+    for (const title of titles) {
+      const down = title.toLowerCase();
+      const air = down.includes('macbook air');
+      const pro = down.includes('macbook pro');
+      assert.equal(air && pro, false, title);
+    }
+    assert.equal('MacBook Pro 13-inch Screen Repair'.toLowerCase().includes('macbook air'), false);
+    assert.equal('repair'.includes('air'), true);
   });
 
   it('appends screen FAQs that stay in the FAQPage JSON-LD', () => {
@@ -401,6 +424,14 @@ describe('MacBook screen page additions', () => {
       if (text.includes('PayPal Pay in 3') || text.includes('Pay in 3')) hits.push(name);
     }
     assert.deepEqual(hits, []);
+    const page = read('templates/page.macbook-repairs.json');
+    const schema = read('snippets/icorrect-faq-page-schema.liquid');
+    assert.equal(page.includes('PayPal Pay in 3'), false);
+    assert.equal(page.includes('Pay in 3'), false);
+    assert.equal(schema.includes('PayPal Pay in 3'), false);
+    assert.equal(schema.includes('Pay in 3'), false);
+    assert.match(page, /flexible payment options including Klarna/);
+    assert.match(schema, /flexible payment options including Klarna/);
   });
 });
 
