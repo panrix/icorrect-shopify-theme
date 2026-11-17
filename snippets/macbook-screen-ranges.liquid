@@ -1,0 +1,119 @@
+{% doc %}
+  Live screen-repair from-prices grouped by MacBook Air or MacBook Pro and screen size.
+  Diagnostic products are skipped. 15-inch Pro models stay out of this list.
+  16-inch Pro is a min to max range. Every other group is a from-price.
+
+  @param {collection} [price_collection] - Defaults to the current collection.
+{% enddoc %}
+{%- liquid
+  assign range_collection = price_collection
+  if range_collection == blank
+    assign range_collection = collection
+  endif
+  assign air_13 = 0
+  assign air_15 = 0
+  assign pro_13 = 0
+  assign pro_14 = 0
+  assign pro_16_min = 0
+  assign pro_16_max = 0
+-%}
+{%- for product in range_collection.products -%}
+  {%- liquid
+    assign range_title = product.title | downcase
+    assign range_family = ''
+    assign range_size = ''
+    assign range_cents = 0
+    if range_title contains 'diagnostic' or product.handle contains 'diagnostic'
+      continue
+    endif
+    if range_title contains 'macbook air'
+      assign range_family = 'air'
+    elsif range_title contains 'macbook pro'
+      assign range_family = 'pro'
+    else
+      continue
+    endif
+    if range_title contains '16-inch' or range_title contains '16"' or range_title contains '16”'
+      assign range_size = '16'
+    elsif range_title contains '15-inch' or range_title contains '15"' or range_title contains '15”'
+      assign range_size = '15'
+    elsif range_title contains '14-inch' or range_title contains '14"' or range_title contains '14”'
+      assign range_size = '14'
+    elsif range_title contains '13-inch' or range_title contains '13"' or range_title contains '13”'
+      assign range_size = '13'
+    endif
+    if range_size == blank
+      continue
+    endif
+    if range_family == 'pro' and range_size == '15'
+      continue
+    endif
+  -%}
+  {%- for variant in product.variants -%}
+    {%- assign range_variant = variant.title | downcase -%}
+    {%- if variant.price > 0 and range_variant contains 'diagnostic' -%}
+      {%- continue -%}
+    {%- endif -%}
+    {%- if variant.price > 0 -%}
+      {%- if range_cents == 0 or variant.price < range_cents -%}
+        {%- assign range_cents = variant.price -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if range_cents > 0 -%}
+    {%- if range_family == 'air' and range_size == '13' -%}
+      {%- if air_13 == 0 or range_cents < air_13 -%}{%- assign air_13 = range_cents -%}{%- endif -%}
+    {%- elsif range_family == 'air' and range_size == '15' -%}
+      {%- if air_15 == 0 or range_cents < air_15 -%}{%- assign air_15 = range_cents -%}{%- endif -%}
+    {%- elsif range_family == 'pro' and range_size == '13' -%}
+      {%- if pro_13 == 0 or range_cents < pro_13 -%}{%- assign pro_13 = range_cents -%}{%- endif -%}
+    {%- elsif range_family == 'pro' and range_size == '14' -%}
+      {%- if pro_14 == 0 or range_cents < pro_14 -%}{%- assign pro_14 = range_cents -%}{%- endif -%}
+    {%- elsif range_family == 'pro' and range_size == '16' -%}
+      {%- if pro_16_min == 0 or range_cents < pro_16_min -%}{%- assign pro_16_min = range_cents -%}{%- endif -%}
+      {%- if range_cents > pro_16_max -%}{%- assign pro_16_max = range_cents -%}{%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- if air_13 > 0 or air_15 > 0 or pro_13 > 0 or pro_14 > 0 or pro_16_min > 0 -%}
+  <ul class="macbook-ranges">
+    {%- if air_13 > 0 -%}
+      <li><p class="macbook-benefit">MacBook Air 13"</p><p class="macbook-from-price">from {{ air_13 | money_without_trailing_zeros }}</p></li>
+    {%- endif -%}
+    {%- if air_15 > 0 -%}
+      <li><p class="macbook-benefit">MacBook Air 15"</p><p class="macbook-from-price">from {{ air_15 | money_without_trailing_zeros }}</p></li>
+    {%- endif -%}
+    {%- if pro_13 > 0 -%}
+      <li><p class="macbook-benefit">MacBook Pro 13"</p><p class="macbook-from-price">from {{ pro_13 | money_without_trailing_zeros }}</p></li>
+    {%- endif -%}
+    {%- if pro_14 > 0 -%}
+      <li><p class="macbook-benefit">MacBook Pro 14"</p><p class="macbook-from-price">from {{ pro_14 | money_without_trailing_zeros }}</p></li>
+    {%- endif -%}
+    {%- if pro_16_min > 0 -%}
+      <li>
+        <p class="macbook-benefit">MacBook Pro 16"</p>
+        <p class="macbook-from-price">{%- if pro_16_max > pro_16_min -%}{{ pro_16_min | money_without_trailing_zeros }} to {{ pro_16_max | money_without_trailing_zeros }}{%- else -%}from {{ pro_16_min | money_without_trailing_zeros }}{%- endif -%}</p>
+      </li>
+    {%- endif -%}
+  </ul>
+{%- endif -%}
+{% stylesheet %}
+  .macbook-ranges {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 12px;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+  .macbook-ranges li {
+    margin: 0;
+    padding: 0;
+  }
+  @media screen and (min-width: 990px) {
+    .macbook-ranges {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+{% endstylesheet %}

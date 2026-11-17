@@ -25,7 +25,11 @@
     <div class="about-info-row">
       {%- if section.settings.heading_tag == 'h1' -%}
         <h1>{{ heading_text }}</h1>
-        {% render 'macbook-from-price', show_klarna: section.settings.show_klarna %}
+        {%- if section.settings.show_screen_ranges -%}
+          {% render 'macbook-screen-ranges' %}
+        {%- else -%}
+          {% render 'macbook-from-price', show_klarna: section.settings.show_klarna %}
+        {%- endif -%}
       {%- else -%}
         <h2>{{ section.settings.heading }}</h2>
       {%- endif -%}
@@ -223,6 +227,13 @@
       "label": "Klarna placement under the from-price",
       "default": false,
       "info": "Uses the Klarna On-Site Messaging script already loaded by the app embed. The amount is the live from-price in pence."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_screen_ranges",
+      "label": "Screen size from-prices instead of one from-price",
+      "default": false,
+      "info": "MacBook screen pages. Live prices by Air and Pro size. Hides the single from-price and Klarna line."
     },
     {
       "type": "text",

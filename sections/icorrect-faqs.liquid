@@ -1,11 +1,16 @@
-<section class="lp-faqs-{{ section.id }}">
+<section class="lp-faqs-{{ section.id }}{% if section.settings.compact %} lp-faqs--compact{% endif %}">
   <div class="lp-faqs-wrapper page-width">
     <div class="lp-faqs-header">
       <h2>{{ section.settings.heading }}</h2>
-      <p>{{ section.settings.details }}</p>
+      {%- if section.settings.details != blank -%}
+        <p>{{ section.settings.details }}</p>
+      {%- endif -%}
     </div>
     <div class="accordions-row-wrapper">
     {% for block in section.blocks %}
+      {%- if block.settings.show_in_accordion == false -%}
+        {%- continue -%}
+      {%- endif -%}
       <div style="text-align:{{ block.settings.alignment }};" class="faq-col-icorrect {{ section.settings.txt-clr }} {% if section.settings.txt-clr == '#1d1d1f' %}test{% endif %}">
         <h3 class="accordion-{{ section.id }}">{{ block.settings.heading }}</h3>
         <div class="panel-accordion">
@@ -154,6 +159,24 @@ color: {{ section.settings.txt-clr }};
       right: 0rem;
     }
   }
+  .lp-faqs-{{ section.id }}.lp-faqs--compact .faq-col-icorrect {
+    flex: 100%;
+    max-width: 720px;
+  }
+  .lp-faqs-{{ section.id }}.lp-faqs--compact .lp-faqs-header {
+    padding-bottom: 8px;
+  }
+  .lp-faqs-{{ section.id }}.lp-faqs--compact .lp-faqs-header h2 {
+    font-size: 24px;
+    line-height: 1.3;
+  }
+  .lp-faqs-{{ section.id }}.lp-faqs--compact .accordion-{{ section.id }} {
+    font-size: 16px;
+    margin: 8px 0;
+  }
+  .lp-faqs-{{ section.id }}.lp-faqs--compact .panel-accordion p {
+    margin-bottom: 16px;
+  }
 </style>
 
 <script>
@@ -175,6 +198,16 @@ color: {{ section.settings.txt-clr }};
 
 {%- if section.settings.emit_faq_schema -%}
   {% render 'icorrect-faq-jsonld', faq_section: section %}
+{%- endif -%}
+{%- if section.settings.wizard_position == 'above' -%}
+<script>
+  (function () {
+    var host = document.getElementById('shopify-section-{{ section.id }}');
+    var wizard = document.querySelector('.quote-wizard-section');
+    if (!host || !wizard || !wizard.parentNode) return;
+    wizard.parentNode.insertBefore(host, wizard);
+  })();
+</script>
 {%- endif -%}
 
 {% schema %}
@@ -251,6 +284,23 @@ color: {{ section.settings.txt-clr }};
         "id": "txt-clr",
         "label": "Text Color",
         "default": "#FFF"
+      },
+      {
+        "type": "checkbox",
+        "id": "compact",
+        "label": "Compact single column",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "wizard_position",
+        "label": "Position relative to the quote wizard",
+        "options": [
+          { "value": "below", "label": "Below the wizard" },
+          { "value": "above", "label": "Above the wizard" }
+        ],
+        "default": "below",
+        "info": "Below matches the section order. Above moves this section in the browser so the placement can be tested without editing the wizard."
       }
     ],
     "blocks" : [
@@ -286,6 +336,13 @@ color: {{ section.settings.txt-clr }};
     		  }
        	],
            "label": "Text Alignment"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_in_accordion",
+          "label": "Show in the accordion",
+          "default": true,
+          "info": "Turn off to keep the question in FAQ structured data only."
         }
 		]
 	}

@@ -4,6 +4,14 @@
 
   @param {section} faq_section - FAQ section whose accordion blocks are on the page.
 {% enddoc %}
+{%- liquid
+  assign faq_has_model_cost = false
+  for block in faq_section.blocks
+    if block.settings.heading == 'How much does my MacBook screen repair cost?'
+      assign faq_has_model_cost = true
+    endif
+  endfor
+-%}
 {%- assign faq_emitted = 0 -%}
 {%- for block in faq_section.blocks -%}
   {%- if block.type == 'accordion' and block.settings.heading != blank and block.settings.sub_head != blank -%}
@@ -19,6 +27,9 @@
     {%- assign faq_written = 0 -%}
     {%- for block in faq_section.blocks -%}
       {%- if block.type == 'accordion' and block.settings.heading != blank and block.settings.sub_head != blank -%}
+        {%- if faq_has_model_cost and block.settings.heading contains 'cost in the UK' -%}
+          {%- continue -%}
+        {%- endif -%}
         {%- capture faq_answer_html -%}
           {%- render 'macbook-faq-answer', answer_html: block.settings.sub_head, price_collection: collection -%}
         {%- endcapture -%}

@@ -1,62 +1,82 @@
-<section class="macbook-trust" id="macbook-trust-{{ section.id }}">
-  <ul class="macbook-trust__list" role="list">
-    {%- for block in section.blocks -%}
-      <li {{ block.shopify_attributes }}>
-        {%- if block.settings.link != blank -%}
-          <a href="{{ block.settings.link }}"{% if block.settings.new_tab %} target="_blank" rel="noopener"{% endif %}>{{ block.settings.label | escape }}</a>
-        {%- else -%}
-          <span>{{ block.settings.label | escape }}</span>
-        {%- endif -%}
-      </li>
-    {%- endfor -%}
-  </ul>
+<section class="why-icorrect why-icorrect-{{ section.id }}" id="why-icorrect-{{ section.id }}">
+  <div class="page-width">
+    <h2>{{ section.settings.heading | escape }}</h2>
+    <ul>
+      {%- for block in section.blocks -%}
+        <li {{ block.shopify_attributes }}>
+          {%- if block.settings.link != blank -%}
+            <a href="{{ block.settings.link }}"{% if block.settings.new_tab %} target="_blank" rel="noopener"{% endif %}>{{ block.settings.label | escape }}</a>
+          {%- else -%}
+            <span>{{ block.settings.label | escape }}</span>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
 </section>
 
 {% stylesheet %}
-  .macbook-trust {
-    padding: 0 16px 4px;
+  .why-icorrect {
+    padding: 20px 0 10px;
+    background: #fafafa;
   }
-  .macbook-trust__list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 6px 8px;
-    max-width: 720px;
-    margin: 0 auto;
+  .why-icorrect h2 {
+    margin: 0 0 12px;
+    color: #1d1d1f;
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.3;
+    text-align: left;
+  }
+  .why-icorrect ul {
+    margin: 0;
     padding: 0;
     list-style: none;
+    max-width: 720px;
   }
-  .macbook-trust__list a,
-  .macbook-trust__list span {
-    display: inline-block;
-    padding: 3px 8px;
-    border-radius: 999px;
-    background: #f4f4f5;
+  .why-icorrect li {
+    margin: 0;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    color: #333;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.65;
+  }
+  .why-icorrect a {
     color: #1d1d1f;
-    font-size: 13px;
-    line-height: 16px;
-    font-weight: 500;
-    letter-spacing: 0;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.65;
     text-decoration: none;
   }
-  @media (max-width: 749px) {
-    .macbook-trust__list a,
-    .macbook-trust__list span {
-      font-size: 12px;
-      line-height: 16px;
+  @media (max-width: 767px) {
+    .why-icorrect {
+      padding: 15px 0 10px;
+    }
+    .why-icorrect h2 {
+      font-size: 24px;
+      line-height: 1.3;
     }
   }
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "MacBook trust row",
+  "name": "Why iCorrect",
   "tag": "section",
-  "settings": [],
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Why iCorrect"
+    }
+  ],
   "blocks": [
     {
-      "type": "chip",
-      "name": "Chip",
+      "type": "point",
+      "name": "Point",
       "settings": [
         {
           "type": "text",
@@ -66,8 +86,7 @@
         {
           "type": "text",
           "id": "link",
-          "label": "Link",
-          "info": "Optional. A page path, a #anchor on this page, or the Google listing."
+          "label": "Link"
         },
         {
           "type": "checkbox",
@@ -80,7 +99,7 @@
   ],
   "presets": [
     {
-      "name": "MacBook trust row"
+      "name": "Why iCorrect"
     }
   ]
 }

@@ -333,27 +333,52 @@ describe('MacBook screen page additions', () => {
     return JSON.parse(read('templates/collection.macbook-screen-repair.json').replace(/^\s*\/\*[\s\S]*?\*\/\s*/, ''));
   }
 
-  it('places Klarna, trust chips and a live price table around the wizard', () => {
+  it('places live size ranges, quick FAQs and the trust card around the wizard', () => {
     const screen = template();
     const order = screen.order;
     const about = order.indexOf('about_info_RWbQxj');
-    const trust = order.indexOf('macbook_trust_row');
     const wizard = order.indexOf('quote_wizard_top');
+    const quick = order.indexOf('screen_quick_faqs');
+    const trust = order.indexOf('macbook_trust_row');
     const table = order.indexOf('macbook_price_table');
-    assert.ok(about < trust && trust < wizard && wizard < table);
-    assert.equal(screen.sections.about_info_RWbQxj.settings.show_klarna, true);
-    const labels = Object.values(screen.sections.macbook_trust_row.blocks).map((block) => block.settings.label);
+    assert.ok(about < wizard && wizard < quick && quick < trust && trust < table);
+    assert.equal(screen.sections.about_info_RWbQxj.settings.show_screen_ranges, true);
+    assert.equal(screen.sections.about_info_RWbQxj.settings.show_klarna, false);
+    assert.equal(screen.sections.screen_quick_faqs.settings.wizard_position, 'below');
+    assert.equal(screen.sections.screen_quick_faqs.settings.compact, true);
+    assert.equal(screen.sections.screen_quick_faqs.settings.emit_faq_schema, false);
+    const quickHeadings = screen.sections.screen_quick_faqs.block_order.map((id) => screen.sections.screen_quick_faqs.blocks[id].settings.heading);
+    assert.deepEqual(quickHeadings, [
+      'How much does my MacBook screen repair cost?',
+      'Why are some quotes much cheaper?',
+      'How do I get my MacBook to you, and how long does it take?',
+    ]);
+    const quickCopy = Object.values(screen.sections.screen_quick_faqs.blocks).map((block) => block.settings.sub_head).join('\n');
+    assert.equal(quickCopy.includes('—'), false);
+    assert.equal(quickCopy.includes('–'), false);
+    assert.equal(/original parts only/i.test(quickCopy), false);
+    assert.equal(/walk-in/i.test(quickCopy), false);
+    assert.equal(/same-day/i.test(quickCopy), false);
+    assert.equal(/express/i.test(quickCopy), false);
+    const labels = screen.sections.macbook_trust_row.block_order.map((id) => screen.sections.macbook_trust_row.blocks[id].settings.label);
     assert.deepEqual(labels, [
       '4.8 from 750+ Google reviews',
-      'Genuine Apple displays',
+      'Genuine Apple displays, never aftermarket',
+      'Board-level microelectronics specialists',
       '2-year warranty',
-      'Microelectronics specialists',
+      'Collected from your office or home, anywhere in the UK',
     ]);
-    assert.match(screen.sections.macbook_trust_row.blocks.chip_warranty.settings.link, /our-warranty/);
-    assert.equal(screen.sections.macbook_trust_row.blocks.chip_specialists.settings.link, '#macbook-process');
+    assert.equal(screen.sections.macbook_trust_row.blocks.point_board.settings.link, '#macbook-process');
+    assert.match(screen.sections.macbook_trust_row.blocks.point_warranty.settings.link, /our-warranty/);
+    assert.match(screen.sections.macbook_trust_row.blocks.point_reviews.settings.link, /maps\.google\.com/);
+    assert.equal(screen.sections.macbook_trust_row.blocks.point_reviews.settings.new_tab, true);
     assert.equal(screen.sections.about_this_repair.settings.anchor_id, 'macbook-process');
-    assert.match(screen.sections.macbook_trust_row.blocks.chip_reviews.settings.link, /maps\.google\.com/);
-    assert.equal(screen.sections.macbook_trust_row.blocks.chip_reviews.settings.new_tab, true);
+    const ranges = read('snippets/macbook-screen-ranges.liquid');
+    assert.match(ranges, /contains 'macbook air'/);
+    assert.match(ranges, /contains 'macbook pro'/);
+    assert.match(ranges, /money_without_trailing_zeros/);
+    assert.equal(/£\s*\d/.test(ranges), false);
+    assert.equal(ranges.includes("contains 'air'"), false);
     const klarna = read('snippets/macbook-klarna-placement.liquid');
     assert.match(klarna, /data-key="credit-promotion-badge"/);
     assert.match(klarna, /data-locale="en-GB"/);
@@ -386,6 +411,56 @@ describe('MacBook screen page additions', () => {
     }
     assert.equal('MacBook Pro 13-inch Screen Repair'.toLowerCase().includes('macbook air'), false);
     assert.equal('repair'.includes('air'), true);
+  });
+
+  it('computes screen size ranges from products and keeps Pro 15 out of the header', () => {
+    const catalogue = JSON.parse(read('data/shopify-catalogue-2026-09-11.json'));
+    const products = Array.isArray(catalogue) ? catalogue : catalogue.products;
+    const groups = {};
+    function sizeOf(title) {
+      const down = title.toLowerCase();
+      if (down.includes('16-inch') || down.includes('16"') || down.includes('16”')) return '16';
+      if (down.includes('15-inch') || down.includes('15"') || down.includes('15”')) return '15';
+      if (down.includes('14-inch') || down.includes('14"') || down.includes('14”')) return '14';
+      if (down.includes('13-inch') || down.includes('13"') || down.includes('13”')) return '13';
+      return '';
+    }
+    for (const product of products) {
+      const title = product.title || '';
+      const down = title.toLowerCase();
+      if (!/screen/i.test(title) || /diagnostic/i.test(down) || /diagnostic/i.test(product.handle || '')) continue;
+      const family = down.includes('macbook air') ? 'air' : down.includes('macbook pro') ? 'pro' : '';
+      const size = sizeOf(title);
+      if (!family || !size || (family === 'pro' && size === '15')) continue;
+      const cents = Math.min(...(product.variants || []).map((variant) => Math.round(Number(variant.price) * 100)).filter((price) => price > 0));
+      if (!Number.isFinite(cents)) continue;
+      const key = `${family}-${size}`;
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(cents);
+    }
+    const min = (key) => Math.min(...groups[key]);
+    const max = (key) => Math.max(...groups[key]);
+    assert.equal(min('air-13'), 29900);
+    assert.equal(min('air-15'), 44900);
+    assert.equal(min('pro-13'), 29900);
+    assert.equal(min('pro-14'), 54900);
+    assert.equal(min('pro-16'), 49900);
+    assert.equal(max('pro-16'), 79900);
+    assert.equal(groups['pro-15'], undefined);
+    const screen = template();
+    const schemaBlocks = screen.sections.icorrect_faqs_RVk3VL.blocks;
+    for (const heading of [
+      'How much does my MacBook screen repair cost?',
+      'Why are some quotes much cheaper?',
+      'How do I get my MacBook to you, and how long does it take?',
+    ]) {
+      const block = Object.values(schemaBlocks).find((item) => item.settings.heading === heading);
+      assert.ok(block, heading);
+      assert.equal(block.settings.show_in_accordion, false);
+    }
+    const jsonld = read('snippets/icorrect-faq-jsonld.liquid');
+    assert.match(jsonld, /How much does my MacBook screen repair cost\?/);
+    assert.match(jsonld, /cost in the UK/);
   });
 
   it('appends screen FAQs that stay in the FAQPage JSON-LD', () => {
