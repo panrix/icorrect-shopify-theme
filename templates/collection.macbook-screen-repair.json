@@ -281,7 +281,7 @@
           "type": "accordion",
           "settings": {
             "heading": "How long does a MacBook screen repair take?",
-            "sub_head": "<p>Standard screen repairs take two to three working days. That includes intake checks, disassembly, display prep, fitting, calibration, post-repair testing, and final QC.</p><p>Need it faster? Book our express service. It reduces turnaround to one working day when scheduled in advance.</p><p>We can offer this because we’ve built an assembly-line workflow. Each stage is handled by a dedicated technician, which speeds up the process without sacrificing quality.</p>",
+            "sub_head": "<p>Once your MacBook reaches our workshop, a screen repair takes 2 working days. That includes intake checks, disassembly, display prep, fitting, calibration, post-repair testing, and final QC.</p>",
             "alignment": "left"
           }
         },
@@ -356,33 +356,6 @@
             "sub_head": "<p>Lines, flicker, or a picture that only works at some angles can be the panel, or a cable fault. <a href=\"/collections/macbook-flexgate-repair-prices\">Flexgate</a> is a short backlight cable on 2016 to 2018 MacBook Pros (A1706, A1707 and A1708). The screen can look dead, or show a stage-light glow when the lid is opened too far. <a href=\"/collections/macbook-dustgate-repair-prices\">Dustgate</a> is dust pressing into the image cables. It often shows as flicker, vertical lines, or odd colour, usually on later models. When the fault is in the cable, we quote that repair before any work starts, rather than replacing the screen.</p>",
             "alignment": "left"
           }
-        },
-        "quick_1": {
-          "type": "accordion",
-          "settings": {
-            "heading": "How much does my MacBook screen repair cost?",
-            "sub_head": "<p>The exact price for your model is in the quote tool on this page. That is the full repair price for a Genuine Apple display fitted to your MacBook.</p>",
-            "alignment": "left",
-            "show_in_accordion": false
-          }
-        },
-        "quick_2": {
-          "type": "accordion",
-          "settings": {
-            "heading": "Why are some quotes much cheaper?",
-            "sub_head": "<p>We fit Genuine Apple displays, never aftermarket panels. Cheaper quotes usually mean aftermarket screens, which often have True Tone and brightness problems. We replace just the display panel and keep your original lid, camera and hinges. Every repair is covered by our 2-year warranty.</p>",
-            "alignment": "left",
-            "show_in_accordion": false
-          }
-        },
-        "quick_3": {
-          "type": "accordion",
-          "settings": {
-            "heading": "How do I get my MacBook to you, and how long does it take?",
-            "sub_head": "<p>We collect from your office or home anywhere in the UK and send it back the same way. Collection is free on orders of £200 or more, which covers every screen repair. Once your MacBook reaches our workshop, a screen repair takes 2 working days. If we find anything beyond the screen, we will check with you before doing any extra work.</p>",
-            "alignment": "left",
-            "show_in_accordion": false
-          }
         }
       },
       "block_order": [
@@ -400,10 +373,7 @@
         "accordion_why_more",
         "accordion_true_tone",
         "accordion_genuine",
-        "accordion_lines",
-        "quick_1",
-        "quick_2",
-        "quick_3"
+        "accordion_lines"
       ],
       "settings": {
         "padding-top": 50,
@@ -447,7 +417,8 @@
         "collection_handles": "macbook-screen-repair-prices,macbook-pro-13-m2-a2338-2022-repair-prices",
         "product_handles": "macbook-pro-13-m2-2022-a2338-screen-repair",
         "show_everywhere": false,
-        "show_finder": false
+        "show_finder": false,
+        "two_day_screen": true
       }
     },
     "repair_index": {
@@ -578,7 +549,7 @@
         "quick_3"
       ],
       "settings": {
-        "emit_faq_schema": false,
+        "emit_faq_schema": true,
         "padding-top": 20,
         "padding-bottom": 10,
         "mob-padding-top": 15,

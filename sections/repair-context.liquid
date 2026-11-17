@@ -112,7 +112,7 @@
   <section aria-labelledby="rcx-process-{{ section.id }}">
     <p class="rcx__label">How it works</p>
     <h2 id="rcx-process-{{ section.id }}">How a courier or mail-in screen repair works</h2>
-    <p>Courier collection across London, tracked mail-in nationwide. Standard screen repairs take two to three working days once your MacBook reaches our workshop at 12 Margaret Street, London W1W 8JQ. Express service can reduce this to one working day when booked in advance.</p>
+    <p>Courier collection across London, tracked mail-in nationwide. {%- if section.settings.two_day_screen -%}Once your MacBook reaches our workshop, a screen repair takes 2 working days.{%- else -%}Standard screen repairs take two to three working days once your MacBook reaches our workshop at 12 Margaret Street, London W1W 8JQ. Express service can reduce this to one working day when booked in advance.{%- endif -%}</p>
     <ol class="rcx__steps">
       <li><h3>Book and send</h3><p>Get your price in the quote tool above, then choose courier collection in London or a tracked mail-in from anywhere in the UK.</p></li>
       <li><h3>Intake checks</h3><p>We check for deeper faults before any screen repair. If your MacBook does not power on or show a picture, we upgrade the job to a full diagnostic first and give you a clear quote before we begin.</p></li>
@@ -195,6 +195,7 @@
   "settings": [
     { "type": "checkbox", "id": "show_everywhere", "label": "Show on every page using this template", "default": false },
     { "type": "checkbox", "id": "show_finder", "label": "Show model number finder", "default": true },
+    { "type": "checkbox", "id": "two_day_screen", "label": "Use the 2 working day screen line", "default": false, "info": "Replaces the express sentence. Other templates keep the existing wording." },
     { "type": "textarea", "id": "collection_handles", "label": "Collection handles (comma separated)", "default": "macbook-screen-repair-prices,macbook-pro-13-m2-a2338-2022-repair-prices" },
     { "type": "textarea", "id": "product_handles", "label": "Product handles (comma separated)", "default": "macbook-pro-13-m2-2022-a2338-screen-repair" }
   ],

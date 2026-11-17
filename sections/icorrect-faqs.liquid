@@ -29,13 +29,13 @@
     width: 100%;
     background-color: {{ section.settings.bg }};
   }
-  .lp-faqs-header{
+  .lp-faqs-{{ section.id }} .lp-faqs-header{
     text-align: center;
     width: 100%;
     padding-bottom: 20px;
     max-width: 760px;
   }
-  .lp-faqs-header h2{
+  .lp-faqs-{{ section.id }} .lp-faqs-header h2{
 font-size: 28px;
 font-weight: 600;
 line-height: 45.67px;
@@ -45,7 +45,7 @@ margin: 0;
 padding: 0;
 padding-bottom: 10px;
   }
-  .lp-faqs-header p{
+  .lp-faqs-{{ section.id }} .lp-faqs-header p{
 font-size: 18px;
 font-weight: 400;
 line-height: 30px;
@@ -55,13 +55,13 @@ color: {{ section.settings.txt-clr }};
 margin: 0;
 padding: 0;
   }
-.accordions-row-wrapper{
+.lp-faqs-{{ section.id }} .accordions-row-wrapper{
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: flex-start;
 }
-  .faq-col-icorrect{
+  .lp-faqs-{{ section.id }} .faq-col-icorrect{
     flex: 48%;
     max-width: 48%;
   }
@@ -100,14 +100,14 @@ margin: 15px 0px 15px 0px;
   
 }
 
-.active-accordion:after {
+.lp-faqs-{{ section.id }} .active-accordion:after {
 content: "";
    background-image: url('https://cdn.shopify.com/s/files/1/0754/5903/5403/files/Vector.png?v=1723514794');
   background-repeat: no-repeat;
   min-height: 16px;
 }
 
-.panel-accordion {
+.lp-faqs-{{ section.id }} .panel-accordion {
 padding: 0 5px;
 background-color: transparent;
 max-height: 0;
@@ -120,7 +120,7 @@ text-align: left;
 color: {{ section.settings.txt-clr }};
    border-bottom: 1px solid {{ section.settings.txt-clr }};
 }
-  .panel-accordion p{
+  .lp-faqs-{{ section.id }} .panel-accordion p{
     margin-top: 0px;
     margin-bottom: 30px;
   }
@@ -131,16 +131,16 @@ color: {{ section.settings.txt-clr }};
       padding-top: {{ section.settings.mob-padding-top }}px;
       padding-bottom: {{ section.settings.mob-padding-bottom }}px;
     }
-    .faq-col-icorrect{
+    .lp-faqs-{{ section.id }} .faq-col-icorrect{
     flex: 100%;
     max-width: 100%;
   }
-    .lp-faqs-header h2{
+    .lp-faqs-{{ section.id }} .lp-faqs-header h2{
       font-size: 24px;
       font-weight: 600;
       line-height: 36px;
     }
-    .lp-faqs-header p{
+    .lp-faqs-{{ section.id }} .lp-faqs-header p{
       font-size: 14px;
       font-weight: 400;
       line-height: 20px;
@@ -187,10 +187,11 @@ color: {{ section.settings.txt-clr }};
       acc[i].addEventListener("click", function() {
       this.classList.toggle("active-accordion");
       var panel = this.nextElementSibling;
-      if (panel.style.maxHeight){
-      panel.style.maxHeight = null;
+      if (!panel) return;
+      if (this.classList.contains("active-accordion")) {
+        panel.style.maxHeight = "none";
       } else {
-      panel.style.maxHeight = panel.scrollHeight + "px";
+        panel.style.maxHeight = "0px";
       }
       });
 }

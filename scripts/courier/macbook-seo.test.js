@@ -346,13 +346,17 @@ describe('MacBook screen page additions', () => {
     assert.equal(screen.sections.about_info_RWbQxj.settings.show_klarna, false);
     assert.equal(screen.sections.screen_quick_faqs.settings.wizard_position, 'below');
     assert.equal(screen.sections.screen_quick_faqs.settings.compact, true);
-    assert.equal(screen.sections.screen_quick_faqs.settings.emit_faq_schema, false);
+    assert.equal(screen.sections.screen_quick_faqs.settings.emit_faq_schema, true);
     const quickHeadings = screen.sections.screen_quick_faqs.block_order.map((id) => screen.sections.screen_quick_faqs.blocks[id].settings.heading);
     assert.deepEqual(quickHeadings, [
       'How much does my MacBook screen repair cost?',
       'Why are some quotes much cheaper?',
       'How do I get my MacBook to you, and how long does it take?',
     ]);
+    const bottomHeadings = screen.sections.icorrect_faqs_RVk3VL.block_order.map((id) => screen.sections.icorrect_faqs_RVk3VL.blocks[id].settings.heading);
+    for (const heading of quickHeadings) {
+      assert.equal(bottomHeadings.includes(heading), false, heading);
+    }
     const quickCopy = Object.values(screen.sections.screen_quick_faqs.blocks).map((block) => block.settings.sub_head).join('\n');
     assert.equal(quickCopy.includes('—'), false);
     assert.equal(quickCopy.includes('–'), false);
@@ -447,20 +451,22 @@ describe('MacBook screen page additions', () => {
     assert.equal(min('pro-16'), 49900);
     assert.equal(max('pro-16'), 79900);
     assert.equal(groups['pro-15'], undefined);
+    const ranges = read('snippets/macbook-screen-ranges.liquid');
+    assert.match(ranges, /margin: 0/);
+    assert.match(ranges, /line-height: 1\.4/);
+    const faqs = read('sections/icorrect-faqs.liquid');
+    assert.match(faqs, /\.lp-faqs-\{\{ section\.id \}\} \.lp-faqs-header h2/);
+    assert.match(faqs, /\.lp-faqs-\{\{ section\.id \}\} \.panel-accordion \{/);
+    assert.match(faqs, /maxHeight = "none"/);
     const screen = template();
-    const schemaBlocks = screen.sections.icorrect_faqs_RVk3VL.blocks;
-    for (const heading of [
-      'How much does my MacBook screen repair cost?',
-      'Why are some quotes much cheaper?',
-      'How do I get my MacBook to you, and how long does it take?',
-    ]) {
-      const block = Object.values(schemaBlocks).find((item) => item.settings.heading === heading);
-      assert.ok(block, heading);
-      assert.equal(block.settings.show_in_accordion, false);
-    }
-    const jsonld = read('snippets/icorrect-faq-jsonld.liquid');
-    assert.match(jsonld, /How much does my MacBook screen repair cost\?/);
-    assert.match(jsonld, /cost in the UK/);
+    assert.equal(screen.sections.repair_context.settings.two_day_screen, true);
+    const turnaround = screen.sections.icorrect_faqs_RVk3VL.blocks.accordion_PLgEhN.settings.sub_head;
+    assert.match(turnaround, /takes 2 working days/);
+    assert.equal(/express/i.test(turnaround), false);
+    assert.equal(/one working day/i.test(turnaround), false);
+    const guide = read('sections/repair-context.liquid');
+    assert.match(guide, /two_day_screen/);
+    assert.match(guide, /takes 2 working days/);
   });
 
   it('appends screen FAQs that stay in the FAQPage JSON-LD', () => {
