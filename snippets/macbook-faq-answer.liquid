@@ -1,0 +1,25 @@
+{% doc %}
+  FAQ answer HTML, with [[from_price]] swapped for the live collection minimum.
+  The same output is used in the visible accordion and the FAQPage JSON-LD.
+
+  @param {string} answer_html - Rich text from the FAQ block.
+  @param {collection} [price_collection] - Collection to price. Defaults to the current collection.
+{% enddoc %}
+{%- liquid
+  assign faq_out = answer_html
+  if faq_out contains '[[from_price]]'
+    assign faq_source = price_collection
+    if faq_source == blank
+      assign faq_source = collection
+    endif
+    capture faq_cents_raw
+      render 'macbook-from-cents', price_collection: faq_source
+    endcapture
+    assign faq_cents = faq_cents_raw | strip | plus: 0
+    if faq_cents > 0
+      assign faq_money = faq_cents | money_without_trailing_zeros
+      assign faq_out = faq_out | replace: '[[from_price]]', faq_money
+    endif
+  endif
+-%}
+{{- faq_out -}}

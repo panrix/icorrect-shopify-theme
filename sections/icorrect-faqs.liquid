@@ -9,7 +9,7 @@
       <div style="text-align:{{ block.settings.alignment }};" class="faq-col-icorrect {{ section.settings.txt-clr }} {% if section.settings.txt-clr == '#1d1d1f' %}test{% endif %}">
         <h3 class="accordion-{{ section.id }}">{{ block.settings.heading }}</h3>
         <div class="panel-accordion">
-            <p>{{ block.settings.sub_head }}</p>
+            {% render 'macbook-faq-answer', answer_html: block.settings.sub_head, price_collection: collection %}
         </div>
       </div>
     {% endfor %}

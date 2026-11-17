@@ -1,0 +1,84 @@
+{% doc %}
+  One crawlable price-table row. Model, A-number and year/chip come from the product title.
+  The from-price is the cheapest non-diagnostic variant. Nothing is hardcoded.
+
+  @param {product} product - A repair product in the current collection.
+{% enddoc %}
+{%- liquid
+  assign row_cents = 0
+  assign row_title = product.title | downcase
+  assign row_skip = false
+  if row_title contains 'diagnostic' or product.handle contains 'diagnostic'
+    assign row_skip = true
+  endif
+-%}
+{%- unless row_skip -%}
+  {%- for variant in product.variants -%}
+    {%- assign variant_name = variant.title | downcase -%}
+    {%- if variant.price > 0 and variant_name contains 'diagnostic' -%}
+      {%- continue -%}
+    {%- endif -%}
+    {%- if variant.price > 0 -%}
+      {%- if row_cents == 0 or variant.price < row_cents -%}
+        {%- assign row_cents = variant.price -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endunless -%}
+{%- if row_cents > 0 -%}
+  {%- liquid
+    assign clean = product.title | split: ' Screen Repair' | first | split: ' screen repair' | first
+    assign year = ''
+    if clean contains '('
+      assign year = clean | split: '(' | last | split: ')' | first
+    endif
+    assign chip = ''
+    if clean contains '‘'
+      assign chip = clean | split: '‘' | last | split: '’' | first
+    elsif clean contains "'"
+      assign quote_parts = clean | split: "'"
+      assign chip = quote_parts[1]
+    endif
+    assign scan = clean
+    if chip != blank
+      assign scan = scan | remove: chip
+    endif
+    if year != blank
+      assign scan = scan | remove: year
+    endif
+    assign model_number = ''
+    assign words = scan | split: ' '
+    for word in words
+      assign bare = word | remove: '(' | remove: ')' | remove: "'" | remove: '"' | remove: '‘' | remove: '’' | remove: '”'
+      assign first_char = bare | slice: 0, 1
+      assign second_char = bare | slice: 1, 1
+      if bare.size >= 5 and first_char == 'A' and '0123456789' contains second_char
+        assign model_number = bare
+      endif
+    endfor
+    assign model_name = clean
+    if year != blank
+      assign model_name = model_name | remove: year
+    endif
+    assign model_name = model_name | remove: '(' | remove: ')'
+    if model_number != blank
+      assign model_name = model_name | remove: model_number
+    endif
+    if chip != blank
+      assign model_name = model_name | remove: chip
+    endif
+    assign model_name = model_name | remove: "'" | remove: '‘' | remove: '’' | remove: '"' | replace: '”', '-inch' | remove: 'Retina' | replace: '  ', ' ' | replace: '  ', ' ' | replace: '  ', ' ' | strip
+    assign spec = year
+    if chip != blank and year != blank
+      assign spec = chip | append: ', ' | append: year
+    elsif chip != blank
+      assign spec = chip
+    endif
+  -%}
+  <tr>
+    <th scope="row"><a href="{{ product.url }}">{{ model_name | escape }}</a></th>
+    <td>{{ model_number | escape }}</td>
+    <td>{{ spec | escape }}</td>
+    <td><a href="{{ product.url }}">from {{ row_cents | money_without_trailing_zeros }}</a></td>
+  </tr>
+{%- endif -%}

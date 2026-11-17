@@ -25,7 +25,7 @@
     <div class="about-info-row">
       {%- if section.settings.heading_tag == 'h1' -%}
         <h1>{{ heading_text }}</h1>
-        {% render 'macbook-from-price', align: 'center' %}
+        {% render 'macbook-from-price', show_klarna: section.settings.show_klarna %}
       {%- else -%}
         <h2>{{ section.settings.heading }}</h2>
       {%- endif -%}
@@ -216,6 +216,13 @@
       ],
       "default": "h2",
       "info": "Use H1 only on the first section of a page that has no other H1."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_klarna",
+      "label": "Klarna placement under the from-price",
+      "default": false,
+      "info": "Uses the Klarna On-Site Messaging script already loaded by the app embed. The amount is the live from-price in pence."
     },
     {
       "type": "text",

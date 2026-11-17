@@ -1,0 +1,81 @@
+<section class="macbook-trust" id="macbook-trust-{{ section.id }}">
+  <ul class="macbook-trust__list" role="list">
+    {%- for block in section.blocks -%}
+      <li {{ block.shopify_attributes }}>
+        {%- if block.settings.link != blank -%}
+          <a href="{{ block.settings.link }}">{{ block.settings.label | escape }}</a>
+        {%- else -%}
+          <span>{{ block.settings.label | escape }}</span>
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+  </ul>
+</section>
+
+{% stylesheet %}
+  .macbook-trust {
+    padding: 0 16px 4px;
+  }
+  .macbook-trust__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 8px;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+  .macbook-trust__list a,
+  .macbook-trust__list span {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #f4f4f5;
+    color: #1d1d1f;
+    font-size: 13px;
+    line-height: 16px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-decoration: none;
+  }
+  @media (max-width: 749px) {
+    .macbook-trust__list a,
+    .macbook-trust__list span {
+      font-size: 12px;
+      line-height: 16px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "MacBook trust row",
+  "tag": "section",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "chip",
+      "name": "Chip",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label"
+        },
+        {
+          "type": "text",
+          "id": "link",
+          "label": "Link",
+          "info": "Optional. A page path, a #anchor on this page, or the Google listing."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MacBook trust row"
+    }
+  ]
+}
+{% endschema %}

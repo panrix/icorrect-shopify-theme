@@ -1,0 +1,41 @@
+{% doc %}
+  Klarna On-Site Messaging credit-promotion badge.
+  The klarna-on-site-messaging app embed already loads the script.
+  data-purchase-amount is the from-price in minor units. No monthly figure is written here.
+  If the script has not defined the element, the fallback sentence stays visible.
+
+  @param {number} purchase_amount - Price in minor units (pence).
+{% enddoc %}
+{%- if purchase_amount > 0 -%}
+  <div class="macbook-klarna">
+    <klarna-placement
+      data-key="credit-promotion-badge"
+      data-locale="en-GB"
+      data-purchase-amount="{{ purchase_amount }}"
+    ></klarna-placement>
+    <span class="macbook-klarna-fallback">or spread the cost with Klarna, subject to status.</span>
+  </div>
+{%- endif -%}
+{% stylesheet %}
+  .macbook-klarna {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 24px;
+    max-height: 36px;
+    margin: 2px 0 4px;
+    overflow: hidden;
+    text-align: center;
+  }
+  .macbook-klarna-fallback {
+    margin: 0;
+    font-size: 13px;
+    line-height: 24px;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: #6e6e73;
+  }
+  .macbook-klarna klarna-placement:defined + .macbook-klarna-fallback {
+    display: none;
+  }
+{% endstylesheet %}

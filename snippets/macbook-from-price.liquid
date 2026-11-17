@@ -5,6 +5,7 @@
   Collection is not described as free, because that only applies once the repair is £200 or more.
 
   @param {collection} [price_collection] - Collection to price. Defaults to the current collection, or the screen price list on the MacBook repairs page.
+  @param {boolean} [show_klarna] - Show the Klarna placement under the from-price.
 {% enddoc %}
 {%- liquid
   assign price_source = price_collection
@@ -54,6 +55,9 @@
       assign from_money = from_cents | money_without_trailing_zeros
     -%}
     <p class="macbook-from-price">{{ from_label }} {{ from_money }}</p>
+    {%- if show_klarna -%}
+      {% render 'macbook-klarna-placement', purchase_amount: from_cents %}
+    {%- endif -%}
   {%- endif -%}
   <p class="macbook-benefit">Courier collection across London, tracked mail-in nationwide.</p>
   <style>

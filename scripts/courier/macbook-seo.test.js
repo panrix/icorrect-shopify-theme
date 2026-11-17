@@ -80,7 +80,7 @@ describe('MacBook pages keep the turnaround test copy', () => {
 
   it('keeps the wizard H1 and only adds the from-price under it', () => {
     const wizard = read('sections/quote-wizard.liquid');
-    assert.match(wizard, /<h1 class="qw-page-title">\{\{ collection\.title \| escape \}\}<\/h1>\n\s*\{% render 'macbook-from-price', align: 'center' %\}/);
+    assert.match(wizard, /<h1 class="qw-page-title">\{\{ collection\.title \| escape \}\}<\/h1>\n\s*\{% render 'macbook-from-price' %\}/);
     assert.equal(read('assets/quote-wizard.js').includes("render 'macbook-from-price'"), false);
   });
 
@@ -325,6 +325,82 @@ describe('MacBook template settings fit their section schema', () => {
       }
     }
     assert.deepEqual(problems, []);
+  });
+});
+
+describe('MacBook screen page additions', () => {
+  function template() {
+    return JSON.parse(read('templates/collection.macbook-screen-repair.json').replace(/^\s*\/\*[\s\S]*?\*\/\s*/, ''));
+  }
+
+  it('places Klarna, trust chips and a live price table around the wizard', () => {
+    const screen = template();
+    const order = screen.order;
+    const about = order.indexOf('about_info_RWbQxj');
+    const trust = order.indexOf('macbook_trust_row');
+    const wizard = order.indexOf('quote_wizard_top');
+    const table = order.indexOf('macbook_price_table');
+    assert.ok(about < trust && trust < wizard && wizard < table);
+    assert.equal(screen.sections.about_info_RWbQxj.settings.show_klarna, true);
+    const labels = Object.values(screen.sections.macbook_trust_row.blocks).map((block) => block.settings.label);
+    assert.deepEqual(labels, [
+      '4.8 from 750+ Google reviews',
+      'Genuine Apple displays',
+      '2-year warranty',
+      'Microelectronics specialists',
+    ]);
+    assert.match(screen.sections.macbook_trust_row.blocks.chip_warranty.settings.link, /our-warranty/);
+    assert.match(screen.sections.macbook_trust_row.blocks.chip_specialists.settings.link, /about_info_XAqnaH/);
+    const klarna = read('snippets/macbook-klarna-placement.liquid');
+    assert.match(klarna, /data-key="credit-promotion-badge"/);
+    assert.match(klarna, /data-locale="en-GB"/);
+    assert.match(klarna, /data-purchase-amount="\{\{ purchase_amount \}\}"/);
+    assert.match(klarna, /or spread the cost with Klarna, subject to status\./);
+    assert.equal(/£\d/.test(klarna), false);
+    assert.equal(klarna.includes('per month'), false);
+    const tableSource = read('sections/macbook-price-table.liquid') + read('snippets/macbook-price-row.liquid');
+    assert.match(tableSource, /money_without_trailing_zeros/);
+    assert.match(tableSource, /collection\.products/);
+    assert.equal(/£\s*\d/.test(tableSource), false);
+    assert.equal(tableSource.includes('—'), false);
+  });
+
+  it('appends screen FAQs that stay in the FAQPage JSON-LD', () => {
+    const screen = template();
+    const blocks = screen.sections.icorrect_faqs_RVk3VL.blocks;
+    const headings = screen.sections.icorrect_faqs_RVk3VL.block_order.map((id) => blocks[id].settings.heading);
+    const expected = [
+      'How much does a MacBook screen repair cost in the UK?',
+      'Why does a 14-inch or 16-inch MacBook Pro screen cost more?',
+      'Will True Tone still work after the repair?',
+      'What is the difference between a genuine and an aftermarket MacBook screen?',
+      'My screen has lines or flickers, is it the screen?',
+    ];
+    for (const heading of expected) assert.ok(headings.includes(heading), heading);
+    const answers = expected.map((heading) => Object.values(blocks).find((block) => block.settings.heading === heading).settings.sub_head).join('\n');
+    assert.match(answers, /\[\[from_price\]\]/);
+    assert.match(answers, /macbook-flexgate-repair-prices/);
+    assert.match(answers, /macbook-dustgate-repair-prices/);
+    assert.equal(answers.includes('—'), false);
+    assert.equal(answers.includes('–'), false);
+    assert.equal(/original parts only/i.test(answers), false);
+    assert.equal(/walk-in/i.test(answers), false);
+    assert.equal(/deposit/i.test(answers), false);
+    assert.equal(/free collection/i.test(answers), false);
+    const jsonld = read('snippets/icorrect-faq-jsonld.liquid');
+    assert.match(jsonld, /macbook-faq-answer/);
+    assert.match(jsonld, /"@type": "FAQPage"/);
+    assert.equal(jsonld.includes('aggregateRating'), false);
+  });
+
+  it('removes PayPal Pay in 3 from MacBook templates', () => {
+    const files = fs.readdirSync(path.join(root, 'templates')).filter((name) => /macbook/i.test(name));
+    const hits = [];
+    for (const name of files) {
+      const text = read(`templates/${name}`);
+      if (text.includes('PayPal Pay in 3') || text.includes('Pay in 3')) hits.push(name);
+    }
+    assert.deepEqual(hits, []);
   });
 });
 

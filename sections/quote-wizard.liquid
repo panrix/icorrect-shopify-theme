@@ -321,7 +321,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
     <div class="qw-wizard" aria-label="Repair quote wizard">
       {%- if section.settings.page_title and request.page_type == 'collection' and collection.title != blank -%}
         <h1 class="qw-page-title">{{ collection.title | escape }}</h1>
-        {% render 'macbook-from-price', align: 'center' %}
+        {% render 'macbook-from-price' %}
       {%- endif -%}
       <div class="qw-head">
         {% if request.page_type == 'page' and page.handle == 'contact' %}

@@ -71,7 +71,8 @@
         "heading_size_mobile": 24,
         "heading_line_height_desktop": 46,
         "heading_line_height_mobile": 36,
-        "heading_tag": "h1"
+        "heading_tag": "h1",
+        "show_klarna": true
       }
     },
     "model_number_search_nCwYGN": {
@@ -314,6 +315,46 @@
             "sub_head": "<p>We deal with these cases often. Poor third-party repairs often use full lids with non-original screens, leading to dim displays, missing features, and poor fit.</p><p>If we detect aftermarket parts or incompatible assemblies, we’ll let you know. In many cases, we can replace the faulty screen with an original one and restore your MacBook to full health.</p><p>We’ll explain what went wrong with your previous repair and what can be done to fix it properly. If a housing or internal parts need to be replaced too, we’ll give you the full picture and a clear quote before we begin.</p>",
             "alignment": "left"
           }
+        },
+        "accordion_cost_uk": {
+          "type": "accordion",
+          "settings": {
+            "heading": "How much does a MacBook screen repair cost in the UK?",
+            "sub_head": "<p>MacBook screen repairs start from [[from_price]]. The price depends on the model. See the <a href=\"#macbook-price-table\">price table</a> for each MacBook Air and MacBook Pro.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_why_more": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Why does a 14-inch or 16-inch MacBook Pro screen cost more?",
+            "sub_head": "<p>14-inch and 16-inch MacBook Pro screens cost more because those displays, including Liquid Retina XDR, are larger and the mini-LED structure needs more precise fitting and calibration. We replace the damaged display rather than the whole lid. The price in the table is the price for that model.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_true_tone": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Will True Tone still work after the repair?",
+            "sub_head": "<p>Yes. We use Apple displays, so True Tone, full brightness, native resolution, colour calibration, and the ambient light features stay. Each screen is tested and calibrated, then checked again in final quality control.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_genuine": {
+          "type": "accordion",
+          "settings": {
+            "heading": "What is the difference between a genuine and an aftermarket MacBook screen?",
+            "sub_head": "<p>A genuine Apple display is recovered from a MacBook and recalibrated, so True Tone, brightness, and colour stay as Apple designed them. Aftermarket panels are cheaper copies. They often lose True Tone and full brightness, and the housing rarely fits. We fit Apple displays, not aftermarket panels.</p>",
+            "alignment": "left"
+          }
+        },
+        "accordion_lines": {
+          "type": "accordion",
+          "settings": {
+            "heading": "My screen has lines or flickers, is it the screen?",
+            "sub_head": "<p>Lines, flicker, or a picture that only works at some angles can be the panel, or a cable fault. <a href=\"/collections/macbook-flexgate-repair-prices\">Flexgate</a> is a short backlight cable on 2016 to 2018 MacBook Pros (A1706, A1707 and A1708). The screen can look dead, or show a stage-light glow when the lid is opened too far. <a href=\"/collections/macbook-dustgate-repair-prices\">Dustgate</a> is dust pressing into the image cables. It often shows as flicker, vertical lines, or odd colour, usually on later models. When the fault is in the cable, we quote that repair before any work starts, rather than replacing the screen.</p>",
+            "alignment": "left"
+          }
         }
       },
       "block_order": [
@@ -326,7 +367,12 @@
         "accordion_wMHNen",
         "accordion_heFyRm",
         "accordion_7WpxcT",
-        "accordion_7BMWPU"
+        "accordion_7BMWPU",
+        "accordion_cost_uk",
+        "accordion_why_more",
+        "accordion_true_tone",
+        "accordion_genuine",
+        "accordion_lines"
       ],
       "settings": {
         "padding-top": 50,
@@ -397,6 +443,54 @@
         "heading_line_height_mobile": 28,
         "heading_tag": "h2"
       }
+    },
+    "macbook_trust_row": {
+      "type": "macbook-trust-row",
+      "blocks": {
+        "chip_reviews": {
+          "type": "chip",
+          "settings": {
+            "label": "4.8 from 750+ Google reviews",
+            "link": "https://maps.google.com/?q=iCorrect+12+Margaret+Street+London+W1W+8JQ"
+          }
+        },
+        "chip_displays": {
+          "type": "chip",
+          "settings": {
+            "label": "Genuine Apple displays",
+            "link": ""
+          }
+        },
+        "chip_warranty": {
+          "type": "chip",
+          "settings": {
+            "label": "2-year warranty",
+            "link": "/pages/our-warranty"
+          }
+        },
+        "chip_specialists": {
+          "type": "chip",
+          "settings": {
+            "label": "Microelectronics specialists",
+            "link": "#shopify-section-about_info_XAqnaH"
+          }
+        }
+      },
+      "block_order": [
+        "chip_reviews",
+        "chip_displays",
+        "chip_warranty",
+        "chip_specialists"
+      ],
+      "settings": {}
+    },
+    "macbook_price_table": {
+      "type": "macbook-price-table",
+      "settings": {
+        "heading": "MacBook screen repair prices by model",
+        "air_heading": "MacBook Air",
+        "pro_heading": "MacBook Pro"
+      }
     }
   },
   "order": [
@@ -404,7 +498,9 @@
     "product-grid",
     "main_banner_and_video_HjbmW9",
     "about_info_RWbQxj",
+    "macbook_trust_row",
     "quote_wizard_top",
+    "macbook_price_table",
     "about_this_repair",
     "model_number_search_nCwYGN",
     "featured_collection_AfhUDd",
