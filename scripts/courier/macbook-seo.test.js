@@ -346,17 +346,22 @@ describe('MacBook screen page additions', () => {
     assert.equal(screen.sections.about_info_RWbQxj.settings.show_klarna, false);
     assert.equal(screen.sections.screen_quick_faqs.settings.wizard_position, 'below');
     assert.equal(screen.sections.screen_quick_faqs.settings.compact, true);
-    assert.equal(screen.sections.screen_quick_faqs.settings.emit_faq_schema, true);
+    assert.equal(screen.sections.screen_quick_faqs.settings.emit_faq_schema, false);
     const quickHeadings = screen.sections.screen_quick_faqs.block_order.map((id) => screen.sections.screen_quick_faqs.blocks[id].settings.heading);
     assert.deepEqual(quickHeadings, [
       'How much does my MacBook screen repair cost?',
       'Why are some quotes much cheaper?',
       'How do I get my MacBook to you, and how long does it take?',
     ]);
-    const bottomHeadings = screen.sections.icorrect_faqs_RVk3VL.block_order.map((id) => screen.sections.icorrect_faqs_RVk3VL.blocks[id].settings.heading);
+    const bottom = screen.sections.icorrect_faqs_RVk3VL;
+    const bottomHeadings = bottom.block_order.map((id) => bottom.blocks[id].settings.heading);
     for (const heading of quickHeadings) {
-      assert.equal(bottomHeadings.includes(heading), false, heading);
+      assert.equal(bottomHeadings.includes(heading), true, heading);
+      const hidden = Object.values(bottom.blocks).find((block) => block.settings.heading === heading);
+      assert.equal(hidden.settings.show_in_accordion, false);
     }
+    const faqEmitters = Object.values(screen.sections).filter((section) => section.settings && section.settings.emit_faq_schema === true);
+    assert.equal(faqEmitters.length, 1);
     const quickCopy = Object.values(screen.sections.screen_quick_faqs.blocks).map((block) => block.settings.sub_head).join('\n');
     assert.equal(quickCopy.includes('—'), false);
     assert.equal(quickCopy.includes('–'), false);
