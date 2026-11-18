@@ -1,6 +1,17 @@
 {% assign repair_products = product.metafields.custom.additional_repair.value %}
 {% assign walk_in = all_products['walk-in-service'] %}
 {% assign mail_in = all_products['mail-in-service'] %}
+{% assign svc_adj_prod = all_products['service-adjustment'] %}
+{% assign qw_price_15 = 0 %}
+{% assign qw_price_20 = 0 %}
+{% assign qw_price_25 = 25 %}
+{% if svc_adj_prod != blank %}
+  {% for v in svc_adj_prod.variants %}
+    {% if v.id == 71280436379901 %}{% assign qw_price_15 = v.price | divided_by: 100.0 %}{% endif %}
+    {% if v.id == 71280436412669 %}{% assign qw_price_20 = v.price | divided_by: 100.0 %}{% endif %}
+    {% if v.id == 71280436445437 %}{% assign qw_price_25 = v.price | divided_by: 100.0 %}{% endif %}
+  {% endfor %}
+{% endif %}
 {% comment %} walk-in product may be retired — all references must be null-safe (#53) {% endcomment %}
 {% assign main_variant = product.selected_or_first_available_variant %}
 
@@ -706,9 +717,9 @@ window.__ADDITIONAL_REPAIR_COURIER = {
     "25": 71280436445437
   },
   serviceAdjustmentPrices: {
-    "15": 0,
-    "20": 0,
-    "25": 25
+    "15": {{ qw_price_15 }},
+    "20": {{ qw_price_20 }},
+    "25": {{ qw_price_25 }}
   }
 };
 </script>
@@ -1468,8 +1479,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      /* Do not add mail-in-service (Shopify £20). Service Type is on the
-         repair line. Paid postage is the adjustment variant only. */
+      /* Do not add the mail-in-service product. Service Type is on the
+         repair line. Postage is the service-adjustment variant, at Shopify's price. */
 
       // TURNAROUND
       const trt = document.querySelector('.turn_arround_time-wrapper input[type="radio"]:checked');

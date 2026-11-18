@@ -10,7 +10,7 @@
  *   MacBook, iPhone, and iPad diagnostic (any price):
  *     collection and return included on every band, and by post
  *     B1–B4 courier → £0 · outside London → free mail-in
- *   <£200 (untagged / paid):
+ *   <£200 (always paid, whatever courier:* tags say — Rick 2026-10-09, #119):
  *     B1–B2 → +£25 courier today, or +£20 mail-in
  *     B3/B4 / outside → mail-in +£20 only
  *
@@ -40,6 +40,9 @@
     PAID_COURIER: 25,
     MAIL_IN: 20,
   };
+  /* Keys above select the Shopify variant. They are not pounds.
+     The customer pays that variant's shelf price. Keys 15 and 20 are £0
+     today; key 25 is £25. */
 
   function roundMoney(value) {
     return Math.round(Number(value) * 100) / 100;
