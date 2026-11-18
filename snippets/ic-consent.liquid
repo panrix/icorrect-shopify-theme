@@ -1,0 +1,30 @@
+{%- comment -%}
+  iCorrect consent bar. Replaces Shopify's default cookie banner with a compact bar built
+  from the design contract. Consent is recorded through Shopify's Customer Privacy API
+  (setTrackingConsent), so Shopify, its pixels and its apps read the same answer they read today.
+
+  Off until the theme setting "Use the iCorrect consent bar" is ticked. When it is on, turn off
+  Shopify's own cookie banner (Settings > Customer privacy > Cookie banner); this file also hides
+  it, so the two never show together.
+  Hidden until script finds the visitor has not decided yet. Nothing shows without script.
+{%- endcomment -%}
+{%- if settings.ic_consent_enabled -%}
+  {{ 'ic-consent-tokens.css' | asset_url | stylesheet_tag }}
+  {{ 'ic-consent.css' | asset_url | stylesheet_tag }}
+  <section class="ic-consent" id="ic-consent" aria-label="Cookie choices" hidden>
+    <div class="ic-consent__main">
+      <p class="ic-consent__text">We use cookies for analytics and ads. <a class="ic-consent__link" href="/policies/privacy-policy">Privacy</a></p>
+      <div class="ic-consent__actions">
+        <button class="ic-consent__btn" type="button" data-consent="decline">Decline</button>
+        <button class="ic-consent__btn" type="button" data-consent="accept">Accept</button>
+      </div>
+    </div>
+    <button class="ic-consent__more" type="button" aria-expanded="false" aria-controls="ic-consent-choose">Choose</button>
+    <form class="ic-consent__choose" id="ic-consent-choose" hidden>
+      <label class="ic-consent__opt"><input type="checkbox" name="analytics"> <span><b>Analytics</b> How the site is used, so we can improve it.</span></label>
+      <label class="ic-consent__opt"><input type="checkbox" name="marketing"> <span><b>Ads</b> Measuring and showing our ads.</span></label>
+      <button class="ic-consent__btn" type="submit" data-consent="save">Save choices</button>
+    </form>
+  </section>
+  <script src="{{ 'ic-consent.js' | asset_url }}" defer></script>
+{%- endif -%}

@@ -1520,5 +1520,17 @@
         "default": "London collection & UK courier"
       }
     ]
+  },
+  {
+    "name": "Consent bar",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "ic_consent_enabled",
+        "label": "Use the iCorrect consent bar",
+        "default": false,
+        "info": "Replaces Shopify's cookie banner. Turn Shopify's banner off in Settings > Customer privacy at the same time."
+      }
+    ]
   }
 ]
