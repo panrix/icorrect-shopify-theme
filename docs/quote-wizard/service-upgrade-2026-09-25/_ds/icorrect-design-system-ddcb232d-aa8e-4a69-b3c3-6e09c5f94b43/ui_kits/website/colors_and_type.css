@@ -1,0 +1,3 @@
+/* Re-export of the single token source at the project root. Kept so the
+   UI kit's relative import path still resolves. Do not add rules here. */
+@import url("../../colors_and_type.css");
