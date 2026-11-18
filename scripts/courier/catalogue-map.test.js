@@ -15,6 +15,7 @@ const {
   getRepair,
   repairsMapForModel,
 } = require('../../assets/repair-catalogue.js');
+const { stampCourierTags, inferCourierTier } = require('./build-catalogue-map.js');
 const {
   quoteCourierCollection,
 } = require('../../assets/courier-pricing.js');
@@ -109,5 +110,24 @@ describe('SW11 all-in adjustment (done-when, policy v2)', () => {
     assert.equal(q.service, 'mail-in');
     assert.equal(q.adjustment, 0);
     assert.equal(q.total, 299);
+  });
+});
+
+describe('stampCourierTags (#119)', () => {
+  it('drops a source courier:free tag when the snapshot price is under £200', () => {
+    assert.equal(inferCourierTier(179), 'paid');
+    assert.deepEqual(stampCourierTags('courier:free, something', 179), []);
+    assert.deepEqual(stampCourierTags(['courier:free', 'courier:one-leg'], 199.99), []);
+  });
+
+  it('stamps courier:free at £200 and keeps it', () => {
+    assert.equal(inferCourierTier(200), 'free');
+    assert.deepEqual(stampCourierTags('', 200), ['courier:free']);
+    assert.deepEqual(stampCourierTags('courier:free', 249), ['courier:free']);
+  });
+
+  it('treats a missing price as paid and strips a free tag', () => {
+    assert.equal(inferCourierTier(undefined), 'paid');
+    assert.deepEqual(stampCourierTags('courier:free', null), []);
   });
 });

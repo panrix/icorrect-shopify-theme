@@ -124,17 +124,44 @@ function slugify(s) {
     .replace(/^-|-$/g, '');
 }
 
-/** Ricky tier rule until products are tagged in Admin. */
+/** ≥£200 → free. Under £200, or an unusable price, always pays (#119). */
 function inferCourierTier(price) {
   const n = Number(price);
   if (!Number.isFinite(n)) return 'paid';
-  /* Policy v2 (#53): ≥£200 → free (B1–B2), else paid. Tags in Admin beat this. */
+  /* Policy v2 (#53): ≥£200 → free (B1–B2), else paid.
+     Under £200 a source courier:free tag must not survive (#119). */
   if (n >= 200) return 'free';
   return 'paid';
 }
 
 function courierTagForTier(tier) {
   return `courier:${tier}`;
+}
+
+/**
+ * Courier tags to store on a catalogue row.
+ * ≥£200 stamps courier:free. Below £200 (or an unusable price) strips
+ * courier:free and courier:one-leg so a stale tag cannot outlive a price cut.
+ * @param {string[]|string} sourceTags
+ * @param {number|string} price
+ * @returns {string[]}
+ */
+function stampCourierTags(sourceTags, price) {
+  const tier = inferCourierTier(price);
+  let tags = Array.isArray(sourceTags)
+    ? sourceTags.map((t) => String(t).trim()).filter(Boolean)
+    : String(sourceTags || '')
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean);
+  if (tier === 'free') {
+    const freeTag = courierTagForTier('free');
+    if (!tags.includes(freeTag)) tags.push(freeTag);
+    tags = tags.filter((t) => !/^courier:(full|subsidised|paid)$/i.test(t));
+  } else {
+    tags = tags.filter((t) => !/^courier:(full|subsidised|paid|free|one-leg)$/i.test(t));
+  }
+  return tags.filter((t) => /^courier:/i.test(t));
 }
 
 function main() {
@@ -168,19 +195,8 @@ function main() {
     const modelName = modelNameFromTitle(p.title, repairType);
     const modelKey = `${device}::${slugify(modelName)}`;
     const price = Number(variant.price);
-    const tier = inferCourierTier(price);
-    let tags = String(p.tags || '')
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean);
-    /* Policy v2: only stamp courier:free (≥£200). Untagged = paid. */
-    if (tier === 'free') {
-      const freeTag = courierTagForTier('free');
-      if (!tags.includes(freeTag)) tags.push(freeTag);
-      tags = tags.filter((t) => !/^courier:(full|subsidised|paid)$/i.test(t));
-    } else {
-      tags = tags.filter((t) => !/^courier:(full|subsidised|paid)$/i.test(t));
-    }
+    /* #119: courier:free only at ≥£200. A source tag cannot keep a cheaper repair free. */
+    const tags = stampCourierTags(p.tags, price);
 
     if (!models[modelKey]) {
       models[modelKey] = {
@@ -193,13 +209,12 @@ function main() {
 
     /* Wizard reads title/price/variantId/tags/handle per repair
        (assets/repair-catalogue.js asWizardProduct + quote-wizard). */
-    const courierTags = tags.filter((t) => /^courier:/i.test(t));
     const entry = {
       variantId: variant.id,
       handle: p.handle,
       title: p.title,
       price,
-      tags: courierTags,
+      tags,
     };
 
     // Prefer genuine/original screen SKUs when colliding.
@@ -247,4 +262,11 @@ function main() {
   );
 }
 
-main();
+module.exports = {
+  inferCourierTier,
+  stampCourierTags,
+};
+
+if (require.main === module) {
+  main();
+}
