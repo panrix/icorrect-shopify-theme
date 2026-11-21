@@ -100,7 +100,7 @@
     var target = (slot && !slot.hidden) ? slot : reveal;
     if (!target || target.hidden) return;
     scrollToEl(target, 140, isMobileQuoteLayout() ? 'start' : 'nearest');
-    if (price && isMobileQuoteLayout()) {
+    if (price && isMobileQuoteLayout() && !(slot && !slot.hidden)) {
       setTimeout(function() {
         try {
           var rect = price.getBoundingClientRect();
@@ -1280,7 +1280,7 @@
      Turnaround uses the same repairBenchDays source as the journey ETA. */
   function buildPriceTrustBlock(device, model, opts) {
     opts = opts || {};
-    var parts = partsClaimLabel(device, model);
+    var parts = S.repairType === 'screen' ? 'Genuine Apple displays' : partsClaimLabel(device, model);
     var turnaround = turnaroundClaimLabel(device, { diagnostic: opts.diagnostic, model: model });
     var starSvg = '<svg width="12" height="12" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1l1.8 3.8 4.2.6-3 2.9.7 4.1L7 10.5 3.3 12.4l.7-4.1-3-2.9 4.2-.6z" fill="currentColor"/></svg>';
     var stars = starSvg + starSvg + starSvg + starSvg + starSvg;
@@ -1291,18 +1291,20 @@
     var priceInner = opts.gate
       ? '<div class="qw-price-gate qw-price-gate--inline" id="qwPriceGate">' + esc(gateCopy) + '</div>' +
         '<div class="qw-price-big-wrap" id="qwPriceBigWrap" hidden>' +
+          '<div class="qw-breakdown" id="qwBreakdown"></div>' +
           '<div class="qw-price-from">All-in total</div>' +
           '<div class="qw-price-big" id="qwPriceBig">' + (opts.priceHtml || '') + '</div>' +
+          '<div class="qw-klarna" id="qwKlarna" hidden></div>' +
         '</div>'
       : '<div class="qw-price-from">All-in total</div>' +
         '<div class="qw-price-big" id="qwPriceBig">' + (opts.priceHtml || '') + '</div>';
     return '<div class="qw-price-trust" id="qwPriceTrust">' +
       '<ul class="qw-trust-cross" role="list" aria-label="Trust signals">' +
-        '<li class="qw-trust-cell qw-trust-reviews" aria-label="4.9 out of 5 from 719 Google reviews">' +
-          '<span class="qw-trust-score">4.9</span>' +
+        '<li class="qw-trust-cell qw-trust-reviews" aria-label="4.8 out of 5 from 750+ Google reviews">' +
+          '<span class="qw-trust-score">4.8</span>' +
           '<span class="qw-trust-reviews-meta">' +
             '<span class="qw-trust-stars" aria-hidden="true">' + stars + '</span>' +
-            '<span class="qw-trust-sub">719 Google reviews</span>' +
+            '<span class="qw-trust-sub">750+ Google reviews</span>' +
           '</span>' +
         '</li>' +
         '<li class="qw-trust-cell qw-trust-parts">' +
@@ -1323,7 +1325,7 @@
           '<span class="qw-trust-ico" aria-hidden="true">' + shieldSvg + '</span>' +
           '<span class="qw-trust-copy">' +
             '<span class="qw-trust-title">2-yr warranty</span>' +
-            '<span class="qw-trust-sub">Double the standard</span>' +
+            '<span class="qw-trust-sub">On every repair</span>' +
           '</span>' +
         '</li>' +
       '</ul>' +
@@ -1564,9 +1566,14 @@
   function renderServiceJourney(kind) {
     var host = document.getElementById('qwJourney');
     if (!host) return;
-    var model = kind === 'mailin' ? buildMailinJourneyModel() : buildCourierJourneyModel();
+    var model = kind === 'mailin' ? buildMailinJourneyModel() : (kind === 'workshop' ? buildWorkshopJourneyModel() : buildCourierJourneyModel());
+    var lastIdx = model.steps.length - 1;
+    var lastMeta = kind === 'workshop' ? 'Ready to collect' : (kind === 'mailin' ? 'Tracked post' : 'To your door');
     var stepsHtml = model.steps.map(function(s, i) {
-      return journeyStepHtml(i + 1, s.title, s.meta);
+      var meta = (i === lastIdx && model.returnDate) ? lastMeta : (s.meta || '');
+      return '<li class="qw-jr-step"><span class="qw-jr-num" aria-hidden="true">' + (i + 1) + '</span>' +
+        '<span class="qw-jr-copy"><span class="qw-jr-title">' + esc(s.title) + '</span>' +
+        (meta ? '<span class="qw-jr-meta">' + esc(meta) + '</span>' : '') + '</span></li>';
     }).join('');
     var quoteDate = model.quoteDate;
     var diagnostic = model.kind === 'diagnostic' || S.route === 'diagnostic';
@@ -1581,7 +1588,7 @@
       eta = '<div class="qw-journey-eta qw-journey-eta--pending"><span class="qw-journey-eta-note">Select a collection window to see when we diagnose and email your quote</span></div>';
     } else if (model.returnDate) {
       eta = '<div class="qw-journey-eta">' +
-          '<span class="qw-journey-eta-label">Estimated return by</span>' +
+          '<span class="qw-journey-eta-label">' + esc(model.etaLabel || 'Back with you') + '</span>' +
           journeyEtaDateHtml(model.returnDate) +
           '<span class="qw-journey-eta-note">' + esc(model.note || 'Often sooner') + '</span>' +
         '</div>';
@@ -1590,7 +1597,7 @@
     }
     host.innerHTML =
       '<div class="qw-journey" data-kind="' + esc(kind) + '">' +
-        '<div class="qw-journey-steps">' + stepsHtml + '</div>' +
+        '<ol class="qw-jr">' + stepsHtml + '</ol>' +
         eta +
       '</div>';
     host.hidden = false;
@@ -1607,7 +1614,13 @@
     if (kind === 'courier' && _courierQuote && _courierQuote.courierAvailable === false) {
       kind = 'mailin';
     }
-    renderServiceJourney(kind === 'mailin' ? 'mailin' : 'courier');
+    renderServiceJourney(kind === 'mailin' ? 'mailin' : (kind === 'workshop' ? 'workshop' : 'courier'));
+  }
+
+  function buildWorkshopJourneyModel() {
+    var drop = _collectionSlot.date && _collectionSlot.date.iso ? parseISODate(_collectionSlot.date.iso) : null;
+    return window.ICorrectWalkin.journey({ drop: drop, bench: repairBenchDays(S.device), turnaround: turnaroundClaimLabel(S.device),
+      note: turnaroundNote(S.device), fmt: formatJourneyDate, addWorkingDays: addWorkingDays });
   }
 
   function collectionWindowCopy(band) {
@@ -1861,10 +1874,10 @@
         var pcInput = document.getElementById('qwPostcode');
         mailQuote = quoteForService('mailin', pcInput ? pcInput.value : '');
       }
-      return serviceCharge(mailQuote || quote) > 0 ? 'Tracked pack' : 'Free pack';
+      return serviceCharge(mailQuote || quote) > 0 ? 'Tracked pack' : 'Free';
     }
     if (!quote.courierAvailable && quote.forcedMailIn) return 'Not in area';
-    if (quote.service === 'courier' && serviceCharge(quote) === 0) return 'Included';
+    if (quote.service === 'courier' && serviceCharge(quote) === 0) return 'Free';
     if (quote.service === 'courier') return 'Available';
     return '—';
   }
@@ -1888,6 +1901,15 @@
     return courierAdj < mailAdj;
   }
 
+  function paintMailinCard(quote) {
+    var card = document.querySelector('.qw-opt-card[data-svc="mailin"]');
+    if (!card) return;
+    var free = serviceCharge(quote) === 0;
+    var t = card.querySelector('.qw-delivery-title'); var sub = card.querySelector('.qw-delivery-sub');
+    if (t) t.textContent = free ? 'Free tracked mail-in' : 'Tracked mail-in';
+    if (sub) sub.textContent = 'We post you a box with a prepaid label. Drop it at a Post Office and we return it tracked.';
+  }
+
   function setMailInOptionVisible(show) {
     var mailCard = document.querySelector('.qw-opt-card[data-svc="mailin"]');
     var courierCard = document.querySelector('.qw-opt-card[data-svc="courier"]');
@@ -1902,6 +1924,16 @@
       }
     }
     if (grid) grid.classList.toggle('qw-delivery-grid-solo', !show);
+    var workshopCard = document.querySelector('.qw-opt-card[data-svc="workshop"]');
+    var courierLive = !!(courierCard && !courierCard.classList.contains('qw-opt-disabled') && _courierQuote && _courierQuote.courierAvailable !== false && !_courierQuote.forcedMailIn);
+    if (workshopCard) workshopCard.hidden = !courierLive;
+    if (courierLive && workshopCard) {
+      if (grid) grid.classList.remove('qw-delivery-grid-solo');
+      if (choice) choice.hidden = false;
+      if (courierCard) courierCard.hidden = false;
+      if (choiceLabel) choiceLabel.textContent = 'How do you want to get it to us?';
+      return;
+    }
     /* Solo free-courier on mobile: drop choice chrome so slots + journey + price fit.
        Only reached when shouldHideMailInOption is true (courier free/cheaper). */
     if (!show && isMobileQuoteLayout()) {
@@ -1962,13 +1994,28 @@
       if (c.getAttribute('data-opt') === 'svc') return;
       total += parseFloat(c.dataset.add || 0);
     });
-    total += serviceCharge(_courierQuote);
+    var svcSel = selectedServiceKind();
+    var svcCharge = svcSel === 'workshop' ? 0 : serviceCharge(_courierQuote);
+    total += svcCharge;
+    renderBreakdown(base, svcSel, svcCharge, total);
     var totalEl = document.getElementById('qwPriceTotal');
     if (totalEl) totalEl.textContent = gbp.format(total);
     var bigEl = document.getElementById('qwPriceBig');
     if (bigEl) bigEl.textContent = gbp.format(total);
     setPriceVisibility(true);
     maybeFireQuoteShown();
+  }
+
+  function renderBreakdown(base, svc, charge, total) {
+    var k = document.getElementById('qwKlarna');
+    if (k) {
+      if (total >= 100) {
+        k.hidden = false;
+        var kTpl = document.getElementById('qwKlarnaBadge');
+        k.innerHTML = '<span class="qw-klarna-badge">' + (kTpl ? kTpl.innerHTML.trim() : 'Klarna') + '</span><span class="qw-klarna-copy">Pay in 3 interest-free payments of <strong>' + gbp.format(Math.round(total / 3 * 100) / 100) + '</strong></span>' +
+          '<span class="qw-klarna-note">First payment at checkout, then one every 30 days. Subject to status.</span>';
+      } else { k.hidden = true; }
+    }
   }
 
   function selectServiceCard(svc) {
@@ -1993,13 +2040,18 @@
 
   function buildServiceCards() {
     return '<div class="qw-opt-section qw-service-mapper">' +
-      '<div class="qw-section-label">Where should we collect from?</div>' +
+      '<div class="qw-section-label">Your postcode</div>' +
       '<div class="qw-postcode-card" id="qwPostcodeCard">' +
+        '<div class="qw-pc-summary" id="qwPcSummary" hidden>' +
+          '<span class="qw-pc-summary-main"><strong id="qwPcSummaryCode"></strong><span id="qwPcSummaryArea"></span></span>' +
+          '<button type="button" class="qw-pc-change" id="qwPcChange">Change</button>' +
+          '<span class="qw-pc-summary-sub" id="qwPcSummarySub"></span>' +
+        '</div>' +
         '<label class="qw-postcode-label" for="qwPostcode">Enter your postcode to see your all-in price' +
-          '<span class="qw-postcode-hint">London postcodes unlock courier collection windows. Outside London we use tracked mail-in.</span>' +
+          '<span class="qw-postcode-hint">In London we collect from your door. Anywhere else in the UK, we post you a tracked mail-in box.</span>' +
         '</label>' +
         '<div class="qw-postcode-row">' +
-          '<input type="text" id="qwPostcode" class="qw-postcode-input qw-courier-inp" placeholder="e.g. SW11 8BJ" autocomplete="postal-code" inputmode="text" enterkeyhint="done">' +
+          '<input type="text" id="qwPostcode" class="qw-postcode-input qw-courier-inp" placeholder="e.g. SW11 8BJ" autocomplete="postal-code" autocapitalize="characters" spellcheck="false" inputmode="text" enterkeyhint="go">' +
         '</div>' +
         '<span class="qw-postcode-wait" id="qwPostcodeWait" style="display:none">Enter your full postcode, for example W1W 8JQ.</span>' +
         '<div class="qw-courier-result" id="qwCourierResult" hidden></div>' +
@@ -2011,18 +2063,26 @@
             '<button type="button" class="qw-delivery-card qw-opt-card sel active" data-opt="svc" data-svc="courier" data-add="0">' +
               '<span class="qw-delivery-radio" aria-hidden="true"><span></span></span>' +
               '<span class="qw-delivery-body">' +
-                '<span class="qw-delivery-title qw-opt-name">Courier collection</span>' +
-                '<span class="qw-delivery-sub qw-opt-meta">We collect from your door across London</span>' +
+                '<span class="qw-delivery-title qw-opt-name">Free courier collection</span>' +
+                '<span class="qw-delivery-sub qw-opt-meta">We collect from your home or office and bring it back. No trip needed.</span>' +
               '</span>' +
               '<span class="qw-delivery-price qw-opt-price" id="qwCourierPriceLbl">—</span>' +
             '</button>' +
             '<button type="button" class="qw-delivery-card qw-opt-card" data-opt="svc" data-svc="mailin" data-add="0">' +
               '<span class="qw-delivery-radio" aria-hidden="true"><span></span></span>' +
               '<span class="qw-delivery-body">' +
-                '<span class="qw-delivery-title qw-opt-name">Post it — mail-in pack</span>' +
-                '<span class="qw-delivery-sub qw-opt-meta">Tracked, insured pack within 24h</span>' +
+                '<span class="qw-delivery-title qw-opt-name">Tracked mail-in</span>' +
+                '<span class="qw-delivery-sub qw-opt-meta">Box and prepaid label, posted within 24h</span>' +
               '</span>' +
               '<span class="qw-delivery-price qw-opt-price" id="qwMailinPriceLbl">—</span>' +
+            '</button>' +
+            '<button type="button" class="qw-delivery-card qw-opt-card" data-opt="svc" data-svc="workshop" data-add="0" hidden>' +
+              '<span class="qw-delivery-radio" aria-hidden="true"><span></span></span>' +
+              '<span class="qw-delivery-body">' +
+                '<span class="qw-delivery-title qw-opt-name">Bring it to our workshop</span>' +
+                '<span class="qw-delivery-sub qw-opt-meta">12 Margaret Street, Fitzrovia W1W 8JQ. Mon to Thu 9am to 6pm, Fri 10am to 6pm.</span>' +
+              '</span>' +
+              '<span class="qw-delivery-price qw-opt-price">Free</span>' +
             '</button>' +
           '</div>' +
         '</div>' +
@@ -2125,9 +2185,23 @@
     if (!found) return;
     _collectionSlot.date = found;
     paintDateStrip();
+    applySlotMode();
     syncIcorrectQuote();
     refreshServiceJourney();
     trackSlotSelected();
+  }
+
+  /* Walk-in helpers: assets/quote-wizard-walkin.js */
+  function workshopDates(list) {
+    return window.ICorrectWalkin ? window.ICorrectWalkin.dates(list, londonWall(), isoJourneyDate) : list;
+  }
+
+  function applySlotMode() {
+    var panel = document.getElementById('qwSlotPanel');
+    if (!panel || !window.ICorrectWalkin) return;
+    var wall = londonWall();
+    window.ICorrectWalkin.applyMode(panel, { workshop: selectedServiceKind() === 'workshop', selected: _collectionSlot.date,
+      todayIso: isoJourneyDate(wall.date), hour: wall.hour });
   }
 
   function renderCollectionSlots(band) {
@@ -2145,6 +2219,7 @@
       includeWeekends: false
     });
     _collectionSlotDates = listed.dates || [];
+    if (selectedServiceKind() === 'workshop') _collectionSlotDates = workshopDates(_collectionSlotDates);
     if (!_collectionSlotDates.length) {
       panel.hidden = true;
       return;
@@ -2177,9 +2252,11 @@
         syncIcorrectQuote();
         refreshServiceJourney();
         trackSlotSelected();
+        if (!_suppressScroll) focusPriceAndProceed();
       });
     });
 
+    applySlotMode();
     if (moreBtn && !moreBtn._qwWired) {
       moreBtn._qwWired = true;
       moreBtn.addEventListener('click', openCollectionCalendar);
@@ -2239,7 +2316,28 @@
 
   var COLLECT_PIN_SVG = '<svg class="qw-collect-pin" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2.4a7 7 0 0 0-7 7c0 5.2 7 12.2 7 12.2s7-7 7-12.2a7 7 0 0 0-7-7z"/><circle cx="12" cy="9.4" r="2.35" fill="#FFF7E6"/></svg>';
 
+  function paintPostcodeSummary() {
+    var box = document.getElementById('qwPcSummary');
+    if (!box) return;
+    if (!_postcodeResolved || !_courierQuote) { box.hidden = true; return; }
+    var code = document.getElementById('qwPcSummaryCode');
+    var area = document.getElementById('qwPcSummaryArea');
+    var sub = document.getElementById('qwPcSummarySub');
+    var kind = selectedServiceKind();
+    var mail = _courierQuote.forcedMailIn || _courierQuote.service !== 'courier';
+    if (code) code.textContent = formatDisplayPostcode(currentPostcodeValue()) || currentPostcodeValue().toUpperCase();
+    if (area) area.textContent = mail ? 'Tracked mail-in' : collectionWindowCopy(_courierQuote.band).headline;
+    if (sub) sub.textContent = kind === 'workshop' ? '' : (mail || kind === 'mailin')
+      ? 'We post your box to this address.'
+      : 'We collect from here. Use the same address at checkout.';
+    if (sub) sub.hidden = !sub.textContent;
+    box.hidden = false;
+    var s4 = document.getElementById('qw-s4s');
+    if (s4 && /Enter your postcode/.test(s4.textContent)) s4.hidden = true;
+  }
+
   function updateCollectionNotice() {
+    paintPostcodeSummary();
     var el = document.getElementById('qwCollectionNotice');
     var res = document.getElementById('qwResCard');
     var pc = collectionNoticePostcode();
@@ -2293,6 +2391,7 @@
       if (mailPanel) mailPanel.hidden = true;
       if (result) { result.hidden = true; result.innerHTML = ''; }
       if (pcCard) pcCard.classList.remove('qw-postcode-card-resolved');
+      paintPostcodeSummary();
       if (priceLbl) priceLbl.textContent = '—';
       if (mailLbl) mailLbl.textContent = '—';
       if (courierCard) {
@@ -2312,6 +2411,7 @@
     _postcodeResolved = true;
     if (reveal) reveal.hidden = false;
     if (pcCard) pcCard.classList.add('qw-postcode-card-resolved');
+    paintPostcodeSummary();
     if (priceLbl) priceLbl.textContent = formatServiceCardHint(quote, 'courier');
     if (mailLbl) mailLbl.textContent = formatServiceCardHint(quote, 'mailin');
 
@@ -2351,18 +2451,8 @@
       setMailInOptionVisible(true);
       if (slotPanel) { slotPanel.hidden = true; _collectionSlot = { date: null, part: null }; _collectionSlotDates = []; }
       if (mailPanel) mailPanel.hidden = false;
-      if (result) {
-        result.hidden = false;
-        if (quote.forcedMailIn) {
-          result.innerHTML = '<div class="qw-courier-confirm qw-courier-confirm--compact">' +
-            '<div class="qw-courier-confirm-title">Same Day Courier isn\'t available for your postcode.</div>' +
-            '<div class="qw-courier-confirm-detail">We\'ve switched you to tracked mail-in.</div></div>';
-        } else {
-          result.innerHTML = '<div class="qw-courier-confirm qw-courier-confirm--compact">' +
-            '<div class="qw-courier-confirm-title">Mail-in pack</div>' +
-            '<div class="qw-courier-confirm-detail">Total below is the all-in price.</div></div>';
-        }
-      }
+      if (result) { result.hidden = true; result.innerHTML = ''; }
+      paintMailinCard(quote);
       refreshServiceJourney();
       if (!_suppressScroll) {
         var mailTarget = document.getElementById('qwMailinPanel') || document.getElementById('qwDeliveryReveal');
@@ -2372,7 +2462,8 @@
 
     refreshAllInTotal();
     updateCollectionNotice();
-    if (!_suppressScroll) focusPriceAndProceed();
+    /* Next thing to fill: a collection/drop-off time if one is still needed, otherwise the price + Proceed. */
+    if (!_suppressScroll && !(slotPanel && !slotPanel.hidden)) focusPriceAndProceed();
     trackCourierQuoteEvents(_courierQuote);
   }
 
@@ -2406,6 +2497,24 @@
       runLookup();
     }
 
+    var pcChange = document.getElementById('qwPcChange');
+    if (pcChange) pcChange.addEventListener('click', function() {
+      var card = document.getElementById('qwPostcodeCard');
+      if (card) card.classList.remove('qw-postcode-card-resolved');
+      var box = document.getElementById('qwPcSummary'); if (box) box.hidden = true;
+      var inp = document.getElementById('qwPostcode');
+      if (inp) { inp.focus(); inp.select(); }
+    });
+    input.addEventListener('blur', function() {
+      setTimeout(function() {
+        if (_postcodeResolved && isFullPostcodeValue(input.value)) {
+          var card = document.getElementById('qwPostcodeCard');
+          if (card) card.classList.add('qw-postcode-card-resolved');
+          paintPostcodeSummary();
+        }
+      }, 150);
+    });
+
     container.querySelectorAll('.qw-opt-card[data-opt="svc"]').forEach(function(card) {
       card.addEventListener('click', function(){
         if (card.classList.contains('qw-opt-disabled')) return;
@@ -2413,6 +2522,16 @@
           c.classList.remove('sel', 'active');
         });
         card.classList.add('sel', 'active');
+        if (card.getAttribute('data-svc') === 'workshop') {
+          _collectionSlot = { date: null, part: null };
+          renderCollectionSlots(_courierQuote && _courierQuote.band);
+          var sp = document.getElementById('qwSlotPanel'); if (sp) sp.hidden = false;
+          updateCollectionNotice();
+          refreshServiceJourney();
+          refreshAllInTotal();
+          syncIcorrectQuote();
+          return;
+        }
         updateCollectionNotice();
         setTimeout(syncFromSelection, 0);
       });
@@ -3550,6 +3669,20 @@
         var win = collectionWindowCopy(_courierQuote.band);
         items[0].properties['Collection Window'] = win.headline;
       }
+    } else if (svcKind === 'workshop') {
+      if (!_collectionSlot.date || !_collectionSlot.part) {
+        if (errBox) errBox.textContent = 'Pick a drop-off day and time.';
+        return null;
+      }
+      var wsProps = window.ICorrectCourierSlots
+        ? window.ICorrectCourierSlots.slotCartProperties(_collectionSlot.date, _collectionSlot.part)
+        : null;
+      items[0].properties['Service Type'] = 'Walk-in';
+      if (wsProps) items[0].properties['Drop-off Date'] = wsProps['Collection Date'];
+      items[0].properties['Drop-off Window'] = window.ICorrectWalkin
+        ? window.ICorrectWalkin.windowLabel(_collectionSlot.part.id, _collectionSlot.date.date) : _collectionSlot.part.label;
+      var postcodeWs = currentPostcodeValue();
+      if (postcodeWs) items[0].properties['Postcode'] = postcodeWs.toUpperCase();
     } else {
       items[0].properties['Service Type'] = 'Mail-in';
       var postcodeInputMi = document.getElementById('qwPostcode');
@@ -3561,7 +3694,7 @@
     }
 
     /* Service adjustment variant — null-safe: missing ID already forced free mail-in in quote */
-    if (_courierQuote && _courierQuote.adjustment > 0 && !(svcKind === 'mailin' && currentRepairPrice() >= 200)) {
+    if (svcKind !== 'workshop' && _courierQuote && _courierQuote.adjustment > 0 && !(svcKind === 'mailin' && currentRepairPrice() >= 200)) {
       if (_courierQuote.variantMode === 'fallback-free-mail-in') {
         items[0].properties['Service Type'] = 'Mail-in';
         delete items[0].properties['Collection Window'];

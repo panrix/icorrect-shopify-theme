@@ -410,7 +410,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           elsif qw_device == 'watch' or qw_haystack contains 'watch'
             assign qw_noun = 'Apple Watch'
           endif
-          assign qw_sub = "We'll collect your " | append: qw_noun | append: ' same day in London, nationwide by courier.'
+          assign qw_sub = 'Courier collection in London, tracked mail-in across the UK.'
         -%}
         <p class="qw-sub">{{ qw_sub }}</p>
       </div>
@@ -496,6 +496,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 <div class="qw-sticky-cta" id="qw-sticky-cta"></div>
 
 <!-- JAVASCRIPT lives in assets/quote-wizard.js so this section stays under Shopify's 256 KB limit. -->
+<script src="{{ 'quote-wizard-walkin.js' | asset_url }}" defer></script>
 <script src="{{ 'quote-wizard.js' | asset_url }}" defer></script>
 
 <!-- CSS -->
@@ -533,6 +534,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 .qw-opt-disabled, .qw-card-disabled { opacity: 0.45; pointer-events: none; }
 </style>
 
+<template id="qwKlarnaBadge">{{ 'klarna' | payment_type_svg_tag }}</template>
 {% schema %}
 {
   "name": "Quote Wizard",
