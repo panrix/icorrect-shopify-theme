@@ -2654,3 +2654,116 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 .qw-res--collect-note .qw-res-extras:not(:empty) + .qw-res-cta .qw-collect-notice {
   margin-top: 0;
 }
+
+/* ===== Phase 1 additions (mail-in info, breakdown, Klarna). Uses existing --qw tokens. ===== */
+.qw-mailin-info{padding:4px 2px}
+.qw-mailin-info-title{font-size:16px;font-weight:600;color:var(--qw-text);letter-spacing:-0.01em}
+.qw-mailin-info-sub{margin-top:2px;font-size:14px;color:var(--qw-text-muted)}
+.qw-mailin-steps{list-style:none;margin:12px 0 0;padding:0}
+.qw-mailin-steps li{display:flex;gap:12px;padding:10px 0;font-size:14px;line-height:1.45;color:#4d4d4d}
+.qw-mailin-steps li + li{box-shadow:inset 0 1px 0 var(--qw-line)}
+.qw-mailin-steps strong{display:block;font-weight:600;color:var(--qw-text)}
+.qw-mailin-steps .qw-mono{flex:0 0 22px;padding-top:2px;font-size:11px}
+.qw-mailin-info-note{margin-top:8px;font-size:13px;font-weight:500;color:var(--qw-green)}
+.qw-breakdown{width:100%;margin-bottom:12px;text-align:left}
+.qw-bd-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:10px 0;font-size:14px}
+.qw-bd-row + .qw-bd-row{box-shadow:inset 0 1px 0 var(--qw-line)}
+.qw-bd-row strong{display:block;font-weight:600;color:var(--qw-text)}
+.qw-bd-row em{display:block;font-style:normal;color:var(--qw-text-muted);font-size:13px}
+.qw-bd-row > span:last-child{font-weight:500;color:var(--qw-text);white-space:nowrap;font-variant-numeric:tabular-nums}
+.qw-klarna{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 10px;margin-top:12px;padding-top:12px;box-shadow:inset 0 1px 0 var(--qw-line);font-size:14px;color:#4d4d4d}
+.qw-klarna-tag{display:inline-flex;align-items:center;min-height:24px;padding:0 10px;border-radius:6px;background:var(--qw-bg);box-shadow:var(--qw-shadow-card);font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--qw-text)}
+.qw-klarna-copy strong{font-weight:600;color:var(--qw-text);font-variant-numeric:tabular-nums}
+.qw-klarna-note{flex-basis:100%;text-align:center;font-size:12px;color:var(--qw-text-muted)}
+
+.qw-window-btn.qw-window-off{opacity:0.4;cursor:not-allowed}
+
+/* ===== Round 1 polish ===== */
+.qw-postcode-card.qw-postcode-card-resolved{padding:12px 14px}
+.qw-postcode-card-resolved .qw-postcode-label,.qw-postcode-card-resolved .qw-postcode-row,.qw-postcode-card-resolved .qw-postcode-wait{display:none !important}
+.qw-pc-summary{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:12px;row-gap:2px}
+.qw-pc-summary[hidden]{display:none}
+.qw-pc-summary-main{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;font-size:15px;color:#4d4d4d}
+.qw-pc-summary-main strong{font-weight:600;color:#171717;letter-spacing:0.02em}
+.qw-pc-summary-sub{grid-column:1 / -1;font-size:13px;color:#666}
+.qw-pc-change{min-height:44px;padding:0 4px;border:0;background:none;font:500 14px var(--font-sans);color:#38598C;cursor:pointer}
+.qw-pc-change:hover{color:#2E4A72;text-decoration:underline}
+#qwCollectionNotice{display:none !important}
+.qw-delivery-card{padding:16px !important;gap:12px !important}
+.qw-delivery-card.active{box-shadow:inset 0 0 0 1.5px #171717 !important;background:#fafafa !important}
+.qw-delivery-title{font-size:15px;font-weight:600}
+.qw-delivery-sub{font-size:14px;line-height:1.43;color:#4d4d4d}
+.qw-delivery-grid-solo .qw-delivery-radio{display:none}
+.qw-delivery-grid-solo .qw-delivery-card{cursor:default;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08) !important;background:#fff !important}
+.qw-window-strip{display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr)) !important;overflow:visible !important}
+.qw-window-btn{min-width:0 !important;min-height:56px !important}
+.qw-journey{padding:16px !important}
+.qw-tl-head{font:500 11px var(--font-mono);letter-spacing:0.07em;text-transform:uppercase;color:#666;margin-bottom:8px}
+.qw-tl{list-style:none;margin:0;padding:0}
+.qw-tl-step{position:relative;display:grid;grid-template-columns:20px 1fr auto;column-gap:12px;align-items:start;padding:8px 0}
+.qw-tl-step:not(:last-child)::after{content:"";position:absolute;left:9px;top:22px;bottom:-6px;width:2px;background:#d4d4d4}
+.qw-tl-dot{width:8px;height:8px;margin:6px 0 0 6px;border-radius:9999px;background:#a3a3a3}
+.qw-tl-last .qw-tl-dot{width:12px;height:12px;margin:4px 0 0 4px;background:#171717}
+.qw-tl-copy{display:flex;flex-direction:column;gap:2px;min-width:0}
+.qw-tl-title{font-size:15px;font-weight:500;color:#171717;line-height:1.35}
+.qw-tl-last .qw-tl-title{font-weight:600}
+.qw-tl-meta{font-size:13px;color:#666}
+.qw-tl-date{font-size:14px;color:#4d4d4d;white-space:nowrap;font-variant-numeric:tabular-nums;padding-top:1px}
+.qw-tl-last .qw-tl-date,.qw-tl-last .qw-journey-eta-date{font-size:15px;font-weight:600;color:#171717}
+.qw-tl .qw-journey-eta-date{font:inherit}
+.qw-klarna-badge{display:inline-flex;height:24px}
+.qw-klarna-badge svg{height:24px;width:auto;display:block}
+.qw-klarna{justify-content:flex-start !important}
+.qw-klarna-note{text-align:left !important}
+.qw-mailin-info{display:none}
+/* ===== Round 3: 11 Oct result components (design/quote-wizard-upgrade), finished against Untitled UI ===== */
+#qw-sticky-cta,.qw-sticky-cta{display:none !important}
+#qwMailinPanel[hidden],#qwMailinPanel:empty,#qwCalModal[hidden]{display:none !important}
+.qw-slot-panel{margin-top:16px !important;margin-bottom:0 !important;padding-bottom:0 !important}
+.qw-delivery-reveal > .qw-delivery-choice{margin-top:16px}
+/* Timeline card */
+#qwJourney:not([hidden]){display:block;margin-top:16px}
+.qw-journey{padding:16px !important;border-radius:12px !important;background:#fff !important;box-shadow:0 0 0 1px rgba(0,0,0,0.08),0 2px 2px rgba(0,0,0,0.04) !important}
+.qw-jr{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+.qw-jr-step{position:relative;display:flex;gap:12px;align-items:flex-start;padding:0 0 16px}
+.qw-jr-step:last-child{padding-bottom:0}
+.qw-jr-step:not(:last-child)::after{content:"";position:absolute;left:10px;top:26px;bottom:4px;width:2px;border-radius:2px;background:#ebebeb}
+.qw-jr-num{display:grid;place-items:center;flex:none;width:22px;height:22px;border-radius:9999px;background:#171717;color:#fff;font:500 11px var(--font-mono)}
+.qw-jr-copy{min-width:0;display:flex;flex-direction:column;gap:2px;padding-top:1px}
+.qw-jr-title{font-size:14px;font-weight:500;color:#171717;letter-spacing:-0.1px;line-height:1.4}
+.qw-jr-meta{font-size:13px;line-height:1.4;color:#4d4d4d}
+.qw-journey-eta{margin-top:16px !important;padding:12px 14px !important;border-radius:10px !important;background:#fafafa !important;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.06) !important;display:flex !important;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:4px 10px;text-align:center}
+.qw-journey-eta-label{flex-basis:100%;font:500 10px var(--font-mono) !important;letter-spacing:0.08em !important;text-transform:uppercase;color:#808080 !important}
+.qw-journey-eta-date{font-size:24px !important;font-weight:600 !important;letter-spacing:-1px !important;color:#171717 !important;white-space:nowrap}
+.qw-journey-eta-note{font-size:13px !important;color:#666 !important}
+/* Trust tiles + total card */
+.qw-price-trust{margin-top:16px !important;display:grid !important;grid-template-columns:repeat(auto-fit,minmax(240px,1fr)) !important;gap:12px !important;background:none !important;box-shadow:none !important;border-radius:0 !important;overflow:visible !important}
+.qw-trust-cross{display:grid !important;grid-template-columns:1fr 1fr !important;gap:1px !important;margin:0 !important;border-radius:12px;overflow:hidden;background:rgba(0,0,0,0.08) !important;box-shadow:0 0 0 1px rgba(0,0,0,0.08)}
+.qw-trust-cell{background:#fff !important;padding:14px !important;border:0 !important;box-shadow:none !important;display:flex !important;flex-direction:column !important;align-items:flex-start !important;justify-content:center !important;gap:4px !important;min-height:0 !important}
+.qw-trust-ico{display:none !important}
+.qw-trust-title{font-size:13px !important;font-weight:500 !important;line-height:1.35 !important;color:#171717}
+.qw-trust-sub{font-size:12px !important;color:#666 !important}
+.qw-trust-score{font-size:20px !important;letter-spacing:-0.5px !important}
+.qw-price-trust-price{flex:none !important;width:auto !important;border:0 !important;border-radius:12px !important;background:#fafafa !important;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08) !important;padding:18px !important;display:flex !important;flex-direction:column !important;justify-content:center !important;align-items:stretch !important;gap:6px;text-align:left !important}
+.qw-price-trust-price .qw-price-big-wrap{display:block !important;text-align:left !important}
+.qw-price-trust-price .qw-price-from{font:500 10px var(--font-mono) !important;letter-spacing:0.08em;text-transform:uppercase;color:#808080 !important;text-align:left !important}
+.qw-price-trust-price .qw-price-big{font-size:40px !important;letter-spacing:-2px !important;text-align:left !important;line-height:1.1}
+.qw-klarna{margin-top:10px !important;padding-top:12px !important;justify-content:flex-start !important;text-align:left !important;gap:6px 10px !important;font-size:13px !important}
+.qw-klarna-badge,.qw-klarna-badge svg{height:22px !important}
+.qw-klarna-note{text-align:left !important;font-size:12px !important;color:#808080 !important}
+/* Actions */
+.qw-service-mapper{margin-bottom:0 !important}
+.qw-res-service{padding-bottom:0 !important}
+.qw-res-cta{padding-top:0 !important}
+#qwServiceErr:empty,.qw-res-extras:empty{display:none !important}
+.qw-btn-email,.qw-btn-q,.qw-f-sub{min-height:48px !important}
+.qw-restart{min-height:44px !important}
+#qwCFAN,#qwCFAE,#qwCFAP{min-height:48px !important}
+.qw-res-cta{margin-top:16px !important;display:flex;flex-direction:column;gap:8px}
+.qw-res-cta > button{margin:0 !important;width:100% !important}
+@media (min-width:720px){
+  .qw-jr{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px}
+  .qw-jr-step{padding:0;flex-direction:column;gap:8px}
+  .qw-jr-step:not(:last-child)::after{left:30px;right:-8px;top:10px;bottom:auto;width:auto;height:2px}
+  .qw-jr-copy{padding-top:0}
+}
