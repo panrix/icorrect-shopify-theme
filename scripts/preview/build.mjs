@@ -129,7 +129,7 @@ const cartShim = `<script>
 })();
 </script>`;
 
-const banner = (title) => `<div class="pv-bar"><a href="/">Quote wizard preview</a><span>${title}</span><span class="pv-ref">${branch}${sha ? ' · ' + sha : ''}</span></div>`;
+const banner = (title) => `<div class="pv-bar section-header"><a href="/">Quote wizard preview</a><span>${title}</span><span class="pv-ref">${branch}${sha ? ' · ' + sha : ''}</span></div>`;
 const pageCss = `<style>
 :root{--font-sans:"Geist",Arial,sans-serif;--font-mono:"Geist Mono",ui-monospace,monospace}
 body{margin:0;background:#fff;font-family:var(--font-sans);color:#171717}
