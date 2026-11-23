@@ -2764,7 +2764,7 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 .qw-res-cta{margin-top:16px;display:flex;flex-direction:column;gap:8px}
 .qw-res-cta > button{margin:0;width:100%}
 @media (min-width:720px){
-  .qw-jr{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px}
+  .qw-jr{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:16px}
   .qw-jr-step{padding:0;flex-direction:column;gap:8px}
   .qw-jr-step:not(:last-child)::after{left:30px;right:-8px;top:10px;bottom:auto;width:auto;height:2px}
   .qw-jr-copy{padding-top:0}
@@ -2791,7 +2791,7 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 .qw-sum-eta[hidden]{display:none}
 .qw-sum-eta-v{font-weight:600;color:var(--qw-text)}
 .qw-sum-eta-n{color:var(--qw-text-3)}
-.qw-sum-eta-n::before{content:" · "}
+.qw-sum-eta-n{display:block}
 #qwJourney .qw-journey-eta{display:none}
 .qw-slot-panel.qw-collapsed>:not(.qw-slot-line){display:none !important}
 .qw-slot-panel:not(.qw-collapsed)>.qw-slot-line{display:none}
@@ -2828,3 +2828,4 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 .qw-opt-card[data-svc="workshop"]:not(.sel){padding-top:12px !important;padding-bottom:12px !important}
 .qw-slot-change:focus-visible,.qw-pc-change:focus-visible,.qw-how:focus-visible{outline:2px solid var(--qw-primary);outline-offset:2px;border-radius:6px}
 .qw-opt-card[data-svc="workshop"]:not(.sel) .qw-delivery-sub{display:none}
+#qwSummary .qw-price-from,#qwSummary .qw-price-big,#qwSummary .qw-sum-eta{text-align:center !important}

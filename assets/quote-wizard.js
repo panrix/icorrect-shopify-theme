@@ -1700,10 +1700,10 @@
       return;
     }
     if (choice) choice.hidden = false;
-    /* Mobile: keep unavailable courier fully removed (desktop stays greyed). */
+    /* Outside the courier area: remove courier on every screen size; mail-in is the route. */
     if (courierCard) {
       var courierUnavailable = courierCard.classList.contains('qw-opt-disabled');
-      if (courierUnavailable && isMobileQuoteLayout()) {
+      if (courierUnavailable) {
         courierCard.hidden = true;
         courierCard.setAttribute('aria-hidden', 'true');
         if (grid) grid.classList.add('qw-delivery-grid-solo');
