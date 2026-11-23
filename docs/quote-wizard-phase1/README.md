@@ -41,3 +41,15 @@ Not checked here: the real Shopify checkout, Klarna eligibility, and Monday inta
 ## Screenshots (390 px phone)
 
 Before: `before-london-390.jpg`, `before-mailin-390.jpg`. After: `after-london-390.jpg`, `after-walkin-390.jpg`, `after-mailin-390.jpg`. Desktop: `after-london-1440.jpg`, `after-mailin-1440.jpg`.
+
+## Round 4: one complete quote after the postcode (23 Nov)
+
+Ricky's flow: device, model, fault, postcode, then one complete quote.
+
+- **Price gate fixed.** A Round 3 style rule forced the price box to show before a postcode. The price now stays hidden until the postcode resolves, as on live.
+- **Before the postcode** the Book button reads "Enter postcode to continue", so it is clear there is one step left.
+- **After the postcode** the page scrolls to "How do you want to get it to us?" (clear of the sticky header). Below it: the earliest collection or drop-off slot as one line with Change, then the total with "Back with you by …", Klarna and Book.
+- **Mobile:** the timeline sits behind "How it works" under Book; trust tiles, email and question follow. Unselected delivery cards show the title only.
+- **Desktop (1024px and up):** two columns. Questions on the left with the horizontal timeline; total, return date, Klarna, Book and trust stick on the right.
+- New file `assets/quote-wizard-layout.js` (about 9 KB) rearranges the result card after it renders. `quote-wizard.js` only calls `ICorrectQuoteLayout.focus()` after a postcode, and stays under the 256 KB limit.
+- No change to prices, cart properties or the Monday service types.

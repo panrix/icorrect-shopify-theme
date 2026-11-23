@@ -92,24 +92,9 @@
     scrollToEl(target, 120, 'start');
   }
 
-  /* After postcode → land on collection + journey + price as one screen. */
+  /* After postcode: assets/quote-wizard-layout.js */
   function focusCollectionPanel() {
-    var slot = document.getElementById('qwSlotPanel');
-    var reveal = document.getElementById('qwDeliveryReveal');
-    var price = document.getElementById('qwResPrice');
-    var target = (slot && !slot.hidden) ? slot : reveal;
-    if (!target || target.hidden) return;
-    scrollToEl(target, 140, isMobileQuoteLayout() ? 'start' : 'nearest');
-    if (price && isMobileQuoteLayout() && !(slot && !slot.hidden)) {
-      setTimeout(function() {
-        try {
-          var rect = price.getBoundingClientRect();
-          if (rect.bottom > (window.innerHeight || 0) - 12) {
-            price.scrollIntoView({ behavior: scrollBehavior(), block: 'end' });
-          }
-        } catch (e) {}
-      }, 320);
-    }
+    if (window.ICorrectQuoteLayout) window.ICorrectQuoteLayout.focus();
   }
 
   /* [4.7] Shared a11y helper */
@@ -2012,7 +1997,7 @@
       if (total >= 100) {
         k.hidden = false;
         var kTpl = document.getElementById('qwKlarnaBadge');
-        k.innerHTML = '<span class="qw-klarna-badge">' + (kTpl ? kTpl.innerHTML.trim() : 'Klarna') + '</span><span class="qw-klarna-copy">Pay in 3 interest-free payments of <strong>' + gbp.format(Math.round(total / 3 * 100) / 100) + '</strong></span>' +
+        k.innerHTML = '<span class="qw-klarna-badge">' + (kTpl ? kTpl.innerHTML.trim() : 'Klarna') + '</span><span class="qw-klarna-copy">3 interest-free payments of <strong>' + gbp.format(Math.round(total / 3 * 100) / 100) + '</strong></span>' +
           '<span class="qw-klarna-note">First payment at checkout, then one every 30 days. Subject to status.</span>';
       } else { k.hidden = true; }
     }
@@ -2454,16 +2439,11 @@
       if (result) { result.hidden = true; result.innerHTML = ''; }
       paintMailinCard(quote);
       refreshServiceJourney();
-      if (!_suppressScroll) {
-        var mailTarget = document.getElementById('qwMailinPanel') || document.getElementById('qwDeliveryReveal');
-        scrollToEl(mailTarget, 140, isMobileQuoteLayout() ? 'start' : 'nearest');
-      }
+      if (!_suppressScroll) focusCollectionPanel();
     }
 
     refreshAllInTotal();
     updateCollectionNotice();
-    /* Next thing to fill: a collection/drop-off time if one is still needed, otherwise the price + Proceed. */
-    if (!_suppressScroll && !(slotPanel && !slotPanel.hidden)) focusPriceAndProceed();
     trackCourierQuoteEvents(_courierQuote);
   }
 
