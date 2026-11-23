@@ -4,7 +4,7 @@
 (function () {
   'use strict';
 
-  var LAST_HOUR = 17; /* same-day drop-off offered Mon to Fri until 5pm London time */
+  var LAST_HOUR = 15; /* same-day drop-off offered Mon to Fri until 3pm London time */
   var PARTS = { morning: '9am – 12pm', fridayMorning: '10am – 12pm', afternoon: '12pm – 6pm' };
 
   function isAfternoon(partId) {
@@ -17,8 +17,9 @@
     return date && date.getDay && date.getDay() === 5 ? PARTS.fridayMorning : PARTS.morning;
   }
 
-  /* Courier dates start tomorrow; a walk-in can be today while the workshop is open. */
-  function dates(list, wall, isoOf) {
+  /* Courier dates start tomorrow; a walk-in can be today while enabled and before 3pm London time. */
+  function dates(list, wall, isoOf, opts) {
+    if (opts && opts.allowSameDay === false) return list;
     var d = wall.date;
     var dow = d.getDay();
     if (dow < 1 || dow > 5 || wall.hour >= LAST_HOUR) return list;
@@ -35,7 +36,7 @@
     }].concat(list);
   }
 
-  /* opts: { workshop, selected (slot date or null), todayIso, hour } */
+  /* opts: { workshop, selected (slot date or null), todayIso, hour, onAutoPM } */
   function applyMode(panel, opts) {
     var label = panel.querySelector('.qw-section-label');
     if (label) label.textContent = opts.workshop ? 'Pick a drop-off time' : 'Pick a collection window';
@@ -48,6 +49,7 @@
     if (!opts.workshop) return;
     var sel = opts.selected;
     var afterMidday = !!(sel && sel.iso === opts.todayIso && opts.hour >= 12);
+    var switchToPm = false;
     btns.forEach(function (btn) {
       var id = btn.getAttribute('data-part') || '';
       var detail = btn.querySelector('.qw-window-detail');
@@ -57,15 +59,38 @@
         btn.setAttribute('aria-disabled', 'true');
         btn.disabled = true;
         if (btn.classList.contains('active')) {
-          var pm = panel.querySelector('.qw-window-btn[data-part="PM"]');
-          if (pm) setTimeout(function () { pm.click(); }, 0);
+          switchToPm = true;
         }
       }
     });
+    if (switchToPm) {
+      btns.forEach(function (btn) {
+        var pm = isAfternoon(btn.getAttribute('data-part') || '');
+        btn.classList.toggle('active', pm);
+        btn.setAttribute('aria-selected', pm ? 'true' : 'false');
+      });
+      if (typeof opts.onAutoPM === 'function') opts.onAutoPM();
+    }
   }
 
-  /* h: { drop (Date|null), bench, turnaround, note, fmt, addWorkingDays } */
+  /* h: { drop (Date|null), bench, turnaround, note, diagnostic, fmt, addWorkingDays } */
   function journey(h) {
+    if (h.diagnostic) {
+      var quoteDate = h.drop ? h.addWorkingDays(h.drop, 1) : null;
+      var diagSteps = [
+        { title: 'You drop it off', meta: h.drop ? h.fmt(h.drop) : 'Pick a drop-off time' },
+        { title: 'We diagnose & email your quote', meta: quoteDate ? h.fmt(quoteDate) : '1 working day after drop-off' },
+        { title: 'You decide next', meta: 'Device stays with us until you approve' }
+      ];
+      return {
+        kind: 'diagnostic',
+        etaLabel: 'We\'ll tell you what\'s wrong by',
+        note: 'Device stays with us until you approve a repair',
+        steps: diagSteps,
+        returnDate: null,
+        quoteDate: quoteDate
+      };
+    }
     var steps = [
       { title: 'You drop it off', meta: h.drop ? h.fmt(h.drop) : 'Pick a drop-off time' },
       { title: 'We repair', meta: h.turnaround },

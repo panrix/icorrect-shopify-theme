@@ -958,7 +958,20 @@
     return 0;
   }
 
-  function partsClaimLabel(device, model) {
+  function partsClaimLabel(device, model, productTitle) {
+    var title = String(productTitle || '');
+    if (/\(Genuine\s+(?:Display|OLED|LCD|Liquid Retina Display|XDR Display|Ultra Retina XDR Display)\)/i.test(title)) {
+      return 'Genuine Apple displays';
+    }
+    if (/\(Genuine\s+Battery\)/i.test(title)) {
+      return 'Genuine Apple battery';
+    }
+    if (/\(Original\s+Specification\)/i.test(title)) {
+      return 'Original specification';
+    }
+    if (/\(Premium\s+Aftermarket|\bAftermarket\b/i.test(title)) {
+      return 'Premium aftermarket';
+    }
     if (device === 'macbook') {
       return isAppleSiliconModel(model) ? 'Original parts' : 'Original specification';
     }
@@ -1036,7 +1049,7 @@
      Turnaround uses the same repairBenchDays source as the journey ETA. */
   function buildPriceTrustBlock(device, model, opts) {
     opts = opts || {};
-    var parts = S.repairType === 'screen' ? 'Genuine Apple displays' : partsClaimLabel(device, model);
+    var parts = partsClaimLabel(device, model, opts.productTitle);
     var turnaround = turnaroundClaimLabel(device, { diagnostic: opts.diagnostic, model: model });
     var starSvg = '<svg width="12" height="12" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1l1.8 3.8 4.2.6-3 2.9.7 4.1L7 10.5 3.3 12.4l.7-4.1-3-2.9 4.2-.6z" fill="currentColor"/></svg>';
     var stars = starSvg + starSvg + starSvg + starSvg + starSvg;
@@ -1044,16 +1057,17 @@
     var clockSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
     var shieldSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>';
     var gateCopy = opts.gateCopy || 'Enter your postcode above';
+    var warrBadge = opts.diagnostic ? '' : '<span class="qw-price-warr">2-yr warranty</span>';
     var priceInner = opts.gate
       ? '<div class="qw-price-gate qw-price-gate--inline" id="qwPriceGate">' + esc(gateCopy) + '</div>' +
         '<div class="qw-price-big-wrap" id="qwPriceBigWrap" hidden>' +
           '<div class="qw-breakdown" id="qwBreakdown"></div>' +
           '<div class="qw-price-from">All-in total</div>' +
-          '<div class="qw-price-big" id="qwPriceBig" aria-live="polite" aria-atomic="true">' + (opts.priceHtml || '') + '</div>' +
+          '<div class="qw-price-row"><div class="qw-price-big" id="qwPriceBig" aria-live="polite" aria-atomic="true">' + (opts.priceHtml || '') + '</div>' + warrBadge + '</div>' +
           '<div class="qw-klarna" id="qwKlarna" hidden></div>' +
         '</div>'
       : '<div class="qw-price-from">All-in total</div>' +
-        '<div class="qw-price-big" id="qwPriceBig">' + (opts.priceHtml || '') + '</div>';
+        '<div class="qw-price-row"><div class="qw-price-big" id="qwPriceBig">' + (opts.priceHtml || '') + '</div>' + warrBadge + '</div>';
     return '<div class="qw-price-trust" id="qwPriceTrust">' +
       '<ul class="qw-trust-cross" role="list" aria-label="Trust signals">' +
         '<li class="qw-trust-cell qw-trust-reviews" aria-label="4.8 out of 5 from 750+ Google reviews">' +
@@ -1324,7 +1338,7 @@
     if (!host) return;
     var model = kind === 'mailin' ? buildMailinJourneyModel() : (kind === 'workshop' ? buildWorkshopJourneyModel() : buildCourierJourneyModel());
     var lastIdx = model.steps.length - 1;
-    var lastMeta = kind === 'workshop' ? 'Ready to collect' : (kind === 'mailin' ? 'Tracked post' : 'To your door');
+    var lastMeta = kind === 'workshop' ? '12 Margaret Street' : (kind === 'mailin' ? 'Tracked post' : 'To your door');
     var stepsHtml = model.steps.map(function(s, i) {
       var meta = (i === lastIdx && model.returnDate) ? lastMeta : (s.meta || '');
       return '<li class="qw-jr-step"><span class="qw-jr-num" aria-hidden="true">' + (i + 1) + '</span>' +
@@ -1376,7 +1390,7 @@
   function buildWorkshopJourneyModel() {
     var drop = _collectionSlot.date && _collectionSlot.date.iso ? parseISODate(_collectionSlot.date.iso) : null;
     return window.ICorrectWalkin.journey({ drop: drop, bench: repairBenchDays(S.device), turnaround: turnaroundClaimLabel(S.device),
-      note: turnaroundNote(S.device), fmt: formatJourneyDate, addWorkingDays: addWorkingDays });
+      note: turnaroundNote(S.device), diagnostic: S.route === 'diagnostic', fmt: formatJourneyDate, addWorkingDays: addWorkingDays });
   }
 
   function collectionWindowCopy(band) {
@@ -1657,9 +1671,17 @@
     return courierAdj < mailAdj;
   }
 
+  function paintCourierCard(quote) {
+    var card = document.querySelector('.qw-opt-card[data-svc="courier"]');
+    if (!card || !quote) return;
+    var free = quote.service === 'courier' && serviceCharge(quote) === 0;
+    var t = card.querySelector('.qw-delivery-title');
+    if (t) t.textContent = free ? 'Free courier collection' : 'Courier collection';
+  }
+
   function paintMailinCard(quote) {
     var card = document.querySelector('.qw-opt-card[data-svc="mailin"]');
-    if (!card) return;
+    if (!card || !quote) return;
     var free = serviceCharge(quote) === 0;
     var t = card.querySelector('.qw-delivery-title'); var sub = card.querySelector('.qw-delivery-sub');
     if (t) t.textContent = free ? 'Free tracked mail-in' : 'Tracked mail-in';
@@ -1776,6 +1798,13 @@
     }
   }
 
+  function paintWorkshopCard() {
+    var ws = document.querySelector('.qw-opt-card[data-svc="workshop"]');
+    if (!ws) return;
+    var title = ws.querySelector('.qw-delivery-title');
+    if (title) title.textContent = ws.classList.contains('sel') ? 'Drop off in Fitzrovia' : 'Prefer to drop it off?';
+  }
+
   function selectServiceCard(svc) {
     var grid = document.getElementById('qwDeliveryGrid');
     if (!grid) return;
@@ -1784,6 +1813,7 @@
       c.classList.toggle('sel', on);
       c.classList.toggle('active', on);
     });
+    paintWorkshopCard();
   }
 
   /* Price slot after collection/journey so one mobile screen can show slots + ETA + price. */
@@ -1821,7 +1851,7 @@
             '<button type="button" class="qw-delivery-card qw-opt-card sel active" data-opt="svc" data-svc="courier" data-add="0">' +
               '<span class="qw-delivery-radio" aria-hidden="true"><span></span></span>' +
               '<span class="qw-delivery-body">' +
-                '<span class="qw-delivery-title qw-opt-name">Free courier collection</span>' +
+                '<span class="qw-delivery-title qw-opt-name">Courier collection</span>' +
                 '<span class="qw-delivery-sub qw-opt-meta">We collect from your home or office and bring it back. No trip needed.</span>' +
               '</span>' +
               '<span class="qw-delivery-price qw-opt-price" id="qwCourierPriceLbl"></span>' +
@@ -1951,15 +1981,25 @@
 
   /* Walk-in helpers: assets/quote-wizard-walkin.js */
   function workshopDates(list) {
-    return window.ICorrectWalkin ? window.ICorrectWalkin.dates(list, londonWall(), isoJourneyDate) : list;
+    return window.ICorrectWalkin ? window.ICorrectWalkin.dates(list, londonWall(), isoJourneyDate, { allowSameDay: CFG.sameDayDropOff !== false }) : list;
   }
 
   function applySlotMode() {
     var panel = document.getElementById('qwSlotPanel');
     if (!panel || !window.ICorrectWalkin) return;
     var wall = londonWall();
-    window.ICorrectWalkin.applyMode(panel, { workshop: selectedServiceKind() === 'workshop', selected: _collectionSlot.date,
-      todayIso: isoJourneyDate(wall.date), hour: wall.hour });
+    window.ICorrectWalkin.applyMode(panel, {
+      workshop: selectedServiceKind() === 'workshop',
+      selected: _collectionSlot.date,
+      todayIso: isoJourneyDate(wall.date),
+      hour: wall.hour,
+      onAutoPM: function () {
+        var parts = window.ICorrectCourierSlots ? window.ICorrectCourierSlots.dayParts() : [];
+        _collectionSlot.part = parts.filter(function (p) { return p.id === 'PM'; })[0] || parts[1] || _collectionSlot.part;
+        syncIcorrectQuote();
+        refreshServiceJourney();
+      }
+    });
   }
 
   function renderCollectionSlots(band) {
@@ -2172,6 +2212,8 @@
     paintPostcodeSummary();
     if (priceLbl) priceLbl.textContent = formatServiceCardHint(quote, 'courier');
     if (mailLbl) mailLbl.textContent = formatServiceCardHint(quote, 'mailin');
+    paintCourierCard(quote.service === 'courier' ? quote : quoteForService('courier', postcode));
+    paintMailinCard(quote.service === 'mail-in' ? quote : quoteForService('mailin', postcode));
 
     if (courierCard) {
       courierCard.dataset.add = '0';
@@ -2194,6 +2236,7 @@
         if (courierOnly && courierOnly.service === 'courier') quote = courierOnly;
         _courierQuote = quote;
         if (priceLbl) priceLbl.textContent = formatServiceCardHint(quote, 'courier');
+        paintCourierCard(quote);
       }
     }
 
@@ -2275,7 +2318,9 @@
           c.classList.remove('sel', 'active');
         });
         card.classList.add('sel', 'active');
+        paintWorkshopCard();
         if (card.getAttribute('data-svc') === 'workshop') {
+          var mp = document.getElementById('qwMailinPanel'); if (mp) mp.hidden = true;
           _collectionSlot = { date: null, part: null };
           renderCollectionSlots(_courierQuote && _courierQuote.band);
           var sp = document.getElementById('qwSlotPanel'); if (sp) sp.hidden = false;
@@ -3467,7 +3512,7 @@
     }
 
     var homeVid = CFG.homeAddress && parseInt(CFG.homeAddress.variantId, 10);
-    if (homeVid) {
+    if (homeVid && svcKind !== 'workshop') {
       items.push({
         id: homeVid,
         quantity: 1,
@@ -3504,6 +3549,8 @@
     add('Service', 'Service Type');
     add('Collection date', 'Collection Date');
     add('Collection window', 'Collection Window');
+    add('Drop-off date', 'Drop-off Date');
+    add('Drop-off window', 'Drop-off Window');
     add('Return by', 'Return by');
     add('Quote by', 'Quote by');
     add('Postcode', 'Postcode');
@@ -3630,9 +3677,10 @@
         currency: 'GBP',
         item_count: items.length
       });
-      var homePostcode = (items[0] && items[0].properties && items[0].properties.Postcode) || '';
+      var isWalkin = items[0] && items[0].properties && items[0].properties['Service Type'] === 'Walk-in';
+      var homePostcode = isWalkin ? '' : ((items[0] && items[0].properties && items[0].properties.Postcode) || '');
       var postEl = document.getElementById('qwPostcode');
-      if (!homePostcode && postEl) homePostcode = String(postEl.value || '').trim();
+      if (!isWalkin && !homePostcode && postEl) homePostcode = String(postEl.value || '').trim();
       window.location.href = checkoutUrlWithHomeAddress(homePostcode);
     } catch (err) {
       if (btn) { btn.disabled = false; btn.textContent = 'Proceed to checkout'; }
@@ -3704,7 +3752,7 @@
     ]) : '';
 
     var priceTrustHtml = basePrice
-      ? buildPriceTrustBlock(S.device, S.model, { gate: true, priceHtml: gbp.format(basePrice) })
+      ? buildPriceTrustBlock(S.device, S.model, { gate: true, priceHtml: gbp.format(basePrice), productTitle: product.title })
       : '';
     var totalHtml = basePrice
       ? ('<div class="qw-price-total-wrap" id="qwPriceTotalWrap" hidden>' +
@@ -4209,9 +4257,9 @@
     var etaDate = '';
     var etaNote = '';
     if (journeyHost && !journeyHost.hidden) {
-      journeyHost.querySelectorAll('.qw-journey-step').forEach(function(step) {
-        var title = qwText(step.querySelector('.qw-journey-title'));
-        if (title) journey.push({ title: title, meta: qwText(step.querySelector('.qw-journey-meta')) });
+      journeyHost.querySelectorAll('.qw-jr-step, .qw-journey-step').forEach(function(step) {
+        var title = qwText(step.querySelector('.qw-jr-title, .qw-journey-title'));
+        if (title) journey.push({ title: title, meta: qwText(step.querySelector('.qw-jr-meta, .qw-journey-meta')) });
       });
       etaLabel = qwText(journeyHost.querySelector('.qw-journey-eta-label'));
       etaDate = qwText(journeyHost.querySelector('.qw-journey-eta-date'));
@@ -4425,7 +4473,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
             totalPrice: totalPrice,
             estimates: estimates.length > 0 ? JSON.stringify(estimates) : null,
             warranty: CFG.warrantyLabel || '2-year warranty',
-            parts: partsClaimLabel(S.device, S.model),
+            parts: partsClaimLabel(S.device, S.model, productTitle),
             productUrl: productHandle ? 'https://www.icorrect.co.uk/products/' + productHandle : null,
             deviceColor: snap.deviceColor || null,
             colorLabel: snap.colorLabel || null,
@@ -4506,17 +4554,18 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
   function setupStickyCTA(price) {
     var sticky = document.getElementById('qw-sticky-cta');
     if (!sticky) return;
-    sticky.innerHTML = '<span class="qw-sticky-price">' + price + '</span><button class="qw-sticky-book" onclick="document.getElementById(\'qwBookBtn\').click()">Book now</button>';
+    sticky.innerHTML = '<span class="qw-sticky-price">' + esc(price) + '</span>' +
+      '<button type="button" class="qw-sticky-book" onclick="document.getElementById(\'qwBookBtn\').click()">Book now</button>';
 
-    var cta = document.querySelector('.qw-res-cta');
-    if (!cta || !('IntersectionObserver' in window)) return;
+    var target = document.getElementById('qwBookBtn') || document.querySelector('.qw-res-cta');
+    if (!target || !('IntersectionObserver' in window)) return;
     if (_stickyObserver) _stickyObserver.disconnect();
     _stickyObserver = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry) {
-        sticky.classList.toggle('show', !entry.isIntersecting);
+        sticky.classList.toggle('show', _postcodeResolved && !entry.isIntersecting);
       });
-    }, { threshold: 0 });
-    _stickyObserver.observe(cta);
+    }, { threshold: 0.1 });
+    _stickyObserver.observe(target);
   }
 
   function destroyStickyCTA() {

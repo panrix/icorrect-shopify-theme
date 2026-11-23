@@ -2719,7 +2719,10 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 .qw-klarna-note{text-align:left}
 .qw-mailin-info{display:none}
 /* ===== Round 3: 11 Oct result components (design/quote-wizard-upgrade), finished against Untitled UI ===== */
-#qw-sticky-cta,.qw-sticky-cta{display:none !important}
+#qw-sticky-cta.qw-sticky-cta{padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--qw-line);box-shadow:0 -4px 16px rgba(0,0,0,0.08)}
+.qw-sticky-price{font:700 20px var(--font-sans);color:var(--qw-text);font-variant-numeric:tabular-nums}
+.qw-sticky-book{min-height:44px;padding:0 20px;border:0;border-radius:10px;background:var(--qw-text);color:var(--qw-bg);font:600 14px var(--font-sans);cursor:pointer}
+.qw-sticky-book:hover{opacity:0.9}
 #qwMailinPanel[hidden],#qwMailinPanel:empty,#qwCalModal[hidden]{display:none !important}
 .qw-slot-panel{margin-top:16px;margin-bottom:0;padding-bottom:0}
 .qw-delivery-reveal > .qw-delivery-choice{margin-top:16px}
@@ -2778,20 +2781,26 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 #qwSummary #qwBookBtn{order:3;margin:0;width:100%}
 #qwSummary #qwHow{order:4;margin:-4px 0 0}
 #qwSummary #qwJourney{order:5;margin:-8px 0 0}
-#qwSummary .qw-trust-cross{order:6;margin:0}
-#qwSummary #qwEmailQuote{order:7;margin:0}
-#qwSummary #qwToggleCF{order:8;margin:0}
+#qwSummary #qwTrustToggle{order:6;margin:-4px 0 0}
+#qwSummary .qw-trust-cross{order:7;margin:0}
+#qwSummary #qwEmailQuote{order:8;margin:0}
+#qwSummary #qwEmailPanel{order:9;margin:0}
+#qwSummary #qwToggleCF{order:10;margin:0}
+#qwSummary #qwCAcc{order:11;margin:0}
+#qwSummary #qwIntercomBtn{order:12;margin:0}
+#qwSummary #qwCAcc .qw-c-inner{padding:16px 0 4px}
 #qwSummary #qwPriceTotalWrap{display:none}
 #qwSummary .qw-price-trust-price:has(#qwPriceBigWrap[hidden]){display:none !important}
 .qw-res--split .qw-res-service{padding-bottom:0 !important}
 .qw-btn-book.qw-btn-prompt{opacity:1;background:var(--qw-bg-page);color:var(--qw-text-muted);box-shadow:inset 0 0 0 1px var(--qw-line);font-size:0}
 .qw-btn-book.qw-btn-prompt svg{display:none}
 .qw-btn-book.qw-btn-prompt::after{content:"Enter postcode to continue";font:500 15px var(--font-sans)}
+.qw-price-row{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:4px 10px}
+.qw-price-warr{display:inline-flex;align-items:center;padding:3px 9px;border-radius:9999px;background:var(--qw-green-bg);color:var(--qw-green);font:500 12px/1.3 var(--font-sans);white-space:nowrap;transform:translateY(-4px)}
 .qw-sum-eta{margin-top:6px;font:400 14px/1.45 var(--font-sans);color:var(--qw-text-2)}
 .qw-sum-eta[hidden]{display:none}
 .qw-sum-eta-v{font-weight:600;color:var(--qw-text)}
-.qw-sum-eta-n{color:var(--qw-text-3)}
-.qw-sum-eta-n{display:block}
+.qw-sum-eta-n{color:var(--qw-text-3);display:block}
 #qwJourney .qw-journey-eta{display:none}
 .qw-slot-panel.qw-collapsed>:not(.qw-slot-line){display:none !important}
 .qw-slot-panel:not(.qw-collapsed)>.qw-slot-line{display:none}
@@ -2808,6 +2817,7 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 @media (max-width:1023px){
   #qwJourney:not(.qw-jr-open){display:none}
   #qwJourney.qw-jr-open .qw-journey{margin-top:4px}
+  #qwSummary.qw-priced .qw-trust-cross:not(.qw-trust-open){display:none}
   .qw-delivery-card:not(.sel) .qw-delivery-sub{display:none}
   .qw-delivery-card:not(.sel){min-height:0}
 }
@@ -2816,16 +2826,27 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
   .qw-res--split{display:grid;grid-template-columns:minmax(0,1fr) 340px;column-gap:8px;align-items:start;overflow:visible;overflow:clip}
   .qw-res--split>*{grid-column:1;min-width:0}
   .qw-res--split>#qwSummary{grid-column:2;grid-row:1 / span 6;position:sticky;top:calc(var(--qw-head,0px) + 16px);padding:24px 24px 24px 0}
+  .qw-res--split:has(#qwCAcc.open)>#qwSummary,.qw-res--split:has(#qwEmailPanel.show)>#qwSummary{position:static}
   .qw-how{display:none}
   #qwSummary .qw-trust-cross{grid-template-columns:1fr 1fr}
+  #qw-sticky-cta,.qw-sticky-cta{display:none !important}
 }
 #qwSummary .qw-price-trust-price{padding:16px}
 #qwSummary .qw-klarna{margin-top:12px}
-/* Courier first; drop-off is the smaller secondary option */
+/* Courier first; unselected drop-off is a quiet link below courier */
 .qw-delivery-grid .qw-opt-card[data-svc="workshop"]{flex:1 1 100%;min-height:0}
 .qw-delivery-grid:has(.qw-opt-card[data-svc="mailin"][hidden]) .qw-opt-card[data-svc="courier"]{flex:1 1 100%}
 .qw-opt-card[data-svc="workshop"] .qw-delivery-title{font-size:14px}
-.qw-opt-card[data-svc="workshop"]:not(.sel){padding-top:12px !important;padding-bottom:12px !important}
-.qw-slot-change:focus-visible,.qw-pc-change:focus-visible,.qw-how:focus-visible{outline:2px solid var(--qw-primary);outline-offset:2px;border-radius:6px}
+.qw-opt-card[data-svc="workshop"]:not(.sel){background:transparent;box-shadow:none !important;padding:4px 2px !important;min-height:44px;align-items:center}
+.qw-opt-card[data-svc="workshop"]:not(.sel):hover{transform:none}
+.qw-opt-card[data-svc="workshop"]:not(.sel) .qw-delivery-radio,
+.qw-opt-card[data-svc="workshop"]:not(.sel) .qw-delivery-price,
 .qw-opt-card[data-svc="workshop"]:not(.sel) .qw-delivery-sub{display:none}
+.qw-opt-card[data-svc="workshop"]:not(.sel) .qw-delivery-title{font-weight:500;color:var(--qw-primary);text-decoration:underline;text-underline-offset:3px}
+.qw-opt-card[data-svc="workshop"]:not(.sel):hover .qw-delivery-title{color:var(--qw-primary-hover)}
+/* Bigger tap targets for Back and Breadcrumb */
+.qw-back{min-height:44px;padding:0 10px 0 0;margin:-6px 0 6px;font-size:14px}
+.qw-crumb{gap:2px 0;margin-bottom:8px}
+.qw-crumb-btn{display:inline-flex;align-items:center;min-height:44px;padding:0 8px;font-size:13px;text-align:left}
+.qw-slot-change:focus-visible,.qw-pc-change:focus-visible,.qw-how:focus-visible,.qw-back:focus-visible,.qw-crumb-btn:focus-visible,.qw-opt-card[data-svc="workshop"]:focus-visible{outline:2px solid var(--qw-primary);outline-offset:2px;border-radius:6px}
 #qwSummary .qw-price-from,#qwSummary .qw-price-big,#qwSummary .qw-sum-eta{text-align:center !important}

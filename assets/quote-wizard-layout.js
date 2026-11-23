@@ -29,7 +29,22 @@
     sum.appendChild(price);
     sum.appendChild(cta);
     var acc = $('qwCAcc');
-    card.insertBefore(sum, acc && acc.parentNode === card ? acc : null);
+    if (acc) sum.appendChild(acc);
+    card.appendChild(sum);
+
+    var trust = sum.querySelector('.qw-trust-cross');
+    if (trust) {
+      if (!trust.id) trust.id = 'qwTrustCross';
+      var trustBtn = document.createElement('button');
+      trustBtn.type = 'button';
+      trustBtn.className = 'qw-how qw-trust-toggle';
+      trustBtn.id = 'qwTrustToggle';
+      trustBtn.hidden = true;
+      trustBtn.setAttribute('aria-expanded', 'false');
+      trustBtn.setAttribute('aria-controls', trust.id);
+      trustBtn.innerHTML = '<span>Reviews &amp; guarantee</span>' + CHEVRON;
+      sum.appendChild(trustBtn);
+    }
 
     var big = $('qwPriceBigWrap');
     if (big) {
@@ -76,7 +91,15 @@
         p.classList.add('qw-collapsed');
         return;
       }
-      var h = t.closest('.qw-how');
+      var tb = t.closest('#qwTrustToggle');
+      if (tb) {
+        var tc = $('qwTrustCross');
+        var tOpen = !(tc && tc.classList.contains('qw-trust-open'));
+        if (tc) tc.classList.toggle('qw-trust-open', tOpen);
+        tb.setAttribute('aria-expanded', tOpen ? 'true' : 'false');
+        return;
+      }
+      var h = t.closest('#qwHow');
       if (h) {
         var j = $('qwJourney');
         var open = !(j && j.classList.contains('qw-jr-open'));
@@ -116,6 +139,13 @@
     var how = $('qwHow');
     var shown = !!(host && !host.hidden && host.querySelector('.qw-jr'));
     if (how && how.hidden === shown) how.hidden = !shown;
+
+    var sum = $('qwSummary');
+    var big = $('qwPriceBigWrap');
+    var priced = !!(big && !big.hidden);
+    if (sum) sum.classList.toggle('qw-priced', priced);
+    var trustBtn = $('qwTrustToggle');
+    if (trustBtn && trustBtn.hidden === priced) trustBtn.hidden = !priced;
 
     var eta = $('qwSumEta');
     if (eta) {

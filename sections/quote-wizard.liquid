@@ -114,6 +114,7 @@ window.WIZARD_CONTEXT = {
 <script>
 window.WIZARD_CFG = {
   dropOff: {% if section.settings.enable_drop_off == false %}false{% else %}true{% endif %},
+  sameDayDropOff: {% if section.settings.enable_same_day_drop_off == false %}false{% else %}true{% endif %},
   warrantyLabel: {{ section.settings.warranty_label | default: '2-year warranty' | json }},
   diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: 'Quote in 1 working day' | json }},
   bandsUrl: {{ 'courier-london-bands.json' | asset_url | json }},
@@ -557,6 +558,13 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       "label": "Offer drop-off at the workshop",
       "default": true,
       "info": "Shows \"Prefer to drop it off?\" under courier collection for London postcodes. Orders come through as Service Type: Walk-in."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_same_day_drop_off",
+      "label": "Allow same-day drop-off",
+      "default": true,
+      "info": "Offers Today as a drop-off option Mon to Fri until 3pm London time. Turn off on busy days to start drop-offs from tomorrow."
     },
     {
       "type": "checkbox",

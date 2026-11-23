@@ -81,8 +81,10 @@ const issues = parseIssues(wizard);
 
 describe('quote wizard script size', () => {
   it('stays under the 256 KB Shopify asset limit', () => {
-    const bytes = Buffer.byteLength(wizard);
-    assert.ok(bytes <= SCRIPT_LIMIT, `${bytes} bytes exceeds ${SCRIPT_LIMIT}`);
+    for (const file of ['assets/quote-wizard.js', 'assets/quote-wizard-data.js', 'assets/quote-wizard-walkin.js', 'assets/quote-wizard-layout.js']) {
+      const bytes = fs.statSync(path.join(root, file)).size;
+      assert.ok(bytes <= SCRIPT_LIMIT, `${file}: ${bytes} bytes exceeds ${SCRIPT_LIMIT}`);
+    }
   });
 });
 
