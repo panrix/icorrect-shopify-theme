@@ -113,6 +113,8 @@ window.WIZARD_CONTEXT = {
 <script src="{{ 'repair-journey.js' | asset_url }}" defer></script>
 <script>
 window.WIZARD_CFG = {
+  dropOff: {% if section.settings.enable_drop_off == false %}false{% else %}true{% endif %},
+  sameDayDropOff: {% if section.settings.enable_same_day_drop_off == false %}false{% else %}true{% endif %},
   warrantyLabel: {{ section.settings.warranty_label | default: '2-year warranty' | json }},
   diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: 'Quote in 1 working day' | json }},
   bandsUrl: {{ 'courier-london-bands.json' | asset_url | json }},
@@ -410,7 +412,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
           elsif qw_device == 'watch' or qw_haystack contains 'watch'
             assign qw_noun = 'Apple Watch'
           endif
-          assign qw_sub = "We'll collect your " | append: qw_noun | append: ' same day in London, nationwide by courier.'
+          assign qw_sub = 'Courier collection in London, tracked mail-in across the UK.'
         -%}
         <p class="qw-sub">{{ qw_sub }}</p>
       </div>
@@ -496,6 +498,9 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 <div class="qw-sticky-cta" id="qw-sticky-cta"></div>
 
 <!-- JAVASCRIPT lives in assets/quote-wizard.js so this section stays under Shopify's 256 KB limit. -->
+<script src="{{ 'quote-wizard-data.js' | asset_url }}" defer></script>
+<script src="{{ 'quote-wizard-walkin.js' | asset_url }}" defer></script>
+<script src="{{ 'quote-wizard-layout.js' | asset_url }}" defer></script>
 <script src="{{ 'quote-wizard.js' | asset_url }}" defer></script>
 
 <!-- CSS -->
@@ -533,6 +538,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 .qw-opt-disabled, .qw-card-disabled { opacity: 0.45; pointer-events: none; }
 </style>
 
+<template id="qwKlarnaBadge">{{ 'klarna' | payment_type_svg_tag }}</template>
 {% schema %}
 {
   "name": "Quote Wizard",
@@ -545,6 +551,20 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       "label": "Show the collection title as the page H1",
       "default": false,
       "info": "Turn on for collection templates where the wizard is the first section and nothing else renders an H1. The wizard heading itself stays an H2."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_drop_off",
+      "label": "Offer drop-off at the workshop",
+      "default": true,
+      "info": "Shows \"Prefer to drop it off?\" under courier collection for London postcodes. Orders come through as Service Type: Walk-in."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_same_day_drop_off",
+      "label": "Allow same-day drop-off",
+      "default": true,
+      "info": "Offers Today as a drop-off option Mon to Fri until 3pm London time. Turn off on busy days to start drop-offs from tomorrow."
     },
     {
       "type": "checkbox",

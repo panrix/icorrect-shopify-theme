@@ -11,7 +11,8 @@ const fs = require('node:fs');
 const path = require('path');
 
 const root = path.join(__dirname, '../..');
-const wizard = fs.readFileSync(path.join(root, 'assets/quote-wizard.js'), 'utf8');
+const wizard = fs.readFileSync(path.join(root, 'assets/quote-wizard.js'), 'utf8') +
+  '\n' + fs.readFileSync(path.join(root, 'assets/quote-wizard-data.js'), 'utf8');
 const catalogue = JSON.parse(fs.readFileSync(path.join(root, 'assets/repair-catalogue-map.json'), 'utf8'));
 const { repairsMapForModel } = require('../../assets/repair-catalogue.js');
 
@@ -80,8 +81,10 @@ const issues = parseIssues(wizard);
 
 describe('quote wizard script size', () => {
   it('stays under the 256 KB Shopify asset limit', () => {
-    const bytes = Buffer.byteLength(wizard);
-    assert.ok(bytes <= SCRIPT_LIMIT, `${bytes} bytes exceeds ${SCRIPT_LIMIT}`);
+    for (const file of ['assets/quote-wizard.js', 'assets/quote-wizard-data.js', 'assets/quote-wizard-walkin.js', 'assets/quote-wizard-layout.js']) {
+      const bytes = fs.statSync(path.join(root, file)).size;
+      assert.ok(bytes <= SCRIPT_LIMIT, `${file}: ${bytes} bytes exceeds ${SCRIPT_LIMIT}`);
+    }
   });
 });
 
