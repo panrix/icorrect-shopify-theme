@@ -53,3 +53,14 @@ Ricky's flow: device, model, fault, postcode, then one complete quote.
 - **Desktop (1024px and up):** two columns. Questions on the left with the horizontal timeline; total, return date, Klarna, Book and trust stick on the right.
 - New file `assets/quote-wizard-layout.js` (about 9 KB) rearranges the result card after it renders. `quote-wizard.js` only calls `ICorrectQuoteLayout.focus()` after a postcode, and stays under the 256 KB limit.
 - No change to prices, cart properties or the Monday service types.
+
+## Round 5: review notes (23 Nov)
+
+- **Courier first.** Courier collection stays selected and full width. Drop-off is the smaller option underneath, titled "Prefer to drop it off?". Same-day drop-off stays (Ricky, 23 Nov).
+- **Theme setting.** "Offer drop-off at the workshop" (`enable_drop_off`, on by default) in the Quote wizard section switches drop-off off.
+- **Load guard.** Drop-off only shows when `quote-wizard-walkin.js` has loaded, so the Drop-off Window on the order always matches what the customer saw. If `quote-wizard-layout.js` fails, the wizard falls back to the current single-column layout; orders are unaffected.
+- **Checkout address.** The live "Collecting from {postcode}. Please use this address as your shipping address at checkout." notice is back, directly above the Book button.
+- **File split.** The triage copy (`TS`) and iPhone visual guide (`VG_DB`) moved to `assets/quote-wizard-data.js`. `quote-wizard.js` is now about 225 KB (31 KB under the limit). Four tests now read both files.
+- **CSS.** Phase-1 colours use `--qw-*` tokens (new: `--qw-primary`, `--qw-primary-hover`, `--qw-bg-page`). `!important` cut from 140 to 19: each removal was checked by comparing computed styles across ten wizard states, with the theme's `base.css` loaded.
+- **Accessibility.** Focus outlines on Change and How it works; the total has `aria-live="polite"`.
+- **Placeholders.** The service price labels start empty instead of an em dash. The courier error now reads "We can't collect from that postcode. Choose tracked mail-in instead."

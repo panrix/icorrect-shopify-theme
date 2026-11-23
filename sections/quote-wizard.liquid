@@ -113,6 +113,7 @@ window.WIZARD_CONTEXT = {
 <script src="{{ 'repair-journey.js' | asset_url }}" defer></script>
 <script>
 window.WIZARD_CFG = {
+  dropOff: {% if section.settings.enable_drop_off == false %}false{% else %}true{% endif %},
   warrantyLabel: {{ section.settings.warranty_label | default: '2-year warranty' | json }},
   diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: 'Quote in 1 working day' | json }},
   bandsUrl: {{ 'courier-london-bands.json' | asset_url | json }},
@@ -496,6 +497,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 <div class="qw-sticky-cta" id="qw-sticky-cta"></div>
 
 <!-- JAVASCRIPT lives in assets/quote-wizard.js so this section stays under Shopify's 256 KB limit. -->
+<script src="{{ 'quote-wizard-data.js' | asset_url }}" defer></script>
 <script src="{{ 'quote-wizard-walkin.js' | asset_url }}" defer></script>
 <script src="{{ 'quote-wizard-layout.js' | asset_url }}" defer></script>
 <script src="{{ 'quote-wizard.js' | asset_url }}" defer></script>
@@ -548,6 +550,13 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       "label": "Show the collection title as the page H1",
       "default": false,
       "info": "Turn on for collection templates where the wizard is the first section and nothing else renders an H1. The wizard heading itself stays an H2."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_drop_off",
+      "label": "Offer drop-off at the workshop",
+      "default": true,
+      "info": "Shows \"Prefer to drop it off?\" under courier collection for London postcodes. Orders come through as Service Type: Walk-in."
     },
     {
       "type": "checkbox",
