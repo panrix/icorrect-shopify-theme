@@ -17,6 +17,7 @@ function map() {
         repairs: {
           screen: { variantId: 1, handle: 'iphone-11-screen', title: 'iPhone 11 Screen', price: 199, tags: [], unavailable: true },
           battery: { variantId: 2, handle: 'iphone-11-battery', title: 'iPhone 11 Battery', price: 79, tags: [], unavailable: true },
+          diagnostic: { variantId: 5, handle: 'iphone-11-diagnostic', title: 'iPhone 11 Diagnostic', price: 69, tags: [] },
         },
       },
       'iphone::iphone-15': {
@@ -31,9 +32,9 @@ function map() {
 }
 
 describe('catalogue availability', () => {
-  it('hides a model when every repair is unavailable', () => {
+  it('hides a model when every real repair is unavailable (a lone diagnostic does not keep it)', () => {
     assert.equal(cat.modelIsOffered(map(), 'iphone', 'iPhone 11'), false);
-    assert.deepEqual(Object.keys(cat.repairsMapForModel(map(), 'iphone', 'iPhone 11')), []);
+    assert.deepEqual(Object.keys(cat.repairsMapForModel(map(), 'iphone', 'iPhone 11')), ['diagnostic']);
   });
   it('hides only the drafted repairs when others are live', () => {
     assert.equal(cat.modelIsOffered(map(), 'iphone', 'iPhone 15'), true);
