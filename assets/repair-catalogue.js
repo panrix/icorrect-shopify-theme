@@ -133,9 +133,8 @@
     return isRepairAvailable(row) ? row : null;
   }
 
-  /* True unless the catalogue knows the model AND no real repair is left for it.
-     A diagnostic on its own does not count as a repair, so a model whose repairs
-     are all drafted (leaving only the diagnostic) is treated as pulled.
+  /* True unless the catalogue knows the model AND every repair for it is hidden.
+     A model with any published repair (a diagnostic included) stays offered.
      Unknown models stay offered so a catalogue gap never removes a live model. */
   function modelIsOffered(mapAsset, device, modelName) {
     var model = findModel(mapAsset, device, modelName);
@@ -143,7 +142,6 @@
     var types = Object.keys(model.repairs);
     if (!types.length) return true;
     for (var i = 0; i < types.length; i++) {
-      if (types[i] === 'diagnostic') continue;
       if (isRepairAvailable(model.repairs[types[i]])) return true;
     }
     return false;
