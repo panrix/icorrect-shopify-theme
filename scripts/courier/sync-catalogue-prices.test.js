@@ -6,7 +6,7 @@
 
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { applyVariantPrices, collectVariantIds, toCents } = require('./sync-catalogue-prices.js');
+const { applyVariantPrices, applyAvailability, collectVariantIds, toCents } = require('./sync-catalogue-prices.js');
 
 function sample() {
   return {
@@ -70,5 +70,26 @@ describe('applyVariantPrices', () => {
     const { changes } = applyVariantPrices(map, { 11: '119.50', 12: '249.00' });
     assert.equal(changes[0].to, 119.5);
     assert.equal(map.models['iphone::iphone-15'].repairs.battery.price, 119.5);
+  });
+});
+
+describe('applyAvailability', () => {
+  it('hides a repair whose product is not available and restores it later', () => {
+    const map = sample();
+    let r = applyAvailability(map, { 11: true, 12: false });
+    assert.equal(r.hidden.length, 1);
+    assert.equal(map.models['iphone::iphone-15'].repairs.screen.unavailable, true);
+    assert.equal(map.models['iphone::iphone-15'].repairs.battery.unavailable, undefined);
+    r = applyAvailability(map, { 11: true, 12: false });
+    assert.equal(r.hidden.length, 0, 'already hidden rows are not re-reported');
+    r = applyAvailability(map, { 11: true, 12: true });
+    assert.equal(r.restored.length, 1);
+    assert.equal('unavailable' in map.models['iphone::iphone-15'].repairs.screen, false);
+  });
+
+  it('leaves rows with no availability answer alone', () => {
+    const map = sample();
+    const r = applyAvailability(map, {});
+    assert.equal(r.hidden.length + r.restored.length, 0);
   });
 });

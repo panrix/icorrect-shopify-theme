@@ -120,10 +120,30 @@
     return bestScore >= 40 ? best : null;
   }
 
+  /* A repair row is hidden while its Shopify product is drafted or unpublished.
+     scripts/courier/sync-catalogue-prices.js sets `unavailable: true` on the row. */
+  function isRepairAvailable(row) {
+    return !!row && row.unavailable !== true;
+  }
+
   function getRepair(mapAsset, device, modelName, repairType) {
     var model = findModel(mapAsset, device, modelName);
     if (!model || !model.repairs) return null;
-    return model.repairs[repairType] || null;
+    var row = model.repairs[repairType] || null;
+    return isRepairAvailable(row) ? row : null;
+  }
+
+  /* True unless the catalogue knows the model AND every repair for it is hidden.
+     Unknown models stay offered so a catalogue gap never removes a live model. */
+  function modelIsOffered(mapAsset, device, modelName) {
+    var model = findModel(mapAsset, device, modelName);
+    if (!model || !model.repairs) return true;
+    var types = Object.keys(model.repairs);
+    if (!types.length) return true;
+    for (var i = 0; i < types.length; i++) {
+      if (isRepairAvailable(model.repairs[types[i]])) return true;
+    }
+    return false;
   }
 
   /** Shape a catalogue repair entry like a products.json product for the wizard. */
@@ -159,6 +179,7 @@
     if (!model || !model.repairs) return out;
     var types = Object.keys(model.repairs);
     for (var i = 0; i < types.length; i++) {
+      if (!isRepairAvailable(model.repairs[types[i]])) continue;
       out[types[i]] = asWizardProduct(model.repairs[types[i]]);
     }
     return out;
@@ -168,6 +189,8 @@
     slugify: slugify,
     findModel: findModel,
     getRepair: getRepair,
+    isRepairAvailable: isRepairAvailable,
+    modelIsOffered: modelIsOffered,
     asWizardProduct: asWizardProduct,
     repairsMapForModel: repairsMapForModel,
   };
