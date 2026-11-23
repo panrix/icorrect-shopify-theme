@@ -32,9 +32,12 @@ function map() {
 }
 
 describe('catalogue availability', () => {
-  it('hides a model when every real repair is unavailable (a lone diagnostic does not keep it)', () => {
-    assert.equal(cat.modelIsOffered(map(), 'iphone', 'iPhone 11'), false);
-    assert.deepEqual(Object.keys(cat.repairsMapForModel(map(), 'iphone', 'iPhone 11')), ['diagnostic']);
+  it('hides a model only when every repair is unavailable', () => {
+    const m = map();
+    assert.equal(cat.modelIsOffered(m, 'iphone', 'iPhone 11'), true, 'a lone published diagnostic keeps the model listed');
+    assert.deepEqual(Object.keys(cat.repairsMapForModel(m, 'iphone', 'iPhone 11')), ['diagnostic']);
+    m.models['iphone::iphone-11'].repairs.diagnostic.unavailable = true;
+    assert.equal(cat.modelIsOffered(m, 'iphone', 'iPhone 11'), false);
   });
   it('hides only the drafted repairs when others are live', () => {
     assert.equal(cat.modelIsOffered(map(), 'iphone', 'iPhone 15'), true);
