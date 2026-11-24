@@ -63,8 +63,72 @@ describe('courierFunnelExtra', () => {
     assert.equal(extra.band, 'B2');
     assert.equal(extra.tier, 'paid');
     assert.equal(extra.adjustment, 25);
+    assert.equal(extra.charged, 25);
     assert.equal(extra.repair_price, 149);
     assert.equal(extra.total, 174);
+    assert.equal(extra.service, 'courier');
+    assertNoPii(extra);
+  });
+
+  it('B3 quote: adjustment 15 with charged 0 (intentional £0 variant)', () => {
+    const quote = quoteServiceAdjustment({
+      postcode: 'N6 4AA',
+      productTags: ['courier:free'],
+      bands: bandsAsset,
+      service: 'courier',
+      repairPrice: 299,
+      variants: variantsAsset,
+    });
+    const extra = courierFunnelExtra(quote);
+    assert.equal(extra.outward, 'N6');
+    assert.equal(extra.band, 'B3');
+    assert.equal(extra.tier, 'free');
+    assert.equal(extra.adjustment, 15);
+    assert.equal(extra.charged, 0);
+    assert.equal(extra.repair_price, 299);
+    assert.equal(extra.total, 299);
+    assert.equal(extra.service, 'courier');
+    assertNoPii(extra);
+  });
+
+  it('B4 quote: adjustment 25 with charged 25', () => {
+    const quote = quoteServiceAdjustment({
+      postcode: 'W5 5RF',
+      productTags: ['courier:free'],
+      bands: bandsAsset,
+      service: 'courier',
+      repairPrice: 299,
+      variants: variantsAsset,
+    });
+    const extra = courierFunnelExtra(quote);
+    assert.equal(extra.outward, 'W5');
+    assert.equal(extra.band, 'B4');
+    assert.equal(extra.tier, 'free');
+    assert.equal(extra.adjustment, 25);
+    assert.equal(extra.charged, 25);
+    assert.equal(extra.repair_price, 299);
+    assert.equal(extra.total, 324);
+    assert.equal(extra.service, 'courier');
+    assertNoPii(extra);
+  });
+
+  it('B1 free quote: adjustment 0 with charged 0', () => {
+    const quote = quoteServiceAdjustment({
+      postcode: 'W1B 4BD',
+      productTags: ['courier:free'],
+      bands: bandsAsset,
+      service: 'courier',
+      repairPrice: 299,
+      variants: variantsAsset,
+    });
+    const extra = courierFunnelExtra(quote);
+    assert.equal(extra.outward, 'W1B');
+    assert.equal(extra.band, 'B1');
+    assert.equal(extra.tier, 'free');
+    assert.equal(extra.adjustment, 0);
+    assert.equal(extra.charged, 0);
+    assert.equal(extra.repair_price, 299);
+    assert.equal(extra.total, 299);
     assert.equal(extra.service, 'courier');
     assertNoPii(extra);
   });
@@ -81,19 +145,36 @@ describe('courierFunnelExtra', () => {
     const extra = courierFunnelExtra(quote);
     assert.equal(extra.outward, 'M1');
     assert.equal(extra.band, null);
+    assert.equal(extra.adjustment, 0);
+    assert.equal(extra.charged, 0);
     assert.equal(extra.service, 'mail-in');
     assert.equal(quote.forcedMailIn, true);
     assertNoPii(extra);
   });
 
-  it('strips postcode keys from extra', () => {
+  it('strips postcode and PII keys from extra', () => {
     const extra = courierFunnelExtra(
-      { outward: 'W1B', band: 'B1', tier: 'free', adjustment: 0, repair_price: 299, total: 299, service: 'courier' },
-      { postcode: 'W1B 4BD', Postcode: 'W1B 4BD', collection_date: '2026-09-15', collection_window: 'AM' }
+      { outward: 'W1B', band: 'B1', tier: 'free', adjustment: 0, charged: 0, repair_price: 299, total: 299, service: 'courier' },
+      {
+        postcode: 'W1B 4BD',
+        Postcode: 'W1B 4BD',
+        full_postcode: 'W1B 4BD',
+        postal_code: 'W1B 4BD',
+        email: 'test@example.com',
+        name: 'Test Customer',
+        phone: '02070998517',
+        address: '12 Margaret Street',
+        collection_date: '2026-09-15',
+        collection_window: 'AM',
+      }
     );
     assert.equal(extra.outward, 'W1B');
+    assert.equal(extra.charged, 0);
     assert.equal(extra.collection_date, '2026-09-15');
     assert.equal(extra.collection_window, 'AM');
+    for (const piiKey of ['postcode', 'Postcode', 'full_postcode', 'postal_code', 'email', 'name', 'phone', 'address']) {
+      assert.equal(Object.prototype.hasOwnProperty.call(extra, piiKey), false, 'leaked PII key: ' + piiKey);
+    }
     assertNoPii(extra);
   });
 
@@ -101,6 +182,8 @@ describe('courierFunnelExtra', () => {
     const extra = courierFunnelExtra(null, { service: 'courier', total: 0 });
     assert.equal(extra.outward, null);
     assert.equal(extra.band, null);
+    assert.equal(extra.adjustment, null);
+    assert.equal(extra.charged, null);
     assert.equal(extra.service, 'courier');
     assert.equal(extra.total, 0);
     assertNoPii(extra);

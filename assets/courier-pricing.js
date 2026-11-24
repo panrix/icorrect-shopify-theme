@@ -473,6 +473,7 @@
       band: quote.band == null ? null : quote.band,
       tier: quote.tier || null,
       adjustment: quote.adjustment == null ? null : quote.adjustment,
+      charged: quote.charged == null ? null : quote.charged,
       repair_price: quote.repair_price == null ? null : quote.repair_price,
       total: quote.total == null ? null : quote.total,
       service: quote.service || null,
