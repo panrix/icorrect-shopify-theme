@@ -3594,6 +3594,31 @@
     return true;
   }
 
+  /* Cart funnel diagnostics (PostHog). No PII: ids, handles, status codes, device type only. */
+  function cartTrackContext(items, extra) {
+    var rk = (S.route === 'diagnostic') ? 'diagnostic' : S.repairType;
+    var prod = (rk && _repairsMap && _repairsMap[rk]) ? _repairsMap[rk] : null;
+    var w = window.innerWidth || 0;
+    var ctx = {
+      product_handle: prod && prod.handle ? prod.handle : null,
+      variant_id: items && items[0] ? items[0].id : null,
+      item_count: items ? items.length : null,
+      device_type: w && w < 768 ? 'mobile' : (w && w < 1024 ? 'tablet' : 'desktop'),
+      viewport_width: w || null,
+      wizard_path: [S.device, S.model, S.fault, S.issue, S.route || S.repairType].filter(Boolean).join(' > ').slice(0, 300),
+      page_path: window.location.pathname
+    };
+    if (extra) Object.keys(extra).forEach(function (k) { if (extra[k] !== undefined) ctx[k] = extra[k]; });
+    return buildWizardTrackPayload(ctx);
+  }
+  function trackCartEvent(name, items, extra) {
+    try {
+      if (window.posthog && typeof window.posthog.capture === 'function') {
+        window.posthog.capture(name, cartTrackContext(items, extra));
+      }
+    } catch (e) {}
+  }
+
   async function addToCartAndCheckout() {
     var items = buildCartItems();
     if (!items) {
@@ -3611,6 +3636,8 @@
     var btn = document.getElementById('qwBookBtn');
     if (btn) { btn.disabled = true; btn.textContent = 'Redirecting...'; }
 
+    var cartStage = 'cart_check';
+    var err_already_tracked = false;
     try {
       var shouldContinue = await ensureCleanWizardCart();
       if (!shouldContinue) {
@@ -3625,6 +3652,7 @@
         }
       } catch (e) { addItems = items; }
 
+      cartStage = 'cart_add';
       var addRes = await fetch(getShopifyRoot() + 'cart/add.js', {
         method: 'POST',
         headers: {
@@ -3637,10 +3665,19 @@
       if (!addRes.ok) {
         var errData = null;
         try { errData = await addRes.json(); } catch (e) {}
+        trackCartEvent('cart_add_failed', items, {
+          stage: 'cart_add',
+          status_code: addRes.status,
+          error_message: String((errData && (errData.description || errData.message)) || 'Cart error').slice(0, 200),
+          error_code: errData && errData.status ? errData.status : null
+        });
+        err_already_tracked = true;
         throw new Error((errData && (errData.description || errData.message)) || 'Cart error');
       }
 
       await addRes.json();
+      trackCartEvent('cart_add_succeeded', items, { status_code: addRes.status });
+      cartStage = 'post_add';
       try {
         var phId = window.icorrectQuoteEvents && typeof window.icorrectQuoteEvents.phDistinctId === 'function'
           ? window.icorrectQuoteEvents.phDistinctId()
@@ -3681,8 +3718,16 @@
       var homePostcode = isWalkin ? '' : ((items[0] && items[0].properties && items[0].properties.Postcode) || '');
       var postEl = document.getElementById('qwPostcode');
       if (!isWalkin && !homePostcode && postEl) homePostcode = String(postEl.value || '').trim();
+      trackCartEvent('checkout_redirected', items, { service_type: isWalkin ? 'walk-in' : 'courier-or-mail-in' });
       window.location.href = checkoutUrlWithHomeAddress(homePostcode);
     } catch (err) {
+      if (!err_already_tracked) {
+        trackCartEvent('cart_add_failed', items, {
+          stage: cartStage,
+          status_code: null,
+          error_message: String((err && err.message) || 'unknown').slice(0, 200)
+        });
+      }
       if (btn) { btn.disabled = false; btn.textContent = 'Proceed to checkout'; }
       alert(err.message || 'Something went wrong. Please try again.');
     }
