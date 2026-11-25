@@ -24,6 +24,7 @@ const wizardJs = fs.readFileSync(path.join(ROOT, 'assets/quote-wizard.js'), 'utf
 const wizardWalkinJs = fs.readFileSync(path.join(ROOT, 'assets/quote-wizard-walkin.js'), 'utf8');
 const wizardLayoutJs = fs.readFileSync(path.join(ROOT, 'assets/quote-wizard-layout.js'), 'utf8');
 const wizardCss = fs.readFileSync(path.join(ROOT, 'assets/quote-wizard.css'), 'utf8');
+const baseCss = fs.readFileSync(path.join(ROOT, 'assets/base.css'), 'utf8');
 
 function sliceFn(src, startNeedle, endNeedle) {
   const start = src.indexOf(startNeedle);
@@ -227,7 +228,7 @@ describe('Item 5: backdrop fix, mobile CTA order, cookie banner offset, and stic
     assert.match(wizardCss, /\.qw-confirm-modal\[hidden\]\s*\{[^}]*display:\s*none\s*!important/s);
     assert.match(wizardCss, /#qw-sticky-cta\.qw-sticky-cta\{[^}]*bottom:var\(--qw-cookie-h,0px\)/);
     assert.match(wizardCss, /#qw-sticky-cta\.qw-sticky-cta\{[^}]*z-index:10050/);
-    assert.match(wizardCss, /#qwSummary\.qw-priced\{padding-bottom:calc\(88px \+ var\(--qw-cookie-h,0px\)\)\}/);
+    assert.match(wizardCss, /#qwSummary\.qw-priced\{[^}]*padding-bottom:calc\(96px \+ var\(--qw-cookie-h,0px\)\)/);
   });
 
   it('placeDeliveryReveal moves #qwDeliveryReveal into #qwSummary on mobile and restores it on desktop', () => {
@@ -448,8 +449,12 @@ describe('Item 5: backdrop fix, mobile CTA order, cookie banner offset, and stic
     assert.equal(rootClasses.has('qw-consent-bar-on'), false);
     assert.equal(stickyClasses.has('show'), false, 'hides once banner dismissed and #qwBookBtn visible');
 
-    // Full-screen preferences dialog (>50% vh) is ignored
+    // Compliant tall mobile banner (~55% vh, e.g. 405px on 740px or 225px on 640px) is measured
     state.banner.hidden = false;
+    state.banner.rect = { top: 335, bottom: 740, height: 405 };
+    assert.equal(api.measureCookieBannerHeight(), 405);
+
+    // Full-screen preferences dialog (>=65% vh) is ignored
     state.banner.rect = { top: 0, bottom: 740, height: 740 };
     assert.equal(api.measureCookieBannerHeight(), 0);
 
@@ -492,6 +497,107 @@ describe('Item 5: backdrop fix, mobile CTA order, cookie banner offset, and stic
       wizardLayoutJs,
       /cookie-banner/i,
       'assets/quote-wizard-layout.js must not contain "cookie-banner" (matches [class*="cookie-banner"] in assets/base.css)'
+    );
+  });
+
+  it('mobile focus() nudges scroll so #qwBookBtn clears a tall cookie banner without pushing price card above header', () => {
+    const scrolls = [];
+    const rects = {
+      head: { top: 0, bottom: 58, height: 58 },
+      pcCard: { top: 200, bottom: 270, height: 70 },
+      priceCard: { top: 278, bottom: 438, height: 160 },
+      bookBtn: { top: 514, bottom: 566, height: 52 },
+      banner: { top: 415, bottom: 640, height: 225 },
+    };
+
+    const elById = {
+      qwPostcodeCard: { getBoundingClientRect: () => rects.pcCard },
+      qwBookBtn: { getBoundingClientRect: () => rects.bookBtn },
+      qwSummary: { getBoundingClientRect: () => rects.priceCard },
+      qwResCard: { getBoundingClientRect: () => rects.pcCard, getAttribute: () => '1' },
+    };
+    const bannerEl = { hidden: false, getBoundingClientRect: () => rects.banner };
+    const headEl = { getBoundingClientRect: () => rects.head };
+    const priceEl = { getBoundingClientRect: () => rects.priceCard };
+
+    const win = {
+      innerHeight: 640,
+      matchMedia: () => ({ matches: false }),
+      addEventListener: () => {},
+      getComputedStyle: () => ({ position: 'fixed', display: 'block', visibility: 'visible', opacity: '1' }),
+      scrollBy: (opts) => { scrolls.push(opts.top); },
+    };
+    const doc = {
+      readyState: 'complete',
+      documentElement: {
+        clientHeight: 640,
+        style: {
+          setProperty: () => {},
+          getPropertyValue: (k) => (k === '--qw-cookie-h' ? '225px' : ''),
+        },
+      },
+      body: {},
+      getElementById: (id) => elById[id] || null,
+      querySelector: (sel) => {
+        if (sel === '.section-header') return headEl;
+        if (sel === '#shopify-pc__banner, .shopify-pc__banner__dialog') return bannerEl;
+        if (sel === '#qwSummary .qw-price-trust-price') return priceEl;
+        return null;
+      },
+    };
+
+    const sandbox = {
+      window: win,
+      document: doc,
+      MutationObserver: class { observe() {} },
+      setTimeout: (fn) => { fn(); return 1; },
+      requestAnimationFrame: (fn) => { fn(); return 1; },
+    };
+    vm.runInNewContext(wizardLayoutJs, sandbox);
+
+    // Case 1: overflow (23px) fits within maxExtra (80px), so bookBtn clears safeBottom (407)
+    win.ICorrectQuoteLayout.focus();
+    assert.equal(scrolls.length, 1);
+    const dy1 = scrolls[0];
+    assert.ok(rects.bookBtn.bottom - dy1 <= 640 - 225 - 8, 'bookBtn lands at or above safeBottom');
+    assert.ok(rects.priceCard.top - dy1 >= 58 + 4, 'priceCard stays below sticky header');
+
+    // Case 2: extreme overflow is capped so priceCard never scrolls above off + 4 (62px)
+    rects.bookBtn = { top: 610, bottom: 662, height: 52 };
+    win.ICorrectQuoteLayout.focus();
+    assert.equal(scrolls.length, 2);
+    const dy2 = scrolls[1];
+    assert.equal(rects.priceCard.top - dy2, 58 + 4, 'scroll caps so priceCard top stays at header + 4px');
+  });
+});
+
+describe('Cookie banner CSS compliance in assets/base.css', () => {
+  it('removes legacy clamping, privacy-link hiding, overlay hiding, and wildcard selectors', () => {
+    assert.doesNotMatch(baseCss, /max-height:\s*(50|80)px/i, 'must not clamp banner height to 50px or 80px');
+    assert.doesNotMatch(baseCss, /a\[href\*=["']privacy["']\][\s\S]{0,120}display:\s*none/i, 'must not hide privacy policy links');
+    assert.doesNotMatch(baseCss, /\.shopify-pc__overlay[\s\S]{0,120}display:\s*none/i, 'must not hide .shopify-pc__overlay');
+    assert.doesNotMatch(baseCss, /\[class\*=["']cookie-banner["']\]/i, 'must not use [class*="cookie-banner"] wildcard');
+    assert.doesNotMatch(baseCss, /\[id\*=["']cookie-banner["']\]/i, 'must not use [id*="cookie-banner"] wildcard');
+    assert.doesNotMatch(baseCss, /#shopify-pc__prefs/, 'must leave Shopify preferences modal untouched');
+  });
+
+  it('enforces 44px touch targets, visible privacy link, and equal Accept/Decline prominence', () => {
+    assert.match(
+      baseCss,
+      /#shopify-pc__banner\.shopify-pc__banner__dialog\s+button\s*\{[^}]*min-height:\s*44px/s
+    );
+    assert.match(
+      baseCss,
+      /#shopify-pc__banner\.shopify-pc__banner__dialog\s+#shopify-pc__banner__body-policy-link\s*\{[^}]*display:\s*inline[^}]*text-decoration:\s*underline/s
+    );
+    // Accept and Decline share the exact same styling rule for equal prominence
+    assert.match(
+      baseCss,
+      /#shopify-pc__banner\.shopify-pc__banner__dialog\s+#shopify-pc__banner__btn-accept,\s*#shopify-pc__banner\.shopify-pc__banner__dialog\s+#shopify-pc__banner__btn-decline\s*\{[^}]*background:\s*#ffffff;[^}]*color:\s*#171717;[^}]*border:\s*1\.5px solid #171717;[^}]*font-weight:\s*600;/s
+    );
+    assert.match(
+      baseCss,
+      /#shopify-pc__banner\.shopify-pc__banner__dialog\s+#shopify-pc__banner__btn-manage-prefs\s*\{[^}]*min-height:\s*44px[^}]*text-decoration:\s*underline/s
     );
   });
 });
