@@ -180,17 +180,19 @@ describe('quote wizard phase 1 contracts in JS, CSS and Liquid', () => {
     assert.match(snap, /\.qw-jr-meta, \.qw-journey-meta/);
   });
 
-  it('setupStickyCTA observes #qwBookBtn and guards on _postcodeResolved', () => {
-    const sticky = sliceFn(wizardJs, 'function setupStickyCTA(price)', 'function destroyStickyCTA()');
+  it('setupStickyCTA observes #qwBookBtn and #qwResCard, and updateStickyCTA guards on _postcodeResolved', () => {
+    const sticky = sliceFn(wizardJs, 'function updateStickyCTA()', 'function destroyStickyCTA()');
     assert.match(sticky, /document\.getElementById\('qwBookBtn'\)/);
-    assert.match(sticky, /_postcodeResolved && !entry\.isIntersecting/);
+    assert.match(sticky, /document\.getElementById\('qwResCard'\)/);
+    assert.match(sticky, /if \(!_postcodeResolved\)/);
   });
 
-  it('Summary flex ordering covers #qwEmailPanel, #qwCAcc, #qwIntercomBtn, #qwTrustToggle, and 44px tap targets', () => {
-    assert.match(wizardCss, /#qwSummary #qwEmailPanel\{order:9/);
-    assert.match(wizardCss, /#qwSummary #qwCAcc\{order:11/);
-    assert.match(wizardCss, /#qwSummary #qwIntercomBtn\{order:12/);
-    assert.match(wizardCss, /#qwSummary #qwTrustToggle\{order:6/);
+  it('Summary flex ordering covers #qwDeliveryReveal, #qwEmailPanel, #qwCAcc, #qwIntercomBtn, #qwTrustToggle, and 44px tap targets', () => {
+    assert.match(wizardCss, /#qwSummary #qwDeliveryReveal\{order:4/);
+    assert.match(wizardCss, /#qwSummary #qwTrustToggle\{order:7/);
+    assert.match(wizardCss, /#qwSummary #qwEmailPanel\{order:10/);
+    assert.match(wizardCss, /#qwSummary #qwCAcc\{order:12/);
+    assert.match(wizardCss, /#qwSummary #qwIntercomBtn\{order:13/);
     assert.match(wizardCss, /\.qw-back\{[^}]*min-height:44px/);
     assert.match(wizardCss, /\.qw-crumb-btn\{[^}]*min-height:44px/);
     assert.match(wizardCss, /\.qw-price-warr\{/);
