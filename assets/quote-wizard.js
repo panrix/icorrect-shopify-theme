@@ -1643,7 +1643,10 @@
       }
       return serviceCharge(mailQuote || quote) > 0 ? 'Tracked pack' : 'Free';
     }
-    if (!quote.courierAvailable && quote.forcedMailIn) return 'Not in area';
+    if (!quote.courierAvailable && quote.forcedMailIn) {
+      if (quote.band === 'B3' || quote.band === 'B4') return '\u00A3200+ repairs';
+      return 'Not in area';
+    }
     if (quote.service === 'courier' && serviceCharge(quote) === 0) return 'Free';
     if (quote.service === 'courier') return 'Available';
     return '';
@@ -1831,6 +1834,7 @@
           '<span class="qw-pc-summary-main"><strong id="qwPcSummaryCode"></strong><span id="qwPcSummaryArea"></span></span>' +
           '<button type="button" class="qw-pc-change" id="qwPcChange">Change</button>' +
           '<span class="qw-pc-summary-sub" id="qwPcSummarySub"></span>' +
+          '<p class="qw-pc-threshold-note" id="qwPcThresholdNote" role="note" hidden></p>' +
         '</div>' +
         '<label class="qw-postcode-label" for="qwPostcode">Enter your postcode to see your all-in price' +
           '<span class="qw-postcode-hint">In London we collect from your door. Anywhere else in the UK, we post you a tracked mail-in box.</span>' +
@@ -2111,21 +2115,41 @@
 
   var COLLECT_PIN_SVG = '<svg class="qw-collect-pin" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2.4a7 7 0 0 0-7 7c0 5.2 7 12.2 7 12.2s7-7 7-12.2a7 7 0 0 0-7-7z"/><circle cx="12" cy="9.4" r="2.35" fill="#FFF7E6"/></svg>';
 
+  function b3b4MailInThresholdCopy(postcodeResolved, quote) {
+    if (!postcodeResolved || !quote) return '';
+    if (quote.band !== 'B3' && quote.band !== 'B4') return '';
+    if (!quote.forcedMailIn && quote.courierAvailable !== false) return '';
+    var mailLine = serviceCharge(quote) > 0
+      ? 'Tracked mail-in is selected for this repair.'
+      : 'Free tracked mail-in is selected for this repair.';
+    return 'Courier collection in this area applies to repairs \u00A3200 and over. ' + mailLine;
+  }
+
   function paintPostcodeSummary() {
     var box = document.getElementById('qwPcSummary');
     if (!box) return;
-    if (!_postcodeResolved || !_courierQuote) { box.hidden = true; return; }
+    var note = document.getElementById('qwPcThresholdNote');
+    if (!_postcodeResolved || !_courierQuote) {
+      box.hidden = true;
+      if (note) { note.textContent = ''; note.hidden = true; }
+      return;
+    }
     var code = document.getElementById('qwPcSummaryCode');
     var area = document.getElementById('qwPcSummaryArea');
     var sub = document.getElementById('qwPcSummarySub');
     var kind = selectedServiceKind();
     var mail = _courierQuote.forcedMailIn || _courierQuote.service !== 'courier';
+    var thresholdCopy = b3b4MailInThresholdCopy(_postcodeResolved, _courierQuote);
     if (code) code.textContent = formatDisplayPostcode(currentPostcodeValue()) || currentPostcodeValue().toUpperCase();
     if (area) area.textContent = mail ? 'Tracked mail-in' : collectionWindowCopy(_courierQuote.band).headline;
-    if (sub) sub.textContent = kind === 'workshop' ? '' : (mail || kind === 'mailin')
+    if (sub) sub.textContent = (kind === 'workshop' || thresholdCopy) ? '' : (mail || kind === 'mailin')
       ? 'We post your box to this address.'
       : 'We collect from this address.';
     if (sub) sub.hidden = !sub.textContent;
+    if (note) {
+      note.textContent = thresholdCopy;
+      note.hidden = !thresholdCopy;
+    }
     box.hidden = false;
     var s4 = document.getElementById('qw-s4s');
     if (s4 && /Enter your postcode/.test(s4.textContent)) s4.hidden = true;

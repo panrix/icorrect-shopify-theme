@@ -2681,6 +2681,8 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 .qw-pc-summary-main{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;font-size:15px;color:var(--qw-text-2)}
 .qw-pc-summary-main strong{font-weight:600;color:var(--qw-text);letter-spacing:0.02em}
 .qw-pc-summary-sub{grid-column:1 / -1;font-size:13px;color:var(--qw-text-muted)}
+.qw-pc-threshold-note{grid-column:1 / -1;margin:6px 0 0 !important;padding:8px 10px;border-radius:8px;background:#fff8ea;border:1px solid #f5c46b;color:#4d4d4d;font:400 13px/1.4 var(--font-sans) !important}
+.qw-pc-threshold-note[hidden]{display:none !important}
 .qw-pc-change{min-height:44px;padding:0 4px;border:0;background:none;font:500 14px var(--font-sans);color:var(--qw-primary);cursor:pointer}
 .qw-pc-change:hover{color:var(--qw-primary-hover);text-decoration:underline}
 .qw-delivery-card{padding:16px !important;gap:12px}
