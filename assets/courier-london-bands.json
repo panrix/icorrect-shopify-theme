@@ -3,6 +3,10 @@
   "generated_for": "courier-first-pivot #53",
   "fallback": "mail-in",
   "outward": {
+    "W1A": {
+      "band": "B1",
+      "rt_cost": 17.08
+    },
     "W1B": {
       "band": "B1",
       "rt_cost": 17.08
@@ -402,7 +406,7 @@
   },
   "bands": {
     "B1": {
-      "count": 38,
+      "count": 39,
       "rt_min": 17.08,
       "rt_max": 23.92
     },
