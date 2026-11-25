@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">MacBook model number location</title>
+  <desc id="desc">Turn the MacBook over. The model number starts with A and is printed near the hinge.</desc>
+  <rect width="640" height="360" fill="#f5f5f7"/>
+  <!-- MacBook underside -->
+  <g transform="translate(120 48)">
+    <rect x="0" y="0" width="320" height="220" rx="18" fill="#ffffff" stroke="#1d1d1f" stroke-width="3"/>
+    <!-- hinge bar -->
+    <rect x="36" y="14" width="248" height="10" rx="5" fill="#d2d2d7"/>
+    <!-- feet -->
+    <ellipse cx="48" cy="188" rx="14" ry="8" fill="#d2d2d7"/>
+    <ellipse cx="272" cy="188" rx="14" ry="8" fill="#d2d2d7"/>
+    <ellipse cx="48" cy="48" rx="10" ry="6" fill="#d2d2d7"/>
+    <ellipse cx="272" cy="48" rx="10" ry="6" fill="#d2d2d7"/>
+    <!-- vents hint -->
+    <g stroke="#c7c7cc" stroke-width="2">
+      <line x1="96" y1="96" x2="224" y2="96"/>
+      <line x1="96" y1="112" x2="224" y2="112"/>
+      <line x1="96" y1="128" x2="224" y2="128"/>
+    </g>
+    <!-- red callout on hinge/model area -->
+    <circle cx="160" cy="28" r="28" fill="none" stroke="#e11d48" stroke-width="4"/>
+  </g>
+  <!-- arrow + sample A-number -->
+  <path d="M310 76 C360 50, 400 42, 455 48" fill="none" stroke="#1d1d1f" stroke-width="3" stroke-linecap="round"/>
+  <polygon points="450,38 472,50 448,58" fill="#1d1d1f"/>
+  <text x="484" y="56" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="28" font-weight="700" fill="#1d1d1f">A3185</text>
+</svg>
