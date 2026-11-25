@@ -2714,7 +2714,7 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 .qw-mailin-info{display:none}
 /* ===== Round 3: 11 Oct result components (design/quote-wizard-upgrade), finished against Untitled UI ===== */
 #qw-sticky-cta.qw-sticky-cta{bottom:var(--qw-cookie-h,0px);z-index:10050;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--qw-line);box-shadow:0 -4px 16px rgba(0,0,0,0.08)}
-html.qw-has-cookie-banner #qw-sticky-cta.qw-sticky-cta{padding-bottom:10px}
+html.qw-consent-bar-on #qw-sticky-cta.qw-sticky-cta{padding-bottom:10px}
 .qw-sticky-price{font:700 20px var(--font-sans);color:var(--qw-text);font-variant-numeric:tabular-nums}
 .qw-sticky-book{min-height:44px;padding:0 20px;border:0;border-radius:10px;background:var(--qw-text);color:var(--qw-bg);font:600 14px var(--font-sans);cursor:pointer}
 .qw-sticky-book:hover{opacity:0.9}

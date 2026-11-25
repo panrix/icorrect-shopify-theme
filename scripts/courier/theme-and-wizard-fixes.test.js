@@ -417,7 +417,7 @@ describe('Item 5: backdrop fix, mobile CTA order, cookie banner offset, and stic
 
     api.setupStickyCTA('\u00A3149');
     assert.equal(rootVars['--qw-cookie-h'], '130px');
-    assert.equal(rootClasses.has('qw-has-cookie-banner'), true);
+    assert.equal(rootClasses.has('qw-consent-bar-on'), true);
     assert.equal(stickyClasses.has('show'), false, 'hidden while #qwBookBtn sits above cookie banner');
 
     // Cookie banner covers #qwBookBtn (bottom 650 > bottomBound 610)
@@ -445,7 +445,7 @@ describe('Item 5: backdrop fix, mobile CTA order, cookie banner offset, and stic
     state.banner.hidden = true;
     api.syncCookieBannerOffset();
     assert.equal(rootVars['--qw-cookie-h'], '0px');
-    assert.equal(rootClasses.has('qw-has-cookie-banner'), false);
+    assert.equal(rootClasses.has('qw-consent-bar-on'), false);
     assert.equal(stickyClasses.has('show'), false, 'hides once banner dismissed and #qwBookBtn visible');
 
     // Full-screen preferences dialog (>50% vh) is ignored
@@ -475,5 +475,23 @@ describe('Item 5: backdrop fix, mobile CTA order, cookie banner offset, and stic
     assert.equal(observerDisconnected, true);
     assert.equal(stickyClasses.has('show'), false);
     assert.equal(stickyEl.innerHTML, '');
+  });
+
+  it('never uses a class or ID containing "cookie-banner" that collides with assets/base.css', () => {
+    assert.doesNotMatch(
+      wizardJs,
+      /cookie-banner/i,
+      'assets/quote-wizard.js must not contain "cookie-banner" (matches [class*="cookie-banner"] in assets/base.css)'
+    );
+    assert.doesNotMatch(
+      wizardCss,
+      /cookie-banner/i,
+      'assets/quote-wizard.css must not contain "cookie-banner" (matches [class*="cookie-banner"] in assets/base.css)'
+    );
+    assert.doesNotMatch(
+      wizardLayoutJs,
+      /cookie-banner/i,
+      'assets/quote-wizard-layout.js must not contain "cookie-banner" (matches [class*="cookie-banner"] in assets/base.css)'
+    );
   });
 });

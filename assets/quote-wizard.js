@@ -4783,7 +4783,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
     if (next === _lastCookieH) return false;
     _lastCookieH = next;
     document.documentElement.style.setProperty('--qw-cookie-h', next + 'px');
-    document.documentElement.classList.toggle('qw-has-cookie-banner', next > 0);
+    document.documentElement.classList.toggle('qw-consent-bar-on', next > 0);
     return true;
   }
 
