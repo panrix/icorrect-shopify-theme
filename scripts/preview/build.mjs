@@ -39,6 +39,12 @@ fs.cpSync(path.join(ROOT, 'assets'), path.join(OUT, 'assets'), {
   filter: (src) => fs.statSync(src).isDirectory() || !/\.liquid$/.test(src),
 });
 
+/* ---- Static UI Previews ---- */
+const ico11PreviewDir = path.join(ROOT, 'docs/previews/ico-11-macbook-screen-repair');
+if (fs.existsSync(ico11PreviewDir)) {
+  fs.cpSync(ico11PreviewDir, path.join(OUT, 'ico-11'), { recursive: true });
+}
+
 /* ---- Catalogue: models for the wizard menus, products for /products/<handle>.json ---- */
 const cat = JSON.parse(read('assets/repair-catalogue-map.json'));
 const products = new Map();
@@ -188,7 +194,7 @@ write('index.html', `<!doctype html><html lang="en-GB"><head><meta charset="utf-
 .pv-wrap p,.pv-wrap li{color:#4d4d4d;font-size:15px;line-height:1.5}.pv-links a{display:flex;align-items:center;min-height:56px;padding:0 16px;margin:8px 0;border-radius:12px;box-shadow:0 0 0 1px rgba(0,0,0,.12);color:#171717;text-decoration:none;font-weight:500}</style></head>
 <body>${banner('Start')}<div class="pv-wrap"><h1>Quote wizard preview</h1>
 <p>Branch <b>${branch}</b>${sha ? ' at ' + sha : ''}. Prices come from the repo catalogue, not the live store. Checkout is a stand-in that shows what would go into the Shopify cart.</p>
-<div class="pv-links"><a href="/macbook-screen/">MacBook screen repair page</a><a href="/quote/">All devices</a></div>
+<div class="pv-links">${fs.existsSync(ico11PreviewDir) ? '<a href="/ico-11/">ICO-11 MacBook screen repair UI preview (390px + 1440px)</a>' : ''}<a href="/macbook-screen/">MacBook screen repair page (live wizard)</a><a href="/quote/">All devices</a></div>
 <p>Postcodes to try:</p><ul><li><b>W1T 3AB</b>: central London (courier collection or bring it to the workshop)</li><li><b>SE15 4QF</b>: further out in London</li><li><b>M1 4BT</b>: outside London (mail-in)</li></ul></div></body></html>`);
 
 console.log(`preview-dist: ${products.size} products, branch ${branch}`);
