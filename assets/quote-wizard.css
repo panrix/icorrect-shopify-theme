@@ -2402,14 +2402,6 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
   gap: 3px;
   min-width: 0;
 }
-.qw-trust-stars {
-  display: flex;
-  gap: 2px;
-  color: #ffd400;
-}
-.qw-trust-stars svg {
-  filter: drop-shadow(0 0 0.4px #e6b800);
-}
 .qw-trust-ico {
   flex: 0 0 32px;
   width: 32px;

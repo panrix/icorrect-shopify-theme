@@ -1051,8 +1051,6 @@
     opts = opts || {};
     var parts = partsClaimLabel(device, model, opts.productTitle);
     var turnaround = turnaroundClaimLabel(device, { diagnostic: opts.diagnostic, model: model });
-    var starSvg = '<svg width="12" height="12" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1l1.8 3.8 4.2.6-3 2.9.7 4.1L7 10.5 3.3 12.4l.7-4.1-3-2.9 4.2-.6z" fill="currentColor"/></svg>';
-    var stars = starSvg + starSvg + starSvg + starSvg + starSvg;
     var monitorSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>';
     var clockSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
     var shieldSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>';
@@ -1073,7 +1071,6 @@
         '<li class="qw-trust-cell qw-trust-reviews" aria-label="4.8 out of 5 from 750+ Google reviews">' +
           '<span class="qw-trust-score">4.8</span>' +
           '<span class="qw-trust-reviews-meta">' +
-            '<span class="qw-trust-stars" aria-hidden="true">' + stars + '</span>' +
             '<span class="qw-trust-sub">750+ Google reviews</span>' +
           '</span>' +
         '</li>' +
@@ -1868,7 +1865,7 @@
               '<span class="qw-delivery-radio" aria-hidden="true"><span></span></span>' +
               '<span class="qw-delivery-body">' +
                 '<span class="qw-delivery-title qw-opt-name">Prefer to drop it off?</span>' +
-                '<span class="qw-delivery-sub qw-opt-meta">Bring it to 12 Margaret Street, Fitzrovia W1W 8JQ. Mon to Thu 9am to 6pm, Fri 10am to 6pm.</span>' +
+                '<span class="qw-delivery-sub qw-opt-meta">Bring it to 12 Margaret Street, Fitzrovia W1W 8JQ. Mon to Fri 9am to 6pm.</span>' +
               '</span>' +
               '<span class="qw-delivery-price qw-opt-price">Free</span>' +
             '</button>' +
