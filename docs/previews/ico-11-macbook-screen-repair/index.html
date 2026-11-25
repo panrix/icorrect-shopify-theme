@@ -124,9 +124,13 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+      overflow-x: clip;
+    }
     body {
       margin: 0;
+      overflow-x: clip;
       font-family: var(--font-sans);
       color: var(--fg-1);
       background: var(--bg-1);
@@ -357,10 +361,11 @@
 
     .hero-grid {
       display: grid;
-      grid-template-columns: 1fr 1.02fr;
-      gap: 44px;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
+      gap: 40px;
       align-items: center;
     }
+    .hero-grid > * { min-width: 0; }
 
     .hero-title {
       margin: 0 0 10px;
@@ -388,7 +393,9 @@
       list-style: none;
       margin: 0;
       padding: 0;
+      width: 100%;
     }
+    .price-strip li { min-width: 0; }
     .price-chip {
       width: 100%;
       text-align: left;
@@ -410,6 +417,9 @@
       font-size: 12px;
       font-weight: 500;
       color: var(--fg-2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .price-chip-val {
       font-size: 15px;
@@ -434,47 +444,103 @@
       background: var(--bg-2);
       border: 1px solid var(--line);
       border-radius: var(--r-lg);
-      padding: 18px 20px;
+      padding: 14px 18px;
+      width: 100%;
     }
-    .diagram-controls {
+    .diagram-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 4px;
+      flex-wrap: wrap;
     }
-    .segmented {
+    .diagram-pill {
       display: inline-flex;
-      padding: 3px;
-      border-radius: var(--r-sm);
-      background: #ffffff;
-      border: 1px solid var(--line);
-      gap: 2px;
-    }
-    .segmented button {
-      border: 0;
-      background: transparent;
-      padding: 5px 10px;
-      border-radius: 4px;
-      font-size: 12px;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
       font-weight: 500;
-      color: var(--fg-3);
-      cursor: pointer;
+      color: #0369a1;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
     }
-    .segmented button.is-active {
-      background: var(--fg-1);
-      color: #ffffff;
+    .diagram-pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
     }
     .diagram-frame {
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 310px;
+      width: 100%;
+    }
+    .diagram-frame picture {
+      display: flex;
+      justify-content: center;
+      width: 100%;
     }
     .diagram-frame img {
-      max-height: 370px;
-      width: auto;
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+      max-height: 490px;
+      object-fit: contain;
       margin: 0 auto;
+    }
+    /* Companion 6-part legend (shown on mobile where compact SVG uses 1-6 badges) */
+    .diagram-legend-wrap {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+    .diagram-legend {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px 10px;
+    }
+    .diagram-legend li {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--fg-2);
+      min-width: 0;
+    }
+    .diagram-legend li.is-replaced {
+      color: #0369a1;
+      font-weight: 600;
+    }
+    .legend-num {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1px solid var(--line-strong);
+      background: #ffffff;
+      color: var(--fg-1);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .diagram-legend li.is-replaced .legend-num {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
     }
     .diagram-caption {
       margin-top: 10px;
@@ -661,12 +727,15 @@
     .compare-wrap {
       margin-top: 40px;
     }
-    .compare-table-wrap {
-      overflow-x: auto;
+    .compare-card {
       border: 1px solid var(--line);
       border-radius: var(--r-md);
       background: #ffffff;
       box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+    .compare-table-wrap {
+      overflow-x: auto;
     }
     .compare-table {
       width: 100%;
@@ -679,7 +748,6 @@
       border-bottom: 1px solid var(--line);
       vertical-align: top;
     }
-    .compare-table tr:last-child td { border-bottom: 0; }
     .compare-table th {
       font-family: var(--font-mono);
       font-size: 11px;
@@ -694,30 +762,102 @@
       color: var(--fg-1);
       font-weight: 500;
     }
+    .compare-extra-row {
+      display: none;
+    }
+    .compare-card.is-expanded .compare-extra-row {
+      display: table-row;
+    }
+    .compare-expand-btn {
+      width: 100%;
+      border: 0;
+      background: var(--bg-2);
+      color: var(--fg-1);
+      padding: 12px 16px;
+      font-size: 13.5px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: background 140ms ease;
+    }
+    .compare-expand-btn:hover {
+      background: var(--bg-3);
+    }
+    .compare-expand-icon {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      color: var(--fg-3);
+    }
 
-    /* Connected 2-Year Warranty Strip directly attached to Comparison */
-    .warranty-bar {
+    /* Expandable 2-Year Warranty Box */
+    .warranty-card {
       margin-top: 16px;
       background: #ffffff;
       border: 1px solid var(--line);
       border-radius: var(--r-md);
-      padding: 20px 22px;
-      display: grid;
-      grid-template-columns: 1fr 1.1fr;
-      gap: 20px;
-      align-items: center;
       box-shadow: var(--shadow-card);
+      overflow: hidden;
     }
-    .warranty-bar h3 {
-      margin: 4px 0 6px;
+    .warranty-toggle {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      padding: 18px 22px;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      cursor: pointer;
+      transition: background 140ms ease;
+    }
+    .warranty-toggle:hover {
+      background: var(--bg-2);
+    }
+    .warranty-head-copy {
+      min-width: 0;
+    }
+    .warranty-head-copy h3 {
+      margin: 4px 0 0;
       font-size: 19px;
       font-weight: 600;
       letter-spacing: -0.025em;
+      color: var(--fg-1);
     }
-    .warranty-bar p {
+    .warranty-toggle-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--r-sm);
+      border: 1px solid var(--line-strong);
+      background: #ffffff;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--fg-1);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .warranty-body {
+      display: none;
+      padding: 0 22px 20px;
+      border-top: 1px solid var(--line);
+    }
+    .warranty-card.is-open .warranty-body {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 18px 24px;
+      align-items: center;
+      padding-top: 16px;
+    }
+    .warranty-body p {
       margin: 0;
       font-size: 13.5px;
       color: var(--fg-2);
+      line-height: 1.55;
     }
     .check-list {
       list-style: none;
@@ -833,90 +973,113 @@
       line-height: 1.48;
     }
 
-    /* 6. RICKY'S CLEANER MODEL FINDER DESIGN (.identify from icx-macbook-screen-mockup) */
+    /* 5. RICKY'S EXACT CLAUDE CODE FIND YOUR MODEL CONTAINER (shell.css) */
     .identify {
+      padding: 80px 0;
+      border-bottom: 1px solid var(--line);
+      background: var(--bg-1);
+    }
+    .identify-grid {
       display: grid;
-      grid-template-columns: 0.95fr 1.05fr;
-      gap: 44px;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 48px;
       align-items: center;
     }
+    .identify-grid > * { min-width: 0; }
     .identify-visual {
-      background: #ffffff;
-      border-radius: var(--r-lg);
+      background: linear-gradient(135deg, #eef0f2, #d9dde2);
+      border-radius: 16px;
+      padding: 48px;
       box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
-      padding: 24px;
+      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .identify-visual-inner {
+      position: relative;
+      max-width: 100%;
+    }
+    .identify-plate {
+      background: #e5e5e5;
+      padding: 16px 20px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      color: #4d4d4d;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 12px;
+      gap: 4px;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
     }
-    .identify-visual img {
-      width: 100%;
-      max-width: 400px;
-      height: auto;
-      border-radius: var(--r-md);
+    .identify-plate-line { font-size: 11px; }
+    .identify-plate-line.highlight {
+      font-size: 13px;
+      color: #171717;
+      margin-top: 6px;
     }
-    .identify-caption {
-      margin: 0;
-      font-size: 12.5px;
-      color: var(--fg-3);
+    .identify-plate-line.highlight .hl {
+      background: #ffffff;
+      padding: 2px 6px;
+      border-radius: 3px;
+      box-shadow: 0 0 0 2px #171717;
+      color: #171717;
+      font-weight: 600;
+    }
+    .identify-plate-line.muted { color: #808080; }
+    .identify-plate-line.small { font-size: 9px; }
+    .identify-hint {
+      color: #171717 !important;
+      margin-top: 16px;
+      font-size: 11px !important;
+    }
+    .identify-text h2 {
+      font: 600 36px/1.1 var(--font-sans);
+      letter-spacing: -1.44px;
+      margin: 8px 0 16px;
+      color: var(--fg-1);
+    }
+    .identify-text p {
+      font: 400 16px/1.6 var(--font-sans);
+      color: #4d4d4d;
+      margin: 0 0 20px;
     }
     .identify-form {
       display: flex;
-      gap: 10px;
-      margin-top: 18px;
-      max-width: 520px;
+      gap: 8px;
+      max-width: 420px;
     }
     .identify-form input {
-      flex: 1 1 200px;
-      min-height: 46px;
-      padding: 0 14px;
-      border: 1px solid rgba(0, 0, 0, 0.18);
+      flex: 1;
+      min-width: 0;
+      padding: 12px 14px;
+      border: 0;
       border-radius: 8px;
       background: #ffffff;
-      font-size: 15px;
-      color: var(--fg-1);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+      font: 400 15px var(--font-sans);
+      color: #171717;
     }
     .identify-form input:focus {
-      outline: 2px solid var(--accent);
-      outline-offset: 1px;
-      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 2px #171717;
     }
-    .identify-btn {
-      flex: 0 0 auto;
-      min-height: 46px;
-      padding: 0 20px;
-      border-radius: 8px;
-      border: 2px solid #171717;
-      background: transparent;
-      color: #171717;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background 140ms ease, color 140ms ease;
+    .identify-foot {
+      margin-top: 12px;
+      font: 400 13px var(--font-sans);
+      color: #666666;
     }
-    .identify-btn:hover {
-      background: #171717;
-      color: #ffffff;
-    }
-    .identify-alt {
-      margin: 12px 0 0;
-      font-size: 13.5px;
-    }
-    .identify-alt a {
-      color: var(--accent);
+    .identify-foot a {
+      color: #0072f5;
       text-decoration: none;
-      font-weight: 500;
     }
-    .identify-alt a:hover { text-decoration: underline; }
+    .identify-foot a:hover { text-decoration: underline; }
     .identify-result {
       margin-top: 12px;
-      max-width: 520px;
+      max-width: 420px;
       padding: 12px 14px;
       border-radius: 8px;
       border: 1px solid var(--line-strong);
-      background: #ffffff;
+      background: var(--bg-2);
       font-size: 13.5px;
       display: none;
     }
@@ -1028,9 +1191,10 @@
       .trust-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 16px; }
       .trust-cell:nth-child(1), .trust-cell:nth-child(2) { border-bottom: 1px solid var(--line); }
       .trust-cell:nth-child(2), .trust-cell:nth-child(4) { border-right: 0; }
-      .hero-grid, .visual-pair, .warranty-bar, .identify, .footer-grid { grid-template-columns: 1fr; }
-      .pillars-strip { grid-template-columns: 1fr; }
-      .flowchart { grid-template-columns: 1fr; gap: 18px; }
+      .hero-grid, .visual-pair, .identify-grid, .footer-grid { grid-template-columns: minmax(0, 1fr); }
+      .warranty-card.is-open .warranty-body { grid-template-columns: minmax(0, 1fr); }
+      .pillars-strip { grid-template-columns: minmax(0, 1fr); }
+      .flowchart { grid-template-columns: minmax(0, 1fr); gap: 18px; }
       .flowchart::before {
         top: 18px;
         bottom: 18px;
@@ -1052,6 +1216,13 @@
       .flow-tag { display: none; }
     }
 
+    @media (max-width: 768px) {
+      .identify { padding: 48px 0; }
+      .identify-grid { gap: 28px; }
+      .identify-visual { padding: 32px 20px; }
+      .identify-text h2 { font-size: 28px; letter-spacing: -0.035em; }
+    }
+
     @media (max-width: 600px) {
       .ic-container { padding: 0 16px; }
       .header-inner { height: 50px; }
@@ -1066,24 +1237,29 @@
       .trust-copy span { font-size: 10.5px; }
       .hero-title { font-size: 30px; margin-bottom: 8px; }
       .hero-lead { font-size: 14.5px; margin-bottom: 12px; }
+      /* Clean 2-col grid on mobile so price chips never push page width wider than viewport */
       .price-strip {
-        grid-template-columns: repeat(5, minmax(108px, 1fr));
-        overflow-x: auto;
-        padding-bottom: 2px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 6px;
-        scrollbar-width: none;
       }
-      .price-strip::-webkit-scrollbar { display: none; }
-      .price-chip { padding: 7px 10px; }
-      .price-chip-model { font-size: 10.5px; }
-      .price-chip-val { font-size: 13px; }
+      .price-strip li:last-child {
+        grid-column: 1 / -1;
+      }
+      .price-strip li:last-child .price-chip {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .price-chip { padding: 8px 10px; }
+      .price-chip-model { font-size: 11px; }
+      .price-chip-val { font-size: 13.5px; }
       .hero-grid { gap: 18px; }
       .hero-jump-row { margin-top: 10px; gap: 6px; }
       .btn-ghost { font-size: 12px; padding: 5px 10px; min-height: 32px; }
 
-      .diagram-stage { padding: 12px 14px; }
-      .diagram-frame { min-height: 210px; }
-      .diagram-frame img { max-height: 260px; }
+      .diagram-stage { padding: 14px; }
+      .diagram-frame img { max-width: 290px; max-height: 330px; }
+      .diagram-legend-wrap { display: block; }
 
       /* Mobile expandable pillars: titles visible, tap to expand copy */
       .pillars-strip { margin-top: 16px; gap: 8px; }
@@ -1100,6 +1276,16 @@
       }
       .pillar-card.is-open .pillar-body { display: block; }
 
+      .warranty-toggle {
+        padding: 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .warranty-head-copy h3 { font-size: 17px; }
+      .warranty-body { padding: 0 16px 16px; }
+      .warranty-card.is-open .warranty-body { padding-top: 14px; }
+
       .section { padding: 38px 0; }
       .section-compact { padding: 32px 0; }
       .section-title { font-size: 24px; }
@@ -1107,7 +1293,7 @@
       .wizard-intro h2 { font-size: 24px; }
       .check-list, .seo-links-grid { grid-template-columns: 1fr; }
       .identify-form { flex-direction: column; }
-      .identify-btn { width: 100%; }
+      .identify-form .btn-dark { width: 100%; }
     }
   </style>
 </head>
@@ -1231,27 +1417,34 @@
 
             <div class="hero-jump-row">
               <a class="btn-ghost" href="#compare">How do ours compare?</a>
-              <a class="btn-ghost" href="#warranty">See how our 2-year warranty works</a>
+              <a class="btn-ghost" href="#warranty" data-open-warranty>See how our 2-year warranty works</a>
             </div>
           </div>
 
           <div class="diagram-stage">
-            <div class="diagram-controls">
+            <div class="diagram-header">
               <span class="mono-label">Display Assembly Anatomy</span>
-              <div class="segmented" role="group" aria-label="Diagram view">
-                <button type="button" class="is-active" data-diagram="exploded">Exploded view</button>
-                <button type="button" data-diagram="assembled">Assembled</button>
-              </div>
+              <span class="diagram-pill"><span class="diagram-pill-dot" aria-hidden="true"></span>Genuine panel only</span>
             </div>
             <div class="diagram-frame">
               <picture id="macbook-diagram-picture">
                 <source media="(max-width: 600px)" srcset="./assets/macbook-display-assembly-mobile-transparent.svg">
-                <img id="macbook-diagram-img" src="./assets/macbook-display-assembly-transparent.svg" alt="Exploded isometric diagram of a MacBook display assembly highlighting the genuine Apple display panel iCorrect replaces in blue while keeping the original lid shell and hinges">
+                <img id="macbook-diagram-img" src="./assets/macbook-display-assembly-transparent.svg" alt="Exploded isometric diagram of a MacBook display assembly with numbered labels: 1 Polarizer, 2 LCD panel (replaced in blue), 3 Backlight, 4 Display cable, 5 Lid shell, 6 Hinge">
               </picture>
+            </div>
+            <div class="diagram-legend-wrap" aria-label="MacBook display assembly parts">
+              <ol class="diagram-legend">
+                <li class="is-replaced"><span class="legend-num">1</span><span>Polarizer (replaced)</span></li>
+                <li class="is-replaced"><span class="legend-num">2</span><span>LCD panel (replaced)</span></li>
+                <li><span class="legend-num">3</span><span>Backlight</span></li>
+                <li><span class="legend-num">4</span><span>Display cable</span></li>
+                <li><span class="legend-num">5</span><span>Lid shell (original)</span></li>
+                <li><span class="legend-num">6</span><span>Hinge (original)</span></li>
+              </ol>
             </div>
             <div class="diagram-caption">
               <span class="caption-swatch" aria-hidden="true"></span>
-              <span>In blue: the genuine Apple display panel we replace. Your aluminium lid, webcam, antennas, and hinges stay original.</span>
+              <span>In blue: the genuine Apple polarizer &amp; LCD panel we replace. Your aluminium lid, webcam, antennas, and hinges stay original.</span>
             </div>
           </div>
         </div>
@@ -1349,70 +1542,84 @@
             <p class="section-lead">Cheaper high-street quotes rely on aftermarket lids that lose brightness, break True Tone, and fail early. Here is the real difference.</p>
           </div>
 
-          <div class="compare-table-wrap">
-            <table class="compare-table">
-              <thead>
-                <tr>
-                  <th>What matters</th>
-                  <th class="col-icorrect">iCorrect (Panel-only genuine)</th>
-                  <th>Apple Store (Full lid)</th>
-                  <th>Aftermarket shops</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Display panel</strong></td>
-                  <td class="col-icorrect">Genuine Apple display, recalibrated in-house</td>
-                  <td>Genuine Apple full lid assembly</td>
-                  <td>Third-party copy LCD / dimmer panel</td>
-                </tr>
-                <tr>
-                  <td><strong>Original lid &amp; camera</strong></td>
-                  <td class="col-icorrect">Kept original (unless bent or damaged)</td>
-                  <td>Whole lid replaced</td>
-                  <td>Replaced with lower-grade shell</td>
-                </tr>
-                <tr>
-                  <td><strong>True Tone &amp; brightness</strong></td>
-                  <td class="col-icorrect">Preserved and verified during QC</td>
-                  <td>Preserved</td>
-                  <td>Often lost or visibly dimmer</td>
-                </tr>
-                <tr>
-                  <td><strong>Warranty</strong></td>
-                  <td class="col-icorrect">2-year iCorrect warranty</td>
-                  <td>90 days out-of-warranty</td>
-                  <td>Typically 30 to 90 days</td>
-                </tr>
-                <tr>
-                  <td><strong>Typical cost</strong></td>
-                  <td class="col-icorrect">30% to 50% less than full-lid swap</td>
-                  <td>Highest (full assembly pricing)</td>
-                  <td>Cheaper upfront, higher failure rate</td>
-                </tr>
-                <tr>
-                  <td><strong>Board-level backup</strong></td>
-                  <td class="col-icorrect">In-house microelectronics team</td>
-                  <td>Full logic board swap only</td>
-                  <td>Outsourced or returned unfixed</td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="compare-card" id="compare-card">
+            <div class="compare-table-wrap">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>What matters</th>
+                    <th class="col-icorrect">iCorrect (Panel-only genuine)</th>
+                    <th>Apple Store (Full lid)</th>
+                    <th>Aftermarket shops</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Display panel</strong></td>
+                    <td class="col-icorrect">Genuine Apple display, recalibrated in-house</td>
+                    <td>Genuine Apple full lid assembly</td>
+                    <td>Third-party copy LCD / dimmer panel</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Original lid &amp; camera</strong></td>
+                    <td class="col-icorrect">Kept original (unless bent or damaged)</td>
+                    <td>Whole lid replaced</td>
+                    <td>Replaced with lower-grade shell</td>
+                  </tr>
+                  <tr class="compare-extra-row">
+                    <td><strong>True Tone &amp; brightness</strong></td>
+                    <td class="col-icorrect">Preserved and verified during QC</td>
+                    <td>Preserved</td>
+                    <td>Often lost or visibly dimmer</td>
+                  </tr>
+                  <tr class="compare-extra-row">
+                    <td><strong>Warranty</strong></td>
+                    <td class="col-icorrect">2-year iCorrect warranty</td>
+                    <td>90 days out-of-warranty</td>
+                    <td>Typically 30 to 90 days</td>
+                  </tr>
+                  <tr class="compare-extra-row">
+                    <td><strong>Typical cost</strong></td>
+                    <td class="col-icorrect">30% to 50% less than full-lid swap</td>
+                    <td>Highest (full assembly pricing)</td>
+                    <td>Cheaper upfront, higher failure rate</td>
+                  </tr>
+                  <tr class="compare-extra-row">
+                    <td><strong>Board-level backup</strong></td>
+                    <td class="col-icorrect">In-house microelectronics team</td>
+                    <td>Full logic board swap only</td>
+                    <td>Outsourced or returned unfixed</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <button type="button" class="compare-expand-btn" id="compare-expand-btn" aria-expanded="false">
+              <span id="compare-expand-label">Show 4 more comparisons</span>
+              <span class="compare-expand-icon" id="compare-expand-icon" aria-hidden="true">+</span>
+            </button>
           </div>
 
-          <!-- Connected 2-Year Warranty Card -->
-          <div class="warranty-bar" id="warranty">
-            <div>
-              <span class="mono-label">2-Year Warranty Included</span>
-              <h3>Two full years of cover. No asterisks.</h3>
+          <!-- Expandable 2-Year Warranty Box -->
+          <div class="warranty-card" id="warranty">
+            <button type="button" class="warranty-toggle" id="warranty-toggle" aria-expanded="false" aria-controls="warranty-body">
+              <div class="warranty-head-copy">
+                <span class="mono-label">2-Year Warranty Included</span>
+                <h3>Two full years of cover. No asterisks.</h3>
+              </div>
+              <span class="warranty-toggle-pill">
+                <span id="warranty-toggle-label">See what's covered</span>
+                <span id="warranty-toggle-icon" aria-hidden="true">+</span>
+              </span>
+            </button>
+            <div class="warranty-body" id="warranty-body">
               <p>Covers the genuine Apple display panel and our workmanship for 24 months with zero excess on re-work. New impact or liquid damage is excluded.</p>
+              <ul class="check-list">
+                <li><span class="check-mark">&#10003;</span><span>Display panel &amp; backlight faults covered</span></li>
+                <li><span class="check-mark">&#10003;</span><span>Fitting, alignment &amp; hinge calibration covered</span></li>
+                <li><span class="check-mark">&#10003;</span><span>Upfront fixed pricing, zero deposits</span></li>
+                <li><span class="check-mark">&#10003;</span><span>Your data stays untouched on your MacBook</span></li>
+              </ul>
             </div>
-            <ul class="check-list">
-              <li><span class="check-mark">&#10003;</span><span>Display panel &amp; backlight faults covered</span></li>
-              <li><span class="check-mark">&#10003;</span><span>Fitting, alignment &amp; hinge calibration covered</span></li>
-              <li><span class="check-mark">&#10003;</span><span>Upfront fixed pricing, zero deposits</span></li>
-              <li><span class="check-mark">&#10003;</span><span>Your data stays untouched on your MacBook</span></li>
-            </ul>
           </div>
         </div>
       </div>
@@ -1432,8 +1639,36 @@
       </div>
     </section>
 
-    <!-- 5. CONCISE PROCESS FLOWCHART -->
-    <section class="section" id="our-process">
+    <!-- 5. RICKY'S EXACT CLAUDE CODE FIND YOUR MODEL CONTAINER (DIRECTLY BELOW QUOTE WIZARD) -->
+    <section id="identify" class="identify">
+      <div class="ic-container identify-grid">
+        <div class="identify-visual">
+          <div class="identify-visual-inner">
+            <div class="identify-plate">
+              <div class="identify-plate-line">Designed by Apple in California.</div>
+              <div class="identify-plate-line muted">Assembled in China</div>
+              <div class="identify-plate-line highlight">Model <span class="hl">A2442</span></div>
+              <div class="identify-plate-line muted small">EMC 3650 &middot; 61W USB-C</div>
+            </div>
+            <div class="mono-label identify-hint">&larr; Look on the underside</div>
+          </div>
+        </div>
+        <div class="identify-text">
+          <div class="mono-label">Not sure which model you have?</div>
+          <h2>Find your model number in 5 seconds.</h2>
+          <p>Flip your MacBook over. Look for a four-character code starting with "A", printed in small grey type near the hinge. Tell us that code and we'll match the repair exactly.</p>
+          <form class="identify-form" id="identify-form">
+            <input id="identify-input" type="text" placeholder="e.g. A2442" aria-label="MacBook model code" autocomplete="off">
+            <button type="submit" class="btn-dark">Identify</button>
+          </form>
+          <div class="identify-result" id="identify-result" aria-live="polite"></div>
+          <div class="identify-foot">Or <a href="#quote-section">browse models in the wizard &rarr;</a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. CONCISE PROCESS FLOWCHART -->
+    <section class="section section-soft" id="our-process">
       <div class="ic-container">
         <div class="section-head">
           <span class="mono-label">How It Works</span>
@@ -1486,29 +1721,6 @@
             </div>
           </li>
         </ol>
-      </div>
-    </section>
-
-    <!-- 6. RICKY'S CLEANER MODEL FINDER DESIGN -->
-    <section class="section section-soft" id="identify">
-      <div class="ic-container">
-        <div class="identify">
-          <div class="identify-visual">
-            <img src="./assets/macbook-model-number.svg" alt="The model number is printed on the underside of a MacBook, near the hinge">
-            <p class="identify-caption">Look on the underside, near the hinge</p>
-          </div>
-          <div>
-            <span class="mono-label">Not sure which model you have?</span>
-            <h2 class="section-title">Find your model number in a few seconds.</h2>
-            <p class="section-lead">Flip your MacBook over and look for the four-character code starting with <strong>A</strong> near the hinge (for example A2442), or enter your serial number to match the exact screen repair.</p>
-            <form class="identify-form" id="identify-form">
-              <input id="identify-input" type="text" name="model" placeholder="Model code (A2442) or serial number" aria-label="Model code or serial number" autocomplete="off">
-              <button class="identify-btn" type="submit">Identify</button>
-            </form>
-            <div class="identify-result" id="identify-result" aria-live="polite"></div>
-            <p class="identify-alt"><a href="#quote-section">Or browse models in the quote wizard -&gt;</a></p>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -1650,23 +1862,41 @@
 
   <script>
     (function () {
-      // Exploded / Assembled SVG toggle
-      document.querySelectorAll("[data-diagram]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          var mode = btn.getAttribute("data-diagram");
-          document.querySelectorAll("[data-diagram]").forEach(function (b) {
-            b.classList.toggle("is-active", b === btn);
-          });
-          var pic = document.getElementById("macbook-diagram-picture");
-          var img = document.getElementById("macbook-diagram-img");
-          var src = pic.querySelector("source");
-          if (mode === "assembled") {
-            src.srcset = "./assets/macbook-display-assembly-assembled.svg";
-            img.src = "./assets/macbook-display-assembly-assembled.svg";
-          } else {
-            src.srcset = "./assets/macbook-display-assembly-mobile-transparent.svg";
-            img.src = "./assets/macbook-display-assembly-transparent.svg";
-          }
+      // Comparison table expand / collapse (first 2 rows visible by default)
+      var compareCard = document.getElementById("compare-card");
+      var compareBtn = document.getElementById("compare-expand-btn");
+      var compareLabel = document.getElementById("compare-expand-label");
+      var compareIcon = document.getElementById("compare-expand-icon");
+      if (compareBtn && compareCard) {
+        compareBtn.addEventListener("click", function () {
+          var expanded = !compareCard.classList.contains("is-expanded");
+          compareCard.classList.toggle("is-expanded", expanded);
+          compareBtn.setAttribute("aria-expanded", String(expanded));
+          compareLabel.textContent = expanded ? "Show fewer comparisons" : "Show 4 more comparisons";
+          compareIcon.textContent = expanded ? "-" : "+";
+        });
+      }
+
+      // Expandable 2-Year Warranty box
+      var warrantyCard = document.getElementById("warranty");
+      var warrantyBtn = document.getElementById("warranty-toggle");
+      var warrantyLabel = document.getElementById("warranty-toggle-label");
+      var warrantyIcon = document.getElementById("warranty-toggle-icon");
+      function setWarrantyOpen(open) {
+        if (!warrantyCard || !warrantyBtn) return;
+        warrantyCard.classList.toggle("is-open", open);
+        warrantyBtn.setAttribute("aria-expanded", String(open));
+        warrantyLabel.textContent = open ? "Hide details" : "See what's covered";
+        warrantyIcon.textContent = open ? "-" : "+";
+      }
+      if (warrantyBtn) {
+        warrantyBtn.addEventListener("click", function () {
+          setWarrantyOpen(!warrantyCard.classList.contains("is-open"));
+        });
+      }
+      document.querySelectorAll("[data-open-warranty], a[href='#warranty']").forEach(function (link) {
+        link.addEventListener("click", function () {
+          setWarrantyOpen(true);
         });
       });
 
