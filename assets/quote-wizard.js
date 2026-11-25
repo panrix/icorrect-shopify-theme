@@ -1931,6 +1931,7 @@
   function closeCollectionCalendar() {
     var modal = document.getElementById('qwCalModal');
     if (modal) modal.hidden = true;
+    if (typeof updateStickyCTA === 'function') updateStickyCTA();
   }
 
   function openCollectionCalendar() {
@@ -1952,6 +1953,7 @@
       });
     });
     modal.hidden = false;
+    if (typeof updateStickyCTA === 'function') updateStickyCTA();
   }
 
   function paintDateStrip() {
@@ -3661,6 +3663,7 @@
         confirmBtn.removeEventListener('click', onConfirm);
         if (modal.parentNode) modal.parentNode.removeChild(modal);
         _cartReplaceConfirmPromise = null;
+        if (typeof updateStickyCTA === 'function') updateStickyCTA();
         if (previouslyFocused && typeof previouslyFocused.focus === 'function') {
           try { previouslyFocused.focus(); } catch (e) {}
         }
@@ -3699,6 +3702,7 @@
       }
 
       document.body.appendChild(modal);
+      if (typeof updateStickyCTA === 'function') updateStickyCTA();
       try { confirmBtn.focus(); } catch (e) {}
     });
 
@@ -4736,28 +4740,201 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
   }
 
   /* =============================================
-     [5.1] STICKY CTA ON MOBILE
+     [5.1] COOKIE BANNER OFFSET + STICKY CTA ON MOBILE
      ============================================= */
+  var _lastCookieH = -1;
+  var _cookieSyncRaf = 0;
+  var _cookieBodyObserver = null;
+  var _cookieBannerObserver = null;
+  var _cookieResizeObserver = null;
+  var _cookieWatchedEl = null;
+  var _cookieListenersWired = false;
+
+  function measureCookieBannerHeight() {
+    if (typeof document === 'undefined' || typeof window === 'undefined') return 0;
+    var vh = window.innerHeight || (document.documentElement && document.documentElement.clientHeight) || 0;
+    if (!vh) return 0;
+    var maxH = Math.floor(vh * 0.5);
+    var nodes = document.querySelectorAll('#shopify-pc__banner, .shopify-pc__banner__dialog');
+    var best = 0;
+    for (var i = 0; i < nodes.length; i++) {
+      var el = nodes[i];
+      if (!el || el.hidden) continue;
+      var st = window.getComputedStyle ? window.getComputedStyle(el) : null;
+      if (st) {
+        if (st.position !== 'fixed') continue;
+        if (st.display === 'none' || st.visibility === 'hidden') continue;
+        var op = parseFloat(st.opacity);
+        if (isFinite(op) && op <= 0) continue;
+      }
+      var rect = el.getBoundingClientRect ? el.getBoundingClientRect() : null;
+      if (!rect || rect.height <= 0 || rect.height >= vh * 0.5) continue;
+      if (rect.bottom < vh - 12) continue;
+      var h = Math.ceil(rect.height);
+      if (h > maxH) h = maxH;
+      if (h > best) best = h;
+    }
+    return best;
+  }
+
+  function applyCookieBannerHeight(h) {
+    if (typeof document === 'undefined' || !document.documentElement) return false;
+    var next = h > 0 ? Math.ceil(h) : 0;
+    if (next === _lastCookieH) return false;
+    _lastCookieH = next;
+    document.documentElement.style.setProperty('--qw-cookie-h', next + 'px');
+    document.documentElement.classList.toggle('qw-has-cookie-banner', next > 0);
+    return true;
+  }
+
+  function watchCookieBannerElement() {
+    if (typeof document === 'undefined') return;
+    var el = document.querySelector('#shopify-pc__banner, .shopify-pc__banner__dialog');
+    if (el === _cookieWatchedEl) return;
+    if (_cookieBannerObserver) { _cookieBannerObserver.disconnect(); _cookieBannerObserver = null; }
+    if (_cookieResizeObserver) { _cookieResizeObserver.disconnect(); _cookieResizeObserver = null; }
+    _cookieWatchedEl = el;
+    if (!el) return;
+    if (typeof MutationObserver === 'function') {
+      _cookieBannerObserver = new MutationObserver(scheduleCookieBannerSync);
+      _cookieBannerObserver.observe(el, { attributes: true, attributeFilter: ['style', 'class', 'hidden', 'aria-hidden'] });
+    }
+    if (typeof ResizeObserver === 'function') {
+      _cookieResizeObserver = new ResizeObserver(scheduleCookieBannerSync);
+      _cookieResizeObserver.observe(el);
+    }
+  }
+
+  function syncCookieBannerOffset() {
+    watchCookieBannerElement();
+    var h = measureCookieBannerHeight();
+    var changed = applyCookieBannerHeight(h);
+    if (changed) updateStickyCTA();
+    return h;
+  }
+
+  function scheduleCookieBannerSync() {
+    if (_cookieSyncRaf) return;
+    var raf = typeof requestAnimationFrame === 'function' ? requestAnimationFrame : function(fn) { return setTimeout(fn, 16); };
+    _cookieSyncRaf = raf(function() {
+      _cookieSyncRaf = 0;
+      syncCookieBannerOffset();
+    });
+  }
+
+  function initCookieBannerObserver() {
+    if (_cookieListenersWired || typeof document === 'undefined') return;
+    _cookieListenersWired = true;
+    syncCookieBannerOffset();
+    if (document.body && typeof MutationObserver === 'function') {
+      _cookieBodyObserver = new MutationObserver(scheduleCookieBannerSync);
+      _cookieBodyObserver.observe(document.body, { childList: true, attributes: true, attributeFilter: ['style', 'class', 'hidden'] });
+    }
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', scheduleCookieBannerSync, { passive: true });
+      window.addEventListener('scroll', scheduleCookieBannerSync, { passive: true });
+    }
+  }
+
   var _stickyObserver = null;
+  var _stickyScrollHandler = null;
+  var _stickyRaf = 0;
+
+  function updateStickyCTA() {
+    var sticky = document.getElementById('qw-sticky-cta');
+    if (!sticky) return;
+    if (!_postcodeResolved) {
+      sticky.classList.remove('show');
+      return;
+    }
+    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(min-width: 1024px)').matches) {
+      sticky.classList.remove('show');
+      return;
+    }
+    var confirmModal = document.getElementById('qwCartConfirmModal') || document.querySelector('.qw-confirm-modal');
+    if (confirmModal && !confirmModal.hidden) {
+      sticky.classList.remove('show');
+      return;
+    }
+    var calModal = document.getElementById('qwCalModal');
+    if (calModal && !calModal.hidden) {
+      sticky.classList.remove('show');
+      return;
+    }
+    var cookieH = measureCookieBannerHeight();
+    applyCookieBannerHeight(cookieH);
+    var vh = (typeof window !== 'undefined' && window.innerHeight) || (document.documentElement && document.documentElement.clientHeight) || 0;
+    var head = document.querySelector('.section-header');
+    var hb = head && head.getBoundingClientRect ? head.getBoundingClientRect() : null;
+    var topBound = hb && hb.top <= 1 && hb.bottom > 0 && hb.height < 140 ? hb.bottom : 0;
+    var bottomBound = vh - cookieH;
+
+    var resCard = document.getElementById('qwResCard');
+    var cardRect = resCard && resCard.getBoundingClientRect ? resCard.getBoundingClientRect() : null;
+    var cardOnScreen = !!(cardRect && cardRect.height > 0 && cardRect.bottom > topBound && cardRect.top < bottomBound);
+
+    var bookBtn = document.getElementById('qwBookBtn');
+    var bookRect = bookBtn && bookBtn.getBoundingClientRect ? bookBtn.getBoundingClientRect() : null;
+    var bookVisible = !!(bookRect && bookRect.height > 0 && bookRect.top >= topBound - 4 && bookRect.bottom <= bottomBound + 4);
+
+    sticky.classList.toggle('show', cardOnScreen && !bookVisible);
+  }
+
   function setupStickyCTA(price) {
     var sticky = document.getElementById('qw-sticky-cta');
     if (!sticky) return;
+    initCookieBannerObserver();
     sticky.innerHTML = '<span class="qw-sticky-price">' + esc(price) + '</span>' +
-      '<button type="button" class="qw-sticky-book" onclick="document.getElementById(\'qwBookBtn\').click()">Book now</button>';
-
-    var target = document.getElementById('qwBookBtn') || document.querySelector('.qw-res-cta');
-    if (!target || !('IntersectionObserver' in window)) return;
-    if (_stickyObserver) _stickyObserver.disconnect();
-    _stickyObserver = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        sticky.classList.toggle('show', _postcodeResolved && !entry.isIntersecting);
+      '<button type="button" class="qw-sticky-book">Book now</button>';
+    var stickyBtn = sticky.querySelector('.qw-sticky-book');
+    if (stickyBtn) {
+      stickyBtn.addEventListener('click', function() {
+        var btn = document.getElementById('qwBookBtn');
+        if (btn && !btn.disabled) btn.click();
       });
-    }, { threshold: 0.1 });
-    _stickyObserver.observe(target);
+    }
+
+    if (_stickyObserver) { _stickyObserver.disconnect(); _stickyObserver = null; }
+    var bookBtn = document.getElementById('qwBookBtn');
+    var resCard = document.getElementById('qwResCard');
+    if (typeof IntersectionObserver === 'function' && (bookBtn || resCard)) {
+      _stickyObserver = new IntersectionObserver(function() {
+        updateStickyCTA();
+      }, { threshold: [0, 0.1, 1] });
+      if (bookBtn) _stickyObserver.observe(bookBtn);
+      if (resCard) _stickyObserver.observe(resCard);
+    }
+
+    if (!_stickyScrollHandler && typeof window !== 'undefined') {
+      _stickyScrollHandler = function() {
+        if (_stickyRaf) return;
+        var raf = typeof requestAnimationFrame === 'function' ? requestAnimationFrame : function(fn) { return setTimeout(fn, 16); };
+        _stickyRaf = raf(function() {
+          _stickyRaf = 0;
+          updateStickyCTA();
+        });
+      };
+      window.addEventListener('scroll', _stickyScrollHandler, { passive: true });
+      window.addEventListener('resize', _stickyScrollHandler, { passive: true });
+    }
+
+    updateStickyCTA();
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(updateStickyCTA);
+    }
   }
 
   function destroyStickyCTA() {
     if (_stickyObserver) { _stickyObserver.disconnect(); _stickyObserver = null; }
+    if (_stickyScrollHandler && typeof window !== 'undefined') {
+      window.removeEventListener('scroll', _stickyScrollHandler);
+      window.removeEventListener('resize', _stickyScrollHandler);
+      _stickyScrollHandler = null;
+    }
+    if (_stickyRaf && typeof cancelAnimationFrame === 'function') {
+      cancelAnimationFrame(_stickyRaf);
+    }
+    _stickyRaf = 0;
     var sticky = document.getElementById('qw-sticky-cta');
     if (sticky) { sticky.classList.remove('show'); sticky.innerHTML = ''; }
   }
@@ -5154,6 +5331,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
      ============================================= */
   wireProgDots();
   function bootPrefill() {
+    initCookieBannerObserver();
     var ctx = CONTEXT || {};
     var needsCatalogue = !!(ctx.productHandle || ctx.collectionHandle || ctx.device);
     if (needsCatalogue) {

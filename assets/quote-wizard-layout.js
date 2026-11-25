@@ -77,6 +77,7 @@
       host.parentNode.insertBefore(how, host);
     }
 
+    placeDeliveryReveal();
     placeJourney();
 
     card.addEventListener('click', function (e) {
@@ -175,6 +176,28 @@
     return /^(today|tomorrow)$/i.test(head) ? head + ', ' + day : DOW[dt.getDay()] + ' ' + day;
   }
 
+  /* Mobile: move #qwDeliveryReveal into #qwSummary so CSS flex order puts
+     price + collection notice + Proceed above delivery options and slots.
+     Desktop: keep #qwDeliveryReveal in the left column right after postcode. */
+  function placeDeliveryReveal() {
+    var reveal = $('qwDeliveryReveal'), sum = $('qwSummary');
+    if (!reveal || !sum) return;
+    if (wide()) {
+      var mapper = document.querySelector('#qwResCard .qw-service-mapper');
+      if (!mapper || reveal.parentNode === mapper) return;
+      var err = $('qwServiceErr');
+      if (err && err.parentNode === mapper) {
+        mapper.insertBefore(reveal, err);
+      } else {
+        var pcCard = $('qwPostcodeCard');
+        if (pcCard && pcCard.parentNode === mapper) mapper.insertBefore(reveal, pcCard.nextSibling);
+        else mapper.appendChild(reveal);
+      }
+      return;
+    }
+    if (reveal.parentNode !== sum) sum.appendChild(reveal);
+  }
+
   /* Mobile: "How it works" sits under Book so the total and Book fit one
      screen. Desktop: the timeline stays in the left column. */
   function placeJourney() {
@@ -190,26 +213,32 @@
     return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
   }
 
-  /* After a postcode: land on "how it gets to us" with the total and Book
-     below it, clear of the sticky site header. */
+  /* After a postcode:
+     Mobile: anchor on #qwPostcodeCard (8px below sticky header) so postcode chip,
+     all-in total, collection notice, and Proceed all land above the cookie banner.
+     Desktop: show the card top with the sticky summary beside the questions. */
   function focus() {
     setTimeout(function () {
       requestAnimationFrame(function () {
-        var t = $('qwDeliveryChoice');
-        if (!t || t.hidden || !t.offsetParent) t = $('qwPostcodeCard');
-        if (!t) return;
         var head = document.querySelector('.section-header');
         var hb = head ? head.getBoundingClientRect() : null;
         var off = hb && hb.top <= 1 ? Math.max(0, hb.bottom) : 0;
+        var t;
+        var gap = 8;
         if (wide()) {
-          /* Desktop: the summary sticks beside the questions; show the card top. */
+          var choice = $('qwDeliveryChoice');
+          if (!choice || choice.hidden || !choice.offsetParent) choice = $('qwPostcodeCard');
           var card = $('qwResCard');
           var book = $('qwBookBtn');
           if (!card) return;
-          if (book && book.getBoundingClientRect().bottom <= window.innerHeight && t.getBoundingClientRect().bottom <= window.innerHeight) return;
+          if (book && choice && book.getBoundingClientRect().bottom <= window.innerHeight && choice.getBoundingClientRect().bottom <= window.innerHeight) return;
           t = card;
+          gap = 12;
+        } else {
+          t = $('qwPostcodeCard') || $('qwSummary') || $('qwResCard');
         }
-        var y = t.getBoundingClientRect().top - off - 12;
+        if (!t) return;
+        var y = t.getBoundingClientRect().top - off - gap;
         if (Math.abs(y) < 4) return;
         var smooth = !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
         window.scrollBy({ top: y, behavior: smooth ? 'smooth' : 'auto' });
@@ -231,13 +260,13 @@
 
   function start() {
     setHead();
-    window.addEventListener('resize', function () { setHead(); placeJourney(); });
+    window.addEventListener('resize', function () { setHead(); placeDeliveryReveal(); placeJourney(); });
     var root = document.querySelector('.qw-wizard') || document.body;
     new MutationObserver(scan).observe(root, { childList: true, subtree: true });
     scan();
   }
 
-  window.ICorrectQuoteLayout = { focus: focus, arrange: arrange };
+  window.ICorrectQuoteLayout = { focus: focus, arrange: arrange, placeDeliveryReveal: placeDeliveryReveal };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
   else start();
 })();
