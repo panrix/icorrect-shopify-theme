@@ -39,11 +39,8 @@ fs.cpSync(path.join(ROOT, 'assets'), path.join(OUT, 'assets'), {
   filter: (src) => fs.statSync(src).isDirectory() || !/\.liquid$/.test(src),
 });
 
-/* ---- Static UI Previews ---- */
+/* ---- Static UI Previews (copied after Liquid renders so live wizard can be injected) ---- */
 const ico11PreviewDir = path.join(ROOT, 'docs/previews/ico-11-macbook-screen-repair');
-if (fs.existsSync(ico11PreviewDir)) {
-  fs.cpSync(ico11PreviewDir, path.join(OUT, 'ico-11'), { recursive: true });
-}
 
 /* ---- Catalogue: models for the wizard menus, products for /products/<handle>.json ---- */
 const cat = JSON.parse(read('assets/repair-catalogue-map.json'));
@@ -151,9 +148,10 @@ async function renderPage(file, title, ctx) {
 <meta name="robots" content="noindex">
 <title>${title} · quote wizard preview</title>${pageCss}${cartShim}</head>
 <body>${banner(title)}<main>${html}</main></body></html>`);
+  return html;
 }
 
-await renderPage('macbook-screen/index.html', 'MacBook screen repair page', {
+const macbookWizardHtml = await renderPage('macbook-screen/index.html', 'MacBook screen repair page', {
   template: { name: 'collection' },
   collection: {
     handle: 'macbook-screen-repair-prices',
@@ -162,6 +160,18 @@ await renderPage('macbook-screen/index.html', 'MacBook screen repair page', {
   },
 });
 await renderPage('quote/index.html', 'All devices', { template: { name: 'page' }, request: { page_type: 'page' } });
+
+if (fs.existsSync(ico11PreviewDir)) {
+  const ico11Out = path.join(OUT, 'ico-11');
+  fs.cpSync(ico11PreviewDir, ico11Out, { recursive: true });
+  const ico11Index = path.join(ico11Out, 'index.html');
+  if (fs.existsSync(ico11Index)) {
+    const injected = fs.readFileSync(ico11Index, 'utf8')
+      .replace('<!-- LIVE_CART_SHIM_SLOT -->', cartShim)
+      .replace('<!-- LIVE_QUOTE_WIZARD_SLOT -->', macbookWizardHtml);
+    fs.writeFileSync(ico11Index, injected);
+  }
+}
 
 /* Checkout stand-in: shows the cart the wizard built. */
 const checkout = `<!doctype html><html lang="en-GB"><head><meta charset="utf-8">

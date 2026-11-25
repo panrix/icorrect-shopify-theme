@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MacBook Screen Repair Prices UK | Genuine Apple Displays | iCorrect</title>
-  <meta name="description" content="Genuine Apple MacBook screen panel replacement in London and across the UK. Air 13 from £299, Air 15 from £449, Pro 13 from £299, Pro 14 from £549, Pro 16 £599 to £799. 2-year warranty.">
+  <meta name="robots" content="noindex">
+  <title>MacBook Screen Repair | Genuine Apple Displays | iCorrect</title>
+  <meta name="description" content="Genuine Apple MacBook screen panel replacement in Fitzrovia, London and across the UK. We replace the display panel only, keeping your original lid, backed by a 2-year warranty.">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -77,6 +78,7 @@
     ]
   }
   </script>
+  <!-- LIVE_CART_SHIM_SLOT -->
   <style>
     @font-face {
       font-family: "Geist";
@@ -114,7 +116,7 @@
       --green-soft: #e6f6ec;
       --star: #f59e0b;
       --shadow-card: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.03);
-      --shadow-lift: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 8px 24px -8px rgba(0, 0, 0, 0.08);
+      --shadow-lift: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 10px 28px -10px rgba(0, 0, 0, 0.08);
       --r-sm: 6px;
       --r-md: 10px;
       --r-lg: 14px;
@@ -137,7 +139,7 @@
     button, input { font-family: inherit; }
     img, svg { display: block; max-width: 100%; }
 
-    .container {
+    .ic-container {
       width: 100%;
       max-width: var(--max-w);
       margin: 0 auto;
@@ -153,17 +155,17 @@
       color: var(--fg-3);
     }
 
-    /* ── Header ─────────────────────────────────────────────── */
+    /* Header */
     .site-header {
       position: sticky;
       top: 0;
       z-index: 40;
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.94);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--line);
     }
     .header-inner {
-      height: 58px;
+      height: 56px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -179,7 +181,7 @@
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 22px;
       list-style: none;
       margin: 0;
       padding: 0;
@@ -190,11 +192,11 @@
       text-decoration: none;
       transition: color 140ms ease;
     }
-    .nav-links a:hover, .nav-links a[aria-current="page"] { color: var(--fg-1); font-weight: 500; }
+    .nav-links a:hover { color: var(--fg-1); }
     .header-right {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
     .status-pill {
       display: inline-flex;
@@ -222,12 +224,13 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      padding: 8px 14px;
+      min-height: 40px;
+      padding: 8px 16px;
       border-radius: var(--r-sm);
       background: var(--fg-1);
       color: #ffffff;
       border: 1px solid var(--fg-1);
-      font-size: 13.5px;
+      font-size: 14px;
       font-weight: 500;
       text-decoration: none;
       cursor: pointer;
@@ -235,35 +238,41 @@
       white-space: nowrap;
     }
     .btn-dark:hover { background: #333333; }
-    .btn-outline {
+    .btn-ghost {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      padding: 8px 14px;
-      border-radius: var(--r-sm);
+      min-height: 36px;
+      padding: 6px 12px;
+      border-radius: 999px;
       background: #ffffff;
-      color: var(--fg-1);
+      color: var(--fg-2);
       border: 1px solid var(--line-strong);
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 500;
       text-decoration: none;
       cursor: pointer;
-      transition: border-color 140ms ease, background 140ms ease;
+      transition: border-color 140ms ease, color 140ms ease, background 140ms ease;
+      white-space: nowrap;
     }
-    .btn-outline:hover { background: var(--bg-2); border-color: var(--fg-1); }
+    .btn-ghost:hover {
+      color: var(--fg-1);
+      border-color: var(--fg-1);
+      background: var(--bg-2);
+    }
 
-    /* ── First Fold Hero + Trust + Live Prices + Wizard ─────── */
+    /* 1. CALM VALUE-FIRST HERO + EXPLODED DISPLAY VISUAL */
     .hero-band {
-      padding: 22px 0 40px;
-      background: linear-gradient(180deg, #ffffff 0%, #ffffff 54%, #f4f4f5 54%, #f4f4f5 100%);
+      padding: 28px 0 48px;
+      background: #ffffff;
       border-bottom: 1px solid var(--line);
     }
     .breadcrumb {
       display: flex;
       align-items: center;
       gap: 6px;
-      margin-bottom: 10px;
+      margin-bottom: 18px;
       font-family: var(--font-mono);
       font-size: 11px;
       text-transform: uppercase;
@@ -273,513 +282,82 @@
     .breadcrumb a { text-decoration: none; color: var(--fg-3); }
     .breadcrumb a:hover { color: var(--fg-1); }
 
-    .hero-top {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-width: 780px;
-    }
-    .hero-title {
-      margin: 0;
-      font-size: 40px;
-      font-weight: 600;
-      line-height: 1.08;
-      letter-spacing: -0.04em;
-      color: var(--fg-1);
-    }
-    .hero-lead {
-      margin: 0;
-      font-size: 16px;
-      line-height: 1.48;
-      color: var(--fg-2);
-    }
-
-    /* Approved 5-signal Trust Strip */
-    .trust-strip {
-      margin: 16px 0 0;
-      padding: 0;
-      list-style: none;
+    .hero-grid {
       display: grid;
-      grid-template-columns: 1.25fr 1.15fr 1.15fr 0.9fr 1fr;
-      background: var(--bg-2);
-      border: 1px solid var(--line);
-      border-radius: var(--r-md);
-      overflow: hidden;
-    }
-    .trust-cell {
-      padding: 11px 13px;
-      display: flex;
+      grid-template-columns: 1fr 1.02fr;
+      gap: 44px;
       align-items: center;
-      gap: 9px;
-      border-right: 1px solid var(--line);
-      min-width: 0;
     }
-    .trust-cell:last-child { border-right: 0; }
-    .trust-rating-link {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      width: 100%;
-    }
-    .trust-score {
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -0.04em;
-      line-height: 1;
-      color: var(--fg-1);
-      flex-shrink: 0;
-    }
-    .trust-stars {
+    .review-pill {
       display: inline-flex;
       align-items: center;
-      gap: 2px;
-      color: var(--star);
-      line-height: 1;
-      margin-bottom: 2px;
-    }
-    .trust-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 7px;
-      background: #ffffff;
-      border: 1px solid var(--line);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      color: var(--fg-1);
-    }
-    .trust-copy {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-    .trust-copy strong {
-      font-size: 12.5px;
-      font-weight: 600;
-      color: var(--fg-1);
-      line-height: 1.25;
-    }
-    .trust-copy span {
-      font-size: 11.5px;
-      color: var(--fg-3);
-      line-height: 1.25;
-    }
-
-    /* Live Per-Range Pricing Strip (snippets/macbook-screen-ranges.liquid) */
-    .price-strip-wrap {
-      margin-top: 12px;
-    }
-    .price-strip {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 8px;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    .price-chip {
-      width: 100%;
-      text-align: left;
-      padding: 9px 12px;
-      border-radius: var(--r-sm);
-      border: 1px solid var(--line);
-      background: #ffffff;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
-    }
-    .price-chip:hover, .price-chip.is-active {
-      border-color: var(--fg-1);
-      background: var(--bg-2);
-    }
-    .price-chip-model {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--fg-2);
-    }
-    .price-chip-val {
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      color: var(--fg-1);
-    }
-    .price-footnote {
-      margin: 7px 0 0;
-      font-size: 12px;
-      color: var(--fg-3);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px 14px;
-    }
-
-    /* Embedded Quote Wizard (matching live assets/quote-wizard.css) */
-    .wizard-shell {
-      margin-top: 18px;
-      background: #ffffff;
-      border-radius: var(--r-lg);
-      box-shadow: var(--shadow-lift);
-      padding: 24px 28px 26px;
-      max-width: 820px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .qw-head {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--line);
-    }
-    .qw-title {
-      margin: 0;
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -0.03em;
-      color: var(--fg-1);
-      line-height: 1.2;
-    }
-    .qw-sub {
-      margin: 3px 0 0;
-      font-size: 13.5px;
-      color: var(--fg-2);
-    }
-    .qw-steps-bar {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .qw-step-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
+      padding: 6px 12px;
       border-radius: 999px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--fg-3);
+      border: 1px solid var(--line);
       background: var(--bg-2);
-      border: 1px solid var(--line);
-      cursor: pointer;
-    }
-    .qw-step-pill.is-current {
-      background: var(--fg-1);
-      color: #ffffff;
-      border-color: var(--fg-1);
-    }
-    .qw-step-pill.is-done {
-      background: var(--green-soft);
-      color: var(--green);
-      border-color: rgba(4, 120, 87, 0.2);
-    }
-
-    .qw-panel { display: none; }
-    .qw-panel.is-open { display: block; }
-
-    .qw-family-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .qw-family {
-      border: 1px solid var(--line);
-      border-radius: var(--r-md);
-      background: #ffffff;
-      overflow: hidden;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--fg-1);
+      margin-bottom: 16px;
       transition: border-color 140ms ease;
     }
-    .qw-family.is-expanded {
-      border-color: var(--fg-1);
-    }
-    .qw-family-trigger {
-      width: 100%;
-      padding: 12px 14px;
-      background: transparent;
-      border: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      cursor: pointer;
-      text-align: left;
-    }
-    .qw-family-trigger:hover { background: var(--bg-2); }
-    .qw-family-name {
-      font-size: 14.5px;
-      font-weight: 600;
-      color: var(--fg-1);
-    }
-    .qw-family-meta {
-      font-size: 12px;
-      color: var(--fg-3);
-      margin-top: 1px;
-    }
-    .qw-family-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-    .qw-family-price {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--fg-1);
-      background: var(--bg-2);
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 3px 9px;
-    }
-    .qw-chevron {
-      width: 16px;
-      height: 16px;
-      color: var(--fg-3);
-      transition: transform 160ms ease;
-    }
-    .qw-family.is-expanded .qw-chevron { transform: rotate(180deg); }
-
-    .qw-model-grid {
-      display: none;
-      padding: 0 12px 12px;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      border-top: 1px solid var(--line);
-      padding-top: 12px;
-      background: var(--bg-2);
-    }
-    .qw-family.is-expanded .qw-model-grid { display: grid; }
-    .qw-model-btn {
-      padding: 10px 12px;
-      border-radius: var(--r-sm);
-      border: 1px solid var(--line);
-      background: #ffffff;
-      cursor: pointer;
-      text-align: left;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      transition: border-color 140ms ease, box-shadow 140ms ease;
-    }
-    .qw-model-btn:hover {
-      border-color: var(--fg-1);
-      box-shadow: 0 0 0 1px var(--fg-1);
-    }
-    .qw-model-btn strong {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--fg-1);
-    }
-    .qw-model-btn small {
-      display: block;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--fg-3);
-      margin-top: 2px;
-    }
-    .qw-model-price {
-      font-size: 13.5px;
-      font-weight: 600;
-      color: var(--fg-1);
-      flex-shrink: 0;
-    }
-
-    .qw-unsure-row {
-      margin-top: 10px;
-      padding: 10px 14px;
-      border-radius: var(--r-md);
-      border: 1px dashed var(--line-strong);
-      background: var(--bg-2);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      font-size: 13px;
-      color: var(--fg-2);
-    }
-    .qw-unsure-row a {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--accent);
-      text-decoration: none;
-      white-space: nowrap;
-    }
-    .qw-unsure-row a:hover { text-decoration: underline; }
-
-    /* Wizard Steps 2 to 4 (interactive preview) */
-    .qw-selected-chip {
+    .review-pill:hover { border-color: var(--line-strong); }
+    .review-stars {
       display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 11px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: #0052b3;
-      font-size: 12.5px;
-      font-weight: 500;
-      margin-bottom: 14px;
+      gap: 2px;
+      color: var(--star);
     }
-    .qw-option-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-    .qw-option-card {
-      padding: 14px;
-      border-radius: var(--r-md);
-      border: 1px solid var(--line);
-      background: #ffffff;
-      text-align: left;
-      cursor: pointer;
-      transition: border-color 140ms ease, box-shadow 140ms ease;
-    }
-    .qw-option-card:hover, .qw-option-card.is-picked {
-      border-color: var(--fg-1);
-      box-shadow: 0 0 0 1px var(--fg-1);
-    }
-    .qw-option-card strong { display: block; font-size: 14px; font-weight: 600; color: var(--fg-1); }
-    .qw-option-card span { display: block; font-size: 12.5px; color: var(--fg-3); margin-top: 3px; }
 
-    .qw-postcode-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 8px;
-    }
-    .qw-input {
-      flex: 1;
-      height: 44px;
-      padding: 0 14px;
-      border-radius: var(--r-sm);
-      border: 1px solid var(--line-strong);
-      font-size: 15px;
-      color: var(--fg-1);
-      background: #ffffff;
-    }
-    .qw-input:focus {
-      outline: 2px solid var(--accent);
-      outline-offset: 1px;
-      border-color: var(--accent);
-    }
-    .qw-route-note {
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: var(--r-sm);
-      background: var(--bg-2);
-      border: 1px solid var(--line);
-      font-size: 12.5px;
-      color: var(--fg-2);
-    }
-    .qw-summary-box {
-      border: 1px solid var(--line);
-      border-radius: var(--r-md);
-      background: var(--bg-2);
-      padding: 18px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 16px;
-      align-items: center;
-    }
-    .qw-summary-price {
-      font-size: 30px;
+    .hero-title {
+      margin: 0 0 12px;
+      font-size: 44px;
       font-weight: 600;
+      line-height: 1.06;
       letter-spacing: -0.04em;
       color: var(--fg-1);
-      text-align: right;
+      text-wrap: balance;
     }
-    .qw-summary-meta {
+    .hero-lead {
+      margin: 0 0 20px;
+      font-size: 17px;
+      line-height: 1.5;
+      color: var(--fg-2);
+      max-width: 48ch;
+      text-wrap: pretty;
+    }
+
+    .hero-cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+    .hero-cta-note {
+      font-size: 13px;
+      color: var(--fg-3);
+    }
+    .hero-jump-row {
+      margin-top: 16px;
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-top: 10px;
     }
-    .qw-meta-tag {
-      font-size: 12px;
-      padding: 4px 9px;
-      border-radius: 999px;
-      background: #ffffff;
-      border: 1px solid var(--line);
-      color: var(--fg-2);
-    }
-    .qw-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 14px;
-    }
-    .qw-back {
-      background: none;
-      border: 0;
-      padding: 0;
-      font-size: 13px;
-      color: var(--fg-3);
-      cursor: pointer;
-      margin-bottom: 10px;
-    }
-    .qw-back:hover { color: var(--fg-1); }
 
-    /* ── Standard Content Sections ──────────────────────────── */
-    .section {
-      padding: 64px 0;
-      border-bottom: 1px solid var(--line);
-    }
-    .section-soft { background: var(--bg-2); }
-    .section-dark {
-      background: #171717;
-      color: #ffffff;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .section-head {
-      max-width: 680px;
-      margin-bottom: 32px;
-    }
-    .section-title {
-      margin: 8px 0 10px;
-      font-size: 32px;
-      font-weight: 600;
-      line-height: 1.15;
-      letter-spacing: -0.035em;
-      color: var(--fg-1);
-    }
-    .section-dark .section-title { color: #ffffff; }
-    .section-lead {
-      margin: 0;
-      font-size: 15.5px;
-      color: var(--fg-2);
-      line-height: 1.55;
-    }
-    .section-dark .section-lead { color: rgba(255, 255, 255, 0.72); }
-
-    /* ── Section 2: Exploded Display Breakdown ──────────────── */
-    .exploded-grid {
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 40px;
-      align-items: center;
-    }
+    /* Exploded Display Stage right in First Fold */
     .diagram-stage {
       background: var(--bg-2);
       border: 1px solid var(--line);
       border-radius: var(--r-lg);
-      padding: 20px;
-      position: relative;
+      padding: 18px 20px;
     }
     .diagram-controls {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .segmented {
       display: inline-flex;
@@ -792,7 +370,7 @@
     .segmented button {
       border: 0;
       background: transparent;
-      padding: 6px 11px;
+      padding: 5px 10px;
       border-radius: 4px;
       font-size: 12px;
       font-weight: 500;
@@ -807,187 +385,204 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 360px;
+      min-height: 310px;
     }
     .diagram-frame img {
-      max-height: 440px;
+      max-height: 370px;
       width: auto;
       margin: 0 auto;
     }
     .diagram-caption {
-      margin-top: 12px;
-      padding-top: 12px;
+      margin-top: 10px;
+      padding-top: 10px;
       border-top: 1px solid var(--line);
       font-size: 12.5px;
       color: var(--fg-3);
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 8px;
+      line-height: 1.4;
     }
     .caption-swatch {
-      width: 10px;
-      height: 10px;
+      width: 9px;
+      height: 9px;
       border-radius: 2px;
       background: var(--accent);
       flex-shrink: 0;
-    }
-    .breakdown-list {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      margin-top: 22px;
-    }
-    .breakdown-item {
-      padding: 14px 16px;
-      border-radius: var(--r-md);
-      border: 1px solid var(--line);
-      background: #ffffff;
-    }
-    .breakdown-item strong {
-      display: block;
-      font-size: 14.5px;
-      font-weight: 600;
-      color: var(--fg-1);
-      margin-bottom: 3px;
-    }
-    .breakdown-item p {
-      margin: 0;
-      font-size: 13.5px;
-      color: var(--fg-2);
+      margin-top: 4px;
     }
 
-    /* ── Section 3: Model Number Finder ─────────────────────── */
-    .finder-grid {
+    /* 3 Panel-Only Pillars: Cards on desktop, compact expandable accordions on mobile */
+    .pillars-strip {
+      margin-top: 28px;
       display: grid;
-      grid-template-columns: 0.95fr 1.05fr;
-      gap: 36px;
-      align-items: center;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
     }
-    .finder-visual {
-      background: #f5f5f7;
-      border: 1px solid var(--line);
-      border-radius: var(--r-lg);
-      padding: 18px;
-    }
-    .finder-form {
-      display: flex;
-      gap: 10px;
-      margin-top: 16px;
-    }
-    .finder-result {
-      margin-top: 12px;
-      padding: 12px 14px;
-      border-radius: var(--r-sm);
-      border: 1px solid var(--line);
-      background: #ffffff;
-      font-size: 13.5px;
-      display: none;
-    }
-    .finder-result.is-visible { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-    .finder-examples {
-      margin-top: 10px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
-      font-size: 12px;
-      color: var(--fg-3);
-    }
-    .example-chip {
-      border: 1px solid var(--line);
-      background: #ffffff;
-      border-radius: 999px;
-      padding: 3px 9px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--fg-2);
-      cursor: pointer;
-    }
-    .example-chip:hover { border-color: var(--fg-1); color: var(--fg-1); }
-
-    /* ── Section 4: 4-Step Process + Bench/Courier SVGs ─────── */
-    .process-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
-    }
-    .step-card {
-      background: #ffffff;
+    .pillar-card {
+      background: var(--bg-2);
       border: 1px solid var(--line);
       border-radius: var(--r-md);
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      overflow: hidden;
     }
-    .step-top {
+    .pillar-toggle {
+      width: 100%;
+      background: transparent;
+      border: 0;
+      padding: 15px 16px 6px;
+      text-align: left;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 10px;
+      cursor: default;
     }
-    .step-num {
-      font-family: var(--font-mono);
-      font-size: 12px;
+    .pillar-title {
+      font-size: 14.5px;
       font-weight: 600;
-      color: var(--accent);
+      color: var(--fg-1);
+      line-height: 1.3;
     }
-    .step-tag {
+    .pillar-plus {
+      display: none;
       font-family: var(--font-mono);
-      font-size: 10.5px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--fg-3);
-    }
-    .step-card h3 {
-      margin: 2px 0 0;
       font-size: 16px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
+      color: var(--fg-3);
+      flex-shrink: 0;
     }
-    .step-card p {
-      margin: 0;
+    .pillar-body {
+      padding: 0 16px 15px;
       font-size: 13.5px;
       color: var(--fg-2);
       line-height: 1.5;
     }
+    .pillar-body p { margin: 0; }
 
+    /* Sections */
+    .section {
+      padding: 56px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .section-compact { padding: 44px 0; }
+    .section-soft { background: var(--bg-2); }
+    .section-dark {
+      background: #171717;
+      color: #ffffff;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .section-head {
+      max-width: 680px;
+      margin-bottom: 28px;
+    }
+    .section-title {
+      margin: 6px 0 8px;
+      font-size: 30px;
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.035em;
+      color: var(--fg-1);
+      text-wrap: balance;
+    }
+    .section-dark .section-title { color: #ffffff; }
+    .section-lead {
+      margin: 0;
+      font-size: 15.5px;
+      color: var(--fg-2);
+      line-height: 1.55;
+      text-wrap: pretty;
+    }
+    .section-dark .section-lead { color: rgba(255, 255, 255, 0.72); }
+
+    /* 2. GOOGLE REVIEWS (HIGH UP IN FOLD 2) */
+    .reviews-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .trustindex-slot {
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      background: #ffffff;
+      min-height: 220px;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 8px;
+      box-shadow: var(--shadow-card);
+    }
+    .trustindex-slot strong { font-size: 15px; color: var(--fg-1); }
+    .trustindex-slot p {
+      margin: 0;
+      max-width: 54ch;
+      font-size: 13.5px;
+      color: var(--fg-2);
+    }
+    .trustindex-slot code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      background: var(--bg-2);
+      border: 1px solid var(--line);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    /* 3. WORKSHOP & COURIER VISUALS + COMPARISON + WARRANTY (MOVED HIGH UP) */
     .visual-pair {
-      margin-top: 20px;
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
+      gap: 16px;
     }
     .visual-card {
       background: #ffffff;
       border: 1px solid var(--line);
-      border-radius: var(--r-md);
-      padding: 18px;
+      border-radius: var(--r-lg);
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
+      box-shadow: var(--shadow-card);
     }
-    .visual-card img {
-      max-height: 210px;
+    .visual-card-img {
+      background: var(--bg-2);
+      border-radius: var(--r-md);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 210px;
+    }
+    .visual-card-img img {
+      max-height: 200px;
       width: auto;
-      margin: 0 auto;
     }
-    .visual-card h4 {
-      margin: 0;
-      font-size: 15px;
+    .visual-card h3 {
+      margin: 4px 0 4px;
+      font-size: 18px;
       font-weight: 600;
+      letter-spacing: -0.02em;
     }
     .visual-card p {
-      margin: 3px 0 0;
-      font-size: 13px;
+      margin: 0;
+      font-size: 14px;
       color: var(--fg-2);
+      line-height: 1.5;
     }
 
-    /* ── Section 5: Comparison + Warranty + Video Slot ──────── */
+    .compare-wrap {
+      margin-top: 40px;
+    }
     .compare-table-wrap {
       overflow-x: auto;
       border: 1px solid var(--line);
       border-radius: var(--r-md);
       background: #ffffff;
+      box-shadow: var(--shadow-card);
     }
     .compare-table {
       width: 100%;
@@ -996,7 +591,7 @@
       text-align: left;
     }
     .compare-table th, .compare-table td {
-      padding: 13px 16px;
+      padding: 12px 16px;
       border-bottom: 1px solid var(--line);
       vertical-align: top;
     }
@@ -1015,28 +610,35 @@
       color: var(--fg-1);
       font-weight: 500;
     }
-    .proof-split {
-      margin-top: 22px;
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 16px;
-    }
-    .warranty-card, .video-slot-card {
-      border-radius: var(--r-md);
-      border: 1px solid var(--line);
+
+    /* Connected 2-Year Warranty Strip directly attached to Comparison */
+    .warranty-bar {
+      margin-top: 16px;
       background: #ffffff;
-      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      padding: 20px 22px;
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 20px;
+      align-items: center;
+      box-shadow: var(--shadow-card);
     }
-    .warranty-card h3, .video-slot-card h3 {
-      margin: 6px 0 8px;
-      font-size: 20px;
+    .warranty-bar h3 {
+      margin: 4px 0 6px;
+      font-size: 19px;
       font-weight: 600;
       letter-spacing: -0.025em;
+    }
+    .warranty-bar p {
+      margin: 0;
+      font-size: 13.5px;
+      color: var(--fg-2);
     }
     .check-list {
       list-style: none;
       padding: 0;
-      margin: 12px 0 0;
+      margin: 0;
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px 14px;
@@ -1049,74 +651,206 @@
       gap: 7px;
     }
     .check-mark { color: var(--green); font-weight: 600; flex-shrink: 0; }
-    .video-placeholder {
-      margin-top: 12px;
-      border-radius: var(--r-sm);
-      border: 1px dashed var(--line-strong);
-      background: var(--bg-2);
-      padding: 22px 16px;
+
+    /* 4. LIVE UNTOUCHED QUOTE WIZARD SECTION */
+    .wizard-band {
+      padding: 56px 0;
+      background: #f4f4f5;
+      border-bottom: 1px solid var(--line);
+    }
+    .wizard-intro {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto 24px;
+    }
+    .wizard-intro h2 {
+      margin: 6px 0 6px;
+      font-size: 30px;
+      font-weight: 600;
+      letter-spacing: -0.035em;
+    }
+    .wizard-intro p {
+      margin: 0;
+      font-size: 15px;
+      color: var(--fg-2);
+    }
+    .wizard-live-host {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    /* 5. CONCISE PROCESS FLOWCHART */
+    .flowchart {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .flowchart::before {
+      content: "";
+      position: absolute;
+      top: 19px;
+      left: 24px;
+      right: 24px;
+      height: 1px;
+      background: var(--line-strong);
+      z-index: 0;
+    }
+    .flow-node {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .flow-head {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 10px;
     }
-    .play-circle {
-      width: 42px;
-      height: 42px;
+    .flow-badge {
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       background: var(--fg-1);
       color: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      box-shadow: 0 0 0 4px #ffffff;
+    }
+    .flow-tag {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      background: #ffffff;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .flow-body h3 {
+      margin: 0 0 4px;
+      font-size: 15.5px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .flow-body p {
+      margin: 0;
+      font-size: 13.5px;
+      color: var(--fg-2);
+      line-height: 1.48;
     }
 
-    /* ── Section 6: Trustindex Google Reviews Slot ──────────── */
-    .reviews-box {
-      border: 1px solid var(--line);
-      border-radius: var(--r-lg);
+    /* 6. RICKY'S CLEANER MODEL FINDER DESIGN (.identify from icx-macbook-screen-mockup) */
+    .identify {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 44px;
+      align-items: center;
+    }
+    .identify-visual {
       background: #ffffff;
+      border-radius: var(--r-lg);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
       padding: 24px;
-      min-height: 220px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      gap: 16px;
+      align-items: center;
+      gap: 12px;
     }
-    .reviews-head {
+    .identify-visual img {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      border-radius: var(--r-md);
+    }
+    .identify-caption {
+      margin: 0;
+      font-size: 12.5px;
+      color: var(--fg-3);
+    }
+    .identify-form {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+      max-width: 520px;
+    }
+    .identify-form input {
+      flex: 1 1 200px;
+      min-height: 46px;
+      padding: 0 14px;
+      border: 1px solid rgba(0, 0, 0, 0.18);
+      border-radius: 8px;
+      background: #ffffff;
+      font-size: 15px;
+      color: var(--fg-1);
+    }
+    .identify-form input:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+      border-color: var(--accent);
+    }
+    .identify-btn {
+      flex: 0 0 auto;
+      min-height: 46px;
+      padding: 0 20px;
+      border-radius: 8px;
+      border: 2px solid #171717;
+      background: transparent;
+      color: #171717;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 140ms ease, color 140ms ease;
+    }
+    .identify-btn:hover {
+      background: #171717;
+      color: #ffffff;
+    }
+    .identify-alt {
+      margin: 12px 0 0;
+      font-size: 13.5px;
+    }
+    .identify-alt a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .identify-alt a:hover { text-decoration: underline; }
+    .identify-result {
+      margin-top: 12px;
+      max-width: 520px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--line-strong);
+      background: #ffffff;
+      font-size: 13.5px;
+      display: none;
+    }
+    .identify-result.is-visible {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
     }
-    .trustindex-embed-preview {
-      border: 1px dashed var(--line-strong);
-      border-radius: var(--r-md);
-      background: var(--bg-2);
-      padding: 28px 20px;
-      text-align: center;
-      color: var(--fg-2);
-      font-size: 13.5px;
-    }
-    .trustindex-embed-preview code {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      background: #ffffff;
-      border: 1px solid var(--line);
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
 
-    /* ── Section 7: Dark FAQ Accordion ──────────────────────── */
+    /* 7. DARK FAQ ACCORDION */
     .faq-list {
       display: flex;
       flex-direction: column;
       border-top: 1px solid rgba(255, 255, 255, 0.14);
     }
-    .faq-item {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-    }
+    .faq-item { border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
     .faq-btn {
       width: 100%;
       background: transparent;
@@ -1144,14 +878,14 @@
       font-size: 14px;
       line-height: 1.6;
       color: rgba(255, 255, 255, 0.76);
-      max-width: 78ch;
+      max-width: 76ch;
     }
     .faq-item.is-open .faq-answer { display: block; }
 
-    /* ── Section 8: Workshop + SEO Internal Links ───────────── */
+    /* 8. WORKSHOP + SEO LINKS */
     .footer-grid {
       display: grid;
-      grid-template-columns: 1fr 1.2fr;
+      grid-template-columns: 1fr 1.15fr;
       gap: 28px;
       align-items: start;
     }
@@ -1162,14 +896,14 @@
       padding: 22px;
     }
     .workshop-card h3 {
-      margin: 6px 0 12px;
+      margin: 6px 0 10px;
       font-size: 20px;
       font-weight: 600;
       letter-spacing: -0.025em;
     }
     .hours-grid {
       display: grid;
-      grid-template-columns: 110px 1fr;
+      grid-template-columns: 115px 1fr;
       gap: 4px 12px;
       font-size: 13.5px;
       color: var(--fg-2);
@@ -1204,117 +938,101 @@
     .seo-link-group a { text-decoration: none; }
     .seo-link-group a:hover { color: var(--accent); text-decoration: underline; }
 
-    .preview-banner {
-      background: #171717;
-      color: rgba(255, 255, 255, 0.85);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      padding: 7px 16px;
-      text-align: center;
-      letter-spacing: 0.03em;
-    }
-
-    /* ── Responsive: Tablet & 390px Mobile First-Fold Precision ─ */
+    /* Responsive: Tablet & 390px Mobile */
     @media (max-width: 960px) {
       .nav-links, .status-pill { display: none; }
-      .trust-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .trust-cell:first-child { grid-column: 1 / -1; border-bottom: 1px solid var(--line); border-right: 0; }
-      .trust-cell:nth-child(2), .trust-cell:nth-child(3) { border-bottom: 1px solid var(--line); }
-      .trust-cell:nth-child(3), .trust-cell:nth-child(5) { border-right: 0; }
-      .price-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-      .exploded-grid, .finder-grid, .proof-split, .footer-grid, .visual-pair { grid-template-columns: 1fr; }
-      .process-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .hero-grid, .visual-pair, .warranty-bar, .identify, .footer-grid { grid-template-columns: 1fr; }
+      .pillars-strip { grid-template-columns: 1fr; }
+      .flowchart { grid-template-columns: 1fr; gap: 18px; }
+      .flowchart::before {
+        top: 18px;
+        bottom: 18px;
+        left: 18px;
+        right: auto;
+        width: 1px;
+        height: auto;
+      }
+      .flow-node {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 14px;
+      }
+      .flow-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+      .flow-tag { display: none; }
     }
 
     @media (max-width: 600px) {
-      .container { padding: 0 14px; }
-      .preview-banner { display: none; }
+      .ic-container { padding: 0 16px; }
       .header-inner { height: 50px; }
-      .brand { font-size: 17px; }
-      .btn-dark { padding: 7px 12px; font-size: 12.5px; }
+      .hero-band { padding: 16px 0 28px; }
+      .breadcrumb { margin-bottom: 10px; font-size: 10px; }
+      .review-pill { margin-bottom: 10px; font-size: 12px; padding: 5px 10px; }
+      .hero-title { font-size: 30px; margin-bottom: 8px; }
+      .hero-lead { font-size: 14.5px; margin-bottom: 14px; }
+      .hero-grid { gap: 18px; }
+      .hero-cta-row { gap: 8px; }
+      .hero-jump-row { margin-top: 10px; gap: 6px; }
+      .btn-ghost { font-size: 12px; padding: 5px 10px; min-height: 32px; }
 
-      /* Tight mobile first-fold budget: Hero + Trust + Prices + Wizard start inside 844px */
-      .hero-band { padding: 12px 0 24px; }
-      .breadcrumb { margin-bottom: 6px; font-size: 10px; }
-      .hero-title { font-size: 27px; letter-spacing: -0.035em; }
-      .hero-lead { font-size: 13.5px; line-height: 1.4; }
+      .diagram-stage { padding: 12px 14px; }
+      .diagram-frame { min-height: 210px; }
+      .diagram-frame img { max-height: 260px; }
 
-      .trust-strip { margin-top: 10px; }
-      .trust-cell { padding: 7px 10px; gap: 7px; }
-      .trust-score { font-size: 18px; }
-      .trust-icon { width: 22px; height: 22px; border-radius: 5px; }
-      .trust-icon svg { width: 13px; height: 13px; }
-      .trust-copy strong { font-size: 11.5px; }
-      .trust-copy span { font-size: 10.5px; }
-
-      .price-strip-wrap { margin-top: 8px; }
-      .price-strip {
-        grid-template-columns: repeat(5, minmax(104px, 1fr));
-        overflow-x: auto;
-        padding-bottom: 2px;
-        gap: 6px;
-        scrollbar-width: none;
+      /* Mobile expandable pillars: titles visible, tap to expand copy */
+      .pillars-strip { margin-top: 16px; gap: 8px; }
+      .pillar-toggle {
+        padding: 13px 14px;
+        cursor: pointer;
       }
-      .price-strip::-webkit-scrollbar { display: none; }
-      .price-chip { padding: 6px 9px; }
-      .price-chip-model { font-size: 10.5px; }
-      .price-chip-val { font-size: 13px; }
-      .price-footnote { margin-top: 5px; font-size: 11px; }
-
-      .wizard-shell {
-        margin-top: 10px;
-        padding: 14px 14px 16px;
-        border-radius: 12px;
+      .pillar-title { font-size: 14px; }
+      .pillar-plus { display: inline-block; }
+      .pillar-body {
+        display: none;
+        padding: 0 14px 13px;
+        font-size: 13px;
       }
-      .qw-head { margin-bottom: 10px; padding-bottom: 10px; gap: 8px; }
-      .qw-title { font-size: 17px; }
-      .qw-sub { font-size: 12px; }
-      .qw-step-pill { padding: 3px 8px; font-size: 11px; }
-      .qw-family-trigger { padding: 10px 11px; }
-      .qw-family-name { font-size: 13.5px; }
-      .qw-family-meta { font-size: 11px; }
-      .qw-model-grid, .qw-option-grid, .process-grid, .check-list, .seo-links-grid { grid-template-columns: 1fr; }
-      .qw-summary-box { grid-template-columns: 1fr; }
-      .qw-summary-price { text-align: left; }
-      .qw-postcode-row, .finder-form { flex-direction: column; }
-      .qw-unsure-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+      .pillar-card.is-open .pillar-body { display: block; }
 
-      .section { padding: 40px 0; }
+      .section { padding: 38px 0; }
+      .section-compact { padding: 32px 0; }
       .section-title { font-size: 24px; }
-      .diagram-frame { min-height: 260px; }
-      .diagram-frame img { max-height: 340px; }
+      .wizard-band { padding: 38px 0; }
+      .wizard-intro h2 { font-size: 24px; }
+      .check-list, .seo-links-grid { grid-template-columns: 1fr; }
+      .identify-form { flex-direction: column; }
+      .identify-btn { width: 100%; }
     }
   </style>
 </head>
 <body>
 
-  <div class="preview-banner">
-    ICO-11 PREVIEW (25 NOV 2026) | /collections/macbook-screen-repair-prices | UNTOUCHED WIZARD PATTERN + LIVE PER-RANGE PRICES + EXPLODED SVGs
-  </div>
-
-  <!-- Storefront Header -->
+  <!-- Header -->
   <header class="site-header">
-    <div class="container header-inner">
+    <div class="ic-container header-inner">
       <a class="brand" href="#top">iCorrect</a>
       <ul class="nav-links">
-        <li><a href="#quote-wizard" aria-current="page">MacBook Screens</a></li>
-        <li><a href="#panel-breakdown">Why Panel Only</a></li>
-        <li><a href="#our-process">How It Works</a></li>
-        <li><a href="#warranty">Warranty</a></li>
+        <li><a href="#google-reviews">Reviews</a></li>
+        <li><a href="#compare">How we compare</a></li>
+        <li><a href="#warranty">2-year warranty</a></li>
+        <li><a href="#our-process">Process</a></li>
         <li><a href="#faqs">FAQs</a></li>
       </ul>
       <div class="header-right">
-        <span class="status-pill"><span class="status-dot" aria-hidden="true"></span>FITZROVIA · MON-FRI 9AM-6PM</span>
-        <a class="btn-dark" href="#quote-wizard">Get a quote -&gt;</a>
+        <span class="status-pill"><span class="status-dot" aria-hidden="true"></span>FITZROVIA · LONDON</span>
+        <a class="btn-dark" href="#quote-section">Get your price -&gt;</a>
       </div>
     </div>
   </header>
 
   <main id="top">
 
-    <!-- 1. FIRST FOLD: Trust + Live Per-Range Prices + Interactive Quote Wizard -->
+    <!-- 1. FIRST FOLD: Calm Hero + Exploded Display Proof (No Price Clutter) -->
     <section class="hero-band">
-      <div class="container">
+      <div class="ic-container">
         <nav class="breadcrumb" aria-label="Breadcrumb">
           <a href="#">Home</a>
           <span>/</span>
@@ -1323,200 +1041,33 @@
           <span>MacBook Screen Repair</span>
         </nav>
 
-        <div class="hero-top">
-          <h1 class="hero-title">MacBook Screen Repair</h1>
-          <p class="hero-lead">Cracked, flickering, or blank display? We replace the genuine Apple display panel only, keeping your original lid, camera, and hinges, backed by a 2-year warranty.</p>
-        </div>
-
-        <!-- 5 Approved Trust Signals (in first fold on both 390px and 1440px) -->
-        <ul class="trust-strip" role="list" aria-label="Why choose iCorrect">
-          <li class="trust-cell">
-            <a class="trust-rating-link" href="#google-reviews">
-              <span class="trust-score">4.8</span>
-              <span class="trust-copy">
-                <span class="trust-stars" aria-hidden="true">
-                  <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-                  <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-                  <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-                  <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-                  <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-                </span>
-                <strong>from 750+ Google reviews</strong>
-              </span>
+        <div class="hero-grid">
+          <div>
+            <a class="review-pill" href="#google-reviews">
+              <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              <span class="review-stars" aria-hidden="true">★★★★★</span>
+              <span>4.8 from 750+ Google reviews</span>
             </a>
-          </li>
-          <li class="trust-cell">
-            <span class="trust-icon" aria-hidden="true">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg>
-            </span>
-            <span class="trust-copy">
-              <strong>Genuine Apple displays</strong>
-              <span>Panel only, calibrated</span>
-            </span>
-          </li>
-          <li class="trust-cell">
-            <span class="trust-icon" aria-hidden="true">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M9 1v3m6-3v3M9 20v3m6-3v3M1 9h3m-3 6h3m16-6h3m-3 6h3"/></svg>
-            </span>
-            <span class="trust-copy">
-              <strong>Board-level specialists</strong>
-              <span>In-house microelectronics</span>
-            </span>
-          </li>
-          <li class="trust-cell">
-            <span class="trust-icon" aria-hidden="true">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
-            </span>
-            <span class="trust-copy">
-              <strong>2-year warranty</strong>
-              <span>Included as standard</span>
-            </span>
-          </li>
-          <li class="trust-cell">
-            <span class="trust-icon" aria-hidden="true">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h11v10H3z"/><path d="M14 10h4l3 3v4h-7z"/><circle cx="7.5" cy="18" r="1.8"/><circle cx="17.5" cy="18" r="1.8"/></svg>
-            </span>
-            <span class="trust-copy">
-              <strong>UK-wide collection</strong>
-              <span>Free on orders £200+</span>
-            </span>
-          </li>
-        </ul>
 
-        <!-- Live Per-Range Pricing Strip (mirrors snippets/macbook-screen-ranges.liquid) -->
-        <div class="price-strip-wrap">
-          <ul class="price-strip" role="list" aria-label="Live MacBook screen repair prices by range">
-            <li>
-              <button type="button" class="price-chip" data-jump-family="air-13">
-                <span class="price-chip-model">MacBook Air 13"</span>
-                <span class="price-chip-val">from £299</span>
-              </button>
-            </li>
-            <li>
-              <button type="button" class="price-chip" data-jump-family="air-15">
-                <span class="price-chip-model">MacBook Air 15"</span>
-                <span class="price-chip-val">from £449</span>
-              </button>
-            </li>
-            <li>
-              <button type="button" class="price-chip" data-jump-family="pro-13">
-                <span class="price-chip-model">MacBook Pro 13"</span>
-                <span class="price-chip-val">from £299</span>
-              </button>
-            </li>
-            <li>
-              <button type="button" class="price-chip" data-jump-family="pro-14">
-                <span class="price-chip-model">MacBook Pro 14"</span>
-                <span class="price-chip-val">from £549</span>
-              </button>
-            </li>
-            <li>
-              <button type="button" class="price-chip" data-jump-family="pro-16">
-                <span class="price-chip-model">MacBook Pro 16"</span>
-                <span class="price-chip-val">£599 to £799</span>
-              </button>
-            </li>
-          </ul>
-          <p class="price-footnote">
-            <span>Live prices inc. fitting, calibration &amp; free collection (£200+). Standard turnaround: 2 working days in workshop.</span>
-          </p>
-        </div>
+            <h1 class="hero-title">We replace the display panel, not your whole lid.</h1>
+            <p class="hero-lead">Cracked, flickering, or blank MacBook screen? We fit a genuine Apple display panel into your original lid in our Fitzrovia workshop, backed by a 2-year warranty.</p>
 
-        <!-- Live Quote Wizard Surface (untouched visual grammar, interactive preview) -->
-        <div class="wizard-shell" id="quote-wizard" aria-label="MacBook Screen Repair Quote Wizard">
-          <div class="qw-head">
-            <div>
-              <h2 class="qw-title">Get your MacBook Screen Repair quote</h2>
-              <p class="qw-sub">Same-day courier collection in selected London zones, or free insured UK mail-in pack.</p>
+            <div class="hero-cta-row">
+              <a class="btn-dark" href="#quote-section">Get your exact price -&gt;</a>
+              <span class="hero-cta-note">From £299 · Free UK collection (£200+) · 2 working days</span>
             </div>
-            <div class="qw-steps-bar" role="tablist" aria-label="Quote steps">
-              <button type="button" class="qw-step-pill is-current" data-step-btn="1">1. Model</button>
-              <button type="button" class="qw-step-pill" data-step-btn="2">2. Fault</button>
-              <button type="button" class="qw-step-pill" data-step-btn="3">3. Postcode</button>
-              <button type="button" class="qw-step-pill" data-step-btn="4">4. Quote</button>
+
+            <div class="hero-jump-row">
+              <a class="btn-ghost" href="#compare">How do ours compare?</a>
+              <a class="btn-ghost" href="#warranty">See how our 2-year warranty works</a>
             </div>
           </div>
 
-          <!-- Step 1: Model Selection -->
-          <div class="qw-panel is-open" data-step-panel="1">
-            <div class="qw-family-list" id="qw-family-list"></div>
-            <div class="qw-unsure-row">
-              <span>Not sure which MacBook model you have?</span>
-              <a href="#model-finder">Find your A-number in 5 seconds &rarr;</a>
-            </div>
-          </div>
-
-          <!-- Step 2: Fault Selection -->
-          <div class="qw-panel" data-step-panel="2">
-            <button type="button" class="qw-back" data-go-step="1">&lt;- Change MacBook model</button>
-            <div class="qw-selected-chip" id="qw-chip-step2"></div>
-            <div class="qw-option-grid">
-              <button type="button" class="qw-option-card" data-fault="Cracked glass or black ink lines">
-                <strong>Cracked display / ink lines</strong>
-                <span>Visible fracture, coloured vertical bars, or black bleed</span>
-              </button>
-              <button type="button" class="qw-option-card" data-fault="Blank screen / backlight failure">
-                <strong>Blank or dim screen</strong>
-                <span>MacBook powers on but display stays black or very dim</span>
-              </button>
-              <button type="button" class="qw-option-card" data-fault="Flickering / Flexgate or Dustgate">
-                <strong>Flickering / stage-light effect</strong>
-                <span>Display cuts out at certain hinge angles or shows lines</span>
-              </button>
-              <button type="button" class="qw-option-card" data-fault="Not sure / possible liquid damage">
-                <strong>Not sure or liquid spill</strong>
-                <span>Start with a full intake check before any screen fitting</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Step 3: Postcode (honest London courier vs free UK mail-in split) -->
-          <div class="qw-panel" data-step-panel="3">
-            <button type="button" class="qw-back" data-go-step="2">&lt;- Change fault</button>
-            <div class="qw-selected-chip" id="qw-chip-step3"></div>
-            <label for="qw-postcode" class="mono-label">Enter your UK postcode for collection options</label>
-            <div class="qw-postcode-row">
-              <input id="qw-postcode" class="qw-input" type="text" placeholder="e.g. W1W 8JQ or M1 1AE" autocomplete="postal-code">
-              <button type="button" class="btn-dark" id="qw-postcode-submit">See price &amp; collection -&gt;</button>
-            </div>
-            <div class="qw-route-note">
-              <strong>Honest delivery options:</strong> Postcodes inside our London courier zones qualify for free tracked courier collection (same-day slots available in selected zones). Every other UK postcode receives a <strong>free tracked and insured mail-in pack</strong> straight to your door, with the exact same 2 working days workshop turnaround.
-            </div>
-          </div>
-
-          <!-- Step 4: Instant Quote Result -->
-          <div class="qw-panel" data-step-panel="4">
-            <button type="button" class="qw-back" data-go-step="3">&lt;- Change postcode</button>
-            <div class="qw-summary-box">
-              <div>
-                <div class="mono-label" id="qw-summary-route">FREE TRACKED COLLECTION INCLUDED (£200+)</div>
-                <h3 style="margin:4px 0 2px;font-size:19px;letter-spacing:-0.02em;" id="qw-summary-title"></h3>
-                <p style="margin:0;font-size:13.5px;color:var(--fg-2);" id="qw-summary-sub"></p>
-                <div class="qw-summary-meta">
-                  <span class="qw-meta-tag">Genuine Apple display panel</span>
-                  <span class="qw-meta-tag">2 working days in workshop</span>
-                  <span class="qw-meta-tag">2-year warranty</span>
-                  <span class="qw-meta-tag">Upfront payment, no hidden fees</span>
-                </div>
-              </div>
-              <div>
-                <div class="qw-summary-price" id="qw-summary-price"></div>
-                <div style="font-size:11.5px;color:var(--fg-3);text-align:right;">Inc. VAT &amp; collection</div>
-              </div>
-            </div>
-            <div class="qw-actions">
-              <a href="#top" class="btn-dark" onclick="event.preventDefault();alert('Preview mode: in Shopify this routes straight into live checkout via untouched assets/quote-wizard.js.');">Book this repair -&gt;</a>
-              <button type="button" class="btn-outline" onclick="alert('Preview mode: sends the branded iCorrect quote email.');">Email me this quote</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2. EXPLODED DISPLAY BREAKDOWN (Real Diagram Kit SVGs) -->
-    <section class="section" id="panel-breakdown">
-      <div class="container">
-        <div class="exploded-grid">
           <div class="diagram-stage">
             <div class="diagram-controls">
               <span class="mono-label">Display Assembly Anatomy</span>
@@ -1528,201 +1079,167 @@
             <div class="diagram-frame">
               <picture id="macbook-diagram-picture">
                 <source media="(max-width: 600px)" srcset="./assets/macbook-display-assembly-mobile-transparent.svg">
-                <img id="macbook-diagram-img" src="./assets/macbook-display-assembly-transparent.svg" alt="Exploded isometric diagram of a MacBook display assembly highlighting the LCD panel iCorrect replaces in blue while keeping the original lid shell and hinges">
+                <img id="macbook-diagram-img" src="./assets/macbook-display-assembly-transparent.svg" alt="Exploded isometric diagram of a MacBook display assembly highlighting the genuine Apple display panel iCorrect replaces in blue while keeping the original lid shell and hinges">
               </picture>
             </div>
             <div class="diagram-caption">
               <span class="caption-swatch" aria-hidden="true"></span>
-              <span>Highlighted in blue: the genuine Apple display panel we replace. Your aluminium lid, webcam, antennas, and hinges stay original.</span>
+              <span>In blue: the genuine Apple display panel we replace. Your aluminium lid, webcam, antennas, and hinges stay original.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 Panel-Only Proof Points (Desktop: open cards | Mobile: tap-to-expand accordions) -->
+        <div class="pillars-strip" aria-label="Why panel-only MacBook screen repair">
+          <div class="pillar-card" data-pillar>
+            <button type="button" class="pillar-toggle" aria-expanded="false">
+              <span class="pillar-title">Genuine Apple displays, calibrated in-house</span>
+              <span class="pillar-plus" aria-hidden="true">+</span>
+            </button>
+            <div class="pillar-body">
+              <p>We reclaim and test genuine Apple panels and recalibrate colour accuracy, brightness uniformity, and True Tone so your screen matches factory output.</p>
             </div>
           </div>
 
-          <div>
-            <span class="mono-label">Why iCorrect Is Different</span>
-            <h2 class="section-title">We replace the display panel, not your whole lid.</h2>
-            <p class="section-lead">Most repair chains and the Apple Store swap the entire lid assembly, throwing away your working aluminium shell, camera, hinge mechanism, and wireless antennas. Our microelectronics bench separates the assembly and fits a genuine Apple display panel into your original lid.</p>
+          <div class="pillar-card" data-pillar>
+            <button type="button" class="pillar-toggle" aria-expanded="false">
+              <span class="pillar-title">30% to 50% less than a full-lid swap</span>
+              <span class="pillar-plus" aria-hidden="true">+</span>
+            </button>
+            <div class="pillar-body">
+              <p>Apple and most chains replace the entire lid assembly, throwing away your working casing, hinges, and FaceTime camera. You only pay to replace the broken panel.</p>
+            </div>
+          </div>
 
-            <div class="breakdown-list">
-              <div class="breakdown-item">
-                <strong>Genuine Apple displays, calibrated in-house</strong>
-                <p>We reclaim and test genuine Apple panels and recalibrate colour accuracy, brightness uniformity, and True Tone so the finished screen matches factory output.</p>
-              </div>
-              <div class="breakdown-item">
-                <strong>30% to 50% less than a full-lid replacement</strong>
-                <p>Because you are not paying to replace an undamaged lid, hinges, and FaceTime camera, you get genuine Apple optical quality without paying for parts that are not broken.</p>
-              </div>
-              <div class="breakdown-item">
-                <strong>Built for Liquid Retina XDR and M-series MacBooks</strong>
-                <p>14-inch and 16-inch mini-LED MacBook Pro displays demand clean-room alignment and firmware calibration. We repair them daily alongside MacBook Air M1, M2, M3, and M4 models.</p>
-              </div>
+          <div class="pillar-card" data-pillar>
+            <button type="button" class="pillar-toggle" aria-expanded="false">
+              <span class="pillar-title">Built for Liquid Retina XDR &amp; M-series</span>
+              <span class="pillar-plus" aria-hidden="true">+</span>
+            </button>
+            <div class="pillar-body">
+              <p>14-inch and 16-inch mini-LED MacBook Pro displays require clean-room alignment and calibration. We repair them daily alongside MacBook Air M1, M2, M3, and M4 models.</p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 3. MODEL NUMBER FINDER -->
-    <section class="section section-soft" id="model-finder">
-      <div class="container">
-        <div class="finder-grid">
-          <div class="finder-visual">
-            <img src="./assets/macbook-model-number.svg" alt="Underside of a MacBook showing the A-number printed near the hinge">
-          </div>
+    <!-- 2. FOLD 2: GOOGLE REVIEWS HIGH UP (TRUSTINDEX WIDGET) -->
+    <section class="section section-compact section-soft" id="google-reviews">
+      <div class="ic-container">
+        <div class="reviews-head">
           <div>
-            <span class="mono-label">Not Sure Which Model?</span>
-            <h2 class="section-title">Find your MacBook model number in 5 seconds.</h2>
-            <p class="section-lead">Flip your MacBook over and look near the hinge for the letter <strong>A</strong> followed by four digits (for example <code style="font-family:var(--font-mono);font-size:13px;">A2442</code>). Enter it below to jump straight to your exact screen repair price.</p>
-
-            <form class="finder-form" id="model-finder-form">
-              <input id="model-finder-input" class="qw-input" type="text" placeholder="Enter A-number (e.g. A2338, A2681, A2992)" aria-label="MacBook model number">
-              <button type="submit" class="btn-dark">Identify model</button>
-            </form>
-
-            <div class="finder-examples">
-              <span>Try:</span>
-              <button type="button" class="example-chip" data-try-model="A2681">A2681</button>
-              <button type="button" class="example-chip" data-try-model="A2338">A2338</button>
-              <button type="button" class="example-chip" data-try-model="A2992">A2992</button>
-              <button type="button" class="example-chip" data-try-model="A2991">A2991</button>
-            </div>
-
-            <div class="finder-result" id="model-finder-result" aria-live="polite"></div>
+            <span class="mono-label">Verified Client Reviews</span>
+            <h2 class="section-title" style="margin-bottom:0;">4.8 from 750+ Google reviews</h2>
           </div>
+          <a class="btn-ghost" href="https://maps.google.com/?q=iCorrect+12+Margaret+Street+London+W1W+8JQ" target="_blank" rel="noopener">Read on Google Maps -&gt;</a>
+        </div>
+        <div class="trustindex-slot">
+          <strong>Live Trustindex Google Reviews Widget loads here</strong>
+          <p>Mounts the real Trustindex loader from PR #133 (<code>cdn.trustindex.io/loader.js?47cc7ef8590e8871fa062160cf7</code>) with reserved height, zero hand-drawn review cards, and zero star-rating JSON-LD.</p>
         </div>
       </div>
     </section>
 
-    <!-- 4. FOUR-STEP PROCESS + BENCH & COURIER DIAGRAMS -->
-    <section class="section" id="our-process">
-      <div class="container">
+    <!-- 3. FOLD 3: WORKSHOP & COURIER VISUALS + HOW WE COMPARE + 2-YEAR WARRANTY -->
+    <section class="section" id="why-icorrect">
+      <div class="ic-container">
         <div class="section-head">
-          <span class="mono-label">Our Process</span>
-          <h2 class="section-title">From collection to calibrated return in 2 working days.</h2>
-          <p class="section-lead">Every MacBook screen repair happens in-house at our Fitzrovia workshop. Nothing is outsourced, and you get clear updates at every stage.</p>
-        </div>
-
-        <div class="process-grid">
-          <article class="step-card">
-            <div class="step-top">
-              <span class="step-num">01</span>
-              <span class="step-tag">Free on £200+</span>
-            </div>
-            <h3>Book &amp; collect</h3>
-            <p>Choose tracked courier collection in London (same-day slots available in selected zones) or our free insured UK mail-in pack delivered to your door.</p>
-          </article>
-
-          <article class="step-card">
-            <div class="step-top">
-              <span class="step-num">02</span>
-              <span class="step-tag">Intake check</span>
-            </div>
-            <h3>Pre-repair inspection</h3>
-            <p>We test power rails, backlight lines, hinges, and flex cables before opening the display. If we spot liquid or logic-board damage, we quote clearly before touching anything.</p>
-          </article>
-
-          <article class="step-card">
-            <div class="step-top">
-              <span class="step-num">03</span>
-              <span class="step-tag">In-house bench</span>
-            </div>
-            <h3>Genuine panel fit &amp; calibration</h3>
-            <p>A technician fits a genuine Apple display panel into your original lid and verifies True Tone, colour uniformity, webcam, microphone, and lid closure.</p>
-          </article>
-
-          <article class="step-card">
-            <div class="step-top">
-              <span class="step-num">04</span>
-              <span class="step-tag">2 working days</span>
-            </div>
-            <h3>Insured return &amp; 2-year cover</h3>
-            <p>Standard screen repairs complete within 2 working days once your MacBook reaches our workshop, then return by tracked, insured courier with our 2-year warranty.</p>
-          </article>
+          <span class="mono-label">In-House Bench &amp; UK-Wide Collection</span>
+          <h2 class="section-title">Board-level workshop in Fitzrovia. Collected from your door.</h2>
+          <p class="section-lead">Every MacBook is repaired in-house by our microelectronics team, never outsourced, with free tracked collection on all orders of £200 or more.</p>
         </div>
 
         <div class="visual-pair">
-          <div class="visual-card">
-            <img src="./assets/repair-bench-transparent.svg" alt="Isometric diagram of the iCorrect micro-soldering and display calibration repair bench">
+          <article class="visual-card">
+            <div class="visual-card-img">
+              <img src="./assets/repair-bench-transparent.svg" alt="Isometric diagram of the iCorrect micro-soldering and display calibration repair bench">
+            </div>
             <div>
-              <h4>Microelectronics workshop in Fitzrovia</h4>
+              <span class="mono-label">Microelectronics Specialists</span>
+              <h3>Fitzrovia workshop, never outsourced</h3>
               <p>Because our team repairs logic boards and backlight circuits to component level, we catch Flexgate, Dustgate, and backlight IC faults that part-swap shops miss.</p>
             </div>
-          </div>
-          <div class="visual-card">
-            <img src="./assets/courier-route-transparent.svg" alt="Isometric diagram of tracked courier collection from office or home to the iCorrect workshop and back">
-            <div>
-              <h4>Tracked London courier or free UK mail-in</h4>
-              <p>No need to take half a day off to queue at a store. Collection and insured return are included free on all orders of £200 or more, which covers every MacBook screen repair.</p>
+          </article>
+
+          <article class="visual-card">
+            <div class="visual-card-img">
+              <img src="./assets/courier-route-transparent.svg" alt="Isometric diagram of tracked courier collection from office or home to the iCorrect workshop and back">
             </div>
+            <div>
+              <span class="mono-label">Free Collection on £200+</span>
+              <h3>Tracked London courier or free UK mail-in</h3>
+              <p>Same-day courier collection is available in selected London zones. Anywhere else in the UK, we send a free tracked, insured mail-in pack straight to your door.</p>
+            </div>
+          </article>
+        </div>
+
+        <!-- How Our Display Compares -->
+        <div class="compare-wrap" id="compare">
+          <div class="section-head" style="margin-bottom:18px;">
+            <span class="mono-label">Parts &amp; Quality Comparison</span>
+            <h2 class="section-title">How our display repair compares.</h2>
+            <p class="section-lead">Cheaper high-street quotes rely on aftermarket lids that lose brightness, break True Tone, and fail early. Here is the real difference.</p>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- 5. PART QUALITY, TESTING, 2-YEAR WARRANTY & YOUTUBE WALKTHROUGH SLOT -->
-    <section class="section section-soft" id="warranty">
-      <div class="container">
-        <div class="section-head">
-          <span class="mono-label">Parts, Testing &amp; Warranty</span>
-          <h2 class="section-title">How our display repair compares.</h2>
-          <p class="section-lead">Cheaper high-street quotes rely on aftermarket lids that lose brightness, break True Tone, and misalign at the hinge. Here is the real difference.</p>
-        </div>
+          <div class="compare-table-wrap">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th>What matters</th>
+                  <th class="col-icorrect">iCorrect (Panel-only genuine)</th>
+                  <th>Apple Store (Full lid)</th>
+                  <th>Aftermarket shops</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Display panel</strong></td>
+                  <td class="col-icorrect">Genuine Apple display, recalibrated in-house</td>
+                  <td>Genuine Apple full lid assembly</td>
+                  <td>Third-party copy LCD / dimmer panel</td>
+                </tr>
+                <tr>
+                  <td><strong>Original lid &amp; camera</strong></td>
+                  <td class="col-icorrect">Kept original (unless bent or damaged)</td>
+                  <td>Whole lid replaced</td>
+                  <td>Replaced with lower-grade shell</td>
+                </tr>
+                <tr>
+                  <td><strong>True Tone &amp; brightness</strong></td>
+                  <td class="col-icorrect">Preserved and verified during QC</td>
+                  <td>Preserved</td>
+                  <td>Often lost or visibly dimmer</td>
+                </tr>
+                <tr>
+                  <td><strong>Warranty</strong></td>
+                  <td class="col-icorrect">2-year iCorrect warranty</td>
+                  <td>90 days out-of-warranty</td>
+                  <td>Typically 30 to 90 days</td>
+                </tr>
+                <tr>
+                  <td><strong>Typical cost</strong></td>
+                  <td class="col-icorrect">30% to 50% less than full-lid swap</td>
+                  <td>Highest (full assembly pricing)</td>
+                  <td>Cheaper upfront, higher failure rate</td>
+                </tr>
+                <tr>
+                  <td><strong>Board-level backup</strong></td>
+                  <td class="col-icorrect">In-house microelectronics team</td>
+                  <td>Full logic board swap only</td>
+                  <td>Outsourced or returned unfixed</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-        <div class="compare-table-wrap">
-          <table class="compare-table">
-            <thead>
-              <tr>
-                <th>What matters</th>
-                <th class="col-icorrect">iCorrect (Panel-only genuine)</th>
-                <th>Apple Store (Full lid)</th>
-                <th>Aftermarket repair shops</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Display panel</strong></td>
-                <td class="col-icorrect">Genuine Apple display, recalibrated in-house</td>
-                <td>Genuine Apple full lid assembly</td>
-                <td>Third-party copy LCD / low-nit panel</td>
-              </tr>
-              <tr>
-                <td><strong>Original lid &amp; camera kept</strong></td>
-                <td class="col-icorrect">Yes, unless lid is bent or damaged</td>
-                <td>No, whole lid replaced</td>
-                <td>Usually replaced with lower-grade shell</td>
-              </tr>
-              <tr>
-                <td><strong>True Tone &amp; brightness</strong></td>
-                <td class="col-icorrect">Preserved and tested during QC</td>
-                <td>Preserved</td>
-                <td>Often lost or visibly dimmer</td>
-              </tr>
-              <tr>
-                <td><strong>Warranty length</strong></td>
-                <td class="col-icorrect">2-year iCorrect warranty</td>
-                <td>90 days on out-of-warranty repairs</td>
-                <td>Typically 30 to 90 days</td>
-              </tr>
-              <tr>
-                <td><strong>Typical cost</strong></td>
-                <td class="col-icorrect">30% to 50% less than full-lid swap</td>
-                <td>Highest (full assembly pricing)</td>
-                <td>Cheaper upfront, higher failure rate</td>
-              </tr>
-              <tr>
-                <td><strong>Board-level fault backup</strong></td>
-                <td class="col-icorrect">In-house microelectronics team</td>
-                <td>Full logic board swap only</td>
-                <td>Outsourced or returned unfixed</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="proof-split">
-          <div class="warranty-card">
-            <span class="mono-label">2-Year Warranty Included</span>
-            <h3>Two full years of cover on every MacBook screen.</h3>
-            <p style="margin:0;font-size:14px;color:var(--fg-2);">Every MacBook screen repair leaves our Fitzrovia bench with a 2-year warranty covering both the genuine Apple display panel and our workmanship. New physical impact or liquid damage is excluded.</p>
+          <!-- Connected 2-Year Warranty Card -->
+          <div class="warranty-bar" id="warranty">
+            <div>
+              <span class="mono-label">2-Year Warranty Included</span>
+              <h3>Two full years of cover. No asterisks.</h3>
+              <p>Covers the genuine Apple display panel and our workmanship for 24 months with zero excess on re-work. New impact or liquid damage is excluded.</p>
+            </div>
             <ul class="check-list">
               <li><span class="check-mark">&#10003;</span><span>Display panel &amp; backlight faults covered</span></li>
               <li><span class="check-mark">&#10003;</span><span>Fitting, alignment &amp; hinge calibration covered</span></li>
@@ -1730,48 +1247,99 @@
               <li><span class="check-mark">&#10003;</span><span>Your data stays untouched on your MacBook</span></li>
             </ul>
           </div>
-
-          <div class="video-slot-card">
-            <span class="mono-label">Workshop Video Slot (Ready for YouTube)</span>
-            <h3>See how Ricky and the team repair your screen.</h3>
-            <p style="margin:0;font-size:13.5px;color:var(--fg-2);">Dedicated responsive slot reserved here for Ricky's YouTube walkthrough explaining panel-only replacement, in-house calibration, and our 2-year warranty.</p>
-            <div class="video-placeholder">
-              <div class="play-circle" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-              </div>
-              <div>
-                <strong style="display:block;font-size:13.5px;color:var(--fg-1);">YouTube walkthrough ready to embed</strong>
-                <span style="font-size:12px;color:var(--fg-3);">Drops straight into this slot with VideoObject schema once filmed.</span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>
 
-    <!-- 6. GOOGLE REVIEWS (TRUSTINDEX WIDGET SLOT, ZERO FAKE CARDS) -->
-    <section class="section" id="google-reviews">
-      <div class="container">
-        <div class="reviews-box">
-          <div class="reviews-head">
-            <div>
-              <span class="mono-label">Verified Client Reviews</span>
-              <h2 class="section-title" style="margin:6px 0 0;font-size:26px;">Google reviews</h2>
+    <!-- 4. LIVE, UNTOUCHED QUOTE WIZARD (INJECTED DIRECTLY FROM sections/quote-wizard.liquid) -->
+    <section class="wizard-band" id="quote-section" aria-label="MacBook Screen Repair Quote Wizard">
+      <div class="ic-container">
+        <div class="wizard-intro">
+          <span class="mono-label">Live Quote Tool (Untouched Shopify Wizard)</span>
+          <h2>Check your exact MacBook screen price</h2>
+          <p>Select your MacBook model to see your fixed upfront price and live collection options for your postcode.</p>
+        </div>
+        <div class="wizard-live-host">
+          <!-- LIVE_QUOTE_WIZARD_SLOT -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. CONCISE PROCESS FLOWCHART -->
+    <section class="section" id="our-process">
+      <div class="ic-container">
+        <div class="section-head">
+          <span class="mono-label">How It Works</span>
+          <h2 class="section-title">Collection to calibrated return in 2 working days.</h2>
+          <p class="section-lead">Four clear steps from your door to our Fitzrovia bench and back, with updates at every stage.</p>
+        </div>
+
+        <ol class="flowchart">
+          <li class="flow-node">
+            <div class="flow-head">
+              <span class="flow-badge">01</span>
+              <span class="flow-tag">Free £200+</span>
             </div>
-            <a class="btn-outline" href="https://maps.google.com/?q=iCorrect+12+Margaret+Street+London" target="_blank" rel="noopener">
-              <span class="trust-stars" style="margin:0;" aria-hidden="true">
-                <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-                <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-                <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-                <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-                <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-              </span>
-              <span>4.8 from 750+ Google reviews &rarr;</span>
-            </a>
+            <div class="flow-body">
+              <h3>Book &amp; collect</h3>
+              <p>Same-day London courier in selected zones, or a free tracked, insured UK mail-in pack to your door.</p>
+            </div>
+          </li>
+
+          <li class="flow-node">
+            <div class="flow-head">
+              <span class="flow-badge">02</span>
+              <span class="flow-tag">Intake check</span>
+            </div>
+            <div class="flow-body">
+              <h3>Pre-repair inspection</h3>
+              <p>We test backlight rails, hinges, and flex cables first. Any deeper fault is quoted before extra work starts.</p>
+            </div>
+          </li>
+
+          <li class="flow-node">
+            <div class="flow-head">
+              <span class="flow-badge">03</span>
+              <span class="flow-tag">In-house bench</span>
+            </div>
+            <div class="flow-body">
+              <h3>Panel fit &amp; calibrate</h3>
+              <p>Genuine Apple display panel fitted into your original lid, then calibrated for True Tone, colour, and brightness.</p>
+            </div>
+          </li>
+
+          <li class="flow-node">
+            <div class="flow-head">
+              <span class="flow-badge">04</span>
+              <span class="flow-tag">2 working days</span>
+            </div>
+            <div class="flow-body">
+              <h3>Insured return</h3>
+              <p>Completed within 2 working days once your MacBook reaches our workshop, returned insured with 2-year cover.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 6. RICKY'S CLEANER MODEL FINDER DESIGN -->
+    <section class="section section-soft" id="identify">
+      <div class="ic-container">
+        <div class="identify">
+          <div class="identify-visual">
+            <img src="./assets/macbook-model-number.svg" alt="The model number is printed on the underside of a MacBook, near the hinge">
+            <p class="identify-caption">Look on the underside, near the hinge</p>
           </div>
-          <div class="trustindex-embed-preview">
-            <strong>Live Trustindex Widget mounts here in Shopify</strong>
-            <p style="margin:6px 0 0;">Uses the live loader from PR #133 (<code>cdn.trustindex.io/loader.js?47cc7ef8590e8871fa062160cf7</code>) with reserved height (<code>320px</code> desktop / <code>420px</code> mobile), zero fake review cards, and zero self-serving star-rating schema markup.</p>
+          <div>
+            <span class="mono-label">Not sure which model you have?</span>
+            <h2 class="section-title">Find your model number in a few seconds.</h2>
+            <p class="section-lead">Flip your MacBook over and look for the four-character code starting with <strong>A</strong> near the hinge (for example A2442), or enter your serial number to match the exact screen repair.</p>
+            <form class="identify-form" id="identify-form">
+              <input id="identify-input" type="text" name="model" placeholder="Model code (A2442) or serial number" aria-label="Model code or serial number" autocomplete="off">
+              <button class="identify-btn" type="submit">Identify</button>
+            </form>
+            <div class="identify-result" id="identify-result" aria-live="polite"></div>
+            <p class="identify-alt"><a href="#quote-section">Or browse models in the quote wizard -&gt;</a></p>
           </div>
         </div>
       </div>
@@ -1779,14 +1347,14 @@
 
     <!-- 7. FAQS ORDERED BY POSTHOG CLICK DATA -->
     <section class="section section-dark" id="faqs">
-      <div class="container">
+      <div class="ic-container">
         <div class="section-head">
           <span class="mono-label" style="color:rgba(255,255,255,0.55);">Frequently Asked Questions</span>
           <h2 class="section-title">Straight answers before you book.</h2>
           <p class="section-lead">Ordered by the questions MacBook owners check most often before booking a screen repair.</p>
         </div>
 
-        <div class="faq-list" id="faq-list">
+        <div class="faq-list">
           <div class="faq-item is-open">
             <button type="button" class="faq-btn" aria-expanded="true">
               <span>How much does a MacBook screen repair cost compared to the Apple Store?</span>
@@ -1870,18 +1438,18 @@
       </div>
     </section>
 
-    <!-- 8. FITZROVIA WORKSHOP & INTERNAL MODEL LINKS -->
+    <!-- 8. FITZROVIA WORKSHOP & INTERNAL LINKS -->
     <section class="section section-soft">
-      <div class="container">
+      <div class="ic-container">
         <div class="footer-grid">
           <div class="workshop-card">
             <span class="mono-label">Fitzrovia Workshop</span>
             <h3>iCorrect London</h3>
             <p style="margin:0;font-size:14px;color:var(--fg-2);">12 Margaret Street, Audley House, Fitzrovia, London W1W 8JQ<br>Phone: 020 7099 8517 | Email: support@icorrect.co.uk</p>
             <div class="hours-grid">
-              <strong>Mon to Fri</strong><span>9am to 6pm</span>
+              <strong>Mon to Thu</strong><span>9am to 6pm</span>
+              <strong>Friday</strong><span>10am to 6pm</span>
               <strong>Sat &amp; Sun</strong><span>Closed</span>
-              <strong>Service</strong><span>Courier collection &amp; tracked UK mail-in only</span>
             </div>
           </div>
 
@@ -1889,11 +1457,11 @@
             <div class="seo-link-group">
               <h4>MacBook Screen Ranges</h4>
               <ul>
-                <li><a href="#quote-wizard" data-jump-family="air-13">MacBook Air 13" Screen Repair (from £299)</a></li>
-                <li><a href="#quote-wizard" data-jump-family="air-15">MacBook Air 15" Screen Repair (from £449)</a></li>
-                <li><a href="#quote-wizard" data-jump-family="pro-13">MacBook Pro 13" Screen Repair (from £299)</a></li>
-                <li><a href="#quote-wizard" data-jump-family="pro-14">MacBook Pro 14" Screen Repair (from £549)</a></li>
-                <li><a href="#quote-wizard" data-jump-family="pro-16">MacBook Pro 16" Screen Repair (£599 to £799)</a></li>
+                <li><a href="#quote-section">MacBook Air 13" Screen Repair (from £299)</a></li>
+                <li><a href="#quote-section">MacBook Air 15" Screen Repair (from £449)</a></li>
+                <li><a href="#quote-section">MacBook Pro 13" Screen Repair (from £299)</a></li>
+                <li><a href="#quote-section">MacBook Pro 14" Screen Repair (from £549)</a></li>
+                <li><a href="#quote-section">MacBook Pro 16" Screen Repair (£599 to £799)</a></li>
               </ul>
             </div>
             <div class="seo-link-group">
@@ -1915,184 +1483,16 @@
 
   <script>
     (function () {
-      const FAMILIES = [
-        {
-          id: "air-13",
-          name: 'MacBook Air 13"',
-          meta: "M4, M3, M2, M1 & Intel Retina (A3240 to A1932)",
-          range: "from £299",
-          models: [
-            { name: 'MacBook Air 13" M4 (2025)', code: "A3240", price: 449 },
-            { name: 'MacBook Air 13" M3 (2024)', code: "A3113", price: 429 },
-            { name: 'MacBook Air 13" M2 (2022)', code: "A2681", price: 399 },
-            { name: 'MacBook Air 13" M1 (2020)', code: "A2337", price: 329 },
-            { name: 'MacBook Air 13" Intel (2018-2020)', code: "A2179 / A1932", price: 299 }
-          ]
-        },
-        {
-          id: "air-15",
-          name: 'MacBook Air 15"',
-          meta: "M4, M3 & M2 models (A3241, A3114, A2941)",
-          range: "from £449",
-          models: [
-            { name: 'MacBook Air 15" M4 (2025)', code: "A3241", price: 499 },
-            { name: 'MacBook Air 15" M3 (2024)', code: "A3114", price: 479 },
-            { name: 'MacBook Air 15" M2 (2023)', code: "A2941", price: 449 }
-          ]
-        },
-        {
-          id: "pro-13",
-          name: 'MacBook Pro 13"',
-          meta: "M2, M1 & Intel Touch Bar (A2338, A2289, A2159, A1989)",
-          range: "from £299",
-          models: [
-            { name: 'MacBook Pro 13" M2 (2022)', code: "A2338", price: 349 },
-            { name: 'MacBook Pro 13" M1 (2020)', code: "A2338", price: 329 },
-            { name: 'MacBook Pro 13" Intel (2020)', code: "A2289 / A2251", price: 319 },
-            { name: 'MacBook Pro 13" Intel (2018-2019)', code: "A2159 / A1989", price: 299 }
-          ]
-        },
-        {
-          id: "pro-14",
-          name: 'MacBook Pro 14" Liquid Retina XDR',
-          meta: "M4, M3, M2 & M1 Pro/Max (A3112, A2992, A2779, A2442)",
-          range: "from £549",
-          models: [
-            { name: 'MacBook Pro 14" M4 (2024)', code: "A3112 / A3401", price: 629 },
-            { name: 'MacBook Pro 14" M3 (2023)', code: "A2918 / A2992", price: 599 },
-            { name: 'MacBook Pro 14" M2 (2023)', code: "A2779", price: 579 },
-            { name: 'MacBook Pro 14" M1 (2021)', code: "A2442", price: 549 }
-          ]
-        },
-        {
-          id: "pro-16",
-          name: 'MacBook Pro 16" Liquid Retina XDR',
-          meta: "M4, M3, M2, M1 & Intel (A3403, A2991, A2780, A2485, A2141)",
-          range: "£599 to £799",
-          models: [
-            { name: 'MacBook Pro 16" M4 (2024)', code: "A3403 / A3186", price: 799 },
-            { name: 'MacBook Pro 16" M3 (2023)', code: "A2991", price: 749 },
-            { name: 'MacBook Pro 16" M2 (2023)', code: "A2780", price: 699 },
-            { name: 'MacBook Pro 16" M1 (2021)', code: "A2485", price: 649 },
-            { name: 'MacBook Pro 16" Intel (2019)', code: "A2141", price: 599 }
-          ]
-        }
-      ];
-
-      const LONDON_PREFIXES = ["W", "WC", "EC", "SW", "NW", "N", "E", "SE"];
-      const state = { step: 1, model: null, fault: null, postcode: "" };
-
-      const familyListEl = document.getElementById("qw-family-list");
-      function renderFamilies(expandedId) {
-        familyListEl.innerHTML = "";
-        FAMILIES.forEach((fam) => {
-          const isOpen = fam.id === expandedId;
-          const card = document.createElement("div");
-          card.className = "qw-family" + (isOpen ? " is-expanded" : "");
-          card.dataset.familyId = fam.id;
-          card.innerHTML = `
-            <button type="button" class="qw-family-trigger" aria-expanded="${isOpen}">
-              <div>
-                <div class="qw-family-name">${fam.name}</div>
-                <div class="qw-family-meta">${fam.meta}</div>
-              </div>
-              <div class="qw-family-right">
-                <span class="qw-family-price">${fam.range}</span>
-                <svg class="qw-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 7.5l5 5 5-5"/></svg>
-              </div>
-            </button>
-            <div class="qw-model-grid">
-              ${fam.models.map((m, idx) => `
-                <button type="button" class="qw-model-btn" data-fam="${fam.id}" data-idx="${idx}">
-                  <span><strong>${m.name}</strong><small>${m.code}</small></span>
-                  <span class="qw-model-price">£${m.price}</span>
-                </button>
-              `).join("")}
-            </div>
-          `;
-          card.querySelector(".qw-family-trigger").addEventListener("click", () => {
-            renderFamilies(isOpen ? null : fam.id);
-          });
-          card.querySelectorAll(".qw-model-btn").forEach((btn) => {
-            btn.addEventListener("click", () => {
-              const m = fam.models[Number(btn.dataset.idx)];
-              state.model = m;
-              document.getElementById("qw-chip-step2").textContent = `${m.name} (${m.code}) | £${m.price}`;
-              goStep(2);
-            });
-          });
-          familyListEl.appendChild(card);
-        });
-      }
-
-      function goStep(stepNum) {
-        state.step = stepNum;
-        document.querySelectorAll("[data-step-panel]").forEach((p) => {
-          p.classList.toggle("is-open", Number(p.dataset.stepPanel) === stepNum);
-        });
-        document.querySelectorAll("[data-step-btn]").forEach((b) => {
-          const n = Number(b.dataset.stepBtn);
-          b.classList.toggle("is-current", n === stepNum);
-          b.classList.toggle("is-done", n < stepNum);
-        });
-      }
-
-      document.querySelectorAll("[data-go-step]").forEach((btn) => {
-        btn.addEventListener("click", () => goStep(Number(btn.dataset.goStep)));
-      });
-      document.querySelectorAll("[data-step-btn]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const n = Number(btn.dataset.stepBtn);
-          if (n <= state.step) goStep(n);
-        });
-      });
-
-      document.querySelectorAll("[data-jump-family]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const famId = btn.dataset.jumpFamily;
-          document.querySelectorAll(".price-chip").forEach((c) => {
-            c.classList.toggle("is-active", c.dataset.jumpFamily === famId);
-          });
-          goStep(1);
-          renderFamilies(famId);
-          document.getElementById("quote-wizard").scrollIntoView({ behavior: "smooth", block: "nearest" });
-        });
-      });
-
-      document.querySelectorAll("[data-fault]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          state.fault = btn.dataset.fault;
-          document.getElementById("qw-chip-step3").textContent = `${state.model.name} | ${state.fault}`;
-          goStep(3);
-        });
-      });
-
-      document.getElementById("qw-postcode-submit").addEventListener("click", () => {
-        const raw = (document.getElementById("qw-postcode").value || "").trim().toUpperCase();
-        if (!raw) {
-          document.getElementById("qw-postcode").focus();
-          return;
-        }
-        state.postcode = raw;
-        const prefixMatch = raw.match(/^[A-Z]{1,2}/);
-        const isLondon = prefixMatch && LONDON_PREFIXES.includes(prefixMatch[0]);
-        document.getElementById("qw-summary-route").textContent = isLondon
-          ? "FREE LONDON COURIER COLLECTION (SAME-DAY IN SELECTED ZONES)"
-          : "FREE INSURED UK MAIL-IN PACK (TRACKED BOTH WAYS)";
-        document.getElementById("qw-summary-title").textContent = `${state.model.name} Screen Repair`;
-        document.getElementById("qw-summary-sub").textContent = `Fault: ${state.fault} | Postcode: ${raw}`;
-        document.getElementById("qw-summary-price").textContent = `£${state.model.price}`;
-        goStep(4);
-      });
-
       // Exploded / Assembled SVG toggle
-      document.querySelectorAll("[data-diagram]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const mode = btn.dataset.diagram;
-          document.querySelectorAll("[data-diagram]").forEach((b) => b.classList.toggle("is-active", b === btn));
-          const pic = document.getElementById("macbook-diagram-picture");
-          const img = document.getElementById("macbook-diagram-img");
-          const src = pic.querySelector("source");
+      document.querySelectorAll("[data-diagram]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var mode = btn.getAttribute("data-diagram");
+          document.querySelectorAll("[data-diagram]").forEach(function (b) {
+            b.classList.toggle("is-active", b === btn);
+          });
+          var pic = document.getElementById("macbook-diagram-picture");
+          var img = document.getElementById("macbook-diagram-img");
+          var src = pic.querySelector("source");
           if (mode === "assembled") {
             src.srcset = "./assets/macbook-display-assembly-assembled.svg";
             img.src = "./assets/macbook-display-assembly-assembled.svg";
@@ -2103,57 +1503,75 @@
         });
       });
 
-      // Model finder lookup
-      function lookupModel(codeRaw) {
-        const q = codeRaw.trim().toUpperCase();
-        const resEl = document.getElementById("model-finder-result");
-        if (!q) return;
-        let found = null;
-        FAMILIES.forEach((fam) => {
-          fam.models.forEach((m) => {
-            if (m.code.toUpperCase().includes(q)) found = { fam, m };
-          });
-        });
-        resEl.classList.add("is-visible");
-        if (found) {
-          resEl.innerHTML = `
-            <div><strong>${found.m.name} (${found.m.code})</strong> | Genuine display panel repair: <strong>£${found.m.price}</strong></div>
-            <button type="button" class="btn-dark" id="finder-use-model">Quote this model -&gt;</button>
-          `;
-          document.getElementById("finder-use-model").addEventListener("click", () => {
-            state.model = found.m;
-            document.getElementById("qw-chip-step2").textContent = `${found.m.name} (${found.m.code}) | £${found.m.price}`;
-            goStep(2);
-            document.getElementById("quote-wizard").scrollIntoView({ behavior: "smooth" });
-          });
-        } else {
-          resEl.innerHTML = `<span>Model <strong>${q}</strong> was not matched in this preview list. Select your screen size in the wizard above or contact support@icorrect.co.uk.</span>`;
-        }
-      }
-      document.getElementById("model-finder-form").addEventListener("submit", (e) => {
-        e.preventDefault();
-        lookupModel(document.getElementById("model-finder-input").value);
-      });
-      document.querySelectorAll("[data-try-model]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const code = btn.dataset.tryModel;
-          document.getElementById("model-finder-input").value = code;
-          lookupModel(code);
+      // Mobile expandable pillars (collapsed on <=600px, always open on desktop)
+      document.querySelectorAll("[data-pillar]").forEach(function (card) {
+        var btn = card.querySelector(".pillar-toggle");
+        var plus = card.querySelector(".pillar-plus");
+        btn.addEventListener("click", function () {
+          if (window.innerWidth > 600) return;
+          var open = !card.classList.contains("is-open");
+          card.classList.toggle("is-open", open);
+          btn.setAttribute("aria-expanded", String(open));
+          if (plus) plus.textContent = open ? "-" : "+";
         });
       });
 
+      // Model finder lookup (matches Ricky's clean inline pattern)
+      var MODELS = [
+        { code: "A3240", name: 'MacBook Air 13" M4 (2025)', price: "from £479" },
+        { code: "A3113", name: 'MacBook Air 13" M3 (2024)', price: "from £429" },
+        { code: "A2681", name: 'MacBook Air 13" M2 (2022)', price: "from £399" },
+        { code: "A2337", name: 'MacBook Air 13" M1 (2020)', price: "from £339" },
+        { code: "A2179", name: 'MacBook Air 13" (2020)', price: "from £299" },
+        { code: "A1932", name: 'MacBook Air 13" (2018-2019)', price: "from £299" },
+        { code: "A3241", name: 'MacBook Air 15" M4 (2025)', price: "from £519" },
+        { code: "A3114", name: 'MacBook Air 15" M3 (2024)', price: "from £469" },
+        { code: "A2941", name: 'MacBook Air 15" M2 (2023)', price: "from £449" },
+        { code: "A2338", name: 'MacBook Pro 13" M1 / M2 (2020-2022)', price: "from £399" },
+        { code: "A2289", name: 'MacBook Pro 13" (2020)', price: "from £329" },
+        { code: "A2251", name: 'MacBook Pro 13" (2020)', price: "from £329" },
+        { code: "A2159", name: 'MacBook Pro 13" (2019)', price: "from £329" },
+        { code: "A1989", name: 'MacBook Pro 13" (2018-2019)', price: "from £299" },
+        { code: "A3112", name: 'MacBook Pro 14" M4 (2024)', price: "from £649" },
+        { code: "A2992", name: 'MacBook Pro 14" M3 Pro/Max (2023)', price: "from £599" },
+        { code: "A2918", name: 'MacBook Pro 14" M3 (2023)', price: "from £599" },
+        { code: "A2779", name: 'MacBook Pro 14" M2 Pro/Max (2023)', price: "from £599" },
+        { code: "A2442", name: 'MacBook Pro 14" M1 Pro/Max (2021)', price: "from £549" },
+        { code: "A3403", name: 'MacBook Pro 16" M4 Pro/Max (2024)', price: "from £799" },
+        { code: "A3186", name: 'MacBook Pro 16" M4 Pro/Max (2024)', price: "from £799" },
+        { code: "A2991", name: 'MacBook Pro 16" M3 Pro/Max (2023)', price: "from £699" },
+        { code: "A2780", name: 'MacBook Pro 16" M2 Pro/Max (2023)', price: "from £639" },
+        { code: "A2485", name: 'MacBook Pro 16" M1 Pro/Max (2021)', price: "from £599" },
+        { code: "A2141", name: 'MacBook Pro 16" (2019)', price: "from £649" }
+      ];
+
+      document.getElementById("identify-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var raw = (document.getElementById("identify-input").value || "").trim().toUpperCase();
+        var out = document.getElementById("identify-result");
+        if (!raw) return;
+        var match = MODELS.find(function (m) { return m.code === raw || raw.indexOf(m.code) !== -1; });
+        out.classList.add("is-visible");
+        if (match) {
+          out.innerHTML =
+            '<span><strong>' + match.name + ' (' + match.code + ')</strong> · Screen repair ' + match.price + '</span>' +
+            '<a class="btn-dark" style="min-height:34px;padding:5px 12px;font-size:13px;" href="#quote-section">Open in quote wizard -&gt;</a>';
+        } else {
+          out.innerHTML =
+            '<span>Could not match <strong>' + raw.replace(/[<>&"]/g, "") + '</strong> directly. Browse your MacBook in the <a href="#quote-section" style="color:var(--accent);font-weight:500;">quote wizard above</a>.</span>';
+        }
+      });
+
       // FAQ Accordion
-      document.querySelectorAll(".faq-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const item = btn.closest(".faq-item");
-          const open = !item.classList.contains("is-open");
+      document.querySelectorAll(".faq-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var item = btn.closest(".faq-item");
+          var open = !item.classList.contains("is-open");
           item.classList.toggle("is-open", open);
           btn.setAttribute("aria-expanded", String(open));
           btn.querySelector(".faq-icon").textContent = open ? "-" : "+";
         });
       });
-
-      renderFamilies(null);
     })();
   </script>
 </body>
