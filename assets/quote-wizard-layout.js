@@ -213,9 +213,31 @@
     return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
   }
 
+  function readCookieBannerHeight() {
+    var vh = window.innerHeight || (document.documentElement && document.documentElement.clientHeight) || 0;
+    var best = 0;
+    if (document.documentElement && document.documentElement.style && document.documentElement.style.getPropertyValue) {
+      var raw = parseFloat(document.documentElement.style.getPropertyValue('--qw-cookie-h'));
+      if (isFinite(raw) && raw > 0) best = Math.ceil(raw);
+    }
+    var banner = document.querySelector('#shopify-pc__banner, .shopify-pc__banner__dialog');
+    if (banner && !banner.hidden) {
+      var st = window.getComputedStyle ? window.getComputedStyle(banner) : null;
+      var visible = !st || (st.position === 'fixed' && st.display !== 'none' && st.visibility !== 'hidden' && !(isFinite(parseFloat(st.opacity)) && parseFloat(st.opacity) <= 0));
+      if (visible && banner.getBoundingClientRect) {
+        var r = banner.getBoundingClientRect();
+        if (r && r.height > 0 && (!vh || (r.height < vh * 0.65 && r.bottom >= vh - 12))) {
+          var h = Math.ceil(r.height);
+          if (h > best) best = h;
+        }
+      }
+    }
+    return best;
+  }
+
   /* After a postcode:
-     Mobile: anchor on #qwPostcodeCard (8px below sticky header) so postcode chip,
-     all-in total, collection notice, and Proceed all land above the cookie banner.
+     Mobile: anchor on #qwPostcodeCard (6px below sticky header) and nudge down
+     if needed so both the all-in price card and Proceed clear the cookie banner.
      Desktop: show the card top with the sticky summary beside the questions. */
   function focus() {
     setTimeout(function () {
@@ -224,7 +246,7 @@
         var hb = head ? head.getBoundingClientRect() : null;
         var off = hb && hb.top <= 1 ? Math.max(0, hb.bottom) : 0;
         var t;
-        var gap = 8;
+        var gap = 6;
         if (wide()) {
           var choice = $('qwDeliveryChoice');
           if (!choice || choice.hidden || !choice.offsetParent) choice = $('qwPostcodeCard');
@@ -239,6 +261,29 @@
         }
         if (!t) return;
         var y = t.getBoundingClientRect().top - off - gap;
+        if (!wide()) {
+          var bookBtn = $('qwBookBtn');
+          var vh = window.innerHeight || (document.documentElement && document.documentElement.clientHeight) || 0;
+          if (bookBtn && vh > 0 && bookBtn.getBoundingClientRect) {
+            var bookRect = bookBtn.getBoundingClientRect();
+            if (bookRect && bookRect.height > 0) {
+              var cookieH = readCookieBannerHeight();
+              var safeBottom = vh - cookieH - 8;
+              var overflow = (bookRect.bottom - y) - safeBottom;
+              if (overflow > 0) {
+                var priceCard = document.querySelector('#qwSummary .qw-price-trust-price');
+                var maxExtra = overflow;
+                if (priceCard && priceCard.getBoundingClientRect) {
+                  var priceRect = priceCard.getBoundingClientRect();
+                  if (priceRect && priceRect.height > 0) {
+                    maxExtra = Math.max(0, (priceRect.top - y) - (off + 4));
+                  }
+                }
+                y += Math.min(overflow, maxExtra);
+              }
+            }
+          }
+        }
         if (Math.abs(y) < 4) return;
         var smooth = !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
         window.scrollBy({ top: y, behavior: smooth ? 'smooth' : 'auto' });

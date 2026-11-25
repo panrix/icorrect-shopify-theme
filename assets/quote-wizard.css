@@ -2819,15 +2819,18 @@ html.qw-consent-bar-on #qw-sticky-cta.qw-sticky-cta{padding-bottom:10px}
   .qw-res-p{margin-bottom:12px}
   .qw-res--split .qw-res-service{padding:0 16px 0 !important}
   #qwPostcodeCard.qw-postcode-card-resolved{padding:8px 12px;margin-bottom:6px}
-  #qwPostcodeCard.qw-postcode-card-resolved .qw-pc-change{margin:-6px 0}
+  #qwPostcodeCard.qw-postcode-card-resolved .qw-pc-change{min-height:44px;margin:-6px 0}
   #qwSummary{gap:10px;padding:8px 16px 20px}
-  #qwSummary.qw-priced{padding-bottom:calc(88px + var(--qw-cookie-h,0px))}
-  #qwSummary .qw-price-trust-price{padding:12px 14px}
-  #qwSummary .qw-price-big{font-size:34px;line-height:1.05}
-  #qwSummary .qw-sum-eta{margin-top:4px;font-size:13px;line-height:1.35}
-  #qwSummary .qw-klarna{margin-top:8px;padding-top:8px;gap:4px 8px;font-size:12.5px}
-  #qwSummary .qw-klarna-note{font-size:11.5px;line-height:1.3}
-  #qwSummary #qwCollectionNotice{padding:8px 10px}
+  #qwSummary.qw-priced{gap:8px;padding-top:8px;padding-bottom:calc(96px + var(--qw-cookie-h,0px))}
+  #qwSummary.qw-priced .qw-price-trust-price{padding:10px 12px;gap:4px}
+  #qwSummary.qw-priced .qw-price-big{font-size:32px;line-height:1.08}
+  #qwSummary.qw-priced .qw-sum-eta{margin-top:2px;font-size:13px;line-height:1.35}
+  #qwSummary.qw-priced .qw-klarna{margin-top:6px;padding-top:6px;gap:4px 8px;font-size:12px}
+  #qwSummary.qw-priced .qw-klarna-note{font-size:11px;line-height:1.3}
+  #qwSummary.qw-priced #qwCollectionNotice{padding:8px 10px;font-size:13px !important;line-height:17px !important}
+  #qwSummary.qw-priced #qwCollectionNotice .qw-collect-copy,
+  #qwSummary.qw-priced #qwCollectionNotice .qw-collect-strong,
+  #qwSummary.qw-priced #qwCollectionNotice .qw-collect-rest{font-size:13px !important;line-height:17px !important}
   #qwSummary .qw-slot-panel{margin-top:10px}
   #qwJourney:not(.qw-jr-open){display:none}
   #qwJourney.qw-jr-open .qw-journey{margin-top:4px}

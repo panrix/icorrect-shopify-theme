@@ -4754,7 +4754,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
     if (typeof document === 'undefined' || typeof window === 'undefined') return 0;
     var vh = window.innerHeight || (document.documentElement && document.documentElement.clientHeight) || 0;
     if (!vh) return 0;
-    var maxH = Math.floor(vh * 0.5);
+    var maxH = Math.floor(vh * 0.65);
     var nodes = document.querySelectorAll('#shopify-pc__banner, .shopify-pc__banner__dialog');
     var best = 0;
     for (var i = 0; i < nodes.length; i++) {
@@ -4768,7 +4768,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
         if (isFinite(op) && op <= 0) continue;
       }
       var rect = el.getBoundingClientRect ? el.getBoundingClientRect() : null;
-      if (!rect || rect.height <= 0 || rect.height >= vh * 0.5) continue;
+      if (!rect || rect.height <= 0 || rect.height >= vh * 0.65) continue;
       if (rect.bottom < vh - 12) continue;
       var h = Math.ceil(rect.height);
       if (h > maxH) h = maxH;
