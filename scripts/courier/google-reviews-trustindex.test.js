@@ -91,6 +91,7 @@ describe('storefront rating copy', () => {
     { name: '719 review count', re: /719\s*\+?\s*Google reviews/i },
     { name: '700+ review count', re: /700\+\s*(?:Google\s+)?reviews/i },
     { name: 'aggregateRating JSON-LD', re: /aggregateRating|AggregateRating|"reviewCount"\s*:\s*"700"/ },
+    { name: 'devices repaired count', re: /(?:100,000|250,000|65,000)\+\s*(?:<\/strong>\s*)?devices repaired/i },
   ];
 
   function filesUnder(dir, acc) {
