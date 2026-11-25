@@ -282,13 +282,13 @@
     .breadcrumb a { text-decoration: none; color: var(--fg-3); }
     .breadcrumb a:hover { color: var(--fg-1); }
 
-    /* Trust Strip above H1 */
+    /* 4-Badge Trust Strip above H1 */
     .trust-strip {
       margin: 0 0 22px;
       padding: 0;
       list-style: none;
       display: grid;
-      grid-template-columns: 1.28fr 1.12fr 1.12fr 0.92fr 1fr;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       background: var(--bg-2);
       border: 1px solid var(--line);
       border-radius: var(--r-md);
@@ -380,50 +380,47 @@
       text-wrap: pretty;
     }
 
-    /* Calm From-Prices List below H1 */
-    .hero-prices {
+    /* Original v1 From-Price Tiles below H1 */
+    .price-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .price-chip {
+      width: 100%;
+      text-align: left;
+      padding: 9px 12px;
+      border-radius: var(--r-sm);
       border: 1px solid var(--line);
-      border-radius: var(--r-md);
-      background: var(--bg-2);
-      overflow: hidden;
-      max-width: 460px;
-    }
-    .hero-price-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 9px 14px;
-      text-decoration: none;
-      font-size: 13.5px;
-      color: var(--fg-2);
-      border-bottom: 1px solid var(--line);
-      transition: background 140ms ease, color 140ms ease;
-    }
-    .hero-price-row:last-child { border-bottom: 0; }
-    .hero-price-row:hover {
       background: #ffffff;
-      color: var(--fg-1);
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      transition: border-color 140ms ease, background 140ms ease;
     }
-    .hero-price-val {
-      font-weight: 600;
-      color: var(--fg-1);
-      white-space: nowrap;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    .price-chip:hover {
+      border-color: var(--fg-1);
+      background: var(--bg-2);
     }
-    .hero-price-arrow {
-      color: var(--fg-4);
-      font-family: var(--font-mono);
+    .price-chip-model {
       font-size: 12px;
+      font-weight: 500;
+      color: var(--fg-2);
     }
-    .hero-price-row:hover .hero-price-arrow { color: var(--accent); }
+    .price-chip-val {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--fg-1);
+    }
     .hero-price-note {
       margin: 8px 0 0;
       font-size: 12px;
       color: var(--fg-3);
-      max-width: 460px;
     }
     .hero-jump-row {
       margin-top: 14px;
@@ -1029,11 +1026,9 @@
     @media (max-width: 960px) {
       .nav-links, .status-pill { display: none; }
       .trust-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 16px; }
-      .trust-cell:first-child { grid-column: 1 / -1; border-bottom: 1px solid var(--line); border-right: 0; }
-      .trust-cell:nth-child(2), .trust-cell:nth-child(3) { border-bottom: 1px solid var(--line); }
-      .trust-cell:nth-child(3), .trust-cell:nth-child(5) { border-right: 0; }
+      .trust-cell:nth-child(1), .trust-cell:nth-child(2) { border-bottom: 1px solid var(--line); }
+      .trust-cell:nth-child(2), .trust-cell:nth-child(4) { border-right: 0; }
       .hero-grid, .visual-pair, .warranty-bar, .identify, .footer-grid { grid-template-columns: 1fr; }
-      .hero-prices, .hero-price-note { max-width: none; }
       .pillars-strip { grid-template-columns: 1fr; }
       .flowchart { grid-template-columns: 1fr; gap: 18px; }
       .flowchart::before {
@@ -1071,7 +1066,17 @@
       .trust-copy span { font-size: 10.5px; }
       .hero-title { font-size: 30px; margin-bottom: 8px; }
       .hero-lead { font-size: 14.5px; margin-bottom: 12px; }
-      .hero-price-row { padding: 8px 12px; font-size: 13px; }
+      .price-strip {
+        grid-template-columns: repeat(5, minmax(108px, 1fr));
+        overflow-x: auto;
+        padding-bottom: 2px;
+        gap: 6px;
+        scrollbar-width: none;
+      }
+      .price-strip::-webkit-scrollbar { display: none; }
+      .price-chip { padding: 7px 10px; }
+      .price-chip-model { font-size: 10.5px; }
+      .price-chip-val { font-size: 13px; }
       .hero-grid { gap: 18px; }
       .hero-jump-row { margin-top: 10px; gap: 6px; }
       .btn-ghost { font-size: 12px; padding: 5px 10px; min-height: 32px; }
@@ -1139,7 +1144,7 @@
           <span>MacBook Screen Repair</span>
         </nav>
 
-        <!-- 5-Signal Trust Bar above H1 -->
+        <!-- 4-Badge Trust Bar above H1 -->
         <ul class="trust-strip" role="list" aria-label="Why choose iCorrect">
           <li class="trust-cell">
             <a class="trust-rating-link" href="#google-reviews">
@@ -1167,15 +1172,6 @@
           </li>
           <li class="trust-cell">
             <span class="trust-icon" aria-hidden="true">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M9 1v3m6-3v3M9 20v3m6-3v3M1 9h3m-3 6h3m16-6h3m-3 6h3"/></svg>
-            </span>
-            <span class="trust-copy">
-              <strong>Board-level specialists</strong>
-              <span>In-house microelectronics</span>
-            </span>
-          </li>
-          <li class="trust-cell">
-            <span class="trust-icon" aria-hidden="true">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
             </span>
             <span class="trust-copy">
@@ -1199,28 +1195,38 @@
             <h1 class="hero-title">MacBook Screen Repair</h1>
             <p class="hero-lead">Cracked, flickering, or blank display? We replace the genuine Apple display panel only, keeping your original lid, camera, and hinges, backed by a 2-year warranty.</p>
 
-            <div class="hero-prices" aria-label="MacBook screen repair starting prices">
-              <a class="hero-price-row" href="#quote-section">
-                <span>MacBook Air 13"</span>
-                <span class="hero-price-val">from £299 <span class="hero-price-arrow" aria-hidden="true">-&gt;</span></span>
-              </a>
-              <a class="hero-price-row" href="#quote-section">
-                <span>MacBook Air 15"</span>
-                <span class="hero-price-val">from £449 <span class="hero-price-arrow" aria-hidden="true">-&gt;</span></span>
-              </a>
-              <a class="hero-price-row" href="#quote-section">
-                <span>MacBook Pro 13"</span>
-                <span class="hero-price-val">from £299 <span class="hero-price-arrow" aria-hidden="true">-&gt;</span></span>
-              </a>
-              <a class="hero-price-row" href="#quote-section">
-                <span>MacBook Pro 14"</span>
-                <span class="hero-price-val">from £549 <span class="hero-price-arrow" aria-hidden="true">-&gt;</span></span>
-              </a>
-              <a class="hero-price-row" href="#quote-section">
-                <span>MacBook Pro 16"</span>
-                <span class="hero-price-val">£599 to £799 <span class="hero-price-arrow" aria-hidden="true">-&gt;</span></span>
-              </a>
-            </div>
+            <ul class="price-strip" role="list" aria-label="MacBook screen repair starting prices">
+              <li>
+                <a class="price-chip" href="#quote-section">
+                  <span class="price-chip-model">MacBook Air 13"</span>
+                  <span class="price-chip-val">from £299</span>
+                </a>
+              </li>
+              <li>
+                <a class="price-chip" href="#quote-section">
+                  <span class="price-chip-model">MacBook Air 15"</span>
+                  <span class="price-chip-val">from £449</span>
+                </a>
+              </li>
+              <li>
+                <a class="price-chip" href="#quote-section">
+                  <span class="price-chip-model">MacBook Pro 13"</span>
+                  <span class="price-chip-val">from £299</span>
+                </a>
+              </li>
+              <li>
+                <a class="price-chip" href="#quote-section">
+                  <span class="price-chip-model">MacBook Pro 14"</span>
+                  <span class="price-chip-val">from £549</span>
+                </a>
+              </li>
+              <li>
+                <a class="price-chip" href="#quote-section">
+                  <span class="price-chip-model">MacBook Pro 16"</span>
+                  <span class="price-chip-val">£599 to £799</span>
+                </a>
+              </li>
+            </ul>
             <p class="hero-price-note">Includes genuine panel, calibration &amp; free UK collection (£200+). 2 working days in workshop.</p>
 
             <div class="hero-jump-row">
