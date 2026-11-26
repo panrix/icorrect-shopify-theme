@@ -3,8 +3,10 @@
  * Copy Shopify variant prices into the live quote-wizard catalogue.
  *
  * The wizard reads assets/repair-catalogue-map.json on the published theme.
- * This updates only the price on each repair row, matched by variant id.
- * It does not add, remove, or rename repairs.
+ * This updates the price on each repair row, matched by variant id, then
+ * recomputes the courier tag from that price (#119): courier:free when the
+ * price is £200 or more, and no free-courier tag below £200. It does not add,
+ * remove, or rename repairs.
  *
  *   node scripts/courier/sync-catalogue-prices.js           # write the theme asset when a price differs
  *   node scripts/courier/sync-catalogue-prices.js --dry-run
@@ -18,6 +20,12 @@ const API = process.env.SHOPIFY_API_VERSION || '2024-01';
 const THEME_ID = process.env.SHOPIFY_THEME_ID || '158358438141';
 const ASSET_KEY = 'assets/repair-catalogue-map.json';
 const BATCH = 50;
+
+/* Rick, 2026-10-09 (#119): repairs under £200 always pay for courier. */
+const FREE_COURIER_MIN_PRICE = 200;
+const FREE_TAG = 'courier:free';
+/* Tags that make courier free or cheaper. None may stay on a sub-£200 row. */
+const FREE_COURIER_TAG_RE = /^courier:(free|one-leg)$/i;
 
 function toCents(value) {
   const n = Number(value);
@@ -81,6 +89,63 @@ function applyVariantPrices(map, priceByVariantId) {
     }
   }
   return { changes, missing };
+}
+
+/**
+ * Pounds as integer pence, or null when the catalogue price is missing.
+ * null and "" are missing. Number(null) is 0, so those must be rejected here.
+ * @param {number|string|null|undefined} value
+ * @returns {number|null}
+ */
+function usablePriceCents(value) {
+  if (value == null || value === '') return null;
+  return toCents(value);
+}
+
+/**
+ * Recompute each repair row's courier tag from its (already synced) price.
+ * - price ≥ £200 and no courier tier tag yet: add courier:free.
+ * - price < £200: strip courier:free and courier:one-leg.
+ * An explicit courier:one-leg / paid tag on a ≥£200 row is left as it is.
+ * Rows with no usable price are left alone. Other tags are kept.
+ *
+ * @param {object} map parsed catalogue (mutated)
+ * @returns {{ tagChanges: object[] }}
+ */
+function applyCourierTiers(map) {
+  const tagChanges = [];
+  const models = map && map.models ? map.models : {};
+  for (const modelKey of Object.keys(models)) {
+    const repairs = models[modelKey].repairs || {};
+    for (const type of Object.keys(repairs)) {
+      const row = repairs[type];
+      if (!row) continue;
+      const cents = usablePriceCents(row.price);
+      if (cents == null) continue;
+      const before = Array.isArray(row.tags) ? row.tags.slice() : [];
+      let after;
+      if (cents >= FREE_COURIER_MIN_PRICE * 100) {
+        const hasTier = before.some((t) =>
+          /^courier:(free|one-leg|paid|subsidised|full)$/i.test(String(t))
+        );
+        after = hasTier ? before : before.concat(FREE_TAG);
+      } else {
+        after = before.filter((t) => !FREE_COURIER_TAG_RE.test(String(t)));
+      }
+      if (after.length === before.length && after.every((t, i) => t === before[i])) continue;
+      tagChanges.push({
+        modelKey,
+        type,
+        variantId: row.variantId,
+        handle: row.handle,
+        price: row.price,
+        from: before,
+        to: after,
+      });
+      row.tags = after;
+    }
+  }
+  return { tagChanges };
 }
 
 async function shopify(path, options) {
@@ -154,32 +219,41 @@ async function main() {
   const ids = collectVariantIds(map);
   const prices = await fetchVariantPrices(ids);
   const { changes, missing } = applyVariantPrices(map, prices);
+  const { tagChanges } = applyCourierTiers(map);
   console.log(JSON.stringify({
     dryRun,
     themeId: THEME_ID,
     variants: ids.length,
     shopifyPrices: Object.keys(prices).length,
     changed: changes.length,
+    tagsChanged: tagChanges.length,
     missing: missing.length,
     changes: changes.slice(0, 40),
+    tagChanges: tagChanges.slice(0, 40),
     missingSample: missing.slice(0, 10),
   }, null, 2));
-  if (!changes.length) {
-    console.log('No price changes. Catalogue left as it is.');
+  if (!changes.length && !tagChanges.length) {
+    console.log('No price or courier tag changes. Catalogue left as it is.');
     return;
   }
   if (dryRun) {
     console.log('Dry run. Theme asset not updated.');
     return;
   }
-  map.price_synced_at = new Date().toISOString();
+  if (changes.length) map.price_synced_at = new Date().toISOString();
+  if (tagChanges.length) map.courier_tags_synced_at = new Date().toISOString();
   await uploadCatalogue(map);
-  console.log('Updated ' + changes.length + ' prices on ' + ASSET_KEY);
+  console.log(
+    'Updated ' + changes.length + ' prices and ' + tagChanges.length +
+    ' courier tags on ' + ASSET_KEY
+  );
 }
 
 module.exports = {
   toCents,
   applyVariantPrices,
+  applyCourierTiers,
+  FREE_COURIER_MIN_PRICE,
   collectVariantIds,
 };
 

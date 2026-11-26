@@ -146,26 +146,51 @@ describe('outward → band lookup', () => {
   });
 });
 
-describe('resolveCourierTier (tags beat price)', () => {
-  it('courier:free → free', () => {
-    assert.equal(resolveCourierTier(['courier:free']), 'free');
-  });
-  it('courier:one-leg → one-leg', () => {
-    assert.equal(resolveCourierTier(['courier:one-leg']), 'one-leg');
-  });
-  it('untagged → paid', () => {
+describe('resolveCourierTier (price under £200 beats tags)', () => {
+  it('missing price fails safe to paid, even with a courier:free tag (#119)', () => {
+    assert.equal(resolveCourierTier(['courier:free']), 'paid');
+    assert.equal(resolveCourierTier(['courier:free'], null), 'paid');
+    assert.equal(resolveCourierTier(['courier:free'], ''), 'paid');
+    assert.equal(resolveCourierTier(['courier:free'], 'n/a'), 'paid');
+    assert.equal(resolveCourierTier(['courier:one-leg']), 'paid');
     assert.equal(resolveCourierTier([]), 'paid');
+  });
+  it('courier:one-leg applies only at £200 or more', () => {
+    assert.equal(resolveCourierTier(['courier:one-leg'], 179), 'paid');
+    assert.equal(resolveCourierTier(['courier:one-leg'], 250), 'one-leg');
   });
   it('untagged + price ≥£200 → free', () => {
     assert.equal(resolveCourierTier([], 200), 'free');
     assert.equal(resolveCourierTier([], 199), 'paid');
+    assert.equal(resolveCourierTier([], 199.99), 'paid');
   });
-  it('manual free tag wins under £200 (MacBook battery edge)', () => {
-    assert.equal(resolveCourierTier(['courier:free'], 199), 'free');
+  it('price under £200 always pays courier, even with a courier:free tag (#119)', () => {
+    assert.equal(resolveCourierTier(['courier:free'], 199), 'paid');
+    assert.equal(resolveCourierTier(['courier:free'], 199.99), 'paid');
+    assert.equal(resolveCourierTier(['courier:free'], 179), 'paid');
+    assert.equal(resolveCourierTier(['courier:free'], '179.00'), 'paid');
+    assert.equal(resolveCourierTier('courier:free', 179), 'paid');
+    assert.equal(resolveCourierTier(['courier:one-leg'], 179), 'paid');
+    assert.equal(resolveCourierTier(['courier:free'], 0), 'paid');
+  });
+  it('£200 is free, and a courier:free tag still applies at £200+', () => {
+    assert.equal(resolveCourierTier([], 200), 'free');
+    assert.equal(resolveCourierTier(['courier:free'], 200), 'free');
+    assert.equal(resolveCourierTier(['courier:free'], 249), 'free');
+  });
+  it('diagnostics stay included under £200', () => {
+    assert.equal(
+      resolveCourierTier(['courier:free'], 49, { device: 'iphone', repairType: 'diagnostic' }),
+      'included'
+    );
+    assert.equal(
+      resolveCourierTier([], 49, { device: 'macbook', repairType: 'diagnostic' }),
+      'included'
+    );
   });
   it('legacy subsidised/full → paid', () => {
     assert.equal(resolveCourierTier(['courier:subsidised']), 'paid');
-    assert.equal(resolveCourierTier(['courier:full']), 'paid');
+    assert.equal(resolveCourierTier(['courier:full'], 249), 'paid');
   });
 });
 
@@ -234,6 +259,51 @@ describe('adjustment matrix — band × tag × service', () => {
       assert.equal(q.adjustment, 0);
       assert.equal(q.total, 299);
     }
+  });
+
+  it('#119: £179 repair with a stale courier:free tag pays B1 courier (+£25)', () => {
+    const q = quoteServiceAdjustment({
+      postcode: 'W1B 4BD',
+      productTags: ['courier:free'],
+      bands: bandsAsset,
+      service: 'courier',
+      repairPrice: 179,
+      variants: variantsAsset,
+    });
+    assert.equal(q.tier, 'paid');
+    assert.equal(q.band, 'B1');
+    assert.equal(q.service, 'courier');
+    assert.equal(q.adjustment, 25);
+    assert.equal(q.variantId, variantsAsset.variants['25']);
+    assert.equal(q.total, 204);
+  });
+
+  it('#119: £179 repair with a stale courier:free tag is switched to mail-in on B3', () => {
+    const q = quoteServiceAdjustment({
+      postcode: 'N6 4AA',
+      productTags: ['courier:free'],
+      bands: bandsAsset,
+      service: 'courier',
+      repairPrice: 179,
+      variants: variantsAsset,
+    });
+    assert.equal(q.tier, 'paid');
+    assert.equal(q.service, 'mail-in');
+    assert.equal(q.forcedMailIn, true);
+    assert.equal(q.courierAvailable, false);
+  });
+
+  it('#119: missing price with a courier:free tag does not grant free courier', () => {
+    const q = quoteServiceAdjustment({
+      postcode: 'W1B 4BD',
+      productTags: ['courier:free'],
+      bands: bandsAsset,
+      service: 'courier',
+      variants: variantsAsset,
+    });
+    assert.equal(q.tier, 'paid');
+    assert.equal(q.adjustment, 25);
+    assert.equal(q.repair_price, null);
   });
 
   it('<£200 B1–B2 courier → +£25', () => {
