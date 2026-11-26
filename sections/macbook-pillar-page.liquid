@@ -1,0 +1,1163 @@
+{%- comment -%}
+  sections/macbook-pillar-page.liquid
+  Reusable editorial section for high-intent MacBook pillar money pages
+  (e.g. /pages/macbook-liquid-damage-repair, /pages/macbook-no-power-repair).
+  Render once above sections/quote-wizard (part = "top") and once below (part = "bottom")
+  so the untouched Shopify quote wizard sits in the validated value-first slot.
+{%- endcomment -%}
+
+{%- assign part = section.settings.part | default: 'top' -%}
+{%- assign sid = section.id -%}
+
+{%- if part == 'top' -%}
+<style>
+  .icp-root {
+    --icp-bg-1: #ffffff;
+    --icp-bg-2: #fafafa;
+    --icp-bg-3: #f2f2f2;
+    --icp-fg-1: #171717;
+    --icp-fg-2: #4d4d4d;
+    --icp-fg-3: #666666;
+    --icp-fg-4: #8c8c8c;
+    --icp-line: rgba(0, 0, 0, 0.08);
+    --icp-line-strong: rgba(0, 0, 0, 0.16);
+    --icp-accent: #0070f3;
+    --icp-green: #15803d;
+    --icp-star: #f59e0b;
+    --icp-font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --icp-font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-family: var(--icp-font-sans);
+    color: var(--icp-fg-1);
+    line-height: 1.5;
+    overflow-x: clip;
+  }
+  .icp-root *, .icp-root *::before, .icp-root *::after { box-sizing: border-box; }
+  .icp-container {
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .icp-mono {
+    font-family: var(--icp-font-mono);
+    font-size: 11px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--icp-fg-3);
+  }
+  .icp-btn-dark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 18px;
+    min-height: 40px;
+    border-radius: 6px;
+    background: var(--icp-fg-1);
+    color: #ffffff !important;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    border: 0;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .icp-btn-dark:hover { background: #333333; }
+  .icp-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 7px 13px;
+    min-height: 36px;
+    border-radius: 999px;
+    border: 1px solid var(--icp-line-strong);
+    background: #ffffff;
+    color: var(--icp-fg-1) !important;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .icp-btn-ghost:hover { border-color: var(--icp-fg-1); background: var(--icp-bg-2); }
+
+  /* Hero */
+  .icp-hero {
+    padding: 24px 0 40px;
+    background: var(--icp-bg-1);
+    border-bottom: 1px solid var(--icp-line);
+  }
+  .icp-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 14px;
+    font-family: var(--icp-font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--icp-fg-4);
+  }
+  .icp-breadcrumb a { color: var(--icp-fg-3); text-decoration: none; }
+  .icp-breadcrumb a:hover { color: var(--icp-fg-1); }
+
+  .icp-trust-strip {
+    margin: 0 0 22px;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    background: var(--icp-bg-2);
+    border: 1px solid var(--icp-line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .icp-trust-cell {
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    border-right: 1px solid var(--icp-line);
+    min-width: 0;
+  }
+  .icp-trust-cell:last-child { border-right: 0; }
+  .icp-trust-link {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    text-decoration: none;
+    color: inherit;
+    width: 100%;
+  }
+  .icp-trust-score {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--icp-fg-1);
+    flex-shrink: 0;
+  }
+  .icp-trust-stars { display: inline-flex; gap: 2px; line-height: 1; margin-bottom: 2px; }
+  .icp-trust-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: #ffffff;
+    border: 1px solid var(--icp-line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--icp-fg-1);
+  }
+  .icp-trust-copy { display: flex; flex-direction: column; min-width: 0; }
+  .icp-trust-copy strong { font-size: 12.5px; font-weight: 600; color: var(--icp-fg-1); line-height: 1.25; }
+  .icp-trust-copy span { font-size: 11px; color: var(--icp-fg-3); line-height: 1.25; }
+
+  .icp-hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 36px;
+    align-items: center;
+  }
+  .icp-hero-grid > * { min-width: 0; }
+  .icp-h1 {
+    margin: 0 0 10px;
+    font-size: 42px;
+    font-weight: 600;
+    line-height: 1.08;
+    letter-spacing: -0.04em;
+    color: var(--icp-fg-1);
+  }
+  .icp-lead {
+    margin: 0 0 18px;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--icp-fg-2);
+    max-width: 50ch;
+  }
+  .icp-highlights {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .icp-highlights li { min-width: 0; }
+  .icp-chip {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--icp-line);
+    background: #ffffff;
+    text-decoration: none;
+    color: inherit;
+  }
+  .icp-chip:hover { border-color: var(--icp-fg-1); background: var(--icp-bg-2); }
+  .icp-chip-label { font-size: 11.5px; font-weight: 500; color: var(--icp-fg-3); }
+  .icp-chip-val { font-size: 14.5px; font-weight: 600; color: var(--icp-fg-1); letter-spacing: -0.02em; }
+  .icp-note { margin: 10px 0 0; font-size: 12.5px; color: var(--icp-fg-3); }
+  .icp-cta-row {
+    margin-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* Right Hero Card (Emergency / Diagnostic Steps) */
+  .icp-stage {
+    background: var(--icp-bg-2);
+    border: 1px solid var(--icp-line);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .icp-stage-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .icp-stage-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    font-family: var(--icp-font-mono);
+    font-size: 10.5px;
+    color: #0369a1;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .icp-step-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .icp-step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid var(--icp-line);
+  }
+  .icp-step-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--icp-fg-1);
+    color: #ffffff;
+    font-family: var(--icp-font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .icp-step-item strong { display: block; font-size: 13.5px; color: var(--icp-fg-1); margin-bottom: 2px; }
+  .icp-step-item span { display: block; font-size: 12.5px; color: var(--icp-fg-2); line-height: 1.45; }
+
+  /* 3 Proof Pillars */
+  .icp-pillars {
+    margin-top: 26px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .icp-pillar {
+    background: var(--icp-bg-2);
+    border: 1px solid var(--icp-line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .icp-pillar-btn {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    padding: 15px 16px 6px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    cursor: default;
+  }
+  .icp-pillar-title { font-size: 14.5px; font-weight: 600; color: var(--icp-fg-1); line-height: 1.3; }
+  .icp-pillar-plus { display: none; font-family: var(--icp-font-mono); font-size: 16px; color: var(--icp-fg-3); }
+  .icp-pillar-body { padding: 0 16px 15px; font-size: 13.5px; color: var(--icp-fg-2); line-height: 1.5; }
+  .icp-pillar-body p { margin: 0; }
+
+  /* Sections */
+  .icp-section { padding: 52px 0; border-bottom: 1px solid var(--icp-line); background: var(--icp-bg-1); }
+  .icp-section-soft { background: var(--icp-bg-2); }
+  .icp-section-dark { background: #171717; color: #ffffff; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+  .icp-section-head { max-width: 680px; margin-bottom: 24px; }
+  .icp-h2 {
+    margin: 6px 0 8px;
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.035em;
+    color: var(--icp-fg-1);
+  }
+  .icp-section-dark .icp-h2 { color: #ffffff; }
+  .icp-section-lead { margin: 0; font-size: 15px; color: var(--icp-fg-2); line-height: 1.55; }
+  .icp-section-dark .icp-section-lead { color: rgba(255, 255, 255, 0.72); }
+
+  /* Reviews */
+  .icp-reviews-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .icp-trustindex-slot {
+    border: 1px solid var(--icp-line);
+    border-radius: 12px;
+    background: #ffffff;
+    min-height: 200px;
+    padding: 20px;
+  }
+
+  /* Expandable Comparison Table */
+  .icp-compare-card {
+    border: 1px solid var(--icp-line);
+    border-radius: 10px;
+    background: #ffffff;
+    overflow: hidden;
+  }
+  .icp-compare-scroll { overflow-x: auto; }
+  .icp-compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    text-align: left;
+  }
+  .icp-compare-table th, .icp-compare-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--icp-line);
+    vertical-align: top;
+  }
+  .icp-compare-table th {
+    font-family: var(--icp-font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--icp-fg-3);
+    background: var(--icp-bg-2);
+  }
+  .icp-compare-table .is-icorrect {
+    background: #f8fbff;
+    color: var(--icp-fg-1);
+    font-weight: 500;
+  }
+  .icp-extra-row { display: none; }
+  .icp-compare-card.is-expanded .icp-extra-row { display: table-row; }
+  .icp-expand-btn {
+    width: 100%;
+    border: 0;
+    background: var(--icp-bg-2);
+    color: var(--icp-fg-1);
+    padding: 12px 16px;
+    font-size: 13.5px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .icp-expand-btn:hover { background: var(--icp-bg-3); }
+
+  /* Expandable 2-Year Warranty */
+  .icp-warranty {
+    margin-top: 16px;
+    background: #ffffff;
+    border: 1px solid var(--icp-line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .icp-warranty-btn {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    padding: 18px 22px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    cursor: pointer;
+  }
+  .icp-warranty-btn:hover { background: var(--icp-bg-2); }
+  .icp-warranty-btn h3 { margin: 4px 0 0; font-size: 19px; font-weight: 600; letter-spacing: -0.025em; color: var(--icp-fg-1); }
+  .icp-warranty-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--icp-line-strong);
+    background: #ffffff;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--icp-fg-1);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .icp-warranty-body {
+    display: none;
+    padding: 0 22px 20px;
+    border-top: 1px solid var(--icp-line);
+  }
+  .icp-warranty.is-open .icp-warranty-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: 18px 24px;
+    align-items: center;
+    padding-top: 16px;
+  }
+  .icp-warranty-body p { margin: 0; font-size: 13.5px; color: var(--icp-fg-2); line-height: 1.55; }
+  .icp-checks {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 14px;
+    font-size: 13.5px;
+    color: var(--icp-fg-2);
+  }
+  .icp-checks li { display: flex; align-items: flex-start; gap: 7px; }
+  .icp-check-mark { color: var(--icp-green); font-weight: 600; flex-shrink: 0; }
+
+  /* Find your model (Ricky's exact Claude Code container) */
+  .icp-identify { padding: 64px 0; border-bottom: 1px solid var(--icp-line); background: var(--icp-bg-1); }
+  .icp-identify-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 48px;
+    align-items: center;
+  }
+  .icp-identify-grid > * { min-width: 0; }
+  .icp-identify-visual {
+    background: #e5e7eb;
+    border-radius: 16px;
+    padding: 40px 28px;
+    border: 1px solid var(--icp-line);
+    aspect-ratio: 4 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .icp-identify-plate {
+    background: #e5e5e5;
+    padding: 16px 20px;
+    border-radius: 6px;
+    font-family: var(--icp-font-mono);
+    color: #4d4d4d;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  .icp-plate-line { font-size: 11px; }
+  .icp-plate-line.is-muted { color: #737373; }
+  .icp-plate-line.is-small { font-size: 9.5px; }
+  .icp-plate-line.is-hl { font-size: 13px; color: #171717; margin-top: 6px; }
+  .icp-plate-badge {
+    background: #ffffff;
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 2px solid #171717;
+    color: #171717;
+    font-weight: 600;
+  }
+  .icp-identify-hint { margin-top: 14px; font-size: 11px; color: #171717; }
+  .icp-identify-form { display: flex; gap: 8px; max-width: 420px; margin-top: 16px; }
+  .icp-identify-form input {
+    flex: 1;
+    min-width: 0;
+    padding: 11px 14px;
+    border: 1px solid var(--icp-line-strong);
+    border-radius: 8px;
+    background: #ffffff;
+    font-size: 15px;
+    color: var(--icp-fg-1);
+  }
+  .icp-identify-result {
+    margin-top: 12px;
+    max-width: 420px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--icp-line-strong);
+    background: var(--icp-bg-2);
+    font-size: 13.5px;
+    display: none;
+  }
+  .icp-identify-result.is-visible { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .icp-identify-foot { margin-top: 12px; font-size: 13px; color: var(--icp-fg-3); }
+  .icp-identify-foot a { color: var(--icp-accent); text-decoration: none; }
+
+  /* 4-Step Process Flowchart */
+  .icp-flow {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .icp-flow-node { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .icp-flow-head { display: flex; align-items: center; gap: 10px; }
+  .icp-flow-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--icp-fg-1);
+    color: #ffffff;
+    font-family: var(--icp-font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .icp-flow-tag {
+    font-family: var(--icp-font-mono);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--icp-accent);
+  }
+  .icp-flow-node h3 { margin: 0 0 4px; font-size: 15.5px; font-weight: 600; }
+  .icp-flow-node p { margin: 0; font-size: 13.5px; color: var(--icp-fg-2); line-height: 1.5; }
+
+  /* Dark FAQ Accordion */
+  .icp-faq-list { display: flex; flex-direction: column; border-top: 1px solid rgba(255, 255, 255, 0.14); }
+  .icp-faq-item { border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
+  .icp-faq-btn {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    color: #ffffff;
+    padding: 18px 0;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 15.5px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .icp-faq-icon { font-family: var(--icp-font-mono); font-size: 18px; color: rgba(255, 255, 255, 0.65); flex-shrink: 0; }
+  .icp-faq-answer { display: none; padding: 0 0 18px; font-size: 14px; line-height: 1.6; color: rgba(255, 255, 255, 0.78); max-width: 76ch; }
+  .icp-faq-item.is-open .icp-faq-answer { display: block; }
+
+  /* Workshop & Internal Links Footer */
+  .icp-footer-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 24px; align-items: start; }
+  .icp-workshop-card, .icp-links-card {
+    background: #ffffff;
+    border: 1px solid var(--icp-line);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .icp-workshop-card h3 { margin: 6px 0 8px; font-size: 20px; font-weight: 600; }
+  .icp-hours { display: grid; grid-template-columns: 110px 1fr; gap: 4px 12px; font-size: 13.5px; color: var(--icp-fg-2); margin-top: 12px; }
+  .icp-links-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .icp-links-card h4 { margin: 0 0 8px; font-size: 13.5px; font-weight: 600; }
+  .icp-links-card ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+  .icp-links-card a { color: var(--icp-fg-2); text-decoration: none; }
+  .icp-links-card a:hover { color: var(--icp-accent); text-decoration: underline; }
+
+  @media (max-width: 960px) {
+    .icp-trust-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .icp-trust-cell:nth-child(1), .icp-trust-cell:nth-child(2) { border-bottom: 1px solid var(--icp-line); }
+    .icp-trust-cell:nth-child(2), .icp-trust-cell:nth-child(4) { border-right: 0; }
+    .icp-hero-grid, .icp-identify-grid, .icp-footer-grid, .icp-pillars, .icp-flow { grid-template-columns: minmax(0, 1fr); }
+    .icp-warranty.is-open .icp-warranty-body { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .icp-container { padding: 0 16px; }
+    .icp-h1 { font-size: 30px; }
+    .icp-h2 { font-size: 24px; }
+    .icp-lead { font-size: 14.5px; }
+    .icp-highlights { grid-template-columns: minmax(0, 1fr); }
+    .icp-pillar-btn { padding: 13px 14px; cursor: pointer; }
+    .icp-pillar-plus { display: inline-block; }
+    .icp-pillar-body { display: none; padding: 0 14px 13px; font-size: 13px; }
+    .icp-pillar.is-open .icp-pillar-body { display: block; }
+    .icp-warranty-btn { padding: 16px; flex-direction: column; align-items: flex-start; gap: 10px; }
+    .icp-checks, .icp-links-grid { grid-template-columns: minmax(0, 1fr); }
+    .icp-identify-form { flex-direction: column; }
+    .icp-identify-form .icp-btn-dark { width: 100%; }
+  }
+</style>
+
+<div class="icp-root" data-icp-root="{{ sid }}">
+  <section class="icp-hero">
+    <div class="icp-container">
+      <nav class="icp-breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span>/</span>
+        <a href="/pages/macbook-repairs">MacBook Repairs</a>
+        <span>/</span>
+        <span>{{ section.settings.breadcrumb_label | escape }}</span>
+      </nav>
+
+      <ul class="icp-trust-strip" role="list" aria-label="Why choose iCorrect">
+        <li class="icp-trust-cell">
+          <a class="icp-trust-link" href="#icp-reviews-{{ sid }}">
+            <span class="icp-trust-score">4.8</span>
+            <span class="icp-trust-copy">
+              <span class="icp-trust-stars" aria-hidden="true">
+                <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+              </span>
+              <strong>from 750+ Google reviews</strong>
+            </span>
+          </a>
+        </li>
+        <li class="icp-trust-cell">
+          <span class="icp-trust-icon" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg>
+          </span>
+          <span class="icp-trust-copy">
+            <strong>In-house micro-soldering</strong>
+            <span>Fitzrovia logic board bench</span>
+          </span>
+        </li>
+        <li class="icp-trust-cell">
+          <span class="icp-trust-icon" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+          </span>
+          <span class="icp-trust-copy">
+            <strong>2-year warranty</strong>
+            <span>Included as standard</span>
+          </span>
+        </li>
+        <li class="icp-trust-cell">
+          <span class="icp-trust-icon" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h11v10H3z"/><path d="M14 10h4l3 3v4h-7z"/><circle cx="7.5" cy="18" r="1.8"/><circle cx="17.5" cy="18" r="1.8"/></svg>
+          </span>
+          <span class="icp-trust-copy">
+            <strong>UK-wide collection</strong>
+            <span>Free on orders £200+</span>
+          </span>
+        </li>
+      </ul>
+
+      <div class="icp-hero-grid">
+        <div>
+          <h1 class="icp-h1">{{ section.settings.hero_title | escape }}</h1>
+          <p class="icp-lead">{{ section.settings.hero_lead | escape }}</p>
+
+          <ul class="icp-highlights" role="list">
+            <li>
+              <a class="icp-chip" href="#quote-section">
+                <span class="icp-chip-label">{{ section.settings.chip1_label | escape }}</span>
+                <span class="icp-chip-val">{{ section.settings.chip1_value | escape }}</span>
+              </a>
+            </li>
+            <li>
+              <a class="icp-chip" href="#quote-section">
+                <span class="icp-chip-label">{{ section.settings.chip2_label | escape }}</span>
+                <span class="icp-chip-val">{{ section.settings.chip2_value | escape }}</span>
+              </a>
+            </li>
+            <li>
+              <a class="icp-chip" href="#quote-section">
+                <span class="icp-chip-label">{{ section.settings.chip3_label | escape }}</span>
+                <span class="icp-chip-val">{{ section.settings.chip3_value | escape }}</span>
+              </a>
+            </li>
+            <li>
+              <a class="icp-chip" href="#quote-section">
+                <span class="icp-chip-label">{{ section.settings.chip4_label | escape }}</span>
+                <span class="icp-chip-val">{{ section.settings.chip4_value | escape }}</span>
+              </a>
+            </li>
+          </ul>
+          <p class="icp-note">{{ section.settings.hero_note | escape }}</p>
+
+          <div class="icp-cta-row">
+            <a class="icp-btn-dark" href="#quote-section">Book diagnostic &amp; quote -&gt;</a>
+            <a class="icp-btn-ghost" href="#icp-compare-{{ sid }}">How do we compare?</a>
+            <a class="icp-btn-ghost" href="#icp-warranty-{{ sid }}" data-icp-open-warranty="{{ sid }}">See 2-year warranty</a>
+          </div>
+        </div>
+
+        <div class="icp-stage">
+          <div class="icp-stage-head">
+            <span class="icp-mono">{{ section.settings.stage_kicker | escape }}</span>
+            <span class="icp-stage-pill">{{ section.settings.stage_pill | escape }}</span>
+          </div>
+          <ol class="icp-step-list">
+            <li class="icp-step-item">
+              <span class="icp-step-num">1</span>
+              <div>
+                <strong>{{ section.settings.stage_step1_title | escape }}</strong>
+                <span>{{ section.settings.stage_step1_desc | escape }}</span>
+              </div>
+            </li>
+            <li class="icp-step-item">
+              <span class="icp-step-num">2</span>
+              <div>
+                <strong>{{ section.settings.stage_step2_title | escape }}</strong>
+                <span>{{ section.settings.stage_step2_desc | escape }}</span>
+              </div>
+            </li>
+            <li class="icp-step-item">
+              <span class="icp-step-num">3</span>
+              <div>
+                <strong>{{ section.settings.stage_step3_title | escape }}</strong>
+                <span>{{ section.settings.stage_step3_desc | escape }}</span>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="icp-pillars" aria-label="Key workshop advantages">
+        <div class="icp-pillar" data-icp-pillar>
+          <button type="button" class="icp-pillar-btn" aria-expanded="false">
+            <span class="icp-pillar-title">{{ section.settings.pillar1_title | escape }}</span>
+            <span class="icp-pillar-plus" aria-hidden="true">+</span>
+          </button>
+          <div class="icp-pillar-body"><p>{{ section.settings.pillar1_body | escape }}</p></div>
+        </div>
+        <div class="icp-pillar" data-icp-pillar>
+          <button type="button" class="icp-pillar-btn" aria-expanded="false">
+            <span class="icp-pillar-title">{{ section.settings.pillar2_title | escape }}</span>
+            <span class="icp-pillar-plus" aria-hidden="true">+</span>
+          </button>
+          <div class="icp-pillar-body"><p>{{ section.settings.pillar2_body | escape }}</p></div>
+        </div>
+        <div class="icp-pillar" data-icp-pillar>
+          <button type="button" class="icp-pillar-btn" aria-expanded="false">
+            <span class="icp-pillar-title">{{ section.settings.pillar3_title | escape }}</span>
+            <span class="icp-pillar-plus" aria-hidden="true">+</span>
+          </button>
+          <div class="icp-pillar-body"><p>{{ section.settings.pillar3_body | escape }}</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Verified Google Reviews (Trustindex) -->
+  <section class="icp-section icp-section-soft" id="icp-reviews-{{ sid }}">
+    <div class="icp-container">
+      <div class="icp-reviews-head">
+        <div>
+          <span class="icp-mono">Verified Client Reviews</span>
+          <h2 class="icp-h2" style="margin-bottom:0;">4.8 from 750+ Google reviews</h2>
+        </div>
+        <a class="icp-btn-ghost" href="https://maps.google.com/?q=iCorrect+12+Margaret+Street+London+W1W+8JQ" target="_blank" rel="noopener">Read on Google Maps -&gt;</a>
+      </div>
+      <div class="icp-trustindex-slot">
+        <script defer async src="https://cdn.trustindex.io/loader.js?47cc7ef8590e8871fa062160cf7"></script>
+      </div>
+    </div>
+  </section>
+
+  <!-- Expandable Comparison + Expandable 2-Year Warranty -->
+  <section class="icp-section" id="icp-compare-{{ sid }}">
+    <div class="icp-container">
+      <div class="icp-section-head">
+        <span class="icp-mono">Component-Level vs Full Replacement</span>
+        <h2 class="icp-h2">{{ section.settings.compare_heading | escape }}</h2>
+        <p class="icp-section-lead">{{ section.settings.compare_lead | escape }}</p>
+      </div>
+
+      <div class="icp-compare-card" id="icp-compare-card-{{ sid }}">
+        <div class="icp-compare-scroll">
+          <table class="icp-compare-table">
+            <thead>
+              <tr>
+                <th>What matters</th>
+                <th class="is-icorrect">iCorrect (Component-level)</th>
+                <th>Apple Store (Board swap)</th>
+                <th>General repair shops</th>
+              </tr>
+            </thead>
+            <tbody>
+              {%- for block in section.blocks -%}
+                {%- if block.type == 'compare_row' -%}
+                  <tr class="{% if forloop.index > 2 %}icp-extra-row{% endif %}" {{ block.shopify_attributes }}>
+                    <td><strong>{{ block.settings.metric | escape }}</strong></td>
+                    <td class="is-icorrect">{{ block.settings.icorrect | escape }}</td>
+                    <td>{{ block.settings.apple | escape }}</td>
+                    <td>{{ block.settings.generic | escape }}</td>
+                  </tr>
+                {%- endif -%}
+              {%- endfor -%}
+            </tbody>
+          </table>
+        </div>
+        <button type="button" class="icp-expand-btn" data-icp-compare-toggle="{{ sid }}" aria-expanded="false">
+          <span data-icp-compare-label="{{ sid }}">Show more comparisons</span>
+          <span data-icp-compare-icon="{{ sid }}" aria-hidden="true">+</span>
+        </button>
+      </div>
+
+      <div class="icp-warranty" id="icp-warranty-{{ sid }}">
+        <button type="button" class="icp-warranty-btn" data-icp-warranty-toggle="{{ sid }}" aria-expanded="false">
+          <div>
+            <span class="icp-mono">2-Year Warranty Included</span>
+            <h3>Two full years of cover. No asterisks.</h3>
+          </div>
+          <span class="icp-warranty-pill">
+            <span data-icp-warranty-label="{{ sid }}">See what's covered</span>
+            <span data-icp-warranty-icon="{{ sid }}" aria-hidden="true">+</span>
+          </span>
+        </button>
+        <div class="icp-warranty-body">
+          <p>{{ section.settings.warranty_copy | escape }}</p>
+          <ul class="icp-checks">
+            <li><span class="icp-check-mark">&#10003;</span><span>Repaired board components &amp; workmanship covered</span></li>
+            <li><span class="icp-check-mark">&#10003;</span><span>Written microscope report before full repair starts</span></li>
+            <li><span class="icp-check-mark">&#10003;</span><span>Upfront fixed pricing, zero deposits</span></li>
+            <li><span class="icp-check-mark">&#10003;</span><span>Your soldered SSD &amp; files kept intact wherever possible</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div id="quote-section"></div>
+</div>
+
+{%- else -%}
+
+<div class="icp-root" data-icp-bottom="{{ sid }}">
+  <!-- Ricky's exact Claude Code Find Your Model container directly below Quote Wizard -->
+  <section id="identify" class="icp-identify">
+    <div class="icp-container icp-identify-grid">
+      <div class="icp-identify-visual">
+        <div>
+          <div class="icp-identify-plate">
+            <div class="icp-plate-line">Designed by Apple in California.</div>
+            <div class="icp-plate-line is-muted">Assembled in China</div>
+            <div class="icp-plate-line is-hl">Model <span class="icp-plate-badge">A2442</span></div>
+            <div class="icp-plate-line is-muted is-small">EMC 3650 &middot; 61W USB-C</div>
+          </div>
+          <div class="icp-mono icp-identify-hint">&larr; Look on the underside</div>
+        </div>
+      </div>
+      <div>
+        <div class="icp-mono">Not sure which model you have?</div>
+        <h2 class="icp-h2">Find your model number in 5 seconds.</h2>
+        <p class="icp-section-lead">Flip your MacBook over. Look for a four-character code starting with "A", printed in small grey type near the hinge. Enter that code below to match your model.</p>
+        <form class="icp-identify-form" data-icp-identify-form="{{ sid }}">
+          <input type="text" placeholder="e.g. A2442" aria-label="MacBook model code" autocomplete="off">
+          <button type="submit" class="icp-btn-dark">Identify</button>
+        </form>
+        <div class="icp-identify-result" data-icp-identify-result="{{ sid }}" aria-live="polite"></div>
+        <div class="icp-identify-foot">Or <a href="#quote-section">browse models in the wizard &rarr;</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4-Step Process -->
+  <section class="icp-section icp-section-soft" id="our-process">
+    <div class="icp-container">
+      <div class="icp-section-head">
+        <span class="icp-mono">How It Works</span>
+        <h2 class="icp-h2">Collected from your door. Repaired in-house in Fitzrovia.</h2>
+        <p class="icp-section-lead">Clear written updates at every step, with free tracked UK collection on orders of £200 or more.</p>
+      </div>
+      <ol class="icp-flow">
+        <li class="icp-flow-node">
+          <div class="icp-flow-head"><span class="icp-flow-badge">01</span><span class="icp-flow-tag">Free £200+</span></div>
+          <div>
+            <h3>Book &amp; collect</h3>
+            <p>Same-day courier collection in selected London zones, or a free tracked and insured UK mail-in pack to your door.</p>
+          </div>
+        </li>
+        <li class="icp-flow-node">
+          <div class="icp-flow-head"><span class="icp-flow-badge">02</span><span class="icp-flow-tag">Microscope test</span></div>
+          <div>
+            <h3>Board-level diagnostic</h3>
+            <p>We measure power rails, inspect under the microscope and thermal camera, and trace the exact shorted or corroded components.</p>
+          </div>
+        </li>
+        <li class="icp-flow-node">
+          <div class="icp-flow-head"><span class="icp-flow-badge">03</span><span class="icp-flow-tag">Written quote</span></div>
+          <div>
+            <h3>Component repair</h3>
+            <p>You receive a clear written quote before repair proceeds. We ultrasonic-clean, micro-solder, and stress-test your board in-house.</p>
+          </div>
+        </li>
+        <li class="icp-flow-node">
+          <div class="icp-flow-head"><span class="icp-flow-badge">04</span><span class="icp-flow-tag">2-year cover</span></div>
+          <div>
+            <h3>Insured return</h3>
+            <p>Standard repairs complete within 2 working days once in workshop (complex liquid or board recovery quoted clearly upfront), returned insured with 2-year cover.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Dark FAQ Accordion -->
+  <section class="icp-section icp-section-dark" id="faqs">
+    <div class="icp-container">
+      <div class="icp-section-head">
+        <span class="icp-mono" style="color:rgba(255,255,255,0.55);">Frequently Asked Questions</span>
+        <h2 class="icp-h2">Straight answers before you book.</h2>
+        <p class="icp-section-lead">{{ section.settings.faq_lead | escape }}</p>
+      </div>
+      <div class="icp-faq-list">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'faq' -%}
+            <div class="icp-faq-item{% if forloop.first %} is-open{% endif %}" {{ block.shopify_attributes }}>
+              <button type="button" class="icp-faq-btn" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}">
+                <span>{{ block.settings.question | escape }}</span>
+                <span class="icp-faq-icon">{% if forloop.first %}-{% else %}+{% endif %}</span>
+              </button>
+              <div class="icp-faq-answer">{{ block.settings.answer | escape }}</div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+
+  <!-- Fitzrovia Workshop & Cross-Links Across Top 3 Pillars -->
+  <section class="icp-section icp-section-soft">
+    <div class="icp-container icp-footer-grid">
+      <div class="icp-workshop-card">
+        <span class="icp-mono">Fitzrovia Workshop</span>
+        <h3>iCorrect London</h3>
+        <p style="margin:0;font-size:14px;color:var(--icp-fg-2);">12 Margaret Street, Audley House, Fitzrovia, London W1W 8JQ<br>Phone: 020 7099 8517 | Email: support@icorrect.co.uk</p>
+        <div class="icp-hours">
+          <strong>Mon to Thu</strong><span>9am to 6pm</span>
+          <strong>Friday</strong><span>10am to 6pm</span>
+          <strong>Sat &amp; Sun</strong><span>Closed</span>
+        </div>
+      </div>
+
+      <div class="icp-links-grid">
+        <div class="icp-links-card">
+          <h4>Core MacBook Repairs</h4>
+          <ul>
+            <li><a href="/pages/macbook-liquid-damage-repair">MacBook Liquid Damage Repair</a></li>
+            <li><a href="/pages/macbook-no-power-repair">Dead &amp; No Power MacBook Repair</a></li>
+            <li><a href="/collections/macbook-screen-repair-prices">MacBook Screen Repair (Genuine Panel)</a></li>
+            <li><a href="/pages/macbook-repairs">All MacBook Repairs Hub</a></li>
+          </ul>
+        </div>
+        <div class="icp-links-card">
+          <h4>More MacBook Services</h4>
+          <ul>
+            <li><a href="/pages/advanced-diagnostic">Advanced Logic Board Diagnostics</a></li>
+            <li><a href="/collections/macbook-diagnostic-prices">MacBook Diagnostic Prices</a></li>
+            <li><a href="/collections/macbook-battery-repair-prices">MacBook Battery Replacement</a></li>
+            <li><a href="/pages/corporate-service">Corporate MacBook Repair Accounts</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  (function () {
+    if (window.__icpBound) return;
+    window.__icpBound = true;
+
+    document.querySelectorAll("[data-icp-pillar]").forEach(function (card) {
+      var btn = card.querySelector(".icp-pillar-btn");
+      var plus = card.querySelector(".icp-pillar-plus");
+      if (!btn) return;
+      btn.addEventListener("click", function () {
+        if (window.innerWidth > 600) return;
+        var open = !card.classList.contains("is-open");
+        card.classList.toggle("is-open", open);
+        btn.setAttribute("aria-expanded", String(open));
+        if (plus) plus.textContent = open ? "-" : "+";
+      });
+    });
+
+    document.querySelectorAll("[data-icp-compare-toggle]").forEach(function (btn) {
+      var id = btn.getAttribute("data-icp-compare-toggle");
+      var card = document.getElementById("icp-compare-card-" + id);
+      var label = document.querySelector("[data-icp-compare-label='" + id + "']");
+      var icon = document.querySelector("[data-icp-compare-icon='" + id + "']");
+      if (!card) return;
+      btn.addEventListener("click", function () {
+        var expanded = !card.classList.contains("is-expanded");
+        card.classList.toggle("is-expanded", expanded);
+        btn.setAttribute("aria-expanded", String(expanded));
+        if (label) label.textContent = expanded ? "Show fewer comparisons" : "Show more comparisons";
+        if (icon) icon.textContent = expanded ? "-" : "+";
+      });
+    });
+
+    function setWarranty(id, open) {
+      var box = document.getElementById("icp-warranty-" + id);
+      var btn = document.querySelector("[data-icp-warranty-toggle='" + id + "']");
+      var label = document.querySelector("[data-icp-warranty-label='" + id + "']");
+      var icon = document.querySelector("[data-icp-warranty-icon='" + id + "']");
+      if (!box || !btn) return;
+      box.classList.toggle("is-open", open);
+      btn.setAttribute("aria-expanded", String(open));
+      if (label) label.textContent = open ? "Hide details" : "See what's covered";
+      if (icon) icon.textContent = open ? "-" : "+";
+    }
+    document.querySelectorAll("[data-icp-warranty-toggle]").forEach(function (btn) {
+      var id = btn.getAttribute("data-icp-warranty-toggle");
+      btn.addEventListener("click", function () {
+        var box = document.getElementById("icp-warranty-" + id);
+        setWarranty(id, !box.classList.contains("is-open"));
+      });
+    });
+    document.querySelectorAll("[data-icp-open-warranty]").forEach(function (link) {
+      var id = link.getAttribute("data-icp-open-warranty");
+      link.addEventListener("click", function () { setWarranty(id, true); });
+    });
+
+    document.querySelectorAll(".icp-faq-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var item = btn.closest(".icp-faq-item");
+        var open = !item.classList.contains("is-open");
+        item.classList.toggle("is-open", open);
+        btn.setAttribute("aria-expanded", String(open));
+        var ic = btn.querySelector(".icp-faq-icon");
+        if (ic) ic.textContent = open ? "-" : "+";
+      });
+    });
+
+    var MODELS = [
+      { code: "A3240", name: 'MacBook Air 13" M4 (2025)' },
+      { code: "A3113", name: 'MacBook Air 13" M3 (2024)' },
+      { code: "A2681", name: 'MacBook Air 13" M2 (2022)' },
+      { code: "A2337", name: 'MacBook Air 13" M1 (2020)' },
+      { code: "A2179", name: 'MacBook Air 13" (2020)' },
+      { code: "A1932", name: 'MacBook Air 13" (2018-2019)' },
+      { code: "A3241", name: 'MacBook Air 15" M4 (2025)' },
+      { code: "A3114", name: 'MacBook Air 15" M3 (2024)' },
+      { code: "A2941", name: 'MacBook Air 15" M2 (2023)' },
+      { code: "A2338", name: 'MacBook Pro 13" M1 / M2 (2020-2022)' },
+      { code: "A2289", name: 'MacBook Pro 13" (2020)' },
+      { code: "A2251", name: 'MacBook Pro 13" (2020)' },
+      { code: "A3112", name: 'MacBook Pro 14" M4 (2024)' },
+      { code: "A2992", name: 'MacBook Pro 14" M3 Pro/Max (2023)' },
+      { code: "A2918", name: 'MacBook Pro 14" M3 (2023)' },
+      { code: "A2779", name: 'MacBook Pro 14" M2 Pro/Max (2023)' },
+      { code: "A2442", name: 'MacBook Pro 14" M1 Pro/Max (2021)' },
+      { code: "A3403", name: 'MacBook Pro 16" M4 Pro/Max (2024)' },
+      { code: "A3186", name: 'MacBook Pro 16" M4 Pro/Max (2024)' },
+      { code: "A2991", name: 'MacBook Pro 16" M3 Pro/Max (2023)' },
+      { code: "A2780", name: 'MacBook Pro 16" M2 Pro/Max (2023)' },
+      { code: "A2485", name: 'MacBook Pro 16" M1 Pro/Max (2021)' },
+      { code: "A2141", name: 'MacBook Pro 16" (2019)' }
+    ];
+    document.querySelectorAll("[data-icp-identify-form]").forEach(function (form) {
+      var id = form.getAttribute("data-icp-identify-form");
+      var input = form.querySelector("input");
+      var out = document.querySelector("[data-icp-identify-result='" + id + "']");
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var raw = (input.value || "").trim().toUpperCase();
+        if (!raw || !out) return;
+        var match = MODELS.find(function (m) { return m.code === raw || raw.indexOf(m.code) !== -1; });
+        out.classList.add("is-visible");
+        if (match) {
+          out.innerHTML = '<span><strong>' + match.name + ' (' + match.code + ')</strong> matched</span><a class="icp-btn-dark" style="min-height:34px;padding:6px 12px;font-size:13px;" href="#quote-section">Select in quote wizard -&gt;</a>';
+        } else {
+          out.innerHTML = '<span>Could not match <strong>' + raw.replace(/[<>&"]/g, "") + '</strong> directly. Select your model in the <a href="#quote-section" style="color:#0070f3;font-weight:500;">quote wizard above</a>.</span>';
+        }
+      });
+    });
+  })();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "MacBook Pillar Page",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "part",
+      "label": "Page section slot",
+      "default": "top",
+      "options": [
+        { "value": "top", "label": "Top (Hero, Reviews, Comparison, Warranty)" },
+        { "value": "bottom", "label": "Bottom (Find Your Model, Process, FAQs, Workshop)" }
+      ]
+    },
+    { "type": "text", "id": "breadcrumb_label", "label": "Breadcrumb label", "default": "MacBook Repair" },
+    { "type": "text", "id": "hero_title", "label": "Hero H1", "default": "MacBook Liquid Damage Repair" },
+    { "type": "textarea", "id": "hero_lead", "label": "Hero lead copy" },
+    { "type": "text", "id": "chip1_label", "label": "Highlight 1 label" },
+    { "type": "text", "id": "chip1_value", "label": "Highlight 1 value" },
+    { "type": "text", "id": "chip2_label", "label": "Highlight 2 label" },
+    { "type": "text", "id": "chip2_value", "label": "Highlight 2 value" },
+    { "type": "text", "id": "chip3_label", "label": "Highlight 3 label" },
+    { "type": "text", "id": "chip3_value", "label": "Highlight 3 value" },
+    { "type": "text", "id": "chip4_label", "label": "Highlight 4 label" },
+    { "type": "text", "id": "chip4_value", "label": "Highlight 4 value" },
+    { "type": "text", "id": "hero_note", "label": "Hero note below highlights" },
+    { "type": "text", "id": "stage_kicker", "label": "Right card kicker" },
+    { "type": "text", "id": "stage_pill", "label": "Right card badge" },
+    { "type": "text", "id": "stage_step1_title", "label": "Right card step 1 title" },
+    { "type": "textarea", "id": "stage_step1_desc", "label": "Right card step 1 body" },
+    { "type": "text", "id": "stage_step2_title", "label": "Right card step 2 title" },
+    { "type": "textarea", "id": "stage_step2_desc", "label": "Right card step 2 body" },
+    { "type": "text", "id": "stage_step3_title", "label": "Right card step 3 title" },
+    { "type": "textarea", "id": "stage_step3_desc", "label": "Right card step 3 body" },
+    { "type": "text", "id": "pillar1_title", "label": "Pillar 1 title" },
+    { "type": "textarea", "id": "pillar1_body", "label": "Pillar 1 body" },
+    { "type": "text", "id": "pillar2_title", "label": "Pillar 2 title" },
+    { "type": "textarea", "id": "pillar2_body", "label": "Pillar 2 body" },
+    { "type": "text", "id": "pillar3_title", "label": "Pillar 3 title" },
+    { "type": "textarea", "id": "pillar3_body", "label": "Pillar 3 body" },
+    { "type": "text", "id": "compare_heading", "label": "Comparison heading" },
+    { "type": "textarea", "id": "compare_lead", "label": "Comparison lead" },
+    { "type": "textarea", "id": "warranty_copy", "label": "Warranty body copy" },
+    { "type": "textarea", "id": "faq_lead", "label": "FAQ section lead" }
+  ],
+  "blocks": [
+    {
+      "type": "compare_row",
+      "name": "Comparison row",
+      "settings": [
+        { "type": "text", "id": "metric", "label": "Row label" },
+        { "type": "text", "id": "icorrect", "label": "iCorrect column" },
+        { "type": "text", "id": "apple", "label": "Apple Store column" },
+        { "type": "text", "id": "generic", "label": "General shops column" }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ item",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question" },
+        { "type": "textarea", "id": "answer", "label": "Answer" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "MacBook Pillar Page" }
+  ]
+}
+{% endschema %}

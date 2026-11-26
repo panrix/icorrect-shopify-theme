@@ -1,0 +1,173 @@
+{
+  "sections": {
+    "pillar_top": {
+      "type": "macbook-pillar-page",
+      "settings": {
+        "part": "top",
+        "breadcrumb_label": "Dead & No Power MacBook Repair",
+        "hero_title": "Dead & No Power MacBook Repair",
+        "hero_lead": "MacBook won't turn on, won't charge, or died suddenly overnight? Our Fitzrovia logic board specialists trace shorted power rails and USB-C charging ICs at component level, saving your MacBook and soldered SSD data.",
+        "chip1_label": "Board diagnostic",
+        "chip1_value": "Quote in 1 working day",
+        "chip2_label": "Data preservation",
+        "chip2_value": "Original SSD stays intact",
+        "chip3_label": "Repair warranty",
+        "chip3_value": "2-year cover included",
+        "chip4_label": "UK collection",
+        "chip4_value": "Free on orders £200+",
+        "hero_note": "No guesswork board swaps. Written fault report and fixed repair quote before you decide.",
+        "stage_kicker": "Common No-Power Faults We Fix",
+        "stage_pill": "Logic Board Bench",
+        "stage_step1_title": "Completely dead, no fan spin or charger light",
+        "stage_step1_desc": "Commonly caused by a shorted main power rail (PPBUS_G3H), failed capacitor, or blown power MOSFET on the logic board.",
+        "stage_step2_title": "USB-C or MagSafe ports not charging (stuck at 5V)",
+        "stage_step2_desc": "Frequently traced to failed USB-C power delivery controllers (CD3217) or damaged power management ICs (PMIC).",
+        "stage_step3_title": "Quoted £700+ by Apple Store for a logic board swap",
+        "stage_step3_desc": "Apple replaces the entire logic board and wipes your storage. We isolate the single failed component for a fraction of the cost.",
+        "pillar1_title": "Component-level fault tracing, not board swaps",
+        "pillar1_body": "Using thermal cameras, oscilloscopes, and board schematics in our Fitzrovia workshop, we locate the exact failed IC, capacitor, or power rail instead of quoting a full logic board replacement.",
+        "pillar2_title": "Keep your soldered SSD & files intact",
+        "pillar2_body": "On M1, M2, M3, M4 and modern Intel MacBooks, your SSD is soldered onto the logic board. Repairing your original board restores both your MacBook and your files without a wipe.",
+        "pillar3_title": "Clear second opinion within 1 working day",
+        "pillar3_body": "Told your dead MacBook is beyond economical repair? Once it reaches our workshop, we diagnose the logic board within 1 working day and email a written report and fixed quote before any work begins.",
+        "compare_heading": "Component-level logic board repair vs a full Apple board swap",
+        "compare_lead": "When a MacBook stops powering on, Apple replaces the whole logic board and wipes your files. We trace and repair the exact faulty circuit on your existing board.",
+        "warranty_copy": "Every completed dead MacBook and logic board repair includes our 2-year warranty covering the repaired power circuits, replaced micro-components, and workmanship. Upfront fixed pricing, zero deposits."
+      },
+      "blocks": {
+        "row_1": {
+          "type": "compare_row",
+          "settings": {
+            "metric": "What gets repaired",
+            "icorrect": "Faulty IC, capacitor, or power rail replaced in-house",
+            "apple": "Entire logic board replaced",
+            "generic": "Often sent away or guessed without schematics"
+          }
+        },
+        "row_2": {
+          "type": "compare_row",
+          "settings": {
+            "metric": "Your files & soldered SSD",
+            "icorrect": "Original logic board & soldered SSD preserved",
+            "apple": "Data wiped with logic board replacement",
+            "generic": "Risk of irreversible board damage"
+          }
+        },
+        "row_3": {
+          "type": "compare_row",
+          "settings": {
+            "metric": "Typical cost",
+            "icorrect": "Fixed component-level quote after diagnostic",
+            "apple": "Typically £600 to £1,200+ out of warranty",
+            "generic": "Unpredictable subcontracted pricing"
+          }
+        },
+        "row_4": {
+          "type": "compare_row",
+          "settings": {
+            "metric": "Apple Silicon & Intel support",
+            "icorrect": "M1, M2, M3, M4 & Intel MacBook Air / Pro",
+            "apple": "Full board swap only; older models declined",
+            "generic": "Limited Apple Silicon board tooling"
+          }
+        },
+        "row_5": {
+          "type": "compare_row",
+          "settings": {
+            "metric": "Warranty",
+            "icorrect": "2-year warranty on repaired circuits & parts",
+            "apple": "90-day repair warranty",
+            "generic": "30 to 90 days"
+          }
+        },
+        "row_6": {
+          "type": "compare_row",
+          "settings": {
+            "metric": "Diagnostic turnaround",
+            "icorrect": "Written report & fixed quote within 1 working day",
+            "apple": "Appointment required; swap-only quote",
+            "generic": "Several days via outsourced labs"
+          }
+        }
+      },
+      "block_order": ["row_1", "row_2", "row_3", "row_4", "row_5", "row_6"]
+    },
+    "quote_wizard_nopower": {
+      "type": "quote-wizard",
+      "settings": {
+        "show_map": false,
+        "heading": "Get your dead MacBook diagnostic quote",
+        "subheading": "Select your MacBook model below. Same-day courier collection in selected London zones, or free tracked UK mail-in on orders £200+.",
+        "prefill_mode": "manual",
+        "skip_to_service": false,
+        "prefill_device": "macbook"
+      }
+    },
+    "pillar_bottom": {
+      "type": "macbook-pillar-page",
+      "settings": {
+        "part": "bottom",
+        "faq_lead": "Straight answers on dead MacBooks, USB-C charging failures, soldered SSD data safety, and our 2-year warranty."
+      },
+      "blocks": {
+        "faq_1": {
+          "type": "faq",
+          "settings": {
+            "question": "Why did my MacBook suddenly die with no liquid spill or drop?",
+            "answer": "Sudden no-power failures on MacBook Air and MacBook Pro models are commonly caused by a shorted surface-mount capacitor on the main power rail, a failed USB-C charging IC (such as a CD3217 controller), or a power management fault after voltage spikes or third-party chargers. These can usually be traced and repaired at component level without replacing the whole logic board."
+          }
+        },
+        "faq_2": {
+          "type": "faq",
+          "settings": {
+            "question": "Will I lose my data if my MacBook won't turn on?",
+            "answer": "Because modern MacBooks have the SSD soldered directly onto the logic board, Apple's standard logic board replacement wipes all data. By repairing the power circuit on your original logic board, we aim to restore your MacBook with your files and apps completely intact."
+          }
+        },
+        "faq_3": {
+          "type": "faq",
+          "settings": {
+            "question": "Apple quoted £700+ for a new logic board. Can iCorrect give me a second opinion?",
+            "answer": "Yes. Many of our dead MacBook repairs come directly from clients who received a high logic board replacement quote from an Apple Store or authorised centre. Book our diagnostic and we will inspect the board under the microscope within 1 working day and email a clear written report and fixed component-level quote."
+          }
+        },
+        "faq_4": {
+          "type": "faq",
+          "settings": {
+            "question": "Do you repair dead M1, M2, M3, and M4 Apple Silicon MacBooks?",
+            "answer": "Yes. Our Fitzrovia workshop repairs both Apple Silicon (M1, M2, M3, M4) and Intel MacBook Air and MacBook Pro logic boards, including USB-C / MagSafe charging failures, DFU firmware recovery, and power-rail short circuits."
+          }
+        },
+        "faq_5": {
+          "type": "faq",
+          "settings": {
+            "question": "How long does a dead MacBook logic board repair take?",
+            "answer": "Once your MacBook reaches our workshop, we complete the full power-rail diagnostic and email your written quote within 1 working day. Standard repairs complete within 2 working days once approved, with exact timing confirmed upfront for complex board faults."
+          }
+        },
+        "faq_6": {
+          "type": "faq",
+          "settings": {
+            "question": "What warranty covers a no-power logic board repair?",
+            "answer": "All completed MacBook logic board and no-power repairs include our 2-year warranty covering the repaired circuits, replaced components, and workmanship. We charge upfront fixed prices with zero deposits."
+          }
+        }
+      },
+      "block_order": ["faq_1", "faq_2", "faq_3", "faq_4", "faq_5", "faq_6"]
+    },
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    }
+  },
+  "order": [
+    "pillar_top",
+    "quote_wizard_nopower",
+    "pillar_bottom",
+    "main"
+  ]
+}

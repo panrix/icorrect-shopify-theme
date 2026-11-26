@@ -1,0 +1,173 @@
+{
+  "sections": {
+    "pillar_top": {
+      "type": "macbook-pillar-page",
+      "settings": {
+        "part": "top",
+        "breadcrumb_label": "MacBook Liquid Damage Repair",
+        "hero_title": "MacBook Liquid Damage Repair",
+        "hero_lead": "Coffee, water, or wine spill on your MacBook? We clean corrosion ultrasonically and repair shorted power circuits at component level in our Fitzrovia workshop, protecting your logic board and soldered SSD data wherever possible.",
+        "chip1_label": "Board diagnostic",
+        "chip1_value": "Quote in 1 working day",
+        "chip2_label": "Data preservation",
+        "chip2_value": "Soldered SSD kept intact",
+        "chip3_label": "Repair warranty",
+        "chip3_value": "2-year cover included",
+        "chip4_label": "UK collection",
+        "chip4_value": "Free on orders £200+",
+        "hero_note": "Upfront fixed diagnostic and clear written quote before repair proceeds. Zero deposits.",
+        "stage_kicker": "First 60 Seconds After a Spill",
+        "stage_pill": "Emergency Checklist",
+        "stage_step1_title": "Power off and unplug immediately",
+        "stage_step1_desc": "Hold the power button until off and disconnect USB-C or MagSafe. Every second with power running accelerates corrosion on the logic board.",
+        "stage_step2_title": "Do not use rice or a hairdryer",
+        "stage_step2_desc": "Rice leaves starch dust inside fans and connectors; heat warps keycaps and pushes liquid deeper under logic board chips.",
+        "stage_step3_title": "Book a microscope board inspection",
+        "stage_step3_desc": "Leave the MacBook dry and switched off, then book courier collection in selected London zones or a free tracked UK mail-in pack.",
+        "pillar1_title": "Ultrasonic cleaning & microscope micro-soldering",
+        "pillar1_body": "Instead of writing off your MacBook for a £800 to £1,400+ Apple Tier 4 swap, we strip the board, remove hidden corrosion ultrasonically, and replace only the damaged components.",
+        "pillar2_title": "Built to protect your files & soldered SSD",
+        "pillar2_body": "On Apple Silicon (M1, M2, M3, M4) and modern Intel MacBooks, your SSD is soldered onto the logic board. Repairing your original board keeps your data intact without a board-swap wipe.",
+        "pillar3_title": "Written report & fixed quote before repair",
+        "pillar3_body": "Once your MacBook reaches our Fitzrovia workshop, we complete board diagnostics within 1 working day and email a clear written report and fixed quote. Nothing proceeds without your approval.",
+        "compare_heading": "Component-level liquid recovery vs an Apple Tier 4 replacement",
+        "compare_lead": "Apple classifies liquid spills as Tier 4 accidental damage and quotes a full logic board and top-case replacement that wipes your SSD. We repair your original board in-house.",
+        "warranty_copy": "Every completed MacBook liquid damage repair includes a 2-year warranty covering the repaired circuits, replaced components, and workmanship. We quote upfront after our board-level diagnostic with zero deposits."
+      },
+      "blocks": {
+        "row_1": {
+          "type": "compare_row",
+          "settings": {
+            "metric": "What gets repaired",
+            "icorrect": "Original logic board ultrasonically cleaned & micro-soldered",
+            "apple": "Full logic board & top-case swap (Tier 4)",
+            "generic": "Often outsourced or surface-wiped only"
+          }
+        },
+        "row_2": {
+          "type": "compare_row",
+          "settings": {
+            "metric": "Your files & soldered SSD",
+            "icorrect": "Original board & SSD kept intact wherever possible",
+            "apple": "Data wiped during logic board replacement",
+            "generic": "High risk without schematic & microscope diagnostics"
+          }
+        },
+        "row_3": {
+          "type": "compare_row",
+          "settings": {
+            "metric": "Typical cost",
+            "icorrect": "Fraction of Apple Tier 4 replacement cost",
+            "apple": "Often £800 to £1,400+ out of warranty",
+            "generic": "Low initial estimate, frequent repeat faults"
+          }
+        },
+        "row_4": {
+          "type": "compare_row",
+          "settings": {
+            "metric": "Corrosion treatment",
+            "icorrect": "Full board strip, ultrasonic bath & damaged IC replacement",
+            "apple": "No corrosion cleaning offered",
+            "generic": "Alcohol brush only; hidden corrosion spreads later"
+          }
+        },
+        "row_5": {
+          "type": "compare_row",
+          "settings": {
+            "metric": "Warranty",
+            "icorrect": "2-year warranty on repaired circuits & parts",
+            "apple": "90-day repair warranty",
+            "generic": "30 to 90 days, often excludes liquid spills"
+          }
+        },
+        "row_6": {
+          "type": "compare_row",
+          "settings": {
+            "metric": "Diagnostic clarity",
+            "icorrect": "Written microscope report & fixed quote in 1 working day",
+            "apple": "Flat Tier 4 quote without component breakdown",
+            "generic": "Verbal estimate with unclear root cause"
+          }
+        }
+      },
+      "block_order": ["row_1", "row_2", "row_3", "row_4", "row_5", "row_6"]
+    },
+    "quote_wizard_liquid": {
+      "type": "quote-wizard",
+      "settings": {
+        "show_map": false,
+        "heading": "Get your MacBook liquid damage diagnostic quote",
+        "subheading": "Select your MacBook model below. Same-day courier collection in selected London zones, or free tracked UK mail-in on orders £200+.",
+        "prefill_mode": "manual",
+        "skip_to_service": false,
+        "prefill_device": "macbook"
+      }
+    },
+    "pillar_bottom": {
+      "type": "macbook-pillar-page",
+      "settings": {
+        "part": "bottom",
+        "faq_lead": "Everything you need to know about liquid spills, soldered SSD data safety, turnaround times, and our 2-year warranty."
+      },
+      "blocks": {
+        "faq_1": {
+          "type": "faq",
+          "settings": {
+            "question": "My MacBook still turns on after a spill. Do I still need a liquid damage inspection?",
+            "answer": "Yes. Liquid leaves conductive mineral residue under microchips and connectors that continues to corrode silently over days or weeks. Switching the MacBook off now and booking an ultrasonic clean and inspection stops a minor spill from turning into a major power-rail short."
+          }
+        },
+        "faq_2": {
+          "type": "faq",
+          "settings": {
+            "question": "Will my data be safe during a MacBook liquid damage repair?",
+            "answer": "Because modern MacBook Air and MacBook Pro SSDs are soldered directly to the logic board, repairing your original logic board is the best way to keep your files intact. Liquid damage can be unpredictable and there is a small chance data could be affected if the storage circuit itself was damaged, so during diagnostics we prioritise protecting your data wherever possible."
+          }
+        },
+        "faq_3": {
+          "type": "faq",
+          "settings": {
+            "question": "Should I put my wet MacBook in rice or use a hairdryer?",
+            "answer": "No. Neither dries liquid trapped beneath tightly sealed logic board chips. Rice introduces starch dust into fans and ports, and a hairdryer can warp keys, damage display polarisers, and drive liquid deeper into connectors. Power the MacBook off immediately and keep it unplugged."
+          }
+        },
+        "faq_4": {
+          "type": "faq",
+          "settings": {
+            "question": "How much does MacBook liquid damage repair cost compared to Apple?",
+            "answer": "Apple typically classifies liquid spills as Tier 4 damage and quotes £800 to £1,400+ for a full logic board and top-case swap. We start with a fixed board-level diagnostic and email you an exact written repair quote within 1 working day of receiving your MacBook, usually at a fraction of a full replacement."
+          }
+        },
+        "faq_5": {
+          "type": "faq",
+          "settings": {
+            "question": "How long does MacBook liquid damage repair take?",
+            "answer": "Once your MacBook arrives at our Fitzrovia workshop, we complete the microscope diagnostic and email your written quote within 1 working day. Standard repairs complete within 2 working days once approved, and we confirm exact timing upfront for complex multi-circuit liquid recovery."
+          }
+        },
+        "faq_6": {
+          "type": "faq",
+          "settings": {
+            "question": "What warranty is included on MacBook liquid damage repairs?",
+            "answer": "Completed MacBook liquid damage repairs are covered by our 2-year warranty on the repaired circuits, replaced components, and associated workmanship. If any issue related to the original repair returns within two years, we inspect and resolve it under warranty."
+          }
+        }
+      },
+      "block_order": ["faq_1", "faq_2", "faq_3", "faq_4", "faq_5", "faq_6"]
+    },
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    }
+  },
+  "order": [
+    "pillar_top",
+    "quote_wizard_liquid",
+    "pillar_bottom",
+    "main"
+  ]
+}

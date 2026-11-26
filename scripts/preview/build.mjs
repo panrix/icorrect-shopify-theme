@@ -114,6 +114,40 @@ engine.registerFilter('json', (v) => JSON.stringify(v === undefined ? null : v))
 engine.registerFilter('money_without_currency', (v) => v);
 engine.registerFilter('payment_type_svg_tag', () => read('scripts/preview/klarna.svg'));
 const source = read('sections/quote-wizard.liquid').replace(/\{%-?\s*schema\s*-?%\}[\s\S]*?\{%-?\s*endschema\s*-?%\}/, '');
+const pillarSource = read('sections/macbook-pillar-page.liquid').replace(/\{%-?\s*schema\s*-?%\}[\s\S]*?\{%-?\s*endschema\s*-?%\}/, '');
+
+async function renderPillarPage(outFile, title, templateFile) {
+  const tpl = JSON.parse(read(templateFile));
+  const parts = [];
+  for (const key of tpl.order || []) {
+    const sec = tpl.sections[key];
+    if (!sec || sec.disabled) continue;
+    const blocks = (sec.block_order || []).map((id) => ({
+      id,
+      type: sec.blocks[id].type,
+      settings: sec.blocks[id].settings || {},
+      shopify_attributes: '',
+    }));
+    if (sec.type === 'macbook-pillar-page') {
+      parts.push(await engine.parseAndRender(pillarSource, {
+        section: { id: key, settings: sec.settings || {}, blocks },
+      }));
+    } else if (sec.type === 'quote-wizard') {
+      parts.push('<div class="quote-wizard-section" style="max-width:1120px;margin:0 auto;padding:36px 24px 48px;">' +
+        await engine.parseAndRender(source, {
+          ...baseContext,
+          template: { name: 'page' },
+          request: { page_type: 'page' },
+          section: { id: key, settings: { ...baseContext.section.settings, ...(sec.settings || {}) } },
+        }) + '</div>');
+    }
+  }
+  write(outFile, `<!doctype html><html lang="en-GB"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>${title} | iCorrect Preview</title>${pageCss}${cartShim}</head>
+<body>${banner(title)}${parts.join('\n')}</body></html>`);
+}
 
 const baseContext = {
   linklists: {
@@ -177,6 +211,8 @@ await renderPage('macbook-screen/index.html', 'MacBook screen repair page', {
   },
 });
 await renderPage('quote/index.html', 'All devices', { template: { name: 'page' }, request: { page_type: 'page' } });
+await renderPillarPage('macbook-liquid-damage/index.html', 'MacBook Liquid Damage Repair', 'templates/page.macbook-liquid-damage-repair.json');
+await renderPillarPage('macbook-no-power/index.html', 'Dead & No Power MacBook Repair', 'templates/page.macbook-no-power-repair.json');
 
 /* Checkout stand-in: shows the cart the wizard built. */
 const checkout = `<!doctype html><html lang="en-GB"><head><meta charset="utf-8">
@@ -323,9 +359,11 @@ write('index.html', `<!doctype html><html lang="en-GB"><head><meta charset="utf-
 <title>Quote wizard &amp; Video Panels preview</title>${pageCss}
 <style>.pv-wrap{max-width:640px;margin:0 auto;padding:24px 20px}.pv-wrap h1{font-size:28px;letter-spacing:-.04em;margin:0 0 8px}
 .pv-wrap p,.pv-wrap li{color:#4d4d4d;font-size:15px;line-height:1.5}.pv-links a{display:flex;align-items:center;min-height:56px;padding:0 16px;margin:8px 0;border-radius:12px;box-shadow:0 0 0 1px rgba(0,0,0,.12);color:#171717;text-decoration:none;font-weight:500}</style></head>
-<body>${banner('Start')}<div class="pv-wrap"><h1>3-Video Panel Redesign &amp; SEO Preview</h1>
+<body>${banner('Start')}<div class="pv-wrap"><h1>iCorrect Preview</h1>
 <p>Branch <b>${branch}</b>${sha ? ' at ' + sha : ''}.</p>
 <div class="pv-links">
+  <a href="/macbook-liquid-damage/">MacBook Liquid Damage Repair</a>
+  <a href="/macbook-no-power/">Dead &amp; No Power MacBook Repair</a>
   <a href="/video-panels/">All 5 Redesigned 3-Video Panels (Homepage, MacBook, iPhone, iPad, Watch)</a>
   <a href="/macbook-screen/">MacBook screen repair page</a>
   <a href="/quote/">All devices quote wizard</a>
