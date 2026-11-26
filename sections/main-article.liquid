@@ -79,6 +79,181 @@
           {% assign share_url = request.origin | append: article.url %}
           {% render 'share-button', block: block, share_link: share_url %}
         </div>
+
+      {%- when 'repair_cta' -%}
+        {%- liquid
+          assign tag_str = article.tags | join: ' ' | downcase
+          assign hay = article.handle | append: ' ' | append: article.title | append: ' ' | append: tag_str | downcase
+
+          assign cta_kicker = 'FITZROVIA MICROELECTRONICS WORKSHOP'
+          assign cta_heading = 'Need your MacBook repaired without losing your data?'
+          assign cta_body = 'Component-level MacBook repairs carried out in-house in Fitzrovia. Standard 2-working-day turnaround once in workshop, backed by a 2-year warranty and free UK collection on orders £200+.'
+          assign cta_primary_label = 'View MacBook repairs ->'
+          assign cta_primary_url = '/pages/macbook-repairs'
+          assign cta_secondary_label = 'Check screen repair prices'
+          assign cta_secondary_url = '/collections/macbook-screen-repair-prices'
+
+          if hay contains 'liquid' or hay contains 'water' or hay contains 'spill' or hay contains 'coffee' or hay contains 'corros'
+            assign cta_kicker = 'MACBOOK LIQUID DAMAGE RECOVERY'
+            assign cta_heading = 'Spilled liquid on your MacBook? Power it off and book a board-level inspection.'
+            assign cta_body = 'Do not plug it in or use rice. Our Fitzrovia technicians clean corrosion under the microscope and restore failed logic board components so your data stays intact. Free UK collection on orders £200+.'
+            assign cta_primary_label = 'Book MacBook liquid damage repair ->'
+            assign cta_primary_url = '/pages/macbook-liquid-damage-repair'
+            assign cta_secondary_label = 'MacBook will not turn on?'
+            assign cta_secondary_url = '/pages/macbook-no-power-repair'
+          elsif hay contains 'no-power' or hay contains 'no power' or hay contains 'not-turning-on' or hay contains 'turn on' or hay contains 'dead' or hay contains 'logic-board' or hay contains 'logic board' or hay contains 'charging' or hay contains 'cd3217'
+            if hay contains 'iphone'
+              assign cta_kicker = 'IPHONE BOARD & POWER DIAGNOSTICS'
+              assign cta_heading = 'iPhone not turning on or showing faults?'
+              assign cta_body = 'Our Fitzrovia workshop carries out in-house diagnostics and component-level iPhone repairs with upfront fixed pricing and a 2-year warranty.'
+              assign cta_primary_label = 'Explore iPhone repairs ->'
+              assign cta_primary_url = '/pages/iphone-repairs'
+              assign cta_secondary_label = 'Check iPhone diagnostic prices'
+              assign cta_secondary_url = '/collections/iphone-diagnostic-prices'
+            else
+              assign cta_kicker = 'DEAD & NO POWER MACBOOK REPAIR'
+              assign cta_heading = 'MacBook completely dead or not charging?'
+              assign cta_body = 'Apple replaces the entire logic board and wipes your soldered SSD. We trace and repair the exact failed power rail in-house in Fitzrovia, keeping your files intact with a 2-year warranty.'
+              assign cta_primary_label = 'Book dead MacBook diagnostic ->'
+              assign cta_primary_url = '/pages/macbook-no-power-repair'
+              assign cta_secondary_label = 'Had a liquid spill?'
+              assign cta_secondary_url = '/pages/macbook-liquid-damage-repair'
+            endif
+          elsif hay contains 'iphone'
+            assign cta_kicker = 'FITZROVIA IPHONE REPAIR SPECIALISTS'
+            assign cta_heading = 'Need a reliable iPhone repair in London or via UK mail-in?'
+            assign cta_body = 'Genuine Apple displays, battery replacements, and component-level logic board repairs carried out in-house, backed by a 2-year warranty and 4.8 from 750+ Google reviews.'
+            assign cta_primary_label = 'View iPhone repairs ->'
+            assign cta_primary_url = '/pages/iphone-repairs'
+            assign cta_secondary_label = 'Check iPhone screen prices'
+            assign cta_secondary_url = '/collections/iphone-screen-repair-prices'
+          elsif hay contains 'ipad' or hay contains 'apple-pencil' or hay contains 'pencil'
+            assign cta_kicker = 'FITZROVIA IPAD REPAIR SPECIALISTS'
+            assign cta_heading = 'Need an iPad screen, battery, or board repair?'
+            assign cta_body = 'In-house iPad Pro, Air, and Mini repairs at our Fitzrovia workshop with calibrated displays, upfront fixed pricing, and a 2-year warranty.'
+            assign cta_primary_label = 'View iPad repairs ->'
+            assign cta_primary_url = '/pages/ipad-repairs'
+            assign cta_secondary_label = 'Check iPad diagnostic prices'
+            assign cta_secondary_url = '/collections/ipad-diagnostic-prices'
+          elsif hay contains 'watch'
+            assign cta_kicker = 'APPLE WATCH REPAIR SPECIALISTS'
+            assign cta_heading = 'Cracked Apple Watch glass or worn battery?'
+            assign cta_body = 'Glass-only screen restoration and battery replacement carried out in-house in Fitzrovia with a 2-year warranty.'
+            assign cta_primary_label = 'View Apple Watch repairs ->'
+            assign cta_primary_url = '/pages/apple-watch-repairs'
+            assign cta_secondary_label = 'Check Watch glass repair prices'
+            assign cta_secondary_url = '/collections/apple-watch-screen-glass-only-repair-prices'
+          elsif hay contains 'screen' or hay contains 'display' or hay contains 'flexgate' or hay contains 'dustgate' or hay contains 'retina' or hay contains 'macbook'
+            assign cta_kicker = 'GENUINE APPLE PANEL-ONLY SCREEN REPAIR'
+            assign cta_heading = 'Cracked, flickering, or blank MacBook display?'
+            assign cta_body = 'We fit genuine Apple displays panel-only into your original lid (30% to 50% less than a full-lid swap), completed in 2 working days with a 2-year warranty and free UK collection on orders £200+.'
+            assign cta_primary_label = 'Get your exact MacBook screen price ->'
+            assign cta_primary_url = '/collections/macbook-screen-repair-prices'
+            assign cta_secondary_label = 'Liquid or power fault instead?'
+            assign cta_secondary_url = '/pages/macbook-liquid-damage-repair'
+          endif
+        -%}
+        <aside class="ic-article-cta page-width page-width--narrow" aria-label="Book a repair with iCorrect" {{ block.shopify_attributes }}>
+          <div class="ic-article-cta__card">
+            <span class="ic-article-cta__kicker">{{ cta_kicker }}</span>
+            <h2 class="ic-article-cta__title">{{ cta_heading }}</h2>
+            <p class="ic-article-cta__body">{{ cta_body }}</p>
+            <div class="ic-article-cta__actions">
+              <a class="ic-article-cta__btn-primary" href="{{ cta_primary_url }}">{{ cta_primary_label }}</a>
+              <a class="ic-article-cta__btn-secondary" href="{{ cta_secondary_url }}">{{ cta_secondary_label }}</a>
+            </div>
+            <div class="ic-article-cta__pillars">
+              <span>Top MacBook repairs:</span>
+              <a href="/pages/macbook-liquid-damage-repair">Liquid Damage</a>
+              <span aria-hidden="true">&middot;</span>
+              <a href="/pages/macbook-no-power-repair">Dead / No Power</a>
+              <span aria-hidden="true">&middot;</span>
+              <a href="/collections/macbook-screen-repair-prices">Screen Repair</a>
+            </div>
+          </div>
+        </aside>
+        <style>
+          .ic-article-cta { margin-top: 3.2rem; margin-bottom: 1.6rem; }
+          .ic-article-cta__card {
+            background: #fafafa;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            color: #171717;
+          }
+          .ic-article-cta__kicker {
+            display: block;
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #666666;
+            margin-bottom: 6px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+          }
+          .ic-article-cta__title {
+            margin: 0 0 10px;
+            font-size: 22px;
+            line-height: 1.2;
+            font-weight: 600;
+            color: #171717;
+          }
+          .ic-article-cta__body {
+            margin: 0 0 18px;
+            font-size: 15px;
+            line-height: 1.55;
+            color: #4d4d4d;
+          }
+          .ic-article-cta__actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+          }
+          .ic-article-cta__btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 11px 18px;
+            border-radius: 8px;
+            background: #171717;
+            color: #ffffff !important;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+          }
+          .ic-article-cta__btn-primary:hover { background: #333333; }
+          .ic-article-cta__btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.18);
+            background: #ffffff;
+            color: #171717 !important;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+          }
+          .ic-article-cta__btn-secondary:hover { border-color: #171717; }
+          .ic-article-cta__pillars {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            font-size: 13px;
+            color: #666666;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+          }
+          .ic-article-cta__pillars a {
+            color: #0070f3;
+            text-decoration: none;
+            font-weight: 500;
+          }
+          .ic-article-cta__pillars a:hover { text-decoration: underline; }
+        </style>
     {%- endcase -%}
   {%- endfor -%}
 
@@ -363,6 +538,11 @@
           "content": "t:sections.main-article.blocks.share.settings.title_info.content"
         }
       ]
+    },
+    {
+      "type": "repair_cta",
+      "name": "Contextual Repair CTA",
+      "limit": 1
     }
   ]
 }

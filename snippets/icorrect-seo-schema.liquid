@@ -16,7 +16,7 @@
   {%- if col_handle contains 'macbook' or col_handle contains 'keyboard' or col_handle contains 'touchbar' or col_handle contains 'trackpad' or col_handle contains 'flexgate' or col_handle contains 'dustgate' -%}
     {%- assign device_type = 'macbook' -%}
     {%- assign service_name = 'MacBook Repair London' -%}
-    {%- assign service_desc = 'Professional MacBook repair in London. Logic board, screen, battery, keyboard, and liquid damage specialists. Same-day and next-day service available. All models covered. 2-year warranty.' -%}
+    {%- assign service_desc = 'Specialist MacBook repair in Fitzrovia, London and across the UK. Liquid damage recovery, dead or no-power logic board repair, and genuine Apple display panel-only replacement. Standard 2-working-day turnaround once in workshop, backed by a 2-year warranty.' -%}
     {%- assign service_url = 'https://icorrect.co.uk/pages/macbook-repairs' -%}
   {%- elsif col_handle contains 'iphone' -%}
     {%- assign device_type = 'iphone' -%}
@@ -140,14 +140,90 @@
 
 {%- elsif request.page_type == 'page' -%}
 
-  {%- comment -%} BreadcrumbList for service pages {%- endcomment -%}
+  {%- comment -%} BreadcrumbList and Service schema for service & MacBook pillar pages {%- endcomment -%}
   {%- assign page_handle = page.handle -%}
-  {%- assign is_service_page = false -%}
+  {%- assign is_top_service_page = false -%}
+  {%- assign is_macbook_subpage = false -%}
+  {%- assign page_service_name = '' -%}
+  {%- assign page_service_desc = '' -%}
+
   {%- if page_handle == 'macbook-repairs' or page_handle == 'macbook-repair-page' or page_handle == 'iphone-repairs' or page_handle == 'ipad-repairs' or page_handle == 'apple-watch-repairs' or page_handle == 'our-services' -%}
-    {%- assign is_service_page = true -%}
+    {%- assign is_top_service_page = true -%}
   {%- endif -%}
 
-  {%- if is_service_page -%}
+  {%- if page_handle == 'macbook-liquid-damage-repair'
+      or page_handle == 'macbook-no-power-repair'
+      or page_handle == 'advanced-diagnostic'
+      or page_handle == 'macbook-repair-london'
+      or page_handle == 'macbook-screen-repair-london'
+      or page_handle == 'macbook-pro-repair-london'
+      or page_handle == 'macbook-air-repair-london'
+      or page_handle == 'macbook-pro-screen-replacement-london'
+      or page_handle == 'macbook-air-screen-replacement-london' -%}
+    {%- assign is_macbook_subpage = true -%}
+  {%- endif -%}
+
+  {%- if page_handle == 'macbook-liquid-damage-repair' -%}
+    {%- assign page_service_name = 'MacBook Liquid Damage Repair London & UK' -%}
+    {%- assign page_service_desc = 'Component-level MacBook liquid damage recovery in Fitzrovia, London. Ultrasonic cleaning, micro-soldering logic board restoration, and data preservation with 2-year warranty and free UK collection on orders £200+.' -%}
+  {%- elsif page_handle == 'macbook-no-power-repair' -%}
+    {%- assign page_service_name = 'Dead & No Power MacBook Logic Board Repair London & UK' -%}
+    {%- assign page_service_desc = 'In-house logic board and power-rail repair for MacBooks that will not turn on or charge. Component-level micro-soldering in Fitzrovia with data kept intact and 2-year warranty.' -%}
+  {%- elsif page_handle == 'advanced-diagnostic' -%}
+    {%- assign page_service_name = 'MacBook Advanced Logic Board Diagnostics London' -%}
+    {%- assign page_service_desc = 'Microelectronics-level diagnostics for MacBook liquid damage, no power, charging faults, and complex logic board issues at our Fitzrovia workshop.' -%}
+  {%- endif -%}
+
+  {%- if page_service_name != '' -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": {{ page_service_name | json }},
+    "serviceType": "Electronics Repair",
+    "description": {{ page_service_desc | json }},
+    "url": {{ request.origin | append: request.path | json }},
+    "provider": {
+      "@type": "LocalBusiness",
+      "@id": "https://icorrect.co.uk/#localbusiness",
+      "name": "iCorrect"
+    },
+    "areaServed": [
+      { "@type": "City", "name": "London" },
+      { "@type": "Country", "name": "United Kingdom" }
+    ]
+  }
+  </script>
+  {%- endif -%}
+
+  {%- if is_macbook_subpage -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": {{ request.origin | json }}
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "MacBook Repairs",
+        "item": "https://icorrect.co.uk/pages/macbook-repairs"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": {{ page.title | json }},
+        "item": {{ request.origin | append: request.path | json }}
+      }
+    ]
+  }
+  </script>
+  {%- elsif is_top_service_page -%}
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -169,5 +245,35 @@
   }
   </script>
   {%- endif -%}
+
+{%- elsif request.page_type == 'article' -%}
+
+  {%- comment -%} BreadcrumbList for blog articles {%- endcomment -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": {{ request.origin | json }}
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ blog.title | json }},
+        "item": {{ request.origin | append: blog.url | json }}
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": {{ article.title | json }},
+        "item": {{ request.origin | append: article.url | json }}
+      }
+    ]
+  }
+  </script>
 
 {%- endif -%}
