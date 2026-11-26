@@ -555,70 +555,76 @@
       list-style: none;
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      background: var(--bg-2);
-      border: 1px solid var(--line);
-      border-radius: var(--r-md);
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
       overflow: hidden;
     }
     .trust-cell {
-      padding: 11px 14px;
+      padding: 13px 16px;
       display: flex;
       align-items: center;
-      gap: 9px;
-      border-right: 1px solid var(--line);
+      gap: 11px;
+      border-right: 1px solid #e5e7eb;
       min-width: 0;
     }
     .trust-cell:last-child { border-right: 0; }
     .trust-rating-link {
       display: flex;
       align-items: center;
-      gap: 9px;
+      gap: 11px;
       text-decoration: none;
       width: 100%;
       min-width: 0;
     }
-    .trust-score {
-      font-size: 20px;
-      font-weight: 600;
-      letter-spacing: -0.04em;
-      line-height: 1;
-      color: var(--fg-1);
-      flex-shrink: 0;
+    .trust-rating-link:hover .trust-icon {
+      border-color: #cbd5e1;
+      background: #ffffff;
     }
-    .trust-stars {
+    .trust-rating-title {
       display: inline-flex;
       align-items: center;
-      gap: 2px;
+      gap: 5px;
+      flex-wrap: nowrap;
+    }
+    .trust-stars-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 1.5px;
       color: var(--star);
       line-height: 1;
-      margin-bottom: 2px;
+      transform: translateY(-0.5px);
     }
     .trust-icon {
-      width: 26px;
-      height: 26px;
-      border-radius: 6px;
-      background: #ffffff;
-      border: 1px solid var(--line);
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      color: var(--fg-1);
+      color: #111827;
+      transition: border-color 140ms ease, background 140ms ease;
     }
     .trust-copy {
       display: flex;
       flex-direction: column;
+      gap: 1px;
       min-width: 0;
     }
     .trust-copy strong {
-      font-size: 12.5px;
+      font-size: 13px;
       font-weight: 600;
-      color: var(--fg-1);
+      letter-spacing: -0.015em;
+      color: #111827;
       line-height: 1.25;
     }
     .trust-copy span {
-      font-size: 11px;
-      color: var(--fg-3);
+      font-size: 11.5px;
+      color: #6b7280;
       line-height: 1.25;
     }
 
@@ -860,17 +866,130 @@
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
-      gap: 12px;
+      gap: 14px;
       flex-wrap: wrap;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
+    }
+    .reviews-head-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .reviews-g-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .reviews-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+    .reviews-stars-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      line-height: 1;
     }
     .trustindex-slot {
       width: 100%;
-      min-height: 320px;
+      min-height: 252px;
       overflow-x: clip;
     }
-    @media (max-width: 989px) {
-      .trustindex-slot { min-height: 420px; }
+
+    /* Scoped overrides to align live Trustindex widget with iCorrect Apple-minimal cards */
+    #google-reviews .ti-widget,
+    #google-reviews .ti-widget * {
+      font-family: var(--font-sans) !important;
+    }
+    #google-reviews .ti-widget .ti-widget-header,
+    #google-reviews .ti-widget .ti-header {
+      display: none !important;
+    }
+    #google-reviews .ti-widget .ti-widget-container {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+    #google-reviews .ti-widget .ti-reviews-container {
+      margin-top: 0 !important;
+    }
+    #google-reviews .ti-widget .ti-reviews-container-wrapper {
+      padding-top: 4px !important;
+      padding-bottom: 12px !important;
+    }
+    #google-reviews .ti-widget .ti-review-item > .ti-inner {
+      background: #ffffff !important;
+      border: 1px solid #e5e7eb !important;
+      border-radius: 16px !important;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 4px 14px rgba(0, 0, 0, 0.03) !important;
+      padding: 20px 22px !important;
+      transition: border-color 140ms ease, box-shadow 140ms ease !important;
+    }
+    #google-reviews .ti-widget .ti-review-item > .ti-inner:hover {
+      border-color: #d1d5db !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), 0 8px 20px rgba(0, 0, 0, 0.05) !important;
+    }
+    #google-reviews .ti-widget .ti-name {
+      font-size: 14px !important;
+      font-weight: 600 !important;
+      letter-spacing: -0.015em !important;
+      color: #111827 !important;
+    }
+    #google-reviews .ti-widget .ti-date {
+      font-size: 12px !important;
+      color: #6b7280 !important;
+    }
+    #google-reviews .ti-widget .ti-review-content {
+      font-size: 14px !important;
+      line-height: 1.55 !important;
+      color: #374151 !important;
+    }
+    #google-reviews .ti-widget .ti-read-more,
+    #google-reviews .ti-widget .ti-read-more span {
+      font-size: 12.5px !important;
+      font-weight: 500 !important;
+      color: var(--accent) !important;
+      opacity: 1 !important;
+    }
+    #google-reviews .ti-widget .ti-controls .ti-prev,
+    #google-reviews .ti-widget .ti-controls .ti-next {
+      background: #ffffff !important;
+      border: 1px solid #e5e7eb !important;
+      border-radius: 999px !important;
+      width: 34px !important;
+      height: 34px !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+      transition: border-color 140ms ease, background 140ms ease !important;
+    }
+    #google-reviews .ti-widget .ti-controls .ti-prev:hover,
+    #google-reviews .ti-widget .ti-controls .ti-next:hover {
+      border-color: #cbd5e1 !important;
+      background: #f8fafc !important;
+    }
+    #google-reviews .ti-widget .ti-controls-line {
+      background: #e5e7eb !important;
+      height: 3px !important;
+      border-radius: 999px !important;
+      margin-top: 8px !important;
+    }
+    #google-reviews .ti-widget .ti-controls-line .dot {
+      background: #111827 !important;
+      height: 3px !important;
+      border-radius: 999px !important;
     }
 
     /* 3. HOW WE COMPARE + WORKSHOP & 2-YEAR WARRANTY */
@@ -1524,7 +1643,7 @@
     @media (max-width: 960px) {
       .nav-links, .status-pill { display: none; }
       .trust-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .trust-cell:nth-child(1), .trust-cell:nth-child(2) { border-bottom: 1px solid var(--line); }
+      .trust-cell:nth-child(1), .trust-cell:nth-child(2) { border-bottom: 1px solid #e5e7eb; }
       .trust-cell:nth-child(2), .trust-cell:nth-child(4) { border-right: 0; }
       .hero-grid, .visual-pair, .identify-grid, .faults-grid, .seo-value-grid { grid-template-columns: minmax(0, 1fr); }
       .model-dir-grid { grid-template-columns: minmax(0, 1fr); }
@@ -1570,13 +1689,26 @@
       .diagram-frame img { max-width: 290px; max-height: 330px; }
       .diagram-legend-wrap { display: block; }
 
-      .trust-strip { margin-top: 16px; }
-      .trust-cell { padding: 8px 10px; gap: 7px; }
-      .trust-score { font-size: 17px; }
-      .trust-icon { width: 22px; height: 22px; border-radius: 5px; }
-      .trust-icon svg { width: 13px; height: 13px; }
-      .trust-copy strong { font-size: 11.5px; }
-      .trust-copy span { font-size: 10.5px; }
+      .trust-strip {
+        margin-top: 16px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .trust-cell {
+        padding: 12px 11px;
+        gap: 9px;
+        min-height: 64px;
+      }
+      .trust-cell:nth-child(1), .trust-cell:nth-child(2) { border-bottom: 1px solid #e5e7eb; }
+      .trust-cell:nth-child(2), .trust-cell:nth-child(4) { border-right: 0; }
+      .trust-rating-link { gap: 9px; }
+      .trust-icon { width: 28px; height: 28px; border-radius: 7px; }
+      .trust-icon svg { width: 14px; height: 14px; }
+      .trust-copy strong { font-size: 12px; }
+      .trust-copy span { font-size: 11px; }
+      .reviews-head { margin-bottom: 14px; align-items: flex-start; }
+      .reviews-g-badge { width: 34px; height: 34px; border-radius: 8px; }
+      #google-reviews .ti-widget .ti-review-item { padding-left: 2px !important; padding-right: 2px !important; }
+      #google-reviews .ti-widget .ti-review-item > .ti-inner { padding: 18px 18px !important; }
 
       /* Mobile expandable pillars: titles visible, tap to expand copy */
       .pillars-strip { margin-top: 12px; gap: 8px; }
@@ -1762,19 +1894,28 @@
         </div>
 
         <!-- 4-Badge Trust Strip: Credibility bridge directly underneath Hero and ABOVE the 3 proof cards -->
-        <ul class="trust-strip" role="list" aria-label="Why choose iCorrect">
+        <ul class="trust-strip" id="trust-strip" role="list" aria-label="Why choose iCorrect">
           <li class="trust-cell">
             <a class="trust-rating-link" href="#google-reviews">
-              <span class="trust-score">4.8</span>
+              <span class="trust-icon" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+              </span>
               <span class="trust-copy">
-                <span class="trust-stars" aria-hidden="true">
-                  <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-                  <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-                  <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-                  <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-                  <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-                </span>
-                <strong>from 750+ Google reviews</strong>
+                <strong class="trust-rating-title">4.8
+                  <span class="trust-stars-inline" aria-hidden="true">
+                    <svg width="11" height="11" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                    <svg width="11" height="11" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                    <svg width="11" height="11" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                    <svg width="11" height="11" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                    <svg width="11" height="11" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                  </span>
+                </strong>
+                <span>from 750+ Google reviews</span>
               </span>
             </a>
           </li>
@@ -1893,9 +2034,28 @@
     <section class="section section-compact section-soft" id="google-reviews">
       <div class="ic-container">
         <div class="reviews-head">
-          <div>
-            <span class="mono-label">Verified Client Reviews</span>
-            <h2 class="section-title" style="margin-bottom:0;">4.8 from 750+ Google reviews</h2>
+          <div class="reviews-head-main">
+            <span class="reviews-g-badge" aria-hidden="true">
+              <svg width="19" height="19" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+            </span>
+            <div>
+              <span class="mono-label">Verified Client Reviews</span>
+              <div class="reviews-title-row">
+                <h2 class="section-title" style="margin-bottom:0;">4.8 from 750+ Google reviews</h2>
+                <span class="reviews-stars-inline" aria-hidden="true">
+                  <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                  <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                  <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                  <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                  <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                </span>
+              </div>
+            </div>
           </div>
           <a class="btn-ghost" href="https://maps.google.com/?q=iCorrect+12+Margaret+Street+London+W1W+8JQ" target="_blank" rel="noopener">Read on Google Maps -&gt;</a>
         </div>
