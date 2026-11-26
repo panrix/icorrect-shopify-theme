@@ -178,6 +178,34 @@ await renderPage('macbook-screen/index.html', 'MacBook screen repair page', {
 });
 await renderPage('quote/index.html', 'All devices', { template: { name: 'page' }, request: { page_type: 'page' } });
 
+/* ICO-13 MacBook Repair London preview (untouched Quote Wizard in page mode with MacBook preselected) */
+const ico13PreviewDir = path.join(ROOT, 'docs/previews/ico-13-macbook-repair-london');
+if (fs.existsSync(ico13PreviewDir)) {
+  const londonMacbookWizardHtml = await engine.parseAndRender(source, {
+    ...baseContext,
+    template: { name: 'page' },
+    request: { page_type: 'page' },
+    section: {
+      settings: {
+        heading: 'Get a MacBook repair quote',
+        prefill_mode: 'manual',
+        prefill_device: 'macbook',
+        prefill_fault: '',
+        show_map: false,
+      },
+    },
+  });
+  const ico13Out = path.join(OUT, 'ico-13');
+  fs.cpSync(ico13PreviewDir, ico13Out, { recursive: true });
+  const ico13Index = path.join(ico13Out, 'index.html');
+  if (fs.existsSync(ico13Index)) {
+    const injected = fs.readFileSync(ico13Index, 'utf8')
+      .replace('<!-- LIVE_CART_SHIM_SLOT -->', cartShim)
+      .replace('<!-- LIVE_QUOTE_WIZARD_SLOT -->', londonMacbookWizardHtml);
+    fs.writeFileSync(ico13Index, injected);
+  }
+}
+
 /* Checkout stand-in: shows the cart the wizard built. */
 const checkout = `<!doctype html><html lang="en-GB"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
@@ -326,6 +354,7 @@ write('index.html', `<!doctype html><html lang="en-GB"><head><meta charset="utf-
 <body>${banner('Start')}<div class="pv-wrap"><h1>3-Video Panel Redesign &amp; SEO Preview</h1>
 <p>Branch <b>${branch}</b>${sha ? ' at ' + sha : ''}.</p>
 <div class="pv-links">
+  ${fs.existsSync(ico13PreviewDir) ? '<a href="/ico-13/">ICO-13 MacBook Repair London preview (390px + 1440px)</a>' : ''}
   <a href="/video-panels/">All 5 Redesigned 3-Video Panels (Homepage, MacBook, iPhone, iPad, Watch)</a>
   <a href="/macbook-screen/">MacBook screen repair page</a>
   <a href="/quote/">All devices quote wizard</a>
