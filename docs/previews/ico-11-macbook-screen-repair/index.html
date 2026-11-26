@@ -384,10 +384,11 @@
     .price-chip {
       width: 100%;
       text-align: left;
-      padding: 9px 12px;
+      padding: 10px 12px;
       border-radius: var(--r-sm);
-      border: 1px solid #bfdbfe;
-      background: #eff6ff;
+      border: 1px solid #d1d5db;
+      background: linear-gradient(180deg, #f8f9fa 0%, #f1f3f5 100%);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 1px 2px rgba(0, 0, 0, 0.03);
       text-decoration: none;
       display: flex;
       flex-direction: column;
@@ -395,14 +396,14 @@
       transition: border-color 140ms ease, background 140ms ease, box-shadow 140ms ease;
     }
     .price-chip:hover {
-      border-color: #93c5fd;
-      background: #dbeafe;
-      box-shadow: 0 2px 8px rgba(11, 99, 206, 0.12);
+      border-color: #9ca3af;
+      background: linear-gradient(180deg, #ffffff 0%, #f3f4f6 100%);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 3px 10px rgba(17, 24, 39, 0.07);
     }
     .price-chip-model {
       font-size: 12px;
       font-weight: 500;
-      color: #1e3a5f;
+      color: #4b5563;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -411,7 +412,7 @@
       font-size: 15px;
       font-weight: 600;
       letter-spacing: -0.02em;
-      color: var(--accent);
+      color: #111827;
     }
     .hero-price-note {
       margin: 8px 0 0;
@@ -674,104 +675,118 @@
     }
     .pillar-body p { margin: 0; }
 
-    /* Compact Expandable "Collection & calibration in 2 working days" Strip */
+    /* Collection & Calibration Lead-In Card (Directly ABOVE "How our display repair compares") */
     .process-bar {
-      margin-top: 14px;
-      background: #ffffff;
-      border: 1px solid var(--line);
-      border-radius: var(--r-md);
-      box-shadow: var(--shadow-card);
+      margin: 0 0 40px;
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: var(--r-lg);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
       overflow: hidden;
     }
     .process-bar-trigger {
       width: 100%;
       border: 0;
       background: transparent;
-      padding: 11px 16px;
+      padding: 20px 22px;
       text-align: left;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 20px;
       cursor: pointer;
       transition: background 140ms ease;
     }
-    .process-bar-trigger:hover { background: var(--bg-2); }
+    .process-bar-trigger:hover { background: #f3f6fa; }
     .process-bar-left {
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 12px;
       min-width: 0;
       flex: 1;
-      flex-wrap: nowrap;
+    }
+    .process-bar-top {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
     }
     .process-bar-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 9px;
+      padding: 3px 9px;
       border-radius: 999px;
-      background: var(--bg-3);
-      border: 1px solid var(--line);
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--fg-1);
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .process-bar-steps {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      flex-wrap: nowrap;
-      min-width: 0;
-    }
-    .process-bar-steps li {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 12.5px;
-      font-weight: 500;
-      color: var(--fg-1);
-      white-space: nowrap;
-    }
-    .process-step-num {
+      background: #ffffff;
+      border: 1px solid #d1d5db;
       font-family: var(--font-mono);
       font-size: 10.5px;
       font-weight: 600;
-      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #111827;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
-    .process-step-arrow {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--fg-4);
-      margin-left: 2px;
+    .process-bar-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      color: #111827;
+      line-height: 1.25;
+    }
+    .process-highlights {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      width: 100%;
+    }
+    .process-highlight {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 10px 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .process-highlight strong {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111827;
+      letter-spacing: -0.015em;
+      line-height: 1.3;
+    }
+    .process-highlight span {
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.35;
     }
     .process-bar-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 11px;
-      border-radius: var(--r-sm);
-      border: 1px solid var(--line-strong);
+      gap: 7px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
       background: #ffffff;
-      font-size: 12.5px;
+      font-size: 13px;
       font-weight: 500;
-      color: var(--fg-1);
+      color: #111827;
       white-space: nowrap;
       flex-shrink: 0;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
     }
     .process-bar-panel {
       display: none;
-      border-top: 1px solid var(--line);
-      background: var(--bg-2);
-      padding: 18px 18px 20px;
+      border-top: 1px solid #e5e7eb;
+      background: #ffffff;
+      padding: 20px 22px 22px;
     }
     .process-bar.is-open .process-bar-panel { display: block; }
     .process-detail-head {
@@ -782,9 +797,9 @@
       flex-wrap: wrap;
       margin-bottom: 14px;
     }
-    .process-detail-head h2 {
+    .process-detail-head h3 {
       margin: 0;
-      font-size: 16px;
+      font-size: 15.5px;
       font-weight: 600;
       letter-spacing: -0.02em;
       color: var(--fg-1);
@@ -994,46 +1009,129 @@
 
     /* 3. HOW WE COMPARE + WORKSHOP & 2-YEAR WARRANTY */
     .compare-card {
-      border: 1px solid var(--line);
-      border-radius: var(--r-md);
+      border: 1px solid #e5e7eb;
+      border-radius: var(--r-lg);
       background: #ffffff;
-      box-shadow: var(--shadow-card);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
       overflow: hidden;
     }
-    .compare-table-wrap { overflow-x: auto; }
+    .compare-table-wrap { width: 100%; }
     .compare-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 13.5px;
+      font-size: 14px;
       text-align: left;
+      table-layout: fixed;
     }
+    .compare-table col.col-w-label { width: 20%; }
+    .compare-table col.col-w-win { width: 29%; }
+    .compare-table col.col-w-other { width: 25.5%; }
     .compare-table th, .compare-table td {
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--line);
+      padding: 15px 18px;
+      border-bottom: 1px solid #e5e7eb;
       vertical-align: top;
     }
     .compare-table th {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--fg-3);
-      background: var(--bg-2);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      text-transform: none;
+      color: #4b5563;
+      background: #fafafa;
+      padding: 16px 18px;
     }
-    .compare-table th.col-icorrect,
+    .compare-table th.col-icorrect {
+      background: #eff6ff;
+      color: #0b63ce;
+      border-top: 3px solid #0b63ce;
+      border-left: 1px solid #bfdbfe;
+      border-right: 1px solid #bfdbfe;
+    }
     .compare-table td.col-icorrect {
-      background: #f8fbff;
-      color: var(--fg-1);
-      font-weight: 500;
+      background: #f5f9ff;
+      border-left: 1px solid #dbeafe;
+      border-right: 1px solid #dbeafe;
     }
+    .compare-win-head {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+    .compare-win-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #0b63ce;
+      flex-shrink: 0;
+    }
+    .cmp-row-label {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      color: #111827;
+      line-height: 1.35;
+    }
+    .cmp-cell {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      min-width: 0;
+    }
+    .cmp-mark {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .cmp-mark-win {
+      background: #dbeafe;
+      color: #0b63ce;
+    }
+    .cmp-mark-neutral {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+    .cmp-mark-no {
+      background: #f3f4f6;
+      color: #9ca3af;
+    }
+    .cmp-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .cmp-verdict {
+      font-size: 13.5px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: #111827;
+      line-height: 1.3;
+    }
+    .col-icorrect .cmp-verdict { color: #0f172a; }
+    .cmp-sub {
+      font-size: 12.5px;
+      color: #6b7280;
+      line-height: 1.35;
+    }
+    .col-icorrect .cmp-sub { color: #334155; }
     .compare-extra-row { display: none; }
     .compare-card.is-expanded .compare-extra-row { display: table-row; }
     .compare-expand-btn {
       width: 100%;
       border: 0;
-      background: var(--bg-2);
-      color: var(--fg-1);
-      padding: 12px 16px;
+      background: #fafafa;
+      color: #111827;
+      padding: 13px 18px;
       font-size: 13.5px;
       font-weight: 500;
       display: flex;
@@ -1043,11 +1141,11 @@
       cursor: pointer;
       transition: background 140ms ease;
     }
-    .compare-expand-btn:hover { background: var(--bg-3); }
+    .compare-expand-btn:hover { background: #f3f4f6; }
     .compare-expand-icon {
       font-family: var(--font-mono);
       font-size: 15px;
-      color: var(--fg-3);
+      color: #6b7280;
     }
 
     .workshop-block { margin-top: 44px; }
@@ -1648,7 +1746,8 @@
       .hero-grid, .visual-pair, .identify-grid, .faults-grid, .seo-value-grid { grid-template-columns: minmax(0, 1fr); }
       .model-dir-grid { grid-template-columns: minmax(0, 1fr); }
       .process-detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .process-bar-left, .process-bar-steps { flex-wrap: wrap; }
+      .process-highlights { grid-template-columns: minmax(0, 1fr); }
+      .process-bar-trigger { flex-direction: column; align-items: flex-start; gap: 14px; }
       .related-links-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .warranty-card.is-open .warranty-body { grid-template-columns: minmax(0, 1fr); }
       .pillars-strip { grid-template-columns: minmax(0, 1fr); }
@@ -1725,32 +1824,71 @@
       }
       .pillar-card.is-open .pillar-body { display: block; }
 
-      /* Mobile compact 2-working-day process bar */
-      .process-bar { margin-top: 12px; }
+      /* Mobile Collection & Calibration Lead-In Card */
+      .process-bar { margin: 0 0 28px; }
       .process-bar-trigger {
-        padding: 12px 14px;
+        padding: 16px;
         flex-direction: column;
         align-items: flex-start;
-        gap: 10px;
+        gap: 12px;
       }
-      .process-bar-left { gap: 8px; }
-      .process-bar-steps {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 6px 10px;
-        width: 100%;
-      }
-      .process-bar-steps li {
-        font-size: 12px;
-        white-space: normal;
-      }
-      .process-step-arrow { display: none; }
+      .process-bar-title { font-size: 16.5px; }
+      .process-highlights { gap: 8px; }
+      .process-highlight { padding: 10px 12px; }
       .process-bar-pill {
         width: 100%;
         justify-content: space-between;
       }
-      .process-bar-panel { padding: 14px; }
+      .process-bar-panel { padding: 14px 16px 16px; }
       .process-detail-grid { grid-template-columns: minmax(0, 1fr); }
+
+      /* Mobile stacked comparison cards (zero horizontal clipping or overflow) */
+      .compare-table,
+      .compare-table tbody,
+      .compare-table tr,
+      .compare-table td { display: block; width: 100%; }
+      .compare-table thead,
+      .compare-table colgroup { display: none; }
+      .compare-card.is-expanded .compare-extra-row { display: block; }
+      .compare-table tbody tr {
+        padding: 14px;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .compare-table tbody tr.compare-extra-row { display: none; }
+      .compare-card.is-expanded .compare-table tbody tr.compare-extra-row { display: flex; }
+      .compare-table tbody tr:last-child { border-bottom: 0; }
+      .compare-table td {
+        padding: 0;
+        border: 0;
+      }
+      .compare-table td.cmp-label-cell {
+        padding-bottom: 4px;
+      }
+      .compare-table td[data-col] {
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        background: #fafafa;
+      }
+      .compare-table td[data-col]::before {
+        content: attr(data-col);
+        display: block;
+        font-size: 11.5px;
+        font-weight: 600;
+        color: #6b7280;
+        margin-bottom: 5px;
+      }
+      .compare-table td.col-icorrect[data-col] {
+        background: #f5f9ff;
+        border: 1px solid #bfdbfe;
+        border-left: 3px solid #0b63ce;
+      }
+      .compare-table td.col-icorrect[data-col]::before {
+        color: #0b63ce;
+      }
 
       .warranty-toggle {
         padding: 16px;
@@ -1980,53 +2118,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Compact Expandable "Collection & calibration in 2 working days" Strip -->
-        <div class="process-bar" id="process-strip">
-          <button type="button" class="process-bar-trigger" id="process-bar-toggle" aria-expanded="false" aria-controls="process-bar-panel">
-            <div class="process-bar-left">
-              <span class="process-bar-badge">Collection &amp; calibration</span>
-              <ol class="process-bar-steps" aria-label="4-step repair turnaround">
-                <li><span class="process-step-num">01</span>Collect or drop off<span class="process-step-arrow" aria-hidden="true">-&gt;</span></li>
-                <li><span class="process-step-num">02</span>Panel replacement<span class="process-step-arrow" aria-hidden="true">-&gt;</span></li>
-                <li><span class="process-step-num">03</span>Calibrate &amp; test<span class="process-step-arrow" aria-hidden="true">-&gt;</span></li>
-                <li><span class="process-step-num">04</span>Back in 2 working days</li>
-              </ol>
-            </div>
-            <span class="process-bar-pill">
-              <span id="process-bar-label">See how it works</span>
-              <span id="process-bar-icon" aria-hidden="true">+</span>
-            </span>
-          </button>
-          <div class="process-bar-panel" id="process-bar-panel">
-            <div class="process-detail-head">
-              <h2>From your door to our Fitzrovia bench and back in 2 working days</h2>
-              <span>Free collection on orders £200+ · Updates at every stage</span>
-            </div>
-            <ol class="process-detail-grid">
-              <li class="process-detail-card">
-                <span class="mono-label">01 · Free £200+</span>
-                <h3>Collect or drop off</h3>
-                <p>Book same-day London courier collection in selected London zones, receive a free tracked and insured UK mail-in pack elsewhere, or drop off at 12 Margaret Street, Fitzrovia.</p>
-              </li>
-              <li class="process-detail-card">
-                <span class="mono-label">02 · In-house bench</span>
-                <h3>Panel replacement</h3>
-                <p>We check backlight rails, hinges, and flex cables on intake, then replace only the damaged display panel with a genuine Apple display inside your original lid.</p>
-              </li>
-              <li class="process-detail-card">
-                <span class="mono-label">03 · Factory QC</span>
-                <h3>Calibrate &amp; test</h3>
-                <p>Every display is recalibrated in-house for True Tone, peak brightness, colour accuracy, and ambient light sensing, followed by hinge alignment and camera checks.</p>
-              </li>
-              <li class="process-detail-card">
-                <span class="mono-label">04 · 2 working days</span>
-                <h3>Back in 2 working days</h3>
-                <p>Completed within 2 working days once your MacBook reaches our workshop, then returned insured with your 2-year warranty and your data untouched.</p>
-              </li>
-            </ol>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -2065,12 +2156,70 @@
       </div>
     </section>
 
-    <!-- 3. HOW OUR DISPLAY REPAIR COMPARES + BOARD-LEVEL WORKSHOP / 2-YEAR WARRANTY -->
+    <!-- 3. COLLECTION & CALIBRATION + HOW OUR DISPLAY REPAIR COMPARES + BOARD-LEVEL WORKSHOP / 2-YEAR WARRANTY -->
     <section class="section" id="why-icorrect">
       <div class="ic-container">
+        <!-- Collection & Calibration Lead-In Card (Directly ABOVE "How our display repair compares") -->
+        <div class="process-bar" id="process-strip">
+          <button type="button" class="process-bar-trigger" id="process-bar-toggle" aria-expanded="false" aria-controls="process-bar-panel">
+            <div class="process-bar-left">
+              <div class="process-bar-top">
+                <span class="process-bar-badge">Collection &amp; calibration</span>
+                <h2 class="process-bar-title">Collected from your door, calibrated in Fitzrovia, back in 2 working days.</h2>
+              </div>
+              <ul class="process-highlights" aria-label="Turnaround and collection highlights">
+                <li class="process-highlight">
+                  <strong>2 working days</strong>
+                  <span>Workshop turnaround once received</span>
+                </li>
+                <li class="process-highlight">
+                  <strong>Free UK collection (£200+)</strong>
+                  <span>London same-day courier or tracked UK mail-in</span>
+                </li>
+                <li class="process-highlight">
+                  <strong>Fitzrovia board-level bench</strong>
+                  <span>Calibrated in-house, never outsourced</span>
+                </li>
+              </ul>
+            </div>
+            <span class="process-bar-pill">
+              <span id="process-bar-label">See how it works</span>
+              <span id="process-bar-icon" aria-hidden="true">+</span>
+            </span>
+          </button>
+          <div class="process-bar-panel" id="process-bar-panel">
+            <div class="process-detail-head">
+              <h3>From your door to our Fitzrovia bench and back in 2 working days</h3>
+              <span>Free collection on orders £200+ · Updates at every stage</span>
+            </div>
+            <ol class="process-detail-grid">
+              <li class="process-detail-card">
+                <span class="mono-label">01 · Free £200+</span>
+                <h3>Collect or drop off</h3>
+                <p>Book same-day London courier collection in selected London zones, receive a free tracked and insured UK mail-in pack elsewhere, or drop off at 12 Margaret Street, Fitzrovia.</p>
+              </li>
+              <li class="process-detail-card">
+                <span class="mono-label">02 · In-house bench</span>
+                <h3>Panel replacement</h3>
+                <p>We check backlight rails, hinges, and flex cables on intake, then replace only the damaged display panel with a genuine Apple display inside your original lid.</p>
+              </li>
+              <li class="process-detail-card">
+                <span class="mono-label">03 · Factory QC</span>
+                <h3>Calibrate &amp; test</h3>
+                <p>Every display is recalibrated in-house for True Tone, peak brightness, colour accuracy, and ambient light sensing, followed by hinge alignment and camera checks.</p>
+              </li>
+              <li class="process-detail-card">
+                <span class="mono-label">04 · 2 working days</span>
+                <h3>Back in 2 working days</h3>
+                <p>Completed within 2 working days once your MacBook reaches our workshop, then returned insured with your 2-year warranty and your data untouched.</p>
+              </li>
+            </ol>
+          </div>
+        </div>
+
         <!-- How Our Display Compares -->
         <div id="compare">
-          <div class="section-head" style="margin-bottom:18px;">
+          <div class="section-head" style="margin-bottom:20px;">
             <span class="mono-label">Parts &amp; Quality Comparison</span>
             <h2 class="section-title">How our display repair compares.</h2>
             <p class="section-lead">Cheaper high-street quotes rely on aftermarket lids that lose brightness, break True Tone, and fail early. Here is the real difference.</p>
@@ -2079,50 +2228,200 @@
           <div class="compare-card" id="compare-card">
             <div class="compare-table-wrap">
               <table class="compare-table">
+                <colgroup>
+                  <col class="col-w-label">
+                  <col class="col-w-win">
+                  <col class="col-w-other">
+                  <col class="col-w-other">
+                </colgroup>
                 <thead>
                   <tr>
                     <th>What matters</th>
-                    <th class="col-icorrect">iCorrect (Panel-only genuine)</th>
-                    <th>Apple Store (Full lid)</th>
-                    <th>Aftermarket shops</th>
+                    <th class="col-icorrect"><span class="compare-win-head"><span class="compare-win-dot" aria-hidden="true"></span><span>iCorrect (Panel only)</span></span></th>
+                    <th>Apple Store</th>
+                    <th>Aftermarket shop</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td><strong>Display panel</strong></td>
-                    <td class="col-icorrect">Genuine Apple display, recalibrated in-house</td>
-                    <td>Genuine Apple full lid assembly</td>
-                    <td>Third-party copy LCD / dimmer panel</td>
+                    <td class="cmp-label-cell"><span class="cmp-row-label">Display panel</span></td>
+                    <td class="col-icorrect" data-col="iCorrect (Panel only)">
+                      <div class="cmp-cell">
+                        <span class="cmp-mark cmp-mark-win" aria-hidden="true">&#10003;</span>
+                        <div class="cmp-copy">
+                          <strong class="cmp-verdict">Genuine Apple panel</strong>
+                          <span class="cmp-sub">Recalibrated in-house</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td data-col="Apple Store">
+                      <div class="cmp-cell">
+                        <span class="cmp-mark cmp-mark-neutral" aria-hidden="true">&bull;</span>
+                        <div class="cmp-copy">
+                          <strong class="cmp-verdict">Genuine full lid</strong>
+                          <span class="cmp-sub">Whole assembly swapped</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td data-col="Aftermarket shop">
+                      <div class="cmp-cell">
+                        <span class="cmp-mark cmp-mark-no" aria-hidden="true">&times;</span>
+                        <div class="cmp-copy">
+                          <strong class="cmp-verdict">Third-party copy LCD</strong>
+                          <span class="cmp-sub">Dimmer, non-genuine panel</span>
+                        </div>
+                      </div>
+                    </td>
                   </tr>
                   <tr>
-                    <td><strong>Original lid &amp; camera</strong></td>
-                    <td class="col-icorrect">Kept original (unless bent or damaged)</td>
-                    <td>Whole lid replaced</td>
-                    <td>Replaced with lower-grade shell</td>
+                    <td class="cmp-label-cell"><span class="cmp-row-label">Original lid &amp; camera</span></td>
+                    <td class="col-icorrect" data-col="iCorrect (Panel only)">
+                      <div class="cmp-cell">
+                        <span class="cmp-mark cmp-mark-win" aria-hidden="true">&#10003;</span>
+                        <div class="cmp-copy">
+                          <strong class="cmp-verdict">Kept original</strong>
+                          <span class="cmp-sub">Your lid, hinges &amp; camera stay</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td data-col="Apple Store">
+                      <div class="cmp-cell">
+                        <span class="cmp-mark cmp-mark-neutral" aria-hidden="true">&bull;</span>
+                        <div class="cmp-copy">
+                          <strong class="cmp-verdict">Full lid replaced</strong>
+                          <span class="cmp-sub">Working hardware discarded</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td data-col="Aftermarket shop">
+                      <div class="cmp-cell">
+                        <span class="cmp-mark cmp-mark-no" aria-hidden="true">&times;</span>
+                        <div class="cmp-copy">
+                          <strong class="cmp-verdict">Lower-grade shell</strong>
+                          <span class="cmp-sub">Non-OEM casing &amp; hinges</span>
+                        </div>
+                      </div>
+                    </td>
                   </tr>
                   <tr class="compare-extra-row">
-                    <td><strong>True Tone &amp; brightness</strong></td>
-                    <td class="col-icorrect">Preserved and verified during QC</td>
-                    <td>Preserved</td>
-                    <td>Often lost or visibly dimmer</td>
+                    <td class="cmp-label-cell"><span class="cmp-row-label">True Tone &amp; brightness</span></td>
+                    <td class="col-icorrect" data-col="iCorrect (Panel only)">
+                      <div class="cmp-cell">
+                        <span class="cmp-mark cmp-mark-win" aria-hidden="true">&#10003;</span>
+                        <div class="cmp-copy">
+                          <strong class="cmp-verdict">Factory matched</strong>
+                          <span class="cmp-sub">True Tone verified in QC</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td data-col="Apple Store">
+                      <div class="cmp-cell">
+                        <span class="cmp-mark cmp-mark-neutral" aria-hidden="true">&#10003;</span>
+                        <div class="cmp-copy">
+                          <strong class="cmp-verdict">Preserved</strong>
+                          <span class="cmp-sub">Factory calibration</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td data-col="Aftermarket shop">
+                      <div class="cmp-cell">
+                        <span class="cmp-mark cmp-mark-no" aria-hidden="true">&times;</span>
+                        <div class="cmp-copy">
+                          <strong class="cmp-verdict">Often lost</strong>
+                          <span class="cmp-sub">Visibly dimmer output</span>
+                        </div>
+                      </div>
+                    </td>
                   </tr>
                   <tr class="compare-extra-row">
-                    <td><strong>Warranty</strong></td>
-                    <td class="col-icorrect">2-year iCorrect warranty</td>
-                    <td>90 days out-of-warranty</td>
-                    <td>Typically 30 to 90 days</td>
+                    <td class="cmp-label-cell"><span class="cmp-row-label">Warranty</span></td>
+                    <td class="col-icorrect" data-col="iCorrect (Panel only)">
+                      <div class="cmp-cell">
+                        <span class="cmp-mark cmp-mark-win" aria-hidden="true">&#10003;</span>
+                        <div class="cmp-copy">
+                          <strong class="cmp-verdict">2-year warranty</strong>
+                          <span class="cmp-sub">Panel &amp; workmanship covered</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td data-col="Apple Store">
+                      <div class="cmp-cell">
+                        <span class="cmp-mark cmp-mark-neutral" aria-hidden="true">&bull;</span>
+                        <div class="cmp-copy">
+                          <strong class="cmp-verdict">90 days</strong>
+                          <span class="cmp-sub">Out-of-warranty cover</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td data-col="Aftermarket shop">
+                      <div class="cmp-cell">
+                        <span class="cmp-mark cmp-mark-no" aria-hidden="true">&times;</span>
+                        <div class="cmp-copy">
+                          <strong class="cmp-verdict">30 to 90 days</strong>
+                          <span class="cmp-sub">Limited cover</span>
+                        </div>
+                      </div>
+                    </td>
                   </tr>
                   <tr class="compare-extra-row">
-                    <td><strong>Typical cost</strong></td>
-                    <td class="col-icorrect">30% to 50% less than full-lid swap</td>
-                    <td>Highest (full assembly pricing)</td>
-                    <td>Cheaper upfront, higher failure rate</td>
+                    <td class="cmp-label-cell"><span class="cmp-row-label">Typical cost</span></td>
+                    <td class="col-icorrect" data-col="iCorrect (Panel only)">
+                      <div class="cmp-cell">
+                        <span class="cmp-mark cmp-mark-win" aria-hidden="true">&#10003;</span>
+                        <div class="cmp-copy">
+                          <strong class="cmp-verdict">30% to 50% less</strong>
+                          <span class="cmp-sub">Pay for the panel only</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td data-col="Apple Store">
+                      <div class="cmp-cell">
+                        <span class="cmp-mark cmp-mark-no" aria-hidden="true">&times;</span>
+                        <div class="cmp-copy">
+                          <strong class="cmp-verdict">Highest price</strong>
+                          <span class="cmp-sub">Full-lid assembly pricing</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td data-col="Aftermarket shop">
+                      <div class="cmp-cell">
+                        <span class="cmp-mark cmp-mark-neutral" aria-hidden="true">&bull;</span>
+                        <div class="cmp-copy">
+                          <strong class="cmp-verdict">Cheaper upfront</strong>
+                          <span class="cmp-sub">Higher repeat failure rate</span>
+                        </div>
+                      </div>
+                    </td>
                   </tr>
                   <tr class="compare-extra-row">
-                    <td><strong>Board-level backup</strong></td>
-                    <td class="col-icorrect">In-house microelectronics team</td>
-                    <td>Full logic board swap only</td>
-                    <td>Outsourced or returned unfixed</td>
+                    <td class="cmp-label-cell"><span class="cmp-row-label">Board-level backup</span></td>
+                    <td class="col-icorrect" data-col="iCorrect (Panel only)">
+                      <div class="cmp-cell">
+                        <span class="cmp-mark cmp-mark-win" aria-hidden="true">&#10003;</span>
+                        <div class="cmp-copy">
+                          <strong class="cmp-verdict">In-house microelectronics</strong>
+                          <span class="cmp-sub">Flexgate &amp; backlight repaired</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td data-col="Apple Store">
+                      <div class="cmp-cell">
+                        <span class="cmp-mark cmp-mark-no" aria-hidden="true">&times;</span>
+                        <div class="cmp-copy">
+                          <strong class="cmp-verdict">Board swap only</strong>
+                          <span class="cmp-sub">No component-level repair</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td data-col="Aftermarket shop">
+                      <div class="cmp-cell">
+                        <span class="cmp-mark cmp-mark-no" aria-hidden="true">&times;</span>
+                        <div class="cmp-copy">
+                          <strong class="cmp-verdict">Not available</strong>
+                          <span class="cmp-sub">Outsourced or returned unfixed</span>
+                        </div>
+                      </div>
+                    </td>
                   </tr>
                 </tbody>
               </table>
