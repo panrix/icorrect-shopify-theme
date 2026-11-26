@@ -1,8 +1,10 @@
 {% comment %}
   Shared Click-to-Play 3-Video Panel (snippets/icorrect-video-panel.liquid)
-  Replaces heavy eager-loaded YouTube Shorts iframes across 81 templates with
+  Replaces heavy eager-loaded YouTube Shorts iframes across 82 templates with
   lightweight click-to-play facades (0 KB YouTube JS/cookies on initial load).
-  Preserves all existing Shopify Theme Customizer settings across the 5 video sections.
+  Uses Dawn color scheme variables (--color-foreground / --color-background) so
+  headings, subtitles, and badges stay high-contrast on both dark (scheme-4) and
+  light (scheme-1) sections.
 {% endcomment %}
 
 {%- liquid
@@ -20,6 +22,7 @@
   .ic-vp-{{ vp_id }} {
     padding-top: {{ vp_pad_top }}px;
     padding-bottom: {{ vp_pad_bottom }}px;
+    color: rgb(var(--color-foreground, 17, 24, 39));
   }
   .ic-vp-{{ vp_id }} .ic-vp__container {
     max-width: 1200px;
@@ -46,7 +49,7 @@
     font-weight: 500;
     letter-spacing: 0.07em;
     text-transform: uppercase;
-    color: #6b7280;
+    color: rgba(var(--color-foreground, 17, 24, 39), 0.72);
     font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   }
   .ic-vp-{{ vp_id }} .ic-vp__heading {
@@ -55,13 +58,13 @@
     line-height: 1.14;
     letter-spacing: -0.03em;
     font-weight: 600;
-    color: #111827;
+    color: rgb(var(--color-foreground, 17, 24, 39));
   }
   .ic-vp-{{ vp_id }} .ic-vp__subtitle {
     margin: 0;
     font-size: 15.5px;
     line-height: 1.55;
-    color: #4b5563;
+    color: rgba(var(--color-foreground, 17, 24, 39), 0.8);
   }
   .ic-vp-{{ vp_id }} .ic-vp__badge {
     display: inline-flex;
@@ -69,9 +72,9 @@
     gap: 6px;
     padding: 5px 12px;
     border-radius: 999px;
-    background: #eff6ff;
-    border: 1px solid #bfdbfe;
-    color: #0b63ce;
+    background: rgba(var(--color-foreground, 17, 24, 39), 0.08);
+    border: 1px solid rgba(var(--color-foreground, 17, 24, 39), 0.2);
+    color: rgb(var(--color-foreground, 17, 24, 39));
     font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 11px;
     font-weight: 500;
@@ -83,7 +86,7 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #0b63ce;
+    background: #3b82f6;
     flex-shrink: 0;
   }
   .ic-vp-{{ vp_id }} .ic-vp__grid {
@@ -93,17 +96,18 @@
   }
   .ic-vp-{{ vp_id }} .ic-vp__card {
     background: #ffffff;
-    border: 1px solid #e5e7eb;
+    border: 1px solid rgba(var(--color-foreground, 17, 24, 39), 0.14);
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 8px 24px -18px rgba(17, 24, 39, 0.14);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08), 0 12px 28px -18px rgba(0, 0, 0, 0.22);
     display: flex;
     flex-direction: column;
-    transition: border-color 180ms ease, box-shadow 180ms ease;
+    color: #111827;
+    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
   }
   .ic-vp-{{ vp_id }} .ic-vp__card:hover {
-    border-color: #d1d5db;
-    box-shadow: 0 6px 22px -12px rgba(17, 24, 39, 0.18);
+    border-color: rgba(var(--color-foreground, 17, 24, 39), 0.28);
+    box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.26);
   }
   .ic-vp-{{ vp_id }} .ic-vp__media {
     position: relative;
@@ -114,7 +118,7 @@
     outline: none;
   }
   .ic-vp-{{ vp_id }} .ic-vp__media:focus-visible {
-    box-shadow: inset 0 0 0 3px #0b63ce;
+    box-shadow: inset 0 0 0 3px #3b82f6;
   }
   .ic-vp-{{ vp_id }} .ic-vp__media img {
     width: 100%;
@@ -141,10 +145,10 @@
     left: 12px;
     padding: 4px 10px;
     border-radius: 999px;
-    background: rgba(17, 24, 39, 0.82);
+    background: rgba(17, 24, 39, 0.84);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     color: #ffffff;
     font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 10px;
@@ -287,36 +291,4 @@
   </div>
 </section>
 
-<script>
-  (function () {
-    if (window.__icVideoPanelInit) return;
-    window.__icVideoPanelInit = true;
-    function activateVideo(el) {
-      var id = el.getAttribute('data-ic-yt');
-      if (!id) return;
-      var title = el.getAttribute('data-ic-yt-title') || 'iCorrect repair video';
-      var iframe = document.createElement('iframe');
-      iframe.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?autoplay=1&rel=0';
-      iframe.title = title;
-      iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
-      iframe.setAttribute('allowfullscreen', '');
-      el.removeAttribute('role');
-      el.removeAttribute('tabindex');
-      el.removeAttribute('data-ic-yt');
-      el.innerHTML = '';
-      el.appendChild(iframe);
-    }
-    document.addEventListener('click', function (e) {
-      var target = e.target.closest('[data-ic-yt]');
-      if (target) activateVideo(target);
-    });
-    document.addEventListener('keydown', function (e) {
-      if (e.key !== 'Enter' && e.key !== ' ') return;
-      var target = e.target.closest('[data-ic-yt]');
-      if (target) {
-        e.preventDefault();
-        activateVideo(target);
-      }
-    });
-  })();
-</script>
+<script src="{{ 'icorrect-video-panel.js' | asset_url }}" defer="defer"></script>

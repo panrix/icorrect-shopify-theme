@@ -215,14 +215,14 @@ const videoDemos = [
         video_1_title: "Apple recommends iCorrect? Here's why!",
         video_2_title: 'Repairs better than Apple?',
         video_3_title: 'Too broken for Apple? Just right for us.',
-        color_scheme: 'scheme-1',
-        padding_top: 24,
-        padding_bottom: 32,
+        color_scheme: 'scheme-4',
+        padding_top: 40,
+        padding_bottom: 48,
       },
     },
   },
   {
-    label: '2. MacBook Pages (`sections/macbook-videos.liquid`)',
+    label: '2. MacBook Pages (`sections/macbook-videos.liquid` · Dark scheme-4)',
     file: 'sections/macbook-videos.liquid',
     section: {
       id: 'macbook-demo',
@@ -232,14 +232,14 @@ const videoDemos = [
         video_1_title: 'Repair is better than replace.',
         video_2_title: 'Our repair approach is sustainable.',
         video_3_title: 'Do not overpay for your repairs.',
-        color_scheme: 'scheme-1',
-        padding_top: 24,
-        padding_bottom: 32,
+        color_scheme: 'scheme-4',
+        padding_top: 40,
+        padding_bottom: 48,
       },
     },
   },
   {
-    label: '3. iPhone Pages (`sections/iphone-videos.liquid`)',
+    label: '3. iPhone Pages (`sections/iphone-videos.liquid` · Light scheme-1)',
     file: 'sections/iphone-videos.liquid',
     section: {
       id: 'iphone-demo',
@@ -301,6 +301,8 @@ write('video-panels/index.html', `<!doctype html><html lang="en-GB"><head><meta 
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
 <title>Redesigned 3-Video Panels (All 5 Sections) · Preview</title>${pageCss}
 <style>
+.color-scheme-4{--color-background:29,29,31;--color-foreground:255,255,255;background:rgb(var(--color-background));color:rgb(var(--color-foreground))}
+.color-scheme-1{--color-background:255,255,255;--color-foreground:18,18,18;background:rgb(var(--color-background));color:rgb(var(--color-foreground))}
 .vp-demo-intro{max-width:1200px;margin:28px auto 12px;padding:0 20px}
 .vp-demo-intro h1{margin:0 0 8px;font-size:28px;letter-spacing:-.03em}
 .vp-demo-intro p{margin:0;color:#4b5563;font-size:15px;line-height:1.55;max-width:74ch}
