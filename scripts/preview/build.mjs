@@ -119,6 +119,7 @@ const pillarSource = read('sections/macbook-pillar-page.liquid').replace(/\{%-?\
 async function renderPillarPage(outFile, title, templateFile) {
   const tpl = JSON.parse(read(templateFile));
   const parts = [];
+  const faqEntities = [];
   for (const key of tpl.order || []) {
     const sec = tpl.sections[key];
     if (!sec || sec.disabled) continue;
@@ -128,24 +129,39 @@ async function renderPillarPage(outFile, title, templateFile) {
       settings: sec.blocks[id].settings || {},
       shopify_attributes: '',
     }));
+    for (const b of blocks) {
+      if (b.type === 'faq' && b.settings.question && b.settings.answer) {
+        faqEntities.push({
+          '@type': 'Question',
+          name: b.settings.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: b.settings.answer,
+          },
+        });
+      }
+    }
     if (sec.type === 'macbook-pillar-page') {
       parts.push(await engine.parseAndRender(pillarSource, {
         section: { id: key, settings: sec.settings || {}, blocks },
       }));
     } else if (sec.type === 'quote-wizard') {
-      parts.push('<div class="quote-wizard-section" style="max-width:1120px;margin:0 auto;padding:36px 24px 48px;">' +
+      parts.push('<section class="quote-wizard-section" id="quote-section" style="max-width:1120px;margin:0 auto;padding:20px 24px 52px;">' +
         await engine.parseAndRender(source, {
           ...baseContext,
           template: { name: 'page' },
           request: { page_type: 'page' },
           section: { id: key, settings: { ...baseContext.section.settings, ...(sec.settings || {}) } },
-        }) + '</div>');
+        }) + '</section>');
     }
   }
+  const faqJsonLd = faqEntities.length
+    ? `\n<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqEntities })}</script>`
+    : '';
   write(outFile, `<!doctype html><html lang="en-GB"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
-<title>${title} | iCorrect Preview</title>${pageCss}${cartShim}</head>
+<title>${title} | iCorrect Preview</title>${faqJsonLd}${pageCss}${cartShim}</head>
 <body>${banner(title)}${parts.join('\n')}</body></html>`);
 }
 
@@ -186,6 +202,8 @@ const cartShim = `<script>
 
 const banner = (title) => `<div class="pv-bar section-header"><a href="/">Quote wizard preview</a><span>${title}</span><span class="pv-ref">${branch}${sha ? ' · ' + sha : ''}</span></div>`;
 const pageCss = `<style>
+@font-face{font-family:"Geist";src:url("/assets/Geist-Variable.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
+@font-face{font-family:"Geist Mono";src:url("/assets/GeistMono-Variable.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
 :root{--font-sans:"Geist",Arial,sans-serif;--font-mono:"Geist Mono",ui-monospace,monospace}
 body{margin:0;background:#fff;font-family:var(--font-sans);color:#171717}
 .pv-bar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;padding:8px 16px;background:#171717;color:#d4d4d4;font:500 11px var(--font-mono);letter-spacing:.06em;text-transform:uppercase}
