@@ -1132,7 +1132,6 @@
     .col-icorrect .cmp-sub { color: #334155; }
     .compare-extra-row { display: none; }
     .compare-card.is-expanded .compare-extra-row { display: table-row; }
-    .compare-mobile-summary { display: none; }
     #compare { scroll-margin-top: 72px; }
     .compare-expand-btn {
       width: 100%;
@@ -1767,91 +1766,123 @@
       .hero-grid > .trust-strip { order: 2; margin-top: 16px; }
       .hero-grid > .diagram-stage { order: 3; margin-top: 16px; }
 
-      /* Mobile minimised comparison card by default; expands to 6 stacked cards */
-      .compare-mobile-summary {
-        display: block;
-        padding: 14px 16px;
-        background: #f5f9ff;
-        border-top: 2px solid #0b63ce;
-        border-bottom: 1px solid #dbeafe;
+      /* Mobile compact 3-column side-by-side comparison (zero horizontal overflow) */
+      .compare-table,
+      .compare-table thead,
+      .compare-table tbody { display: block; width: 100%; }
+      .compare-table colgroup { display: none; }
+      .compare-table thead tr {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr);
+        width: 100%;
       }
-      .compare-mobile-summary-head {
+      .compare-table thead th.cmp-th-label { display: none; }
+      .compare-table thead th {
         display: flex;
         align-items: center;
-        gap: 7px;
-        font-size: 13px;
-        font-weight: 600;
-        color: #0b63ce;
-        letter-spacing: -0.01em;
-        margin-bottom: 5px;
-      }
-      .compare-mobile-summary-copy {
-        margin: 0;
-        font-size: 13px;
-        line-height: 1.48;
-        color: #334155;
-      }
-      .compare-card:not(.is-expanded) .compare-table-wrap { display: none; }
-      .compare-card.is-expanded .compare-mobile-summary { display: none; }
-      .compare-expand-btn {
-        justify-content: space-between;
-        padding: 13px 16px;
-        background: #ffffff;
-        text-align: left;
-        font-size: 13px;
-      }
-      .compare-card.is-expanded .compare-expand-btn {
-        background: #fafafa;
-        border-top: 1px solid #e5e7eb;
-        justify-content: center;
-      }
-
-      /* Mobile stacked comparison cards (zero horizontal clipping or overflow) */
-      .compare-table,
-      .compare-table tbody,
-      .compare-table tr,
-      .compare-table td { display: block; width: 100%; }
-      .compare-table thead,
-      .compare-table colgroup { display: none; }
-      .compare-card.is-expanded .compare-extra-row { display: block; }
-      .compare-table tbody tr {
-        padding: 14px;
-        border-bottom: 1px solid #e5e7eb;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-      .compare-table tbody tr.compare-extra-row { display: none; }
-      .compare-card.is-expanded .compare-table tbody tr.compare-extra-row { display: flex; }
-      .compare-table tbody tr:last-child { border-bottom: 0; }
-      .compare-table td {
-        padding: 0;
-        border: 0;
-      }
-      .compare-table td.cmp-label-cell {
-        padding-bottom: 4px;
-      }
-      .compare-table td[data-col] {
-        padding: 10px 12px;
-        border-radius: 10px;
-        border: 1px solid #e5e7eb;
-        background: #fafafa;
-      }
-      .compare-table td[data-col]::before {
-        content: attr(data-col);
-        display: block;
+        padding: 10px 7px;
         font-size: 11.5px;
         font-weight: 600;
-        color: #6b7280;
-        margin-bottom: 5px;
+        line-height: 1.25;
+        letter-spacing: -0.015em;
+        color: #111827;
+        background: #fafafa;
+        border-bottom: 1px solid #e5e7eb;
+        min-width: 0;
       }
-      .compare-table td.col-icorrect[data-col] {
-        background: #f5f9ff;
-        border: 1px solid #bfdbfe;
-        border-left: 3px solid #0b63ce;
+      .compare-table thead th:nth-child(3) {
+        border-right: 1px solid #f1f5f9;
       }
-      .compare-table td.col-icorrect[data-col]::before {
+      .compare-table thead th.col-icorrect {
+        align-items: flex-start;
+        background: #eff6ff;
         color: #0b63ce;
+        border-top: 2px solid #0b63ce;
+        border-left: 0;
+        border-right: 1px solid #dbeafe;
+        border-bottom: 1px solid #dbeafe;
+      }
+      .compare-win-head {
+        align-items: flex-start;
+        gap: 5px;
+      }
+      .compare-win-dot {
+        width: 6px;
+        height: 6px;
+        margin-top: 4px;
+      }
+      .cmp-th-paren,
+      .cmp-th-shop-word { display: none; }
+      .cmp-th-icorrect-sub {
+        display: block;
+        font-size: 10px;
+        font-weight: 500;
+        color: #2563eb;
+        line-height: 1.2;
+        margin-top: 1px;
+      }
+
+      .compare-table tbody tr {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr);
+        width: 100%;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      .compare-table tbody tr.compare-extra-row { display: none; }
+      .compare-card.is-expanded .compare-table tbody tr.compare-extra-row { display: grid; }
+      .compare-table tbody tr:last-child { border-bottom: 0; }
+      .compare-table td {
+        display: block;
+        min-width: 0;
+        border-bottom: 0;
+      }
+      .compare-table td.cmp-label-cell {
+        grid-column: 1 / -1;
+        padding: 7px 10px;
+        background: #f8fafc;
+        border-bottom: 1px solid #eef2f7;
+      }
+      .cmp-row-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: #374151;
+        letter-spacing: -0.005em;
+      }
+      .compare-table td[data-col] {
+        padding: 9px 7px 10px;
+        background: #ffffff;
+      }
+      .compare-table td:nth-child(3) {
+        border-right: 1px solid #f1f5f9;
+      }
+      .compare-table td.col-icorrect {
+        background: #f5f9ff;
+        border-left: 0;
+        border-right: 1px solid #dbeafe;
+      }
+      .cmp-cell {
+        flex-direction: column;
+        gap: 5px;
+      }
+      .cmp-mark {
+        width: 15px;
+        height: 15px;
+        font-size: 9.5px;
+        margin-top: 0;
+      }
+      .cmp-verdict {
+        font-size: 11.5px;
+        line-height: 1.25;
+        letter-spacing: -0.015em;
+      }
+      .cmp-sub {
+        font-size: 10.5px;
+        line-height: 1.3;
+      }
+      .compare-expand-btn {
+        padding: 12px 14px;
+        font-size: 13px;
+        border-top: 1px solid #e5e7eb;
       }
 
       .identify { padding: 48px 0; }
@@ -2202,7 +2233,7 @@
           <a class="btn-ghost" href="https://maps.google.com/?q=iCorrect+12+Margaret+Street+London+W1W+8JQ" target="_blank" rel="noopener">Read on Google Maps -&gt;</a>
         </div>
         <div class="trustindex-slot" id="trustindex-reviews-slot">
-          <script defer async src="https://cdn.trustindex.io/loader.js?47cc7ef8590e8871fa062160cf7"></script>
+          <script defer async src="https://cdn.trustindex.io/loader.js?b831fa386ffa616e7a2620959d0"></script>
         </div>
       </div>
     </section>
@@ -2277,13 +2308,6 @@
           </div>
 
           <div class="compare-card" id="compare-card">
-            <div class="compare-mobile-summary">
-              <div class="compare-mobile-summary-head">
-                <span class="compare-win-dot" aria-hidden="true"></span>
-                <span>iCorrect (Panel only) at a glance</span>
-              </div>
-              <p class="compare-mobile-summary-copy">Genuine Apple panel, original lid &amp; camera kept, True Tone matched, 2-year warranty, and 30% to 50% less than a full-lid swap.</p>
-            </div>
             <div class="compare-table-wrap">
               <table class="compare-table">
                 <colgroup>
@@ -2294,10 +2318,10 @@
                 </colgroup>
                 <thead>
                   <tr>
-                    <th>What matters</th>
-                    <th class="col-icorrect"><span class="compare-win-head"><span class="compare-win-dot" aria-hidden="true"></span><span>iCorrect (Panel only)</span></span></th>
+                    <th class="cmp-th-label">What matters</th>
+                    <th class="col-icorrect"><span class="compare-win-head"><span class="compare-win-dot" aria-hidden="true"></span><span>iCorrect <span class="cmp-th-icorrect-sub"><span class="cmp-th-paren">(</span>Panel only<span class="cmp-th-paren">)</span></span></span></span></th>
                     <th>Apple Store</th>
-                    <th>Aftermarket shop</th>
+                    <th>Aftermarket<span class="cmp-th-shop-word"> shop</span></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -3150,44 +3174,22 @@
         });
       }
 
-      // Comparison table expand / collapse (desktop: 2 rows + 4 more; <=768px mobile: minimised summary + 6 points)
+      // Comparison table expand / collapse (2 rows visible by default on desktop and mobile; expands to 6 rows)
       var compareCard = document.getElementById("compare-card");
       var compareBtn = document.getElementById("compare-expand-btn");
       var compareLabel = document.getElementById("compare-expand-label");
       var compareIcon = document.getElementById("compare-expand-icon");
-      var mobileCompareMQ = window.matchMedia("(max-width: 768px)");
-      function syncCompareUI() {
-        if (!compareBtn || !compareCard) return;
-        var expanded = compareCard.classList.contains("is-expanded");
-        compareBtn.setAttribute("aria-expanded", String(expanded));
-        if (mobileCompareMQ.matches) {
-          compareLabel.textContent = expanded ? "Hide comparison" : "Compare iCorrect vs Apple & aftermarket (6 points)";
-        } else {
-          compareLabel.textContent = expanded ? "Show fewer comparisons" : "Show 4 more comparisons";
-        }
-        compareIcon.textContent = expanded ? "-" : "+";
-      }
-      function setCompareExpanded(expanded) {
-        if (!compareCard) return;
-        compareCard.classList.toggle("is-expanded", expanded);
-        syncCompareUI();
-      }
       if (compareBtn && compareCard) {
-        syncCompareUI();
-        if (mobileCompareMQ.addEventListener) {
-          mobileCompareMQ.addEventListener("change", syncCompareUI);
-        } else if (mobileCompareMQ.addListener) {
-          mobileCompareMQ.addListener(syncCompareUI);
-        }
         compareBtn.addEventListener("click", function () {
-          setCompareExpanded(!compareCard.classList.contains("is-expanded"));
+          var expanded = !compareCard.classList.contains("is-expanded");
+          compareCard.classList.toggle("is-expanded", expanded);
+          compareBtn.setAttribute("aria-expanded", String(expanded));
+          compareLabel.textContent = expanded ? "Show fewer comparisons" : "Show 4 more comparisons";
+          compareIcon.textContent = expanded ? "-" : "+";
         });
         window.addEventListener("click", function (e) {
           var link = e.target && e.target.closest ? e.target.closest("a[href='#compare']") : null;
           if (!link) return;
-          if (mobileCompareMQ.matches) {
-            setCompareExpanded(true);
-          }
           var compareSection = document.getElementById("compare");
           if (compareSection) {
             e.preventDefault();
@@ -3195,11 +3197,6 @@
             compareSection.scrollIntoView({ behavior: "smooth", block: "start" });
           }
         }, true);
-        window.addEventListener("hashchange", function () {
-          if (window.location.hash === "#compare" && mobileCompareMQ.matches) {
-            setCompareExpanded(true);
-          }
-        });
       }
 
       // Expandable 2-Year Warranty box
