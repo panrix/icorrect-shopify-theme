@@ -142,19 +142,22 @@
         </div>
       </section>
 
-      <!-- Desktop Verified Google Reviews (Trustindex Slot) & Fitzrovia Workshop Details (>= 768px) -->
+      <!-- Desktop Verified Google Reviews (Live Trustindex Widget) & Fitzrovia Workshop Details (>= 768px) -->
       <section class="proof-section" aria-label="Reviews and workshop details">
-        <div class="proof-card">
-          <span class="mono-label">Verified Client Reviews</span>
-          <h2>4.8 from 750+ Google reviews</h2>
-          <p class="quote-card-sub">Independent London microelectronics workshop with genuine Apple displays and a 2-year warranty on every screen repair.</p>
+        <div class="proof-card proof-card-reviews">
+          <div class="reviews-card-head">
+            <div>
+              <span class="mono-label">Verified Client Reviews</span>
+              <h2>4.8 from 750+ Google reviews</h2>
+            </div>
+            <p class="quote-card-sub">Independent London microelectronics workshop with genuine Apple displays (panel only) and a 2-year warranty on every screen repair.</p>
+          </div>
           <div class="trustindex-slot" id="trustindexSlot" data-widget-id="47cc7ef8590e8871fa062160cf7">
-            <strong>Live Trustindex Google Reviews widget mounts here</strong>
-            <p>Uses the approved Trustindex loader (<code>cdn.trustindex.io/loader.js?47cc7ef8590e8871fa062160cf7</code>) with reserved height, zero hand-drawn review cards, and zero star-rating JSON-LD.</p>
+            <div class="trustindex-loading">Loading verified Google reviews...</div>
           </div>
         </div>
 
-        <div class="proof-card">
+        <div class="proof-card proof-card-workshop">
           <span class="mono-label">Fitzrovia Workshop &amp; Collection</span>
           <h2>12 Margaret Street, London</h2>
           <div class="workshop-meta">
@@ -193,7 +196,23 @@
         <button type="button" class="sheet-close" id="closeAppSheet" aria-label="Close details">&times;</button>
       </div>
       <div class="sheet-body" id="appSheetBody">
-        <!-- Populated dynamically by app.js -->
+        <div id="appSheetHowPanel"></div>
+        <div id="appSheetReviewsPanel" hidden>
+          <span class="mono-label">Verified Client Reviews</span>
+          <h3 class="sheet-section-title" id="appSheetReviewsTitle">4.8 from 750+ Google reviews</h3>
+          <p class="quote-card-sub" style="margin-bottom:12px;">Independent London microelectronics workshop with genuine Apple displays (panel only) and a 2-year warranty on every screen repair.</p>
+          <div class="trustindex-slot trustindex-slot-mobile" id="mobileTrustindexSlot" data-widget-id="47cc7ef8590e8871fa062160cf7">
+            <div class="trustindex-loading">Loading verified Google reviews...</div>
+          </div>
+          <div class="sheet-workshop-box">
+            <span class="mono-label">Fitzrovia Workshop &amp; Collection</span>
+            <div class="workshop-meta" style="margin-top:8px;">
+              <div class="workshop-row"><strong>Workshop Address</strong>12 Margaret Street, Audley House, London W1W 8JQ</div>
+              <div class="workshop-row"><strong>Opening Hours</strong>Mon to Thu 9am to 6pm, Friday 10am to 6pm, Sat &amp; Sun closed</div>
+              <div class="workshop-row"><strong>Collection &amp; UK Mail-In</strong>Free collection on orders of £200 or more. Same-day London courier in selected London zones; free tracked and insured UK mail-in pack elsewhere.</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

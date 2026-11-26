@@ -1297,11 +1297,46 @@
     '</div>';
   }
 
+  var TRUSTINDEX_WIDGET_ID = "47cc7ef8590e8871fa062160cf7";
+  var TRUSTINDEX_LOADER_URL = "https://cdn.trustindex.io/loader.js?" + TRUSTINDEX_WIDGET_ID;
+
+  function mountTrustindexWidget(slotEl) {
+    if (!slotEl) return;
+    if (slotEl.getAttribute("data-ti-mounted") === "1") return;
+    if (slotEl.offsetWidth <= 0) return;
+
+    slotEl.setAttribute("data-ti-mounted", "1");
+
+    var removeLoading = function () {
+      var loading = slotEl.querySelector(".trustindex-loading");
+      if (loading && slotEl.querySelector(".ti-widget")) {
+        loading.remove();
+      }
+    };
+
+    if (typeof MutationObserver === "function") {
+      var obs = new MutationObserver(function () {
+        if (slotEl.querySelector(".ti-widget")) {
+          removeLoading();
+          obs.disconnect();
+        }
+      });
+      obs.observe(slotEl, { childList: true, subtree: true });
+    }
+
+    var s = document.createElement("script");
+    s.src = TRUSTINDEX_LOADER_URL;
+    s.async = true;
+    s.defer = true;
+    slotEl.appendChild(s);
+  }
+
   /* =========================================================
      BOTTOM SHEET RENDERER (HOW IT WORKS + REVIEWS & WORKSHOP)
      ========================================================= */
   function renderAppSheetContent() {
-    var body = document.getElementById("appSheetBody");
+    var howPanel = document.getElementById("appSheetHowPanel");
+    var revPanel = document.getElementById("appSheetReviewsPanel");
     var tabHow = document.getElementById("sheetTabHow");
     var tabRev = document.getElementById("sheetTabReviews");
     var isHow = state.activeSheetTab === "how";
@@ -1311,6 +1346,9 @@
     tabRev.classList.toggle("is-active", !isHow);
     tabRev.setAttribute("aria-selected", !isHow ? "true" : "false");
 
+    howPanel.hidden = !isHow;
+    revPanel.hidden = isHow;
+
     if (isHow) {
       var timelineHtml = getTimelineSteps().map(function (st, idx) {
         return '<li class="timeline-step">' +
@@ -1319,7 +1357,7 @@
           '</li>';
       }).join("");
 
-      body.innerHTML =
+      howPanel.innerHTML =
         '<span class="mono-label">3-Step Repair Process</span>' +
         '<h3 class="sheet-section-title" id="appSheetTitle">How your iCorrect repair works</h3>' +
         '<ol class="timeline-list">' + timelineHtml + '</ol>' +
@@ -1334,29 +1372,16 @@
           '</div>' +
         '</div>';
     } else {
-      body.innerHTML =
-        '<span class="mono-label">Verified Client Reviews</span>' +
-        '<h3 class="sheet-section-title" id="appSheetTitle">4.8 from 750+ Google reviews</h3>' +
-        '<p class="quote-card-sub" style="margin-bottom:12px;">Independent London microelectronics workshop with genuine Apple displays (panel only) and a 2-year warranty on every screen repair.</p>' +
-        '<div class="trustindex-slot" data-widget-id="47cc7ef8590e8871fa062160cf7" style="min-height:130px;margin-top:0;">' +
-          '<strong>Live Trustindex Google Reviews widget mounts here</strong>' +
-          '<p>Uses the approved Trustindex loader (<code>cdn.trustindex.io/loader.js?47cc7ef8590e8871fa062160cf7</code>) with reserved height, zero hand-drawn review cards, and zero star-rating JSON-LD.</p>' +
-        '</div>' +
-        '<div class="sheet-workshop-box">' +
-          '<span class="mono-label">Fitzrovia Workshop &amp; Collection</span>' +
-          '<div class="workshop-meta" style="margin-top:8px;">' +
-            '<div class="workshop-row"><strong>Workshop Address</strong>12 Margaret Street, Audley House, London W1W 8JQ</div>' +
-            '<div class="workshop-row"><strong>Opening Hours</strong>Mon to Thu 9am to 6pm, Friday 10am to 6pm, Sat &amp; Sun closed</div>' +
-            '<div class="workshop-row"><strong>Collection &amp; UK Mail-In</strong>Free collection on orders of £200 or more. Same-day London courier in selected London zones; free tracked and insured UK mail-in pack elsewhere.</div>' +
-          '</div>' +
-        '</div>';
+      window.requestAnimationFrame(function () {
+        mountTrustindexWidget(document.getElementById("mobileTrustindexSlot"));
+      });
     }
   }
 
   function openAppSheet(tab) {
     state.activeSheetTab = tab === "reviews" ? "reviews" : "how";
-    renderAppSheetContent();
     document.getElementById("appSheet").hidden = false;
+    renderAppSheetContent();
   }
 
   function closeAppSheet() {
@@ -1773,6 +1798,9 @@
 
     wireStageEvents();
     updateCookieAndToggles();
+    if (!mobile) {
+      mountTrustindexWidget(document.getElementById("trustindexSlot"));
+    }
   }
 
   function wireGlobalControls() {
