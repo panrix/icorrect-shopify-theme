@@ -347,10 +347,14 @@
     .hero-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
-      gap: 40px;
+      column-gap: 40px;
+      row-gap: 0;
       align-items: center;
     }
     .hero-grid > * { min-width: 0; }
+    .hero-grid > .trust-strip {
+      grid-column: 1 / -1;
+    }
 
     .hero-title {
       margin: 0 0 10px;
@@ -1128,6 +1132,8 @@
     .col-icorrect .cmp-sub { color: #334155; }
     .compare-extra-row { display: none; }
     .compare-card.is-expanded .compare-extra-row { display: table-row; }
+    .compare-mobile-summary { display: none; }
+    #compare { scroll-margin-top: 72px; }
     .compare-expand-btn {
       width: 100%;
       border: 0;
@@ -1746,6 +1752,7 @@
       .trust-cell:nth-child(1), .trust-cell:nth-child(2) { border-bottom: 1px solid #e5e7eb; }
       .trust-cell:nth-child(2), .trust-cell:nth-child(4) { border-right: 0; }
       .hero-grid, .visual-pair, .identify-grid, .faults-grid, .seo-value-grid { grid-template-columns: minmax(0, 1fr); }
+      .hero-grid > .diagram-stage { margin-top: 24px; }
       .model-dir-grid { grid-template-columns: minmax(0, 1fr); }
       .process-detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .process-highlights { grid-template-columns: minmax(0, 1fr); }
@@ -1756,6 +1763,97 @@
     }
 
     @media (max-width: 768px) {
+      .hero-copy { order: 1; }
+      .hero-grid > .trust-strip { order: 2; margin-top: 16px; }
+      .hero-grid > .diagram-stage { order: 3; margin-top: 16px; }
+
+      /* Mobile minimised comparison card by default; expands to 6 stacked cards */
+      .compare-mobile-summary {
+        display: block;
+        padding: 14px 16px;
+        background: #f5f9ff;
+        border-top: 2px solid #0b63ce;
+        border-bottom: 1px solid #dbeafe;
+      }
+      .compare-mobile-summary-head {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #0b63ce;
+        letter-spacing: -0.01em;
+        margin-bottom: 5px;
+      }
+      .compare-mobile-summary-copy {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.48;
+        color: #334155;
+      }
+      .compare-card:not(.is-expanded) .compare-table-wrap { display: none; }
+      .compare-card.is-expanded .compare-mobile-summary { display: none; }
+      .compare-expand-btn {
+        justify-content: space-between;
+        padding: 13px 16px;
+        background: #ffffff;
+        text-align: left;
+        font-size: 13px;
+      }
+      .compare-card.is-expanded .compare-expand-btn {
+        background: #fafafa;
+        border-top: 1px solid #e5e7eb;
+        justify-content: center;
+      }
+
+      /* Mobile stacked comparison cards (zero horizontal clipping or overflow) */
+      .compare-table,
+      .compare-table tbody,
+      .compare-table tr,
+      .compare-table td { display: block; width: 100%; }
+      .compare-table thead,
+      .compare-table colgroup { display: none; }
+      .compare-card.is-expanded .compare-extra-row { display: block; }
+      .compare-table tbody tr {
+        padding: 14px;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .compare-table tbody tr.compare-extra-row { display: none; }
+      .compare-card.is-expanded .compare-table tbody tr.compare-extra-row { display: flex; }
+      .compare-table tbody tr:last-child { border-bottom: 0; }
+      .compare-table td {
+        padding: 0;
+        border: 0;
+      }
+      .compare-table td.cmp-label-cell {
+        padding-bottom: 4px;
+      }
+      .compare-table td[data-col] {
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        background: #fafafa;
+      }
+      .compare-table td[data-col]::before {
+        content: attr(data-col);
+        display: block;
+        font-size: 11.5px;
+        font-weight: 600;
+        color: #6b7280;
+        margin-bottom: 5px;
+      }
+      .compare-table td.col-icorrect[data-col] {
+        background: #f5f9ff;
+        border: 1px solid #bfdbfe;
+        border-left: 3px solid #0b63ce;
+      }
+      .compare-table td.col-icorrect[data-col]::before {
+        color: #0b63ce;
+      }
+
       .identify { padding: 48px 0; }
       .identify-grid { gap: 28px; }
       .identify-visual { padding: 32px 20px; }
@@ -1782,7 +1880,6 @@
       .price-chip { padding: 8px 10px; }
       .price-chip-model { font-size: 11px; }
       .price-chip-val { font-size: 13.5px; }
-      .hero-grid { gap: 18px; }
       .hero-jump-row { margin-top: 10px; gap: 6px; }
       .btn-ghost { font-size: 12px; padding: 5px 10px; min-height: 32px; }
 
@@ -1843,54 +1940,6 @@
       }
       .process-bar-panel { padding: 14px 16px 16px; }
       .process-detail-grid { grid-template-columns: minmax(0, 1fr); }
-
-      /* Mobile stacked comparison cards (zero horizontal clipping or overflow) */
-      .compare-table,
-      .compare-table tbody,
-      .compare-table tr,
-      .compare-table td { display: block; width: 100%; }
-      .compare-table thead,
-      .compare-table colgroup { display: none; }
-      .compare-card.is-expanded .compare-extra-row { display: block; }
-      .compare-table tbody tr {
-        padding: 14px;
-        border-bottom: 1px solid #e5e7eb;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-      .compare-table tbody tr.compare-extra-row { display: none; }
-      .compare-card.is-expanded .compare-table tbody tr.compare-extra-row { display: flex; }
-      .compare-table tbody tr:last-child { border-bottom: 0; }
-      .compare-table td {
-        padding: 0;
-        border: 0;
-      }
-      .compare-table td.cmp-label-cell {
-        padding-bottom: 4px;
-      }
-      .compare-table td[data-col] {
-        padding: 10px 12px;
-        border-radius: 10px;
-        border: 1px solid #e5e7eb;
-        background: #fafafa;
-      }
-      .compare-table td[data-col]::before {
-        content: attr(data-col);
-        display: block;
-        font-size: 11.5px;
-        font-weight: 600;
-        color: #6b7280;
-        margin-bottom: 5px;
-      }
-      .compare-table td.col-icorrect[data-col] {
-        background: #f5f9ff;
-        border: 1px solid #bfdbfe;
-        border-left: 3px solid #0b63ce;
-      }
-      .compare-table td.col-icorrect[data-col]::before {
-        color: #0b63ce;
-      }
 
       .warranty-toggle {
         padding: 16px;
@@ -1961,7 +2010,7 @@
         </nav>
 
         <div class="hero-grid">
-          <div>
+          <div class="hero-copy">
             <h1 class="hero-title">MacBook Screen Repair</h1>
             <p class="hero-lead">Cracked, flickering, or blank display? We replace the genuine Apple display panel only, keeping your original lid, camera, and hinges, backed by a 2-year warranty.</p>
 
@@ -2031,10 +2080,9 @@
               <span>In blue: the genuine Apple polarizer &amp; LCD panel we replace. Your aluminium lid, webcam, antennas, and hinges stay original.</span>
             </div>
           </div>
-        </div>
 
-        <!-- 4-Badge Trust Strip: Credibility bridge directly underneath Hero and ABOVE the 3 proof cards -->
-        <ul class="trust-strip" id="trust-strip" role="list" aria-label="Why choose iCorrect">
+          <!-- 4-Badge Trust Strip: Full-width below Hero on desktop, ordered ABOVE Anatomy card on <=768px mobile -->
+          <ul class="trust-strip" id="trust-strip" role="list" aria-label="Why choose iCorrect">
           <li class="trust-cell">
             <a class="trust-rating-link" href="#google-reviews">
               <span class="trust-icon" aria-hidden="true">
@@ -2087,6 +2135,7 @@
             </span>
           </li>
         </ul>
+        </div>
 
         <!-- 3 Panel-Only Proof Cards (Desktop: open cards | Mobile: tap-to-expand accordions) -->
         <div class="pillars-strip" aria-label="Why panel-only MacBook screen repair">
@@ -2228,6 +2277,13 @@
           </div>
 
           <div class="compare-card" id="compare-card">
+            <div class="compare-mobile-summary">
+              <div class="compare-mobile-summary-head">
+                <span class="compare-win-dot" aria-hidden="true"></span>
+                <span>iCorrect (Panel only) at a glance</span>
+              </div>
+              <p class="compare-mobile-summary-copy">Genuine Apple panel, original lid &amp; camera kept, True Tone matched, 2-year warranty, and 30% to 50% less than a full-lid swap.</p>
+            </div>
             <div class="compare-table-wrap">
               <table class="compare-table">
                 <colgroup>
@@ -3094,18 +3150,44 @@
         });
       }
 
-      // Comparison table expand / collapse (first 2 rows visible by default)
+      // Comparison table expand / collapse (desktop: 2 rows + 4 more; <=768px mobile: minimised summary + 6 points)
       var compareCard = document.getElementById("compare-card");
       var compareBtn = document.getElementById("compare-expand-btn");
       var compareLabel = document.getElementById("compare-expand-label");
       var compareIcon = document.getElementById("compare-expand-icon");
-      if (compareBtn && compareCard) {
-        compareBtn.addEventListener("click", function () {
-          var expanded = !compareCard.classList.contains("is-expanded");
-          compareCard.classList.toggle("is-expanded", expanded);
-          compareBtn.setAttribute("aria-expanded", String(expanded));
+      var mobileCompareMQ = window.matchMedia("(max-width: 768px)");
+      function syncCompareUI() {
+        if (!compareBtn || !compareCard) return;
+        var expanded = compareCard.classList.contains("is-expanded");
+        compareBtn.setAttribute("aria-expanded", String(expanded));
+        if (mobileCompareMQ.matches) {
+          compareLabel.textContent = expanded ? "Hide comparison" : "Compare iCorrect vs Apple & aftermarket (6 points)";
+        } else {
           compareLabel.textContent = expanded ? "Show fewer comparisons" : "Show 4 more comparisons";
-          compareIcon.textContent = expanded ? "-" : "+";
+        }
+        compareIcon.textContent = expanded ? "-" : "+";
+      }
+      function setCompareExpanded(expanded) {
+        if (!compareCard) return;
+        compareCard.classList.toggle("is-expanded", expanded);
+        syncCompareUI();
+      }
+      if (compareBtn && compareCard) {
+        syncCompareUI();
+        if (mobileCompareMQ.addEventListener) {
+          mobileCompareMQ.addEventListener("change", syncCompareUI);
+        } else if (mobileCompareMQ.addListener) {
+          mobileCompareMQ.addListener(syncCompareUI);
+        }
+        compareBtn.addEventListener("click", function () {
+          setCompareExpanded(!compareCard.classList.contains("is-expanded"));
+        });
+        document.querySelectorAll("a[href='#compare']").forEach(function (link) {
+          link.addEventListener("click", function () {
+            if (mobileCompareMQ.matches) {
+              setCompareExpanded(true);
+            }
+          });
         });
       }
 
