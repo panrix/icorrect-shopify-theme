@@ -324,7 +324,9 @@
     "A2442":["Silver","Space Gray"],
     "A2991":["Silver","Space Black"],"A2996":["Silver","Space Black"],"A2998":["Silver","Space Black"],
     "A3401":["Silver","Space Black"],"A3185":["Silver","Space Black"],"A3403":["Silver","Space Black"],
-    "A3186":["Silver","Space Black"],"A3112":["Silver","Space Black"]
+    "A3186":["Silver","Space Black"],"A3112":["Silver","Space Black"],
+    "A3434":["Silver","Space Black"],"A3426":["Silver","Space Black"],"A3427":["Silver","Space Black"],
+    "A3428":["Silver","Space Black"],"A3429":["Silver","Space Black"]
   };
 
   function getDeviceColors(device, model, repairType) {
@@ -883,10 +885,12 @@
 
   /* MacBook model number lookup DB */
   var MB_NUMS = [
+    {n:"A3428",m:"MacBook Pro 16-inch 'M5 Pro/Max' A3428/A3429 (2026)"},{n:"A3429",m:"MacBook Pro 16-inch 'M5 Pro/Max' A3428/A3429 (2026)"},
     {n:"A3403",m:"MacBook Pro 16-inch 'M4 Pro/Max' A3186/A3403 (2024)"},{n:"A3186",m:"MacBook Pro 16-inch 'M4 Pro/Max' A3186/A3403 (2024)"},
     {n:"A2991",m:"MacBook Pro 16-inch 'M3 Pro/Max' A2991 (2023)"},{n:"A2780",m:"MacBook Pro 16-inch 'M2 Pro/Max' A2780 (2023)"},
     {n:"A2485",m:"MacBook Pro 16-inch 'M1 Pro/Max' A2485 (2021)"},{n:"A2141",m:"MacBook Pro 16-inch A2141 (2019)"},
     {n:"A1990",m:"MacBook Pro 15-inch A1990 (2018-2019)"},{n:"A1707",m:"MacBook Pro 15-inch A1707 (2016-2017)"},
+    {n:"A3434",m:"MacBook Pro 14-inch 'M5/Pro/Max' A3434/A3426/A3427 (2025-2026)"},{n:"A3426",m:"MacBook Pro 14-inch 'M5/Pro/Max' A3434/A3426/A3427 (2025-2026)"},{n:"A3427",m:"MacBook Pro 14-inch 'M5/Pro/Max' A3434/A3426/A3427 (2025-2026)"},
     {n:"A3401",m:"MacBook Pro 14-inch 'M4 Pro/Max' A3112/A3185/A3401 (2024)"},{n:"A3112",m:"MacBook Pro 14-inch 'M4 Pro/Max' A3112/A3185/A3401 (2024)"},{n:"A3185",m:"MacBook Pro 14-inch 'M4 Pro/Max' A3112/A3185/A3401 (2024)"},
     {n:"A2918",m:"MacBook Pro 14-inch 'M3 Pro/Max' A2918/A2992 (2023)"},{n:"A2992",m:"MacBook Pro 14-inch 'M3 Pro/Max' A2918/A2992 (2023)"},
     {n:"A2779",m:"MacBook Pro 14-inch 'M2 Pro/Max' A2779 (2023)"},{n:"A2442",m:"MacBook Pro 14-inch 'M1 Pro/Max' A2442 (2021)"},

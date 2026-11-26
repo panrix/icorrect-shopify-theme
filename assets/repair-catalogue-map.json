@@ -2,8 +2,8 @@
   "source": "data/shopify-catalogue-2026-09-15.json",
   "generated_for": "courier-first-pivot #53",
   "generated_at": "2026-09-18",
-  "model_count": 115,
-  "repair_count": 920,
+  "model_count": 117,
+  "repair_count": 932,
   "models": {
     "watch::apple-watch-se-2-40mm": {
       "device": "watch",
@@ -7510,6 +7510,74 @@
         }
       }
     },
+    "macbook::macbook-pro-14-inch-m5-pro-max-a3434-a3426-a3427-2025-2026": {
+      "device": "macbook",
+      "name": "MacBook Pro 14-inch 'M5/Pro/Max' A3434/A3426/A3427 (2025-2026)",
+      "slug": "macbook-pro-14-inch-m5-pro-max-a3434-a3426-a3427-2025-2026",
+      "aliases": [
+        "MacBook Pro 14” ‘M5’ A3434 (2025)",
+        "MacBook Pro 14” ‘M5 Pro’ A3426 (2026)",
+        "MacBook Pro 14” ‘M5 Max’ A3427 (2026)"
+      ],
+      "repairs": {
+        "battery": {
+          "variantId": 72083982188797,
+          "handle": "macbook-pro-14-m5-2025-2026-a3434-a3426-a3427-battery-repair",
+          "title": "MacBook Pro 14-inch 'M5/Pro/Max' A3434/A3426/A3427 (2025-2026) Battery Replacement (Original Specification)",
+          "price": 299,
+          "tags": [
+            "courier:free"
+          ],
+          "unavailable": true
+        },
+        "charging-port": {
+          "variantId": 72083982319869,
+          "handle": "macbook-pro-14-m5-2025-2026-a3434-a3426-a3427-charging-port-repair",
+          "title": "MacBook Pro 14-inch 'M5/Pro/Max' A3434/A3426/A3427 (2025-2026) Charging Port Repair",
+          "price": 199,
+          "tags": [],
+          "unavailable": true
+        },
+        "diagnostic": {
+          "variantId": 72083980878077,
+          "handle": "macbook-pro-14-m5-2025-2026-a3434-a3426-a3427-diagnostic",
+          "title": "MacBook Pro 14-inch 'M5/Pro/Max' A3434/A3426/A3427 (2025-2026) Diagnostic - No Power or Liquid Damage",
+          "price": 49,
+          "tags": [],
+          "unavailable": true
+        },
+        "keyboard": {
+          "variantId": 72083982385405,
+          "handle": "macbook-pro-14-m5-2025-2026-a3434-a3426-a3427-keyboard-repair",
+          "title": "MacBook Pro 14-inch 'M5/Pro/Max' A3434/A3426/A3427 (2025-2026) Keyboard Repair",
+          "price": 299,
+          "tags": [
+            "courier:free"
+          ],
+          "unavailable": true
+        },
+        "screen": {
+          "variantId": 72083982090493,
+          "handle": "macbook-pro-14-m5-2025-2026-a3434-a3426-a3427-screen-repair",
+          "title": "MacBook Pro 14-inch 'M5/Pro/Max' A3434/A3426/A3427 (2025-2026) Screen Repair (Genuine Display)",
+          "price": 749,
+          "tags": [
+            "courier:free"
+          ],
+          "unavailable": true
+        },
+        "trackpad": {
+          "variantId": 72083982483709,
+          "handle": "macbook-pro-14-m5-2025-2026-a3434-a3426-a3427-trackpad-repair",
+          "title": "MacBook Pro 14-inch 'M5/Pro/Max' A3434/A3426/A3427 (2025-2026) Trackpad Repair",
+          "price": 299,
+          "tags": [
+            "courier:free"
+          ],
+          "unavailable": true
+        }
+      }
+    },
     "macbook::macbook-pro-14-inch-m4-pro-max-a3112-a3185-a3401-2024": {
       "device": "macbook",
       "name": "MacBook Pro 14-inch 'M4 Pro/Max' A3112/A3185/A3401 (2024)",
@@ -7974,6 +8042,73 @@
           "tags": [
             "courier:free"
           ]
+        }
+      }
+    },
+    "macbook::macbook-pro-16-inch-m5-pro-max-a3428-a3429-2026": {
+      "device": "macbook",
+      "name": "MacBook Pro 16-inch 'M5 Pro/Max' A3428/A3429 (2026)",
+      "slug": "macbook-pro-16-inch-m5-pro-max-a3428-a3429-2026",
+      "aliases": [
+        "MacBook Pro 16” ‘M5 Pro’ A3428 (2026)",
+        "MacBook Pro 16” ‘M5 Max’ A3429 (2026)"
+      ],
+      "repairs": {
+        "battery": {
+          "variantId": 72083982942461,
+          "handle": "macbook-pro-16-m5-2026-a3428-a3429-battery-repair",
+          "title": "MacBook Pro 16-inch 'M5 Pro/Max' A3428/A3429 (2026) Battery Replacement (Original Specification)",
+          "price": 299,
+          "tags": [
+            "courier:free"
+          ],
+          "unavailable": true
+        },
+        "charging-port": {
+          "variantId": 72083983040765,
+          "handle": "macbook-pro-16-m5-2026-a3428-a3429-charging-port-repair",
+          "title": "MacBook Pro 16-inch 'M5 Pro/Max' A3428/A3429 (2026) Charging Port Repair",
+          "price": 199,
+          "tags": [],
+          "unavailable": true
+        },
+        "diagnostic": {
+          "variantId": 72083982582013,
+          "handle": "macbook-pro-16-m5-2026-a3428-a3429-diagnostic",
+          "title": "MacBook Pro 16-inch 'M5 Pro/Max' A3428/A3429 (2026) Diagnostic - No Power or Liquid Damage",
+          "price": 49,
+          "tags": [],
+          "unavailable": true
+        },
+        "keyboard": {
+          "variantId": 72083983106301,
+          "handle": "macbook-pro-16-m5-2026-a3428-a3429-keyboard-repair",
+          "title": "MacBook Pro 16-inch 'M5 Pro/Max' A3428/A3429 (2026) Keyboard Repair",
+          "price": 299,
+          "tags": [
+            "courier:free"
+          ],
+          "unavailable": true
+        },
+        "screen": {
+          "variantId": 72083982844157,
+          "handle": "macbook-pro-16-m5-2026-a3428-a3429-screen-repair",
+          "title": "MacBook Pro 16-inch 'M5 Pro/Max' A3428/A3429 (2026) Screen Repair (Genuine Display)",
+          "price": 799,
+          "tags": [
+            "courier:free"
+          ],
+          "unavailable": true
+        },
+        "trackpad": {
+          "variantId": 72083983237373,
+          "handle": "macbook-pro-16-m5-2026-a3428-a3429-trackpad-repair",
+          "title": "MacBook Pro 16-inch 'M5 Pro/Max' A3428/A3429 (2026) Trackpad Repair",
+          "price": 299,
+          "tags": [
+            "courier:free"
+          ],
+          "unavailable": true
         }
       }
     },
