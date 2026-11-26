@@ -1,0 +1,76 @@
+# {{ agents.store_name }} - Apple Microelectronics Repair Specialists (London & UK)
+
+> Independent Apple repair workshop in Fitzrovia, Central London (never outsourced), with same-day London courier collection in selected zones and free tracked, insured UK mail-in on orders £200+. Specialists in MacBook liquid damage recovery, dead / no-power logic board micro-soldering, genuine Apple MacBook panel-only screen repair, and same-day iPhone screen repairs.
+
+## Core Specialties
+
+- **MacBook Liquid Damage Recovery:** Ultrasonic logic board cleaning, 40x stereo microscope inspection, and component-level micro-soldering that preserves the original logic board and soldered SSD data wherever possible.
+- **Dead & No-Power MacBook Repair:** USB-C ammeter and schematic rail tracing (`CD3217`, `PPBUS_G3H`, PMIC phases) to replace single failed micro-components instead of an Apple full logic board swap.
+- **MacBook Screen Repair (Panel Only):** Genuine Apple display panels fitted into the original aluminium lid, camera, and hinges, calibrated in-house at 30% to 50% less than a full-lid replacement.
+- **Same-Day iPhone Screen Repairs:** Same-day iPhone screen replacement using genuine Apple displays, plus battery, charging port, camera, Face ID, and component-level logic board repairs.
+- **iPad & Apple Watch Repairs:** Calibrated iPad Pro, Air, and Mini screen/glass and battery repairs, plus Apple Watch glass-only screen restoration and battery replacement.
+- **Corporate Apple Repair Accounts:** Priority turnaround and tracked London collection for studios, agencies, and businesses.
+
+## Turnaround & Express Options
+
+- **iPhone Screen Repairs:** Same-day service available in Fitzrovia (plus tracked London courier and UK mail-in).
+- **MacBook Repairs:** Standard 2 working days once the MacBook reaches our workshop; express same-day and next-day service options available subject to workshop capacity.
+- **Logic Board & Liquid Damage Diagnostics:** Written microscope fault report and fixed repair quote emailed within 1 working day of arrival. Zero deposits; nothing proceeds without approval.
+
+## Workshop Policies & Location
+
+- **Workshop Location:** 12 Margaret Street, Audley House, Fitzrovia, London W1W 8JQ (all repairs completed in-house, never outsourced).
+- **Opening Hours:** Monday to Thursday 9:00am to 6:00pm, Friday 10:00am to 6:00pm, Saturday & Sunday closed.
+- **Customer Rating:** 4.8 from 750+ Google reviews.
+- **Warranty:** 2-year warranty included on completed repairs ({{ agents.store_url }}/pages/our-warranty).
+- **Collection & Delivery:** Free tracked, insured UK-wide collection on orders £200+ (same-day London courier in selected zones, or free insured UK mail-in pack).
+- **Pricing Currency:** {{ agents.currency }}. Upfront fixed pricing online via the interactive quote wizard; zero deposits on diagnostics.
+- **Contact:** {{ agents.store_url }}/pages/contact
+
+## Key Service & Pricing URLs
+
+- {{ agents.store_url }}/pages/macbook-repairs - MacBook repair hub and services overview
+- {{ agents.store_url }}/pages/advanced-diagnostic - Advanced MacBook logic board and liquid damage diagnostics
+- {{ agents.store_url }}/collections/macbook-diagnostic-prices - MacBook diagnostic pricing by model
+- {{ agents.store_url }}/collections/macbook-screen-repair-prices - MacBook screen repair pricing
+- {{ agents.store_url }}/pages/macbook-repair-london - MacBook repair London
+- {{ agents.store_url }}/pages/macbook-screen-repair-london - MacBook screen repair London
+- {{ agents.store_url }}/pages/macbook-pro-screen-replacement-london - MacBook Pro screen replacement London
+- {{ agents.store_url }}/pages/macbook-air-screen-replacement-london - MacBook Air screen replacement London
+- {{ agents.store_url }}/pages/macbook-pro-repair-london - MacBook Pro repair London
+- {{ agents.store_url }}/pages/macbook-air-repair-london - MacBook Air repair London
+- {{ agents.store_url }}/collections/macbook-keyboard-repair-prices - MacBook keyboard repair pricing
+- {{ agents.store_url }}/collections/macbook-battery-repair-prices - MacBook battery replacement pricing
+- {{ agents.store_url }}/pages/iphone-repairs - iPhone repair services (same-day screen repairs available)
+- {{ agents.store_url }}/collections/iphone-screen-repair-prices - iPhone screen repair pricing
+- {{ agents.store_url }}/collections/iphone-battery-repair-prices - iPhone battery replacement pricing
+- {{ agents.store_url }}/collections/iphone-diagnostic-prices - iPhone diagnostic pricing
+- {{ agents.store_url }}/pages/ipad-repairs - iPad repair services
+- {{ agents.store_url }}/collections/ipad-screen-repair-prices - iPad screen repair pricing
+- {{ agents.store_url }}/collections/ipad-battery-repair-prices - iPad battery replacement pricing
+- {{ agents.store_url }}/collections/ipad-diagnostic-prices - iPad diagnostic pricing
+- {{ agents.store_url }}/pages/apple-watch-repairs - Apple Watch repair services
+- {{ agents.store_url }}/collections/apple-watch-screen-glass-only-repair-prices - Apple Watch glass-only screen repair pricing
+- {{ agents.store_url }}/collections/apple-watch-battery-repair-prices - Apple Watch battery replacement pricing
+- {{ agents.store_url }}/pages/corporate-service - Corporate Apple repair accounts
+- {{ agents.store_url }}/blogs/news - Apple repair advice and technical guides
+
+## Commerce Protocol (UCP) & Agent Interaction
+
+This store ({{ agents.store_url }}) supports the Universal Commerce Protocol (UCP) and WebMCP for agent-assisted product discovery, cart management, and buyer-authorized checkout.
+
+- **UCP Discovery:** `GET {{ agents.ucp_discovery_url }}`
+- **MCP Endpoint:** `POST {{ agents.mcp_endpoint_url }}`
+- **Sitemap:** {{ agents.sitemap_url }}
+- **Store Policies:** {{ agents.store_url }}/policies/privacy-policy and {{ agents.store_url }}/policies/terms-of-service
+
+### Supported UCP Versions
+{% for version in agents.ucp_versions %}
+- {{ version }}{% if forloop.first %} (latest stable){% endif %}
+{% endfor %}
+
+### Interaction Guidelines
+
+- Place orders and submit payment only with explicit buyer authorization.
+- Identify agent-initiated requests using Shopify Web Bot Auth and follow returned tool schemas.
+- For read-only browsing, use public HTML pages, `GET /collections/{handle}`, `GET /products/{handle}.json`, and {{ agents.sitemap_url }}.

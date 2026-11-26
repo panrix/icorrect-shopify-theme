@@ -82,72 +82,117 @@
 
       {%- when 'repair_cta' -%}
         {%- liquid
+          assign title_handle = article.handle | append: ' ' | append: article.title | downcase
           assign tag_str = article.tags | join: ' ' | downcase
-          assign hay = article.handle | append: ' ' | append: article.title | append: ' ' | append: tag_str | downcase
+          assign hay = title_handle | append: ' ' | append: tag_str
 
           assign liquid_url = '/pages/advanced-diagnostic'
+          assign has_liquid_page = false
           if pages['macbook-liquid-damage-repair'] != blank
             assign liquid_url = '/pages/macbook-liquid-damage-repair'
+            assign has_liquid_page = true
           endif
           assign nopower_url = '/pages/advanced-diagnostic'
+          assign has_nopower_page = false
           if pages['macbook-no-power-repair'] != blank
             assign nopower_url = '/pages/macbook-no-power-repair'
+            assign has_nopower_page = true
           endif
 
-          assign cta_badge = 'Fitzrovia Workshop · Never Outsourced'
-          assign cta_kicker = 'MACBOOK & APPLE MICROELECTRONICS'
-          assign cta_heading = 'Need your MacBook repaired without losing your data?'
-          assign cta_body = 'Component-level MacBook repairs carried out in-house at our Fitzrovia workshop. Standard 2-working-day turnaround with express options available subject to capacity, backed by a 2-year warranty and free UK collection on orders £200+.'
-          assign cta_primary_label = 'Explore MacBook repairs'
-          assign cta_primary_url = '/pages/macbook-repairs'
-          assign cta_secondary_label = 'Check screen repair prices'
-          assign cta_secondary_url = '/collections/macbook-screen-repair-prices'
+          # Step 1: Select device first (title/handle take priority over broad tags)
+          assign cta_device = 'general'
+          if title_handle contains 'macbook' or title_handle contains 'flexgate' or title_handle contains 'dustgate' or title_handle contains 'cd3217'
+            assign cta_device = 'macbook'
+          elsif title_handle contains 'iphone'
+            assign cta_device = 'iphone'
+          elsif title_handle contains 'ipad' or title_handle contains 'apple-pencil' or title_handle contains 'pencil'
+            assign cta_device = 'ipad'
+          elsif title_handle contains 'apple watch' or title_handle contains 'apple-watch' or title_handle contains 'iwatch'
+            assign cta_device = 'watch'
+          elsif tag_str contains 'macbook'
+            assign cta_device = 'macbook'
+          elsif tag_str contains 'iphone'
+            assign cta_device = 'iphone'
+          elsif tag_str contains 'ipad'
+            assign cta_device = 'ipad'
+          elsif tag_str contains 'watch'
+            assign cta_device = 'watch'
+          endif
 
-          if hay contains 'liquid' or hay contains 'water' or hay contains 'spill' or hay contains 'coffee' or hay contains 'corros'
-            assign cta_kicker = 'MACBOOK LIQUID DAMAGE RECOVERY'
-            assign cta_heading = 'Spilled liquid on your MacBook? Power it off and book a board-level inspection.'
-            assign cta_body = 'Do not plug it in or use rice. Our Fitzrovia technicians clean hidden corrosion ultrasonically and repair shorted logic board components so your original board and soldered SSD stay intact. Written quote within 1 working day.'
-            assign cta_primary_label = 'Book liquid damage diagnostic'
-            assign cta_primary_url = liquid_url
-            assign cta_secondary_label = 'MacBook will not turn on?'
-            assign cta_secondary_url = nopower_url
-          elsif hay contains 'no-power' or hay contains 'no power' or hay contains 'not-turning-on' or hay contains 'turn on' or hay contains 'dead' or hay contains 'logic-board' or hay contains 'logic board' or hay contains 'charging' or hay contains 'cd3217'
-            if hay contains 'iphone'
-              assign cta_badge = 'Same-Day iPhone Repairs Available'
+          assign is_liquid = false
+          if hay contains 'liquid' or hay contains 'water' or hay contains 'spill' or hay contains 'spilt' or hay contains 'coffee' or hay contains 'corros'
+            assign is_liquid = true
+          endif
+
+          assign is_power = false
+          if hay contains 'no-power' or hay contains 'no power' or hay contains 'not-turning-on' or hay contains 'turn on' or hay contains 'dead' or hay contains 'logic-board' or hay contains 'logic board' or hay contains 'charging' or hay contains 'cd3217'
+            assign is_power = true
+          endif
+
+          assign is_screen = false
+          if hay contains 'screen' or hay contains 'display' or hay contains 'lcd' or hay contains 'backlight' or hay contains 'crack' or hay contains 'flicker' or hay contains 'retina' or hay contains 'flexgate' or hay contains 'dustgate' or hay contains 'panel'
+            assign is_screen = true
+          endif
+
+          # Default: general Apple repair CTA
+          assign cta_badge = 'Fitzrovia Workshop · Never Outsourced'
+          assign cta_kicker = 'APPLE MICROELECTRONICS SPECIALISTS'
+          assign cta_heading = 'Need an in-house Apple repair without losing your data?'
+          assign cta_body = 'Component-level MacBook, iPhone, iPad, and Apple Watch repairs carried out in-house at our Fitzrovia workshop. Same-day iPhone screens, standard 2-working-day MacBook turnaround with express same-day and next-day options, backed by a 2-year warranty.'
+          assign cta_primary_label = 'Explore our repair services'
+          assign cta_primary_url = '/pages/our-services'
+          assign cta_secondary_label = 'Book an advanced diagnostic'
+          assign cta_secondary_url = '/pages/advanced-diagnostic'
+
+          # Step 2: Route by device first, then fault
+          if cta_device == 'iphone'
+            if is_liquid
+              assign cta_badge = 'Fitzrovia Workshop · Data Recovery'
+              assign cta_kicker = 'IPHONE LIQUID DAMAGE & DATA RECOVERY'
+              assign cta_heading = 'Water-damaged iPhone? Power it off and book a board-level inspection.'
+              assign cta_body = 'Do not plug it in or use rice. Our Fitzrovia microelectronics team cleans corrosion ultrasonically and repairs shorted iPhone logic boards to recover your phone and data, backed by a 2-year warranty.'
+              assign cta_primary_label = 'Check iPhone diagnostic prices'
+              assign cta_primary_url = '/collections/iphone-diagnostic-prices'
+              assign cta_secondary_label = 'Explore iPhone repairs'
+              assign cta_secondary_url = '/pages/iphone-repairs'
+            elsif is_power
+              assign cta_badge = 'Fitzrovia Workshop · Board Repair'
               assign cta_kicker = 'IPHONE BOARD & POWER DIAGNOSTICS'
-              assign cta_heading = 'iPhone not turning on or showing power faults?'
-              assign cta_body = 'Our Fitzrovia microelectronics team carries out in-house diagnostics and component-level iPhone repairs with upfront fixed pricing, same-day screen service, and a 2-year warranty.'
+              assign cta_heading = 'iPhone not turning on or not charging?'
+              assign cta_body = 'Our Fitzrovia microelectronics team carries out in-house logic board diagnostics and component-level iPhone power repairs with upfront fixed pricing and a 2-year warranty.'
+              assign cta_primary_label = 'Check iPhone diagnostic prices'
+              assign cta_primary_url = '/collections/iphone-diagnostic-prices'
+              assign cta_secondary_label = 'Explore iPhone repairs'
+              assign cta_secondary_url = '/pages/iphone-repairs'
+            else
+              assign cta_badge = 'Same-Day iPhone Screen Repairs'
+              assign cta_kicker = 'FITZROVIA IPHONE REPAIR SPECIALISTS'
+              assign cta_heading = 'Need a genuine iPhone repair in London or via UK mail-in?'
+              assign cta_body = 'Same-day iPhone screen replacements using genuine Apple displays, plus battery and component-level logic board repairs carried out in-house in Fitzrovia with a 2-year warranty.'
               assign cta_primary_label = 'Explore iPhone repairs'
               assign cta_primary_url = '/pages/iphone-repairs'
-              assign cta_secondary_label = 'Check iPhone diagnostic prices'
-              assign cta_secondary_url = '/collections/iphone-diagnostic-prices'
-            else
-              assign cta_kicker = 'DEAD & NO POWER MACBOOK REPAIR'
-              assign cta_heading = 'MacBook completely dead or not charging?'
-              assign cta_body = 'Apple replaces the entire logic board and wipes your soldered SSD. We trace and micro-solder the exact failed power rail or USB-C controller in-house in Fitzrovia, keeping your files intact with a 2-year warranty.'
-              assign cta_primary_label = 'Book dead MacBook diagnostic'
-              assign cta_primary_url = nopower_url
-              assign cta_secondary_label = 'Had a liquid spill?'
-              assign cta_secondary_url = liquid_url
+              assign cta_secondary_label = 'Check iPhone screen prices'
+              assign cta_secondary_url = '/collections/iphone-screen-repair-prices'
             endif
-          elsif hay contains 'iphone'
-            assign cta_badge = 'Same-Day iPhone Screen Repairs'
-            assign cta_kicker = 'FITZROVIA IPHONE REPAIR SPECIALISTS'
-            assign cta_heading = 'Need a genuine iPhone repair in London or via UK mail-in?'
-            assign cta_body = 'Same-day iPhone screen replacements using genuine Apple displays, plus battery and component-level logic board repairs carried out in-house in Fitzrovia with a 2-year warranty.'
-            assign cta_primary_label = 'Explore iPhone repairs'
-            assign cta_primary_url = '/pages/iphone-repairs'
-            assign cta_secondary_label = 'Check iPhone screen prices'
-            assign cta_secondary_url = '/collections/iphone-screen-repair-prices'
-          elsif hay contains 'ipad' or hay contains 'apple-pencil' or hay contains 'pencil'
-            assign cta_kicker = 'FITZROVIA IPAD REPAIR SPECIALISTS'
-            assign cta_heading = 'Need an iPad screen, battery, or board repair?'
-            assign cta_body = 'In-house iPad Pro, Air, and Mini repairs at our Fitzrovia workshop with calibrated displays, upfront fixed pricing, and a 2-year warranty.'
-            assign cta_primary_label = 'Explore iPad repairs'
-            assign cta_primary_url = '/pages/ipad-repairs'
-            assign cta_secondary_label = 'Check iPad diagnostic prices'
-            assign cta_secondary_url = '/collections/ipad-diagnostic-prices'
-          elsif hay contains 'watch'
+          elsif cta_device == 'ipad'
+            if is_liquid or is_power
+              assign cta_kicker = 'IPAD LOGIC BOARD & CHARGING DIAGNOSTICS'
+              assign cta_heading = 'iPad not charging, water-damaged, or completely dead?'
+              assign cta_body = 'Our Fitzrovia technicians trace charging IC and logic board faults to component level so your iPad and data can be saved without a full replacement, backed by a 2-year warranty.'
+              assign cta_primary_label = 'Check iPad diagnostic prices'
+              assign cta_primary_url = '/collections/ipad-diagnostic-prices'
+              assign cta_secondary_label = 'Explore iPad repairs'
+              assign cta_secondary_url = '/pages/ipad-repairs'
+            else
+              assign cta_kicker = 'FITZROVIA IPAD REPAIR SPECIALISTS'
+              assign cta_heading = 'Need an iPad screen, battery, or board repair?'
+              assign cta_body = 'In-house iPad Pro, Air, and Mini repairs at our Fitzrovia workshop with calibrated displays, upfront fixed pricing, and a 2-year warranty.'
+              assign cta_primary_label = 'Explore iPad repairs'
+              assign cta_primary_url = '/pages/ipad-repairs'
+              assign cta_secondary_label = 'Check iPad screen prices'
+              assign cta_secondary_url = '/collections/ipad-screen-repair-prices'
+            endif
+          elsif cta_device == 'watch'
             assign cta_kicker = 'APPLE WATCH REPAIR SPECIALISTS'
             assign cta_heading = 'Cracked Apple Watch glass or worn battery?'
             assign cta_body = 'Glass-only screen restoration and battery replacement carried out in-house in Fitzrovia with upfront fixed pricing and a 2-year warranty.'
@@ -155,14 +200,50 @@
             assign cta_primary_url = '/pages/apple-watch-repairs'
             assign cta_secondary_label = 'Check Watch glass repair prices'
             assign cta_secondary_url = '/collections/apple-watch-screen-glass-only-repair-prices'
-          elsif hay contains 'screen' or hay contains 'display' or hay contains 'flexgate' or hay contains 'dustgate' or hay contains 'retina' or hay contains 'macbook'
-            assign cta_kicker = 'GENUINE APPLE PANEL-ONLY SCREEN REPAIR'
-            assign cta_heading = 'Cracked, flickering, or blank MacBook display?'
-            assign cta_body = 'We fit genuine Apple display panels only into your original lid (30% to 50% less than a full-lid swap), calibrated in-house in Fitzrovia. Standard 2 working days with express options available, backed by a 2-year warranty.'
-            assign cta_primary_label = 'Get your MacBook screen price'
-            assign cta_primary_url = '/collections/macbook-screen-repair-prices'
-            assign cta_secondary_label = 'Liquid or power fault instead?'
-            assign cta_secondary_url = liquid_url
+          elsif cta_device == 'macbook'
+            if is_liquid
+              assign cta_kicker = 'MACBOOK LIQUID DAMAGE RECOVERY'
+              assign cta_heading = 'Spilled liquid on your MacBook? Power it off and book a board-level inspection.'
+              assign cta_body = 'Do not plug it in or use rice. Our Fitzrovia technicians clean hidden corrosion ultrasonically and repair shorted logic board components so your original board and soldered SSD stay intact. Written quote within 1 working day.'
+              assign cta_primary_label = 'Book liquid damage diagnostic'
+              assign cta_primary_url = liquid_url
+              if has_nopower_page
+                assign cta_secondary_label = 'MacBook will not turn on?'
+                assign cta_secondary_url = nopower_url
+              else
+                assign cta_secondary_label = 'Explore all MacBook repairs'
+                assign cta_secondary_url = '/pages/macbook-repairs'
+              endif
+            elsif is_power
+              assign cta_kicker = 'DEAD & NO POWER MACBOOK REPAIR'
+              assign cta_heading = 'MacBook completely dead or not charging?'
+              assign cta_body = 'Apple replaces the entire logic board and wipes your soldered SSD. We trace and micro-solder the exact failed power rail or USB-C controller in-house in Fitzrovia, keeping your files intact with a 2-year warranty.'
+              assign cta_primary_label = 'Book dead MacBook diagnostic'
+              assign cta_primary_url = nopower_url
+              if has_liquid_page
+                assign cta_secondary_label = 'Had a liquid spill?'
+                assign cta_secondary_url = liquid_url
+              else
+                assign cta_secondary_label = 'Explore all MacBook repairs'
+                assign cta_secondary_url = '/pages/macbook-repairs'
+              endif
+            elsif is_screen
+              assign cta_kicker = 'GENUINE APPLE PANEL-ONLY SCREEN REPAIR'
+              assign cta_heading = 'Cracked, flickering, or blank MacBook display?'
+              assign cta_body = 'We fit genuine Apple display panels only into your original lid (30% to 50% less than a full-lid swap), calibrated in-house in Fitzrovia. Standard 2 working days with express same-day and next-day options available, backed by a 2-year warranty.'
+              assign cta_primary_label = 'Get your MacBook screen price'
+              assign cta_primary_url = '/collections/macbook-screen-repair-prices'
+              assign cta_secondary_label = 'Liquid or power fault instead?'
+              assign cta_secondary_url = liquid_url
+            else
+              assign cta_kicker = 'FITZROVIA MACBOOK REPAIR SPECIALISTS'
+              assign cta_heading = 'Need your MacBook repaired without losing your data?'
+              assign cta_body = 'Component-level MacBook repairs carried out in-house at our Fitzrovia workshop. Standard 2-working-day turnaround with express same-day and next-day service options available subject to capacity, backed by a 2-year warranty.'
+              assign cta_primary_label = 'Explore MacBook repairs'
+              assign cta_primary_url = '/pages/macbook-repairs'
+              assign cta_secondary_label = 'Book an advanced diagnostic'
+              assign cta_secondary_url = '/pages/advanced-diagnostic'
+            endif
           endif
         -%}
         <aside class="ic-article-cta page-width page-width--narrow" aria-label="Book a repair with iCorrect" {{ block.shopify_attributes }}>
@@ -175,7 +256,9 @@
             <p class="ic-article-cta__body">{{ cta_body }}</p>
             <div class="ic-article-cta__actions">
               <a class="ic-article-cta__btn-primary" href="{{ cta_primary_url }}">{{ cta_primary_label }} &rarr;</a>
-              <a class="ic-article-cta__btn-secondary" href="{{ cta_secondary_url }}">{{ cta_secondary_label }}</a>
+              {%- if cta_secondary_url != blank and cta_secondary_url != cta_primary_url -%}
+                <a class="ic-article-cta__btn-secondary" href="{{ cta_secondary_url }}">{{ cta_secondary_label }}</a>
+              {%- endif -%}
             </div>
             <div class="ic-article-cta__meta">
               <span><strong>4.8 &#9733;</strong> 750+ Google reviews</span>
@@ -186,11 +269,19 @@
             </div>
             <div class="ic-article-cta__pillars">
               <span class="ic-article-cta__pillars-label">Popular MacBook repairs:</span>
-              <a href="{{ liquid_url }}">Liquid Damage</a>
-              <span aria-hidden="true">&middot;</span>
-              <a href="{{ nopower_url }}">Dead / No Power</a>
-              <span aria-hidden="true">&middot;</span>
-              <a href="/collections/macbook-screen-repair-prices">Screen Repair</a>
+              {%- if has_liquid_page and has_nopower_page -%}
+                <a href="{{ liquid_url }}">Liquid Damage</a>
+                <span aria-hidden="true">&middot;</span>
+                <a href="{{ nopower_url }}">Dead / No Power</a>
+                <span aria-hidden="true">&middot;</span>
+                <a href="/collections/macbook-screen-repair-prices">Screen Repair</a>
+              {%- else -%}
+                <a href="/pages/advanced-diagnostic">Advanced Diagnostics</a>
+                <span aria-hidden="true">&middot;</span>
+                <a href="/collections/macbook-screen-repair-prices">Screen Repair</a>
+                <span aria-hidden="true">&middot;</span>
+                <a href="/pages/macbook-repairs">All MacBook Repairs</a>
+              {%- endif -%}
             </div>
           </div>
         </aside>
