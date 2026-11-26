@@ -58,6 +58,59 @@
     });
   }
 
+  function getDistinctId() {
+    try {
+      if (window.icorrectQuoteEvents && typeof window.icorrectQuoteEvents.phDistinctId === 'function') {
+        var qid = window.icorrectQuoteEvents.phDistinctId();
+        if (qid) return String(qid);
+      }
+      if (typeof posthog !== 'undefined' && typeof posthog.get_distinct_id === 'function') {
+        return String(posthog.get_distinct_id() || '');
+      }
+    } catch (e) {}
+    return '';
+  }
+
+  function identifyEnquiry(email, name) {
+    try {
+      var normalized = String(email || '').trim().toLowerCase();
+      if (!normalized || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) return false;
+      if (typeof posthog === 'undefined' || typeof posthog.identify !== 'function') return false;
+      var props = { email: normalized };
+      var cleanName = String(name || '').trim();
+      if (cleanName) props.name = cleanName;
+      posthog.identify(normalized, props);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  window.icorrectPostHog = {
+    getDistinctId: getDistinctId,
+    identifyEnquiry: identifyEnquiry
+  };
+
+  function bindNativeContactIdentify() {
+    document.addEventListener('submit', function (event) {
+      try {
+        var form = event && event.target;
+        if (!form || typeof form.getAttribute !== 'function') return;
+        if (form.dataset && form.dataset.contactIntercept === 'true' && form.dataset.nativeFallbackMode !== 'true') {
+          return;
+        }
+        var action = String(form.getAttribute('action') || form.action || '');
+        if (action.indexOf('/contact') === -1) return;
+        var emailEl = form.querySelector('input[name="contact[email]"], input[type="email"]');
+        if (!emailEl || !emailEl.value) return;
+        var nameEl = form.querySelector('input[name="contact[name]"]');
+        identifyEnquiry(emailEl.value, nameEl ? nameEl.value : '');
+      } catch (e) {}
+    }, true);
+  }
+
+  bindNativeContactIdentify();
+
   waitForPostHog(function () {
     // Run immediately and re-run whenever the cart updates (e.g. mini-cart drawer)
     patchCheckoutLinks();
