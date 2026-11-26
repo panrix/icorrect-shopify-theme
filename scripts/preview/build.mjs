@@ -86,7 +86,28 @@ for (const [handle, p] of products) {
 }
 
 /* ---- Liquid ---- */
-const engine = new Liquid({ strictVariables: false, strictFilters: false });
+const engine = new Liquid({
+  strictVariables: false,
+  strictFilters: false,
+  partials: path.join(ROOT, 'snippets'),
+  extname: '.liquid',
+});
+engine.registerTag('style', {
+  parse(tagToken, remainTokens) {
+    this.templates = [];
+    this.liquid.parser
+      .parseStream(remainTokens)
+      .on('template', (tpl) => this.templates.push(tpl))
+      .on('tag:endstyle', function () { this.stop(); })
+      .on('end', () => { throw new Error('unclosed style tag'); })
+      .start();
+  },
+  *render(ctx, emitter) {
+    emitter.write('<style>');
+    yield this.liquid.renderer.renderTemplates(this.templates, ctx, emitter);
+    emitter.write('</style>');
+  },
+});
 engine.registerFilter('asset_url', (v) => '/assets/' + v);
 engine.registerFilter('stylesheet_tag', (v) => `<link rel="stylesheet" href="${v}">`);
 engine.registerFilter('json', (v) => JSON.stringify(v === undefined ? null : v));
@@ -180,15 +201,132 @@ return '<div class="pv-card">'+rows+'</div>'}).join('')}
 write('checkout/index.html', checkout);
 write('cart/index.html', checkout);
 
+/* Preview: All 5 Redesigned 3-Video Panels rendered directly from Liquid sections */
+const stripSchema = (s) => s.replace(/\{%-?\s*schema\s*-?%\}[\s\S]*?\{%-?\s*endschema\s*-?%\}/, '');
+const videoDemos = [
+  {
+    label: '1. Homepage (`sections/homepage-videos.liquid`)',
+    file: 'sections/homepage-videos.liquid',
+    section: {
+      id: 'home-demo',
+      settings: {
+        heading: 'Behind the scenes',
+        subtitle: 'Watch our videos to understand common repair issues, what to expect, and how we fix your device with care.',
+        video_1_title: "Apple recommends iCorrect? Here's why!",
+        video_2_title: 'Repairs better than Apple?',
+        video_3_title: 'Too broken for Apple? Just right for us.',
+        color_scheme: 'scheme-1',
+        padding_top: 24,
+        padding_bottom: 32,
+      },
+    },
+  },
+  {
+    label: '2. MacBook Pages (`sections/macbook-videos.liquid`)',
+    file: 'sections/macbook-videos.liquid',
+    section: {
+      id: 'macbook-demo',
+      settings: {
+        heading: 'See How We Repair Your MacBook',
+        subtitle: 'Watch our videos to see how we repair MacBooks, what to expect, and how we work.',
+        video_1_title: 'Repair is better than replace.',
+        video_2_title: 'Our repair approach is sustainable.',
+        video_3_title: 'Do not overpay for your repairs.',
+        color_scheme: 'scheme-1',
+        padding_top: 24,
+        padding_bottom: 32,
+      },
+    },
+  },
+  {
+    label: '3. iPhone Pages (`sections/iphone-videos.liquid`)',
+    file: 'sections/iphone-videos.liquid',
+    section: {
+      id: 'iphone-demo',
+      settings: {
+        heading: 'Behind the scenes',
+        subtitle: 'Watch our videos to understand common repair issues, what to expect, and how we fix your device with care.',
+        video_1_title: 'We specialise in data recovery.',
+        video_2_title: 'Do not compromise on quality.',
+        video_3_title: 'Poor quality parts cause serious issues.',
+        color_scheme: 'scheme-1',
+        padding_top: 24,
+        padding_bottom: 32,
+      },
+    },
+  },
+  {
+    label: '4. iPad Pages (`sections/ipad-videos.liquid`)',
+    file: 'sections/ipad-videos.liquid',
+    section: {
+      id: 'ipad-demo',
+      settings: {
+        heading: 'Behind the scenes',
+        subtitle: 'Watch our videos to understand common repair issues, what to expect, and how we fix your device with care.',
+        video_1_title: 'Your Pencil will work after the repair.',
+        video_2_title: 'We repair what Apple cannot.',
+        video_3_title: 'We can bring your iPad back to life.',
+        color_scheme: 'scheme-1',
+        padding_top: 24,
+        padding_bottom: 32,
+      },
+    },
+  },
+  {
+    label: '5. Apple Watch Pages (`sections/apple-watch-videos.liquid`)',
+    file: 'sections/apple-watch-videos.liquid',
+    section: {
+      id: 'watch-demo',
+      settings: {
+        heading: 'Behind the scenes',
+        subtitle: 'Watch our videos to understand common repair issues, what to expect, and how we fix your device with care.',
+        video_1_title: 'Repair your Watch, do not replace it.',
+        video_2_title: 'Treat your rear glass with care.',
+        video_3_title: 'We care about sustainability.',
+        color_scheme: 'scheme-1',
+        padding_top: 0,
+        padding_bottom: 0,
+      },
+    },
+  },
+];
+
+const renderedPanels = [];
+for (const d of videoDemos) {
+  const html = await engine.parseAndRender(stripSchema(read(d.file)), { section: d.section });
+  renderedPanels.push(`<div class="vp-demo-divider"><span>${d.label}</span></div>${html}`);
+}
+
+write('video-panels/index.html', `<!doctype html><html lang="en-GB"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Redesigned 3-Video Panels (All 5 Sections) · Preview</title>${pageCss}
+<style>
+.vp-demo-intro{max-width:1200px;margin:28px auto 12px;padding:0 20px}
+.vp-demo-intro h1{margin:0 0 8px;font-size:28px;letter-spacing:-.03em}
+.vp-demo-intro p{margin:0;color:#4b5563;font-size:15px;line-height:1.55;max-width:74ch}
+.vp-demo-divider{max-width:1200px;margin:28px auto 0;padding:12px 20px 0;border-top:1px solid #e5e7eb}
+.vp-demo-divider span{display:inline-block;padding:4px 10px;border-radius:999px;background:#111827;color:#fff;font:500 10.5px var(--font-mono);letter-spacing:.04em}
+</style></head>
+<body>${banner('All 5 Redesigned 3-Video Panels (81 Templates)')}
+<div class="vp-demo-intro">
+  <h1>Redesigned 3-Video Panels (All 5 Live Sections)</h1>
+  <p>Rendered directly from the real Liquid theme sections via <code>snippets/icorrect-video-panel.liquid</code>. Zero YouTube JS loads on page open; click any card to launch the privacy-enhanced YouTube player in place.</p>
+</div>
+${renderedPanels.join('\n')}
+</body></html>`);
+
 /* Index */
 write('index.html', `<!doctype html><html lang="en-GB"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
-<title>Quote wizard preview</title>${pageCss}
+<title>Quote wizard &amp; Video Panels preview</title>${pageCss}
 <style>.pv-wrap{max-width:640px;margin:0 auto;padding:24px 20px}.pv-wrap h1{font-size:28px;letter-spacing:-.04em;margin:0 0 8px}
 .pv-wrap p,.pv-wrap li{color:#4d4d4d;font-size:15px;line-height:1.5}.pv-links a{display:flex;align-items:center;min-height:56px;padding:0 16px;margin:8px 0;border-radius:12px;box-shadow:0 0 0 1px rgba(0,0,0,.12);color:#171717;text-decoration:none;font-weight:500}</style></head>
-<body>${banner('Start')}<div class="pv-wrap"><h1>Quote wizard preview</h1>
-<p>Branch <b>${branch}</b>${sha ? ' at ' + sha : ''}. Prices come from the repo catalogue, not the live store. Checkout is a stand-in that shows what would go into the Shopify cart.</p>
-<div class="pv-links"><a href="/macbook-screen/">MacBook screen repair page</a><a href="/quote/">All devices</a></div>
-<p>Postcodes to try:</p><ul><li><b>W1T 3AB</b>: central London (courier collection or bring it to the workshop)</li><li><b>SE15 4QF</b>: further out in London</li><li><b>M1 4BT</b>: outside London (mail-in)</li></ul></div></body></html>`);
+<body>${banner('Start')}<div class="pv-wrap"><h1>3-Video Panel Redesign &amp; SEO Preview</h1>
+<p>Branch <b>${branch}</b>${sha ? ' at ' + sha : ''}.</p>
+<div class="pv-links">
+  <a href="/video-panels/">All 5 Redesigned 3-Video Panels (Homepage, MacBook, iPhone, iPad, Watch)</a>
+  <a href="/macbook-screen/">MacBook screen repair page</a>
+  <a href="/quote/">All devices quote wizard</a>
+</div></div></body></html>`);
 
 console.log(`preview-dist: ${products.size} products, branch ${branch}`);
