@@ -2,14 +2,14 @@
 <html lang="en-GB">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex">
   <title>Quote Wizard Redesign Preview (ICO-146) | iCorrect</title>
-  <meta name="description" content="Interactive ICO-146 quote wizard redesign preview with mobile legibility floor, trust-first data wall, natural quote hierarchy, and cookie banner clearance.">
+  <meta name="description" content="Interactive ICO-146 quote wizard redesign preview with native mobile app click-through flow, trust-first data wall, fixed quote hierarchy, and cookie banner clearance.">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <!-- Preview Toolbar for Ricky & Michael -->
+  <!-- Desktop Preview Toolbar (>= 768px) -->
   <div class="pv-toolbar" role="region" aria-label="Preview controls">
     <div class="ic-container pv-toolbar-inner">
       <div class="pv-toolbar-top">
@@ -46,23 +46,23 @@
       <div class="pv-spec-drawer" id="pvSpecDrawer" hidden>
         <div class="pv-spec-grid">
           <div class="pv-spec-item">
-            <strong>Typography &amp; Legibility Floor</strong>
-            Body 14px to 15px, labels and metadata strictly 12px minimum, hero fixed price 40px mobile / 44px desktop. Zero 10px or 11px squeezed notes.
+            <strong>Native Mobile App Flow (&lt; 768px)</strong>
+            One focused viewport per screen (390x844): Step 3 Your Details (4 fields incl. Email) -> Step 4 Fixed Price &amp; Service Options -> Step 5 Collection &amp; Checkout. Supporting details sit cleanly in tap-to-open bottom sheets.
           </div>
           <div class="pv-spec-item">
-            <strong>Touch Targets &amp; Spacing</strong>
-            All inputs and buttons 48px+ height (52px primary CTA), 16px to 20px card padding, 16px to 20px vertical block spacing. Zero horizontal overflow.
+            <strong>Legibility &amp; Touch Floor</strong>
+            16px inputs (zero iOS zoom), body 14px to 15px, labels minimum 12px, 44px to 48px touch targets, 52px pinned primary CTA, hero price 40px mobile / 44px desktop. Zero horizontal overflow.
           </div>
           <div class="pv-spec-item">
-            <strong>Natural Mobile Hierarchy</strong>
-            Step 3 Data Wall (Name, UK Phone, Postcode) unlocks Step 4 in natural order: Service &amp; Slot first, Price + Uncollapsed 3-Step Timeline second, Proceed CTA third, with sticky bar clearing the 227px cookie banner.
+            <strong>Cookie Banner Clearance</strong>
+            Mobile pinned CTA docks cleanly above the simulated 227px UK-GDPR banner with zero overlap, zero font shrinking, and zero layout inversion.
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Site Header -->
+  <!-- Desktop Site Header (>= 768px) -->
   <header class="site-header">
     <div class="ic-container header-inner">
       <a class="brand" href="#top" id="top">iCorrect</a>
@@ -76,7 +76,32 @@
     </div>
   </header>
 
-  <main class="page-main">
+  <!-- Mobile App Fixed Top Bar (< 768px) -->
+  <header class="m-app-bar" id="mAppBar" aria-label="Quote app navigation">
+    <button type="button" class="m-back-btn" id="mBackBtn" aria-label="Previous step">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M12.5 4.5L7 10L12.5 15.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <div class="m-progress-wrap">
+      <div class="m-progress-segs" id="mProgressSegs" aria-hidden="true">
+        <span class="m-seg" data-seg="1"></span>
+        <span class="m-seg" data-seg="2"></span>
+        <span class="m-seg" data-seg="3"></span>
+        <span class="m-seg" data-seg="4"></span>
+        <span class="m-seg" data-seg="5"></span>
+      </div>
+      <span class="m-step-label" id="mStepLabel">Step 3 of 5 · Your Details</span>
+    </div>
+
+    <button type="button" class="m-preview-pill" id="mPreviewBtn" aria-haspopup="dialog" aria-controls="previewSheet">
+      <span class="m-preview-dot" aria-hidden="true"></span>
+      <span>Preview</span>
+    </button>
+  </header>
+
+  <main class="page-main" id="pageMain">
     <div class="ic-container">
       <div class="page-intro">
         <span class="mono-label">Instant Repair Quote</span>
@@ -84,7 +109,7 @@
         <p>Genuine Apple displays (panel only), 2-year warranty, and free collection on orders of £200 or more. Standard workshop turnaround is 2 working days once your device reaches Fitzrovia.</p>
       </div>
 
-      <!-- Main Quote Wizard Shell -->
+      <!-- Main Quote Wizard Shell (Desktop 4-step view + Mobile 5-step app viewport) -->
       <section class="wizard-shell" aria-label="Interactive quote wizard prototype">
         <div class="wizard-head">
           <div class="stepper" role="tablist" aria-label="Quote steps">
@@ -117,7 +142,7 @@
         </div>
       </section>
 
-      <!-- Verified Google Reviews (Trustindex Slot) & Fitzrovia Workshop Details -->
+      <!-- Desktop Verified Google Reviews (Trustindex Slot) & Fitzrovia Workshop Details (>= 768px) -->
       <section class="proof-section" aria-label="Reviews and workshop details">
         <div class="proof-card">
           <span class="mono-label">Verified Client Reviews</span>
@@ -151,13 +176,81 @@
     </div>
   </main>
 
-  <!-- Mobile Sticky Bottom CTA Bar (Step 4 only, docks above simulated cookie banner) -->
-  <div class="mobile-sticky-cta" id="mobileStickyCta" hidden>
-    <div class="sticky-left">
-      <span class="sticky-price" id="stickyPrice">£399</span>
-      <span class="sticky-sub" id="stickySub">Free London courier · 2 working days</span>
+  <!-- Mobile App Pinned Bottom CTA Bar (< 768px, docks above simulated cookie banner) -->
+  <div class="m-app-footer" id="mAppFooter">
+    <button type="button" class="btn-primary m-footer-cta" id="mFooterCta">See my fixed price &rarr;</button>
+  </div>
+
+  <!-- Mobile Bottom Sheet: How It Works + Reviews (Trustindex) & Fitzrovia Workshop -->
+  <div class="sheet-overlay" id="appSheet" hidden>
+    <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="appSheetTitle">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="sheet-head">
+        <div class="sheet-tabs" role="tablist" aria-label="Details">
+          <button type="button" class="sheet-tab is-active" id="sheetTabHow" data-sheet-tab="how" role="tab" aria-selected="true">How it works</button>
+          <button type="button" class="sheet-tab" id="sheetTabReviews" data-sheet-tab="reviews" role="tab" aria-selected="false">Reviews &amp; Workshop</button>
+        </div>
+        <button type="button" class="sheet-close" id="closeAppSheet" aria-label="Close details">&times;</button>
+      </div>
+      <div class="sheet-body" id="appSheetBody">
+        <!-- Populated dynamically by app.js -->
+      </div>
     </div>
-    <button type="button" class="sticky-btn" id="stickyProceedBtn">Proceed to checkout</button>
+  </div>
+
+  <!-- Mobile Preview Controls Drawer (< 768px) -->
+  <div class="sheet-overlay" id="previewSheet" hidden>
+    <div class="sheet-card sheet-card-dark" role="dialog" aria-modal="true" aria-labelledby="previewSheetTitle">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="sheet-head">
+        <div>
+          <span class="pv-sheet-kicker">ICO-146 MOBILE APP PREVIEW</span>
+          <h3 class="pv-sheet-title" id="previewSheetTitle">Demo Controls</h3>
+        </div>
+        <button type="button" class="sheet-close is-dark" id="closePreviewSheet" aria-label="Close preview controls">&times;</button>
+      </div>
+      <div class="sheet-body pv-sheet-body">
+        <div class="pv-sheet-section">
+          <span class="pv-sheet-label">Scenarios</span>
+          <div class="pv-sheet-grid">
+            <button type="button" class="pv-pill is-active" data-scenario="A">A: MBP 14" + W1W (Free Courier)</button>
+            <button type="button" class="pv-pill" data-scenario="B">B: iPhone 15 + E1 (&lt;£200 3-Way)</button>
+            <button type="button" class="pv-pill" data-scenario="C">C: MBA M3 + M1 (UK Mail-In)</button>
+            <button type="button" class="pv-pill" data-scenario="D">D: Liquid Damage Triage</button>
+          </div>
+        </div>
+
+        <div class="pv-sheet-section">
+          <span class="pv-sheet-label">Jump to Step</span>
+          <div class="pv-step-jump-row">
+            <button type="button" class="pv-jump-btn" data-jump-step="1">1. Device</button>
+            <button type="button" class="pv-jump-btn" data-jump-step="2">2. Fault</button>
+            <button type="button" class="pv-jump-btn" data-jump-step="3">3. Details</button>
+            <button type="button" class="pv-jump-btn" data-jump-step="4">4. Price</button>
+            <button type="button" class="pv-jump-btn" data-jump-step="5">5. Checkout</button>
+          </div>
+        </div>
+
+        <div class="pv-sheet-section">
+          <span class="pv-sheet-label">Preview Toggles</span>
+          <div class="pv-sheet-toggles">
+            <label class="pv-toggle" id="mToggleCookieWrap">
+              <input type="checkbox" id="mToggleCookieBanner">
+              <span>Simulate 227px UK Cookie Banner</span>
+            </label>
+            <label class="pv-toggle" id="mToggleSpeedWrap">
+              <input type="checkbox" id="mToggleFutureSpeed">
+              <span>Preview: Future Speed Tiers</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="pv-sheet-foot">
+          <a class="pv-link-btn" href="/">All Previews</a>
+          <button type="button" class="pv-done-btn" id="donePreviewSheet">Done</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Simulated 227px UK-GDPR Cookie Banner (OFF by default) -->

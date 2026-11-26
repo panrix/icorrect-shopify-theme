@@ -57,6 +57,7 @@
     {
       id: "screen",
       title: "Cracked or broken screen",
+      shortTitle: "Cracked screen",
       desc: "Shattered glass, black screen, vertical lines, or backlight failure.",
       tag: "Fixed price",
       isDiag: false
@@ -64,6 +65,7 @@
     {
       id: "liquid",
       title: "Liquid damage",
+      shortTitle: "Liquid damage",
       desc: "Spilled water, coffee, or other liquid. Board-level microelectronics diagnostic.",
       tag: "Triage + diagnostic",
       isDiag: true
@@ -71,6 +73,7 @@
     {
       id: "nopower",
       title: "No power / will not turn on",
+      shortTitle: "No power",
       desc: "Completely dead, no charging sign, or shuts down unexpectedly.",
       tag: "Triage + diagnostic",
       isDiag: true
@@ -78,6 +81,7 @@
     {
       id: "battery",
       title: "Battery replacement",
+      shortTitle: "Battery replacement",
       desc: "Drains quickly, service battery warning, or swollen cells.",
       tag: "Fixed price",
       isDiag: false
@@ -85,6 +89,7 @@
     {
       id: "data",
       title: "Data recovery",
+      shortTitle: "Data recovery",
       desc: "Recover essential files from a liquid-damaged or dead Apple device.",
       tag: "Triage + diagnostic",
       isDiag: true
@@ -110,6 +115,7 @@
       modelId: "mbp-14-m3",
       faultId: "screen",
       name: "Alex Morgan",
+      email: "alex.morgan@example.co.uk",
       phone: "07700 900123",
       postcode: "W1W 8JQ",
       service: "courier",
@@ -121,6 +127,7 @@
       modelId: "ip-15",
       faultId: "screen",
       name: "Hannah Patel",
+      email: "hannah.patel@example.co.uk",
       phone: "07700 900456",
       postcode: "E1 6AN",
       service: "mailin",
@@ -132,6 +139,7 @@
       modelId: "mba-13-m3",
       faultId: "screen",
       name: "Samira Bennett",
+      email: "samira.bennett@example.co.uk",
       phone: "07700 900789",
       postcode: "M1 4BT",
       service: "mailin",
@@ -143,11 +151,20 @@
       modelId: "mbp-14-m3",
       faultId: "liquid",
       name: "David Chen",
+      email: "david.chen@example.co.uk",
       phone: "07700 900321",
       postcode: "SW11 8BJ",
       service: "courier",
       defaultStep: 2
     }
+  };
+
+  var MOBILE_STEP_LABELS = {
+    1: "Step 1 of 5 · Device",
+    2: "Step 2 of 5 · Fault",
+    3: "Step 3 of 5 · Your Details",
+    4: "Step 4 of 5 · Price & Service",
+    5: "Step 5 of 5 · Checkout"
   };
 
   var state = {
@@ -166,6 +183,7 @@
     },
     lead: {
       name: "Alex Morgan",
+      email: "alex.morgan@example.co.uk",
       phone: "07700 900123",
       postcode: "W1W 8JQ"
     },
@@ -176,8 +194,15 @@
     futureSpeed: "standard",
     showCookieBanner: false,
     showFutureSpeed: false,
+    activeSheetTab: "how",
     feedbackMsg: ""
   };
+
+  var lastModeMobile = null;
+
+  function isMobileMode() {
+    return window.innerWidth < 768;
+  }
 
   function esc(str) {
     return String(str == null ? "" : str).replace(/[&<>"]/g, function (c) {
@@ -220,6 +245,10 @@
   function isValidUkPhone(raw) {
     var digits = String(raw || "").replace(/[^\d+]/g, "");
     return /^((\+44|0044)7\d{9}|07\d{9}|(\+44|0044)[123]\d{8,9}|0[123]\d{8,9})$/.test(digits);
+  }
+
+  function isValidEmail(raw) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(raw || "").trim());
   }
 
   function classifyPostcode(raw) {
@@ -277,7 +306,9 @@
     var base = getBasePrice();
     var fault = getFaultObj();
     if (!zone.isLondon) {
-      state.service = "mailin";
+      if (state.service !== "mailin" && state.service !== "workshop") {
+        state.service = "mailin";
+      }
       return;
     }
     if (base >= 200 || fault.isDiag) {
@@ -289,6 +320,51 @@
         state.service = "mailin";
       }
     }
+  }
+
+  function getTimelineSteps() {
+    var zone = classifyPostcode(state.lead.postcode);
+    var fault = getFaultObj();
+    var base = getBasePrice();
+    if (fault.isDiag) {
+      return [
+        {
+          title: state.service === "mailin" ? "We post your free insured pack" : (state.service === "workshop" ? "Drop off at 12 Margaret Street, W1W 8JQ" : "We collect from your London door"),
+          desc: state.service === "mailin"
+            ? "Protective box and prepaid tracked label posted within 24 hours."
+            : (state.service === "workshop"
+              ? "Hand your device directly to our Fitzrovia team (Mon to Thu 9am to 6pm, Friday 10am to 6pm)."
+              : "Tracked door-to-door London courier brings your device safely to Fitzrovia.")
+        },
+        {
+          title: "Board-level diagnostic in Fitzrovia",
+          desc: "Microelectronics inspection with your triage notes attached. Standard assessment within 2 working days of workshop arrival."
+        },
+        {
+          title: "Clear repair quote, £" + base + " deducted",
+          desc: "You decide whether to proceed. Your £" + base + " diagnostic fee is deducted from the final repair price."
+        }
+      ];
+    }
+    if (state.service === "mailin") {
+      return [
+        { title: "Free tracked & insured pack posted to " + esc(zone.outward), desc: "Padded protective box and prepaid tracked return label arrive at your door." },
+        { title: "Repaired in 2 working days at Fitzrovia", desc: "Genuine Apple displays (panel only), recalibrated and tested in-house once your device reaches our workshop." },
+        { title: "Tracked insured delivery back to you", desc: "Backed by our 2-year warranty with zero hidden extras." }
+      ];
+    }
+    if (state.service === "workshop") {
+      return [
+        { title: "Drop off at 12 Margaret Street, W1W 8JQ", desc: "Hand your device directly to our Fitzrovia team (Mon to Thu 9am to 6pm, Friday 10am to 6pm)." },
+        { title: "Repaired in 2 working days in-house", desc: "Genuine Apple displays (panel only), fitted and recalibrated at our Fitzrovia bench." },
+        { title: "Collect ready to go, 2-year warranty", desc: "We message you as soon as final quality checks pass." }
+      ];
+    }
+    return [
+      { title: "Same-day London courier collects from " + esc(zone.outward), desc: "Dedicated London courier collects during your chosen slot and brings your device straight to Fitzrovia." },
+      { title: "Repaired in 2 working days once it reaches our workshop", desc: "Genuine Apple displays (panel only), keeping your original lid with full calibration." },
+      { title: "Courier returns it to your door", desc: "Delivered back safely, backed by our 2-year warranty." }
+    ];
   }
 
   function renderDeviceIcon(devKey) {
@@ -343,7 +419,10 @@
       '</svg>';
   }
 
-  function renderStep1() {
+  /* =========================================================
+     DESKTOP RENDERERS (>= 768px, KEPT INTACT + EMAIL ADDED)
+     ========================================================= */
+  function renderDesktopStep1() {
     var devObj = getDeviceObj();
     var deviceCards = Object.keys(CATALOG).map(function (key) {
       var d = CATALOG[key];
@@ -413,7 +492,49 @@
       '</div>';
   }
 
-  function renderStep2() {
+  function renderTriageBlock() {
+    var fault = getFaultObj();
+    if (!fault.isDiag) return "";
+    var dataNote = state.triage.usable === "yes"
+      ? "If you can, please back up your device. Liquid damage is unpredictable and may still affect your data, though we will take every care with your device."
+      : "Liquid damage and power faults can be unpredictable. During the diagnostic we will prioritise protecting your data wherever we can.";
+
+    return '<div class="triage-card" id="triageCard">' +
+      '<span class="mono-label">Quick Bench Triage (Required for ' + esc(fault.title) + ')</span>' +
+      '<h3 class="section-block-title" style="margin-top:6px;">Three quick questions for our microelectronics team</h3>' +
+      '<p class="quote-card-sub">Straightforward screen repairs skip these questions. For liquid damage, no power, or data recovery, your answers let our technicians prepare the right bench diagnostic.</p>' +
+
+      '<div class="triage-q">' +
+        '<span class="triage-q-label">1. Is the device turning on and usable right now?</span>' +
+        '<div class="triage-opts">' +
+          '<button type="button" class="triage-opt' + (state.triage.usable === "yes" ? " is-selected" : "") + '" data-triage="usable" data-val="yes">Yes, turns on and is usable</button>' +
+          '<button type="button" class="triage-opt' + (state.triage.usable === "no" ? " is-selected" : "") + '" data-triage="usable" data-val="no">No, will not turn on or is not usable</button>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="triage-q">' +
+        '<span class="triage-q-label">2. Has it already been to Apple or another repair shop?</span>' +
+        '<div class="triage-opts">' +
+          '<button type="button" class="triage-opt' + (state.triage.seenBefore === "no" ? " is-selected" : "") + '" data-triage="seenBefore" data-val="no">No, nobody has opened it</button>' +
+          '<button type="button" class="triage-opt' + (state.triage.seenBefore === "apple_quote" ? " is-selected" : "") + '" data-triage="seenBefore" data-val="apple_quote">Yes, Apple quoted a replacement</button>' +
+          '<button type="button" class="triage-opt' + (state.triage.seenBefore === "other_shop" ? " is-selected" : "") + '" data-triage="seenBefore" data-val="other_shop">Yes, another repair shop looked at it</button>' +
+          '<button type="button" class="triage-opt' + (state.triage.seenBefore === "unsure" ? " is-selected" : "") + '" data-triage="seenBefore" data-val="unsure">Not sure</button>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="triage-q">' +
+        '<span class="triage-q-label">3. How important is keeping the data on this device?</span>' +
+        '<div class="triage-opts">' +
+          '<button type="button" class="triage-opt' + (state.triage.dataPriority === "essential" ? " is-selected" : "") + '" data-triage="dataPriority" data-val="essential">Essential: prioritise keeping my data</button>' +
+          '<button type="button" class="triage-opt' + (state.triage.dataPriority === "backup" ? " is-selected" : "") + '" data-triage="dataPriority" data-val="backup">I already have a full backup</button>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="triage-notice">' + esc(dataNote) + '</div>' +
+    '</div>';
+  }
+
+  function renderDesktopStep2() {
     var model = getModelObj();
     var fault = getFaultObj();
 
@@ -427,47 +548,6 @@
         '</button>';
     }).join("");
 
-    var triageHtml = "";
-    if (fault.isDiag) {
-      var dataNote = state.triage.usable === "yes"
-        ? "If you can, please back up your device. Liquid damage is unpredictable and may still affect your data, though we will take every care with your device."
-        : "Liquid damage and power faults can be unpredictable. During the diagnostic we will prioritise protecting your data wherever we can.";
-
-      triageHtml = '<div class="triage-card" id="triageCard">' +
-        '<span class="mono-label">Quick Bench Triage (Required for ' + esc(fault.title) + ')</span>' +
-        '<h3 class="section-block-title" style="margin-top:6px;">Three quick questions for our microelectronics team</h3>' +
-        '<p class="quote-card-sub">Straightforward screen repairs skip these questions. For liquid damage, no power, or data recovery, your answers let our technicians prepare the right bench diagnostic.</p>' +
-
-        '<div class="triage-q">' +
-          '<span class="triage-q-label">1. Is the device turning on and usable right now?</span>' +
-          '<div class="triage-opts">' +
-            '<button type="button" class="triage-opt' + (state.triage.usable === "yes" ? " is-selected" : "") + '" data-triage="usable" data-val="yes">Yes, turns on and is usable</button>' +
-            '<button type="button" class="triage-opt' + (state.triage.usable === "no" ? " is-selected" : "") + '" data-triage="usable" data-val="no">No, will not turn on or is not usable</button>' +
-          '</div>' +
-        '</div>' +
-
-        '<div class="triage-q">' +
-          '<span class="triage-q-label">2. Has it already been to Apple or another repair shop?</span>' +
-          '<div class="triage-opts">' +
-            '<button type="button" class="triage-opt' + (state.triage.seenBefore === "no" ? " is-selected" : "") + '" data-triage="seenBefore" data-val="no">No, nobody has opened it</button>' +
-            '<button type="button" class="triage-opt' + (state.triage.seenBefore === "apple_quote" ? " is-selected" : "") + '" data-triage="seenBefore" data-val="apple_quote">Yes, Apple quoted a replacement</button>' +
-            '<button type="button" class="triage-opt' + (state.triage.seenBefore === "other_shop" ? " is-selected" : "") + '" data-triage="seenBefore" data-val="other_shop">Yes, another repair shop looked at it</button>' +
-            '<button type="button" class="triage-opt' + (state.triage.seenBefore === "unsure" ? " is-selected" : "") + '" data-triage="seenBefore" data-val="unsure">Not sure</button>' +
-          '</div>' +
-        '</div>' +
-
-        '<div class="triage-q">' +
-          '<span class="triage-q-label">3. How important is keeping the data on this device?</span>' +
-          '<div class="triage-opts">' +
-            '<button type="button" class="triage-opt' + (state.triage.dataPriority === "essential" ? " is-selected" : "") + '" data-triage="dataPriority" data-val="essential">Essential: prioritise keeping my data</button>' +
-            '<button type="button" class="triage-opt' + (state.triage.dataPriority === "backup" ? " is-selected" : "") + '" data-triage="dataPriority" data-val="backup">I already have a full backup</button>' +
-          '</div>' +
-        '</div>' +
-
-        '<div class="triage-notice">' + esc(dataNote) + '</div>' +
-      '</div>';
-    }
-
     return '<h2 class="step-heading">What is wrong with your ' + esc(model.name) + '?</h2>' +
       '<p class="step-sub">Select the symptom that matches best. The illustration highlights the affected area (referencing Michael\'s PR #104/#107 fault marks pattern).</p>' +
       '<div class="fault-layout">' +
@@ -478,14 +558,14 @@
         '</div>' +
         '<div class="fault-grid">' + faultCards + '</div>' +
       '</div>' +
-      triageHtml +
+      renderTriageBlock() +
       '<div class="step-footer">' +
         '<span class="mono-label">Step 2 of 4</span>' +
         '<button type="button" class="btn-primary" id="step2Continue" style="max-width:320px;">Continue to unlock your quote &rarr;</button>' +
       '</div>';
   }
 
-  function renderStep3DataWall() {
+  function renderDesktopStep3DataWall() {
     var model = getModelObj();
     var fault = getFaultObj();
     var zoneValid = isValidUkPostcode(state.lead.postcode);
@@ -529,6 +609,12 @@
           '</div>' +
 
           '<div class="field-group">' +
+            '<label class="field-label" for="dwEmail">Email address</label>' +
+            '<input type="email" inputmode="email" class="text-input' + (state.leadErrors.email ? " is-error" : "") + '" id="dwEmail" autocomplete="email" value="' + esc(state.lead.email) + '" placeholder="e.g. alex.morgan@example.co.uk">' +
+            (state.leadErrors.email ? '<span class="field-error">' + esc(state.leadErrors.email) + '</span>' : '') +
+          '</div>' +
+
+          '<div class="field-group">' +
             '<label class="field-label" for="dwPhone">UK phone number</label>' +
             '<input type="tel" inputmode="tel" class="text-input' + (state.leadErrors.phone ? " is-error" : "") + '" id="dwPhone" autocomplete="tel" value="' + esc(state.lead.phone) + '" placeholder="e.g. 07700 900123">' +
             '<span class="field-hint">Used for courier arrival updates and your quote follow-up if you need advice.</span>' +
@@ -565,7 +651,7 @@
     '</div>';
   }
 
-  function renderStep4Quote() {
+  function renderDesktopStep4Quote() {
     ensureValidServiceForZone();
     var model = getModelObj();
     var fault = getFaultObj();
@@ -623,11 +709,19 @@
         '</button>';
     } else {
       serviceCardsHtml =
-        '<button type="button" class="service-card is-selected" data-svc="mailin">' +
+        '<button type="button" class="service-card' + (state.service === "mailin" ? " is-selected" : "") + '" data-svc="mailin">' +
           '<span class="service-radio" aria-hidden="true"></span>' +
           '<span>' +
             '<span class="service-name-row"><span class="service-name">Free Tracked &amp; Insured UK Mail-In Pack</span><span class="service-pill">Included UK-wide</span></span>' +
             '<span class="service-desc">For postcodes outside our London courier zones (' + esc(zone.outward) + '), we post a free padded box and prepaid tracked, insured return label to your door.</span>' +
+          '</span>' +
+          '<span class="service-price is-free">Free</span>' +
+        '</button>' +
+        '<button type="button" class="service-card' + (state.service === "workshop" ? " is-selected" : "") + '" data-svc="workshop">' +
+          '<span class="service-radio" aria-hidden="true"></span>' +
+          '<span>' +
+            '<span class="service-name-row"><span class="service-name">Drop off in Fitzrovia</span><span class="service-pill is-neutral">W1W 8JQ</span></span>' +
+            '<span class="service-desc">Bring your device to 12 Margaret Street, Audley House, London W1W 8JQ. Mon to Thu 9am to 6pm, Friday 10am to 6pm.</span>' +
           '</span>' +
           '<span class="service-price is-free">Free</span>' +
         '</button>';
@@ -664,7 +758,7 @@
       futureSpeedHtml = '<div class="future-speed-card" id="futureSpeedSlot">' +
         '<span class="future-badge">PREVIEW ONLY: FUTURE SPEED TIERS (NOT LIVE)</span>' +
         '<h3 class="quote-card-title">How future turnaround upgrades slot cleanly into Step 4</h3>' +
-        '<p class="quote-card-sub">Hidden in default live-compliant mode. Shows where Standard, Priority, Same-Day, and ~1h London courier options fit without crowding mobile spacing.</p>' +
+        '<p class="quote-card-sub">Hidden in default live-compliant mode. Shows where Standard, Priority, Same-Day, and ~1h London courier options fit cleanly.</p>' +
         '<div class="speed-grid">' +
           '<button type="button" class="speed-opt' + (state.futureSpeed === "standard" ? " is-selected" : "") + '" data-speed="standard">' +
             '<span class="speed-opt-title">Standard</span>' +
@@ -691,34 +785,7 @@
       '</div>';
     }
 
-    var timelineSteps = [];
-    if (fault.isDiag) {
-      timelineSteps = [
-        { title: state.service === "mailin" ? "We post your free insured pack" : "We collect from your London door", desc: state.service === "mailin" ? "Protective box and prepaid tracked label posted within 24 hours." : "Tracked door-to-door London courier brings your device safely to Fitzrovia." },
-        { title: "Board-level diagnostic in Fitzrovia", desc: "Microelectronics inspection with your triage notes attached. Standard assessment within 2 working days of workshop arrival." },
-        { title: "Clear repair quote, £" + base + " deducted", desc: "You decide whether to proceed. Your £" + base + " diagnostic fee is deducted from the final repair price." }
-      ];
-    } else if (state.service === "mailin") {
-      timelineSteps = [
-        { title: "Free tracked & insured pack posted to " + esc(zone.outward), desc: "Padded protective box and prepaid tracked return label arrive at your door." },
-        { title: "Repaired in 2 working days at Fitzrovia", desc: "Genuine Apple displays (panel only), recalibrated and tested in-house once your device reaches our workshop." },
-        { title: "Tracked insured delivery back to you", desc: "Backed by our 2-year warranty with zero hidden extras." }
-      ];
-    } else if (state.service === "workshop") {
-      timelineSteps = [
-        { title: "Drop off at 12 Margaret Street, W1W 8JQ", desc: "Hand your device directly to our Fitzrovia team (Mon to Thu 9am to 6pm, Friday 10am to 6pm)." },
-        { title: "Repaired in 2 working days in-house", desc: "Genuine Apple displays (panel only), fitted and recalibrated at our Fitzrovia bench." },
-        { title: "Collect ready to go, 2-year warranty", desc: "We message you as soon as final quality checks pass." }
-      ];
-    } else {
-      timelineSteps = [
-        { title: "Same-day London courier collects from " + esc(zone.outward), desc: "Dedicated London courier collects during your chosen slot and brings your device straight to Fitzrovia." },
-        { title: "Repaired in 2 working days once it reaches our workshop", desc: "Genuine Apple displays (panel only), keeping your original lid with full calibration." },
-        { title: "Courier returns it to your door", desc: "Delivered back safely, backed by our 2-year warranty." }
-      ];
-    }
-
-    var timelineHtml = timelineSteps.map(function (st, idx) {
+    var timelineHtml = getTimelineSteps().map(function (st, idx) {
       return '<li class="timeline-step">' +
         '<span class="timeline-num">0' + (idx + 1) + '</span>' +
         '<div><div class="timeline-title">' + st.title + '</div><div class="timeline-desc">' + st.desc + '</div></div>' +
@@ -752,13 +819,12 @@
       : "Standard turnaround: 2 working days once your device reaches our workshop.";
 
     return '<div class="quote-layout">' +
-      /* LEFT / TOP ON MOBILE: NATURAL ORDER (POSTCODE -> SERVICE & SLOT -> OPTIONAL SPEED -> TIMELINE) */
       '<div class="quote-left">' +
         '<div class="lead-banner">' +
           '<div class="lead-banner-main">' +
             '<span class="mono-label">Fixed Quote Unlocked · ' + esc(zone.areaLabel) + '</span>' +
             '<span class="lead-banner-title">Quote ready for ' + esc(firstName) + ' · ' + esc(zone.formatted) + '</span>' +
-            '<span class="lead-banner-meta">' + esc(model.name) + ' · ' + esc(fault.title) + ' · ' + esc(state.lead.phone) + '</span>' +
+            '<span class="lead-banner-meta">' + esc(model.name) + ' · ' + esc(fault.title) + ' · ' + esc(state.lead.email) + ' · ' + esc(state.lead.phone) + '</span>' +
           '</div>' +
           '<button type="button" class="text-action-btn" id="editLeadBtn">Edit details</button>' +
         '</div>' +
@@ -769,7 +835,7 @@
           '<div class="quote-card-head">' +
             '<div>' +
               '<span class="mono-label">1. How Your Device Reaches Us</span>' +
-              '<h3 class="quote-card-title" style="margin-top:4px;">' + (zone.isLondon ? "London collection &amp; drop-off options" : "Free tracked &amp; insured UK mail-in") + '</h3>' +
+              '<h3 class="quote-card-title" style="margin-top:4px;">' + (zone.isLondon ? "London collection &amp; drop-off options" : "UK mail-in &amp; Fitzrovia drop-off options") + '</h3>' +
             '</div>' +
           '</div>' +
           '<div class="service-list">' + serviceCardsHtml + '</div>' +
@@ -778,9 +844,8 @@
 
         futureSpeedHtml +
 
-        /* Uncollapsed concise timeline & trust strip visible by default on mobile */
         '<div class="quote-card" id="timelineCard">' +
-          '<span class="mono-label">2. How It Works (Visible By Default)</span>' +
+          '<span class="mono-label">2. How It Works</span>' +
           '<h3 class="quote-card-title" style="margin-top:4px;">Simple 3-step Fitzrovia repair process</h3>' +
           '<ol class="timeline-list">' + timelineHtml + '</ol>' +
           '<div class="trust-grid">' +
@@ -792,7 +857,6 @@
         '</div>' +
       '</div>' +
 
-      /* RIGHT RAIL ON DESKTOP (STICKY) / FOLLOWS NATURALLY ON MOBILE */
       '<div class="quote-right">' +
         '<div class="price-summary-card" id="priceSummaryCard">' +
           '<div class="price-top-row">' +
@@ -813,7 +877,7 @@
 
           klarnaHtml +
 
-          '<p class="payment-assurance">Upfront fixed pricing with no deposits required. Your name, UK phone number, and postcode pre-fill Shopify checkout automatically.</p>' +
+          '<p class="payment-assurance">Upfront fixed pricing with no deposits required. Your name, email, UK phone number, and postcode pre-fill Shopify checkout automatically.</p>' +
 
           '<div class="cta-stack">' +
             '<button type="button" class="btn-primary" id="proceedCheckoutBtn">Proceed to checkout · £' + total + '</button>' +
@@ -829,17 +893,490 @@
     '</div>';
   }
 
-  function updateStepperAndChips() {
+  /* =========================================================
+     MOBILE APP CLICK-THROUGH RENDERERS (< 768px, 390x844)
+     ========================================================= */
+  function renderMobileStep1() {
+    var devObj = getDeviceObj();
+    var deviceBtns = Object.keys(CATALOG).map(function (key) {
+      var d = CATALOG[key];
+      var sel = state.device === key ? " is-selected" : "";
+      return '<button type="button" class="m-device-btn' + sel + '" data-device="' + key + '">' +
+        renderDeviceIcon(key) +
+        '<div><div class="device-name" style="font-size:14px;">' + esc(d.label) + '</div><div class="device-meta">' + esc(d.meta) + '</div></div>' +
+        '</button>';
+    }).join("");
+
+    var familyChips = devObj.families.map(function (fam) {
+      var active = state.familyFilter === fam ? " is-active" : "";
+      return '<button type="button" class="filter-chip' + active + '" data-family="' + esc(fam) + '">' + esc(fam) + '</button>';
+    }).join("");
+
+    var filteredModels = devObj.models.filter(function (m) {
+      return state.familyFilter === "All" || m.family === state.familyFilter;
+    });
+
+    var modelBtns = filteredModels.map(function (m) {
+      var sel = state.modelId === m.id ? " is-selected" : "";
+      return '<button type="button" class="model-btn' + sel + '" data-model="' + esc(m.id) + '">' +
+        '<span><span class="model-title">' + esc(m.name) + '</span><span class="model-sub">' + esc(m.sub) + '</span></span>' +
+        '<span class="model-code">' + esc(m.code) + '</span>' +
+        '</button>';
+    }).join("");
+
+    var helperQuery = state.helperQuery.trim().toUpperCase();
+    var helperHits = helperQuery
+      ? CATALOG.macbook.models.filter(function (m) {
+          return m.code.toUpperCase().indexOf(helperQuery) !== -1 || m.name.toUpperCase().indexOf(helperQuery) !== -1;
+        })
+      : CATALOG.macbook.models.slice(0, 3);
+
+    var helperResultsHtml = helperHits.map(function (m) {
+      return '<button type="button" class="helper-hit" data-helper-model="' + esc(m.id) + '">' +
+        '<span><strong>' + esc(m.code) + '</strong> · ' + esc(m.name) + '</span>' +
+        '<span style="color:#0070f3;font-weight:600;">Select</span>' +
+        '</button>';
+    }).join("");
+
+    return '<div class="m-screen" data-m-step="1">' +
+      '<div class="m-screen-head">' +
+        '<h2 class="m-screen-title">Choose your Apple device</h2>' +
+        '<p class="m-screen-sub">Tap your model to continue straight to repair options.</p>' +
+      '</div>' +
+      '<div class="m-device-tabs">' + deviceBtns + '</div>' +
+      '<div class="filter-row" style="margin-bottom:10px;">' + familyChips + '</div>' +
+      '<div class="m-model-list">' + modelBtns + '</div>' +
+      '<div class="helper-box" style="margin-top:12px;">' +
+        '<button type="button" class="helper-toggle" id="toggleModelHelper" aria-expanded="' + (state.helperOpen ? "true" : "false") + '">' +
+          (state.helperOpen ? "Hide A-number finder" : "Not sure of your model? Search by A-number") +
+        '</button>' +
+        '<div class="helper-panel" id="modelHelperPanel"' + (state.helperOpen ? "" : " hidden") + '>' +
+          '<p>Find the A-number printed near the bottom hinge (e.g. A2918).</p>' +
+          '<input type="text" class="m-input is-mono" id="modelHelperInput" value="' + esc(state.helperQuery) + '" placeholder="Type A-number, e.g. A2918">' +
+          '<div class="helper-results">' + (helperResultsHtml || '<p style="margin:6px 0 0;font-size:12px;color:#5c5c5c;">No matching A-number found.</p>') + '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function renderMobileStep2() {
+    var model = getModelObj();
+    var faultCards = FAULTS.map(function (f) {
+      var sel = state.faultId === f.id ? " is-selected" : "";
+      var tagClass = f.isDiag ? "fault-tag is-diag" : "fault-tag";
+      return '<button type="button" class="fault-card' + sel + '" data-fault="' + esc(f.id) + '" style="min-height:auto;padding:12px 14px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;">' +
+          '<span class="fault-title" style="font-size:15px;">' + esc(f.title) + '</span>' +
+          '<span class="' + tagClass + '" style="margin-top:0;">' + esc(f.tag) + '</span>' +
+        '</div>' +
+        '<span class="fault-desc" style="font-size:13px;">' + esc(f.desc) + '</span>' +
+        '</button>';
+    }).join("");
+
+    return '<div class="m-screen" data-m-step="2">' +
+      '<div class="m-context-pill">' +
+        '<div class="m-context-left">' +
+          '<span class="m-context-title">' + esc(model.name) + ' (' + esc(model.code) + ')</span>' +
+          '<span class="m-context-sub">Genuine Apple displays (panel only) · 2-year warranty</span>' +
+        '</div>' +
+        '<button type="button" class="m-change-btn" id="mStep2ChangeDevice">Change</button>' +
+      '</div>' +
+      '<div class="m-screen-head">' +
+        '<h2 class="m-screen-title">What needs repairing?</h2>' +
+        '<p class="m-screen-sub">Tap an issue to see your fixed price in seconds.</p>' +
+      '</div>' +
+      '<div class="m-fault-list">' + faultCards + '</div>' +
+      renderTriageBlock() +
+    '</div>';
+  }
+
+  function renderMobileStep3Details() {
+    var model = getModelObj();
+    var fault = getFaultObj();
+    var zoneValid = isValidUkPostcode(state.lead.postcode);
+    var zone = zoneValid ? classifyPostcode(state.lead.postcode) : null;
+
+    var inlineZoneHtml = "";
+    if (zone) {
+      inlineZoneHtml = '<span class="m-inline-zone' + (zone.isLondon ? "" : " is-mailin") + '">' +
+        (zone.isLondon ? "London courier · " + esc(zone.outward) : "Free UK mail-in · " + esc(zone.outward)) +
+        '</span>';
+    }
+
+    return '<div class="m-screen" data-m-step="3" id="mDetailsScreen">' +
+      '<div class="m-context-pill">' +
+        '<div class="m-context-left">' +
+          '<span class="m-context-title">' + esc(model.name) + ' · ' + esc(fault.shortTitle) + '</span>' +
+          '<span class="m-context-sub">' + (fault.isDiag ? "Board-level diagnostic · deducted from repair" : "Genuine Apple displays (panel only) · 2-year warranty") + '</span>' +
+        '</div>' +
+        '<button type="button" class="m-change-btn" id="dwEditDevice">Change</button>' +
+      '</div>' +
+
+      '<div class="m-screen-head">' +
+        '<h2 class="m-screen-title">Unlock your fixed price</h2>' +
+        '<p class="m-screen-sub">Instant upfront quote + same-day London collection check.</p>' +
+      '</div>' +
+
+      '<form class="m-form-card" id="dataWallForm" novalidate>' +
+        '<div class="m-form-stack">' +
+          '<div class="m-field">' +
+            '<label class="m-field-label" for="dwName">Full name</label>' +
+            '<input type="text" class="m-input' + (state.leadErrors.name ? " is-error" : "") + '" id="dwName" autocomplete="name" value="' + esc(state.lead.name) + '" placeholder="e.g. Alex Morgan">' +
+            (state.leadErrors.name ? '<span class="m-field-error">' + esc(state.leadErrors.name) + '</span>' : '') +
+          '</div>' +
+
+          '<div class="m-field">' +
+            '<label class="m-field-label" for="dwEmail">Email address</label>' +
+            '<input type="email" inputmode="email" class="m-input' + (state.leadErrors.email ? " is-error" : "") + '" id="dwEmail" autocomplete="email" value="' + esc(state.lead.email) + '" placeholder="e.g. alex.morgan@example.co.uk">' +
+            (state.leadErrors.email ? '<span class="m-field-error">' + esc(state.leadErrors.email) + '</span>' : '') +
+          '</div>' +
+
+          '<div class="m-field">' +
+            '<label class="m-field-label" for="dwPhone">UK phone number</label>' +
+            '<input type="tel" inputmode="tel" class="m-input' + (state.leadErrors.phone ? " is-error" : "") + '" id="dwPhone" autocomplete="tel" value="' + esc(state.lead.phone) + '" placeholder="e.g. 07700 900123">' +
+            (state.leadErrors.phone ? '<span class="m-field-error">' + esc(state.leadErrors.phone) + '</span>' : '') +
+          '</div>' +
+
+          '<div class="m-field">' +
+            '<div class="m-field-row">' +
+              '<label class="m-field-label" for="dwPostcode">UK postcode</label>' +
+              '<span id="dwZonePreview">' + inlineZoneHtml + '</span>' +
+            '</div>' +
+            '<input type="text" class="m-input is-mono' + (state.leadErrors.postcode ? " is-error" : "") + '" id="dwPostcode" autocomplete="postal-code" autocapitalize="characters" spellcheck="false" value="' + esc(state.lead.postcode) + '" placeholder="e.g. W1W 8JQ">' +
+            (state.leadErrors.postcode ? '<span class="m-field-error">' + esc(state.leadErrors.postcode) + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+      '</form>' +
+
+      '<div class="m-trust-box">' +
+        '<div class="m-trust-pills">' +
+          '<span class="m-mini-pill is-green">4.8 from 750+ Google reviews</span>' +
+          '<span class="m-mini-pill">Genuine Apple displays</span>' +
+          '<span class="m-mini-pill">2-year warranty</span>' +
+        '</div>' +
+        '<p class="m-privacy-line">No spam, ever. Pre-fills Shopify checkout and lets our Fitzrovia team help if you prefer a trade-in or question first.</p>' +
+      '</div>' +
+
+      '<div class="m-sample-bar">' +
+        '<span>Upfront fixed pricing · No deposits</span>' +
+        '<button type="button" class="m-link-inline" id="dwFillSample">Fill sample</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function renderMobileStep4PriceService() {
+    ensureValidServiceForZone();
+    var model = getModelObj();
+    var fault = getFaultObj();
+    var zone = classifyPostcode(state.lead.postcode);
+    var base = getBasePrice();
+    var total = getTotalPrice();
+
+    var klarnaChip = total >= 100
+      ? '<span class="m-klarna-chip">Klarna · 3 x £' + (total / 3).toFixed(2) + '</span>'
+      : '';
+
+    var turnaroundLine = fault.isDiag
+      ? "Turnaround: 2 working days diagnostic once at Fitzrovia."
+      : "Turnaround: 2 working days once it reaches Fitzrovia.";
+
+    var futureHtml = "";
+    if (state.showFutureSpeed && !fault.isDiag) {
+      var sdFee = state.device === "iphone" ? 49 : 149;
+      futureHtml = '<div class="m-future-box" id="futureSpeedSlot">' +
+        '<span class="future-badge" style="margin-bottom:0;">PREVIEW ONLY: FUTURE SPEED TIERS (NOT LIVE)</span>' +
+        '<div class="m-speed-row">' +
+          '<button type="button" class="m-speed-btn' + (state.futureSpeed === "standard" ? " is-selected" : "") + '" data-speed="standard">' +
+            '<span class="m-speed-name">Standard<br>2 working days</span>' +
+            '<span class="m-speed-price" style="color:#047857;">Included</span>' +
+          '</button>' +
+          '<button type="button" class="m-speed-btn' + (state.futureSpeed === "fast" ? " is-selected" : "") + '" data-speed="fast">' +
+            '<span class="m-speed-name">Priority<br>Next day</span>' +
+            '<span class="m-speed-price">+£79</span>' +
+          '</button>' +
+          (zone.isLondon
+            ? '<button type="button" class="m-speed-btn' + (state.futureSpeed === "sameday" ? " is-selected" : "") + '" data-speed="sameday">' +
+                '<span class="m-speed-name">Same-Day<br>~1h London</span>' +
+                '<span class="m-speed-price">+£' + sdFee + '</span>' +
+              '</button>'
+            : '<div class="m-speed-btn" style="opacity:0.6;cursor:default;">' +
+                '<span class="m-speed-name">Same-Day<br>London only</span>' +
+                '<span class="m-speed-price">N/A</span>' +
+              '</div>') +
+        '</div>' +
+      '</div>';
+    }
+
+    var svcCards = "";
+    if (zone.isLondon && (base >= 200 || fault.isDiag)) {
+      svcCards =
+        '<button type="button" class="m-svc-card' + (state.service === "courier" ? " is-selected" : "") + '" data-svc="courier">' +
+          '<span class="service-radio" aria-hidden="true"></span>' +
+          '<span class="m-svc-main">' +
+            '<span class="m-svc-title-row"><span class="m-svc-title">Same-Day London Courier</span><span class="service-pill">Recommended</span></span>' +
+            '<span class="m-svc-desc">Door-to-door in ' + esc(zone.outward) + '. Free on orders £200+.</span>' +
+          '</span>' +
+          '<span class="m-svc-price is-free">Free</span>' +
+        '</button>' +
+        '<button type="button" class="m-svc-card' + (state.service === "workshop" ? " is-selected" : "") + '" data-svc="workshop">' +
+          '<span class="service-radio" aria-hidden="true"></span>' +
+          '<span class="m-svc-main">' +
+            '<span class="m-svc-title-row"><span class="m-svc-title">Drop off in Fitzrovia</span><span class="service-pill is-neutral">W1W 8JQ</span></span>' +
+            '<span class="m-svc-desc">12 Margaret Street, London. Mon to Fri walk-in.</span>' +
+          '</span>' +
+          '<span class="m-svc-price is-free">Free</span>' +
+        '</button>';
+    } else if (zone.isLondon && base < 200) {
+      svcCards =
+        '<button type="button" class="m-svc-card' + (state.service === "mailin" ? " is-selected" : "") + '" data-svc="mailin">' +
+          '<span class="service-radio" aria-hidden="true"></span>' +
+          '<span class="m-svc-main">' +
+            '<span class="m-svc-title-row"><span class="m-svc-title">Free Tracked UK Mail-In Pack</span><span class="service-pill">Free under £200</span></span>' +
+            '<span class="m-svc-desc">Protective box &amp; prepaid insured label to ' + esc(zone.outward) + '.</span>' +
+          '</span>' +
+          '<span class="m-svc-price is-free">Free</span>' +
+        '</button>' +
+        '<button type="button" class="m-svc-card' + (state.service === "workshop" ? " is-selected" : "") + '" data-svc="workshop">' +
+          '<span class="service-radio" aria-hidden="true"></span>' +
+          '<span class="m-svc-main">' +
+            '<span class="m-svc-title-row"><span class="m-svc-title">Drop off in Fitzrovia</span><span class="service-pill is-neutral">W1W 8JQ</span></span>' +
+            '<span class="m-svc-desc">12 Margaret Street, London. Mon to Fri walk-in.</span>' +
+          '</span>' +
+          '<span class="m-svc-price is-free">Free</span>' +
+        '</button>' +
+        '<button type="button" class="m-svc-card' + (state.service === "courier" ? " is-selected" : "") + '" data-svc="courier">' +
+          '<span class="service-radio" aria-hidden="true"></span>' +
+          '<span class="m-svc-main">' +
+            '<span class="m-svc-title-row"><span class="m-svc-title">Same-Day London Courier</span></span>' +
+            '<span class="m-svc-desc">Door-to-door in ' + esc(zone.outward) + ' (free on orders £200+).</span>' +
+          '</span>' +
+          '<span class="m-svc-price">+£25</span>' +
+        '</button>';
+    } else {
+      svcCards =
+        '<button type="button" class="m-svc-card' + (state.service === "mailin" ? " is-selected" : "") + '" data-svc="mailin">' +
+          '<span class="service-radio" aria-hidden="true"></span>' +
+          '<span class="m-svc-main">' +
+            '<span class="m-svc-title-row"><span class="m-svc-title">Free Tracked UK Mail-In Pack</span><span class="service-pill">Recommended</span></span>' +
+            '<span class="m-svc-desc">Padded box &amp; prepaid insured return label to ' + esc(zone.outward) + '.</span>' +
+          '</span>' +
+          '<span class="m-svc-price is-free">Free</span>' +
+        '</button>' +
+        '<button type="button" class="m-svc-card' + (state.service === "workshop" ? " is-selected" : "") + '" data-svc="workshop">' +
+          '<span class="service-radio" aria-hidden="true"></span>' +
+          '<span class="m-svc-main">' +
+            '<span class="m-svc-title-row"><span class="m-svc-title">Drop off in Fitzrovia</span><span class="service-pill is-neutral">W1W 8JQ</span></span>' +
+            '<span class="m-svc-desc">12 Margaret Street, London. Mon to Fri walk-in.</span>' +
+          '</span>' +
+          '<span class="m-svc-price is-free">Free</span>' +
+        '</button>';
+    }
+
+    return '<div class="m-screen" data-m-step="4" id="mPriceScreen">' +
+      '<div class="m-price-card" id="priceSummaryCard">' +
+        '<div class="m-price-top">' +
+          '<span class="mono-label">' + (fault.isDiag ? "Diagnostic Fee" : "Fixed Price") + ' · ' + esc(zone.formatted) + '</span>' +
+          '<span class="warranty-pill">2-year warranty</span>' +
+        '</div>' +
+        '<div class="m-price-row">' +
+          '<span class="m-price-figure"><span class="m-price-num price-hero">£' + total + '</span><span class="m-price-vat">inc. VAT</span></span>' +
+          klarnaChip +
+        '</div>' +
+        '<p class="m-turnaround-line">' + esc(turnaroundLine) + '</p>' +
+        '<div class="m-proof-chips">' +
+          '<span class="m-mini-pill">' + esc(model.name) + ' · ' + esc(fault.shortTitle) + '</span>' +
+          '<span class="m-mini-pill">Genuine Apple displays</span>' +
+          (fault.isDiag ? '<span class="m-mini-pill is-green">Bench triage attached</span>' : '<span class="m-mini-pill">No deposits</span>') +
+        '</div>' +
+      '</div>' +
+
+      futureHtml +
+
+      '<div id="servicePickerCard">' +
+        '<div class="m-svc-head">' +
+          '<h3 class="m-svc-heading">Choose how your device reaches us</h3>' +
+          '<button type="button" class="m-link-inline" id="editLeadBtn">Edit details</button>' +
+        '</div>' +
+        '<div class="m-svc-list">' + svcCards + '</div>' +
+      '</div>' +
+
+      '<div class="m-sheet-triggers">' +
+        '<button type="button" class="m-sheet-trigger-btn" id="openHowSheetBtn">How it works (3 steps)</button>' +
+        '<button type="button" class="m-sheet-trigger-btn" id="openReviewsSheetBtn">4.8 ★ 750+ Google reviews</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function renderMobileStep5Checkout() {
+    ensureValidServiceForZone();
+    var model = getModelObj();
+    var fault = getFaultObj();
+    var zone = classifyPostcode(state.lead.postcode);
+    var base = getBasePrice();
+    var svcFee = getServiceFee();
+    var speedAdd = getFutureSpeedAdd();
+    var total = getTotalPrice();
+
+    var dateBtns = COLLECTION_DATES.map(function (d) {
+      var sel = state.dateId === d.id ? " is-selected" : "";
+      return '<button type="button" class="date-btn' + sel + '" data-date="' + d.id + '">' +
+        '<span class="date-dow">' + esc(d.dow) + '</span>' +
+        '<span class="date-day">' + esc(d.day) + '</span>' +
+        '</button>';
+    }).join("");
+
+    var winBtns = COLLECTION_WINDOWS.map(function (w) {
+      var sel = state.windowId === w.id ? " is-selected" : "";
+      return '<button type="button" class="window-btn' + sel + '" data-window="' + w.id + '">' +
+        '<span class="window-title">' + esc(w.title) + '</span>' +
+        '<span class="window-time">' + esc(w.time) + '</span>' +
+        '</button>';
+    }).join("");
+
+    var serviceDetailCard = "";
+    if (state.service === "courier") {
+      serviceDetailCard = '<div class="m-card">' +
+        '<span class="mono-label">London Courier Collection · ' + esc(zone.formatted) + '</span>' +
+        '<h3 class="m-card-title">Pick your collection slot</h3>' +
+        '<div class="date-strip" style="margin-top:10px;">' + dateBtns + '</div>' +
+        '<div class="window-row" style="margin-top:8px;">' + winBtns + '</div>' +
+      '</div>';
+    } else if (state.service === "workshop") {
+      serviceDetailCard = '<div class="m-card">' +
+        '<span class="mono-label">Fitzrovia Workshop Drop-Off</span>' +
+        '<h3 class="m-card-title">12 Margaret Street, Audley House, London W1W 8JQ</h3>' +
+        '<p class="m-card-copy"><strong>Opening hours:</strong> Mon to Thu 9am to 6pm, Friday 10am to 6pm, Sat &amp; Sun closed.</p>' +
+        '<div class="date-strip" style="margin-top:10px;">' + dateBtns + '</div>' +
+      '</div>';
+    } else {
+      serviceDetailCard = '<div class="m-card">' +
+        '<span class="mono-label">Free Tracked &amp; Insured UK Mail-In Pack</span>' +
+        '<h3 class="m-card-title">Prepaid pack dispatched to ' + esc(zone.formatted) + '</h3>' +
+        '<p class="m-card-copy">We post a padded protective box and prepaid tracked, insured return label to your door. Once it reaches Fitzrovia, turnaround is 2 working days.</p>' +
+      '</div>';
+    }
+
+    var svcLabel = state.service === "courier"
+      ? (svcFee > 0 ? "Same-day London courier (+£" + svcFee + ")" : "Same-day London courier (Free)")
+      : (state.service === "workshop" ? "Fitzrovia drop-off (Free)" : "Tracked UK mail-in pack (Free)");
+
+    var triageRow = fault.isDiag
+      ? '<div class="m-summary-row"><span>Bench triage</span><strong>' + (state.triage.dataPriority === "essential" ? "Prioritise data · £" + base + " deducted" : "Backed up · £" + base + " deducted") + '</strong></div>'
+      : '';
+
+    var speedRow = speedAdd > 0
+      ? '<div class="m-summary-row"><span>Future speed preview</span><strong>+£' + speedAdd + '</strong></div>'
+      : '';
+
+    return '<div class="m-screen" data-m-step="5" id="mCheckoutScreen">' +
+      serviceDetailCard +
+
+      '<div class="m-card">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
+          '<span class="mono-label">Order &amp; Contact Summary</span>' +
+          '<button type="button" class="m-link-inline" id="mChangeServiceBtn">Change service</button>' +
+        '</div>' +
+        '<div class="m-summary-list">' +
+          '<div class="m-summary-row"><span>Repair</span><strong>' + esc(model.name) + ' · ' + esc(fault.shortTitle) + '</strong></div>' +
+          '<div class="m-summary-row"><span>Service</span><strong>' + esc(svcLabel) + '</strong></div>' +
+          triageRow +
+          '<div class="m-summary-row"><span>Customer</span><strong>' + esc(state.lead.name) + '</strong></div>' +
+          '<div class="m-summary-row"><span>Email</span><strong>' + esc(state.lead.email) + '</strong></div>' +
+          '<div class="m-summary-row"><span>Phone &amp; Postcode</span><strong>' + esc(state.lead.phone) + ' · ' + esc(zone.formatted) + '</strong></div>' +
+          '<div class="m-summary-row"><span>Turnaround</span><strong>2 working days at workshop</strong></div>' +
+          speedRow +
+          '<div class="m-summary-row is-total"><span>Upfront fixed total (inc. VAT)</span><strong>£' + total + '</strong></div>' +
+        '</div>' +
+        '<p class="m-privacy-line" style="margin-top:8px;">Upfront fixed pricing with no deposits. Genuine Apple displays (panel only) with a 2-year warranty.</p>' +
+        '<div class="m-secondary-row">' +
+          '<button type="button" class="btn-secondary" id="emailQuoteBtn" style="min-height:44px;font-size:13px;">Email this quote</button>' +
+          '<button type="button" class="btn-secondary" id="askQuestionBtn" style="min-height:44px;font-size:13px;">Ask a question</button>' +
+        '</div>' +
+        (state.feedbackMsg ? '<div class="inline-feedback" role="status">' + esc(state.feedbackMsg) + '</div>' : '') +
+      '</div>' +
+    '</div>';
+  }
+
+  /* =========================================================
+     BOTTOM SHEET RENDERER (HOW IT WORKS + REVIEWS & WORKSHOP)
+     ========================================================= */
+  function renderAppSheetContent() {
+    var body = document.getElementById("appSheetBody");
+    var tabHow = document.getElementById("sheetTabHow");
+    var tabRev = document.getElementById("sheetTabReviews");
+    var isHow = state.activeSheetTab === "how";
+
+    tabHow.classList.toggle("is-active", isHow);
+    tabHow.setAttribute("aria-selected", isHow ? "true" : "false");
+    tabRev.classList.toggle("is-active", !isHow);
+    tabRev.setAttribute("aria-selected", !isHow ? "true" : "false");
+
+    if (isHow) {
+      var timelineHtml = getTimelineSteps().map(function (st, idx) {
+        return '<li class="timeline-step">' +
+          '<span class="timeline-num">0' + (idx + 1) + '</span>' +
+          '<div><div class="timeline-title">' + st.title + '</div><div class="timeline-desc">' + st.desc + '</div></div>' +
+          '</li>';
+      }).join("");
+
+      body.innerHTML =
+        '<span class="mono-label">3-Step Repair Process</span>' +
+        '<h3 class="sheet-section-title" id="appSheetTitle">How your iCorrect repair works</h3>' +
+        '<ol class="timeline-list">' + timelineHtml + '</ol>' +
+        '<div class="trust-grid" style="margin-top:14px;">' +
+          '<div class="trust-tile"><div class="trust-tile-title">Genuine Apple displays</div><div class="trust-tile-sub">Display panel only, keeping your original lid and factory calibration.</div></div>' +
+          '<div class="trust-tile"><div class="trust-tile-title">2-year warranty</div><div class="trust-tile-sub">Backed by our 2-year guarantee on every screen and component repair.</div></div>' +
+        '</div>' +
+        '<div class="sheet-workshop-box">' +
+          '<div class="workshop-meta" style="margin-top:0;">' +
+            '<div class="workshop-row"><strong>Fitzrovia Workshop</strong>12 Margaret Street, Audley House, London W1W 8JQ</div>' +
+            '<div class="workshop-row"><strong>Opening Hours</strong>Mon to Thu 9am to 6pm, Friday 10am to 6pm, Sat &amp; Sun closed</div>' +
+          '</div>' +
+        '</div>';
+    } else {
+      body.innerHTML =
+        '<span class="mono-label">Verified Client Reviews</span>' +
+        '<h3 class="sheet-section-title" id="appSheetTitle">4.8 from 750+ Google reviews</h3>' +
+        '<p class="quote-card-sub" style="margin-bottom:12px;">Independent London microelectronics workshop with genuine Apple displays (panel only) and a 2-year warranty on every screen repair.</p>' +
+        '<div class="trustindex-slot" data-widget-id="47cc7ef8590e8871fa062160cf7" style="min-height:130px;margin-top:0;">' +
+          '<strong>Live Trustindex Google Reviews widget mounts here</strong>' +
+          '<p>Uses the approved Trustindex loader (<code>cdn.trustindex.io/loader.js?47cc7ef8590e8871fa062160cf7</code>) with reserved height, zero hand-drawn review cards, and zero star-rating JSON-LD.</p>' +
+        '</div>' +
+        '<div class="sheet-workshop-box">' +
+          '<span class="mono-label">Fitzrovia Workshop &amp; Collection</span>' +
+          '<div class="workshop-meta" style="margin-top:8px;">' +
+            '<div class="workshop-row"><strong>Workshop Address</strong>12 Margaret Street, Audley House, London W1W 8JQ</div>' +
+            '<div class="workshop-row"><strong>Opening Hours</strong>Mon to Thu 9am to 6pm, Friday 10am to 6pm, Sat &amp; Sun closed</div>' +
+            '<div class="workshop-row"><strong>Collection &amp; UK Mail-In</strong>Free collection on orders of £200 or more. Same-day London courier in selected London zones; free tracked and insured UK mail-in pack elsewhere.</div>' +
+          '</div>' +
+        '</div>';
+    }
+  }
+
+  function openAppSheet(tab) {
+    state.activeSheetTab = tab === "reviews" ? "reviews" : "how";
+    renderAppSheetContent();
+    document.getElementById("appSheet").hidden = false;
+  }
+
+  function closeAppSheet() {
+    document.getElementById("appSheet").hidden = true;
+  }
+
+  /* =========================================================
+     CHROMIUM / NAVIGATION / FOOTER / COOKIE BANNER SYNC
+     ========================================================= */
+  function updateStepperAndChrome() {
     var model = getModelObj();
     var fault = getFaultObj();
     var dev = getDeviceObj();
+    var desktopStep = state.step >= 4 ? 4 : state.step;
 
-    var tabs = document.querySelectorAll(".step-tab");
-    tabs.forEach(function (tab) {
+    document.querySelectorAll(".step-tab").forEach(function (tab) {
       var s = parseInt(tab.getAttribute("data-step"), 10);
-      tab.classList.toggle("is-active", s === state.step);
-      tab.classList.toggle("is-done", s < state.step);
-      tab.setAttribute("aria-selected", s === state.step ? "true" : "false");
+      tab.classList.toggle("is-active", s === desktopStep);
+      tab.classList.toggle("is-done", s < desktopStep);
+      tab.setAttribute("aria-selected", s === desktopStep ? "true" : "false");
     });
 
     var chips = [
@@ -847,28 +1384,69 @@
       '<span class="sel-chip">' + esc(model.name) + '</span>',
       '<span class="sel-chip">' + esc(fault.title) + '</span>'
     ];
-    if (state.step === 4 && state.lead.postcode) {
+    if (desktopStep === 4 && state.lead.postcode) {
       chips.push('<span class="sel-chip">' + esc(normalizePostcode(state.lead.postcode)) + '</span>');
     } else {
-      chips.push('<span class="sel-chip sel-chip-muted">Step ' + state.step + ' of 4</span>');
+      chips.push('<span class="sel-chip sel-chip-muted">Step ' + desktopStep + ' of 4</span>');
     }
     document.getElementById("selectionChips").innerHTML = chips.join("");
+    document.getElementById("stepBackBtn").hidden = desktopStep <= 1;
 
-    var backBtn = document.getElementById("stepBackBtn");
-    backBtn.hidden = state.step <= 1;
+    // Mobile App Bar + Progress
+    var mBack = document.getElementById("mBackBtn");
+    mBack.disabled = state.step <= 1;
+    document.getElementById("mStepLabel").textContent = MOBILE_STEP_LABELS[state.step] || "Step 3 of 5 · Your Details";
+    document.querySelectorAll(".m-seg").forEach(function (seg) {
+      var n = parseInt(seg.getAttribute("data-seg"), 10);
+      seg.classList.toggle("is-done", n < state.step);
+      seg.classList.toggle("is-active", n === state.step);
+    });
+
+    // Mobile Preview Sheet step jump highlight
+    document.querySelectorAll("[data-jump-step]").forEach(function (btn) {
+      btn.classList.toggle("is-active", parseInt(btn.getAttribute("data-jump-step"), 10) === state.step);
+    });
+
+    // Mobile Pinned Bottom CTA Label
+    var mCta = document.getElementById("mFooterCta");
+    ensureValidServiceForZone();
+    var total = getTotalPrice();
+    if (state.step === 1) {
+      mCta.innerHTML = "Continue to repair &rarr;";
+    } else if (state.step === 2) {
+      mCta.innerHTML = "Continue to your details &rarr;";
+    } else if (state.step === 3) {
+      mCta.innerHTML = "See my fixed price &rarr;";
+    } else if (state.step === 4) {
+      mCta.innerHTML = "Continue · £" + total + " &rarr;";
+    } else {
+      mCta.innerHTML = "Proceed to checkout · £" + total;
+    }
   }
 
-  function updateStickyAndCookie() {
-    var sticky = document.getElementById("mobileStickyCta");
+  function updateCookieAndToggles() {
     var banner = document.getElementById("simCookieBanner");
     var root = document.documentElement;
 
     banner.hidden = !state.showCookieBanner;
     root.classList.toggle("sim-cookie-on", state.showCookieBanner);
-    document.getElementById("toggleCookieWrap").classList.toggle("is-on", state.showCookieBanner);
-    document.getElementById("toggleSpeedWrap").classList.toggle("is-on", state.showFutureSpeed);
-    document.getElementById("toggleCookieBanner").checked = state.showCookieBanner;
-    document.getElementById("toggleFutureSpeed").checked = state.showFutureSpeed;
+
+    ["toggleCookieWrap", "mToggleCookieWrap"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.classList.toggle("is-on", state.showCookieBanner);
+    });
+    ["toggleSpeedWrap", "mToggleSpeedWrap"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.classList.toggle("is-on", state.showFutureSpeed);
+    });
+    ["toggleCookieBanner", "mToggleCookieBanner"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.checked = state.showCookieBanner;
+    });
+    ["toggleFutureSpeed", "mToggleFutureSpeed"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.checked = state.showFutureSpeed;
+    });
 
     if (state.showCookieBanner) {
       var rect = banner.getBoundingClientRect();
@@ -879,20 +1457,34 @@
     } else {
       root.style.setProperty("--cookie-h", "0px");
     }
+  }
 
-    if (state.step === 4) {
-      ensureValidServiceForZone();
-      var total = getTotalPrice();
-      var svcFee = getServiceFee();
-      var svcShort = state.service === "courier"
-        ? (svcFee === 0 ? "Free courier" : "£" + svcFee + " courier")
-        : (state.service === "workshop" ? "Fitzrovia drop-off" : "Free mail-in");
-      document.getElementById("stickyPrice").textContent = "£" + total;
-      document.getElementById("stickySub").textContent = svcShort + " · 2 working days";
-      sticky.hidden = false;
-    } else {
-      sticky.hidden = true;
+  function validateAndSubmitDetails() {
+    var errs = {};
+    if (!state.lead.name || state.lead.name.trim().length < 2) {
+      errs.name = "Please enter your full name.";
     }
+    if (!isValidEmail(state.lead.email)) {
+      errs.email = "Please enter a valid email address.";
+    }
+    if (!isValidUkPhone(state.lead.phone)) {
+      errs.phone = "Please enter a valid UK phone number (e.g. 07700 900123).";
+    }
+    if (!isValidUkPostcode(state.lead.postcode)) {
+      errs.postcode = "Please enter a full UK postcode (e.g. W1W 8JQ).";
+    }
+    state.leadErrors = errs;
+    if (Object.keys(errs).length > 0) {
+      render();
+      return false;
+    }
+    state.lead.postcode = normalizePostcode(state.lead.postcode);
+    ensureValidServiceForZone();
+    state.feedbackMsg = "";
+    state.step = 4;
+    render();
+    window.scrollTo({ top: 0, behavior: "instant" });
+    return true;
   }
 
   function openCheckoutModal() {
@@ -909,6 +1501,7 @@
       ["Device & Model", model.name + " (" + model.code + ")"],
       ["Repair / Fault", fault.title],
       ["Customer Name", state.lead.name],
+      ["Email Address", state.lead.email],
       ["UK Phone", state.lead.phone],
       ["Postcode", zone.formatted + " (" + zone.areaLabel + ")"],
       ["Service", state.service === "courier" ? "Same-day London courier" : (state.service === "workshop" ? "Fitzrovia drop-off (W1W 8JQ)" : "Free tracked & insured UK mail-in")],
@@ -926,6 +1519,7 @@
 
   function wireStageEvents() {
     var stage = document.getElementById("wizardStage");
+    var mobile = isMobileMode();
 
     if (state.step === 1) {
       stage.querySelectorAll("[data-device]").forEach(function (btn) {
@@ -949,6 +1543,7 @@
           state.modelId = btn.getAttribute("data-model");
           state.step = 2;
           render();
+          window.scrollTo({ top: 0, behavior: "instant" });
         });
       });
 
@@ -981,6 +1576,7 @@
           state.helperOpen = false;
           state.step = 2;
           render();
+          window.scrollTo({ top: 0, behavior: "instant" });
         });
       });
 
@@ -989,12 +1585,16 @@
     }
 
     if (state.step === 2) {
+      var chDev = document.getElementById("mStep2ChangeDevice");
+      if (chDev) chDev.addEventListener("click", function () { state.step = 1; render(); });
+
       stage.querySelectorAll("[data-fault]").forEach(function (btn) {
         btn.addEventListener("click", function () {
           state.faultId = btn.getAttribute("data-fault");
           var f = getFaultObj();
           if (!f.isDiag) {
             state.step = 3;
+            window.scrollTo({ top: 0, behavior: "instant" });
           }
           render();
         });
@@ -1002,9 +1602,7 @@
 
       stage.querySelectorAll("[data-triage]").forEach(function (btn) {
         btn.addEventListener("click", function () {
-          var key = btn.getAttribute("data-triage");
-          var val = btn.getAttribute("data-val");
-          state.triage[key] = val;
+          state.triage[btn.getAttribute("data-triage")] = btn.getAttribute("data-val");
           render();
         });
       });
@@ -1015,13 +1613,15 @@
 
     if (state.step === 3) {
       var editBtn = document.getElementById("dwEditDevice");
-      if (editBtn) editBtn.addEventListener("click", function () { state.step = 1; render(); });
+      if (editBtn) editBtn.addEventListener("click", function () { state.step = 1; render(); window.scrollTo({ top: 0, behavior: "instant" }); });
 
       var nameInp = document.getElementById("dwName");
+      var emailInp = document.getElementById("dwEmail");
       var phoneInp = document.getElementById("dwPhone");
       var pcInp = document.getElementById("dwPostcode");
 
       if (nameInp) nameInp.addEventListener("input", function () { state.lead.name = nameInp.value; });
+      if (emailInp) emailInp.addEventListener("input", function () { state.lead.email = emailInp.value; });
       if (phoneInp) phoneInp.addEventListener("input", function () { state.lead.phone = phoneInp.value; });
       if (pcInp) {
         pcInp.addEventListener("input", function () {
@@ -1030,11 +1630,17 @@
           if (preview) {
             if (isValidUkPostcode(state.lead.postcode)) {
               var z = classifyPostcode(state.lead.postcode);
-              preview.innerHTML = '<div class="zone-preview-pill' + (z.isLondon ? "" : " is-mailin") + '">' +
-                (z.isLondon
-                  ? "London zone matched (" + esc(z.outward) + "): same-day London courier &amp; Fitzrovia drop-off available"
-                  : "UK zone matched (" + esc(z.outward) + "): free tracked and insured UK mail-in pack available") +
-                '</div>';
+              if (mobile) {
+                preview.innerHTML = '<span class="m-inline-zone' + (z.isLondon ? "" : " is-mailin") + '">' +
+                  (z.isLondon ? "London courier · " + esc(z.outward) : "Free UK mail-in · " + esc(z.outward)) +
+                  '</span>';
+              } else {
+                preview.innerHTML = '<div class="zone-preview-pill' + (z.isLondon ? "" : " is-mailin") + '">' +
+                  (z.isLondon
+                    ? "London zone matched (" + esc(z.outward) + "): same-day London courier &amp; Fitzrovia drop-off available"
+                    : "UK zone matched (" + esc(z.outward) + "): free tracked and insured UK mail-in pack available") +
+                  '</div>';
+              }
             } else {
               preview.innerHTML = "";
             }
@@ -1046,7 +1652,7 @@
       if (fillBtn) {
         fillBtn.addEventListener("click", function () {
           var sc = SCENARIOS[state.scenario] || SCENARIOS.A;
-          state.lead = { name: sc.name, phone: sc.phone, postcode: sc.postcode };
+          state.lead = { name: sc.name, email: sc.email, phone: sc.phone, postcode: sc.postcode };
           state.leadErrors = {};
           render();
         });
@@ -1056,34 +1662,17 @@
       if (form) {
         form.addEventListener("submit", function (e) {
           e.preventDefault();
-          var errs = {};
-          if (!state.lead.name || state.lead.name.trim().length < 2) {
-            errs.name = "Please enter your full name so we can prepare your quote.";
-          }
-          if (!isValidUkPhone(state.lead.phone)) {
-            errs.phone = "Please enter a valid UK mobile or landline number (e.g. 07700 900123).";
-          }
-          if (!isValidUkPostcode(state.lead.postcode)) {
-            errs.postcode = "Please enter a full UK postcode (e.g. W1W 8JQ or M1 4BT).";
-          }
-          state.leadErrors = errs;
-          if (Object.keys(errs).length > 0) {
-            render();
-            return;
-          }
-          state.lead.postcode = normalizePostcode(state.lead.postcode);
-          ensureValidServiceForZone();
-          state.feedbackMsg = "";
-          state.step = 4;
-          render();
-          window.scrollTo({ top: 0, behavior: "smooth" });
+          validateAndSubmitDetails();
         });
       }
     }
 
-    if (state.step === 4) {
+    if (state.step === 4 || state.step === 5) {
       var editLead = document.getElementById("editLeadBtn");
-      if (editLead) editLead.addEventListener("click", function () { state.step = 3; render(); });
+      if (editLead) editLead.addEventListener("click", function () { state.step = 3; render(); window.scrollTo({ top: 0, behavior: "instant" }); });
+
+      var changeSvc = document.getElementById("mChangeServiceBtn");
+      if (changeSvc) changeSvc.addEventListener("click", function () { state.step = 4; render(); window.scrollTo({ top: 0, behavior: "instant" }); });
 
       stage.querySelectorAll("[data-svc]").forEach(function (btn) {
         btn.addEventListener("click", function () {
@@ -1114,13 +1703,19 @@
         });
       });
 
+      var openHow = document.getElementById("openHowSheetBtn");
+      if (openHow) openHow.addEventListener("click", function () { openAppSheet("how"); });
+
+      var openRev = document.getElementById("openReviewsSheetBtn");
+      if (openRev) openRev.addEventListener("click", function () { openAppSheet("reviews"); });
+
       var proceedBtn = document.getElementById("proceedCheckoutBtn");
       if (proceedBtn) proceedBtn.addEventListener("click", openCheckoutModal);
 
       var emailBtn = document.getElementById("emailQuoteBtn");
       if (emailBtn) {
         emailBtn.addEventListener("click", function () {
-          state.feedbackMsg = "Quote summary queued for " + state.lead.name + " (" + state.lead.phone + "). Ready for Intercom follow-up.";
+          state.feedbackMsg = "Quote summary queued for " + state.lead.email + " (" + state.lead.phone + ").";
           render();
         });
       }
@@ -1128,7 +1723,7 @@
       var askBtn = document.getElementById("askQuestionBtn");
       if (askBtn) {
         askBtn.addEventListener("click", function () {
-          state.feedbackMsg = "Technician callback request logged for " + state.lead.name + " on " + state.lead.phone + ".";
+          state.feedbackMsg = "Technician callback logged for " + state.lead.name + " on " + state.lead.phone + ".";
           render();
         });
       }
@@ -1142,7 +1737,7 @@
     state.familyFilter = "All";
     state.modelId = sc.modelId;
     state.faultId = sc.faultId;
-    state.lead = { name: sc.name, phone: sc.phone, postcode: sc.postcode };
+    state.lead = { name: sc.name, email: sc.email, phone: sc.phone, postcode: sc.postcode };
     state.leadErrors = {};
     state.service = sc.service;
     state.futureSpeed = "standard";
@@ -1157,30 +1752,58 @@
   }
 
   function render() {
-    updateStepperAndChips();
+    var mobile = isMobileMode();
+    lastModeMobile = mobile;
+    updateStepperAndChrome();
+
     var stage = document.getElementById("wizardStage");
-    if (state.step === 1) stage.innerHTML = renderStep1();
-    else if (state.step === 2) stage.innerHTML = renderStep2();
-    else if (state.step === 3) stage.innerHTML = renderStep3DataWall();
-    else stage.innerHTML = renderStep4Quote();
+    if (mobile) {
+      if (state.step === 1) stage.innerHTML = renderMobileStep1();
+      else if (state.step === 2) stage.innerHTML = renderMobileStep2();
+      else if (state.step === 3) stage.innerHTML = renderMobileStep3Details();
+      else if (state.step === 4) stage.innerHTML = renderMobileStep4PriceService();
+      else stage.innerHTML = renderMobileStep5Checkout();
+    } else {
+      var dStep = state.step >= 4 ? 4 : state.step;
+      if (dStep === 1) stage.innerHTML = renderDesktopStep1();
+      else if (dStep === 2) stage.innerHTML = renderDesktopStep2();
+      else if (dStep === 3) stage.innerHTML = renderDesktopStep3DataWall();
+      else stage.innerHTML = renderDesktopStep4Quote();
+    }
 
     wireStageEvents();
-    updateStickyAndCookie();
+    updateCookieAndToggles();
   }
 
   function wireGlobalControls() {
     document.querySelectorAll("[data-scenario]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         applyScenario(btn.getAttribute("data-scenario"));
+        document.getElementById("previewSheet").hidden = true;
+      });
+    });
+
+    document.querySelectorAll("[data-jump-step]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var target = parseInt(btn.getAttribute("data-jump-step"), 10);
+        if (target >= 4 && (!isValidUkPostcode(state.lead.postcode) || !isValidUkPhone(state.lead.phone) || !isValidEmail(state.lead.email) || !state.lead.name.trim())) {
+          var sc = SCENARIOS[state.scenario] || SCENARIOS.A;
+          state.lead = { name: sc.name, email: sc.email, phone: sc.phone, postcode: sc.postcode };
+        }
+        state.step = target;
+        state.feedbackMsg = "";
+        document.getElementById("previewSheet").hidden = true;
+        render();
+        window.scrollTo({ top: 0, behavior: "instant" });
       });
     });
 
     document.querySelectorAll(".step-tab").forEach(function (tab) {
       tab.addEventListener("click", function () {
         var target = parseInt(tab.getAttribute("data-step"), 10);
-        if (target === 4 && (!isValidUkPostcode(state.lead.postcode) || !isValidUkPhone(state.lead.phone) || !state.lead.name.trim())) {
+        if (target >= 4 && (!isValidUkPostcode(state.lead.postcode) || !isValidUkPhone(state.lead.phone) || !isValidEmail(state.lead.email) || !state.lead.name.trim())) {
           var sc = SCENARIOS[state.scenario] || SCENARIOS.A;
-          state.lead = { name: sc.name, phone: sc.phone, postcode: sc.postcode };
+          state.lead = { name: sc.name, email: sc.email, phone: sc.phone, postcode: sc.postcode };
         }
         state.step = target;
         state.feedbackMsg = "";
@@ -1190,21 +1813,60 @@
 
     document.getElementById("stepBackBtn").addEventListener("click", function () {
       if (state.step > 1) {
-        state.step -= 1;
+        state.step = state.step >= 4 ? 3 : state.step - 1;
         state.feedbackMsg = "";
         render();
       }
     });
 
-    document.getElementById("toggleCookieBanner").addEventListener("change", function (e) {
-      state.showCookieBanner = !!e.target.checked;
-      updateStickyAndCookie();
+    document.getElementById("mBackBtn").addEventListener("click", function () {
+      if (state.step > 1) {
+        state.step -= 1;
+        state.feedbackMsg = "";
+        render();
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }
     });
 
-    document.getElementById("toggleFutureSpeed").addEventListener("change", function (e) {
-      state.showFutureSpeed = !!e.target.checked;
-      if (!state.showFutureSpeed) state.futureSpeed = "standard";
-      render();
+    document.getElementById("mFooterCta").addEventListener("click", function () {
+      if (state.step === 1) {
+        state.step = 2;
+        render();
+        window.scrollTo({ top: 0, behavior: "instant" });
+      } else if (state.step === 2) {
+        state.step = 3;
+        render();
+        window.scrollTo({ top: 0, behavior: "instant" });
+      } else if (state.step === 3) {
+        validateAndSubmitDetails();
+      } else if (state.step === 4) {
+        state.step = 5;
+        render();
+        window.scrollTo({ top: 0, behavior: "instant" });
+      } else {
+        openCheckoutModal();
+      }
+    });
+
+    ["toggleCookieBanner", "mToggleCookieBanner"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.addEventListener("change", function (e) {
+          state.showCookieBanner = !!e.target.checked;
+          updateCookieAndToggles();
+        });
+      }
+    });
+
+    ["toggleFutureSpeed", "mToggleFutureSpeed"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.addEventListener("change", function (e) {
+          state.showFutureSpeed = !!e.target.checked;
+          if (!state.showFutureSpeed) state.futureSpeed = "standard";
+          render();
+        });
+      }
     });
 
     var specBtn = document.getElementById("pvSpecBtn");
@@ -1215,7 +1877,33 @@
       specBtn.setAttribute("aria-expanded", open ? "true" : "false");
     });
 
-    document.getElementById("stickyProceedBtn").addEventListener("click", openCheckoutModal);
+    // Mobile Preview Controls Drawer
+    document.getElementById("mPreviewBtn").addEventListener("click", function () {
+      document.getElementById("previewSheet").hidden = false;
+    });
+    document.getElementById("closePreviewSheet").addEventListener("click", function () {
+      document.getElementById("previewSheet").hidden = true;
+    });
+    document.getElementById("donePreviewSheet").addEventListener("click", function () {
+      document.getElementById("previewSheet").hidden = true;
+    });
+    document.getElementById("previewSheet").addEventListener("click", function (e) {
+      if (e.target === e.currentTarget) document.getElementById("previewSheet").hidden = true;
+    });
+
+    // Mobile Info Bottom Sheet (How it works / Reviews & Workshop)
+    document.getElementById("closeAppSheet").addEventListener("click", closeAppSheet);
+    document.getElementById("appSheet").addEventListener("click", function (e) {
+      if (e.target === e.currentTarget) closeAppSheet();
+    });
+    document.querySelectorAll("[data-sheet-tab]").forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        state.activeSheetTab = tab.getAttribute("data-sheet-tab");
+        renderAppSheetContent();
+      });
+    });
+
+    // Checkout Handoff Modal
     document.getElementById("closeCheckoutModal").addEventListener("click", function () {
       document.getElementById("checkoutModal").hidden = true;
     });
@@ -1228,12 +1916,18 @@
       if (el) {
         el.addEventListener("click", function () {
           state.showCookieBanner = false;
-          updateStickyAndCookie();
+          updateCookieAndToggles();
         });
       }
     });
 
-    window.addEventListener("resize", updateStickyAndCookie);
+    window.addEventListener("resize", function () {
+      if (isMobileMode() !== lastModeMobile) {
+        render();
+      } else {
+        updateCookieAndToggles();
+      }
+    });
   }
 
   function initFromQuery() {
@@ -1242,14 +1936,19 @@
     var stepParam = params.get("step");
     var cookieParam = params.get("cookie");
     var speedParam = params.get("speed");
+    var sheetParam = params.get("sheet");
 
     state.showCookieBanner = cookieParam === "1" || cookieParam === "true";
     state.showFutureSpeed = speedParam === "1" || speedParam === "true";
 
     var parsedStep = stepParam ? parseInt(stepParam, 10) : 3;
-    if (!(parsedStep >= 1 && parsedStep <= 4)) parsedStep = 3;
+    if (!(parsedStep >= 1 && parsedStep <= 5)) parsedStep = 3;
 
     applyScenario(SCENARIOS[sc] ? sc : "A", parsedStep);
+
+    if (sheetParam === "how" || sheetParam === "reviews") {
+      openAppSheet(sheetParam);
+    }
   }
 
   wireGlobalControls();
