@@ -3187,7 +3187,22 @@
       return exact || best;
     }
 
-    var groups = MODELS['macbook'] || [];
+    /* Menu titles use either the catalogue name or a chip label that contains the A-number. */
+    function findMenuModelForLookup(entry) {
+      var byName = findConfiguredModelByName(entry.m);
+      if (byName) return byName;
+      var groups = MODELS['macbook'] || [];
+      var hit = null;
+      for (var g = 0; g < groups.length; g++) {
+        var models = groups[g].models || [];
+        for (var m = 0; m < models.length; m++) {
+          if (models[m].name.indexOf(entry.n) === -1) continue;
+          if (hit && hit !== models[m]) return null;
+          hit = models[m];
+        }
+      }
+      return hit;
+    }
 
     function mbFilter() {
       var q = (document.getElementById('qwMbSearch').value || '').trim().toUpperCase();
@@ -3195,7 +3210,12 @@
       if (!r) return;
       r.innerHTML = '';
       if (!q) return;
-      var f = MB_NUMS.filter(function(n) { return n.n.toUpperCase().indexOf(q) !== -1 || n.m.toUpperCase().indexOf(q) !== -1; });
+      var f = MB_NUMS.filter(function(n) {
+        if (n.n.toUpperCase().indexOf(q) === -1 && n.m.toUpperCase().indexOf(q) === -1) return false;
+        /* No menu row yet, or every repair for this model is still drafted. */
+        if (!findMenuModelForLookup(n)) return false;
+        return catalogueOffersModel('macbook', n.m);
+      });
       if (!f.length) { r.innerHTML = '<div style="padding:10px;font-size:13px;color:var(--qw-text-3);">No match. Check the number and try again.</div>'; return; }
       /* Deduplicate by model name to avoid showing A2338 twice with same target */
       var seen = {};
@@ -3205,7 +3225,7 @@
         var d = document.createElement('div'); d.className = 'qw-help-hit';
         d.innerHTML = '<span class="qw-hn">' + n.n + '</span><span class="qw-hm">' + n.m + '</span><span class="qw-hs">Select</span>';
         d.onclick = function() {
-          var model = findConfiguredModelByName(n.m);
+          var model = findMenuModelForLookup(n);
           if (model) {
             panel.classList.remove('open');
             pickModel(model.name, model.collectionHandle, null);
