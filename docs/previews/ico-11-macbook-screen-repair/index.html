@@ -865,34 +865,12 @@
       margin-bottom: 16px;
     }
     .trustindex-slot {
-      border: 1px solid var(--line);
-      border-radius: var(--r-lg);
-      background: #ffffff;
-      min-height: 220px;
-      padding: 28px 24px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      gap: 8px;
-      box-shadow: var(--shadow-card);
+      width: 100%;
+      min-height: 320px;
+      overflow-x: clip;
     }
-    .trustindex-slot strong { font-size: 15px; color: var(--fg-1); }
-    .trustindex-slot p {
-      margin: 0;
-      max-width: 54ch;
-      font-size: 13.5px;
-      color: var(--fg-2);
-    }
-    .trustindex-slot code {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      background: var(--bg-2);
-      border: 1px solid var(--line);
-      padding: 2px 6px;
-      border-radius: 4px;
-      word-break: break-all;
+    @media (max-width: 989px) {
+      .trustindex-slot { min-height: 420px; }
     }
 
     /* 3. HOW WE COMPARE + WORKSHOP & 2-YEAR WARRANTY */
@@ -1921,9 +1899,8 @@
           </div>
           <a class="btn-ghost" href="https://maps.google.com/?q=iCorrect+12+Margaret+Street+London+W1W+8JQ" target="_blank" rel="noopener">Read on Google Maps -&gt;</a>
         </div>
-        <div class="trustindex-slot">
-          <strong>Live Trustindex Google Reviews Widget loads here</strong>
-          <p>Mounts the real Trustindex loader from PR #133 (<code>cdn.trustindex.io/loader.js?47cc7ef8590e8871fa062160cf7</code>) with reserved height, zero hand-drawn review cards, and zero star-rating JSON-LD.</p>
+        <div class="trustindex-slot" id="trustindex-reviews-slot">
+          <script defer async src="https://cdn.trustindex.io/loader.js?47cc7ef8590e8871fa062160cf7"></script>
         </div>
       </div>
     </section>
