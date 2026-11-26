@@ -656,7 +656,8 @@
     }
     .price-strip {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-auto-rows: 1fr;
       gap: var(--space-3);
       list-style: none;
       margin: 0;
@@ -776,34 +777,6 @@
       height: auto;
       object-fit: contain;
       margin: 0 auto;
-    }
-    /* Companion 6-part legend (shown on mobile where compact SVG uses 1-6 badges) */
-    .diagram-legend-wrap {
-      margin-top: var(--space-3);
-      padding-top: var(--space-3);
-      border-top: 1px solid var(--line);
-    }
-    .diagram-legend {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--space-2) var(--space-4);
-    }
-    .legend-num {
-      width: var(--space-6);
-      height: var(--space-6);
-      border-radius: 50%;
-      background: var(--surface-dark);
-      color: var(--on-dark);
-      font-family: var(--font-mono);
-      font-size: var(--text-sm);
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
     }
     .diagram-caption {
       margin-top: var(--space-3);
@@ -1894,12 +1867,6 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: var(--space-2);
       }
-      .price-strip li:last-child { grid-column: 1 / -1; }
-      .price-strip li:last-child .price-chip {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-      }
       .price-chip {
         min-height: 52px;
         padding: var(--space-2) var(--space-3);
@@ -2005,18 +1972,17 @@
     }
 
 
-    /* Polish pass: disclosures, legends, models, footer, touch targets */
+    /* Polish pass: disclosures, models, footer, touch targets */
     .process-bar-pill:hover, .warranty-toggle-pill:hover { background: var(--bg-2); }
     .process-detail-title { margin: 0; font-size: var(--text-md); font-weight: 600; letter-spacing: -0.02em; color: var(--fg-1); }
-    .diagram-legend li { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); color: var(--fg-2); min-width: 0; }
-    .diagram-legend li.is-accent { color: var(--fg-1); font-weight: 600; }
-    .diagram-legend li.is-accent .legend-num { background: var(--accent); }
-    .diagram-stage .diagram-legend { grid-template-columns: minmax(0, 1fr); }
-    .specialty-media .diagram-legend-wrap { width: 100%; }
-    .specialty-media .specialty-img-tall { max-width: 320px; }
-    @media (max-width: 600px) {
-      .diagram-legend { grid-template-columns: minmax(0, 1fr); }
-    }
+    .specialty-media .specialty-img-tall { max-width: 420px; }
+    .specialty-media .diagram-caption { width: 100%; margin-top: 0; }
+    .process-list { margin: var(--space-3) 0 0; padding-left: var(--space-5); font-size: var(--text-md); line-height: 1.5; color: var(--fg-2); }
+    .process-list li + li { margin-top: var(--space-1); }
+    .process-list + .specialty-meta { margin-top: var(--space-3); }
+    .hero-steps { margin: var(--space-3) 0 0; padding: var(--space-3) 0 0 var(--space-5); border-top: 1px solid var(--line); font-size: var(--text-sm); line-height: 20px; color: var(--fg-2); }
+    .hero-steps li + li { margin-top: var(--space-1); }
+    .hero-steps strong { color: var(--fg-1); font-weight: 600; }
     .wizard-intro-line {
       max-width: 640px;
       margin: 0 auto var(--space-6);
@@ -2027,12 +1993,8 @@
     }
     @media (max-width: 600px) { .wizard-intro-line { text-align: left; } }
     .price-strip > li { display: flex; }
-    .price-chip { flex: 1; border-color: var(--control-border); }
-    .price-chip-sub { font-size: var(--text-xs); line-height: 16px; color: var(--fg-3); }
-    @media (max-width: 600px) {
-      .price-strip li:last-child .price-chip { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: var(--space-3); }
-      .price-strip li:last-child .price-chip-sub { grid-column: 1 / -1; }
-    }
+    .price-chip { flex: 1; justify-content: space-between; border-color: var(--control-border); }
+    .price-chip-model { white-space: normal; overflow: visible; text-overflow: clip; }
     .related-links-row { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
     .related-links-row a { border-color: var(--control-border); }
     .seo-value-card .hours-grid + p { margin-top: var(--space-4); }
@@ -2048,8 +2010,22 @@
     .models-table tbody th { font-weight: 500; color: var(--fg-1); }
     .models-table .num { text-align: right; padding-right: 0; white-space: nowrap; }
     .models-table td:nth-child(2) { overflow-wrap: anywhere; }
-    @media (max-width: 768px) {
+    .models-table .th-sub { display: none; }
+    @media (max-width: 1100px) {
       .models-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); }
+    }
+    @media (max-width: 600px) {
+      .models-table, .models-table thead, .models-table tbody { display: block; }
+      .models-table tr { display: grid; grid-template-columns: minmax(0, 1fr) 44px 48px 44px; column-gap: var(--space-2); align-items: start; }
+      .models-table th, .models-table td { padding-right: 0; border-top: 0; }
+      .models-table tbody tr { border-top: 1px solid var(--line); padding: var(--space-2) 0; }
+      .models-table tbody th, .models-table tbody td { padding: 0; }
+      .models-table tbody th { grid-column: 1; grid-row: 1; }
+      .models-table tbody td:nth-child(2) { grid-column: 1; grid-row: 2; font-size: var(--text-xs); line-height: 16px; color: var(--fg-3); }
+      .models-table tbody td.num { grid-row: 1 / span 2; align-self: center; }
+      .models-table .col-code { display: none; }
+      .models-table .th-sub { display: inline; }
+      .models-table .from { display: block; font-size: var(--text-xs); line-height: 16px; color: var(--fg-3); }
     }
     .site-footer-info { display: flex; flex-wrap: wrap; align-items: center; gap: 0 var(--space-3); }
     @media (max-width: 768px), (pointer: coarse) {
@@ -2108,21 +2084,16 @@
               <span class="diagram-pill"><span class="diagram-pill-dot" aria-hidden="true"></span>Fitzrovia, W1W</span>
             </div>
             <div class="diagram-frame">
-              <img id="london-options-img" src="./assets/london-service-options-transparent.svg" width="460" height="350" fetchpriority="high" alt="Isometric diagram of three ways to get your MacBook to iCorrect, numbered 1 to 4: London courier collection and return, a free tracked UK mail-in pack, the Fitzrovia workshop, and a booked drop-off at the workshop">
+              <img id="london-options-img" src="./assets/london-service-options-transparent.svg" width="480" height="335" fetchpriority="high" alt="Isometric diagram of the ways to get your MacBook to iCorrect: London courier, mail-in, drop-off, and the Fitzrovia W1W workshop">
             </div>
-            <div class="diagram-legend-wrap" aria-label="Ways to get your MacBook to us">
-              <ol class="diagram-legend">
-                <li class="is-accent"><span class="legend-num" aria-hidden="true">1</span><span>London courier: collected and returned (selected Zones 1 to 3 postcodes on orders £200+ and all £49 diagnostics)</span></li>
-                <li><span class="legend-num" aria-hidden="true">2</span><span>UK mail-in pack: free, tracked and insured, for Outer London and the UK</span></li>
-                <li><span class="legend-num" aria-hidden="true">3</span><span>Fitzrovia workshop: 12 Margaret Street, W1W 8JQ</span></li>
-                <li class="is-accent"><span class="legend-num" aria-hidden="true">4</span><span>Fitzrovia drop-off: a booked handover at the workshop</span></li>
-              </ol>
+            <ol class="hero-steps" aria-label="How your repair works">
+              <li><strong>Receive your device.</strong> London courier (selected Zones 1 to 3 postcodes on orders £200+ and all £49 diagnostics), a free UK mail-in pack, or a booked drop-off at our Fitzrovia workshop.</li>
+              <li><strong>Pre-repair check and diagnosis.</strong> We test every function and find the fault.</li>
+              <li><strong>Repair at our Fitzrovia bench.</strong> Done in-house, never sent away.</li>
+              <li><strong>Full post-repair testing.</strong> The same checks again, to match.</li>
+              <li><strong>Final QC check, then return</strong> with a 2-year warranty.</li>
+            </ol>
             </div>
-            <div class="diagram-caption">
-              <span class="caption-swatch" aria-hidden="true"></span>
-              <span>Pick one when you get your price. Every route ends at the same in-house bench in Fitzrovia.</span>
-            </div>
-          </div>
 
           <ul class="trust-strip" id="trust-strip" role="list" aria-label="Why choose iCorrect">
           <li class="trust-cell">
@@ -2189,6 +2160,18 @@
           </li>
           <li>
             <a class="price-chip" href="#quote-section">
+              <span class="price-chip-model">Logic board repair</span>
+              <span class="price-chip-val">from £249</span>
+            </a>
+          </li>
+          <li>
+            <a class="price-chip" href="#quote-section">
+              <span class="price-chip-model">Water damage or no power</span>
+              <span class="price-chip-val">£49 diagnostic</span>
+            </a>
+          </li>
+          <li>
+            <a class="price-chip" href="#quote-section">
               <span class="price-chip-model">Battery</span>
               <span class="price-chip-val">from £159</span>
             </a>
@@ -2203,13 +2186,6 @@
             <a class="price-chip" href="#quote-section">
               <span class="price-chip-model">Charging port</span>
               <span class="price-chip-val">from £149</span>
-            </a>
-          </li>
-          <li>
-            <a class="price-chip" href="#quote-section">
-              <span class="price-chip-model">Water damage or no power</span>
-              <span class="price-chip-val">£49 diagnostic</span>
-              <span class="price-chip-sub">Board repairs from £249</span>
             </a>
           </li>
         </ul>
@@ -2532,60 +2508,46 @@
           <div class="specialty-list">
             <article class="specialty-row" id="logic-board">
               <div class="specialty-media">
-                <img src="./assets/macbook-liquid-board-diagram.svg" width="420" height="275" loading="lazy" alt="Isometric diagram of a MacBook logic board with numbered markers on the USB-C controllers, shorted power rail, original board, backlight circuit, PMIC and phases, and the soldered SSD that stays in place">
-              <div class="diagram-legend-wrap" aria-label="Logic board diagram key">
-                <ol class="diagram-legend">
-                  <li class="is-accent"><span class="legend-num" aria-hidden="true">1</span><span>USB-C controllers</span></li>
-                  <li class="is-accent"><span class="legend-num" aria-hidden="true">2</span><span>Shorted power rail</span></li>
-                  <li><span class="legend-num" aria-hidden="true">3</span><span>Original board</span></li>
-                  <li class="is-accent"><span class="legend-num" aria-hidden="true">4</span><span>Backlight circuit</span></li>
-                  <li class="is-accent"><span class="legend-num" aria-hidden="true">5</span><span>PMIC and phases</span></li>
-                  <li><span class="legend-num" aria-hidden="true">6</span><span>Soldered SSD (kept)</span></li>
-                </ol>
-              </div>
+                <img src="./assets/macbook-liquid-board-diagram.svg" width="650" height="275" loading="lazy" alt="Isometric diagram of a MacBook logic board with labelled parts: USB-C, shorted rail, original board, backlight, PMIC and the soldered SSD that stays in place">
               </div>
               <div class="specialty-copy">
                 <h3>Logic board and liquid damage</h3>
-                <p>Water damage from a spilt drink, or it will not turn on or charge? We check the power rails under a stereo microscope, clean off the corrosion and replace the failed components on the board. Apple usually quotes a full logic board swap. We repair the board you already have.</p>
+                <p>Spilt drink, or it will not turn on or charge? Apple usually quotes a full board swap. We repair the board you already have.</p>
+                <ol class="process-list">
+                  <li>Diagnose the logic board under a stereo microscope and find faults down to component level.</li>
+                  <li>Replace every damaged component on your original board.</li>
+                  <li>Stress test the board after the repair.</li>
+                  <li>Final QC check across the whole MacBook, so every function works.</li>
+                </ol>
                 <p class="specialty-meta"><strong>£49 board diagnostic</strong> with a written quote in 1 working day, deducted if you go ahead. <strong>Board repairs from £249.</strong></p>
               </div>
             </article>
 
             <article class="specialty-row" id="data-recovery">
               <div class="specialty-media">
-                <img src="./assets/data-recovery-microscope-transparent.svg" width="460" height="310" loading="lazy" alt="Isometric diagram of a MacBook logic board under a stereo microscope, with numbered markers on the microscope, a damaged circuit path, the Apple Silicon chip and the soldered SSD kept on the original board">
-              <div class="diagram-legend-wrap" aria-label="Data recovery diagram key">
-                <ol class="diagram-legend">
-                  <li class="is-accent"><span class="legend-num" aria-hidden="true">1</span><span>Stereo microscope</span></li>
-                  <li class="is-accent"><span class="legend-num" aria-hidden="true">2</span><span>Damaged circuit path, repaired in-house</span></li>
-                  <li><span class="legend-num" aria-hidden="true">3</span><span>Apple Silicon (original chip)</span></li>
-                  <li class="is-accent"><span class="legend-num" aria-hidden="true">4</span><span>Soldered SSD, kept on the original board</span></li>
-                </ol>
-              </div>
+                <img src="./assets/data-recovery-microscope-transparent.svg" width="480" height="332" loading="lazy" alt="Isometric diagram of a MacBook logic board under a stereo microscope, labelled: microscope, circuit path, Apple Silicon and the soldered SSD kept on the original board">
               </div>
               <div class="specialty-copy">
                 <h3>Data recovery</h3>
-                <p>A full board swap usually means a new SSD and no files. We keep your soldered SSD on the original board and repair the damaged circuit path around it, so your files can come back. We prioritise your data whenever the SSD itself is undamaged. Severe liquid corrosion can still affect data, and we say so in your written quote.</p>
+                <p>A full board swap usually means a new SSD and no files. We keep your soldered SSD on the original board and prioritise your data whenever the SSD itself is undamaged.</p>
+                <p>We stabilise the logic board just enough to extract your data securely, then complete a backup to iCloud or transfer it onto an external drive. Severe liquid corrosion can still affect data, and we confirm that in your written quote.</p>
               </div>
             </article>
 
             <article class="specialty-row" id="screen-repair">
               <div class="specialty-media">
-                <img class="specialty-img-tall" src="./assets/macbook-display-assembly-transparent.svg" width="460" height="760" loading="lazy" alt="Exploded isometric diagram of a MacBook display assembly with numbered markers: polarizer, LCD panel, backlight, display cable, lid shell and hinge">
-              <div class="diagram-legend-wrap" aria-label="MacBook display assembly key">
-                <ol class="diagram-legend">
-                  <li class="is-accent"><span class="legend-num" aria-hidden="true">1</span><span>Polarizer (replaced)</span></li>
-                  <li class="is-accent"><span class="legend-num" aria-hidden="true">2</span><span>LCD panel (replaced)</span></li>
-                  <li><span class="legend-num" aria-hidden="true">3</span><span>Backlight</span></li>
-                  <li><span class="legend-num" aria-hidden="true">4</span><span>Display cable</span></li>
-                  <li><span class="legend-num" aria-hidden="true">5</span><span>Lid shell (original)</span></li>
-                  <li><span class="legend-num" aria-hidden="true">6</span><span>Hinge (original)</span></li>
-                </ol>
-              </div>
+                <img class="specialty-img-tall" src="./assets/macbook-display-assembly-transparent.svg" width="590" height="760" loading="lazy" alt="Exploded isometric diagram of a MacBook display assembly, labelled: polarizer, LCD panel, backlight, cable, shell and hinge">
+                <p class="diagram-caption"><span class="caption-swatch" aria-hidden="true"></span><span>Blue parts are the ones we replace.</span></p>
               </div>
               <div class="specialty-copy">
                 <h3>Screen repairs</h3>
-                <p>Cracked, dead or flickering display? We fit a genuine Apple display, tested before it goes in, so colour accuracy and True Tone carry over. Ready in 2 working days once it reaches our workshop, with a 2-year warranty.</p>
+                <p>Cracked, dead or flickering display? We fit a genuine Apple display.</p>
+                <ol class="process-list">
+                  <li>Pre-repair test of every function before we start.</li>
+                  <li>Display tested before fitting, so colour accuracy and True Tone carry over.</li>
+                  <li>Post-repair test and a final QC check.</li>
+                  <li>Ready in 2 working days once it reaches our workshop, with a 2-year warranty.</li>
+                </ol>
                 <p class="specialty-meta"><strong>Screens from £299.</strong> See your exact price in the quote tool below.</p>
               </div>
             </article>
@@ -2662,7 +2624,7 @@
       <div class="ic-container">
         <div class="section-head">
           <h2 class="section-title" id="models-title">Models we repair in London</h2>
-          <p class="section-lead">MacBook Air and MacBook Pro, M1 to M4 and Intel. Find the A-number on the underside of your MacBook. Prices are the live prices for a screen or battery repair; water damage and board faults begin with a £49 diagnostic.</p>
+          <p class="section-lead">MacBook Air and MacBook Pro, M1 to M4 and Intel. Find the A-number on the underside of your MacBook. Screen and battery prices are live. Board repairs start from £249 on every model, after a £49 diagnostic with a written quote.</p>
         </div>
         <div class="models-grid">
           <div class="models-group">
@@ -2670,50 +2632,57 @@
             <table class="models-table">
               <caption class="visually-hidden">MacBook Air 13-inch models, A-numbers and starting prices</caption>
               <thead>
-                <tr><th scope="col">Model</th><th scope="col">A-number</th><th scope="col" class="num">Screen</th><th scope="col" class="num">Battery</th></tr>
+                <tr><th scope="col">Model<span class="th-sub"> / A-number</span></th><th scope="col" class="col-code">A-number</th><th scope="col" class="num">Screen</th><th scope="col" class="num">Battery</th><th scope="col" class="num">Board</th></tr>
               </thead>
               <tbody>
-                <tr data-codes="A2337" data-name="MacBook Air 13-inch M1 (2020)" data-screen="£339" data-battery="£229">
+                <tr data-codes="A2337" data-name="MacBook Air 13-inch M1 (2020)" data-screen="£339" data-battery="£229" data-board="from £249">
                   <th scope="row">M1 (2020)</th>
                   <td>A2337</td>
                   <td class="num">£339</td>
                   <td class="num">£229</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A2681" data-name="MacBook Air 13-inch M2 (2022)" data-screen="£399" data-battery="£279">
+                <tr data-codes="A2681" data-name="MacBook Air 13-inch M2 (2022)" data-screen="£399" data-battery="£279" data-board="from £249">
                   <th scope="row">M2 (2022)</th>
                   <td>A2681</td>
                   <td class="num">£399</td>
                   <td class="num">£279</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A3113" data-name="MacBook Air 13-inch M3 (2024)" data-screen="£429" data-battery="£279">
+                <tr data-codes="A3113" data-name="MacBook Air 13-inch M3 (2024)" data-screen="£429" data-battery="£279" data-board="from £249">
                   <th scope="row">M3 (2024)</th>
                   <td>A3113</td>
                   <td class="num">£429</td>
                   <td class="num">£279</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A3240" data-name="MacBook Air 13-inch M4 (2025)" data-screen="£479" data-battery="£299">
+                <tr data-codes="A3240" data-name="MacBook Air 13-inch M4 (2025)" data-screen="£479" data-battery="£299" data-board="from £249">
                   <th scope="row">M4 (2025)</th>
                   <td>A3240</td>
                   <td class="num">£479</td>
                   <td class="num">£299</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A1466" data-name="MacBook Air 13-inch Intel, 2012 to 2017" data-screen="£299" data-battery="£159">
+                <tr data-codes="A1466" data-name="MacBook Air 13-inch Intel, 2012 to 2017" data-screen="£299" data-battery="£159" data-board="from £249">
                   <th scope="row">Intel, 2012 to 2017</th>
                   <td>A1466</td>
                   <td class="num">£299</td>
                   <td class="num">£159</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A1932" data-name="MacBook Air 13-inch Intel, 2018 to 2019" data-screen="£299" data-battery="£249">
+                <tr data-codes="A1932" data-name="MacBook Air 13-inch Intel, 2018 to 2019" data-screen="£299" data-battery="£249" data-board="from £249">
                   <th scope="row">Intel, 2018 to 2019</th>
                   <td>A1932</td>
                   <td class="num">£299</td>
                   <td class="num">£249</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A2179" data-name="MacBook Air 13-inch Intel, 2020" data-screen="£299" data-battery="£229">
+                <tr data-codes="A2179" data-name="MacBook Air 13-inch Intel, 2020" data-screen="£299" data-battery="£229" data-board="from £249">
                   <th scope="row">Intel, 2020</th>
                   <td>A2179</td>
                   <td class="num">£299</td>
                   <td class="num">£229</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
               </tbody>
             </table>
@@ -2723,26 +2692,29 @@
             <table class="models-table">
               <caption class="visually-hidden">MacBook Air 15-inch models, A-numbers and starting prices</caption>
               <thead>
-                <tr><th scope="col">Model</th><th scope="col">A-number</th><th scope="col" class="num">Screen</th><th scope="col" class="num">Battery</th></tr>
+                <tr><th scope="col">Model<span class="th-sub"> / A-number</span></th><th scope="col" class="col-code">A-number</th><th scope="col" class="num">Screen</th><th scope="col" class="num">Battery</th><th scope="col" class="num">Board</th></tr>
               </thead>
               <tbody>
-                <tr data-codes="A2941" data-name="MacBook Air 15-inch M2 (2023)" data-screen="£449" data-battery="£279">
+                <tr data-codes="A2941" data-name="MacBook Air 15-inch M2 (2023)" data-screen="£449" data-battery="£279" data-board="from £249">
                   <th scope="row">M2 (2023)</th>
                   <td>A2941</td>
                   <td class="num">£449</td>
                   <td class="num">£279</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A3114" data-name="MacBook Air 15-inch M3 (2024)" data-screen="£469" data-battery="£279">
+                <tr data-codes="A3114" data-name="MacBook Air 15-inch M3 (2024)" data-screen="£469" data-battery="£279" data-board="from £249">
                   <th scope="row">M3 (2024)</th>
                   <td>A3114</td>
                   <td class="num">£469</td>
                   <td class="num">£279</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A3241" data-name="MacBook Air 15-inch M4 (2025)" data-screen="£519" data-battery="£299">
+                <tr data-codes="A3241" data-name="MacBook Air 15-inch M4 (2025)" data-screen="£519" data-battery="£299" data-board="from £249">
                   <th scope="row">M4 (2025)</th>
                   <td>A3241</td>
                   <td class="num">£519</td>
                   <td class="num">£299</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
               </tbody>
             </table>
@@ -2752,56 +2724,64 @@
             <table class="models-table">
               <caption class="visually-hidden">MacBook Pro 13-inch models, A-numbers and starting prices</caption>
               <thead>
-                <tr><th scope="col">Model</th><th scope="col">A-number</th><th scope="col" class="num">Screen</th><th scope="col" class="num">Battery</th></tr>
+                <tr><th scope="col">Model<span class="th-sub"> / A-number</span></th><th scope="col" class="col-code">A-number</th><th scope="col" class="num">Screen</th><th scope="col" class="num">Battery</th><th scope="col" class="num">Board</th></tr>
               </thead>
               <tbody>
-                <tr data-codes="A1989" data-name="MacBook Pro 13-inch Intel, 2018 to 2019" data-screen="£299" data-battery="£249">
+                <tr data-codes="A1989" data-name="MacBook Pro 13-inch Intel, 2018 to 2019" data-screen="£299" data-battery="£249" data-board="from £249">
                   <th scope="row">Intel, 2018 to 2019</th>
                   <td>A1989</td>
                   <td class="num">£299</td>
                   <td class="num">£249</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A2338" data-name="MacBook Pro 13-inch M1 (2020)" data-screen="£399" data-battery="£249">
+                <tr data-codes="A2338" data-name="MacBook Pro 13-inch M1 (2020)" data-screen="£399" data-battery="£249" data-board="from £249">
                   <th scope="row">M1 (2020)</th>
                   <td>A2338</td>
                   <td class="num">£399</td>
                   <td class="num">£249</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A2338" data-name="MacBook Pro 13-inch M2 (2022)" data-screen="£429" data-battery="£249">
+                <tr data-codes="A2338" data-name="MacBook Pro 13-inch M2 (2022)" data-screen="£429" data-battery="£249" data-board="from £249">
                   <th scope="row">M2 (2022)</th>
                   <td>A2338</td>
                   <td class="num">£429</td>
                   <td class="num">£249</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A1706" data-name="MacBook Pro 13-inch Intel, 2016 to 2018" data-screen="£399" data-battery="£299">
+                <tr data-codes="A1706" data-name="MacBook Pro 13-inch Intel, 2016 to 2018" data-screen="£399" data-battery="£299" data-board="from £249">
                   <th scope="row">Intel, 2016 to 2018</th>
                   <td>A1706</td>
                   <td class="num">£399</td>
                   <td class="num">£299</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A1708" data-name="MacBook Pro 13-inch Intel, 2016 to 2017" data-screen="£399" data-battery="£299">
+                <tr data-codes="A1708" data-name="MacBook Pro 13-inch Intel, 2016 to 2017" data-screen="£399" data-battery="£299" data-board="from £249">
                   <th scope="row">Intel, 2016 to 2017</th>
                   <td>A1708</td>
                   <td class="num">£399</td>
                   <td class="num">£299</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A2159" data-name="MacBook Pro 13-inch Intel, 2019" data-screen="£329" data-battery="£249">
+                <tr data-codes="A2159" data-name="MacBook Pro 13-inch Intel, 2019" data-screen="£329" data-battery="£249" data-board="from £249">
                   <th scope="row">Intel, 2019</th>
                   <td>A2159</td>
                   <td class="num">£329</td>
                   <td class="num">£249</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A2251" data-name="MacBook Pro 13-inch Intel, 2020" data-screen="£329" data-battery="£249">
+                <tr data-codes="A2251" data-name="MacBook Pro 13-inch Intel, 2020" data-screen="£329" data-battery="£249" data-board="from £249">
                   <th scope="row">Intel, 2020</th>
                   <td>A2251</td>
                   <td class="num">£329</td>
                   <td class="num">£249</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A2289" data-name="MacBook Pro 13-inch Intel, 2020" data-screen="£329" data-battery="£249">
+                <tr data-codes="A2289" data-name="MacBook Pro 13-inch Intel, 2020" data-screen="£329" data-battery="£249" data-board="from £249">
                   <th scope="row">Intel, 2020</th>
                   <td>A2289</td>
                   <td class="num">£329</td>
                   <td class="num">£249</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
               </tbody>
             </table>
@@ -2811,32 +2791,36 @@
             <table class="models-table">
               <caption class="visually-hidden">MacBook Pro 14-inch models, A-numbers and starting prices</caption>
               <thead>
-                <tr><th scope="col">Model</th><th scope="col">A-number</th><th scope="col" class="num">Screen</th><th scope="col" class="num">Battery</th></tr>
+                <tr><th scope="col">Model<span class="th-sub"> / A-number</span></th><th scope="col" class="col-code">A-number</th><th scope="col" class="num">Screen</th><th scope="col" class="num">Battery</th><th scope="col" class="num">Board</th></tr>
               </thead>
               <tbody>
-                <tr data-codes="A2442" data-name="MacBook Pro 14-inch M1 Pro/Max (2021)" data-screen="£549" data-battery="£279">
+                <tr data-codes="A2442" data-name="MacBook Pro 14-inch M1 Pro/Max (2021)" data-screen="£549" data-battery="£279" data-board="from £249">
                   <th scope="row">M1 Pro/Max (2021)</th>
                   <td>A2442</td>
                   <td class="num">£549</td>
                   <td class="num">£279</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A2779" data-name="MacBook Pro 14-inch M2 Pro/Max (2023)" data-screen="£599" data-battery="£279">
+                <tr data-codes="A2779" data-name="MacBook Pro 14-inch M2 Pro/Max (2023)" data-screen="£599" data-battery="£279" data-board="from £249">
                   <th scope="row">M2 Pro/Max (2023)</th>
                   <td>A2779</td>
                   <td class="num">£599</td>
                   <td class="num">£279</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A2918 A2992" data-name="MacBook Pro 14-inch M3 Pro/Max (2023)" data-screen="£599" data-battery="£279">
+                <tr data-codes="A2918 A2992" data-name="MacBook Pro 14-inch M3 Pro/Max (2023)" data-screen="£599" data-battery="£279" data-board="from £249">
                   <th scope="row">M3 Pro/Max (2023)</th>
                   <td>A2918 / A2992</td>
                   <td class="num">£599</td>
                   <td class="num">£279</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A3112 A3185 A3401" data-name="MacBook Pro 14-inch M4 Pro/Max (2024)" data-screen="£649" data-battery="£299">
+                <tr data-codes="A3112 A3185 A3401" data-name="MacBook Pro 14-inch M4 Pro/Max (2024)" data-screen="£649" data-battery="£299" data-board="from £249">
                   <th scope="row">M4 Pro/Max (2024)</th>
                   <td>A3112 / A3185 / A3401</td>
                   <td class="num">£649</td>
                   <td class="num">£299</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
               </tbody>
             </table>
@@ -2846,20 +2830,22 @@
             <table class="models-table">
               <caption class="visually-hidden">MacBook Pro 15-inch models, A-numbers and starting prices</caption>
               <thead>
-                <tr><th scope="col">Model</th><th scope="col">A-number</th><th scope="col" class="num">Screen</th><th scope="col" class="num">Battery</th></tr>
+                <tr><th scope="col">Model<span class="th-sub"> / A-number</span></th><th scope="col" class="col-code">A-number</th><th scope="col" class="num">Screen</th><th scope="col" class="num">Battery</th><th scope="col" class="num">Board</th></tr>
               </thead>
               <tbody>
-                <tr data-codes="A1990" data-name="MacBook Pro 15-inch Intel, 2018 to 2019" data-screen="£649" data-battery="£299">
+                <tr data-codes="A1990" data-name="MacBook Pro 15-inch Intel, 2018 to 2019" data-screen="£649" data-battery="£299" data-board="from £249">
                   <th scope="row">Intel, 2018 to 2019</th>
                   <td>A1990</td>
                   <td class="num">£649</td>
                   <td class="num">£299</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A1707" data-name="MacBook Pro 15-inch Intel Retina, 2016 to 2017" data-screen="£649" data-battery="£299">
+                <tr data-codes="A1707" data-name="MacBook Pro 15-inch Intel Retina, 2016 to 2017" data-screen="£649" data-battery="£299" data-board="from £249">
                   <th scope="row">Intel Retina, 2016 to 2017</th>
                   <td>A1707</td>
                   <td class="num">£649</td>
                   <td class="num">£299</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
               </tbody>
             </table>
@@ -2869,38 +2855,43 @@
             <table class="models-table">
               <caption class="visually-hidden">MacBook Pro 16-inch models, A-numbers and starting prices</caption>
               <thead>
-                <tr><th scope="col">Model</th><th scope="col">A-number</th><th scope="col" class="num">Screen</th><th scope="col" class="num">Battery</th></tr>
+                <tr><th scope="col">Model<span class="th-sub"> / A-number</span></th><th scope="col" class="col-code">A-number</th><th scope="col" class="num">Screen</th><th scope="col" class="num">Battery</th><th scope="col" class="num">Board</th></tr>
               </thead>
               <tbody>
-                <tr data-codes="A2141" data-name="MacBook Pro 16-inch Intel, 2019" data-screen="£649" data-battery="£299">
+                <tr data-codes="A2141" data-name="MacBook Pro 16-inch Intel, 2019" data-screen="£649" data-battery="£299" data-board="from £249">
                   <th scope="row">Intel, 2019</th>
                   <td>A2141</td>
                   <td class="num">£649</td>
                   <td class="num">£299</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A2485" data-name="MacBook Pro 16-inch M1 Pro/Max (2021)" data-screen="£599" data-battery="£279">
+                <tr data-codes="A2485" data-name="MacBook Pro 16-inch M1 Pro/Max (2021)" data-screen="£599" data-battery="£279" data-board="from £249">
                   <th scope="row">M1 Pro/Max (2021)</th>
                   <td>A2485</td>
                   <td class="num">£599</td>
                   <td class="num">£279</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A2780" data-name="MacBook Pro 16-inch M2 Pro/Max (2023)" data-screen="£639" data-battery="£279">
+                <tr data-codes="A2780" data-name="MacBook Pro 16-inch M2 Pro/Max (2023)" data-screen="£639" data-battery="£279" data-board="from £249">
                   <th scope="row">M2 Pro/Max (2023)</th>
                   <td>A2780</td>
                   <td class="num">£639</td>
                   <td class="num">£279</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A2991" data-name="MacBook Pro 16-inch M3 Pro/Max (2023)" data-screen="£699" data-battery="£279">
+                <tr data-codes="A2991" data-name="MacBook Pro 16-inch M3 Pro/Max (2023)" data-screen="£699" data-battery="£279" data-board="from £249">
                   <th scope="row">M3 Pro/Max (2023)</th>
                   <td>A2991</td>
                   <td class="num">£699</td>
                   <td class="num">£279</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
-                <tr data-codes="A3186 A3403" data-name="MacBook Pro 16-inch M4 Pro/Max (2024)" data-screen="£799" data-battery="£299">
+                <tr data-codes="A3186 A3403" data-name="MacBook Pro 16-inch M4 Pro/Max (2024)" data-screen="£799" data-battery="£299" data-board="from £249">
                   <th scope="row">M4 Pro/Max (2024)</th>
                   <td>A3186 / A3403</td>
                   <td class="num">£799</td>
                   <td class="num">£299</td>
+                  <td class="num"><span class="from">from </span>£249</td>
                 </tr>
               </tbody>
             </table>
@@ -3204,7 +3195,7 @@
         if (matches.length) {
           var lines = matches.map(function (row) {
             return '<span class="identify-line"><strong>' + row.getAttribute("data-name") + ' (' + row.getAttribute("data-codes").split(" ").join(" / ") + ')</strong>, screen ' +
-              row.getAttribute("data-screen") + ', battery ' + row.getAttribute("data-battery") + '</span>';
+              row.getAttribute("data-screen") + ', battery ' + row.getAttribute("data-battery") + ', board ' + row.getAttribute("data-board") + '</span>';
           }).join("");
           out.innerHTML = '<span class="identify-lines">' + lines + '</span>' +
             '<a class="btn-ghost" href="#quote-section">Open in quote tool</a>';
