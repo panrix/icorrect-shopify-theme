@@ -76,6 +76,9 @@
 
       showSuccessMessage(form);
 
+      identifyPostHogEnquiry(formData.email, formData.name);
+      capturePostHogContactSubmit(formData);
+
       if (typeof gtag === 'function') {
         gtag('event', 'form_submission', {
           event_category: 'Contact Form',
@@ -155,9 +158,66 @@
     }
   }
 
+  function getPostHogDistinctId() {
+    try {
+      if (window.icorrectPostHog && typeof window.icorrectPostHog.getDistinctId === 'function') {
+        return window.icorrectPostHog.getDistinctId();
+      }
+      if (window.posthog && typeof window.posthog.get_distinct_id === 'function') {
+        return String(window.posthog.get_distinct_id() || '');
+      }
+    } catch (e) {}
+    return '';
+  }
+
+  function identifyPostHogEnquiry(email, name) {
+    try {
+      if (window.icorrectPostHog && typeof window.icorrectPostHog.identifyEnquiry === 'function') {
+        window.icorrectPostHog.identifyEnquiry(email, name);
+        return;
+      }
+      const normalized = String(email || '').trim().toLowerCase();
+      if (!normalized || !window.posthog || typeof window.posthog.identify !== 'function') return;
+      const props = { email: normalized };
+      const cleanName = String(name || '').trim();
+      if (cleanName) props.name = cleanName;
+      window.posthog.identify(normalized, props);
+    } catch (e) {}
+  }
+
+  function capturePostHogContactSubmit(formData) {
+    try {
+      if (!window.posthog || typeof window.posthog.capture !== 'function') return;
+      window.posthog.capture('contact_form_submitted', {
+        form_type: formData && formData.company ? 'corporate' : 'consumer',
+        page_path: window.location.pathname
+      });
+    } catch (e) {}
+  }
+
+  function getAttributionSnapshot() {
+    try {
+      if (window.icorrectAttribution && typeof window.icorrectAttribution.forQuote === 'function') {
+        return window.icorrectAttribution.forQuote() || null;
+      }
+    } catch (e) {}
+    return null;
+  }
+
   async function sendToN8N(formData) {
     const controller = new AbortController();
     const timeoutId = window.setTimeout(() => controller.abort(), 30000);
+    const posthogDistinctId = getPostHogDistinctId();
+    const attribution = getAttributionSnapshot();
+    const payload = {
+      contact: formData,
+      timestamp: new Date().toISOString(),
+      source: 'shopify-website',
+      page_url: window.location.href,
+      referrer: document.referrer || null
+    };
+    if (posthogDistinctId) payload.posthog_distinct_id = posthogDistinctId;
+    if (attribution) payload.attribution = attribution;
 
     try {
       const response = await fetch(CONFIG.webhookUrl, {
@@ -166,13 +226,7 @@
           'Content-Type': 'application/json',
           Accept: 'application/json'
         },
-        body: JSON.stringify({
-          contact: formData,
-          timestamp: new Date().toISOString(),
-          source: 'shopify-website',
-          page_url: window.location.href,
-          referrer: document.referrer || null
-        }),
+        body: JSON.stringify(payload),
         signal: controller.signal
       });
 
