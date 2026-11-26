@@ -103,30 +103,52 @@
       --fg-1: #171717;
       --fg-2: #4d4d4d;
       --fg-3: #666666;
-      --fg-4: #808080;
       --bg-1: #ffffff;
       --bg-2: #fafafa;
       --bg-3: #f4f4f5;
-      --line: rgba(0, 0, 0, 0.08);
-      --line-strong: rgba(0, 0, 0, 0.16);
+      --line: #e5e7eb;
+      --line-strong: #c4c8cf;
+      --control-border: #8b919b;
       --accent: #0b63ce;
       --accent-hover: #0952ab;
       --accent-soft: #f0f7ff;
-      --green: #047857;
-      --green-dot: #10b981;
-      --green-soft: #e6f6ec;
       --star: #f59e0b;
-      --shadow-card: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.03);
-      --shadow-lift: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 10px 28px -10px rgba(0, 0, 0, 0.08);
+      --focus: #0b63ce;
+
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --space-16: 64px;
+
+      --text-xs: 12px;
+      --text-sm: 14px;
+      --text-md: 16px;
+      --text-lg: 20px;
+      --text-xl: 24px;
+      --text-2xl: 30px;
+      --text-3xl: 36px;
+      --text-hero: 44px;
+
+      --shadow-card: 0 1px 2px rgba(17, 24, 39, 0.04);
+      --shadow-lift: 0 8px 24px -8px rgba(17, 24, 39, 0.12);
       --r-sm: 6px;
-      --r-md: 10px;
-      --r-lg: 14px;
+      --r-md: 8px;
+      --r-lg: 12px;
+      --r-pill: 999px;
       --max-w: 1120px;
+      --header-h: 56px;
     }
 
     *, *::before, *::after { box-sizing: border-box; }
     html {
       scroll-behavior: smooth;
+      scroll-padding-top: calc(var(--header-h) + var(--space-4));
       overflow-x: clip;
     }
     body {
@@ -138,26 +160,67 @@
       -webkit-font-smoothing: antialiased;
       font-feature-settings: "liga";
       line-height: 1.5;
-      font-size: 15px;
+      font-size: var(--text-md);
     }
     a { color: inherit; }
     button, input { font-family: inherit; }
     img, svg { display: block; max-width: 100%; }
+    h1, h2, h3 { text-wrap: balance; }
+
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+    .section-dark :focus-visible,
+    .site-footer :focus-visible { outline-color: #ffffff; }
+
+    .skip-link {
+      position: absolute;
+      left: var(--space-4);
+      top: var(--space-2);
+      z-index: 100;
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--r-sm);
+      background: #111827;
+      color: #ffffff;
+      font-size: var(--text-sm);
+      font-weight: 500;
+      text-decoration: none;
+      transform: translateY(-200%);
+    }
+    .skip-link:focus { transform: translateY(0); }
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .price-chip-val, .model-row-price, .model-group-head span, .cmp-verdict { font-variant-numeric: tabular-nums; }
 
     .ic-container {
       width: 100%;
       max-width: var(--max-w);
       margin: 0 auto;
-      padding: 0 24px;
+      padding: 0 var(--space-6);
     }
 
     .mono-label {
       font-family: var(--font-mono);
-      font-size: 11px;
+      font-size: var(--text-xs);
       font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0;
       color: var(--fg-3);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
     }
 
     /* Header */
@@ -165,19 +228,18 @@
       position: sticky;
       top: 0;
       z-index: 40;
-      background: rgba(255, 255, 255, 0.94);
-      backdrop-filter: blur(10px);
+      background: #ffffff;
       border-bottom: 1px solid var(--line);
     }
     .header-inner {
-      height: 56px;
+      height: var(--header-h);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: var(--space-4);
     }
     .brand {
-      font-size: 18px;
+      font-size: var(--text-lg);
       font-weight: 600;
       letter-spacing: -0.04em;
       text-decoration: none;
@@ -186,13 +248,17 @@
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 22px;
+      gap: var(--space-2);
       list-style: none;
       margin: 0;
       padding: 0;
     }
     .nav-links a {
-      font-size: 13.5px;
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 var(--space-2);
+      font-size: var(--text-sm);
       color: var(--fg-2);
       text-decoration: none;
       transition: color 140ms ease;
@@ -201,48 +267,35 @@
     .header-right {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: var(--space-4);
     }
     .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 5px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: var(--bg-2);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      letter-spacing: 0.04em;
-      color: var(--fg-2);
+      font-size: var(--text-sm);
+      color: var(--fg-3);
       white-space: nowrap;
-    }
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--green-dot);
-      flex-shrink: 0;
     }
     .btn-dark {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      min-height: 40px;
-      padding: 8px 16px;
-      border-radius: var(--r-sm);
+      gap: var(--space-2);
+      min-height: 44px;
+      padding: 0 var(--space-4);
+      border-radius: var(--r-md);
       background: #111827;
       color: #ffffff;
       border: 1px solid #111827;
-      font-size: 14px;
+      font-size: var(--text-sm);
       font-weight: 500;
       text-decoration: none;
       cursor: pointer;
-      transition: background 140ms ease;
+      transition: background 140ms ease, transform 140ms ease-out;
       white-space: nowrap;
     }
     .btn-dark:hover { background: #1f2937; }
+    .btn-dark:active { background: #000000; transform: translateY(1px); }
+    .btn-dark:disabled,
+    .btn-dark[aria-disabled="true"] { background: #9ca3af; border-color: #9ca3af; cursor: not-allowed; }
     .header-cta {
       transition: opacity 200ms ease, transform 200ms ease, visibility 200ms ease, background 140ms ease;
     }
@@ -254,25 +307,24 @@
     }
     .floating-cta {
       position: fixed;
-      right: 24px;
-      bottom: 24px;
+      right: var(--space-6);
+      bottom: var(--space-6);
       z-index: 60;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 7px;
-      height: 50px;
-      padding: 0 22px;
-      border-radius: 999px;
+      gap: var(--space-2);
+      height: 48px;
+      padding: 0 var(--space-6);
+      border-radius: var(--r-md);
       background: #111827;
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      font-size: 14.5px;
+      border: 1px solid #111827;
+      font-size: var(--text-md);
       font-weight: 500;
-      letter-spacing: -0.01em;
       text-decoration: none;
       white-space: nowrap;
-      box-shadow: 0 12px 28px rgba(17, 24, 39, 0.28), 0 2px 8px rgba(0, 0, 0, 0.16);
+      box-shadow: var(--shadow-lift);
       opacity: 0;
       transform: translateY(14px);
       pointer-events: none;
@@ -290,54 +342,41 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      min-height: 36px;
-      padding: 6px 12px;
-      border-radius: 999px;
+      gap: var(--space-2);
+      min-height: 44px;
+      padding: 0 var(--space-4);
+      border-radius: var(--r-md);
       background: #ffffff;
-      color: var(--fg-2);
-      border: 1px solid var(--line-strong);
-      font-size: 13px;
+      color: var(--fg-1);
+      border: 1px solid var(--control-border);
+      font-size: var(--text-sm);
       font-weight: 500;
       text-decoration: none;
       cursor: pointer;
-      transition: border-color 140ms ease, color 140ms ease, background 140ms ease;
+      transition: border-color 140ms ease, background 140ms ease;
       white-space: nowrap;
     }
     .btn-ghost:hover {
-      color: var(--fg-1);
       border-color: var(--fg-1);
       background: var(--bg-2);
     }
-    .btn-pill-neutral {
-      background: #f5f6f8;
-      border-color: #e2e5ea;
-      color: #1f2937;
-    }
-    .btn-pill-neutral:hover {
-      background: #eceef2;
-      border-color: #cbd5e1;
-      color: #111827;
-    }
+    .btn-ghost:active { background: var(--bg-3); }
 
     /* 1. CALM VALUE-FIRST HERO + EXPLODED DISPLAY VISUAL */
     .hero-band {
-      padding: 24px 0 40px;
+      padding: var(--space-6) 0 var(--space-12);
       background: #ffffff;
       border-bottom: 1px solid var(--line);
     }
     .breadcrumb {
       display: flex;
       align-items: center;
-      gap: 6px;
-      margin-bottom: 16px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #6b7280;
+      gap: var(--space-2);
+      margin-bottom: var(--space-6);
+      font-size: var(--text-sm);
+      color: var(--fg-3);
     }
-    .breadcrumb a { text-decoration: none; color: #6b7280; }
+    .breadcrumb a { color: var(--fg-3); text-underline-offset: 3px; }
     .breadcrumb a:hover { color: #111827; }
     .breadcrumb-current {
       color: #111827;
@@ -346,8 +385,8 @@
 
     .hero-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
-      column-gap: 40px;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      column-gap: var(--space-12);
       row-gap: 0;
       align-items: center;
     }
@@ -357,28 +396,33 @@
     }
 
     .hero-title {
-      margin: 0 0 10px;
-      font-size: 44px;
+      margin: 0 0 var(--space-4);
+      font-size: var(--text-hero);
       font-weight: 600;
-      line-height: 1.06;
+      line-height: 1.08;
       letter-spacing: -0.04em;
       color: var(--fg-1);
-      text-wrap: balance;
     }
     .hero-lead {
-      margin: 0 0 18px;
-      font-size: 16.5px;
+      margin: 0 0 var(--space-6);
+      font-size: var(--text-md);
       line-height: 1.5;
       color: var(--fg-2);
-      max-width: 48ch;
+      max-width: 52ch;
       text-wrap: pretty;
     }
 
     /* Horizontal From-Price Tiles below H1 */
+    .price-strip-label {
+      margin: 0 0 var(--space-2);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--fg-1);
+    }
     .price-strip {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
+      gap: var(--space-2);
       list-style: none;
       margin: 0;
       padding: 0;
@@ -387,79 +431,85 @@
     .price-strip li { min-width: 0; }
     .price-chip {
       width: 100%;
+      min-height: 56px;
       text-align: left;
-      padding: 10px 12px;
-      border-radius: var(--r-sm);
-      border: 1px solid #d1d5db;
-      background: linear-gradient(180deg, #f8f9fa 0%, #f1f3f5 100%);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 1px 2px rgba(0, 0, 0, 0.03);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--r-md);
+      border: 1px solid var(--line-strong);
+      background: #f5f6f8;
+      box-shadow: inset 0 1px 0 #ffffff;
       text-decoration: none;
       display: flex;
       flex-direction: column;
-      gap: 2px;
-      transition: border-color 140ms ease, background 140ms ease, box-shadow 140ms ease;
+      justify-content: center;
+      gap: 0;
+      transition: border-color 140ms ease, background 140ms ease;
     }
     .price-chip:hover {
-      border-color: #9ca3af;
-      background: linear-gradient(180deg, #ffffff 0%, #f3f4f6 100%);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 3px 10px rgba(17, 24, 39, 0.07);
+      border-color: var(--control-border);
+      background: #ffffff;
     }
+    .price-chip:active { background: var(--bg-3); }
     .price-chip-model {
-      font-size: 12px;
+      font-size: var(--text-xs);
       font-weight: 500;
+      line-height: 16px;
       color: #4b5563;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
     .price-chip-val {
-      font-size: 15px;
+      font-size: var(--text-md);
       font-weight: 600;
+      line-height: 24px;
       letter-spacing: -0.02em;
       color: #111827;
     }
     .hero-price-note {
-      margin: 8px 0 0;
-      font-size: 12px;
+      margin: var(--space-3) 0 0;
+      font-size: var(--text-sm);
       color: var(--fg-3);
     }
     .hero-jump-row {
-      margin-top: 14px;
+      margin-top: var(--space-6);
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: var(--space-2);
     }
 
     /* Exploded Display Stage right in First Fold */
     .diagram-stage {
-      background: #f8fafc;
-      border: 1px solid #e5e7eb;
+      background: var(--bg-2);
+      border: 1px solid var(--line);
       border-radius: var(--r-lg);
-      padding: 14px 18px;
+      padding: var(--space-4) var(--space-6);
       width: 100%;
     }
     .diagram-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 4px;
+      gap: var(--space-3);
+      margin-bottom: var(--space-1);
       flex-wrap: wrap;
+    }
+    .diagram-title {
+      margin: 0;
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--fg-1);
     }
     .diagram-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 3px 9px;
-      border-radius: 999px;
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      font-family: var(--font-mono);
-      font-size: 10.5px;
+      gap: var(--space-2);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--r-pill);
+      background: var(--accent-soft);
+      font-size: var(--text-xs);
       font-weight: 500;
       color: var(--accent);
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
     }
     .diagram-pill-dot {
       width: 6px;
@@ -505,7 +555,7 @@
       display: flex;
       align-items: center;
       gap: 7px;
-      font-size: 12px;
+      font-size: var(--text-xs);
       color: var(--fg-2);
       min-width: 0;
     }
@@ -521,7 +571,7 @@
       background: #ffffff;
       color: var(--fg-1);
       font-family: var(--font-mono);
-      font-size: 10px;
+      font-size: var(--text-xs);
       font-weight: 600;
       display: inline-flex;
       align-items: center;
@@ -537,7 +587,7 @@
       margin-top: 10px;
       padding-top: 10px;
       border-top: 1px solid var(--line);
-      font-size: 12.5px;
+      font-size: var(--text-sm);
       color: var(--fg-3);
       display: flex;
       align-items: flex-start;
@@ -555,30 +605,29 @@
 
     /* 4-Badge Trust Strip: Directly BELOW hero and ABOVE the 3 proof cards */
     .trust-strip {
-      margin: 28px 0 0;
+      margin: var(--space-8) 0 0;
       padding: 0;
       list-style: none;
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       background: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
       overflow: hidden;
     }
     .trust-cell {
-      padding: 13px 16px;
+      padding: var(--space-4);
       display: flex;
       align-items: center;
-      gap: 11px;
-      border-right: 1px solid #e5e7eb;
+      gap: var(--space-3);
+      border-right: 1px solid var(--line);
       min-width: 0;
     }
     .trust-cell:last-child { border-right: 0; }
     .trust-rating-link {
       display: flex;
       align-items: center;
-      gap: 11px;
+      gap: var(--space-3);
       text-decoration: none;
       width: 100%;
       min-width: 0;
@@ -602,11 +651,11 @@
       transform: translateY(-0.5px);
     }
     .trust-icon {
-      width: 30px;
-      height: 30px;
-      border-radius: 8px;
-      background: #f8fafc;
-      border: 1px solid #e5e7eb;
+      width: 32px;
+      height: 32px;
+      border-radius: var(--r-md);
+      background: var(--bg-2);
+      border: 1px solid var(--line);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -621,126 +670,133 @@
       min-width: 0;
     }
     .trust-copy strong {
-      font-size: 13px;
+      font-size: var(--text-sm);
       font-weight: 600;
       letter-spacing: -0.015em;
       color: #111827;
       line-height: 1.25;
     }
     .trust-copy span {
-      font-size: 11.5px;
-      color: #6b7280;
-      line-height: 1.25;
+      font-size: var(--text-xs);
+      color: var(--fg-3);
+      line-height: 16px;
     }
 
-    /* 3 Panel-Only Proof Cards: Cards on desktop, compact expandable accordions on mobile */
+    /* Shared disclosure chevron and check/cross marks (one SVG icon style, 2px stroke) */
+    .chev {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      font-size: 0;
+      background: currentColor;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") center / 16px no-repeat;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") center / 16px no-repeat;
+      transition: transform 150ms ease-out;
+    }
+    [aria-expanded="true"] .chev { transform: rotate(180deg); }
+    .check-mark {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      margin-top: 4px;
+      flex-shrink: 0;
+      font-size: 0;
+      background: var(--fg-1);
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 16px no-repeat;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 16px no-repeat;
+    }
+
+    /* 3 Panel-Only Proof Points: divided row on desktop, compact accordions on mobile */
     .pillars-strip {
-      margin-top: 14px;
+      margin-top: var(--space-8);
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
+      gap: 0;
+      border-top: 1px solid var(--line);
     }
     .pillar-card {
-      background: var(--bg-2);
-      border: 1px solid var(--line);
-      border-radius: var(--r-md);
-      overflow: hidden;
+      padding: var(--space-6) var(--space-6) 0;
+      border-left: 1px solid var(--line);
+      min-width: 0;
     }
+    .pillar-card:first-child { padding-left: 0; border-left: 0; }
+    .pillar-card:last-child { padding-right: 0; }
     .pillar-toggle {
       width: 100%;
       background: transparent;
       border: 0;
-      padding: 15px 16px 6px;
+      padding: 0 0 var(--space-2);
       text-align: left;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: var(--space-3);
       cursor: default;
+      color: var(--fg-1);
     }
     .pillar-title {
-      font-size: 14.5px;
+      font-size: var(--text-md);
       font-weight: 600;
       color: var(--fg-1);
-      line-height: 1.3;
+      line-height: 1.4;
     }
-    .pillar-plus {
-      display: none;
-      font-family: var(--font-mono);
-      font-size: 16px;
-      color: var(--fg-3);
-      flex-shrink: 0;
-    }
+    .pillar-plus { display: none; color: var(--fg-3); }
     .pillar-body {
-      padding: 0 16px 15px;
-      font-size: 13.5px;
+      font-size: var(--text-md);
       color: var(--fg-2);
       line-height: 1.5;
     }
     .pillar-body p { margin: 0; }
 
-    /* Collection & Calibration Lead-In Card (Directly ABOVE "How our display repair compares") */
+    /* Collection & Calibration Lead-In (Directly ABOVE "How our display repair compares") */
     .process-bar {
-      margin: 0 0 40px;
-      scroll-margin-top: 84px;
-      background: #f8fafc;
-      border: 1px solid #e5e7eb;
+      margin: 0 0 var(--space-16);
+      background: #ffffff;
+      border: 1px solid var(--line);
       border-radius: var(--r-lg);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
       overflow: hidden;
     }
     .process-bar-trigger {
       width: 100%;
       border: 0;
       background: transparent;
-      padding: 20px 22px;
+      padding: var(--space-6);
       text-align: left;
       display: flex;
       flex-direction: column;
       align-items: stretch;
-      gap: 14px;
+      gap: var(--space-6);
       cursor: pointer;
+      color: var(--fg-1);
       transition: background 140ms ease;
     }
-    .process-bar-trigger:hover { background: #f3f6fa; }
+    .process-bar-trigger:hover { background: var(--bg-2); }
     .process-bar-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: var(--space-4);
       width: 100%;
     }
     .process-bar-top {
       display: flex;
-      align-items: baseline;
-      gap: 12px;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: var(--space-1);
       min-width: 0;
     }
     .process-bar-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 3px 9px;
-      border-radius: 999px;
-      background: #ffffff;
-      border: 1px solid #d1d5db;
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: #111827;
-      white-space: nowrap;
-      flex-shrink: 0;
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--fg-3);
     }
     .process-bar-title {
       margin: 0;
-      font-size: 18px;
+      font-size: var(--text-lg);
       font-weight: 600;
       letter-spacing: -0.025em;
       color: #111827;
-      line-height: 1.25;
+      line-height: 1.4;
     }
     .process-highlights {
       list-style: none;
@@ -748,70 +804,69 @@
       padding: 0;
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
+      gap: 0;
       width: 100%;
     }
     .process-highlight {
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 10px;
-      padding: 10px 13px;
+      padding: 0 var(--space-6);
+      border-left: 1px solid var(--line);
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: var(--space-1);
       min-width: 0;
     }
+    .process-highlight:first-child { padding-left: 0; border-left: 0; }
     .process-highlight strong {
-      font-size: 13px;
+      font-size: var(--text-md);
       font-weight: 600;
       color: #111827;
       letter-spacing: -0.015em;
-      line-height: 1.3;
+      line-height: 1.4;
     }
     .process-highlight span {
-      font-size: 12px;
-      color: #6b7280;
-      line-height: 1.35;
+      font-size: var(--text-sm);
+      color: var(--fg-3);
+      line-height: 1.45;
     }
     .process-bar-pill {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      padding: 9px 14px;
-      border-radius: 999px;
-      border: 1px solid #d1d5db;
+      gap: var(--space-2);
+      min-height: 44px;
+      padding: 0 var(--space-4);
+      border-radius: var(--r-md);
+      border: 1px solid var(--control-border);
       background: #ffffff;
-      font-size: 13px;
+      font-size: var(--text-sm);
       font-weight: 500;
       color: #111827;
       white-space: nowrap;
       flex-shrink: 0;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
     }
     .process-bar-panel {
       display: none;
-      border-top: 1px solid #e5e7eb;
-      background: #ffffff;
-      padding: 20px 22px 22px;
+      border-top: 1px solid var(--line);
+      background: var(--bg-2);
+      padding: var(--space-6);
     }
     .process-bar.is-open .process-bar-panel { display: block; }
     .process-detail-head {
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      gap: 12px;
+      gap: var(--space-3);
       flex-wrap: wrap;
-      margin-bottom: 14px;
+      margin-bottom: var(--space-6);
     }
     .process-detail-head h3 {
       margin: 0;
-      font-size: 15.5px;
+      font-size: var(--text-md);
       font-weight: 600;
       letter-spacing: -0.02em;
       color: var(--fg-1);
     }
     .process-detail-head span {
-      font-size: 12.5px;
+      font-size: var(--text-sm);
       color: var(--fg-3);
     }
     .process-detail-grid {
@@ -820,39 +875,36 @@
       padding: 0;
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
+      gap: var(--space-6);
     }
     .process-detail-card {
-      background: #ffffff;
-      border: 1px solid var(--line);
-      border-radius: var(--r-sm);
-      padding: 13px 14px;
+      padding-top: var(--space-3);
+      border-top: 2px solid var(--fg-1);
       min-width: 0;
     }
     .process-detail-card .mono-label {
       display: block;
-      color: var(--accent);
-      margin-bottom: 4px;
+      margin-bottom: var(--space-1);
     }
     .process-detail-card h3 {
-      margin: 0 0 4px;
-      font-size: 14px;
+      margin: 0 0 var(--space-2);
+      font-size: var(--text-md);
       font-weight: 600;
       color: var(--fg-1);
     }
     .process-detail-card p {
       margin: 0;
-      font-size: 12.5px;
+      font-size: var(--text-sm);
       line-height: 1.5;
       color: var(--fg-2);
     }
 
     /* Sections */
     .section {
-      padding: 56px 0;
+      padding: var(--space-16) 0;
       border-bottom: 1px solid var(--line);
     }
-    .section-compact { padding: 44px 0; }
+    .section-compact { padding: var(--space-12) 0; }
     .section-soft { background: var(--bg-2); }
     .section-dark {
       background: #171717;
@@ -861,21 +913,20 @@
     }
     .section-head {
       max-width: 680px;
-      margin-bottom: 28px;
+      margin-bottom: var(--space-8);
     }
     .section-title {
-      margin: 6px 0 8px;
-      font-size: 30px;
+      margin: 0 0 var(--space-3);
+      font-size: var(--text-2xl);
       font-weight: 600;
-      line-height: 1.15;
+      line-height: 1.2;
       letter-spacing: -0.035em;
       color: var(--fg-1);
-      text-wrap: balance;
     }
     .section-dark .section-title { color: #ffffff; }
     .section-lead {
       margin: 0;
-      font-size: 15.5px;
+      font-size: var(--text-md);
       color: var(--fg-2);
       line-height: 1.55;
       text-wrap: pretty;
@@ -889,21 +940,20 @@
       justify-content: space-between;
       gap: 14px;
       flex-wrap: wrap;
-      margin-bottom: 20px;
+      margin-bottom: var(--space-6);
     }
     .reviews-head-main {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: var(--space-4);
       min-width: 0;
     }
     .reviews-g-badge {
       width: 40px;
       height: 40px;
-      border-radius: 10px;
+      border-radius: var(--r-md);
       background: #ffffff;
-      border: 1px solid #e5e7eb;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+      border: 1px solid var(--line);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -912,23 +962,18 @@
     .reviews-title-row {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: var(--space-3);
       flex-wrap: wrap;
-      margin-top: 2px;
     }
     .reviews-stars-inline {
       display: inline-flex;
       align-items: center;
       gap: 2px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
       line-height: 1;
     }
     .trustindex-slot {
       width: 100%;
-      min-height: 252px;
+      min-height: 256px;
       overflow-x: clip;
     }
 
@@ -954,34 +999,29 @@
     }
     #google-reviews .ti-widget .ti-review-item > .ti-inner {
       background: #ffffff !important;
-      border: 1px solid #e5e7eb !important;
-      border-radius: 16px !important;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 4px 14px rgba(0, 0, 0, 0.03) !important;
-      padding: 20px 22px !important;
-      transition: border-color 140ms ease, box-shadow 140ms ease !important;
-    }
-    #google-reviews .ti-widget .ti-review-item > .ti-inner:hover {
-      border-color: #d1d5db !important;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), 0 8px 20px rgba(0, 0, 0, 0.05) !important;
+      border: 1px solid var(--line) !important;
+      border-radius: var(--r-lg) !important;
+      box-shadow: none !important;
+      padding: var(--space-6) !important;
     }
     #google-reviews .ti-widget .ti-name {
-      font-size: 14px !important;
+      font-size: var(--text-sm) !important;
       font-weight: 600 !important;
       letter-spacing: -0.015em !important;
       color: #111827 !important;
     }
     #google-reviews .ti-widget .ti-date {
-      font-size: 12px !important;
+      font-size: var(--text-xs) !important;
       color: #6b7280 !important;
     }
     #google-reviews .ti-widget .ti-review-content {
-      font-size: 14px !important;
+      font-size: var(--text-sm) !important;
       line-height: 1.55 !important;
       color: #374151 !important;
     }
     #google-reviews .ti-widget .ti-read-more,
     #google-reviews .ti-widget .ti-read-more span {
-      font-size: 12.5px !important;
+      font-size: var(--text-sm) !important;
       font-weight: 500 !important;
       color: var(--accent) !important;
       opacity: 1 !important;
@@ -991,9 +1031,9 @@
       background: #ffffff !important;
       border: 1px solid #e5e7eb !important;
       border-radius: 999px !important;
-      width: 34px !important;
-      height: 34px !important;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+      width: 44px !important;
+      height: 44px !important;
+      box-shadow: var(--shadow-lift) !important;
       transition: border-color 140ms ease, background 140ms ease !important;
     }
     #google-reviews .ti-widget .ti-controls .ti-prev:hover,
@@ -1015,17 +1055,16 @@
 
     /* 3. HOW WE COMPARE + WORKSHOP & 2-YEAR WARRANTY */
     .compare-card {
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--line);
       border-radius: var(--r-lg);
       background: #ffffff;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
       overflow: hidden;
     }
     .compare-table-wrap { width: 100%; }
     .compare-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 14px;
+      font-size: var(--text-sm);
       text-align: left;
       table-layout: fixed;
     }
@@ -1033,82 +1072,75 @@
     .compare-table col.col-w-win { width: 29%; }
     .compare-table col.col-w-other { width: 25.5%; }
     .compare-table th, .compare-table td {
-      padding: 15px 18px;
-      border-bottom: 1px solid #e5e7eb;
+      padding: var(--space-4) var(--space-5);
+      border-bottom: 1px solid var(--line);
       vertical-align: top;
     }
     .compare-table th {
       font-family: var(--font-sans);
-      font-size: 14px;
+      font-size: var(--text-sm);
       font-weight: 600;
       letter-spacing: -0.015em;
-      text-transform: none;
-      color: #4b5563;
-      background: #fafafa;
-      padding: 16px 18px;
+      color: #374151;
+      background: var(--bg-2);
     }
     .compare-table th.col-icorrect {
-      background: #eff6ff;
-      color: #0b63ce;
-      border-top: 3px solid #0b63ce;
-      border-left: 1px solid #bfdbfe;
-      border-right: 1px solid #bfdbfe;
+      background: var(--accent-soft);
+      color: var(--accent);
     }
-    .compare-table td.col-icorrect {
-      background: #f5f9ff;
-      border-left: 1px solid #dbeafe;
-      border-right: 1px solid #dbeafe;
-    }
+    .compare-table td.col-icorrect { background: #f7fbff; }
     .compare-win-head {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
+      gap: var(--space-2);
       flex-wrap: wrap;
     }
-    .compare-win-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #0b63ce;
-      flex-shrink: 0;
-    }
+    .compare-win-dot { display: none; }
     .cmp-row-label {
-      font-size: 14px;
+      font-size: var(--text-sm);
       font-weight: 600;
       letter-spacing: -0.015em;
       color: #111827;
-      line-height: 1.35;
+      line-height: 1.4;
     }
     .cmp-cell {
       display: flex;
       align-items: flex-start;
-      gap: 9px;
+      gap: var(--space-2);
       min-width: 0;
     }
     .cmp-mark {
-      width: 18px;
-      height: 18px;
-      border-radius: 999px;
+      width: 20px;
+      height: 20px;
+      border-radius: var(--r-pill);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 11px;
-      font-weight: 700;
-      line-height: 1;
+      font-size: 0;
       flex-shrink: 0;
-      margin-top: 1px;
+    }
+    .cmp-mark::before {
+      content: "";
+      width: 12px;
+      height: 12px;
+      background: currentColor;
+      -webkit-mask: var(--cmp-icon) center / 12px no-repeat;
+      mask: var(--cmp-icon) center / 12px no-repeat;
     }
     .cmp-mark-win {
-      background: #dbeafe;
-      color: #0b63ce;
+      background: var(--accent);
+      color: #ffffff;
+      --cmp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
     }
     .cmp-mark-neutral {
-      background: #f3f4f6;
-      color: #6b7280;
+      background: #e5e7eb;
+      color: #374151;
+      --cmp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M6 12h12'/%3E%3C/svg%3E");
     }
     .cmp-mark-no {
-      background: #f3f4f6;
-      color: #9ca3af;
+      background: #e5e7eb;
+      color: #4b5563;
+      --cmp-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7L7 17'/%3E%3C/svg%3E");
     }
     .cmp-copy {
       display: flex;
@@ -1117,126 +1149,130 @@
       min-width: 0;
     }
     .cmp-verdict {
-      font-size: 13.5px;
+      font-size: var(--text-sm);
       font-weight: 600;
       letter-spacing: -0.01em;
       color: #111827;
-      line-height: 1.3;
+      line-height: 1.4;
     }
-    .col-icorrect .cmp-verdict { color: #0f172a; }
     .cmp-sub {
-      font-size: 12.5px;
-      color: #6b7280;
-      line-height: 1.35;
+      font-size: var(--text-sm);
+      color: var(--fg-3);
+      line-height: 1.4;
     }
     .col-icorrect .cmp-sub { color: #334155; }
     .compare-extra-row { display: none; }
     .compare-card.is-expanded .compare-extra-row { display: table-row; }
-    #compare { scroll-margin-top: 72px; }
     .compare-expand-btn {
       width: 100%;
+      min-height: 48px;
       border: 0;
-      background: #fafafa;
+      background: var(--bg-2);
       color: #111827;
-      padding: 13px 18px;
-      font-size: 13.5px;
+      padding: 0 var(--space-4);
+      font-size: var(--text-sm);
       font-weight: 500;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: var(--space-2);
       cursor: pointer;
       transition: background 140ms ease;
     }
-    .compare-expand-btn:hover { background: #f3f4f6; }
+    .compare-expand-btn:hover { background: var(--bg-3); }
     .compare-expand-icon {
-      font-family: var(--font-mono);
-      font-size: 15px;
-      color: #6b7280;
+      color: var(--fg-3);
     }
 
     .workshop-block { margin-top: 44px; }
     .visual-pair {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
+      gap: var(--space-6);
     }
     .visual-card {
-      background: #ffffff;
-      border: 1px solid var(--line);
-      border-radius: var(--r-lg);
-      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      box-shadow: var(--shadow-card);
+      gap: var(--space-4);
+      min-width: 0;
     }
     .visual-card-img {
       background: var(--bg-2);
-      border-radius: var(--r-md);
-      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      padding: var(--space-4);
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 210px;
+      aspect-ratio: 16 / 9;
     }
     .visual-card-img img {
-      max-height: 200px;
+      max-height: 100%;
       width: auto;
+      height: auto;
     }
     .visual-card h3 {
-      margin: 4px 0 4px;
-      font-size: 18px;
+      margin: 0 0 var(--space-2);
+      font-size: var(--text-lg);
       font-weight: 600;
+      line-height: 1.4;
       letter-spacing: -0.02em;
     }
     .visual-card p {
       margin: 0;
-      font-size: 14px;
+      font-size: var(--text-md);
       color: var(--fg-2);
       line-height: 1.5;
+      max-width: 60ch;
     }
 
     /* Expandable 2-Year Warranty Box */
     .warranty-card {
-      margin-top: 16px;
+      margin-top: var(--space-8);
       background: #ffffff;
       border: 1px solid var(--line);
-      border-radius: var(--r-md);
-      box-shadow: var(--shadow-card);
+      border-radius: var(--r-lg);
       overflow: hidden;
     }
     .warranty-toggle {
       width: 100%;
       border: 0;
       background: transparent;
-      padding: 18px 22px;
+      padding: var(--space-6);
       text-align: left;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: var(--space-4);
       cursor: pointer;
+      color: var(--fg-1);
       transition: background 140ms ease;
     }
     .warranty-toggle:hover { background: var(--bg-2); }
     .warranty-head-copy { min-width: 0; }
     .warranty-head-copy h3 {
-      margin: 4px 0 0;
-      font-size: 19px;
+      margin: 0;
+      font-size: var(--text-lg);
       font-weight: 600;
+      line-height: 1.4;
       letter-spacing: -0.025em;
       color: var(--fg-1);
+    }
+    .warranty-head-copy p {
+      margin: var(--space-1) 0 0;
+      font-size: var(--text-sm);
+      color: var(--fg-3);
     }
     .warranty-toggle-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      border-radius: var(--r-sm);
-      border: 1px solid var(--line-strong);
+      gap: var(--space-2);
+      min-height: 44px;
+      padding: 0 var(--space-4);
+      border-radius: var(--r-md);
+      border: 1px solid var(--control-border);
       background: #ffffff;
-      font-size: 12.5px;
+      font-size: var(--text-sm);
       font-weight: 500;
       color: var(--fg-1);
       white-space: nowrap;
@@ -1244,21 +1280,21 @@
     }
     .warranty-body {
       display: none;
-      padding: 0 22px 20px;
+      padding: 0 var(--space-6) var(--space-6);
       border-top: 1px solid var(--line);
     }
     .warranty-card.is-open .warranty-body {
       display: grid;
       grid-template-columns: 1fr 1.15fr;
-      gap: 18px 24px;
-      align-items: center;
-      padding-top: 16px;
+      gap: var(--space-4) var(--space-6);
+      align-items: start;
+      padding-top: var(--space-6);
     }
     .warranty-body p {
       margin: 0;
-      font-size: 13.5px;
+      font-size: var(--text-md);
       color: var(--fg-2);
-      line-height: 1.55;
+      line-height: 1.5;
     }
     .check-list {
       list-style: none;
@@ -1266,35 +1302,36 @@
       margin: 0;
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px 14px;
-      font-size: 13.5px;
+      gap: var(--space-3) var(--space-4);
+      font-size: var(--text-sm);
       color: var(--fg-2);
     }
     .check-list li {
       display: flex;
       align-items: flex-start;
-      gap: 7px;
+      gap: var(--space-2);
+      line-height: 1.5;
     }
-    .check-mark { color: var(--green); font-weight: 600; flex-shrink: 0; }
-
+    .check-list .check-mark { margin-top: 2px; }
     /* 4. RICKY'S EXACT FIND YOUR MODEL CONTAINER (DIRECTLY ABOVE QUOTE WIZARD) */
     .identify {
-      padding: 64px 0;
+      padding: var(--space-16) 0;
       border-bottom: 1px solid var(--line);
       background: var(--bg-2);
     }
     .identify-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 48px;
+      gap: var(--space-12);
       align-items: center;
     }
     .identify-grid > * { min-width: 0; }
     .identify-visual {
+      /* Brushed-aluminium base plate: the one hardware texture the brand keeps */
       background: linear-gradient(135deg, #eef0f2, #d9dde2);
-      border-radius: 16px;
-      padding: 44px;
-      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+      border-radius: var(--r-lg);
+      padding: var(--space-10);
+      border: 1px solid var(--line);
       aspect-ratio: 4/3;
       display: flex;
       align-items: center;
@@ -1306,85 +1343,110 @@
     }
     .identify-plate {
       background: #e5e5e5;
-      padding: 16px 20px;
-      border-radius: 6px;
+      padding: var(--space-4) var(--space-5);
+      border-radius: var(--r-sm);
       font-family: var(--font-mono);
-      color: #4d4d4d;
+      color: #3f3f46;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: var(--space-1);
       box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
     }
-    .identify-plate-line { font-size: 11px; }
+    .identify-plate-line { font-size: var(--text-xs); }
     .identify-plate-line.highlight {
-      font-size: 13px;
+      font-size: var(--text-sm);
       color: #171717;
-      margin-top: 6px;
+      margin-top: var(--space-2);
     }
     .identify-plate-line.highlight .hl {
       background: #ffffff;
-      padding: 2px 6px;
-      border-radius: 3px;
+      padding: 2px var(--space-2);
+      border-radius: var(--r-sm);
       box-shadow: 0 0 0 2px #171717;
       color: #171717;
       font-weight: 600;
     }
-    .identify-plate-line.muted { color: #808080; }
-    .identify-plate-line.small { font-size: 9px; }
+    .identify-plate-line.muted { color: #52525b; }
     .identify-hint {
       color: #171717 !important;
-      margin-top: 16px;
-      font-size: 11px !important;
+      margin-top: var(--space-4);
     }
     .identify-text h2 {
-      font: 600 36px/1.1 var(--font-sans);
-      letter-spacing: -1.44px;
-      margin: 8px 0 16px;
+      font-size: var(--text-3xl);
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -0.04em;
+      margin: var(--space-2) 0 var(--space-4);
       color: var(--fg-1);
     }
     .identify-text p {
-      font: 400 16px/1.6 var(--font-sans);
-      color: #4d4d4d;
-      margin: 0 0 20px;
+      font-size: var(--text-md);
+      line-height: 1.5;
+      color: var(--fg-2);
+      margin: 0 0 var(--space-6);
+      max-width: 52ch;
+    }
+    .field-label {
+      display: block;
+      margin-bottom: var(--space-2);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--fg-1);
+    }
+    .field-hint {
+      font-weight: 400;
+      color: var(--fg-3);
     }
     .identify-form {
       display: flex;
-      gap: 8px;
+      gap: var(--space-2);
       max-width: 420px;
     }
     .identify-form input {
       flex: 1;
       min-width: 0;
-      padding: 12px 14px;
-      border: 0;
-      border-radius: 8px;
+      min-height: 44px;
+      padding: 0 var(--space-3);
+      border: 1px solid var(--control-border);
+      border-radius: var(--r-md);
       background: #ffffff;
-      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
-      font: 400 15px var(--font-sans);
+      font-size: var(--text-md);
       color: #171717;
     }
-    .identify-form input:focus {
-      outline: none;
-      box-shadow: 0 0 0 2px #171717;
+    .identify-form input:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 1px;
+      border-color: var(--focus);
     }
+    .identify-form input[aria-invalid="true"] { border-color: #b42318; }
+    .identify-error {
+      margin: var(--space-2) 0 0;
+      font-size: var(--text-sm);
+      color: #b42318;
+    }
+    .identify-error[hidden] { display: none; }
     .identify-foot {
-      margin-top: 12px;
-      font: 400 13px var(--font-sans);
-      color: #666666;
+      margin-top: var(--space-4);
+      font-size: var(--text-sm);
+      color: var(--fg-3);
     }
-    .identify-foot a {
-      color: #0072f5;
-      text-decoration: none;
+    .identify-foot a,
+    .text-link {
+      color: var(--accent);
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 3px;
     }
-    .identify-foot a:hover { text-decoration: underline; }
+    .identify-foot a:hover,
+    .text-link:hover { color: var(--accent-hover); }
     .identify-result {
-      margin-top: 12px;
+      margin-top: var(--space-3);
       max-width: 420px;
-      padding: 12px 14px;
-      border-radius: 8px;
+      padding: var(--space-3);
+      border-radius: var(--r-md);
       border: 1px solid var(--line-strong);
       background: #ffffff;
-      font-size: 13.5px;
+      font-size: var(--text-sm);
       display: none;
     }
     .identify-result.is-visible {
@@ -1397,24 +1459,25 @@
 
     /* 5. LIVE UNTOUCHED QUOTE WIZARD SECTION */
     .wizard-band {
-      padding: 56px 0;
+      padding: var(--space-16) 0;
       background: #f4f4f5;
       border-bottom: 1px solid var(--line);
     }
     .wizard-intro {
       text-align: center;
       max-width: 640px;
-      margin: 0 auto 24px;
+      margin: 0 auto var(--space-8);
     }
     .wizard-intro h2 {
-      margin: 6px 0 6px;
-      font-size: 30px;
+      margin: 0 0 var(--space-2);
+      font-size: var(--text-2xl);
       font-weight: 600;
+      line-height: 1.2;
       letter-spacing: -0.035em;
     }
     .wizard-intro p {
       margin: 0;
-      font-size: 15px;
+      font-size: var(--text-md);
       color: var(--fg-2);
     }
     .wizard-live-host {
@@ -1426,75 +1489,74 @@
     .faults-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
+      gap: var(--space-8) var(--space-12);
     }
     .fault-card {
-      background: var(--bg-2);
-      border: 1px solid var(--line);
-      border-radius: var(--r-md);
-      padding: 18px 20px;
+      padding-top: var(--space-6);
+      border-top: 1px solid var(--line);
       min-width: 0;
     }
     .fault-card-top {
       display: flex;
-      align-items: center;
+      align-items: baseline;
       justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 6px;
+      gap: var(--space-3);
+      margin-bottom: var(--space-2);
       flex-wrap: wrap;
     }
     .fault-card h3 {
       margin: 0;
-      font-size: 16px;
+      font-size: var(--text-lg);
       font-weight: 600;
+      line-height: 1.4;
       letter-spacing: -0.02em;
       color: var(--fg-1);
     }
     .fault-tag {
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      padding: 2px 7px;
-      border-radius: 999px;
-      background: #ffffff;
-      border: 1px solid var(--line);
-      color: var(--fg-3);
+      font-size: var(--text-xs);
+      font-weight: 500;
+      padding: 2px var(--space-2);
+      border-radius: var(--r-pill);
+      background: var(--bg-3);
+      color: #3f3f46;
       white-space: nowrap;
     }
     .fault-card p {
       margin: 0;
-      font-size: 13.5px;
-      line-height: 1.55;
+      font-size: var(--text-md);
+      line-height: 1.5;
       color: var(--fg-2);
+      max-width: 62ch;
     }
     .fault-card-link {
-      display: inline-block;
-      margin-top: 8px;
-      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      margin-top: var(--space-1);
+      font-size: var(--text-sm);
       font-weight: 500;
       color: var(--accent);
-      text-decoration: none;
+      text-decoration: underline;
+      text-underline-offset: 3px;
     }
-    .fault-card-link:hover { text-decoration: underline; }
+    .fault-card-link:hover { color: var(--accent-hover); }
 
     /* Model Prices Directory (SEO-crawlable, grouped cleanly for 390px and 1440px) */
     .model-dir-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
+      gap: var(--space-6);
       align-items: start;
     }
     .model-group-card {
       background: #ffffff;
       border: 1px solid var(--line);
-      border-radius: var(--r-md);
-      box-shadow: var(--shadow-card);
+      border-radius: var(--r-lg);
       overflow: hidden;
       min-width: 0;
     }
     .model-group-head {
-      padding: 14px 16px;
+      padding: var(--space-4);
       background: var(--bg-2);
       border-bottom: 1px solid var(--line);
       display: flex;
@@ -1504,14 +1566,14 @@
     }
     .model-group-head h3 {
       margin: 0;
-      font-size: 15px;
+      font-size: var(--text-md);
       font-weight: 600;
       letter-spacing: -0.02em;
       color: var(--fg-1);
     }
     .model-group-head span {
       font-family: var(--font-mono);
-      font-size: 11px;
+      font-size: var(--text-xs);
       color: var(--fg-3);
       white-space: nowrap;
     }
@@ -1528,10 +1590,11 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      padding: 10px 16px;
+      gap: var(--space-3);
+      min-height: 56px;
+      padding: var(--space-2) var(--space-4);
       text-decoration: none;
-      transition: background 120ms ease;
+      transition: background 140ms ease;
     }
     .model-row a:hover { background: var(--bg-2); }
     .model-row-info {
@@ -1541,19 +1604,19 @@
       min-width: 0;
     }
     .model-row-name {
-      font-size: 13px;
+      font-size: var(--text-sm);
       font-weight: 500;
       color: var(--fg-1);
       line-height: 1.3;
     }
     .model-row-code {
       font-family: var(--font-mono);
-      font-size: 11px;
+      font-size: var(--text-xs);
       color: var(--fg-3);
       line-height: 1.25;
     }
     .model-row-price {
-      font-size: 13.5px;
+      font-size: var(--text-sm);
       font-weight: 600;
       letter-spacing: -0.02em;
       color: var(--fg-1);
@@ -1561,8 +1624,8 @@
       flex-shrink: 0;
     }
     .model-dir-note {
-      margin: 14px 0 0;
-      font-size: 12.5px;
+      margin: var(--space-6) 0 0;
+      font-size: var(--text-sm);
       color: var(--fg-3);
     }
 
@@ -1570,28 +1633,27 @@
     .seo-value-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-      align-items: stretch;
+      gap: var(--space-8) var(--space-12);
+      align-items: start;
     }
     .seo-value-card {
-      background: var(--bg-2);
-      border: 1px solid var(--line);
-      border-radius: var(--r-md);
-      padding: 22px;
+      padding-top: var(--space-6);
+      border-top: 1px solid var(--line);
       min-width: 0;
     }
     .seo-value-card h3 {
-      margin: 6px 0 10px;
-      font-size: 20px;
+      margin: 0 0 var(--space-3);
+      font-size: var(--text-xl);
       font-weight: 600;
+      line-height: 1.3;
       letter-spacing: -0.025em;
       color: var(--fg-1);
     }
     .seo-value-card > p {
-      margin: 0 0 14px;
-      font-size: 14px;
+      margin: 0 0 var(--space-6);
+      font-size: var(--text-md);
       color: var(--fg-2);
-      line-height: 1.55;
+      line-height: 1.5;
     }
     .seo-detail-list {
       list-style: none;
@@ -1599,77 +1661,73 @@
       padding: 0;
       display: flex;
       flex-direction: column;
-      gap: 9px;
-      font-size: 13.5px;
+      gap: var(--space-3);
+      font-size: var(--text-sm);
       color: var(--fg-2);
-      line-height: 1.48;
+      line-height: 1.5;
     }
     .seo-detail-list li {
       display: flex;
       align-items: flex-start;
-      gap: 8px;
+      gap: var(--space-2);
     }
+    .seo-detail-list .check-mark { margin-top: 2px; }
     .seo-detail-list strong { color: var(--fg-1); font-weight: 600; }
     .hours-grid {
       display: grid;
-      grid-template-columns: 110px 1fr;
-      gap: 5px 12px;
-      font-size: 13.5px;
+      grid-template-columns: 112px 1fr;
+      gap: var(--space-1) var(--space-3);
+      font-size: var(--text-sm);
       color: var(--fg-2);
-      margin-top: 14px;
-      padding-top: 14px;
+      margin-top: var(--space-6);
+      padding-top: var(--space-4);
       border-top: 1px solid var(--line);
     }
     .hours-grid strong { color: var(--fg-1); }
 
     /* Related MacBook Repairs Internal-Links Strip */
     .related-strip {
-      margin-top: 20px;
-      background: #ffffff;
-      border: 1px solid var(--line);
-      border-radius: var(--r-md);
-      padding: 18px 20px;
-      box-shadow: var(--shadow-card);
+      margin-top: var(--space-12);
     }
     .related-strip-head {
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      gap: 12px;
+      gap: var(--space-3);
       flex-wrap: wrap;
-      margin-bottom: 12px;
+      margin-bottom: var(--space-4);
     }
     .related-strip-head h3 {
       margin: 0;
-      font-size: 15px;
+      font-size: var(--text-lg);
       font-weight: 600;
       color: var(--fg-1);
     }
     .related-strip-head a {
-      font-size: 13px;
+      font-size: var(--text-sm);
       font-weight: 500;
       color: var(--accent);
-      text-decoration: none;
+      text-decoration: underline;
+      text-underline-offset: 3px;
     }
-    .related-strip-head a:hover { text-decoration: underline; }
+    .related-strip-head a:hover { color: var(--accent-hover); }
     .related-links-row {
       list-style: none;
       margin: 0;
       padding: 0;
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
+      gap: var(--space-2);
     }
     .related-links-row a {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 10px 12px;
-      border-radius: var(--r-sm);
-      border: 1px solid var(--line);
-      background: var(--bg-2);
-      font-size: 13px;
+      min-height: 48px;
+      padding: 0 var(--space-4);
+      border-radius: var(--r-md);
+      border: 1px solid var(--line-strong);
+      background: #ffffff;
+      font-size: var(--text-sm);
       font-weight: 500;
       color: var(--fg-1);
       text-decoration: none;
@@ -1677,13 +1735,7 @@
     }
     .related-links-row a:hover {
       border-color: var(--fg-1);
-      background: #ffffff;
-    }
-    .related-arrow {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--fg-3);
-      flex-shrink: 0;
+      background: var(--bg-2);
     }
 
     /* 7. DARK FAQ ACCORDION */
@@ -1698,73 +1750,75 @@
       background: transparent;
       border: 0;
       color: #ffffff;
-      padding: 18px 0;
+      min-height: 64px;
+      padding: var(--space-4) 0;
       text-align: left;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      font-size: 15.5px;
+      gap: var(--space-4);
+      font-size: var(--text-md);
       font-weight: 500;
+      line-height: 1.4;
       cursor: pointer;
     }
-    .faq-icon {
-      font-family: var(--font-mono);
-      font-size: 18px;
-      color: rgba(255, 255, 255, 0.6);
-      flex-shrink: 0;
-    }
+    .faq-icon { color: rgba(255, 255, 255, 0.72); }
     .faq-answer {
       display: none;
-      padding: 0 0 18px;
-      font-size: 14px;
+      padding: 0 0 var(--space-6);
+      font-size: var(--text-md);
       line-height: 1.6;
-      color: rgba(255, 255, 255, 0.76);
-      max-width: 76ch;
+      color: rgba(255, 255, 255, 0.78);
+      max-width: 72ch;
     }
     .faq-item.is-open .faq-answer { display: block; }
 
     /* Compact Site Footer Bar */
     .site-footer {
       background: #111111;
-      color: rgba(255, 255, 255, 0.68);
-      padding: 20px 0;
-      font-size: 12.5px;
+      color: rgba(255, 255, 255, 0.72);
+      padding: var(--space-6) 0;
+      font-size: var(--text-sm);
     }
     .site-footer-inner {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: var(--space-3) var(--space-6);
       flex-wrap: wrap;
     }
     .site-footer a {
-      color: rgba(255, 255, 255, 0.86);
-      text-decoration: none;
+      color: #ffffff;
+      text-decoration: underline;
+      text-underline-offset: 3px;
     }
-    .site-footer a:hover { text-decoration: underline; }
 
     /* Responsive: Tablet & 390px Mobile */
     @media (max-width: 960px) {
       .nav-links, .status-pill { display: none; }
       .trust-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .trust-cell:nth-child(1), .trust-cell:nth-child(2) { border-bottom: 1px solid #e5e7eb; }
+      .trust-cell:nth-child(1), .trust-cell:nth-child(2) { border-bottom: 1px solid var(--line); }
       .trust-cell:nth-child(2), .trust-cell:nth-child(4) { border-right: 0; }
       .hero-grid, .visual-pair, .identify-grid, .faults-grid, .seo-value-grid { grid-template-columns: minmax(0, 1fr); }
-      .hero-grid > .diagram-stage { margin-top: 24px; }
+      .hero-grid > .diagram-stage { margin-top: var(--space-6); }
       .model-dir-grid { grid-template-columns: minmax(0, 1fr); }
       .process-detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .process-highlights { grid-template-columns: minmax(0, 1fr); }
-      .process-bar-head { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .process-highlights { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+      .process-highlight { padding: var(--space-4) 0 0; border-left: 0; border-top: 1px solid var(--line); }
+      .process-highlight:first-child { padding-top: 0; border-top: 0; }
+      .process-bar-head { flex-direction: column; align-items: flex-start; gap: var(--space-4); }
       .related-links-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .warranty-card.is-open .warranty-body { grid-template-columns: minmax(0, 1fr); }
       .pillars-strip { grid-template-columns: minmax(0, 1fr); }
+      .pillar-card,
+      .pillar-card:first-child,
+      .pillar-card:last-child { padding: var(--space-4) 0; border-left: 0; border-bottom: 1px solid var(--line); }
     }
 
     @media (max-width: 768px) {
       .hero-copy { order: 1; }
-      .hero-grid > .trust-strip { order: 2; margin-top: 16px; }
-      .hero-grid > .diagram-stage { order: 3; margin-top: 16px; }
+      .hero-grid > .trust-strip { order: 2; margin-top: var(--space-6); }
+      .hero-grid > .diagram-stage { order: 3; margin-top: var(--space-4); }
 
       /* Mobile compact 3-column side-by-side comparison (zero horizontal overflow) */
       .compare-table,
@@ -1780,53 +1834,44 @@
       .compare-table thead th {
         display: flex;
         align-items: center;
-        padding: 10px 7px;
-        font-size: 11.5px;
+        padding: var(--space-3) var(--space-2);
+        font-size: var(--text-xs);
         font-weight: 600;
-        line-height: 1.25;
-        letter-spacing: -0.015em;
+        line-height: 16px;
+        letter-spacing: 0;
         color: #111827;
-        background: #fafafa;
-        border-bottom: 1px solid #e5e7eb;
+        background: var(--bg-2);
+        border-bottom: 1px solid var(--line);
         min-width: 0;
       }
       .compare-table thead th:nth-child(3) {
-        border-right: 1px solid #f1f5f9;
+        border-right: 1px solid var(--line);
       }
       .compare-table thead th.col-icorrect {
         align-items: flex-start;
-        background: #eff6ff;
-        color: #0b63ce;
-        border-top: 2px solid #0b63ce;
-        border-left: 0;
-        border-right: 1px solid #dbeafe;
-        border-bottom: 1px solid #dbeafe;
+        background: var(--accent-soft);
+        color: var(--accent);
+        border-right: 1px solid var(--line);
       }
       .compare-win-head {
         align-items: flex-start;
-        gap: 5px;
-      }
-      .compare-win-dot {
-        width: 6px;
-        height: 6px;
-        margin-top: 4px;
+        gap: var(--space-1);
       }
       .cmp-th-paren,
       .cmp-th-shop-word { display: none; }
       .cmp-th-icorrect-sub {
         display: block;
-        font-size: 10px;
+        font-size: var(--text-xs);
         font-weight: 500;
-        color: #2563eb;
-        line-height: 1.2;
-        margin-top: 1px;
+        color: var(--accent);
+        line-height: 16px;
       }
 
       .compare-table tbody tr {
         display: grid;
         grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr);
         width: 100%;
-        border-bottom: 1px solid #e5e7eb;
+        border-bottom: 1px solid var(--line);
       }
       .compare-table tbody tr.compare-extra-row { display: none; }
       .compare-card.is-expanded .compare-table tbody tr.compare-extra-row { display: grid; }
@@ -1838,69 +1883,66 @@
       }
       .compare-table td.cmp-label-cell {
         grid-column: 1 / -1;
-        padding: 7px 10px;
-        background: #f8fafc;
-        border-bottom: 1px solid #eef2f7;
+        padding: var(--space-2) var(--space-3);
+        background: var(--bg-2);
+        border-bottom: 1px solid var(--line);
       }
       .cmp-row-label {
-        font-size: 11px;
+        font-size: var(--text-xs);
         font-weight: 600;
         color: #374151;
-        letter-spacing: -0.005em;
+        letter-spacing: 0;
       }
       .compare-table td[data-col] {
-        padding: 9px 7px 10px;
+        padding: var(--space-3) var(--space-2);
         background: #ffffff;
       }
       .compare-table td:nth-child(3) {
-        border-right: 1px solid #f1f5f9;
+        border-right: 1px solid var(--line);
       }
       .compare-table td.col-icorrect {
-        background: #f5f9ff;
-        border-left: 0;
-        border-right: 1px solid #dbeafe;
+        background: #f7fbff;
+        border-right: 1px solid var(--line);
       }
       .cmp-cell {
         flex-direction: column;
-        gap: 5px;
+        gap: var(--space-2);
       }
       .cmp-mark {
-        width: 15px;
-        height: 15px;
-        font-size: 9.5px;
-        margin-top: 0;
+        width: 16px;
+        height: 16px;
       }
+      .cmp-mark::before { width: 10px; height: 10px; -webkit-mask-size: 10px; mask-size: 10px; }
       .cmp-verdict {
-        font-size: 11.5px;
-        line-height: 1.25;
-        letter-spacing: -0.015em;
+        font-size: var(--text-xs);
+        line-height: 16px;
+        letter-spacing: 0;
       }
       .cmp-sub {
-        font-size: 10.5px;
-        line-height: 1.3;
+        font-size: var(--text-xs);
+        line-height: 16px;
       }
       .compare-expand-btn {
-        padding: 12px 14px;
-        font-size: 13px;
-        border-top: 1px solid #e5e7eb;
+        border-top: 1px solid var(--line);
       }
 
-      .identify { padding: 48px 0; }
-      .identify-grid { gap: 28px; }
-      .identify-visual { padding: 32px 20px; }
-      .identify-text h2 { font-size: 28px; letter-spacing: -0.035em; }
+      .identify { padding: var(--space-12) 0; }
+      .identify-grid { gap: var(--space-8); }
+      .identify-visual { padding: var(--space-8) var(--space-5); }
+      .identify-text h2 { font-size: var(--text-xl); letter-spacing: -0.035em; }
     }
 
     @media (max-width: 600px) {
-      .ic-container { padding: 0 16px; }
-      .header-inner { height: 50px; }
-      .hero-band { padding: 16px 0 28px; }
-      .breadcrumb { margin-bottom: 10px; font-size: 10px; }
-      .hero-title { font-size: 30px; margin-bottom: 8px; }
-      .hero-lead { font-size: 14.5px; margin-bottom: 12px; }
+      :root { --header-h: 52px; }
+      .ic-container { padding: 0 var(--space-4); }
+      .header-cta { min-height: 40px; }
+      .hero-band { padding: var(--space-4) 0 var(--space-8); }
+      .breadcrumb { margin-bottom: var(--space-3); font-size: var(--text-xs); }
+      .hero-title { font-size: var(--text-2xl); margin-bottom: var(--space-3); }
+      .hero-lead { font-size: var(--text-md); margin-bottom: var(--space-4); }
       .price-strip {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 6px;
+        gap: var(--space-2);
       }
       .price-strip li:last-child { grid-column: 1 / -1; }
       .price-strip li:last-child .price-chip {
@@ -1908,97 +1950,85 @@
         align-items: center;
         justify-content: space-between;
       }
-      .price-chip { padding: 8px 10px; }
-      .price-chip-model { font-size: 11px; }
-      .price-chip-val { font-size: 13.5px; }
-      .hero-jump-row { margin-top: 10px; gap: 6px; }
-      .btn-ghost { font-size: 12px; padding: 5px 10px; min-height: 32px; }
+      .price-chip { min-height: 52px; }
+      .hero-jump-row { margin-top: var(--space-4); }
 
-      .diagram-stage { padding: 14px; }
-      .diagram-frame img { max-width: 290px; max-height: 330px; }
+      .diagram-stage { padding: var(--space-4); }
+      .diagram-frame img { max-width: 288px; max-height: 328px; }
       .diagram-legend-wrap { display: block; }
 
-      .trust-strip {
-        margin-top: 16px;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+      .trust-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .trust-cell {
-        padding: 12px 11px;
-        gap: 9px;
+        padding: var(--space-3);
+        gap: var(--space-2);
         min-height: 64px;
       }
-      .trust-cell:nth-child(1), .trust-cell:nth-child(2) { border-bottom: 1px solid #e5e7eb; }
-      .trust-cell:nth-child(2), .trust-cell:nth-child(4) { border-right: 0; }
-      .trust-rating-link { gap: 9px; }
-      .trust-icon { width: 28px; height: 28px; border-radius: 7px; }
+      .trust-rating-link { gap: var(--space-2); }
+      .trust-icon { width: 28px; height: 28px; border-radius: var(--r-sm); }
       .trust-icon svg { width: 14px; height: 14px; }
-      .trust-copy strong { font-size: 12px; }
-      .trust-copy span { font-size: 11px; }
-      .reviews-head { margin-bottom: 14px; align-items: flex-start; }
-      .reviews-g-badge { width: 34px; height: 34px; border-radius: 8px; }
+      .reviews-head { margin-bottom: var(--space-4); align-items: flex-start; }
+      .reviews-g-badge { width: 32px; height: 32px; border-radius: var(--r-md); }
       #google-reviews .ti-widget .ti-review-item { padding-left: 2px !important; padding-right: 2px !important; }
-      #google-reviews .ti-widget .ti-review-item > .ti-inner { padding: 18px 18px !important; }
+      #google-reviews .ti-widget .ti-review-item > .ti-inner { padding: var(--space-4) !important; }
 
       /* Mobile expandable pillars: titles visible, tap to expand copy */
-      .pillars-strip { margin-top: 12px; gap: 8px; }
+      .pillars-strip { margin-top: var(--space-6); }
+      .pillar-card,
+      .pillar-card:first-child,
+      .pillar-card:last-child { padding: 0; }
       .pillar-toggle {
-        padding: 13px 14px;
+        min-height: 56px;
+        padding: var(--space-3) 0;
         cursor: pointer;
       }
-      .pillar-title { font-size: 14px; }
       .pillar-plus { display: inline-block; }
       .pillar-body {
         display: none;
-        padding: 0 14px 13px;
-        font-size: 13px;
+        padding: 0 0 var(--space-4);
       }
       .pillar-card.is-open .pillar-body { display: block; }
 
       /* Mobile Collection & Calibration Lead-In Card */
-      .process-bar { margin: 0 0 28px; }
+      .process-bar { margin: 0 0 var(--space-12); }
       .process-bar-trigger {
-        padding: 16px;
+        padding: var(--space-4);
         flex-direction: column;
         align-items: flex-start;
-        gap: 12px;
+        gap: var(--space-4);
       }
-      .process-bar-title { font-size: 16.5px; }
-      .process-highlights { gap: 8px; }
-      .process-highlight { padding: 10px 12px; }
+      .process-bar-title { font-size: var(--text-lg); }
       .process-bar-pill {
         width: 100%;
         justify-content: space-between;
       }
-      .process-bar-panel { padding: 14px 16px 16px; }
+      .process-bar-panel { padding: var(--space-4); }
       .process-detail-grid { grid-template-columns: minmax(0, 1fr); }
 
       .warranty-toggle {
-        padding: 16px;
+        padding: var(--space-4);
         flex-direction: column;
         align-items: flex-start;
-        gap: 10px;
+        gap: var(--space-4);
       }
-      .warranty-head-copy h3 { font-size: 17px; }
-      .warranty-body { padding: 0 16px 16px; }
-      .warranty-card.is-open .warranty-body { padding-top: 14px; }
+      .warranty-toggle-pill { width: 100%; justify-content: space-between; }
+      .warranty-body { padding: 0 var(--space-4) var(--space-4); }
+      .warranty-card.is-open .warranty-body { padding-top: var(--space-4); }
 
-      .section { padding: 38px 0; }
-      .section-compact { padding: 32px 0; }
-      .section-title { font-size: 24px; }
-      .wizard-band { padding: 38px 0; }
-      .wizard-intro h2 { font-size: 24px; }
+      .section { padding: var(--space-10) 0; }
+      .section-compact { padding: var(--space-8) 0; }
+      .section-title { font-size: var(--text-xl); }
+      .wizard-band { padding: var(--space-10) 0; }
+      .wizard-intro { text-align: left; margin-bottom: var(--space-6); }
+      .wizard-intro h2 { font-size: var(--text-xl); }
       .check-list, .related-links-row { grid-template-columns: minmax(0, 1fr); }
       .identify-form { flex-direction: column; }
-      .identify-form .btn-dark { width: 100%; }
-      .model-row a { padding: 10px 14px; }
-      .seo-value-card { padding: 18px 16px; }
-      .related-strip { padding: 16px; }
+      .identify-form .btn-dark { width: 100%; min-height: 48px; }
       .floating-cta {
         left: 50%;
         right: auto;
-        bottom: calc(18px + env(safe-area-inset-bottom));
+        bottom: calc(var(--space-4) + env(safe-area-inset-bottom));
         height: 48px;
-        padding: 0 24px;
+        padding: 0 var(--space-6);
         transform: translate(-50%, 14px);
       }
       .floating-cta.is-visible {
@@ -2009,11 +2039,13 @@
 </head>
 <body>
 
+  <a class="skip-link" href="#main">Skip to content</a>
+
   <!-- Header -->
   <header class="site-header">
     <div class="ic-container header-inner">
-      <a class="brand" href="#top">iCorrect</a>
-      <ul class="nav-links">
+      <a class="brand" href="#main">iCorrect</a>
+      <ul class="nav-links" aria-label="On this page">
         <li><a href="#process-strip">How it works</a></li>
         <li><a href="#google-reviews">Reviews</a></li>
         <li><a href="#compare">How we compare</a></li>
@@ -2021,23 +2053,23 @@
         <li><a href="#faqs">FAQs</a></li>
       </ul>
       <div class="header-right">
-        <span class="status-pill"><span class="status-dot" aria-hidden="true"></span>FITZROVIA · LONDON</span>
-        <a class="btn-dark header-cta" id="header-cta" href="#quote-section">Get your price -&gt;</a>
+        <span class="status-pill">Fitzrovia, London</span>
+        <a class="btn-dark header-cta" id="header-cta" href="#quote-section">Get your price</a>
       </div>
     </div>
   </header>
 
-  <main id="top">
+  <main id="main" tabindex="-1">
 
     <!-- 1. FIRST FOLD: Calm Hero + Trust Badges Bridge + 3 Proof Cards + Expandable 2-Working-Day Strip -->
     <section class="hero-band">
       <div class="ic-container">
         <nav class="breadcrumb" aria-label="Breadcrumb">
-          <a href="#">Home</a>
-          <span>/</span>
-          <a href="#">MacBook Repairs</a>
-          <span>/</span>
-          <span class="breadcrumb-current">MacBook Screen Repair</span>
+          <a href="/">Home</a>
+          <span aria-hidden="true">/</span>
+          <a href="/pages/macbook-repairs">MacBook repairs</a>
+          <span aria-hidden="true">/</span>
+          <span class="breadcrumb-current" aria-current="page">MacBook screen repair</span>
         </nav>
 
         <div class="hero-grid">
@@ -2045,7 +2077,8 @@
             <h1 class="hero-title">MacBook Screen Repair</h1>
             <p class="hero-lead">Cracked, flickering, or blank display? We replace the genuine Apple display panel only, keeping your original lid, camera, and hinges, backed by a 2-year warranty.</p>
 
-            <ul class="price-strip" role="list" aria-label="MacBook screen repair starting prices">
+            <p class="price-strip-label" id="price-strip-label">Starting prices by model</p>
+            <ul class="price-strip" role="list" aria-labelledby="price-strip-label">
               <li>
                 <a class="price-chip" href="#quote-section">
                   <span class="price-chip-model">MacBook Air 13"</span>
@@ -2080,20 +2113,20 @@
             <p class="hero-price-note">Includes genuine panel, calibration &amp; free UK collection (£200+). 2 working days in workshop.</p>
 
             <div class="hero-jump-row">
-              <a class="btn-ghost btn-pill-neutral" href="#compare">How do ours compare?</a>
-              <a class="btn-ghost btn-pill-neutral" href="#warranty" data-open-warranty>See how our 2-year warranty works</a>
+              <a class="btn-ghost" href="#compare">Compare with Apple and other shops</a>
+              <a class="btn-ghost" href="#warranty" data-open-warranty>See the 2-year warranty</a>
             </div>
           </div>
 
           <div class="diagram-stage">
             <div class="diagram-header">
-              <span class="mono-label">Display Assembly Anatomy</span>
+              <p class="diagram-title">What we replace</p>
               <span class="diagram-pill"><span class="diagram-pill-dot" aria-hidden="true"></span>Genuine panel only</span>
             </div>
             <div class="diagram-frame">
               <picture id="macbook-diagram-picture">
-                <source media="(max-width: 600px)" srcset="./assets/macbook-display-assembly-mobile-transparent.svg">
-                <img id="macbook-diagram-img" src="./assets/macbook-display-assembly-transparent.svg" alt="Exploded isometric diagram of a MacBook display assembly with numbered labels: 1 Polarizer, 2 LCD panel (replaced in blue), 3 Backlight, 4 Display cable, 5 Lid shell, 6 Hinge">
+                <source media="(max-width: 600px)" srcset="./assets/macbook-display-assembly-mobile-transparent.svg" width="500" height="880">
+                <img id="macbook-diagram-img" src="./assets/macbook-display-assembly-transparent.svg" width="700" height="880" fetchpriority="high" alt="Exploded isometric diagram of a MacBook display assembly with numbered labels: 1 Polarizer, 2 LCD panel (replaced in blue), 3 Backlight, 4 Display cable, 5 Lid shell, 6 Hinge">
               </picture>
             </div>
             <div class="diagram-legend-wrap" aria-label="MacBook display assembly parts">
@@ -2173,7 +2206,7 @@
           <div class="pillar-card" data-pillar>
             <button type="button" class="pillar-toggle" aria-expanded="false">
               <span class="pillar-title">Genuine Apple displays, calibrated in-house</span>
-              <span class="pillar-plus" aria-hidden="true">+</span>
+              <span class="pillar-plus chev" aria-hidden="true"></span>
             </button>
             <div class="pillar-body">
               <p>We reclaim and test genuine Apple panels and recalibrate colour accuracy, brightness uniformity, and True Tone so your screen matches factory output.</p>
@@ -2183,7 +2216,7 @@
           <div class="pillar-card" data-pillar>
             <button type="button" class="pillar-toggle" aria-expanded="false">
               <span class="pillar-title">30% to 50% less than a full-lid swap</span>
-              <span class="pillar-plus" aria-hidden="true">+</span>
+              <span class="pillar-plus chev" aria-hidden="true"></span>
             </button>
             <div class="pillar-body">
               <p>Apple and most chains replace the entire lid assembly, throwing away your working casing, hinges, and FaceTime camera. You only pay to replace the broken panel.</p>
@@ -2193,7 +2226,7 @@
           <div class="pillar-card" data-pillar>
             <button type="button" class="pillar-toggle" aria-expanded="false">
               <span class="pillar-title">Built for Liquid Retina XDR &amp; original lids</span>
-              <span class="pillar-plus" aria-hidden="true">+</span>
+              <span class="pillar-plus chev" aria-hidden="true"></span>
             </button>
             <div class="pillar-body">
               <p>14-inch and 16-inch mini-LED MacBook Pro displays require precision alignment and calibration. We repair them daily alongside MacBook Air M1, M2, M3, and M4 models.</p>
@@ -2217,9 +2250,8 @@
               </svg>
             </span>
             <div>
-              <span class="mono-label">Verified Client Reviews</span>
               <div class="reviews-title-row">
-                <h2 class="section-title" style="margin-bottom:0;">4.8 from 750+ Google reviews</h2>
+                <h2 class="section-title" style="margin:0;">4.8 from 750+ Google reviews</h2>
                 <span class="reviews-stars-inline" aria-hidden="true">
                   <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
                   <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
@@ -2230,7 +2262,7 @@
               </div>
             </div>
           </div>
-          <a class="btn-ghost" href="https://maps.google.com/?q=iCorrect+12+Margaret+Street+London+W1W+8JQ" target="_blank" rel="noopener">Read on Google Maps -&gt;</a>
+          <a class="btn-ghost" href="https://maps.google.com/?q=iCorrect+12+Margaret+Street+London+W1W+8JQ" target="_blank" rel="noopener">Read all reviews on Google<span class="visually-hidden"> (opens in a new tab)</span></a>
         </div>
         <div class="trustindex-slot" id="trustindex-reviews-slot">
           <script defer async src="https://cdn.trustindex.io/loader.js?b831fa386ffa616e7a2620959d0"></script>
@@ -2246,12 +2278,12 @@
           <button type="button" class="process-bar-trigger" id="process-bar-toggle" aria-expanded="false" aria-controls="process-bar-panel">
             <div class="process-bar-head">
               <div class="process-bar-top">
-                <span class="process-bar-badge">Collection &amp; calibration</span>
+                <span class="process-bar-badge">How it works</span>
                 <h2 class="process-bar-title">Collected from your door, calibrated in Fitzrovia, back in 2 working days.</h2>
               </div>
               <span class="process-bar-pill">
-                <span id="process-bar-label">See how it works</span>
-                <span id="process-bar-icon" aria-hidden="true">+</span>
+                <span id="process-bar-label">See each step</span>
+                <span class="chev" id="process-bar-icon" aria-hidden="true"></span>
               </span>
             </div>
             <ul class="process-highlights" aria-label="Turnaround and collection highlights">
@@ -2272,26 +2304,26 @@
           <div class="process-bar-panel" id="process-bar-panel">
             <div class="process-detail-head">
               <h3>From your door to our Fitzrovia bench and back in 2 working days</h3>
-              <span>Free collection on orders £200+ · Updates at every stage</span>
+              <span>Free collection on orders £200+, with updates at every stage</span>
             </div>
             <ol class="process-detail-grid">
               <li class="process-detail-card">
-                <span class="mono-label">01 · Free £200+</span>
+                <span class="mono-label">Step 1</span>
                 <h3>Collect or drop off</h3>
                 <p>Book same-day London courier collection in selected London zones, receive a free tracked and insured UK mail-in pack elsewhere, or drop off at 12 Margaret Street, Fitzrovia.</p>
               </li>
               <li class="process-detail-card">
-                <span class="mono-label">02 · In-house bench</span>
+                <span class="mono-label">Step 2</span>
                 <h3>Panel replacement</h3>
                 <p>We check backlight rails, hinges, and flex cables on intake, then replace only the damaged display panel with a genuine Apple display inside your original lid.</p>
               </li>
               <li class="process-detail-card">
-                <span class="mono-label">03 · Factory QC</span>
+                <span class="mono-label">Step 3</span>
                 <h3>Calibrate &amp; test</h3>
                 <p>Every display is recalibrated in-house for True Tone, peak brightness, colour accuracy, and ambient light sensing, followed by hinge alignment and camera checks.</p>
               </li>
               <li class="process-detail-card">
-                <span class="mono-label">04 · 2 working days</span>
+                <span class="mono-label">Step 4</span>
                 <h3>Back in 2 working days</h3>
                 <p>Completed within 2 working days once your MacBook reaches our workshop, then returned insured with your 2-year warranty and your data untouched.</p>
               </li>
@@ -2301,9 +2333,8 @@
 
         <!-- How Our Display Compares -->
         <div id="compare">
-          <div class="section-head" style="margin-bottom:20px;">
-            <span class="mono-label">Parts &amp; Quality Comparison</span>
-            <h2 class="section-title">How our display repair compares.</h2>
+          <div class="section-head" style="margin-bottom:var(--space-6);">
+            <h2 class="section-title">How our display repair compares</h2>
             <p class="section-lead">Cheaper high-street quotes rely on aftermarket lids that lose brightness, break True Tone, and fail early. Here is the real difference.</p>
           </div>
 
@@ -2510,7 +2541,7 @@
             </div>
             <button type="button" class="compare-expand-btn" id="compare-expand-btn" aria-expanded="false">
               <span id="compare-expand-label">Show 4 more comparisons</span>
-              <span class="compare-expand-icon" id="compare-expand-icon" aria-hidden="true">+</span>
+              <span class="compare-expand-icon chev" id="compare-expand-icon" aria-hidden="true"></span>
             </button>
           </div>
         </div>
@@ -2518,18 +2549,16 @@
         <!-- Board-Level Workshop + Expandable 2-Year Warranty -->
         <div class="workshop-block">
           <div class="section-head">
-            <span class="mono-label">In-House Bench &amp; UK-Wide Collection</span>
-            <h2 class="section-title">Board-level workshop in Fitzrovia. Collected from your door.</h2>
+            <h2 class="section-title">Board-level workshop in Fitzrovia, collected from your door</h2>
             <p class="section-lead">Every MacBook is repaired in-house by our microelectronics team, never outsourced, with free tracked collection on all orders of £200 or more.</p>
           </div>
 
           <div class="visual-pair">
             <article class="visual-card">
               <div class="visual-card-img">
-                <img src="./assets/repair-bench-transparent.svg" alt="Isometric diagram of the iCorrect micro-soldering and display calibration repair bench">
+                <img src="./assets/repair-bench-transparent.svg" width="760" height="480" loading="lazy" alt="Isometric diagram of the iCorrect micro-soldering and display calibration repair bench">
               </div>
               <div>
-                <span class="mono-label">Microelectronics Specialists</span>
                 <h3>Fitzrovia workshop, never outsourced</h3>
                 <p>Because our team repairs logic boards and backlight circuits to component level, we catch Flexgate, Dustgate, and backlight IC faults that part-swap shops miss.</p>
               </div>
@@ -2537,10 +2566,9 @@
 
             <article class="visual-card">
               <div class="visual-card-img">
-                <img src="./assets/courier-route-transparent.svg" alt="Isometric diagram of tracked courier collection from office or home to the iCorrect workshop and back">
+                <img src="./assets/courier-route-transparent.svg" width="720" height="420" loading="lazy" alt="Isometric diagram of tracked courier collection from office or home to the iCorrect workshop and back">
               </div>
               <div>
-                <span class="mono-label">Free Collection on £200+</span>
                 <h3>Tracked London courier or free UK mail-in</h3>
                 <p>Same-day courier collection is available in selected London zones. Anywhere else in the UK, we send a free tracked, insured mail-in pack straight to your door.</p>
               </div>
@@ -2551,21 +2579,21 @@
           <div class="warranty-card" id="warranty">
             <button type="button" class="warranty-toggle" id="warranty-toggle" aria-expanded="false" aria-controls="warranty-body">
               <div class="warranty-head-copy">
-                <span class="mono-label">2-Year Warranty Included</span>
-                <h3>Two full years of cover. No asterisks.</h3>
+                <h3>2-year warranty on every screen repair</h3>
+                <p>Included as standard on the panel and our workmanship</p>
               </div>
               <span class="warranty-toggle-pill">
                 <span id="warranty-toggle-label">See what's covered</span>
-                <span id="warranty-toggle-icon" aria-hidden="true">+</span>
+                <span class="chev" id="warranty-toggle-icon" aria-hidden="true"></span>
               </span>
             </button>
             <div class="warranty-body" id="warranty-body">
               <p>Covers the genuine Apple display panel and our workmanship for 24 months with zero excess on re-work. New impact or liquid damage is excluded.</p>
               <ul class="check-list">
-                <li><span class="check-mark">&#10003;</span><span>Display panel &amp; backlight faults covered</span></li>
-                <li><span class="check-mark">&#10003;</span><span>Fitting, alignment &amp; hinge calibration covered</span></li>
-                <li><span class="check-mark">&#10003;</span><span>Upfront fixed pricing, zero deposits</span></li>
-                <li><span class="check-mark">&#10003;</span><span>Your data stays untouched on your MacBook</span></li>
+                <li><span class="check-mark" aria-hidden="true"></span><span>Display panel &amp; backlight faults covered</span></li>
+                <li><span class="check-mark" aria-hidden="true"></span><span>Fitting, alignment &amp; hinge calibration covered</span></li>
+                <li><span class="check-mark" aria-hidden="true"></span><span>Upfront fixed pricing, zero deposits</span></li>
+                <li><span class="check-mark" aria-hidden="true"></span><span>Your data stays untouched on your MacBook</span></li>
               </ul>
             </div>
           </div>
@@ -2584,19 +2612,23 @@
               <div class="identify-plate-line highlight">Model <span class="hl">A2442</span></div>
               <div class="identify-plate-line muted small">EMC 3650 &middot; 61W USB-C</div>
             </div>
-            <div class="mono-label identify-hint">&larr; Look on the underside</div>
+            <div class="mono-label identify-hint">Printed on the underside, near the hinge</div>
           </div>
         </div>
         <div class="identify-text">
           <div class="mono-label">Not sure which model you have?</div>
-          <h2>Find your model number in 5 seconds.</h2>
-          <p>Flip your MacBook over. Look for a four-character code starting with "A", printed in small grey type near the hinge. Tell us that code and we'll match the repair exactly.</p>
-          <form class="identify-form" id="identify-form">
-            <input id="identify-input" type="text" placeholder="e.g. A2442" aria-label="MacBook model code" autocomplete="off">
-            <button type="submit" class="btn-dark">Identify</button>
+          <h2>Find your model number in 5 seconds</h2>
+          <p>Flip your MacBook over. Look for a code starting with "A" followed by four digits, printed in small grey type near the hinge. Enter it here and we'll match the repair exactly.</p>
+          <form class="identify-form-wrap" id="identify-form" novalidate>
+            <label class="field-label" for="identify-input">Model number <span class="field-hint">(for example A2442)</span></label>
+            <div class="identify-form">
+              <input id="identify-input" name="model" type="text" inputmode="text" autocapitalize="characters" spellcheck="false" autocomplete="off" maxlength="12" aria-describedby="identify-error">
+              <button type="submit" class="btn-dark">Find my model</button>
+            </div>
+            <p class="identify-error" id="identify-error" hidden>Enter the model number from the underside of your MacBook, for example A2442.</p>
           </form>
-          <div class="identify-result" id="identify-result" aria-live="polite"></div>
-          <div class="identify-foot">Or <a href="#quote-section">browse models in the quote wizard below &rarr;</a></div>
+          <div class="identify-result" id="identify-result" role="status" aria-live="polite"></div>
+          <div class="identify-foot">Or <a href="#quote-section">browse every model in the quote tool below</a></div>
         </div>
       </div>
     </section>
@@ -2605,7 +2637,6 @@
     <section class="wizard-band" id="quote-section" aria-label="MacBook Screen Repair Quote Wizard">
       <div class="ic-container">
         <div class="wizard-intro">
-          <span class="mono-label">Live Quote Tool (Untouched Shopify Wizard)</span>
           <h2>Check your exact MacBook screen price</h2>
           <p>Select your MacBook model to see your fixed upfront price and live collection options for your postcode.</p>
         </div>
@@ -2619,7 +2650,6 @@
     <section class="section" id="common-faults">
       <div class="ic-container">
         <div class="section-head">
-          <span class="mono-label">Common Screen Faults</span>
           <h2 class="section-title">Is your MacBook screen cracked, flickering, or dark?</h2>
           <p class="section-lead">These are the display faults we repair most often on MacBook Air and MacBook Pro. We inspect flex cables, backlight rails, and hinges on intake so you only pay for the exact repair your MacBook needs.</p>
         </div>
@@ -2639,7 +2669,7 @@
               <span class="fault-tag">Cable or panel</span>
             </div>
             <p>Stage-light glow along the bottom edge or a screen that cuts out when opened past a certain angle. Common on 2016 to 2018 MacBook Pro models (A1706, A1707, A1708) where the short backlight flex cable frays over time.</p>
-            <a class="fault-card-link" href="/collections/macbook-flexgate-repair-prices">See Flexgate repair options -&gt;</a>
+            <a class="fault-card-link" href="/collections/macbook-flexgate-repair-prices">See Flexgate repair options</a>
           </article>
 
           <article class="fault-card">
@@ -2648,7 +2678,7 @@
               <span class="fault-tag">Micro-soldering</span>
             </div>
             <p>Pink or grey vertical bars, colour distortion, or a picture that only clears at specific lid angles. Caused by dust pressing into the hinge display signal cables; our microelectronics team repairs the damaged cable where possible without swapping the screen.</p>
-            <a class="fault-card-link" href="/collections/macbook-dustgate-repair-prices">See Dustgate repair options -&gt;</a>
+            <a class="fault-card-link" href="/collections/macbook-dustgate-repair-prices">See Dustgate repair options</a>
           </article>
 
           <article class="fault-card">
@@ -2666,7 +2696,6 @@
     <section class="section section-soft" id="prices-by-model">
       <div class="ic-container">
         <div class="section-head">
-          <span class="mono-label">Verified Fixed Pricing</span>
           <h2 class="section-title">MacBook screen repair prices by model</h2>
           <p class="section-lead">Upfront fixed prices for genuine Apple display panel replacement, in-house calibration, a 2-year warranty, and free UK collection (orders £200+). No deposits.</p>
         </div>
@@ -2937,7 +2966,7 @@
           </div>
         </div>
 
-        <p class="model-dir-note">All prices verified from our live Shopify catalogue and include a genuine Apple display panel, calibration, 2-year warranty, and 2 working days workshop turnaround. Select your model in the <a href="#quote-section" style="color:var(--accent);text-decoration:none;font-weight:500;">quote wizard above</a> to book.</p>
+        <p class="model-dir-note">All prices verified from our live Shopify catalogue and include a genuine Apple display panel, calibration, 2-year warranty, and 2 working days workshop turnaround. Select your model in the <a class="text-link" href="#quote-section">quote tool above</a> to book.</p>
       </div>
     </section>
 
@@ -2946,25 +2975,24 @@
       <div class="ic-container">
         <div class="seo-value-grid">
           <div class="seo-value-card">
-            <span class="mono-label">Panel-Only Repair Standard</span>
             <h3>What stays original on your MacBook</h3>
             <p>Unlike full-lid swaps that discard working Apple hardware, we replace only the broken display panel using genuine Apple displays reclaimed and recalibrated in-house.</p>
             <ul class="seo-detail-list">
-              <li><span class="check-mark">&#10003;</span><span><strong>Original aluminium lid &amp; hinges:</strong> Kept intact unless physically bent or damaged, preserving your MacBook's factory fit and finish.</span></li>
-              <li><span class="check-mark">&#10003;</span><span><strong>Original FaceTime camera &amp; sensors:</strong> Your webcam, microphone array, and wireless antennas stay undisturbed.</span></li>
-              <li><span class="check-mark">&#10003;</span><span><strong>True Tone &amp; factory brightness:</strong> Every genuine Apple display panel is recalibrated in-house for colour accuracy and ambient light response.</span></li>
-              <li><span class="check-mark">&#10003;</span><span><strong>Your data stays untouched:</strong> Display replacement does not involve your storage or macOS install, and turnaround is 2 working days in our workshop.</span></li>
+              <li><span class="check-mark" aria-hidden="true"></span><span><strong>Original aluminium lid &amp; hinges:</strong> Kept intact unless physically bent or damaged, preserving your MacBook's factory fit and finish.</span></li>
+              <li><span class="check-mark" aria-hidden="true"></span><span><strong>Original FaceTime camera &amp; sensors:</strong> Your webcam, microphone array, and wireless antennas stay undisturbed.</span></li>
+              <li><span class="check-mark" aria-hidden="true"></span><span><strong>True Tone &amp; factory brightness:</strong> Every genuine Apple display panel is recalibrated in-house for colour accuracy and ambient light response.</span></li>
+              <li><span class="check-mark" aria-hidden="true"></span><span><strong>Your data stays untouched:</strong> Display replacement does not involve your storage or macOS install, and turnaround is 2 working days in our workshop.</span></li>
             </ul>
           </div>
 
           <div class="seo-value-card">
-            <span class="mono-label">London Collection &amp; Fitzrovia Workshop</span>
+            <span class="mono-label">Fitzrovia workshop and London collection</span>
             <h3>12 Margaret Street, Audley House, London W1W 8JQ</h3>
             <p>Collection is free on orders of £200 or more, which includes every MacBook screen repair, or you can drop off in person at our Fitzrovia workshop.</p>
             <ul class="seo-detail-list">
-              <li><span class="check-mark">&#10003;</span><span><strong>Same-day London courier:</strong> Tracked, insured door-to-door collection in selected London zones.</span></li>
-              <li><span class="check-mark">&#10003;</span><span><strong>Free UK-wide mail-in pack:</strong> Tracked and insured packaging delivered straight to your address anywhere else in the UK.</span></li>
-              <li><span class="check-mark">&#10003;</span><span><strong>Direct workshop support:</strong> Phone 020 7099 8517 | Email support@icorrect.co.uk</span></li>
+              <li><span class="check-mark" aria-hidden="true"></span><span><strong>Same-day London courier:</strong> Tracked, insured door-to-door collection in selected London zones.</span></li>
+              <li><span class="check-mark" aria-hidden="true"></span><span><strong>Free UK-wide mail-in pack:</strong> Tracked and insured packaging delivered straight to your address anywhere else in the UK.</span></li>
+              <li><span class="check-mark" aria-hidden="true"></span><span><strong>Direct workshop support:</strong> Phone <a class="text-link" href="tel:+442070998517">020 7099 8517</a> or email <a class="text-link" href="mailto:support@icorrect.co.uk">support@icorrect.co.uk</a></span></li>
             </ul>
             <div class="hours-grid">
               <strong>Mon to Thu</strong><span>9am to 6pm</span>
@@ -2977,32 +3005,24 @@
         <nav class="related-strip" aria-label="Related MacBook repairs">
           <div class="related-strip-head">
             <h3>Related MacBook repairs</h3>
-            <a href="/pages/macbook-repairs">View all MacBook repairs -&gt;</a>
+            <a href="/pages/macbook-repairs">View all MacBook repairs</a>
           </div>
           <ul class="related-links-row" role="list">
             <li>
               <a href="/collections/macbook-battery-repair-prices">
-                <span>MacBook Battery Replacement</span>
-                <span class="related-arrow" aria-hidden="true">-&gt;</span>
-              </a>
+                <span>MacBook Battery Replacement</span>              </a>
             </li>
             <li>
               <a href="/collections/macbook-keyboard-repair-prices">
-                <span>MacBook Keyboard Repair</span>
-                <span class="related-arrow" aria-hidden="true">-&gt;</span>
-              </a>
+                <span>MacBook Keyboard Repair</span>              </a>
             </li>
             <li>
               <a href="/collections/macbook-charging-port-repair-prices">
-                <span>MacBook USB-C Port Repair</span>
-                <span class="related-arrow" aria-hidden="true">-&gt;</span>
-              </a>
+                <span>MacBook USB-C Port Repair</span>              </a>
             </li>
             <li>
               <a href="/pages/advanced-diagnostic">
-                <span>Liquid Damage &amp; Diagnostics</span>
-                <span class="related-arrow" aria-hidden="true">-&gt;</span>
-              </a>
+                <span>Liquid Damage &amp; Diagnostics</span>              </a>
             </li>
           </ul>
         </nav>
@@ -3013,8 +3033,7 @@
     <section class="section section-dark" id="faqs">
       <div class="ic-container">
         <div class="section-head">
-          <span class="mono-label" style="color:rgba(255,255,255,0.55);">Frequently Asked Questions</span>
-          <h2 class="section-title">Straight answers before you book.</h2>
+          <h2 class="section-title">Questions before you book</h2>
           <p class="section-lead">Ordered by the questions MacBook owners check most often before booking a screen repair.</p>
         </div>
 
@@ -3022,7 +3041,7 @@
           <div class="faq-item is-open">
             <button type="button" class="faq-btn" aria-expanded="true">
               <span>How much does a MacBook screen repair cost compared to the Apple Store?</span>
-              <span class="faq-icon">-</span>
+              <span class="faq-icon chev" aria-hidden="true"></span>
             </button>
             <div class="faq-answer">
               Apple replaces the entire display lid assembly, including the aluminium casing, hinges, webcam, and wireless antennas, even when none of those parts are damaged. We replace only the broken display panel using a genuine Apple screen reclaimed and recalibrated in-house. Our repairs typically cost 30% to 50% less than a full-lid swap while delivering the same visual quality.
@@ -3032,7 +3051,7 @@
           <div class="faq-item">
             <button type="button" class="faq-btn" aria-expanded="false">
               <span>Do you use genuine Apple displays in your MacBook repairs?</span>
-              <span class="faq-icon">+</span>
+              <span class="faq-icon chev" aria-hidden="true"></span>
             </button>
             <div class="faq-answer">
               Yes. We fit genuine Apple displays reclaimed from genuine MacBooks and never use aftermarket copy panels. Every display is tested and recalibrated in-house so colour, brightness, and firmware compatibility match Apple factory standards.
@@ -3042,7 +3061,7 @@
           <div class="faq-item">
             <button type="button" class="faq-btn" aria-expanded="false">
               <span>Will my screen repair with iCorrect void my Apple warranty?</span>
-              <span class="faq-icon">+</span>
+              <span class="faq-icon chev" aria-hidden="true"></span>
             </button>
             <div class="faq-answer">
               Accidental screen damage is already outside standard Apple warranty cover. Our genuine Apple display repairs do not cause software conflicts, though Apple may decline future warranty claims once a third party has opened a device. Every iCorrect repair includes our own 2-year warranty.
@@ -3052,7 +3071,7 @@
           <div class="faq-item">
             <button type="button" class="faq-btn" aria-expanded="false">
               <span>Will I keep True Tone, brightness, and native resolution?</span>
-              <span class="faq-icon">+</span>
+              <span class="faq-icon chev" aria-hidden="true"></span>
             </button>
             <div class="faq-answer">
               Yes. Because we only install genuine Apple display panels and calibrate them in-house, your MacBook retains True Tone, full peak brightness, native resolution, and ambient light sensing.
@@ -3062,7 +3081,7 @@
           <div class="faq-item">
             <button type="button" class="faq-btn" aria-expanded="false">
               <span>How long does a MacBook screen repair take?</span>
-              <span class="faq-icon">+</span>
+              <span class="faq-icon chev" aria-hidden="true"></span>
             </button>
             <div class="faq-answer">
               Standard MacBook screen repairs take 2 working days once your MacBook reaches our Fitzrovia workshop. That covers intake inspection, disassembly, genuine panel fitting, calibration, and final QC testing.
@@ -3072,7 +3091,7 @@
           <div class="faq-item">
             <button type="button" class="faq-btn" aria-expanded="false">
               <span>How does collection work in London and across the UK?</span>
-              <span class="faq-icon">+</span>
+              <span class="faq-icon chev" aria-hidden="true"></span>
             </button>
             <div class="faq-answer">
               Collection is free on orders of £200 or more, which covers every MacBook screen repair. Same-day courier collection is available in selected London zones. Anywhere else in the UK, we send a free tracked, insured mail-in pack straight to your address.
@@ -3082,7 +3101,7 @@
           <div class="faq-item">
             <button type="button" class="faq-btn" aria-expanded="false">
               <span>What if the screen is not the only fault, or another shop already tried to fix it?</span>
-              <span class="faq-icon">+</span>
+              <span class="faq-icon chev" aria-hidden="true"></span>
             </button>
             <div class="faq-answer">
               We check power rails, backlight circuits, and flex cables before starting any screen fit. If we find logic-board or liquid damage, or a poor aftermarket display from a previous repair, we pause and send you a clear written quote before carrying out extra work.
@@ -3092,7 +3111,7 @@
           <div class="faq-item">
             <button type="button" class="faq-btn" aria-expanded="false">
               <span>Can you repair Liquid Retina XDR screens on 14-inch and 16-inch MacBook Pros?</span>
-              <span class="faq-icon">+</span>
+              <span class="faq-icon chev" aria-hidden="true"></span>
             </button>
             <div class="faq-answer">
               Yes. We repair Liquid Retina XDR mini-LED displays on 14-inch and 16-inch MacBook Pro models (including M1, M2, M3, and M4 generations) using genuine Apple display panels and in-house calibration.
@@ -3106,12 +3125,12 @@
 
   <footer class="site-footer">
     <div class="ic-container site-footer-inner">
-      <span>iCorrect · 12 Margaret Street, Audley House, London W1W 8JQ · Mon to Thu 9am to 6pm, Friday 10am to 6pm, Sat &amp; Sun closed</span>
-      <span><a href="/pages/macbook-repair-london">MacBook Repair London</a> · <a href="#quote-section">Check your price</a></span>
+      <span>iCorrect, 12 Margaret Street, Audley House, London W1W 8JQ. Mon to Thu 9am to 6pm, Friday 10am to 6pm, Sat &amp; Sun closed</span>
+      <span><a href="/pages/macbook-repair-london">MacBook repair London</a></span>
     </div>
   </footer>
 
-  <a class="floating-cta" id="floating-cta" href="#quote-section" aria-hidden="true" tabindex="-1">Get your price -&gt;</a>
+  <a class="floating-cta" id="floating-cta" href="#quote-section" aria-hidden="true" tabindex="-1">Get your price</a>
 
   <script>
     (function () {
@@ -3163,14 +3182,12 @@
       var processBar = document.getElementById("process-strip");
       var processBtn = document.getElementById("process-bar-toggle");
       var processLabel = document.getElementById("process-bar-label");
-      var processIcon = document.getElementById("process-bar-icon");
       if (processBar && processBtn) {
         processBtn.addEventListener("click", function () {
           var open = !processBar.classList.contains("is-open");
           processBar.classList.toggle("is-open", open);
           processBtn.setAttribute("aria-expanded", String(open));
-          processLabel.textContent = open ? "Hide details" : "See how it works";
-          processIcon.textContent = open ? "-" : "+";
+          processLabel.textContent = open ? "Hide steps" : "See each step";
         });
       }
 
@@ -3178,14 +3195,12 @@
       var compareCard = document.getElementById("compare-card");
       var compareBtn = document.getElementById("compare-expand-btn");
       var compareLabel = document.getElementById("compare-expand-label");
-      var compareIcon = document.getElementById("compare-expand-icon");
       if (compareBtn && compareCard) {
         compareBtn.addEventListener("click", function () {
           var expanded = !compareCard.classList.contains("is-expanded");
           compareCard.classList.toggle("is-expanded", expanded);
           compareBtn.setAttribute("aria-expanded", String(expanded));
           compareLabel.textContent = expanded ? "Show fewer comparisons" : "Show 4 more comparisons";
-          compareIcon.textContent = expanded ? "-" : "+";
         });
         window.addEventListener("click", function (e) {
           var link = e.target && e.target.closest ? e.target.closest("a[href='#compare']") : null;
@@ -3194,7 +3209,8 @@
           if (compareSection) {
             e.preventDefault();
             e.stopImmediatePropagation();
-            compareSection.scrollIntoView({ behavior: "smooth", block: "start" });
+            var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            compareSection.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
           }
         }, true);
       }
@@ -3203,13 +3219,11 @@
       var warrantyCard = document.getElementById("warranty");
       var warrantyBtn = document.getElementById("warranty-toggle");
       var warrantyLabel = document.getElementById("warranty-toggle-label");
-      var warrantyIcon = document.getElementById("warranty-toggle-icon");
       function setWarrantyOpen(open) {
         if (!warrantyCard || !warrantyBtn) return;
         warrantyCard.classList.toggle("is-open", open);
         warrantyBtn.setAttribute("aria-expanded", String(open));
         warrantyLabel.textContent = open ? "Hide details" : "See what's covered";
-        warrantyIcon.textContent = open ? "-" : "+";
       }
       if (warrantyBtn) {
         warrantyBtn.addEventListener("click", function () {
@@ -3225,13 +3239,11 @@
       // Mobile expandable pillars (collapsed on <=600px, always open on desktop)
       document.querySelectorAll("[data-pillar]").forEach(function (card) {
         var btn = card.querySelector(".pillar-toggle");
-        var plus = card.querySelector(".pillar-plus");
         btn.addEventListener("click", function () {
           if (window.innerWidth > 600) return;
           var open = !card.classList.contains("is-open");
           card.classList.toggle("is-open", open);
           btn.setAttribute("aria-expanded", String(open));
-          if (plus) plus.textContent = open ? "-" : "+";
         });
       });
 
@@ -3270,18 +3282,29 @@
 
       document.getElementById("identify-form").addEventListener("submit", function (e) {
         e.preventDefault();
-        var raw = (document.getElementById("identify-input").value || "").trim().toUpperCase();
+        var input = document.getElementById("identify-input");
+        var error = document.getElementById("identify-error");
+        var raw = (input.value || "").trim().toUpperCase();
         var out = document.getElementById("identify-result");
-        if (!raw) return;
+        if (!raw) {
+          input.setAttribute("aria-invalid", "true");
+          error.hidden = false;
+          out.classList.remove("is-visible");
+          out.textContent = "";
+          input.focus();
+          return;
+        }
+        input.removeAttribute("aria-invalid");
+        error.hidden = true;
         var match = MODELS.find(function (m) { return m.code === raw || raw.indexOf(m.code) !== -1; });
         out.classList.add("is-visible");
         if (match) {
           out.innerHTML =
-            '<span><strong>' + match.name + ' (' + match.code + ')</strong> · Screen repair ' + match.price + '</span>' +
-            '<a class="btn-dark" style="min-height:34px;padding:5px 12px;font-size:13px;" href="#quote-section">Open in quote wizard -&gt;</a>';
+            '<span><strong>' + match.name + ' (' + match.code + ')</strong>, screen repair ' + match.price + '</span>' +
+            '<a class="btn-ghost" href="#quote-section">Open in quote tool</a>';
         } else {
           out.innerHTML =
-            '<span>Could not match <strong>' + raw.replace(/[<>&"]/g, "") + '</strong> directly. Browse your MacBook in the <a href="#quote-section" style="color:var(--accent);font-weight:500;">quote wizard below</a>.</span>';
+            '<span>We could not match <strong>' + raw.replace(/[<>&"]/g, "") + '</strong>. Check the code on the underside, or choose your MacBook in the <a class="text-link" href="#quote-section">quote tool below</a>.</span>';
         }
       });
 
@@ -3292,7 +3315,6 @@
           var open = !item.classList.contains("is-open");
           item.classList.toggle("is-open", open);
           btn.setAttribute("aria-expanded", String(open));
-          btn.querySelector(".faq-icon").textContent = open ? "-" : "+";
         });
       });
     })();
