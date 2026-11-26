@@ -24,8 +24,12 @@
         "stage_step2_desc": "Frequently traced to failed USB-C power delivery controllers (CD3217) or damaged power management ICs (PMIC).",
         "stage_step3_title": "Quoted £700+ by Apple Store for a logic board swap",
         "stage_step3_desc": "Apple replaces the entire logic board and wipes your storage. We isolate the single failed component for a fraction of the cost.",
+        "hero_bench_image": "macbook-bench-ammeter.webp",
+        "hero_bench_alt": "USB-C power meter on our Fitzrovia bench diagnosing a dead MacBook reading 20.08V and 0.000A",
+        "hero_bench_title": "See dead logic boards revived on our Fitzrovia bench",
+        "hero_bench_sub": "Real A2681 & T2 board breakdowns + 50s workshop walkthrough",
         "pillar1_title": "Component-level fault tracing, not board swaps",
-        "pillar1_body": "Using thermal cameras, oscilloscopes, and board schematics in our Fitzrovia workshop, we locate the exact failed IC, capacitor, or power rail instead of quoting a full logic board replacement.",
+        "pillar1_body": "Using thermal cameras, USB-C ammeters, and board schematics in our Fitzrovia workshop, we locate the exact failed IC, capacitor, or power rail instead of quoting a full logic board replacement.",
         "pillar2_title": "Keep your soldered SSD & files intact",
         "pillar2_body": "On M1, M2, M3, M4 and modern Intel MacBooks, your SSD is soldered onto the logic board. Repairing your original board restores both your MacBook and your files without a wipe.",
         "pillar3_title": "Clear second opinion within 1 working day",
@@ -107,9 +111,105 @@
       "type": "macbook-pillar-page",
       "settings": {
         "part": "bottom",
+        "cases_heading": "Recent dead MacBook logic boards revived on our Fitzrovia bench",
+        "cases_lead": "Real no-power diagnostics completed in-house at 12 Margaret Street. Every repair isolates the failing micro-component on your original logic board instead of quoting an unnecessary full board swap.",
+        "reel_heading": "Watch Ricky walk through a dead MacBook Pro logic board repair",
+        "reel_copy": "Watch how a completely dead MacBook showing zero signs of life is traced to a short-to-ground on our Fitzrovia bench, micro-soldered with hot air, verified at 20.07V on our USB-C power meter, and booted back up with the client's original board and files intact.",
+        "diag_heading": "How we actually find a no-power fault on your logic board",
+        "diag_lead": "Most dead MacBooks fail because of a single shorted capacitor or power controller IC. Click each stage to see how our Fitzrovia technicians trace power rails step by step.",
         "faq_lead": "Straight answers on dead MacBooks, USB-C charging failures, soldered SSD data safety, and our 2-year warranty."
       },
       "blocks": {
+        "case_1": {
+          "type": "case_study",
+          "settings": {
+            "model_badge": "MacBook Air 13\" M2 (A2681) · Dead / No Power",
+            "status_badge": "20V & boot restored",
+            "title": "USB-C & CF650 power-rail short on Apple Silicon M2 board",
+            "before_image": "macbook-bench-a2681-usbc.webp",
+            "after_image": "macbook-bench-a2681-pmic.webp",
+            "media_badge": "A2681 · Dual CD3217B13 Stage",
+            "before_badge": "USB-C Controllers · CD3217B13",
+            "after_badge": "PMIC & R28 Power Phases",
+            "image_alt": "Macro photograph of MacBook Air M2 A2681 logic board showing dual CD3217B13 USB-C power controllers and inductors",
+            "symptom": "MacBook Air M2 died suddenly overnight with zero response on MagSafe or USB-C ports and no battery charging.",
+            "diagnosis": "USB-C amp meter showed stalled power draw; schematic and boardview rail tracing isolated a shorted CF650 power rail capacitor without damaging surrounding Silicon rails.",
+            "outcome": "Single failed component replaced under microscope, verified 20V charging draw and full macOS boot with original M2 logic board and soldered SSD untouched."
+          }
+        },
+        "case_2": {
+          "type": "case_study",
+          "settings": {
+            "model_badge": "MacBook Pro 13\" T2 · Power IC Failure",
+            "status_badge": "Avoided £700+ swap",
+            "title": "Failed BGA power management chip next to Apple T2 silicon",
+            "before_image": "macbook-bench-t2-power-ic.webp",
+            "after_image": "macbook-bench-repaired-rail.webp",
+            "media_badge": "Failed Power IC Lifted",
+            "before_badge": "Failed Power IC · T2 Board",
+            "after_badge": "Repaired Rail · Micro-Soldered",
+            "image_alt": "MacBook Pro 13 inch logic board next to Apple T2 chip with failed BGA power chip cleanly removed for replacement",
+            "symptom": "Dead MacBook Pro 13 inch stuck at 0.000A draw after a charger spike; previously quoted a full logic board replacement.",
+            "diagnosis": "Thermal imaging and diode-mode testing next to the Apple T2 chip pinpointed an internal short inside the BGA power management IC.",
+            "outcome": "Faulty BGA power chip lifted, pads re-tinned cleanly, replacement IC micro-soldered in Fitzrovia, and full charging plus data preserved with 2-year warranty."
+          }
+        },
+        "diag_1": {
+          "type": "diag_stage",
+          "settings": {
+            "tag": "Stage 01 · USB-C Telemetry",
+            "title": "USB-C voltage & current negotiation test",
+            "description": "Every dead MacBook starts on a calibrated USB-C ammeter. Reading 5V vs 20V and exact milliamps narrows the fault to the charging stage or main power rails in seconds.",
+            "image": "macbook-bench-ammeter.webp",
+            "image_alt": "USB-C ammeter plugged into a dead MacBook on the Fitzrovia bench reading 20.08V and 0.000A",
+            "reading_key": "USB-C Bench Meter",
+            "reading_val": "20.08V / 0.000A (Zero Draw)",
+            "note_title": "What 20.08V / 0.000A tells us immediately",
+            "note_body": "When voltage steps up to 20V but current stays at 0.000A, the USB-C negotiation passed but a downstream power rail or PMIC enable line is blocked or shorted."
+          }
+        },
+        "diag_2": {
+          "type": "diag_stage",
+          "settings": {
+            "tag": "Stage 02 · Schematic Trace",
+            "title": "Boardview & diode-mode rail measurements",
+            "description": "We strip the logic board onto an ESD bench mat and probe primary and secondary rails (CD3217B13 controllers, PPBUS_G3H, CF650, and PMIC phases) against Apple schematics.",
+            "image": "macbook-bench-a2681-usbc.webp",
+            "image_alt": "Close-up of MacBook Air M2 A2681 logic board dual CD3217B13 USB-C controllers and inductors",
+            "reading_key": "Diode-Mode Rail Map",
+            "reading_val": "CD3217B13 · PPBUS_G3H · CF650",
+            "note_title": "Pinpointing the exact shorted circuit",
+            "note_body": "Rather than swapping an entire £700+ board, diode-mode readings tell us within millimetres which line is pulled to ground so we test only what is faulty."
+          }
+        },
+        "diag_3": {
+          "type": "diag_stage",
+          "settings": {
+            "tag": "Stage 03 · Thermal & Microscope",
+            "title": "Thermal hotspot & 40x microscope verification",
+            "description": "Controlled low-voltage injection with a thermal camera and stereo microscope highlights the single overheating capacitor or shorted BGA power IC.",
+            "image": "macbook-bench-t2-power-ic.webp",
+            "image_alt": "MacBook Pro 13 inch logic board showing failed BGA power chip lifted cleanly beside the Apple T2 chip",
+            "reading_key": "Microscope & Thermal",
+            "reading_val": "Failed BGA Power IC Isolated",
+            "note_title": "Written report before any repair starts",
+            "note_body": "Once we confirm the exact failed component and verify the main Apple Silicon / T2 chip is healthy, we email your clear written fault report and fixed repair quote within 1 working day."
+          }
+        },
+        "diag_4": {
+          "type": "diag_stage",
+          "settings": {
+            "tag": "Stage 04 · Micro-Solder & QC",
+            "title": "Hot-air micro-soldering & full load stress test",
+            "description": "We replace the failed IC or capacitor under our stereo microscope, clean flux residue, verify 20V multi-amp charging across all ports, and test macOS boot and thermals.",
+            "image": "macbook-bench-repaired-rail.webp",
+            "image_alt": "Repaired MacBook Pro logic board power rail with clean factory-grade micro-soldering",
+            "reading_key": "Post-Repair Load QC",
+            "reading_val": "20V Multi-Amp · Full Boot · 2-Yr Cover",
+            "note_title": "Original board & soldered SSD preserved",
+            "note_body": "Your MacBook boots straight back into your own macOS environment with your files intact, backed by our 2-year warranty on the repaired power circuits."
+          }
+        },
         "faq_1": {
           "type": "faq",
           "settings": {
@@ -153,7 +253,20 @@
           }
         }
       },
-      "block_order": ["faq_1", "faq_2", "faq_3", "faq_4", "faq_5", "faq_6"]
+      "block_order": [
+        "case_1",
+        "case_2",
+        "diag_1",
+        "diag_2",
+        "diag_3",
+        "diag_4",
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4",
+        "faq_5",
+        "faq_6"
+      ]
     },
     "main": {
       "type": "main-page",

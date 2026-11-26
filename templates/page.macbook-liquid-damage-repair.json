@@ -24,6 +24,10 @@
         "stage_step2_desc": "Rice leaves starch dust inside fans and connectors; heat warps keycaps and pushes liquid deeper under logic board chips.",
         "stage_step3_title": "Book a microscope board inspection",
         "stage_step3_desc": "Leave the MacBook dry and switched off, then book courier collection in selected London zones or a free tracked UK mail-in pack.",
+        "hero_bench_image": "macbook-bench-microscope.webp",
+        "hero_bench_alt": "Stereo microscope view of MacBook BGA pad oxidation on our Fitzrovia bench",
+        "hero_bench_title": "See real liquid-damaged boards saved on our Fitzrovia bench",
+        "hero_bench_sub": "Before & after corrosion repairs + 50s workshop walkthrough",
         "pillar1_title": "Ultrasonic cleaning & microscope micro-soldering",
         "pillar1_body": "Instead of writing off your MacBook for a £800 to £1,400+ Apple Tier 4 swap, we strip the board, remove hidden corrosion ultrasonically, and replace only the damaged components.",
         "pillar2_title": "Built to protect your files & soldered SSD",
@@ -107,9 +111,105 @@
       "type": "macbook-pillar-page",
       "settings": {
         "part": "bottom",
+        "cases_heading": "Recent liquid-damaged MacBooks recovered on our Fitzrovia bench",
+        "cases_lead": "Real board-level recoveries documented at 12 Margaret Street. Toggle Before / After below to see how we clean corroded rails and replace failed micro-components instead of swapping your entire logic board.",
+        "reel_heading": "Watch Ricky walk through a dead MacBook Pro logic board repair",
+        "reel_copy": "See how a shorted power rail stops a MacBook showing any sign of life, how we isolate and micro-solder the burnt component under our Fitzrovia microscopes, verify 20.07V on our USB-C bench meter, and boot the original board back up with all data intact.",
+        "diag_heading": "How we actually find liquid damage faults on your logic board",
+        "diag_lead": "Surface drying never removes conductive corrosion trapped beneath BGA chips. Click each stage to see how our Fitzrovia technicians trace every affected circuit before quoting.",
         "faq_lead": "Everything you need to know about liquid spills, soldered SSD data safety, turnaround times, and our 2-year warranty."
       },
       "blocks": {
+        "case_1": {
+          "type": "case_study",
+          "settings": {
+            "model_badge": "MacBook Pro 13\" · Shorted Power Rail",
+            "status_badge": "Board & SSD saved",
+            "title": "Shorted power-rail capacitor after liquid ingress",
+            "before_image": "macbook-bench-shorted-cap.webp",
+            "after_image": "macbook-bench-repaired-rail.webp",
+            "media_badge": "Before · Shorted Component",
+            "before_badge": "Before · Shorted Component",
+            "after_badge": "After · Cleaned & Micro-Soldered",
+            "image_alt": "Before and after Fitzrovia logic board repair showing burnt shorted capacitor replaced cleanly",
+            "symptom": "MacBook arrived completely dead after liquid entered the top-edge vent near the power stage, showing zero fan spin and 0.000A draw.",
+            "diagnosis": "Board removal and stereo microscope inspection revealed a carbonised, shorted capacitor pulling the primary power rail directly to ground.",
+            "outcome": "Burnt pads cleaned, failed components micro-soldered, full ultrasonic clean completed, and original logic board restored to normal boot with 2-year cover."
+          }
+        },
+        "case_2": {
+          "type": "case_study",
+          "settings": {
+            "model_badge": "MacBook Pro 14\" M3 (A2918) · Liquid Spill",
+            "status_badge": "Original M3 board kept",
+            "title": "Under-chip corrosion traced via stereo microscope & schematic",
+            "before_image": "macbook-bench-microscope.webp",
+            "after_image": "macbook-bench-a2681-pmic.webp",
+            "media_badge": "40x Stereo Microscope View",
+            "before_badge": "40x Microscope · Pad Oxidation",
+            "after_badge": "Bench Macro · Clean PMIC & Rails",
+            "image_alt": "Stereo microscope eyepiece view of BGA pad oxidation on a liquid-damaged MacBook logic board",
+            "symptom": "Liquid spill left the Apple Silicon MacBook dead despite looking dry from the outside; quoted a full Tier 4 replacement elsewhere.",
+            "diagnosis": "USB-C meter showed stalled power negotiation; schematic diode-mode tracing and 40x microscope inspection isolated conductive oxidation under BGA pads.",
+            "outcome": "Ultrasonic bath removed hidden residue, damaged power components were replaced in-house, and the original logic board and soldered SSD were returned working."
+          }
+        },
+        "diag_1": {
+          "type": "diag_stage",
+          "settings": {
+            "tag": "Stage 01 · Power Triage",
+            "title": "USB-C ammeter & intake safety check",
+            "description": "Before applying full power, we read voltage and current negotiation on a calibrated USB-C ammeter and disconnect the battery to stop galvanic corrosion.",
+            "image": "macbook-bench-ammeter.webp",
+            "image_alt": "USB-C power meter plugged into a MacBook on the Fitzrovia bench reading 20.08V and 0.000A",
+            "reading_key": "USB-C Bench Meter",
+            "reading_val": "5.0V stalled or 20.08V / 0.000A",
+            "note_title": "Why we never plug in and hope",
+            "note_body": "A dead-shorted board pulling zero amps at 20V tells us immediately that USB-C negotiation passed but a downstream main power rail is shorted or locked out."
+          }
+        },
+        "diag_2": {
+          "type": "diag_stage",
+          "settings": {
+            "tag": "Stage 02 · Microscope Inspection",
+            "title": "40x stereo microscope corrosion mapping",
+            "description": "We strip the logic board out of the chassis and inspect both sides under 40x stereo magnification to log every corroded pad, oxidised connector, and liquid indicator.",
+            "image": "macbook-bench-microscope.webp",
+            "image_alt": "Fitzrovia stereo microscope view showing microscopic oxidation across BGA solder pads",
+            "reading_key": "Optical Magnification",
+            "reading_val": "40x Stereo · Both Board Sides",
+            "note_title": "Catching what alcohol wipes miss",
+            "note_body": "Conductive mineral deposits hide underneath tightly sealed BGA chips and FPC display connectors. Mapping every affected zone lets us quote accurately in 1 working day."
+          }
+        },
+        "diag_3": {
+          "type": "diag_stage",
+          "settings": {
+            "tag": "Stage 03 · Schematic Tracing",
+            "title": "Diode-mode & boardview rail isolation",
+            "description": "Using Apple board schematics and boardview files, we measure resistance to ground across affected rails (PPBUS_G3H, CD3217 USB-C stages, and PMIC outputs) to find the exact dead short.",
+            "image": "macbook-bench-a2681-usbc.webp",
+            "image_alt": "Macro photo of Apple Silicon logic board dual CD3217B13 USB-C controllers and power inductors",
+            "reading_key": "Schematic & Boardview",
+            "reading_val": "PPBUS_G3H · CD3217B13 Rails",
+            "note_title": "Zero guesswork before we quote",
+            "note_body": "Instead of guessing which module failed, diode-mode measurements pinpoint the exact shorted capacitor or controller IC so you receive a clear written quote before repair proceeds."
+          }
+        },
+        "diag_4": {
+          "type": "diag_stage",
+          "settings": {
+            "tag": "Stage 04 · Clean, Solder & QC",
+            "title": "Ultrasonic bath, micro-soldering & load QC",
+            "description": "Once approved, we remove hidden corrosion ultrasonically, micro-solder replacement components onto your original board, and run charging, thermal, and full boot stress tests.",
+            "image": "macbook-bench-repaired-rail.webp",
+            "image_alt": "Cleaned and micro-soldered MacBook Pro logic board power rail after repair on the Fitzrovia bench",
+            "reading_key": "Post-Repair Load QC",
+            "reading_val": "20V Charge · SSD Intact · 2-Yr Cover",
+            "note_title": "Your original board back in service",
+            "note_body": "By repairing the exact affected circuits rather than swapping the whole board, your soldered SSD stays intact wherever possible and every completed repair carries our 2-year warranty."
+          }
+        },
         "faq_1": {
           "type": "faq",
           "settings": {
@@ -153,7 +253,20 @@
           }
         }
       },
-      "block_order": ["faq_1", "faq_2", "faq_3", "faq_4", "faq_5", "faq_6"]
+      "block_order": [
+        "case_1",
+        "case_2",
+        "diag_1",
+        "diag_2",
+        "diag_3",
+        "diag_4",
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4",
+        "faq_5",
+        "faq_6"
+      ]
     },
     "main": {
       "type": "main-page",

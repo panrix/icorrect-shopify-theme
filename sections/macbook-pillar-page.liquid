@@ -2,6 +2,10 @@
   sections/macbook-pillar-page.liquid
   Reusable editorial section for high-intent MacBook pillar money pages
   (e.g. /pages/macbook-liquid-damage-repair, /pages/macbook-no-power-repair).
+  Aligned with ICO-11 v10 design system (trust bar below hero, Fitzrovia Never Outsourced,
+  styled live Trustindex reviews, compact expandable logistics bar, real Fitzrovia bench
+  case studies with Before/After + Ricky's repair walkthrough video, and interactive
+  4-stage logic board fault-finding breakdown).
   Render once above sections/quote-wizard (part = "top") and once below (part = "bottom")
   so the untouched Shopify quote wizard sits in the validated value-first slot.
 {%- endcomment -%}
@@ -14,24 +18,32 @@
   .icp-root {
     --icp-bg-1: #ffffff;
     --icp-bg-2: #fafafa;
-    --icp-bg-3: #f2f2f2;
+    --icp-bg-3: #f4f4f5;
     --icp-fg-1: #171717;
     --icp-fg-2: #4d4d4d;
     --icp-fg-3: #666666;
-    --icp-fg-4: #8c8c8c;
+    --icp-fg-4: #808080;
     --icp-line: rgba(0, 0, 0, 0.08);
     --icp-line-strong: rgba(0, 0, 0, 0.16);
-    --icp-accent: #0070f3;
-    --icp-green: #15803d;
+    --icp-accent: #0b63ce;
+    --icp-accent-hover: #0952ab;
+    --icp-accent-soft: #eff6ff;
+    --icp-accent-border: #bfdbfe;
+    --icp-green: #047857;
+    --icp-green-dot: #10b981;
     --icp-star: #f59e0b;
-    --icp-font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --icp-font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --icp-shadow-card: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.03);
+    --icp-font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    --icp-font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
     font-family: var(--icp-font-sans);
     color: var(--icp-fg-1);
     line-height: 1.5;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
     overflow-x: clip;
   }
   .icp-root *, .icp-root *::before, .icp-root *::after { box-sizing: border-box; }
+  .icp-root img, .icp-root svg, .icp-root video { display: block; max-width: 100%; }
   .icp-container {
     width: 100%;
     max-width: 1120px;
@@ -41,7 +53,8 @@
   .icp-mono {
     font-family: var(--icp-font-mono);
     font-size: 11px;
-    letter-spacing: 0.07em;
+    font-weight: 500;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--icp-fg-3);
   }
@@ -50,41 +63,81 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 10px 18px;
-    min-height: 40px;
+    padding: 8px 18px;
+    min-height: 42px;
     border-radius: 6px;
-    background: var(--icp-fg-1);
+    background: #111827;
     color: #ffffff !important;
+    border: 1px solid #111827;
     font-size: 14px;
     font-weight: 500;
     text-decoration: none;
-    border: 0;
     cursor: pointer;
     white-space: nowrap;
+    transition: background 140ms ease;
   }
-  .icp-btn-dark:hover { background: #333333; }
+  .icp-btn-dark:hover { background: #1f2937; }
   .icp-btn-ghost {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 7px 13px;
+    padding: 6px 12px;
     min-height: 36px;
     border-radius: 999px;
-    border: 1px solid var(--icp-line-strong);
-    background: #ffffff;
-    color: var(--icp-fg-1) !important;
+    border: 1px solid #e2e5ea;
+    background: #f5f6f8;
+    color: #1f2937 !important;
     font-size: 13px;
     font-weight: 500;
     text-decoration: none;
     cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
   }
-  .icp-btn-ghost:hover { border-color: var(--icp-fg-1); background: var(--icp-bg-2); }
+  .icp-btn-ghost:hover { border-color: #cbd5e1; background: #eceef2; color: #111827 !important; }
 
-  /* Hero */
+  /* Floating Scroll-Aware CTA (ICO-11 v10) */
+  .icp-floating-cta {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 60;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    height: 48px;
+    padding: 0 22px;
+    border-radius: 999px;
+    background: #111827;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-family: var(--icp-font-sans);
+    font-size: 14.5px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: 0 12px 28px rgba(17, 24, 39, 0.28), 0 2px 8px rgba(0, 0, 0, 0.16);
+    opacity: 0;
+    transform: translateY(14px);
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 220ms ease, transform 220ms ease, visibility 220ms ease, background 140ms ease;
+  }
+  .icp-floating-cta:hover { background: #1f2937; }
+  .icp-floating-cta.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  /* 1. HERO BAND */
   .icp-hero {
     padding: 24px 0 40px;
-    background: var(--icp-bg-1);
+    background: #ffffff;
     border-bottom: 1px solid var(--icp-line);
   }
   .icp-breadcrumb {
@@ -92,90 +145,39 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 6px;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
     font-family: var(--icp-font-mono);
     font-size: 11px;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    color: var(--icp-fg-4);
+    color: #6b7280;
   }
-  .icp-breadcrumb a { color: var(--icp-fg-3); text-decoration: none; }
-  .icp-breadcrumb a:hover { color: var(--icp-fg-1); }
-
-  .icp-trust-strip {
-    margin: 0 0 22px;
-    padding: 0;
-    list-style: none;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    background: var(--icp-bg-2);
-    border: 1px solid var(--icp-line);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .icp-trust-cell {
-    padding: 10px 12px;
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    border-right: 1px solid var(--icp-line);
-    min-width: 0;
-  }
-  .icp-trust-cell:last-child { border-right: 0; }
-  .icp-trust-link {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    text-decoration: none;
-    color: inherit;
-    width: 100%;
-  }
-  .icp-trust-score {
-    font-size: 20px;
-    font-weight: 600;
-    letter-spacing: -0.04em;
-    line-height: 1;
-    color: var(--icp-fg-1);
-    flex-shrink: 0;
-  }
-  .icp-trust-stars { display: inline-flex; gap: 2px; line-height: 1; margin-bottom: 2px; }
-  .icp-trust-icon {
-    width: 26px;
-    height: 26px;
-    border-radius: 6px;
-    background: #ffffff;
-    border: 1px solid var(--icp-line);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    color: var(--icp-fg-1);
-  }
-  .icp-trust-copy { display: flex; flex-direction: column; min-width: 0; }
-  .icp-trust-copy strong { font-size: 12.5px; font-weight: 600; color: var(--icp-fg-1); line-height: 1.25; }
-  .icp-trust-copy span { font-size: 11px; color: var(--icp-fg-3); line-height: 1.25; }
+  .icp-breadcrumb a { color: #6b7280; text-decoration: none; }
+  .icp-breadcrumb a:hover { color: #111827; }
+  .icp-breadcrumb-current { color: #111827; font-weight: 500; }
 
   .icp-hero-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-    gap: 36px;
+    grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+    gap: 38px;
     align-items: center;
   }
   .icp-hero-grid > * { min-width: 0; }
   .icp-h1 {
     margin: 0 0 10px;
-    font-size: 42px;
+    font-size: 44px;
     font-weight: 600;
-    line-height: 1.08;
+    line-height: 1.06;
     letter-spacing: -0.04em;
     color: var(--icp-fg-1);
+    text-wrap: balance;
   }
   .icp-lead {
     margin: 0 0 18px;
-    font-size: 16px;
-    line-height: 1.55;
+    font-size: 16.5px;
+    line-height: 1.5;
     color: var(--icp-fg-2);
-    max-width: 50ch;
+    max-width: 48ch;
   }
   .icp-highlights {
     display: grid;
@@ -190,38 +192,43 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
-    padding: 10px 12px;
+    padding: 9px 12px;
     border-radius: 6px;
-    border: 1px solid var(--icp-line);
-    background: #ffffff;
+    border: 1px solid var(--icp-accent-border);
+    background: var(--icp-accent-soft);
     text-decoration: none;
     color: inherit;
+    transition: border-color 140ms ease, background 140ms ease, box-shadow 140ms ease;
   }
-  .icp-chip:hover { border-color: var(--icp-fg-1); background: var(--icp-bg-2); }
-  .icp-chip-label { font-size: 11.5px; font-weight: 500; color: var(--icp-fg-3); }
-  .icp-chip-val { font-size: 14.5px; font-weight: 600; color: var(--icp-fg-1); letter-spacing: -0.02em; }
-  .icp-note { margin: 10px 0 0; font-size: 12.5px; color: var(--icp-fg-3); }
+  .icp-chip:hover {
+    border-color: #93c5fd;
+    background: #dbeafe;
+    box-shadow: 0 2px 8px rgba(11, 99, 206, 0.12);
+  }
+  .icp-chip-label { font-size: 11.5px; font-weight: 500; color: #1e3a5f; }
+  .icp-chip-val { font-size: 14.5px; font-weight: 600; color: var(--icp-accent); letter-spacing: -0.02em; }
+  .icp-note { margin: 9px 0 0; font-size: 12px; color: var(--icp-fg-3); }
   .icp-cta-row {
-    margin-top: 16px;
+    margin-top: 15px;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     align-items: center;
   }
 
-  /* Right Hero Card (Emergency / Diagnostic Steps) */
+  /* Right Hero Card (Emergency / Fault Stage + Bench Proof Preview) */
   .icp-stage {
-    background: var(--icp-bg-2);
-    border: 1px solid var(--icp-line);
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
     border-radius: 14px;
-    padding: 20px;
+    padding: 18px;
   }
   .icp-stage-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
     flex-wrap: wrap;
   }
   .icp-stage-pill {
@@ -234,9 +241,16 @@
     border: 1px solid #bfdbfe;
     font-family: var(--icp-font-mono);
     font-size: 10.5px;
-    color: #0369a1;
+    font-weight: 500;
+    color: var(--icp-accent);
     text-transform: uppercase;
     letter-spacing: 0.03em;
+  }
+  .icp-stage-pill-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--icp-accent);
   }
   .icp-step-list {
     list-style: none;
@@ -244,22 +258,22 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 9px;
   }
   .icp-step-item {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
-    padding: 12px;
-    border-radius: 8px;
+    gap: 11px;
+    padding: 11px 12px;
+    border-radius: 9px;
     background: #ffffff;
-    border: 1px solid var(--icp-line);
+    border: 1px solid rgba(0, 0, 0, 0.07);
   }
   .icp-step-num {
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: var(--icp-fg-1);
+    background: #111827;
     color: #ffffff;
     font-family: var(--icp-font-mono);
     font-size: 11px;
@@ -270,12 +284,88 @@
     flex-shrink: 0;
     margin-top: 1px;
   }
-  .icp-step-item strong { display: block; font-size: 13.5px; color: var(--icp-fg-1); margin-bottom: 2px; }
-  .icp-step-item span { display: block; font-size: 12.5px; color: var(--icp-fg-2); line-height: 1.45; }
+  .icp-step-item > div > strong { display: block; font-size: 13.5px; font-weight: 600; color: #111827; margin-bottom: 2px; }
+  .icp-step-item > div > span { display: block; font-size: 12.5px; color: var(--icp-fg-2); line-height: 1.42; }
+  .icp-stage-bench {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #111827;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    transition: background 140ms ease;
+  }
+  .icp-stage-bench:hover { background: #1f2937; }
+  .icp-stage-bench img {
+    width: 56px;
+    height: 42px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+  }
+  .icp-stage-bench-copy { min-width: 0; flex: 1; }
+  .icp-stage-bench-copy strong { display: block; font-size: 12.5px; font-weight: 600; color: #ffffff; line-height: 1.25; }
+  .icp-stage-bench-copy span { display: block; font-size: 11.5px; color: rgba(255, 255, 255, 0.7); line-height: 1.3; margin-top: 2px; }
+  .icp-stage-bench-arrow { font-family: var(--icp-font-mono); font-size: 12px; color: #93c5fd; flex-shrink: 0; }
 
-  /* 3 Proof Pillars */
+  /* 4-BADGE TRUST STRIP: DIRECTLY BELOW HERO, ABOVE 3 PROOF CARDS (ICO-11 v10) */
+  .icp-trust-strip {
+    margin: 28px 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+  }
+  .icp-trust-cell {
+    padding: 13px 16px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    border-right: 1px solid #e5e7eb;
+    min-width: 0;
+  }
+  .icp-trust-cell:last-child { border-right: 0; }
+  .icp-trust-link {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    text-decoration: none;
+    color: inherit;
+    width: 100%;
+    min-width: 0;
+  }
+  .icp-trust-link:hover .icp-trust-icon { border-color: #cbd5e1; background: #ffffff; }
+  .icp-trust-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #111827;
+    transition: border-color 140ms ease, background 140ms ease;
+  }
+  .icp-trust-copy { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .icp-trust-copy strong { font-size: 13px; font-weight: 600; letter-spacing: -0.015em; color: #111827; line-height: 1.25; }
+  .icp-trust-copy span { font-size: 11.5px; color: #6b7280; line-height: 1.25; }
+  .icp-trust-rating-title { display: inline-flex; align-items: center; gap: 5px; flex-wrap: nowrap; }
+  .icp-trust-stars-inline { display: inline-flex; align-items: center; gap: 1.5px; line-height: 1; transform: translateY(-0.5px); }
+
+  /* 3 Board-Level Proof Cards (Desktop cards, Mobile compact accordions) */
   .icp-pillars {
-    margin-top: 26px;
+    margin-top: 14px;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px;
@@ -299,15 +389,127 @@
     cursor: default;
   }
   .icp-pillar-title { font-size: 14.5px; font-weight: 600; color: var(--icp-fg-1); line-height: 1.3; }
-  .icp-pillar-plus { display: none; font-family: var(--icp-font-mono); font-size: 16px; color: var(--icp-fg-3); }
+  .icp-pillar-plus { display: none; font-family: var(--icp-font-mono); font-size: 16px; color: var(--icp-fg-3); flex-shrink: 0; }
   .icp-pillar-body { padding: 0 16px 15px; font-size: 13.5px; color: var(--icp-fg-2); line-height: 1.5; }
   .icp-pillar-body p { margin: 0; }
 
+  /* Compact Expandable Logistics Strip (ICO-11 v10 .process-bar) */
+  .icp-process-bar {
+    margin-top: 14px;
+    background: #ffffff;
+    border: 1px solid var(--icp-line);
+    border-radius: 10px;
+    box-shadow: var(--icp-shadow-card);
+    overflow: hidden;
+  }
+  .icp-process-trigger {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    padding: 11px 16px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
+    transition: background 140ms ease;
+  }
+  .icp-process-trigger:hover { background: var(--icp-bg-2); }
+  .icp-process-left { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; flex-wrap: nowrap; }
+  .icp-process-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: var(--icp-bg-3);
+    border: 1px solid var(--icp-line);
+    font-family: var(--icp-font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--icp-fg-1);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .icp-process-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: nowrap;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .icp-process-steps li {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--icp-fg-1);
+    white-space: nowrap;
+  }
+  .icp-process-num { font-family: var(--icp-font-mono); font-size: 10.5px; font-weight: 600; color: var(--icp-accent); }
+  .icp-process-arrow { font-family: var(--icp-font-mono); font-size: 11px; color: var(--icp-fg-4); margin-left: 2px; }
+  .icp-process-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 11px;
+    border-radius: 6px;
+    border: 1px solid var(--icp-line-strong);
+    background: #ffffff;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--icp-fg-1);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .icp-process-panel {
+    display: none;
+    border-top: 1px solid var(--icp-line);
+    background: var(--icp-bg-2);
+    padding: 18px 18px 20px;
+  }
+  .icp-process-bar.is-open .icp-process-panel { display: block; }
+  .icp-process-detail-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .icp-process-detail-head h2 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -0.02em; color: var(--icp-fg-1); }
+  .icp-process-detail-head span { font-size: 12.5px; color: var(--icp-fg-3); }
+  .icp-process-detail-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .icp-process-detail-card {
+    background: #ffffff;
+    border: 1px solid var(--icp-line);
+    border-radius: 6px;
+    padding: 13px 14px;
+    min-width: 0;
+  }
+  .icp-process-detail-card .icp-mono { display: block; color: var(--icp-accent); margin-bottom: 4px; }
+  .icp-process-detail-card h3 { margin: 0 0 4px; font-size: 14px; font-weight: 600; color: var(--icp-fg-1); }
+  .icp-process-detail-card p { margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--icp-fg-2); }
+
   /* Sections */
-  .icp-section { padding: 52px 0; border-bottom: 1px solid var(--icp-line); background: var(--icp-bg-1); }
+  .icp-section { padding: 54px 0; border-bottom: 1px solid var(--icp-line); background: var(--icp-bg-1); }
   .icp-section-soft { background: var(--icp-bg-2); }
   .icp-section-dark { background: #171717; color: #ffffff; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-  .icp-section-head { max-width: 680px; margin-bottom: 24px; }
+  .icp-section-head { max-width: 700px; margin-bottom: 26px; }
   .icp-h2 {
     margin: 6px 0 8px;
     font-size: 30px;
@@ -315,26 +517,83 @@
     line-height: 1.15;
     letter-spacing: -0.035em;
     color: var(--icp-fg-1);
+    text-wrap: balance;
   }
   .icp-section-dark .icp-h2 { color: #ffffff; }
-  .icp-section-lead { margin: 0; font-size: 15px; color: var(--icp-fg-2); line-height: 1.55; }
+  .icp-section-lead { margin: 0; font-size: 15.5px; color: var(--icp-fg-2); line-height: 1.55; }
   .icp-section-dark .icp-section-lead { color: rgba(255, 255, 255, 0.72); }
 
-  /* Reviews */
-  .icp-reviews-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
-  .icp-trustindex-slot {
-    border: 1px solid var(--icp-line);
-    border-radius: 12px;
-    background: #ffffff;
-    min-height: 200px;
-    padding: 20px;
+  /* 2. VERIFIED GOOGLE REVIEWS (STYLED LIVE TRUSTINDEX - ICO-11 v10) */
+  .icp-reviews-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
   }
+  .icp-reviews-head-main { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .icp-reviews-g-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .icp-reviews-title-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 2px; }
+  .icp-reviews-stars-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    line-height: 1;
+  }
+  .icp-trustindex-slot { width: 100%; min-height: 240px; overflow-x: clip; }
+  .icp-reviews-wrap .ti-widget,
+  .icp-reviews-wrap .ti-widget * { font-family: var(--icp-font-sans) !important; }
+  .icp-reviews-wrap .ti-widget .ti-widget-header,
+  .icp-reviews-wrap .ti-widget .ti-header { display: none !important; }
+  .icp-reviews-wrap .ti-widget .ti-widget-container { margin-top: 0 !important; margin-bottom: 0 !important; }
+  .icp-reviews-wrap .ti-widget .ti-reviews-container { margin-top: 0 !important; }
+  .icp-reviews-wrap .ti-widget .ti-reviews-container-wrapper { padding-top: 4px !important; padding-bottom: 12px !important; }
+  .icp-reviews-wrap .ti-widget .ti-review-item > .ti-inner {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 16px !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 4px 14px rgba(0, 0, 0, 0.03) !important;
+    padding: 20px 22px !important;
+  }
+  .icp-reviews-wrap .ti-widget .ti-name { font-size: 14px !important; font-weight: 600 !important; color: #111827 !important; }
+  .icp-reviews-wrap .ti-widget .ti-date { font-size: 12px !important; color: #6b7280 !important; }
+  .icp-reviews-wrap .ti-widget .ti-review-content { font-size: 14px !important; line-height: 1.55 !important; color: #374151 !important; }
+  .icp-reviews-wrap .ti-widget .ti-read-more,
+  .icp-reviews-wrap .ti-widget .ti-read-more span { font-size: 12.5px !important; font-weight: 500 !important; color: var(--icp-accent) !important; opacity: 1 !important; }
+  .icp-reviews-wrap .ti-widget .ti-controls .ti-prev,
+  .icp-reviews-wrap .ti-widget .ti-controls .ti-next {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 999px !important;
+    width: 34px !important;
+    height: 34px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  }
+  .icp-reviews-wrap .ti-widget .ti-controls-line { background: #e5e7eb !important; height: 3px !important; border-radius: 999px !important; margin-top: 8px !important; }
+  .icp-reviews-wrap .ti-widget .ti-controls-line .dot { background: #111827 !important; height: 3px !important; border-radius: 999px !important; }
 
-  /* Expandable Comparison Table */
+  /* 3. EXPANDABLE COMPARISON TABLE + 2-YEAR WARRANTY */
   .icp-compare-card {
     border: 1px solid var(--icp-line);
     border-radius: 10px;
     background: #ffffff;
+    box-shadow: var(--icp-shadow-card);
     overflow: hidden;
   }
   .icp-compare-scroll { overflow-x: auto; }
@@ -357,7 +616,8 @@
     color: var(--icp-fg-3);
     background: var(--icp-bg-2);
   }
-  .icp-compare-table .is-icorrect {
+  .icp-compare-table th.is-icorrect,
+  .icp-compare-table td.is-icorrect {
     background: #f8fbff;
     color: var(--icp-fg-1);
     font-weight: 500;
@@ -377,6 +637,7 @@
     justify-content: center;
     gap: 8px;
     cursor: pointer;
+    transition: background 140ms ease;
   }
   .icp-expand-btn:hover { background: var(--icp-bg-3); }
 
@@ -386,6 +647,7 @@
     background: #ffffff;
     border: 1px solid var(--icp-line);
     border-radius: 10px;
+    box-shadow: var(--icp-shadow-card);
     overflow: hidden;
   }
   .icp-warranty-btn {
@@ -399,6 +661,7 @@
     justify-content: space-between;
     gap: 16px;
     cursor: pointer;
+    transition: background 140ms ease;
   }
   .icp-warranty-btn:hover { background: var(--icp-bg-2); }
   .icp-warranty-btn h3 { margin: 4px 0 0; font-size: 19px; font-weight: 600; letter-spacing: -0.025em; color: var(--icp-fg-1); }
@@ -442,8 +705,8 @@
   .icp-checks li { display: flex; align-items: flex-start; gap: 7px; }
   .icp-check-mark { color: var(--icp-green); font-weight: 600; flex-shrink: 0; }
 
-  /* Find your model (Ricky's exact Claude Code container) */
-  .icp-identify { padding: 64px 0; border-bottom: 1px solid var(--icp-line); background: var(--icp-bg-1); }
+  /* 4. FIND YOUR MODEL (Ricky's exact Claude Code container) */
+  .icp-identify { padding: 56px 0; border-bottom: 1px solid var(--icp-line); background: var(--icp-bg-1); }
   .icp-identify-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -510,41 +773,415 @@
   .icp-identify-foot { margin-top: 12px; font-size: 13px; color: var(--icp-fg-3); }
   .icp-identify-foot a { color: var(--icp-accent); text-decoration: none; }
 
-  /* 4-Step Process Flowchart */
-  .icp-flow {
-    position: relative;
+  /* 5. FROM OUR FITZROVIA BENCH: REAL REPAIR CASE STUDIES + VIDEO WALKTHROUGH */
+  .icp-cases-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 18px;
-    list-style: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .icp-case-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--icp-shadow-card);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .icp-case-media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background: #0f172a;
+    overflow: hidden;
+  }
+  .icp-case-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .icp-case-media-badge {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(17, 24, 39, 0.86);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    font-family: var(--icp-font-mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    color: #ffffff;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    max-width: calc(100% - 165px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .icp-ba-switch {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    display: inline-flex;
+    padding: 3px;
+    border-radius: 999px;
+    background: rgba(17, 24, 39, 0.86);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    gap: 3px;
+  }
+  .icp-ba-btn {
+    border: 0;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.78);
+    font-family: var(--icp-font-mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 5px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 140ms ease, color 140ms ease;
+  }
+  .icp-ba-btn.is-active { background: #ffffff; color: #111827; }
+  .icp-case-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+  }
+  .icp-case-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .icp-case-model {
+    font-family: var(--icp-font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--icp-accent);
+    background: var(--icp-accent-soft);
+    border: 1px solid var(--icp-accent-border);
+    padding: 3px 8px;
+    border-radius: 999px;
+  }
+  .icp-case-status {
+    font-family: var(--icp-font-mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--icp-green);
+    background: #e6f6ec;
+    padding: 3px 8px;
+    border-radius: 999px;
+  }
+  .icp-case-card h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #111827;
+    line-height: 1.25;
+  }
+  .icp-case-rows {
     margin: 0;
     padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-top: 1px solid var(--icp-line);
+    padding-top: 12px;
   }
-  .icp-flow-node { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-  .icp-flow-head { display: flex; align-items: center; gap: 10px; }
-  .icp-flow-badge {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--icp-fg-1);
-    color: #ffffff;
+  .icp-case-rows li {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 10px;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .icp-case-rows dt,
+  .icp-case-row-label {
     font-family: var(--icp-font-mono);
-    font-size: 12px;
+    font-size: 10.5px;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--icp-fg-3);
+    padding-top: 2px;
+  }
+  .icp-case-row-val { color: var(--icp-fg-2); }
+  .icp-case-row-val strong { color: #111827; font-weight: 600; }
+
+  /* Behind-the-Scenes Workshop Reel Strip */
+  .icp-reel-card {
+    margin-top: 20px;
+    background: #111827;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 28px;
+    align-items: center;
+  }
+  .icp-reel-card > * { min-width: 0; }
+  .icp-reel-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    font-family: var(--icp-font-mono);
+    font-size: 10.5px;
+    color: #93c5fd;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .icp-reel-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--icp-green-dot); }
+  .icp-reel-card h3 {
+    margin: 12px 0 8px;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+    color: #ffffff;
+  }
+  .icp-reel-card p { margin: 0 0 14px; font-size: 14px; line-height: 1.55; color: rgba(255, 255, 255, 0.78); }
+  .icp-reel-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    margin: 0 0 18px;
+    padding: 0;
+  }
+  .icp-reel-tags li {
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-family: var(--icp-font-mono);
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .icp-reel-player-wrap {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000000;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    aspect-ratio: 4 / 3;
+  }
+  .icp-reel-player-wrap video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #0b0f19;
+  }
+  .icp-reel-cover {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
   }
-  .icp-flow-tag {
+  .icp-reel-cover img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.76);
+    transition: transform 240ms ease, filter 240ms ease;
+  }
+  .icp-reel-cover:hover img { transform: scale(1.02); filter: brightness(0.84); }
+  .icp-reel-play-pill {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    border-radius: 999px;
+    background: rgba(17, 24, 39, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    font-size: 13.5px;
+    font-weight: 600;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
+  }
+  .icp-reel-cover.is-hidden { display: none; }
+
+  /* 6. INTERACTIVE 4-STAGE FAULT-FINDING BENCH BREAKDOWN (REPLACES GENERIC PROCESS) */
+  .icp-diag-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: 24px;
+    align-items: start;
+  }
+  .icp-diag-grid > * { min-width: 0; }
+  .icp-diag-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .icp-diag-step-btn {
+    width: 100%;
+    text-align: left;
+    padding: 16px 18px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    transition: border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+  }
+  .icp-diag-step-btn:hover { border-color: #cbd5e1; background: #fcfcfd; }
+  .icp-diag-step-btn.is-active {
+    border-color: var(--icp-accent);
+    background: #f8fbff;
+    box-shadow: 0 0 0 1px var(--icp-accent), 0 8px 20px -10px rgba(11, 99, 206, 0.22);
+  }
+  .icp-diag-num {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: #f4f4f5;
+    border: 1px solid #e5e7eb;
+    color: #111827;
+    font-family: var(--icp-font-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .icp-diag-step-btn.is-active .icp-diag-num {
+    background: var(--icp-accent);
+    border-color: var(--icp-accent);
+    color: #ffffff;
+  }
+  .icp-diag-step-copy { min-width: 0; flex: 1; }
+  .icp-diag-step-tag {
+    display: inline-block;
+    font-family: var(--icp-font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--icp-accent);
+    margin-bottom: 3px;
+  }
+  .icp-diag-step-copy h3 {
+    margin: 0 0 4px;
+    font-size: 15.5px;
+    font-weight: 600;
+    color: #111827;
+    line-height: 1.25;
+  }
+  .icp-diag-step-copy p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--icp-fg-2);
+    line-height: 1.5;
+  }
+
+  /* Live Bench Inspector Panel */
+  .icp-inspector {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 16px;
+    overflow: hidden;
+    color: #ffffff;
+    box-shadow: 0 18px 40px -20px rgba(15, 23, 42, 0.45);
+    position: sticky;
+    top: 76px;
+  }
+  .icp-inspector-bar {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
     font-family: var(--icp-font-mono);
     font-size: 10.5px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--icp-accent);
+    color: rgba(255, 255, 255, 0.72);
   }
-  .icp-flow-node h3 { margin: 0 0 4px; font-size: 15.5px; font-weight: 600; }
-  .icp-flow-node p { margin: 0; font-size: 13.5px; color: var(--icp-fg-2); line-height: 1.5; }
+  .icp-inspector-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #34d399;
+  }
+  .icp-inspector-stage-img {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background: #020617;
+    overflow: hidden;
+  }
+  .icp-inspector-stage-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+  }
+  .icp-inspector-stage-img img.is-active { display: block; }
+  .icp-inspector-reading {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 9px 12px;
+    border-radius: 10px;
+    background: rgba(2, 6, 23, 0.84);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    font-family: var(--icp-font-mono);
+    font-size: 11px;
+  }
+  .icp-inspector-reading strong { color: #38bdf8; font-weight: 600; }
+  .icp-inspector-reading span { color: rgba(255, 255, 255, 0.84); }
+  .icp-inspector-foot {
+    padding: 16px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .icp-inspector-foot strong { font-size: 14.5px; font-weight: 600; color: #ffffff; }
+  .icp-inspector-foot p { margin: 0; font-size: 13px; color: rgba(255, 255, 255, 0.75); line-height: 1.5; }
 
   /* Dark FAQ Accordion */
   .icp-faq-list { display: flex; flex-direction: column; border-top: 1px solid rgba(255, 255, 255, 0.14); }
@@ -585,84 +1222,58 @@
   .icp-links-card a:hover { color: var(--icp-accent); text-decoration: underline; }
 
   @media (max-width: 960px) {
+    .icp-hero-grid,
+    .icp-identify-grid,
+    .icp-footer-grid,
+    .icp-pillars,
+    .icp-cases-grid,
+    .icp-reel-card,
+    .icp-diag-grid { grid-template-columns: minmax(0, 1fr); }
+    .icp-inspector { position: static; }
     .icp-trust-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .icp-trust-cell:nth-child(1), .icp-trust-cell:nth-child(2) { border-bottom: 1px solid var(--icp-line); }
+    .icp-trust-cell:nth-child(1), .icp-trust-cell:nth-child(2) { border-bottom: 1px solid #e5e7eb; }
     .icp-trust-cell:nth-child(2), .icp-trust-cell:nth-child(4) { border-right: 0; }
-    .icp-hero-grid, .icp-identify-grid, .icp-footer-grid, .icp-pillars, .icp-flow { grid-template-columns: minmax(0, 1fr); }
+    .icp-process-detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .icp-process-steps { display: none; }
     .icp-warranty.is-open .icp-warranty-body { grid-template-columns: minmax(0, 1fr); }
   }
   @media (max-width: 600px) {
     .icp-container { padding: 0 16px; }
-    .icp-h1 { font-size: 30px; }
+    .icp-h1 { font-size: 31px; }
     .icp-h2 { font-size: 24px; }
     .icp-lead { font-size: 14.5px; }
-    .icp-highlights { grid-template-columns: minmax(0, 1fr); }
+    .icp-highlights { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+    .icp-chip { padding: 8px 10px; }
+    .icp-chip-label { font-size: 10.5px; }
+    .icp-chip-val { font-size: 13px; }
+    .icp-trust-cell { padding: 11px 12px; gap: 9px; }
+    .icp-trust-copy strong { font-size: 12px; }
+    .icp-trust-copy span { font-size: 10.5px; }
     .icp-pillar-btn { padding: 13px 14px; cursor: pointer; }
     .icp-pillar-plus { display: inline-block; }
     .icp-pillar-body { display: none; padding: 0 14px 13px; font-size: 13px; }
     .icp-pillar.is-open .icp-pillar-body { display: block; }
+    .icp-process-detail-grid { grid-template-columns: minmax(0, 1fr); }
     .icp-warranty-btn { padding: 16px; flex-direction: column; align-items: flex-start; gap: 10px; }
     .icp-checks, .icp-links-grid { grid-template-columns: minmax(0, 1fr); }
     .icp-identify-form { flex-direction: column; }
     .icp-identify-form .icp-btn-dark { width: 100%; }
+    .icp-case-rows li { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+    .icp-reel-card { padding: 18px; }
+    .icp-floating-cta { right: 16px; bottom: 16px; height: 44px; padding: 0 18px; font-size: 13.5px; }
   }
 </style>
 
 <div class="icp-root" data-icp-root="{{ sid }}">
-  <section class="icp-hero">
+  <section class="icp-hero" id="icp-hero-{{ sid }}">
     <div class="icp-container">
       <nav class="icp-breadcrumb" aria-label="Breadcrumb">
         <a href="/">Home</a>
         <span>/</span>
         <a href="/pages/macbook-repairs">MacBook Repairs</a>
         <span>/</span>
-        <span>{{ section.settings.breadcrumb_label | escape }}</span>
+        <span class="icp-breadcrumb-current">{{ section.settings.breadcrumb_label | escape }}</span>
       </nav>
-
-      <ul class="icp-trust-strip" role="list" aria-label="Why choose iCorrect">
-        <li class="icp-trust-cell">
-          <a class="icp-trust-link" href="#icp-reviews-{{ sid }}">
-            <span class="icp-trust-score">4.8</span>
-            <span class="icp-trust-copy">
-              <span class="icp-trust-stars" aria-hidden="true">
-                <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-                <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-                <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-                <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-                <svg width="12" height="12" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
-              </span>
-              <strong>from 750+ Google reviews</strong>
-            </span>
-          </a>
-        </li>
-        <li class="icp-trust-cell">
-          <span class="icp-trust-icon" aria-hidden="true">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg>
-          </span>
-          <span class="icp-trust-copy">
-            <strong>In-house micro-soldering</strong>
-            <span>Fitzrovia logic board bench</span>
-          </span>
-        </li>
-        <li class="icp-trust-cell">
-          <span class="icp-trust-icon" aria-hidden="true">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
-          </span>
-          <span class="icp-trust-copy">
-            <strong>2-year warranty</strong>
-            <span>Included as standard</span>
-          </span>
-        </li>
-        <li class="icp-trust-cell">
-          <span class="icp-trust-icon" aria-hidden="true">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h11v10H3z"/><path d="M14 10h4l3 3v4h-7z"/><circle cx="7.5" cy="18" r="1.8"/><circle cx="17.5" cy="18" r="1.8"/></svg>
-          </span>
-          <span class="icp-trust-copy">
-            <strong>UK-wide collection</strong>
-            <span>Free on orders £200+</span>
-          </span>
-        </li>
-      </ul>
 
       <div class="icp-hero-grid">
         <div>
@@ -698,16 +1309,16 @@
           <p class="icp-note">{{ section.settings.hero_note | escape }}</p>
 
           <div class="icp-cta-row">
-            <a class="icp-btn-dark" href="#quote-section">Book diagnostic &amp; quote -&gt;</a>
-            <a class="icp-btn-ghost" href="#icp-compare-{{ sid }}">How do we compare?</a>
-            <a class="icp-btn-ghost" href="#icp-warranty-{{ sid }}" data-icp-open-warranty="{{ sid }}">See 2-year warranty</a>
+            <a class="icp-btn-dark" href="#quote-section">Book diagnostic &amp; quote &rarr;</a>
+            <a class="icp-btn-ghost" href="#bench-cases">See real repairs</a>
+            <a class="icp-btn-ghost" href="#fault-finding">How we find faults</a>
           </div>
         </div>
 
         <div class="icp-stage">
           <div class="icp-stage-head">
             <span class="icp-mono">{{ section.settings.stage_kicker | escape }}</span>
-            <span class="icp-stage-pill">{{ section.settings.stage_pill | escape }}</span>
+            <span class="icp-stage-pill"><span class="icp-stage-pill-dot" aria-hidden="true"></span>{{ section.settings.stage_pill | escape }}</span>
           </div>
           <ol class="icp-step-list">
             <li class="icp-step-item">
@@ -732,9 +1343,70 @@
               </div>
             </li>
           </ol>
+
+          {%- assign hero_thumb = section.settings.hero_bench_image | default: 'macbook-bench-ammeter.webp' -%}
+          <a class="icp-stage-bench" href="#bench-cases">
+            <img src="{{ hero_thumb | asset_url }}" alt="{{ section.settings.hero_bench_alt | default: 'Fitzrovia logic board repair bench' | escape }}" width="112" height="84" loading="eager">
+            <div class="icp-stage-bench-copy">
+              <strong>{{ section.settings.hero_bench_title | default: 'See real MacBooks repaired on our Fitzrovia bench' | escape }}</strong>
+              <span>{{ section.settings.hero_bench_sub | default: 'Before & after logic board breakdowns + Ricky behind-the-scenes reel' | escape }}</span>
+            </div>
+            <span class="icp-stage-bench-arrow" aria-hidden="true">&rarr;</span>
+          </a>
         </div>
       </div>
 
+      <!-- 4-Badge Trust Strip: Directly BELOW hero and ABOVE the 3 proof cards (ICO-11 v10) -->
+      <ul class="icp-trust-strip" role="list" aria-label="Why choose iCorrect">
+        <li class="icp-trust-cell">
+          <a class="icp-trust-link" href="#icp-reviews-{{ sid }}">
+            <span class="icp-trust-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+            </span>
+            <span class="icp-trust-copy">
+              <strong class="icp-trust-rating-title">4.8
+                <span class="icp-trust-stars-inline" aria-hidden="true">
+                  <svg width="11" height="11" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                  <svg width="11" height="11" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                  <svg width="11" height="11" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                  <svg width="11" height="11" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                  <svg width="11" height="11" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                </span>
+              </strong>
+              <span>from 750+ Google reviews</span>
+            </span>
+          </a>
+        </li>
+        <li class="icp-trust-cell">
+          <span class="icp-trust-icon" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </span>
+          <span class="icp-trust-copy">
+            <strong>Fitzrovia workshop</strong>
+            <span>Never outsourced</span>
+          </span>
+        </li>
+        <li class="icp-trust-cell">
+          <span class="icp-trust-icon" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+          </span>
+          <span class="icp-trust-copy">
+            <strong>2-year warranty</strong>
+            <span>Included as standard</span>
+          </span>
+        </li>
+        <li class="icp-trust-cell">
+          <span class="icp-trust-icon" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v10H3z"/><path d="M14 10h4l3 3v4h-7z"/><circle cx="7.5" cy="18" r="1.8"/><circle cx="17.5" cy="18" r="1.8"/></svg>
+          </span>
+          <span class="icp-trust-copy">
+            <strong>UK-wide collection</strong>
+            <span>Free on orders £200+</span>
+          </span>
+        </li>
+      </ul>
+
+      <!-- 3 Board-Level Proof Cards -->
       <div class="icp-pillars" aria-label="Key workshop advantages">
         <div class="icp-pillar" data-icp-pillar>
           <button type="button" class="icp-pillar-btn" aria-expanded="false">
@@ -758,18 +1430,79 @@
           <div class="icp-pillar-body"><p>{{ section.settings.pillar3_body | escape }}</p></div>
         </div>
       </div>
+
+      <!-- Compact Expandable Collection & Return Logistics Bar (ICO-11 v10) -->
+      <div class="icp-process-bar" id="icp-logistics-{{ sid }}">
+        <button type="button" class="icp-process-trigger" data-icp-logistics-toggle="{{ sid }}" aria-expanded="false">
+          <div class="icp-process-left">
+            <span class="icp-process-badge">Collection &amp; turnaround</span>
+            <ol class="icp-process-steps" aria-hidden="true">
+              <li><span class="icp-process-num">01</span> Free UK collection £200+<span class="icp-process-arrow">&rarr;</span></li>
+              <li><span class="icp-process-num">02</span> 1-day written quote<span class="icp-process-arrow">&rarr;</span></li>
+              <li><span class="icp-process-num">03</span> Repaired in Fitzrovia<span class="icp-process-arrow">&rarr;</span></li>
+              <li><span class="icp-process-num">04</span> Insured 2-year return</li>
+            </ol>
+          </div>
+          <span class="icp-process-pill">
+            <span data-icp-logistics-label="{{ sid }}">How logistics work</span>
+            <span data-icp-logistics-icon="{{ sid }}" aria-hidden="true">+</span>
+          </span>
+        </button>
+        <div class="icp-process-panel">
+          <div class="icp-process-detail-head">
+            <h2>Collected from your door. Repaired in-house in Fitzrovia.</h2>
+            <span>Same-day London courier in selected zones, or free tracked UK mail-in on orders £200+.</span>
+          </div>
+          <ol class="icp-process-detail-grid">
+            <li class="icp-process-detail-card">
+              <span class="icp-mono">01 · Collection</span>
+              <h3>London courier or UK mail-in</h3>
+              <p>Same-day courier collection in selected London zones, a free tracked and insured UK mail-in pack, or drop off at 12 Margaret Street.</p>
+            </li>
+            <li class="icp-process-detail-card">
+              <span class="icp-mono">02 · 1 working day</span>
+              <h3>Bench diagnostic &amp; quote</h3>
+              <p>We test power rails under the microscope within 1 working day and email a clear written fault report and fixed repair quote.</p>
+            </li>
+            <li class="icp-process-detail-card">
+              <span class="icp-mono">03 · Fitzrovia bench</span>
+              <h3>In-house micro-soldering</h3>
+              <p>Your MacBook never leaves our Fitzrovia workshop. Standard repairs complete within 2 working days once approved (complex cases quoted upfront).</p>
+            </li>
+            <li class="icp-process-detail-card">
+              <span class="icp-mono">04 · 2-year cover</span>
+              <h3>QC tested &amp; returned insured</h3>
+              <p>Every repaired board undergoes charging, thermal, and boot checks before tracked insured return backed by our 2-year warranty.</p>
+            </li>
+          </ol>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Verified Google Reviews (Trustindex) -->
-  <section class="icp-section icp-section-soft" id="icp-reviews-{{ sid }}">
+  <!-- 2. Verified Google Reviews (Styled Live Trustindex) -->
+  <section class="icp-section icp-section-soft icp-reviews-wrap" id="icp-reviews-{{ sid }}">
     <div class="icp-container">
       <div class="icp-reviews-head">
-        <div>
-          <span class="icp-mono">Verified Client Reviews</span>
-          <h2 class="icp-h2" style="margin-bottom:0;">4.8 from 750+ Google reviews</h2>
+        <div class="icp-reviews-head-main">
+          <span class="icp-reviews-g-badge" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+          </span>
+          <div>
+            <span class="icp-mono">Verified Google Reviews</span>
+            <div class="icp-reviews-title-row">
+              <h2 class="icp-h2" style="margin:0;">4.8 from 750+ Google reviews</h2>
+              <span class="icp-reviews-stars-pill" aria-hidden="true">
+                <svg width="13" height="13" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                <svg width="13" height="13" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                <svg width="13" height="13" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                <svg width="13" height="13" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+                <svg width="13" height="13" viewBox="0 0 20 20" fill="#f59e0b"><path d="M10 1.5l2.6 5.3 5.9.8-4.2 4.1 1 5.8L10 14.8 4.7 17.5l1-5.8-4.2-4.1 5.9-.8z"/></svg>
+              </span>
+            </div>
+          </div>
         </div>
-        <a class="icp-btn-ghost" href="https://maps.google.com/?q=iCorrect+12+Margaret+Street+London+W1W+8JQ" target="_blank" rel="noopener">Read on Google Maps -&gt;</a>
+        <a class="icp-btn-ghost" href="https://maps.google.com/?q=iCorrect+12+Margaret+Street+London+W1W+8JQ" target="_blank" rel="noopener">Read on Google Maps &rarr;</a>
       </div>
       <div class="icp-trustindex-slot">
         <script defer async src="https://cdn.trustindex.io/loader.js?47cc7ef8590e8871fa062160cf7"></script>
@@ -777,7 +1510,7 @@
     </div>
   </section>
 
-  <!-- Expandable Comparison + Expandable 2-Year Warranty -->
+  <!-- 3. Component-Level vs Apple Full Board Swap + Expandable 2-Year Warranty -->
   <section class="icp-section" id="icp-compare-{{ sid }}">
     <div class="icp-container">
       <div class="icp-section-head">
@@ -846,7 +1579,7 @@
 {%- else -%}
 
 <div class="icp-root" data-icp-bottom="{{ sid }}">
-  <!-- Ricky's exact Claude Code Find Your Model container directly below Quote Wizard -->
+  <!-- 4. Ricky's exact Claude Code Find Your Model container directly below Quote Wizard -->
   <section id="identify" class="icp-identify">
     <div class="icp-container icp-identify-grid">
       <div class="icp-identify-visual">
@@ -874,48 +1607,169 @@
     </div>
   </section>
 
-  <!-- 4-Step Process -->
-  <section class="icp-section icp-section-soft" id="our-process">
+  <!-- 5. From Our Fitzrovia Bench: Real Repair Case Studies + Behind-the-Scenes Walkthrough -->
+  <section class="icp-section icp-section-soft" id="bench-cases">
     <div class="icp-container">
       <div class="icp-section-head">
-        <span class="icp-mono">How It Works</span>
-        <h2 class="icp-h2">Collected from your door. Repaired in-house in Fitzrovia.</h2>
-        <p class="icp-section-lead">Clear written updates at every step, with free tracked UK collection on orders of £200 or more.</p>
+        <span class="icp-mono">From Our Fitzrovia Bench · Never Outsourced</span>
+        <h2 class="icp-h2">{{ section.settings.cases_heading | default: 'Recent MacBook logic board repairs we completed in-house' | escape }}</h2>
+        <p class="icp-section-lead">{{ section.settings.cases_lead | default: 'Real boards diagnosed and repaired under our microscopes at 12 Margaret Street, keeping original logic boards and soldered SSD data intact.' | escape }}</p>
       </div>
-      <ol class="icp-flow">
-        <li class="icp-flow-node">
-          <div class="icp-flow-head"><span class="icp-flow-badge">01</span><span class="icp-flow-tag">Free £200+</span></div>
-          <div>
-            <h3>Book &amp; collect</h3>
-            <p>Same-day courier collection in selected London zones, or a free tracked and insured UK mail-in pack to your door.</p>
-          </div>
-        </li>
-        <li class="icp-flow-node">
-          <div class="icp-flow-head"><span class="icp-flow-badge">02</span><span class="icp-flow-tag">Microscope test</span></div>
-          <div>
-            <h3>Board-level diagnostic</h3>
-            <p>We measure power rails, inspect under the microscope and thermal camera, and trace the exact shorted or corroded components.</p>
-          </div>
-        </li>
-        <li class="icp-flow-node">
-          <div class="icp-flow-head"><span class="icp-flow-badge">03</span><span class="icp-flow-tag">Written quote</span></div>
-          <div>
-            <h3>Component repair</h3>
-            <p>You receive a clear written quote before repair proceeds. We ultrasonic-clean, micro-solder, and stress-test your board in-house.</p>
-          </div>
-        </li>
-        <li class="icp-flow-node">
-          <div class="icp-flow-head"><span class="icp-flow-badge">04</span><span class="icp-flow-tag">2-year cover</span></div>
-          <div>
-            <h3>Insured return</h3>
-            <p>Standard repairs complete within 2 working days once in workshop (complex liquid or board recovery quoted clearly upfront), returned insured with 2-year cover.</p>
-          </div>
-        </li>
-      </ol>
+
+      <div class="icp-cases-grid">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'case_study' -%}
+            {%- assign before_img = block.settings.before_image | default: 'macbook-bench-shorted-cap.webp' -%}
+            {%- assign after_img = block.settings.after_image -%}
+            <article class="icp-case-card" data-icp-case {{ block.shopify_attributes }}>
+              <div class="icp-case-media">
+                <img
+                  src="{{ before_img | asset_url }}"
+                  data-before-src="{{ before_img | asset_url }}"
+                  {% if after_img != blank %}data-after-src="{{ after_img | asset_url }}"{% endif %}
+                  alt="{{ block.settings.image_alt | default: block.settings.title | escape }}"
+                  width="960"
+                  height="720"
+                  loading="lazy">
+                <span class="icp-case-media-badge" data-case-badge>{{ block.settings.media_badge | default: 'Fitzrovia Bench' | escape }}</span>
+                {%- if after_img != blank -%}
+                  <div class="icp-ba-switch" role="group" aria-label="Toggle before and after repair photo">
+                    <button type="button" class="icp-ba-btn is-active" data-ba-mode="before" data-badge-text="{{ block.settings.before_badge | default: 'Before · Fault Found' | escape }}">Before</button>
+                    <button type="button" class="icp-ba-btn" data-ba-mode="after" data-badge-text="{{ block.settings.after_badge | default: 'After · Repaired' | escape }}">After</button>
+                  </div>
+                {%- endif -%}
+              </div>
+              <div class="icp-case-body">
+                <div class="icp-case-top">
+                  <span class="icp-case-model">{{ block.settings.model_badge | escape }}</span>
+                  <span class="icp-case-status">{{ block.settings.status_badge | default: 'Board & data saved' | escape }}</span>
+                </div>
+                <h3>{{ block.settings.title | escape }}</h3>
+                <ul class="icp-case-rows">
+                  <li>
+                    <span class="icp-case-row-label">Symptom</span>
+                    <span class="icp-case-row-val">{{ block.settings.symptom | escape }}</span>
+                  </li>
+                  <li>
+                    <span class="icp-case-row-label">Bench trace</span>
+                    <span class="icp-case-row-val">{{ block.settings.diagnosis | escape }}</span>
+                  </li>
+                  <li>
+                    <span class="icp-case-row-label">Outcome</span>
+                    <span class="icp-case-row-val"><strong>{{ block.settings.outcome | escape }}</strong></span>
+                  </li>
+                </ul>
+              </div>
+            </article>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      <!-- Behind-the-Scenes Workshop Reel from Ricky -->
+      <div class="icp-reel-card">
+        <div>
+          <span class="icp-reel-kicker"><span class="icp-reel-dot" aria-hidden="true"></span>Behind the Scenes · 50s Walkthrough</span>
+          <h3>{{ section.settings.reel_heading | default: 'Watch Ricky walk through a dead MacBook Pro logic board repair' | escape }}</h3>
+          <p>{{ section.settings.reel_copy | default: 'From a completely dead MacBook showing zero signs of life, to tracing the shorted rail under the microscope, removing and replacing the failed micro-components with hot air, verifying 20.07V on our USB-C bench meter, and booting straight back to the Apple logo.' | escape }}</p>
+          <ul class="icp-reel-tags" role="list">
+            <li>20.08V / 0.000A fault</li>
+            <li>Short-to-ground trace</li>
+            <li>Hot-air micro-soldering</li>
+            <li>Original board &amp; SSD kept</li>
+          </ul>
+          <a class="icp-btn-dark" style="background:#ffffff;color:#111827 !important;border-color:#ffffff;" href="#quote-section">Book your bench diagnostic &rarr;</a>
+        </div>
+        <div class="icp-reel-player-wrap" data-icp-reel-wrap>
+          <video controls playsinline preload="none" poster="{{ 'macbook-bench-reel-poster.webp' | asset_url }}" aria-label="Behind the scenes of a MacBook Pro logic board repair at iCorrect Fitzrovia">
+            <source src="{{ 'macbook-bench-repair-reel.mp4' | asset_url }}" type="video/mp4">
+          </video>
+          <button type="button" class="icp-reel-cover" data-icp-reel-play aria-label="Play 50 second Fitzrovia logic board repair walkthrough">
+            <img src="{{ 'macbook-bench-reel-poster.webp' | asset_url }}" alt="Hot-air micro-soldering a MacBook logic board at the iCorrect Fitzrovia bench" width="960" height="720" loading="lazy">
+            <span class="icp-reel-play-pill">
+              <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 3.5l12 6.5-12 6.5z"/></svg>
+              Play 50s bench reel
+            </span>
+          </button>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Dark FAQ Accordion -->
+  <!-- 6. Interactive 4-Stage Logic Board Fault-Finding Breakdown -->
+  <section class="icp-section" id="fault-finding">
+    <div class="icp-container">
+      <div class="icp-section-head">
+        <span class="icp-mono">Inside Our Fitzrovia Workshop</span>
+        <h2 class="icp-h2">{{ section.settings.diag_heading | default: 'How we actually find the fault on your logic board' | escape }}</h2>
+        <p class="icp-section-lead">{{ section.settings.diag_lead | default: 'No guesswork and no automatic board swaps. Click each stage to see how our technicians isolate the exact failing component before we quote.' | escape }}</p>
+      </div>
+
+      <div class="icp-diag-grid" data-icp-diag="{{ sid }}">
+        <ol class="icp-diag-steps">
+          {%- assign diag_idx = 0 -%}
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'diag_stage' -%}
+              {%- assign diag_idx = diag_idx | plus: 1 -%}
+              <li>
+                <button
+                  type="button"
+                  class="icp-diag-step-btn{% if diag_idx == 1 %} is-active{% endif %}"
+                  data-diag-index="{{ diag_idx }}"
+                  data-diag-stage-label="0{{ diag_idx }} / 04"
+                  data-diag-reading-key="{{ block.settings.reading_key | escape }}"
+                  data-diag-reading-val="{{ block.settings.reading_val | escape }}"
+                  data-diag-note-title="{{ block.settings.note_title | escape }}"
+                  data-diag-note-body="{{ block.settings.note_body | escape }}"
+                  aria-pressed="{% if diag_idx == 1 %}true{% else %}false{% endif %}"
+                  {{ block.shopify_attributes }}>
+                  <span class="icp-diag-num">0{{ diag_idx }}</span>
+                  <div class="icp-diag-step-copy">
+                    <span class="icp-diag-step-tag">{{ block.settings.tag | escape }}</span>
+                    <h3>{{ block.settings.title | escape }}</h3>
+                    <p>{{ block.settings.description | escape }}</p>
+                  </div>
+                </button>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ol>
+
+        <div class="icp-inspector" aria-live="polite">
+          <div class="icp-inspector-bar">
+            <span>Fitzrovia Bench · Stage <strong data-inspector-stage>01 / 04</strong></span>
+            <span class="icp-inspector-live"><span class="icp-reel-dot" aria-hidden="true"></span>In-House Bench</span>
+          </div>
+          <div class="icp-inspector-stage-img">
+            {%- assign img_idx = 0 -%}
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'diag_stage' -%}
+                {%- assign img_idx = img_idx | plus: 1 -%}
+                {%- assign stage_img = block.settings.image | default: 'macbook-bench-ammeter.webp' -%}
+                <img
+                  src="{{ stage_img | asset_url }}"
+                  alt="{{ block.settings.image_alt | default: block.settings.title | escape }}"
+                  data-inspector-img="{{ img_idx }}"
+                  class="{% if img_idx == 1 %}is-active{% endif %}"
+                  width="960"
+                  height="720"
+                  loading="lazy">
+              {%- endif -%}
+            {%- endfor -%}
+            <div class="icp-inspector-reading">
+              <strong data-inspector-rkey>USB-C Meter</strong>
+              <span data-inspector-rval>20.08V / 0.000A</span>
+            </div>
+          </div>
+          <div class="icp-inspector-foot">
+            <strong data-inspector-title>What this reading tells our technician</strong>
+            <p data-inspector-body>Before removing a single screw, power-delivery negotiation tells us whether the fault sits in the USB-C controller stage or deeper on the main power rails.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Dark FAQ Accordion -->
   <section class="icp-section icp-section-dark" id="faqs">
     <div class="icp-container">
       <div class="icp-section-head">
@@ -939,11 +1793,11 @@
     </div>
   </section>
 
-  <!-- Fitzrovia Workshop & Cross-Links Across Top 3 Pillars -->
+  <!-- 8. Fitzrovia Workshop & Cross-Links Across Top 3 Pillars -->
   <section class="icp-section icp-section-soft">
     <div class="icp-container icp-footer-grid">
       <div class="icp-workshop-card">
-        <span class="icp-mono">Fitzrovia Workshop</span>
+        <span class="icp-mono">Fitzrovia Workshop · Never Outsourced</span>
         <h3>iCorrect London</h3>
         <p style="margin:0;font-size:14px;color:var(--icp-fg-2);">12 Margaret Street, Audley House, Fitzrovia, London W1W 8JQ<br>Phone: 020 7099 8517 | Email: support@icorrect.co.uk</p>
         <div class="icp-hours">
@@ -975,6 +1829,8 @@
       </div>
     </div>
   </section>
+
+  <a class="icp-floating-cta" id="icp-floating-cta" href="#quote-section" aria-label="Jump to diagnostic quote wizard">Get your quote &rarr;</a>
 </div>
 
 <script>
@@ -982,6 +1838,7 @@
     if (window.__icpBound) return;
     window.__icpBound = true;
 
+    /* Mobile accordions for 3 proof cards */
     document.querySelectorAll("[data-icp-pillar]").forEach(function (card) {
       var btn = card.querySelector(".icp-pillar-btn");
       var plus = card.querySelector(".icp-pillar-plus");
@@ -995,6 +1852,23 @@
       });
     });
 
+    /* Compact expandable logistics bar */
+    document.querySelectorAll("[data-icp-logistics-toggle]").forEach(function (btn) {
+      var id = btn.getAttribute("data-icp-logistics-toggle");
+      var bar = document.getElementById("icp-logistics-" + id);
+      var label = document.querySelector("[data-icp-logistics-label='" + id + "']");
+      var icon = document.querySelector("[data-icp-logistics-icon='" + id + "']");
+      if (!bar) return;
+      btn.addEventListener("click", function () {
+        var open = !bar.classList.contains("is-open");
+        bar.classList.toggle("is-open", open);
+        btn.setAttribute("aria-expanded", String(open));
+        if (label) label.textContent = open ? "Hide logistics" : "How logistics work";
+        if (icon) icon.textContent = open ? "-" : "+";
+      });
+    });
+
+    /* Expandable comparison table */
     document.querySelectorAll("[data-icp-compare-toggle]").forEach(function (btn) {
       var id = btn.getAttribute("data-icp-compare-toggle");
       var card = document.getElementById("icp-compare-card-" + id);
@@ -1010,6 +1884,7 @@
       });
     });
 
+    /* Expandable 2-year warranty card */
     function setWarranty(id, open) {
       var box = document.getElementById("icp-warranty-" + id);
       var btn = document.querySelector("[data-icp-warranty-toggle='" + id + "']");
@@ -1028,11 +1903,69 @@
         setWarranty(id, !box.classList.contains("is-open"));
       });
     });
-    document.querySelectorAll("[data-icp-open-warranty]").forEach(function (link) {
-      var id = link.getAttribute("data-icp-open-warranty");
-      link.addEventListener("click", function () { setWarranty(id, true); });
+
+    /* Before / After case study toggle */
+    document.querySelectorAll("[data-icp-case]").forEach(function (card) {
+      var img = card.querySelector(".icp-case-media img");
+      var badge = card.querySelector("[data-case-badge]");
+      var btns = card.querySelectorAll("[data-ba-mode]");
+      if (!img || !btns.length) return;
+      btns.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var mode = btn.getAttribute("data-ba-mode");
+          var nextSrc = mode === "after" ? img.getAttribute("data-after-src") : img.getAttribute("data-before-src");
+          if (nextSrc) img.setAttribute("src", nextSrc);
+          if (badge && btn.getAttribute("data-badge-text")) {
+            badge.textContent = btn.getAttribute("data-badge-text");
+          }
+          btns.forEach(function (b) { b.classList.toggle("is-active", b === btn); });
+        });
+      });
     });
 
+    /* Click-to-play Fitzrovia repair walkthrough reel */
+    document.querySelectorAll("[data-icp-reel-wrap]").forEach(function (wrap) {
+      var cover = wrap.querySelector("[data-icp-reel-play]");
+      var video = wrap.querySelector("video");
+      if (!cover || !video) return;
+      cover.addEventListener("click", function () {
+        cover.classList.add("is-hidden");
+        video.play().catch(function () {});
+      });
+    });
+
+    /* Interactive 4-stage logic board fault-finding inspector */
+    document.querySelectorAll("[data-icp-diag]").forEach(function (root) {
+      var btns = root.querySelectorAll("[data-diag-index]");
+      var imgs = root.querySelectorAll("[data-inspector-img]");
+      var stageEl = root.querySelector("[data-inspector-stage]");
+      var rKey = root.querySelector("[data-inspector-rkey]");
+      var rVal = root.querySelector("[data-inspector-rval]");
+      var titleEl = root.querySelector("[data-inspector-title]");
+      var bodyEl = root.querySelector("[data-inspector-body]");
+      function activate(btn) {
+        var idx = btn.getAttribute("data-diag-index");
+        btns.forEach(function (b) {
+          var on = b === btn;
+          b.classList.toggle("is-active", on);
+          b.setAttribute("aria-pressed", String(on));
+        });
+        imgs.forEach(function (im) {
+          im.classList.toggle("is-active", im.getAttribute("data-inspector-img") === idx);
+        });
+        if (stageEl) stageEl.textContent = btn.getAttribute("data-diag-stage-label") || "";
+        if (rKey) rKey.textContent = btn.getAttribute("data-diag-reading-key") || "";
+        if (rVal) rVal.textContent = btn.getAttribute("data-diag-reading-val") || "";
+        if (titleEl) titleEl.textContent = btn.getAttribute("data-diag-note-title") || "";
+        if (bodyEl) bodyEl.textContent = btn.getAttribute("data-diag-note-body") || "";
+      }
+      if (btns.length) activate(btns[0]);
+      btns.forEach(function (btn) {
+        btn.addEventListener("click", function () { activate(btn); });
+      });
+    });
+
+    /* FAQ accordion */
     document.querySelectorAll(".icp-faq-btn").forEach(function (btn) {
       btn.addEventListener("click", function () {
         var item = btn.closest(".icp-faq-item");
@@ -1044,6 +1977,26 @@
       });
     });
 
+    /* Scroll-aware matte dark floating CTA (ICO-11 v10) */
+    var floatingCta = document.getElementById("icp-floating-cta");
+    var heroEl = document.querySelector(".icp-hero");
+    var quoteEl = document.getElementById("quote-section");
+    if (floatingCta && heroEl) {
+      function updateFloat() {
+        var heroBottom = heroEl.getBoundingClientRect().bottom;
+        var quoteNear = false;
+        if (quoteEl) {
+          var qr = quoteEl.getBoundingClientRect();
+          quoteNear = qr.top < window.innerHeight * 0.7 && qr.bottom > 120;
+        }
+        floatingCta.classList.toggle("is-visible", heroBottom < 80 && !quoteNear);
+      }
+      window.addEventListener("scroll", updateFloat, { passive: true });
+      window.addEventListener("resize", updateFloat, { passive: true });
+      updateFloat();
+    }
+
+    /* Find your model code matcher */
     var MODELS = [
       { code: "A3240", name: 'MacBook Air 13" M4 (2025)' },
       { code: "A3113", name: 'MacBook Air 13" M3 (2024)' },
@@ -1080,9 +2033,9 @@
         var match = MODELS.find(function (m) { return m.code === raw || raw.indexOf(m.code) !== -1; });
         out.classList.add("is-visible");
         if (match) {
-          out.innerHTML = '<span><strong>' + match.name + ' (' + match.code + ')</strong> matched</span><a class="icp-btn-dark" style="min-height:34px;padding:6px 12px;font-size:13px;" href="#quote-section">Select in quote wizard -&gt;</a>';
+          out.innerHTML = '<span><strong>' + match.name + ' (' + match.code + ')</strong> matched</span><a class="icp-btn-dark" style="min-height:34px;padding:6px 12px;font-size:13px;" href="#quote-section">Select in quote wizard &rarr;</a>';
         } else {
-          out.innerHTML = '<span>Could not match <strong>' + raw.replace(/[<>&"]/g, "") + '</strong> directly. Select your model in the <a href="#quote-section" style="color:#0070f3;font-weight:500;">quote wizard above</a>.</span>';
+          out.innerHTML = '<span>Could not match <strong>' + raw.replace(/[<>&"]/g, "") + '</strong> directly. Select your model in the <a href="#quote-section" style="color:#0b63ce;font-weight:500;">quote wizard above</a>.</span>';
         }
       });
     });
@@ -1101,8 +2054,8 @@
       "label": "Page section slot",
       "default": "top",
       "options": [
-        { "value": "top", "label": "Top (Hero, Reviews, Comparison, Warranty)" },
-        { "value": "bottom", "label": "Bottom (Find Your Model, Process, FAQs, Workshop)" }
+        { "value": "top", "label": "Top (Hero, Trust Bar, Reviews, Comparison, Warranty)" },
+        { "value": "bottom", "label": "Bottom (Find Model, Bench Case Studies, Fault Finding, FAQs, Workshop)" }
       ]
     },
     { "type": "text", "id": "breadcrumb_label", "label": "Breadcrumb label", "default": "MacBook Repair" },
@@ -1125,6 +2078,10 @@
     { "type": "textarea", "id": "stage_step2_desc", "label": "Right card step 2 body" },
     { "type": "text", "id": "stage_step3_title", "label": "Right card step 3 title" },
     { "type": "textarea", "id": "stage_step3_desc", "label": "Right card step 3 body" },
+    { "type": "text", "id": "hero_bench_image", "label": "Hero bench thumbnail asset filename" },
+    { "type": "text", "id": "hero_bench_alt", "label": "Hero bench thumbnail alt" },
+    { "type": "text", "id": "hero_bench_title", "label": "Hero bench strip title" },
+    { "type": "text", "id": "hero_bench_sub", "label": "Hero bench strip subtitle" },
     { "type": "text", "id": "pillar1_title", "label": "Pillar 1 title" },
     { "type": "textarea", "id": "pillar1_body", "label": "Pillar 1 body" },
     { "type": "text", "id": "pillar2_title", "label": "Pillar 2 title" },
@@ -1134,6 +2091,12 @@
     { "type": "text", "id": "compare_heading", "label": "Comparison heading" },
     { "type": "textarea", "id": "compare_lead", "label": "Comparison lead" },
     { "type": "textarea", "id": "warranty_copy", "label": "Warranty body copy" },
+    { "type": "text", "id": "cases_heading", "label": "Bench case studies heading" },
+    { "type": "textarea", "id": "cases_lead", "label": "Bench case studies lead" },
+    { "type": "text", "id": "reel_heading", "label": "Workshop video reel heading" },
+    { "type": "textarea", "id": "reel_copy", "label": "Workshop video reel description" },
+    { "type": "text", "id": "diag_heading", "label": "Fault-finding section heading" },
+    { "type": "textarea", "id": "diag_lead", "label": "Fault-finding section lead" },
     { "type": "textarea", "id": "faq_lead", "label": "FAQ section lead" }
   ],
   "blocks": [
@@ -1145,6 +2108,39 @@
         { "type": "text", "id": "icorrect", "label": "iCorrect column" },
         { "type": "text", "id": "apple", "label": "Apple Store column" },
         { "type": "text", "id": "generic", "label": "General shops column" }
+      ]
+    },
+    {
+      "type": "case_study",
+      "name": "Bench case study",
+      "settings": [
+        { "type": "text", "id": "model_badge", "label": "Model badge" },
+        { "type": "text", "id": "status_badge", "label": "Outcome status badge" },
+        { "type": "text", "id": "title", "label": "Case title" },
+        { "type": "text", "id": "before_image", "label": "Primary / Before image asset filename" },
+        { "type": "text", "id": "after_image", "label": "Optional After image asset filename" },
+        { "type": "text", "id": "media_badge", "label": "Image badge label" },
+        { "type": "text", "id": "before_badge", "label": "Before badge label" },
+        { "type": "text", "id": "after_badge", "label": "After badge label" },
+        { "type": "text", "id": "image_alt", "label": "Image alt text" },
+        { "type": "textarea", "id": "symptom", "label": "Initial symptom" },
+        { "type": "textarea", "id": "diagnosis", "label": "What we found on the bench" },
+        { "type": "textarea", "id": "outcome", "label": "Repair outcome" }
+      ]
+    },
+    {
+      "type": "diag_stage",
+      "name": "Fault-finding stage",
+      "settings": [
+        { "type": "text", "id": "tag", "label": "Stage tag" },
+        { "type": "text", "id": "title", "label": "Stage title" },
+        { "type": "textarea", "id": "description", "label": "Stage description" },
+        { "type": "text", "id": "image", "label": "Bench photo asset filename" },
+        { "type": "text", "id": "image_alt", "label": "Bench photo alt text" },
+        { "type": "text", "id": "reading_key", "label": "Bench reading label" },
+        { "type": "text", "id": "reading_val", "label": "Bench reading value" },
+        { "type": "text", "id": "note_title", "label": "Technician note heading" },
+        { "type": "textarea", "id": "note_body", "label": "Technician note explanation" }
       ]
     },
     {
