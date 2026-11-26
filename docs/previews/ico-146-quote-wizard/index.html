@@ -4,269 +4,198 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex">
-  <title>Quote Wizard Redesign Preview (ICO-146) | iCorrect</title>
-  <meta name="description" content="Interactive ICO-146 quote wizard redesign preview with native mobile app click-through flow, trust-first data wall, fixed quote hierarchy, and cookie banner clearance.">
+  <title>Quote Wizard Preview (ICO-146) | iCorrect</title>
+  <meta name="description" content="Interactive 4-step ICO-146 iCorrect Quote Wizard preview built to the approved flow audit and iCorrect design system.">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <!-- Desktop Preview Toolbar (>= 768px) -->
-  <div class="pv-toolbar" role="region" aria-label="Preview controls">
-    <div class="ic-container pv-toolbar-inner">
-      <div class="pv-toolbar-top">
-        <div class="pv-brand-tag">
-          <span class="pv-brand-dot" aria-hidden="true"></span>
-          <span>ICO-146 QUOTE WIZARD PREVIEW</span>
-        </div>
-        <div class="pv-toolbar-actions">
-          <button type="button" class="pv-spec-btn" id="pvSpecBtn" aria-expanded="false" aria-controls="pvSpecDrawer">Sizing &amp; Hierarchy Spec</button>
-          <a class="pv-link-btn" href="/">All Previews</a>
-        </div>
+  <!-- Slim Unobtrusive Preview Test Bar (Desktop, outside embedded website context) -->
+  <div class="pv-bar" role="region" aria-label="Preview scenario controls">
+    <div class="pv-bar-inner">
+      <div class="pv-bar-group">
+        <span class="pv-tag">ICO-146 preview</span>
+        <button type="button" class="pv-pill is-active" data-scenario="screen">Straight Screen Repair</button>
+        <button type="button" class="pv-pill" data-scenario="liquid">Liquid Damage Triage</button>
+        <button type="button" class="pv-pill" data-scenario="recovery">Data Recovery Triage</button>
+        <button type="button" class="pv-pill" data-scenario="london">London B1/B2 Same-Day</button>
+        <button type="button" class="pv-pill" data-scenario="mailin">UK Mail-in</button>
       </div>
-
-      <div class="pv-controls-grid">
-        <div class="pv-scenario-row" role="group" aria-label="Test scenarios">
-          <button type="button" class="pv-pill is-active" data-scenario="A">A: MBP 14" + W1W (Free Courier)</button>
-          <button type="button" class="pv-pill" data-scenario="B">B: iPhone 15 + E1 (&lt;£200 3-Way)</button>
-          <button type="button" class="pv-pill" data-scenario="C">C: MBA M3 + M1 (UK Mail-In)</button>
-          <button type="button" class="pv-pill" data-scenario="D">D: Liquid Damage Triage</button>
-        </div>
-
-        <div class="pv-toggles-row">
-          <label class="pv-toggle" id="toggleCookieWrap">
-            <input type="checkbox" id="toggleCookieBanner">
-            <span>Simulate 227px UK Cookie Banner</span>
-          </label>
-          <label class="pv-toggle" id="toggleSpeedWrap">
-            <input type="checkbox" id="toggleFutureSpeed">
-            <span>Preview: Future Speed Tiers</span>
-          </label>
-        </div>
-      </div>
-
-      <div class="pv-spec-drawer" id="pvSpecDrawer" hidden>
-        <div class="pv-spec-grid">
-          <div class="pv-spec-item">
-            <strong>Native Mobile App Flow (&lt; 768px)</strong>
-            One focused viewport per screen (390x844): Step 3 Your Details (4 fields incl. Email) -> Step 4 Fixed Price &amp; Service Options -> Step 5 Collection &amp; Checkout. Supporting details sit cleanly in tap-to-open bottom sheets.
-          </div>
-          <div class="pv-spec-item">
-            <strong>Legibility &amp; Touch Floor</strong>
-            16px inputs (zero iOS zoom), body 14px to 15px, labels minimum 12px, 44px to 48px touch targets, 52px pinned primary CTA, hero price 40px mobile / 44px desktop. Zero horizontal overflow.
-          </div>
-          <div class="pv-spec-item">
-            <strong>Cookie Banner Clearance</strong>
-            Mobile pinned CTA docks cleanly above the simulated 227px UK-GDPR banner with zero overlap, zero font shrinking, and zero layout inversion.
-          </div>
-        </div>
+      <div class="pv-bar-right">
+        <label class="pv-check" id="pvExpressFullWrap">
+          <input type="checkbox" id="pvExpressFull">
+          <span>Express full this week (Thu 26 / Fri 27 full -> Tue 1 Dec)</span>
+        </label>
+        <a class="pv-link" href="/">All previews</a>
       </div>
     </div>
   </div>
 
-  <!-- Desktop Site Header (>= 768px) -->
+  <!-- Realistic New-Website Header (Desktop, matches /ico-11/) -->
   <header class="site-header">
-    <div class="ic-container header-inner">
+    <div class="site-header-inner">
       <a class="brand" href="#top" id="top">iCorrect</a>
-      <div class="header-meta">
-        <span class="header-rating">4.8 from 750+ Google reviews</span>
-        <span class="status-pill">
-          <span class="status-dot" aria-hidden="true"></span>
-          <span>Fitzrovia W1W 8JQ</span>
-        </span>
+      <nav class="site-nav" aria-label="Primary">
+        <span>MacBook Repairs</span>
+        <span>iPhone Repairs</span>
+        <span>iPad Repairs</span>
+        <span>Apple Watch</span>
+      </nav>
+      <div class="site-header-right">
+        <button type="button" class="header-proof-btn" id="openReviewsDesktopBtn">4.8 from 750+ Google reviews</button>
+        <span class="header-loc">Fitzrovia, London W1W 8JQ</span>
       </div>
     </div>
   </header>
 
   <!-- Mobile App Fixed Top Bar (< 768px) -->
-  <header class="m-app-bar" id="mAppBar" aria-label="Quote app navigation">
+  <header class="m-app-bar" id="mAppBar" aria-label="Quote wizard navigation">
     <button type="button" class="m-back-btn" id="mBackBtn" aria-label="Previous step">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <path d="M12.5 4.5L7 10L12.5 15.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12.5 4.5L7 10L12.5 15.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
 
     <div class="m-progress-wrap">
-      <div class="m-progress-segs" id="mProgressSegs" aria-hidden="true">
+      <div class="m-progress-segs" aria-hidden="true">
         <span class="m-seg" data-seg="1"></span>
         <span class="m-seg" data-seg="2"></span>
         <span class="m-seg" data-seg="3"></span>
         <span class="m-seg" data-seg="4"></span>
-        <span class="m-seg" data-seg="5"></span>
       </div>
-      <span class="m-step-label" id="mStepLabel">Step 3 of 5 · Your Details</span>
+      <span class="m-step-label" id="mStepLabel">Step 1 of 4 · Device &amp; model</span>
     </div>
 
-    <button type="button" class="m-preview-pill" id="mPreviewBtn" aria-haspopup="dialog" aria-controls="previewSheet">
-      <span class="m-preview-dot" aria-hidden="true"></span>
-      <span>Preview</span>
-    </button>
+    <button type="button" class="m-test-btn" id="mTestBtn" aria-haspopup="dialog" aria-controls="mTestSheet">Scenarios</button>
   </header>
 
-  <main class="page-main" id="pageMain">
-    <div class="ic-container">
-      <div class="page-intro">
-        <span class="mono-label">Instant Repair Quote</span>
-        <h1>Get your fixed Apple repair quote in under 60 seconds.</h1>
-        <p>Genuine Apple displays (panel only), 2-year warranty, and free collection on orders of £200 or more. Standard workshop turnaround is 2 working days once your device reaches Fitzrovia.</p>
+  <!-- Realistic Embedded Page Context (Desktop) / Full-Screen App Canvas (Mobile) -->
+  <main class="page-wrap" id="quote-section">
+    <div class="page-intro">
+      <div class="page-intro-left">
+        <span class="ic-label">Instant repair quote</span>
+        <h1 class="page-title">Check your exact repair price</h1>
+      </div>
+      <p class="page-meta">Genuine Apple displays (panel only) · 2-year warranty · 2 working days once at Fitzrovia</p>
+    </div>
+
+    <!-- True-to-Life Embedded Fixed-Height Wizard Frame (Desktop 760px x 590px, Mobile 100dvh) -->
+    <section class="ic-wizard-frame" id="wizardFrame" aria-label="iCorrect 4-step quote wizard">
+      <!-- Pinned Frame Header -->
+      <div class="wiz-head" id="wizHead">
+        <div class="wiz-steps" role="tablist" aria-label="Quote steps">
+          <button type="button" class="wiz-step" data-step="1" role="tab">
+            <span class="wiz-step-num">01</span>
+            <span>Device</span>
+          </button>
+          <button type="button" class="wiz-step" data-step="2" role="tab">
+            <span class="wiz-step-num">02</span>
+            <span>Fault</span>
+          </button>
+          <button type="button" class="wiz-step" data-step="3" role="tab">
+            <span class="wiz-step-num">03</span>
+            <span>Your details</span>
+          </button>
+          <button type="button" class="wiz-step" data-step="4" role="tab">
+            <span class="wiz-step-num">04</span>
+            <span>Fixed price</span>
+          </button>
+        </div>
+        <div class="wiz-context-row" id="wizContextRow">
+          <div class="wiz-chips" id="wizChips"></div>
+          <button type="button" class="wiz-back-link" id="wizBackBtn" hidden>&larr; Back</button>
+        </div>
       </div>
 
-      <!-- Main Quote Wizard Shell (Desktop 4-step view + Mobile 5-step app viewport) -->
-      <section class="wizard-shell" aria-label="Interactive quote wizard prototype">
-        <div class="wizard-head">
-          <div class="stepper" role="tablist" aria-label="Quote steps">
-            <button type="button" class="step-tab" data-step="1" role="tab">
-              <span class="step-tab-num">01</span>
-              <span class="step-tab-label">Device</span>
-            </button>
-            <button type="button" class="step-tab" data-step="2" role="tab">
-              <span class="step-tab-num">02</span>
-              <span class="step-tab-label">Fault</span>
-            </button>
-            <button type="button" class="step-tab" data-step="3" role="tab">
-              <span class="step-tab-num">03</span>
-              <span class="step-tab-label">Your Details</span>
-            </button>
-            <button type="button" class="step-tab" data-step="4" role="tab">
-              <span class="step-tab-num">04</span>
-              <span class="step-tab-label">Instant Quote</span>
-            </button>
-          </div>
+      <!-- Internally Scrollable Step Stage -->
+      <div class="wiz-body" id="wizardStage">
+        <!-- Rendered dynamically by app.js -->
+      </div>
 
-          <div class="selection-bar" id="selectionBar">
-            <div class="selection-chips" id="selectionChips"></div>
-            <button type="button" class="back-btn" id="stepBackBtn" hidden>&larr; Back</button>
-          </div>
+      <!-- Pinned Frame Footer (Desktop & Mobile Sticky Bottom CTA) -->
+      <div class="wiz-foot" id="wizFoot">
+        <div class="qw-collection-notice" id="qwCollectionNotice" role="note" hidden>
+          <svg class="notice-pin" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 14.5s4.5-4.1 4.5-8A4.5 4.5 0 1 0 3.5 6.5c0 3.9 4.5 8 4.5 8Z" stroke="currentColor" stroke-width="1.4"/>
+            <circle cx="8" cy="6.5" r="1.5" stroke="currentColor" stroke-width="1.4"/>
+          </svg>
+          <span id="qwCollectionNoticeText"></span>
         </div>
 
-        <div class="wizard-body" id="wizardStage">
-          <!-- Rendered dynamically by app.js -->
-        </div>
-      </section>
-
-      <!-- Desktop Verified Google Reviews (Live Trustindex Widget) & Fitzrovia Workshop Details (>= 768px) -->
-      <section class="proof-section" aria-label="Reviews and workshop details">
-        <div class="proof-card proof-card-reviews">
-          <div class="reviews-card-head">
-            <div>
-              <span class="mono-label">Verified Client Reviews</span>
-              <h2>4.8 from 750+ Google reviews</h2>
-            </div>
-            <p class="quote-card-sub">Independent London microelectronics workshop with genuine Apple displays (panel only) and a 2-year warranty on every screen repair.</p>
+        <div class="wiz-foot-bar">
+          <div class="wiz-foot-meta" id="wizFootMeta">
+            <span class="wiz-foot-note">Upfront fixed pricing · No deposits</span>
           </div>
+          <button type="button" class="ic-btn wiz-cta" id="wizPrimaryCta">Continue</button>
+        </div>
+      </div>
+
+      <!-- In-Frame Reviews & Fitzrovia Workshop Drawer (Desktop & Mobile Overlay) -->
+      <div class="in-frame-overlay" id="reviewsOverlay" role="dialog" aria-modal="true" aria-labelledby="reviewsOverlayTitle" hidden>
+        <div class="overlay-head">
+          <div>
+            <span class="ic-label">Verified Google reviews</span>
+            <h2 class="overlay-title" id="reviewsOverlayTitle">4.8 from 750+ Google reviews</h2>
+          </div>
+          <button type="button" class="ic-btn--secondary overlay-close" id="closeReviewsOverlay">Back to quote</button>
+        </div>
+        <div class="overlay-body">
+          <p class="overlay-sub">Independent London microelectronics workshop using genuine Apple displays (panel only), backed by our 2-year warranty.</p>
           <div class="trustindex-slot" id="trustindexSlot" data-widget-id="47cc7ef8590e8871fa062160cf7">
             <div class="trustindex-loading">Loading verified Google reviews...</div>
           </div>
-        </div>
-
-        <div class="proof-card proof-card-workshop">
-          <span class="mono-label">Fitzrovia Workshop &amp; Collection</span>
-          <h2>12 Margaret Street, London</h2>
-          <div class="workshop-meta">
-            <div class="workshop-row">
-              <strong>Workshop Address</strong>
-              12 Margaret Street, Audley House, London W1W 8JQ
-            </div>
-            <div class="workshop-row">
-              <strong>Opening Hours</strong>
-              Mon to Thu 9am to 6pm, Friday 10am to 6pm, Sat &amp; Sun closed
-            </div>
-            <div class="workshop-row">
-              <strong>Collection &amp; UK Mail-In</strong>
-              Free collection on orders of £200 or more. Same-day London courier in selected London zones; free tracked and insured UK mail-in pack elsewhere.
-            </div>
+          <div class="workshop-strip">
+            <div><span class="ic-label">Fitzrovia workshop</span><p>12 Margaret Street, Audley House, London W1W 8JQ</p></div>
+            <div><span class="ic-label">Opening hours</span><p>Mon to Thu 9am to 6pm, Friday 10am to 6pm, Sat &amp; Sun closed</p></div>
           </div>
         </div>
-      </section>
-    </div>
+      </div>
+
+      <!-- Compact Checkout Verification Confirmation Overlay (Zero Step 5) -->
+      <div class="in-frame-overlay" id="checkoutOverlay" role="dialog" aria-modal="true" aria-labelledby="checkoutOverlayTitle" hidden>
+        <div class="overlay-head">
+          <div>
+            <span class="ic-label">Shopify checkout payload verification</span>
+            <h2 class="overlay-title" id="checkoutOverlayTitle">Ready for Shopify checkout</h2>
+          </div>
+          <button type="button" class="ic-btn--secondary overlay-close" id="closeCheckoutOverlay">Edit quote</button>
+        </div>
+        <div class="overlay-body" id="checkoutOverlayBody"></div>
+      </div>
+    </section>
   </main>
 
-  <!-- Mobile App Pinned Bottom CTA Bar (< 768px, docks above simulated cookie banner) -->
-  <div class="m-app-footer" id="mAppFooter">
-    <button type="button" class="btn-primary m-footer-cta" id="mFooterCta">See my fixed price &rarr;</button>
-  </div>
-
-  <!-- Mobile Bottom Sheet: How It Works + Reviews (Trustindex) & Fitzrovia Workshop -->
-  <div class="sheet-overlay" id="appSheet" hidden>
-    <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="appSheetTitle">
-      <div class="sheet-handle" aria-hidden="true"></div>
-      <div class="sheet-head">
-        <div class="sheet-tabs" role="tablist" aria-label="Details">
-          <button type="button" class="sheet-tab is-active" id="sheetTabHow" data-sheet-tab="how" role="tab" aria-selected="true">How it works</button>
-          <button type="button" class="sheet-tab" id="sheetTabReviews" data-sheet-tab="reviews" role="tab" aria-selected="false">Reviews &amp; Workshop</button>
-        </div>
-        <button type="button" class="sheet-close" id="closeAppSheet" aria-label="Close details">&times;</button>
-      </div>
-      <div class="sheet-body" id="appSheetBody">
-        <div id="appSheetHowPanel"></div>
-        <div id="appSheetReviewsPanel" hidden>
-          <span class="mono-label">Verified Client Reviews</span>
-          <h3 class="sheet-section-title" id="appSheetReviewsTitle">4.8 from 750+ Google reviews</h3>
-          <p class="quote-card-sub" style="margin-bottom:12px;">Independent London microelectronics workshop with genuine Apple displays (panel only) and a 2-year warranty on every screen repair.</p>
-          <div class="trustindex-slot trustindex-slot-mobile" id="mobileTrustindexSlot" data-widget-id="47cc7ef8590e8871fa062160cf7">
-            <div class="trustindex-loading">Loading verified Google reviews...</div>
-          </div>
-          <div class="sheet-workshop-box">
-            <span class="mono-label">Fitzrovia Workshop &amp; Collection</span>
-            <div class="workshop-meta" style="margin-top:8px;">
-              <div class="workshop-row"><strong>Workshop Address</strong>12 Margaret Street, Audley House, London W1W 8JQ</div>
-              <div class="workshop-row"><strong>Opening Hours</strong>Mon to Thu 9am to 6pm, Friday 10am to 6pm, Sat &amp; Sun closed</div>
-              <div class="workshop-row"><strong>Collection &amp; UK Mail-In</strong>Free collection on orders of £200 or more. Same-day London courier in selected London zones; free tracked and insured UK mail-in pack elsewhere.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Mobile Preview Controls Drawer (< 768px) -->
-  <div class="sheet-overlay" id="previewSheet" hidden>
-    <div class="sheet-card sheet-card-dark" role="dialog" aria-modal="true" aria-labelledby="previewSheetTitle">
+  <!-- Mobile Scenarios & Toggles Bottom Sheet (< 768px) -->
+  <div class="sheet-overlay" id="mTestSheet" hidden>
+    <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="mTestSheetTitle">
       <div class="sheet-handle" aria-hidden="true"></div>
       <div class="sheet-head">
         <div>
-          <span class="pv-sheet-kicker">ICO-146 MOBILE APP PREVIEW</span>
-          <h3 class="pv-sheet-title" id="previewSheetTitle">Demo Controls</h3>
+          <span class="ic-label">ICO-146 test controls</span>
+          <h2 class="sheet-title" id="mTestSheetTitle">Switch scenario</h2>
         </div>
-        <button type="button" class="sheet-close is-dark" id="closePreviewSheet" aria-label="Close preview controls">&times;</button>
+        <button type="button" class="sheet-close" id="closeMTestSheet" aria-label="Close scenarios">&times;</button>
       </div>
-      <div class="sheet-body pv-sheet-body">
-        <div class="pv-sheet-section">
-          <span class="pv-sheet-label">Scenarios</span>
-          <div class="pv-sheet-grid">
-            <button type="button" class="pv-pill is-active" data-scenario="A">A: MBP 14" + W1W (Free Courier)</button>
-            <button type="button" class="pv-pill" data-scenario="B">B: iPhone 15 + E1 (&lt;£200 3-Way)</button>
-            <button type="button" class="pv-pill" data-scenario="C">C: MBA M3 + M1 (UK Mail-In)</button>
-            <button type="button" class="pv-pill" data-scenario="D">D: Liquid Damage Triage</button>
-          </div>
+      <div class="sheet-body">
+        <div class="sheet-btn-stack">
+          <button type="button" class="ic-btn--secondary sheet-scen-btn is-active" data-scenario="screen">Straight Screen Repair (Step 1)</button>
+          <button type="button" class="ic-btn--secondary sheet-scen-btn" data-scenario="liquid">Liquid Damage Triage (Step 2)</button>
+          <button type="button" class="ic-btn--secondary sheet-scen-btn" data-scenario="recovery">Data Recovery Triage (Step 2)</button>
+          <button type="button" class="ic-btn--secondary sheet-scen-btn" data-scenario="london">London B1/B2 Same-Day (Step 4)</button>
+          <button type="button" class="ic-btn--secondary sheet-scen-btn" data-scenario="mailin">UK Mail-in + Express (Step 4)</button>
         </div>
-
-        <div class="pv-sheet-section">
-          <span class="pv-sheet-label">Jump to Step</span>
-          <div class="pv-step-jump-row">
-            <button type="button" class="pv-jump-btn" data-jump-step="1">1. Device</button>
-            <button type="button" class="pv-jump-btn" data-jump-step="2">2. Fault</button>
-            <button type="button" class="pv-jump-btn" data-jump-step="3">3. Details</button>
-            <button type="button" class="pv-jump-btn" data-jump-step="4">4. Price</button>
-            <button type="button" class="pv-jump-btn" data-jump-step="5">5. Checkout</button>
-          </div>
+        <div class="sheet-toggles">
+          <label class="sheet-check">
+            <input type="checkbox" id="mExpressFull">
+            <span>Express full this week (Thu 26 / Fri 27 full -> Tue 1 Dec)</span>
+          </label>
+          <label class="sheet-check">
+            <input type="checkbox" id="mCookieSim">
+            <span>Simulate 227px UK cookie banner</span>
+          </label>
         </div>
-
-        <div class="pv-sheet-section">
-          <span class="pv-sheet-label">Preview Toggles</span>
-          <div class="pv-sheet-toggles">
-            <label class="pv-toggle" id="mToggleCookieWrap">
-              <input type="checkbox" id="mToggleCookieBanner">
-              <span>Simulate 227px UK Cookie Banner</span>
-            </label>
-            <label class="pv-toggle" id="mToggleSpeedWrap">
-              <input type="checkbox" id="mToggleFutureSpeed">
-              <span>Preview: Future Speed Tiers</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="pv-sheet-foot">
-          <a class="pv-link-btn" href="/">All Previews</a>
-          <button type="button" class="pv-done-btn" id="donePreviewSheet">Done</button>
+        <div class="sheet-foot">
+          <a class="sheet-all-link" href="/">All previews</a>
+          <button type="button" class="ic-btn" id="doneMTestSheet">Done</button>
         </div>
       </div>
     </div>
@@ -275,29 +204,15 @@
   <!-- Simulated 227px UK-GDPR Cookie Banner (OFF by default) -->
   <div class="sim-cookie-banner" id="simCookieBanner" role="dialog" aria-label="Cookie preferences preview" hidden>
     <div class="sim-cookie-inner">
-      <div>
-        <div class="sim-cookie-head">
-          <h2 class="sim-cookie-title">We value your privacy</h2>
-          <span class="sim-cookie-badge">Simulated 227px UK Banner</span>
-        </div>
-        <p class="sim-cookie-copy">We use cookies to keep your repair quote working and measure site performance. Read our <a href="#privacy" onclick="return false;">Privacy Policy</a> for details.</p>
+      <div class="sim-cookie-head">
+        <span class="sim-cookie-title">We value your privacy</span>
+        <span class="ic-label">Simulated 227px UK banner</span>
       </div>
+      <p class="sim-cookie-copy">We use cookies to keep your repair quote working and measure site performance.</p>
       <div class="sim-cookie-btns">
-        <button type="button" class="sim-cookie-btn" id="simCookieAccept">Accept</button>
-        <button type="button" class="sim-cookie-btn" id="simCookieDecline">Decline</button>
-        <button type="button" class="sim-cookie-manage" id="simCookieManage">Manage preferences</button>
+        <button type="button" class="ic-btn--secondary" id="simCookieAccept">Accept</button>
+        <button type="button" class="ic-btn--secondary" id="simCookieDecline">Decline</button>
       </div>
-    </div>
-  </div>
-
-  <!-- Checkout Handoff Preview Modal -->
-  <div class="modal-overlay" id="checkoutModal" hidden>
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="checkoutModalTitle">
-      <span class="mono-label">Preview Checkout Handoff</span>
-      <h3 id="checkoutModalTitle">Ready for Shopify checkout</h3>
-      <p>Nothing is charged in this preview. Below is the exact lead, device, service, and upfront fixed price payload sent to Shopify checkout.</p>
-      <div class="payload-list" id="checkoutPayload"></div>
-      <button type="button" class="btn-primary" id="closeCheckoutModal">Back to preview</button>
     </div>
   </div>
 

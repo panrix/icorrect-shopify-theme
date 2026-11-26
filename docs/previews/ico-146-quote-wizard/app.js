@@ -1,1984 +1,2381 @@
-(function () {
-  "use strict";
+(() => {
+  'use strict';
 
-  var LONDON_PREFIXES = [
-    "EC", "WC", "W", "SW", "SE", "NW", "N", "E",
-    "BR", "CR", "DA", "EN", "HA", "IG", "KT", "RM", "SM", "TW", "UB", "WD"
-  ];
-
-  var INNER_LONDON_PREFIXES = ["W1", "WC1", "WC2", "EC1", "EC2", "EC3", "EC4", "SW1", "SE1", "E1", "N1", "NW1", "SW11"];
-
-  var CATALOG = {
-    macbook: {
-      label: "MacBook",
-      meta: "Pro & Air",
-      families: ["All", "MacBook Pro", "MacBook Air"],
-      models: [
-        { id: "mbp-14-m3", family: "MacBook Pro", name: "MacBook Pro 14\" (M3)", sub: "2023 to 2024 · Liquid Retina XDR", code: "A2918", screenPrice: 399, batteryPrice: 229, diagPrice: 49 },
-        { id: "mba-13-m3", family: "MacBook Air", name: "MacBook Air 13\" (M3)", sub: "2024 · Liquid Retina", code: "A3113", screenPrice: 299, batteryPrice: 199, diagPrice: 49 },
-        { id: "mbp-16-m3", family: "MacBook Pro", name: "MacBook Pro 16\" (M3 Pro / Max)", sub: "2023 to 2024 · Liquid Retina XDR", code: "A2991", screenPrice: 549, batteryPrice: 249, diagPrice: 49 },
-        { id: "mbp-14-m2", family: "MacBook Pro", name: "MacBook Pro 14\" (M1 / M2 Pro)", sub: "2021 to 2023 · Liquid Retina XDR", code: "A2442", screenPrice: 379, batteryPrice: 219, diagPrice: 49 },
-        { id: "mba-13-m2", family: "MacBook Air", name: "MacBook Air 13\" (M2)", sub: "2022 · Liquid Retina", code: "A2681", screenPrice: 289, batteryPrice: 189, diagPrice: 49 },
-        { id: "mbp-13-m1", family: "MacBook Pro", name: "MacBook Pro 13\" (M1 / M2)", sub: "2020 to 2022 · Touch Bar", code: "A2338", screenPrice: 299, batteryPrice: 189, diagPrice: 49 }
-      ]
-    },
-    iphone: {
-      label: "iPhone",
-      meta: "iPhone 12 to 16",
-      families: ["All", "iPhone 16", "iPhone 15", "iPhone 14"],
-      models: [
-        { id: "ip-15", family: "iPhone 15", name: "iPhone 15", sub: "6.1-inch Super Retina XDR", code: "A3090", screenPrice: 149, batteryPrice: 89, diagPrice: 49 },
-        { id: "ip-15-pro", family: "iPhone 15", name: "iPhone 15 Pro", sub: "6.1-inch ProMotion XDR", code: "A3102", screenPrice: 249, batteryPrice: 99, diagPrice: 49 },
-        { id: "ip-16-pro", family: "iPhone 16", name: "iPhone 16 Pro", sub: "6.3-inch ProMotion XDR", code: "A3293", screenPrice: 299, batteryPrice: 109, diagPrice: 49 },
-        { id: "ip-14", family: "iPhone 14", name: "iPhone 14", sub: "6.1-inch Super Retina XDR", code: "A2882", screenPrice: 139, batteryPrice: 79, diagPrice: 49 }
-      ]
-    },
-    ipad: {
-      label: "iPad",
-      meta: "Pro, Air & Mini",
-      families: ["All", "iPad Pro", "iPad Air"],
-      models: [
-        { id: "ipad-pro-11", family: "iPad Pro", name: "iPad Pro 11\" (M2 / M4)", sub: "Full display replacement", code: "A2759", screenPrice: 279, batteryPrice: 149, diagPrice: 49 },
-        { id: "ipad-air-m2", family: "iPad Air", name: "iPad Air 11\" (M2)", sub: "Liquid Retina display", code: "A2902", screenPrice: 219, batteryPrice: 139, diagPrice: 49 }
-      ]
-    },
-    watch: {
-      label: "Apple Watch",
-      meta: "Series & Ultra",
-      families: ["All", "Series", "Ultra"],
-      models: [
-        { id: "aw-s9", family: "Series", name: "Apple Watch Series 9", sub: "41mm / 45mm OLED display", code: "A2980", screenPrice: 159, batteryPrice: 89, diagPrice: 49 },
-        { id: "aw-ultra-2", family: "Ultra", name: "Apple Watch Ultra 2", sub: "49mm flat sapphire display", code: "A2986", screenPrice: 249, batteryPrice: 119, diagPrice: 49 }
-      ]
-    }
+  /* =========================================================================
+     Data: Devices, Models, Faults, Prices, & Locked Copy (Audit Sections 2-7)
+     ========================================================================= */
+  const LOCKED_LIQUID_COPY = {
+    usable: "If you can, please back up your device. Liquid damage is unpredictable and may still affect your data, though we'll still take every care with your device.",
+    notUsable: "Liquid damage can be unpredictable. There's a small chance your data could be affected. During the diagnostic we'll prioritise protecting your data wherever we can."
   };
 
-  var FAULTS = [
-    {
-      id: "screen",
-      title: "Cracked or broken screen",
-      shortTitle: "Cracked screen",
-      desc: "Shattered glass, black screen, vertical lines, or backlight failure.",
-      tag: "Fixed price",
-      isDiag: false
-    },
-    {
-      id: "liquid",
-      title: "Liquid damage",
-      shortTitle: "Liquid damage",
-      desc: "Spilled water, coffee, or other liquid. Board-level microelectronics diagnostic.",
-      tag: "Triage + diagnostic",
-      isDiag: true
-    },
-    {
-      id: "nopower",
-      title: "No power / will not turn on",
-      shortTitle: "No power",
-      desc: "Completely dead, no charging sign, or shuts down unexpectedly.",
-      tag: "Triage + diagnostic",
-      isDiag: true
-    },
-    {
-      id: "battery",
-      title: "Battery replacement",
-      shortTitle: "Battery replacement",
-      desc: "Drains quickly, service battery warning, or swollen cells.",
-      tag: "Fixed price",
-      isDiag: false
-    },
-    {
-      id: "data",
-      title: "Data recovery",
-      shortTitle: "Data recovery",
-      desc: "Recover essential files from a liquid-damaged or dead Apple device.",
-      tag: "Triage + diagnostic",
-      isDiag: true
-    }
-  ];
-
-  var COLLECTION_DATES = [
-    { id: "thu-26", dow: "Today", day: "26 Nov", full: "Thu 26 Nov" },
-    { id: "fri-27", dow: "Fri", day: "27 Nov", full: "Fri 27 Nov" },
-    { id: "mon-30", dow: "Mon", day: "30 Nov", full: "Mon 30 Nov" },
-    { id: "tue-01", dow: "Tue", day: "1 Dec", full: "Tue 1 Dec" }
-  ];
-
-  var COLLECTION_WINDOWS = [
-    { id: "AM", title: "Morning slot", time: "09:00 to 13:00" },
-    { id: "PM", title: "Afternoon slot", time: "13:00 to 17:00" }
-  ];
-
-  var SCENARIOS = {
-    A: {
-      id: "A",
-      device: "macbook",
-      modelId: "mbp-14-m3",
-      faultId: "screen",
-      name: "Alex Morgan",
-      email: "alex.morgan@example.co.uk",
-      phone: "07700 900123",
-      postcode: "W1W 8JQ",
-      service: "courier",
-      defaultStep: 4
-    },
-    B: {
-      id: "B",
-      device: "iphone",
-      modelId: "ip-15",
-      faultId: "screen",
-      name: "Hannah Patel",
-      email: "hannah.patel@example.co.uk",
-      phone: "07700 900456",
-      postcode: "E1 6AN",
-      service: "mailin",
-      defaultStep: 4
-    },
-    C: {
-      id: "C",
-      device: "macbook",
-      modelId: "mba-13-m3",
-      faultId: "screen",
-      name: "Samira Bennett",
-      email: "samira.bennett@example.co.uk",
-      phone: "07700 900789",
-      postcode: "M1 4BT",
-      service: "mailin",
-      defaultStep: 4
-    },
-    D: {
-      id: "D",
-      device: "macbook",
-      modelId: "mbp-14-m3",
-      faultId: "liquid",
-      name: "David Chen",
-      email: "david.chen@example.co.uk",
-      phone: "07700 900321",
-      postcode: "SW11 8BJ",
-      service: "courier",
-      defaultStep: 2
-    }
+  const HOME_ADDRESS_SKU = {
+    variantId: '46150010929405',
+    title: 'Home / collection / mail-in pack address line',
+    price: 0,
+    property: 'Home / collection / mail-in pack'
   };
 
-  var MOBILE_STEP_LABELS = {
-    1: "Step 1 of 5 · Device",
-    2: "Step 2 of 5 · Fault",
-    3: "Step 3 of 5 · Your Details",
-    4: "Step 4 of 5 · Price & Service",
-    5: "Step 5 of 5 · Checkout"
+  const DEVICES = [
+    { id: 'macbook', name: 'MacBook', sub: 'Pro & Air (Intel & M-series)' },
+    { id: 'iphone', name: 'iPhone', sub: '12 to 16 Pro Max' },
+    { id: 'ipad', name: 'iPad', sub: 'Pro, Air & standard' },
+    { id: 'watch', name: 'Apple Watch', sub: 'Series 6 to Ultra 2' }
+  ];
+
+  const MODELS = {
+    macbook: [
+      { id: 'mbp-14-m3', series: 'MacBook Pro', name: 'MacBook Pro 14" (M3, 2023)', code: 'A2918', chip: 'M3', intelDustFlex: false, touchBar: false, colors: ['Space Black', 'Silver'], prices: { screen: 549, battery: 219, 'charging-port': 199, keyboard: 249, trackpad: 189, diagnostic: 49, logicFloor: 249 }, expressFee: 79 },
+      { id: 'mbp-16-m3', series: 'MacBook Pro', name: 'MacBook Pro 16" (M3 Pro/Max)', code: 'A2991', chip: 'M3 Pro', intelDustFlex: false, touchBar: false, colors: ['Space Black', 'Silver'], prices: { screen: 699, battery: 239, 'charging-port': 199, keyboard: 269, trackpad: 199, diagnostic: 49, logicFloor: 249 }, expressFee: 79 },
+      { id: 'mba-13-m3', series: 'MacBook Air', name: 'MacBook Air 13" (M3, 2024)', code: 'A3113', chip: 'M3', intelDustFlex: false, touchBar: false, colors: ['Midnight', 'Starlight', 'Space Grey', 'Silver'], prices: { screen: 399, battery: 179, 'charging-port': 179, keyboard: 219, trackpad: 169, diagnostic: 49, logicFloor: 249 }, expressFee: 79 },
+      { id: 'mba-15-m3', series: 'MacBook Air', name: 'MacBook Air 15" (M3, 2024)', code: 'A3114', chip: 'M3', intelDustFlex: false, touchBar: false, colors: ['Midnight', 'Starlight', 'Space Grey', 'Silver'], prices: { screen: 449, battery: 199, 'charging-port': 179, keyboard: 229, trackpad: 179, diagnostic: 49, logicFloor: 249 }, expressFee: 79 },
+      { id: 'mbp-14-m1', series: 'MacBook Pro', name: 'MacBook Pro 14" (M1 Pro, 2021)', code: 'A2442', chip: 'M1 Pro', intelDustFlex: false, touchBar: false, colors: ['Space Grey', 'Silver'], prices: { screen: 529, battery: 209, 'charging-port': 189, keyboard: 239, trackpad: 179, diagnostic: 49, logicFloor: 249 }, expressFee: 79 },
+      { id: 'mbp-13-2019', series: 'MacBook Pro', name: 'MacBook Pro 13" (2019 Intel)', code: 'A2159', chip: 'Intel', intelDustFlex: true, hasDustgate: true, hasFlexgate: false, touchBar: true, colors: ['Space Grey', 'Silver'], prices: { screen: 349, dustgate: 199, battery: 179, 'charging-port': 169, keyboard: 229, trackpad: 169, 'touch-bar': 189, diagnostic: 49, logicFloor: 249 }, expressFee: 79 },
+      { id: 'mbp-13-2017', series: 'MacBook Pro', name: 'MacBook Pro 13" (2016/2017 Intel)', code: 'A1706', chip: 'Intel', intelDustFlex: true, hasDustgate: true, hasFlexgate: true, touchBar: true, colors: ['Space Grey', 'Silver'], prices: { screen: 299, dustgate: 189, flexgate: 189, battery: 169, 'charging-port': 159, keyboard: 219, trackpad: 159, 'touch-bar': 179, diagnostic: 49, logicFloor: 249 }, expressFee: 79 }
+    ],
+    iphone: [
+      { id: 'ip-16-pro', series: 'iPhone 16', name: 'iPhone 16 Pro', code: 'A3293', colors: ['Black Titanium', 'Natural Titanium', 'Desert Titanium', 'White Titanium'], prices: { screen: 329, battery: 99, 'charging-port': 119, 'rear-glass': 169, 'rear-camera': 189, 'front-camera': 219, diagnostic: 69, logicFloor: 199 }, expressFee: 49 },
+      { id: 'ip-15-pro', series: 'iPhone 15', name: 'iPhone 15 Pro', code: 'A3102', colors: ['Black Titanium', 'Blue Titanium', 'Natural Titanium', 'White Titanium'], prices: { screen: 299, battery: 95, 'charging-port': 109, 'rear-glass': 149, 'rear-camera': 179, 'front-camera': 199, diagnostic: 69, logicFloor: 199 }, expressFee: 49 },
+      { id: 'ip-14-pro', series: 'iPhone 14', name: 'iPhone 14 Pro', code: 'A2890', colors: ['Space Black', 'Deep Purple', 'Silver', 'Gold'], prices: { screen: 249, battery: 89, 'charging-port': 99, 'rear-glass': 139, 'rear-camera': 159, 'front-camera': 189, diagnostic: 69, logicFloor: 199 }, expressFee: 49 },
+      { id: 'ip-13', series: 'iPhone 13', name: 'iPhone 13', code: 'A2633', colors: ['Midnight', 'Starlight', 'Blue', 'Pink'], prices: { screen: 179, battery: 79, 'charging-port': 89, 'rear-glass': 119, 'rear-camera': 129, 'front-camera': 159, diagnostic: 69, logicFloor: 199 }, expressFee: 49 }
+    ],
+    ipad: [
+      { id: 'ipad-pro-13-m4', series: 'iPad Pro', name: 'iPad Pro 13" (M4, 2024)', code: 'A2925', nanoOption: true, needsConnect: true, colors: ['Space Black', 'Silver'], prices: { screen: 499, battery: 159, 'charging-port': 149, diagnostic: 69, logicFloor: 199 }, expressFee: 79 },
+      { id: 'ipad-air-11-m2', series: 'iPad Air', name: 'iPad Air 11" (M2, 2024)', code: 'A2902', nanoOption: false, needsConnect: true, colors: ['Space Grey', 'Starlight', 'Blue', 'Purple'], prices: { screen: 279, battery: 129, 'charging-port': 129, diagnostic: 69, logicFloor: 199 }, expressFee: 79 }
+    ],
+    watch: [
+      { id: 'watch-ultra-2', series: 'Ultra', name: 'Apple Watch Ultra 2', code: 'A2986', colors: ['Natural Titanium', 'Black Titanium'], prices: { 'screen-glass': 229, screen: 329, battery: 109, crown: 129, diagnostic: 49, logicFloor: 149 }, expressFee: 49 },
+      { id: 'watch-s9-45', series: 'Series 9', name: 'Apple Watch Series 9 (45mm)', code: 'A2980', colors: ['Midnight', 'Starlight', 'Silver'], prices: { 'screen-glass': 149, screen: 219, battery: 89, crown: 99, diagnostic: 49, logicFloor: 149 }, expressFee: 49 }
+    ]
   };
 
-  var state = {
-    scenario: "A",
-    step: 3,
-    device: "macbook",
-    familyFilter: "All",
-    modelId: "mbp-14-m3",
-    faultId: "screen",
-    helperOpen: false,
-    helperQuery: "",
-    triage: {
-      usable: "no",
-      seenBefore: "apple_quote",
-      dataPriority: "essential"
-    },
-    lead: {
-      name: "Alex Morgan",
-      email: "alex.morgan@example.co.uk",
-      phone: "07700 900123",
-      postcode: "W1W 8JQ"
-    },
-    leadErrors: {},
-    service: "courier",
-    dateId: "thu-26",
-    windowId: "AM",
-    futureSpeed: "standard",
-    showCookieBanner: false,
-    showFutureSpeed: false,
-    activeSheetTab: "how",
-    feedbackMsg: ""
+  /* 5-day working strip anchored on Thu 26 Nov 2026 per approved audit spec */
+  const WORKING_DATES = [
+    { iso: '2026-11-26', short: 'Thu 26', label: 'Thu 26 Nov', isToday: true, isFriday: false, stdReturn: 'Mon 30 Nov', stdReturnIso: '2026-11-30', expReturn: 'Fri 27 Nov', expReturnIso: '2026-11-27', expSlotsNormal: 2, expSlotsFullWeek: 0 },
+    { iso: '2026-11-27', short: 'Fri 27', label: 'Fri 27 Nov', isToday: false, isFriday: true, stdReturn: 'Tue 1 Dec', stdReturnIso: '2026-12-01', expReturn: 'Mon 30 Nov', expReturnIso: '2026-11-30', expSlotsNormal: 1, expSlotsFullWeek: 0 },
+    { iso: '2026-11-30', short: 'Mon 30', label: 'Mon 30 Nov', isToday: false, isFriday: false, stdReturn: 'Wed 2 Dec', stdReturnIso: '2026-12-02', expReturn: 'Tue 1 Dec', expReturnIso: '2026-12-01', expSlotsNormal: 3, expSlotsFullWeek: 0 },
+    { iso: '2026-12-01', short: 'Tue 1', label: 'Tue 1 Dec', isToday: false, isFriday: false, stdReturn: 'Thu 3 Dec', stdReturnIso: '2026-12-03', expReturn: 'Wed 2 Dec', expReturnIso: '2026-12-02', expSlotsNormal: 3, expSlotsFullWeek: 3 },
+    { iso: '2026-12-02', short: 'Wed 2', label: 'Wed 2 Dec', isToday: false, isFriday: false, stdReturn: 'Fri 4 Dec', stdReturnIso: '2026-12-04', expReturn: 'Thu 3 Dec', expReturnIso: '2026-12-03', expSlotsNormal: 3, expSlotsFullWeek: 3 }
+  ];
+
+  const SWATCH_HEX = {
+    'Space Black': '#1E1F22',
+    'Silver': '#D9DCE0',
+    'Midnight': '#232B38',
+    'Starlight': '#E7E2D8',
+    'Space Grey': '#6D7178',
+    'Black Titanium': '#2C2C2E',
+    'Natural Titanium': '#B9B5AC',
+    'Desert Titanium': '#C2A88B',
+    'White Titanium': '#EFEFEF',
+    'Blue Titanium': '#3B485A',
+    'Deep Purple': '#574B67',
+    'Gold': '#DEC69D',
+    'Blue': '#4D749E',
+    'Pink': '#E7C1C8',
+    'Purple': '#A394C4'
   };
 
-  var lastModeMobile = null;
+  /* =========================================================================
+     Application State
+     ========================================================================= */
+  const state = {
+    step: 1,
+    maxStep: 1,
+    device: 'macbook',
+    series: 'All',
+    modelId: 'mbp-14-m3',
+    finderOpen: false,
+    finderQuery: '',
+    vgStep: 0,
+    vgAnswers: {},
 
-  function isMobileMode() {
-    return window.innerWidth < 768;
+    fault: null,
+    subOption: null,
+    resolvedSku: 'screen',
+    route: 'repair', // 'repair' | 'diagnostic' | 'dismiss' | 'contact'
+    dustFlexConfirmed: false,
+    swollenBattery: false,
+
+    // Liquid & No Power triage (Section 3.2)
+    liquidUsable: null, // 'yes' | 'no'
+    liquidAck: false,
+    dataAnswer: null,
+    appleBeen: null,
+    appleVerdict: null,
+    appleQuote: '',
+
+    // Data Recovery triage (Section 3.3)
+    recWhat: null,
+    recState: null,
+    recTried: null,
+    recTriedSaid: null,
+    recPassword: null,
+    recPriority: '',
+    iphoneRecoveryPath: null, // 'dead' | 'passcode'
+
+    // Step 3 details
+    name: '',
+    email: '',
+    phone: '',
+    postcode: '',
+    postcodeInfo: null,
+    errors: {},
+
+    // Step 4 booking choices
+    service: 'courier', // 'courier' | 'dropoff' | 'mailin'
+    speed: 'standard', // 'standard' | 'express'
+    selectedDateIso: '2026-11-26',
+    selectedWindow: 'am', // 'am' | 'pm'
+    fullDateNotice: '',
+    deviceColor: '',
+    ipadGlass: 'Standard',
+    ipadConnect: 'Wi-Fi',
+
+    // Preview test controls
+    expressFullThisWeek: false,
+    cookieSim: false,
+    londonTimeOverride: null, // { hour, minute } or null for live Europe/London
+    activeScenario: 'screen',
+    trustindexLoaded: false
+  };
+
+  /* =========================================================================
+     UK Postcode Validation (Audit Section 2.3) & Europe/London Clock Logic
+     ========================================================================= */
+  const OUTWARD_RE = /^(?:[A-Z]{1,2}[0-9]{1,2}|[A-Z]{1,2}[0-9][A-Z])$/;
+  const INWARD_RE = /^[0-9][A-Z]{2}$/;
+
+  function parseFullPostcode(raw) {
+    const clean = String(raw || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (clean.length < 5 || clean.length > 7) return null;
+    const outward = clean.slice(0, -3);
+    const inward = clean.slice(-3);
+    if (!OUTWARD_RE.test(outward) || !INWARD_RE.test(inward)) return null;
+    const formatted = outward + ' ' + inward;
+    const band = resolveLondonBand(outward);
+    return { clean, outward, inward, formatted, band };
   }
 
-  function esc(str) {
-    return String(str == null ? "" : str).replace(/[&<>"]/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c];
-    });
+  function resolveLondonBand(outward) {
+    if (/^(W1[A-Z]?|WC[12][A-Z]?|EC[1-4][A-Z]?|SW1[A-Z]?|NW1|SE1|E1|N1)$/.test(outward)) return 'B1';
+    if (/^(W[2-9]|W1[0-4]|SW[2-9]|SW1[0-9]|NW[2-9]|NW1[01]|N[2-9]|N1[0-9]|E[2-9]|E1[0-8]|SE[2-9]|SE1[0-9]|SE2[0-8])$/.test(outward)) return 'B2';
+    if (/^(CR|BR|DA|EN|HA|IG|KT|RM|SM|TW|UB|WD)[0-9]/.test(outward)) return 'B3';
+    if (/^(AL|CM|GU|HP|LU|ME|RG|RH|SL|SS|TN)[0-9]/.test(outward)) return 'B4';
+    return 'UK';
   }
 
-  function getDeviceObj() {
-    return CATALOG[state.device] || CATALOG.macbook;
-  }
-
-  function getModelObj() {
-    var dev = getDeviceObj();
-    for (var i = 0; i < dev.models.length; i++) {
-      if (dev.models[i].id === state.modelId) return dev.models[i];
+  function getLondonClock() {
+    if (state.londonTimeOverride) return state.londonTimeOverride;
+    try {
+      const parts = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Europe/London',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }).formatToParts(new Date());
+      const hour = Number(parts.find((p) => p.type === 'hour')?.value || 10);
+      const minute = Number(parts.find((p) => p.type === 'minute')?.value || 0);
+      return { hour, minute };
+    } catch (_err) {
+      return { hour: 11, minute: 15 };
     }
-    return dev.models[0];
   }
 
-  function getFaultObj() {
-    for (var i = 0; i < FAULTS.length; i++) {
-      if (FAULTS[i].id === state.faultId) return FAULTS[i];
+  function getClockStatus(band) {
+    const { hour, minute } = getLondonClock();
+    const mins = hour * 60 + minute;
+    const isInnerLondon = band === 'B1' || band === 'B2';
+    const todayAllowedCourier = isInnerLondon && mins < 14 * 60;
+    const morningExpiredToday = mins >= 10 * 60 + 30;
+    const dropoffTodayAllowed = mins < 15 * 60;
+    const clockText = String(hour).padStart(2, '0') + ':' + String(minute).padStart(2, '0') + ' Europe/London';
+    return { hour, minute, mins, isInnerLondon, todayAllowedCourier, morningExpiredToday, dropoffTodayAllowed, clockText };
+  }
+
+  /* =========================================================================
+     Helpers: Model, Pricing, Capacity, Dates
+     ========================================================================= */
+  function getModel() {
+    const list = MODELS[state.device] || [];
+    return list.find((m) => m.id === state.modelId) || list[0];
+  }
+
+  function getFaultDefinitions(model) {
+    if (state.device === 'macbook') {
+      const list = [
+        { id: 'screen', title: 'Screen / Display', sub: 'Cracked panel, lines, dark screen', badge: 'Panel only' },
+        { id: 'power', title: 'Battery / Charging', sub: 'Draining fast, swollen, or USB-C port', badge: '1 check' },
+        { id: 'keyboard', title: 'Keyboard', sub: 'Stuck, repeating, or dead keys', badge: 'Straight to price' },
+        { id: 'trackpad', title: 'Trackpad', sub: 'No click, jumping, or cracked glass', badge: 'Straight to price' },
+        { id: 'liquid', title: 'Water Damage', sub: 'Spill, splash, or liquid exposure', badge: 'Inline triage' },
+        { id: 'nopower', title: 'No Power', sub: 'Will not turn on or dead board', badge: 'Inline triage' },
+        { id: 'recovery', title: 'Data Recovery', sub: 'Recover files from a failed Mac', badge: 'Inline triage' }
+      ];
+      if (model.touchBar) {
+        list.splice(4, 0, { id: 'touch-bar', title: 'Touch Bar', sub: 'Flickering, unresponsive, or cracked', badge: 'Straight to price' });
+      }
+      return list;
     }
-    return FAULTS[0];
-  }
-
-  function normalizePostcode(raw) {
-    var clean = String(raw || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
-    if (clean.length > 3) {
-      return clean.slice(0, clean.length - 3) + " " + clean.slice(clean.length - 3);
+    if (state.device === 'iphone') {
+      return [
+        { id: 'screen', title: 'Screen / Display', sub: 'Cracked glass, lines, or touch fault', badge: '1 check' },
+        { id: 'power', title: 'Battery / Charging', sub: 'Battery health, port, or won\'t power on', badge: '1 check' },
+        { id: 'rear-glass', title: 'Rear Glass', sub: 'Cracked back glass or lens cover', badge: '1 check' },
+        { id: 'camera', title: 'Camera / Face ID', sub: 'Rear lens, blur, or Face ID module', badge: '1 check' },
+        { id: 'liquid', title: 'Water Damage', sub: 'Liquid spill or submersion', badge: 'Inline triage' },
+        { id: 'recovery', title: 'Data Recovery', sub: 'Dead phone data or passcode check', badge: 'Inline triage' }
+      ];
     }
-    return clean;
+    if (state.device === 'ipad') {
+      return [
+        { id: 'screen', title: 'Screen / Display', sub: 'Cracked display, touch, or dark panel', badge: '1 check' },
+        { id: 'power', title: 'Battery / Charging', sub: 'Battery drain, USB-C port, or dead', badge: '1 check' },
+        { id: 'liquid', title: 'Water Damage', sub: 'Liquid spill or exposure', badge: 'Inline triage' },
+        { id: 'recovery', title: 'Data Recovery', sub: 'Recover files from a dead iPad', badge: 'Inline triage' }
+      ];
+    }
+    return [
+      { id: 'screen', title: 'Screen / Display', sub: 'Cracked glass or dead OLED', badge: '1 check' },
+      { id: 'power', title: 'Battery / Power', sub: 'Fast drain or will not turn on', badge: '1 check' },
+      { id: 'crown', title: 'Digital Crown', sub: 'Stuck, stiff, or unresponsive crown', badge: 'Straight to price' },
+      { id: 'liquid', title: 'Water Damage', sub: 'Liquid exposure or fogging', badge: 'Inline triage' }
+    ];
   }
 
-  function isValidUkPostcode(raw) {
-    var clean = String(raw || "").trim().toUpperCase().replace(/\s+/g, "");
-    return /^[A-Z]{1,2}\d[A-Z\d]?\d[A-Z]{2}$/.test(clean);
+  function isTriageFault(faultId) {
+    return faultId === 'liquid' || faultId === 'nopower' || faultId === 'recovery';
   }
 
-  function isValidUkPhone(raw) {
-    var digits = String(raw || "").replace(/[^\d+]/g, "");
-    return /^((\+44|0044)7\d{9}|07\d{9}|(\+44|0044)[123]\d{8,9}|0[123]\d{8,9})$/.test(digits);
-  }
-
-  function isValidEmail(raw) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(raw || "").trim());
-  }
-
-  function classifyPostcode(raw) {
-    var formatted = normalizePostcode(raw);
-    var outward = formatted.split(" ")[0] || "";
-    var areaMatch = outward.match(/^[A-Z]+/);
-    var area = areaMatch ? areaMatch[0] : "";
-    var isLondon = LONDON_PREFIXES.indexOf(area) !== -1;
-    var isInner = INNER_LONDON_PREFIXES.indexOf(outward) !== -1 || outward.indexOf("W1") === 0 || outward.indexOf("EC") === 0 || outward.indexOf("WC") === 0;
-    return {
-      formatted: formatted,
-      outward: outward,
-      isLondon: isLondon,
-      areaLabel: isInner ? "Central London courier zone" : (isLondon ? "Selected London courier zone" : "UK tracked mail-in zone")
-    };
+  function isFaceIdRepair() {
+    return state.device === 'iphone' && state.resolvedSku === 'front-camera';
   }
 
   function getBasePrice() {
-    var model = getModelObj();
-    var fault = getFaultObj();
-    if (fault.isDiag) {
-      return fault.id === "data" ? 99 : model.diagPrice;
-    }
-    if (fault.id === "battery") return model.batteryPrice;
-    return model.screenPrice;
+    const model = getModel();
+    if (state.route === 'diagnostic') return model.prices.diagnostic;
+    return model.prices[state.resolvedSku] || model.prices.screen || 199;
   }
 
-  function getServiceFee() {
-    var zone = classifyPostcode(state.lead.postcode);
-    var base = getBasePrice();
-    var fault = getFaultObj();
-    if (!zone.isLondon) return 0;
-    if (state.service === "courier") {
-      if (fault.isDiag || base >= 200) return 0;
-      return 25;
-    }
-    return 0;
+  function getExpressFee() {
+    if (state.route === 'diagnostic' || isFaceIdRepair()) return 0;
+    return getModel().expressFee || 79;
   }
 
-  function getFutureSpeedAdd() {
-    if (!state.showFutureSpeed) return 0;
-    var fault = getFaultObj();
-    if (fault.isDiag) return 0;
-    if (state.futureSpeed === "fast") return 79;
-    if (state.futureSpeed === "sameday") return state.device === "iphone" ? 49 : 149;
+  function canUseExpress() {
+    return state.route === 'repair' && !isFaceIdRepair();
+  }
+
+  function getServiceAdjustment() {
+    const base = getBasePrice();
+    const band = state.postcodeInfo ? state.postcodeInfo.band : 'B1';
+    if (state.service === 'courier') {
+      if (state.route === 'diagnostic' || base >= 200) return 0;
+      if (band === 'B1' || band === 'B2') return 25;
+      return 0;
+    }
     return 0;
   }
 
   function getTotalPrice() {
-    return getBasePrice() + getServiceFee() + getFutureSpeedAdd();
+    const base = getBasePrice();
+    const exp = state.speed === 'express' && canUseExpress() ? getExpressFee() : 0;
+    const adj = getServiceAdjustment();
+    return base + exp + adj;
   }
 
-  function ensureValidServiceForZone() {
-    var zone = classifyPostcode(state.lead.postcode);
-    var base = getBasePrice();
-    var fault = getFaultObj();
-    if (!zone.isLondon) {
-      if (state.service !== "mailin" && state.service !== "workshop") {
-        state.service = "mailin";
+  function isLondonPostcode() {
+    const band = state.postcodeInfo ? state.postcodeInfo.band : 'UK';
+    return band === 'B1' || band === 'B2' || band === 'B3' || band === 'B4';
+  }
+
+  function courierAvailableForOrder() {
+    const band = state.postcodeInfo ? state.postcodeInfo.band : 'UK';
+    const base = getBasePrice();
+    if (band === 'B1' || band === 'B2') return true;
+    if ((band === 'B3' || band === 'B4') && (base >= 200 || state.route === 'diagnostic')) return true;
+    return false;
+  }
+
+  function getExpressSlotsForDate(dateObj) {
+    return state.expressFullThisWeek ? dateObj.expSlotsFullWeek : dateObj.expSlotsNormal;
+  }
+
+  function getEligibleDates(service) {
+    const band = state.postcodeInfo ? state.postcodeInfo.band : 'B1';
+    const clk = getClockStatus(band);
+    return WORKING_DATES.map((d) => {
+      let availableForService = true;
+      if (service === 'courier' && d.isToday && !clk.todayAllowedCourier) {
+        availableForService = false;
       }
-      return;
-    }
-    if (base >= 200 || fault.isDiag) {
-      if (state.service !== "courier" && state.service !== "workshop") {
-        state.service = "courier";
+      if (service === 'dropoff' && d.isToday && !clk.dropoffTodayAllowed) {
+        availableForService = false;
       }
-    } else {
-      if (state.service !== "courier" && state.service !== "mailin" && state.service !== "workshop") {
-        state.service = "mailin";
-      }
-    }
-  }
-
-  function getTimelineSteps() {
-    var zone = classifyPostcode(state.lead.postcode);
-    var fault = getFaultObj();
-    var base = getBasePrice();
-    if (fault.isDiag) {
-      return [
-        {
-          title: state.service === "mailin" ? "We post your free insured pack" : (state.service === "workshop" ? "Drop off at 12 Margaret Street, W1W 8JQ" : "We collect from your London door"),
-          desc: state.service === "mailin"
-            ? "Protective box and prepaid tracked label posted within 24 hours."
-            : (state.service === "workshop"
-              ? "Hand your device directly to our Fitzrovia team (Mon to Thu 9am to 6pm, Friday 10am to 6pm)."
-              : "Tracked door-to-door London courier brings your device safely to Fitzrovia.")
-        },
-        {
-          title: "Board-level diagnostic in Fitzrovia",
-          desc: "Microelectronics inspection with your triage notes attached. Standard assessment within 2 working days of workshop arrival."
-        },
-        {
-          title: "Clear repair quote, £" + base + " deducted",
-          desc: "You decide whether to proceed. Your £" + base + " diagnostic fee is deducted from the final repair price."
-        }
-      ];
-    }
-    if (state.service === "mailin") {
-      return [
-        { title: "Free tracked & insured pack posted to " + esc(zone.outward), desc: "Padded protective box and prepaid tracked return label arrive at your door." },
-        { title: "Repaired in 2 working days at Fitzrovia", desc: "Genuine Apple displays (panel only), recalibrated and tested in-house once your device reaches our workshop." },
-        { title: "Tracked insured delivery back to you", desc: "Backed by our 2-year warranty with zero hidden extras." }
-      ];
-    }
-    if (state.service === "workshop") {
-      return [
-        { title: "Drop off at 12 Margaret Street, W1W 8JQ", desc: "Hand your device directly to our Fitzrovia team (Mon to Thu 9am to 6pm, Friday 10am to 6pm)." },
-        { title: "Repaired in 2 working days in-house", desc: "Genuine Apple displays (panel only), fitted and recalibrated at our Fitzrovia bench." },
-        { title: "Collect ready to go, 2-year warranty", desc: "We message you as soon as final quality checks pass." }
-      ];
-    }
-    return [
-      { title: "Same-day London courier collects from " + esc(zone.outward), desc: "Dedicated London courier collects during your chosen slot and brings your device straight to Fitzrovia." },
-      { title: "Repaired in 2 working days once it reaches our workshop", desc: "Genuine Apple displays (panel only), keeping your original lid with full calibration." },
-      { title: "Courier returns it to your door", desc: "Delivered back safely, backed by our 2-year warranty." }
-    ];
-  }
-
-  function renderDeviceIcon(devKey) {
-    if (devKey === "macbook") {
-      return '<svg class="device-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="5" y="6" width="22" height="15" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M2 23.5h28" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
-    }
-    if (devKey === "iphone") {
-      return '<svg class="device-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="9" y="4" width="14" height="24" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M14 7.5h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
-    }
-    if (devKey === "ipad") {
-      return '<svg class="device-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="6" y="4" width="20" height="24" rx="2.5" stroke="currentColor" stroke-width="1.8"/><circle cx="16" cy="24.5" r="1" fill="currentColor"/></svg>';
-    }
-    return '<svg class="device-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="9" y="8" width="14" height="16" rx="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 8V4.5h8V8M12 24v3.5h8V24" stroke="currentColor" stroke-width="1.6"/></svg>';
-  }
-
-  function renderFaultVisualSvg() {
-    var fault = getFaultObj();
-    var isPhone = state.device === "iphone";
-    var accentStroke = fault.isDiag ? "#b45309" : "#0070f3";
-    if (isPhone) {
-      var overlayPhone = "";
-      if (fault.id === "screen") {
-        overlayPhone = '<path d="M55 24 L42 52 L58 68 L38 96 M42 52 L28 60" stroke="' + accentStroke + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
-      } else if (fault.id === "battery") {
-        overlayPhone = '<rect x="34" y="44" width="22" height="36" rx="3" fill="#e8f7f0" stroke="#047857" stroke-width="2"/><path d="M41 41h8" stroke="#047857" stroke-width="2" stroke-linecap="round"/>';
-      } else {
-        overlayPhone = '<circle cx="45" cy="60" r="16" fill="#fffbeb" stroke="#b45309" stroke-width="2"/><path d="M45 50 C49 56 52 59 52 63 a7 7 0 1 1 -14 0 c0 -4 3 -7 7 -13z" fill="#b45309" opacity="0.85"/>';
-      }
-      return '<svg width="90" height="122" viewBox="0 0 90 122" fill="none" aria-hidden="true">' +
-        '<rect x="18" y="8" width="54" height="106" rx="11" fill="#ffffff" stroke="#171717" stroke-width="2"/>' +
-        '<rect x="23" y="15" width="44" height="92" rx="6" fill="#fafafa" stroke="rgba(0,0,0,0.12)"/>' +
-        '<rect x="37" y="19" width="16" height="4" rx="2" fill="#171717"/>' +
-        overlayPhone +
-        '</svg>';
-    }
-
-    var overlayMac = "";
-    if (fault.id === "screen") {
-      overlayMac = '<path d="M68 24 L94 46 L76 66 L108 92 M94 46 L124 38 M76 66 L54 74" stroke="' + accentStroke + '" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>' +
-        '<rect x="132" y="24" width="10" height="68" fill="' + accentStroke + '" opacity="0.16"/>';
-    } else if (fault.id === "battery") {
-      overlayMac = '<rect x="66" y="42" width="68" height="32" rx="4" fill="#e8f7f0" stroke="#047857" stroke-width="2"/><rect x="134" y="51" width="5" height="14" rx="1.5" fill="#047857"/>';
-    } else {
-      overlayMac = '<circle cx="100" cy="58" r="22" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>' +
-        '<path d="M100 44 C106 53 110 57 110 62 a10 10 0 1 1 -20 0 c0 -5 4 -9 10 -18z" fill="#b45309" opacity="0.85"/>';
-    }
-    return '<svg width="200" height="128" viewBox="0 0 200 128" fill="none" aria-hidden="true">' +
-      '<rect x="26" y="12" width="148" height="92" rx="8" fill="#ffffff" stroke="#171717" stroke-width="2"/>' +
-      '<rect x="33" y="19" width="134" height="78" rx="3" fill="#fafafa" stroke="rgba(0,0,0,0.12)"/>' +
-      '<path d="M10 108 H190 C190 113 185 116 178 116 H22 C15 116 10 113 10 108 Z" fill="#e5e5e5" stroke="#171717" stroke-width="1.8"/>' +
-      overlayMac +
-      '</svg>';
-  }
-
-  /* =========================================================
-     DESKTOP RENDERERS (>= 768px, KEPT INTACT + EMAIL ADDED)
-     ========================================================= */
-  function renderDesktopStep1() {
-    var devObj = getDeviceObj();
-    var deviceCards = Object.keys(CATALOG).map(function (key) {
-      var d = CATALOG[key];
-      var sel = state.device === key ? " is-selected" : "";
-      return '<button type="button" class="device-card' + sel + '" data-device="' + key + '">' +
-        renderDeviceIcon(key) +
-        '<div><div class="device-name">' + esc(d.label) + '</div><div class="device-meta">' + esc(d.meta) + '</div></div>' +
-        '</button>';
-    }).join("");
-
-    var familyChips = devObj.families.map(function (fam) {
-      var active = state.familyFilter === fam ? " is-active" : "";
-      return '<button type="button" class="filter-chip' + active + '" data-family="' + esc(fam) + '">' + esc(fam) + '</button>';
-    }).join("");
-
-    var filteredModels = devObj.models.filter(function (m) {
-      return state.familyFilter === "All" || m.family === state.familyFilter;
+      const expLeft = getExpressSlotsForDate(d);
+      const expressAvailable = availableForService && expLeft > 0;
+      return {
+        ...d,
+        availableForService,
+        expLeft,
+        expressAvailable
+      };
     });
-
-    var modelCards = filteredModels.map(function (m) {
-      var sel = state.modelId === m.id ? " is-selected" : "";
-      return '<button type="button" class="model-btn' + sel + '" data-model="' + esc(m.id) + '">' +
-        '<span><span class="model-title">' + esc(m.name) + '</span><span class="model-sub">' + esc(m.sub) + '</span></span>' +
-        '<span class="model-code">' + esc(m.code) + '</span>' +
-        '</button>';
-    }).join("");
-
-    var allMacModels = CATALOG.macbook.models;
-    var helperQuery = state.helperQuery.trim().toUpperCase();
-    var helperHits = helperQuery
-      ? allMacModels.filter(function (m) {
-          return m.code.toUpperCase().indexOf(helperQuery) !== -1 || m.name.toUpperCase().indexOf(helperQuery) !== -1;
-        })
-      : allMacModels.slice(0, 3);
-
-    var helperResultsHtml = helperHits.map(function (m) {
-      return '<button type="button" class="helper-hit" data-helper-model="' + esc(m.id) + '">' +
-        '<span><strong>' + esc(m.code) + '</strong> · ' + esc(m.name) + '</span>' +
-        '<span style="color:#0070f3;font-weight:600;">Select</span>' +
-        '</button>';
-    }).join("");
-
-    return '<h2 class="step-heading">Which Apple device needs repairing?</h2>' +
-      '<p class="step-sub">Select your device and exact model. Every repair uses genuine Apple displays (panel only) with a 2-year warranty.</p>' +
-      '<div class="device-grid">' + deviceCards + '</div>' +
-      '<div class="section-block">' +
-        '<div class="section-block-head">' +
-          '<h3 class="section-block-title">Select your ' + esc(devObj.label) + ' model</h3>' +
-          '<span class="mono-label">' + filteredModels.length + ' models shown</span>' +
-        '</div>' +
-        '<div class="filter-row">' + familyChips + '</div>' +
-        '<div class="model-grid">' + modelCards + '</div>' +
-      '</div>' +
-      '<div class="helper-box">' +
-        '<button type="button" class="helper-toggle" id="toggleModelHelper" aria-expanded="' + (state.helperOpen ? "true" : "false") + '">' +
-          (state.helperOpen ? "Hide model number finder" : "Not sure of your model? Search by A-number") +
-        '</button>' +
-        '<div class="helper-panel" id="modelHelperPanel"' + (state.helperOpen ? "" : " hidden") + '>' +
-          '<p>Flip your MacBook over to find the A-number printed near the hinge (for example, A2918 or A3113).</p>' +
-          '<input type="text" class="text-input is-mono" id="modelHelperInput" value="' + esc(state.helperQuery) + '" placeholder="Type A-number, e.g. A2918">' +
-          '<div class="helper-results">' + (helperResultsHtml || '<p style="margin:6px 0 0;font-size:13px;color:#5c5c5c;">No matching A-number found in this preview set.</p>') + '</div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="step-footer">' +
-        '<span class="mono-label">Step 1 of 4</span>' +
-        '<button type="button" class="btn-primary" id="step1Continue" style="max-width:300px;">Continue to fault selection &rarr;</button>' +
-      '</div>';
   }
 
-  function renderTriageBlock() {
-    var fault = getFaultObj();
-    if (!fault.isDiag) return "";
-    var dataNote = state.triage.usable === "yes"
-      ? "If you can, please back up your device. Liquid damage is unpredictable and may still affect your data, though we will take every care with your device."
-      : "Liquid damage and power faults can be unpredictable. During the diagnostic we will prioritise protecting your data wherever we can.";
-
-    return '<div class="triage-card" id="triageCard">' +
-      '<span class="mono-label">Quick Bench Triage (Required for ' + esc(fault.title) + ')</span>' +
-      '<h3 class="section-block-title" style="margin-top:6px;">Three quick questions for our microelectronics team</h3>' +
-      '<p class="quote-card-sub">Straightforward screen repairs skip these questions. For liquid damage, no power, or data recovery, your answers let our technicians prepare the right bench diagnostic.</p>' +
-
-      '<div class="triage-q">' +
-        '<span class="triage-q-label">1. Is the device turning on and usable right now?</span>' +
-        '<div class="triage-opts">' +
-          '<button type="button" class="triage-opt' + (state.triage.usable === "yes" ? " is-selected" : "") + '" data-triage="usable" data-val="yes">Yes, turns on and is usable</button>' +
-          '<button type="button" class="triage-opt' + (state.triage.usable === "no" ? " is-selected" : "") + '" data-triage="usable" data-val="no">No, will not turn on or is not usable</button>' +
-        '</div>' +
-      '</div>' +
-
-      '<div class="triage-q">' +
-        '<span class="triage-q-label">2. Has it already been to Apple or another repair shop?</span>' +
-        '<div class="triage-opts">' +
-          '<button type="button" class="triage-opt' + (state.triage.seenBefore === "no" ? " is-selected" : "") + '" data-triage="seenBefore" data-val="no">No, nobody has opened it</button>' +
-          '<button type="button" class="triage-opt' + (state.triage.seenBefore === "apple_quote" ? " is-selected" : "") + '" data-triage="seenBefore" data-val="apple_quote">Yes, Apple quoted a replacement</button>' +
-          '<button type="button" class="triage-opt' + (state.triage.seenBefore === "other_shop" ? " is-selected" : "") + '" data-triage="seenBefore" data-val="other_shop">Yes, another repair shop looked at it</button>' +
-          '<button type="button" class="triage-opt' + (state.triage.seenBefore === "unsure" ? " is-selected" : "") + '" data-triage="seenBefore" data-val="unsure">Not sure</button>' +
-        '</div>' +
-      '</div>' +
-
-      '<div class="triage-q">' +
-        '<span class="triage-q-label">3. How important is keeping the data on this device?</span>' +
-        '<div class="triage-opts">' +
-          '<button type="button" class="triage-opt' + (state.triage.dataPriority === "essential" ? " is-selected" : "") + '" data-triage="dataPriority" data-val="essential">Essential: prioritise keeping my data</button>' +
-          '<button type="button" class="triage-opt' + (state.triage.dataPriority === "backup" ? " is-selected" : "") + '" data-triage="dataPriority" data-val="backup">I already have a full backup</button>' +
-        '</div>' +
-      '</div>' +
-
-      '<div class="triage-notice">' + esc(dataNote) + '</div>' +
-    '</div>';
-  }
-
-  function renderDesktopStep2() {
-    var model = getModelObj();
-    var fault = getFaultObj();
-
-    var faultCards = FAULTS.map(function (f) {
-      var sel = state.faultId === f.id ? " is-selected" : "";
-      var tagClass = f.isDiag ? "fault-tag is-diag" : "fault-tag";
-      return '<button type="button" class="fault-card' + sel + '" data-fault="' + esc(f.id) + '">' +
-        '<span class="fault-title">' + esc(f.title) + '</span>' +
-        '<span class="fault-desc">' + esc(f.desc) + '</span>' +
-        '<span class="' + tagClass + '">' + esc(f.tag) + '</span>' +
-        '</button>';
-    }).join("");
-
-    return '<h2 class="step-heading">What is wrong with your ' + esc(model.name) + '?</h2>' +
-      '<p class="step-sub">Select the symptom that matches best. The illustration highlights the affected area (referencing Michael\'s PR #104/#107 fault marks pattern).</p>' +
-      '<div class="fault-layout">' +
-        '<div class="fault-visual-card">' +
-          '<span class="mono-label">Visual Fault Preview Slot</span>' +
-          '<div class="fault-visual-stage">' + renderFaultVisualSvg() + '</div>' +
-          '<p class="fault-visual-caption"><strong>' + esc(model.name) + '</strong><br>' + esc(fault.title) + '</p>' +
-        '</div>' +
-        '<div class="fault-grid">' + faultCards + '</div>' +
-      '</div>' +
-      renderTriageBlock() +
-      '<div class="step-footer">' +
-        '<span class="mono-label">Step 2 of 4</span>' +
-        '<button type="button" class="btn-primary" id="step2Continue" style="max-width:320px;">Continue to unlock your quote &rarr;</button>' +
-      '</div>';
-  }
-
-  function renderDesktopStep3DataWall() {
-    var model = getModelObj();
-    var fault = getFaultObj();
-    var zoneValid = isValidUkPostcode(state.lead.postcode);
-    var zone = zoneValid ? classifyPostcode(state.lead.postcode) : null;
-
-    var zoneBadgeHtml = "";
-    if (zone) {
-      zoneBadgeHtml = '<div class="zone-preview-pill' + (zone.isLondon ? "" : " is-mailin") + '">' +
-        (zone.isLondon
-          ? "London zone matched (" + esc(zone.outward) + "): same-day London courier &amp; Fitzrovia drop-off available"
-          : "UK zone matched (" + esc(zone.outward) + "): free tracked and insured UK mail-in pack available") +
-        '</div>';
+  function ensureValidStep4Defaults() {
+    const model = getModel();
+    if (!state.deviceColor && model.colors && model.colors.length) {
+      state.deviceColor = model.colors[0];
+    }
+    if (!canUseExpress()) {
+      state.speed = 'standard';
+    }
+    if (!isLondonPostcode()) {
+      state.service = 'mailin';
+    } else if (state.service === 'courier' && !courierAvailableForOrder()) {
+      state.service = 'mailin';
     }
 
-    return '<div class="data-wall-grid">' +
-      '<div class="data-wall-card">' +
-        '<div class="job-pill-banner">' +
-          '<div>' +
-            '<span class="job-pill-text">' + esc(model.name) + ' · ' + esc(fault.title) + '</span>' +
-            '<span class="job-pill-sub">' + (fault.isDiag ? "Board-level diagnostic · deducted from final repair" : "Genuine Apple displays (panel only) · 2-year warranty") + '</span>' +
-          '</div>' +
-          '<button type="button" class="text-action-btn" id="dwEditDevice">Edit</button>' +
-        '</div>' +
-
-        '<span class="mono-label">Step 3 of 4 · Instant Fixed Quote</span>' +
-        '<h2 class="step-heading" style="margin-top:6px;">Unlock your instant fixed quote</h2>' +
-        '<p class="step-sub">See your upfront fixed price right now, plus same-day London collection availability for your postcode.</p>' +
-
-        '<div class="trust-inline-strip">' +
-          '<span class="trust-badge is-green">4.8 from 750+ Google reviews</span>' +
-          '<span class="trust-badge">Genuine Apple displays</span>' +
-          '<span class="trust-badge">2-year warranty</span>' +
-          '<span class="trust-badge">2 working days</span>' +
-        '</div>' +
-
-        '<form class="form-stack" id="dataWallForm" novalidate>' +
-          '<div class="field-group">' +
-            '<label class="field-label" for="dwName">Full name</label>' +
-            '<input type="text" class="text-input' + (state.leadErrors.name ? " is-error" : "") + '" id="dwName" autocomplete="name" value="' + esc(state.lead.name) + '" placeholder="e.g. Alex Morgan">' +
-            (state.leadErrors.name ? '<span class="field-error">' + esc(state.leadErrors.name) + '</span>' : '') +
-          '</div>' +
-
-          '<div class="field-group">' +
-            '<label class="field-label" for="dwEmail">Email address</label>' +
-            '<input type="email" inputmode="email" class="text-input' + (state.leadErrors.email ? " is-error" : "") + '" id="dwEmail" autocomplete="email" value="' + esc(state.lead.email) + '" placeholder="e.g. alex.morgan@example.co.uk">' +
-            (state.leadErrors.email ? '<span class="field-error">' + esc(state.leadErrors.email) + '</span>' : '') +
-          '</div>' +
-
-          '<div class="field-group">' +
-            '<label class="field-label" for="dwPhone">UK phone number</label>' +
-            '<input type="tel" inputmode="tel" class="text-input' + (state.leadErrors.phone ? " is-error" : "") + '" id="dwPhone" autocomplete="tel" value="' + esc(state.lead.phone) + '" placeholder="e.g. 07700 900123">' +
-            '<span class="field-hint">Used for courier arrival updates and your quote follow-up if you need advice.</span>' +
-            (state.leadErrors.phone ? '<span class="field-error">' + esc(state.leadErrors.phone) + '</span>' : '') +
-          '</div>' +
-
-          '<div class="field-group">' +
-            '<label class="field-label" for="dwPostcode">UK postcode</label>' +
-            '<input type="text" class="text-input is-mono' + (state.leadErrors.postcode ? " is-error" : "") + '" id="dwPostcode" autocomplete="postal-code" autocapitalize="characters" spellcheck="false" value="' + esc(state.lead.postcode) + '" placeholder="e.g. W1W 8JQ">' +
-            '<div id="dwZonePreview">' + zoneBadgeHtml + '</div>' +
-            (state.leadErrors.postcode ? '<span class="field-error">' + esc(state.leadErrors.postcode) + '</span>' : '') +
-          '</div>' +
-
-          '<p class="privacy-note">No spam calls, ever. Your details pre-fill Shopify checkout so you do not have to type them twice, and let our Fitzrovia team help if you prefer a trade-in or question first.</p>' +
-
-          '<button type="submit" class="btn-primary" id="dwSubmitBtn">Show my fixed quote &rarr;</button>' +
-
-          '<div class="sample-fill-row">' +
-            '<button type="button" class="text-action-btn" id="dwFillSample">Fill sample details for Scenario ' + esc(state.scenario) + '</button>' +
-            '<span class="mono-label">Upfront fixed pricing · No deposits</span>' +
-          '</div>' +
-        '</form>' +
-      '</div>' +
-
-      '<aside class="data-wall-aside" aria-label="What you unlock next">' +
-        '<span class="mono-label">What You See Next</span>' +
-        '<h3 class="aside-title">Transparent pricing with zero surprises</h3>' +
-        '<ul class="aside-list">' +
-          '<li><span class="check-dot" aria-hidden="true">&#10003;</span><span><strong>Exact fixed repair total</strong> including VAT and 2-year warranty, with Klarna 3-payment breakdown on orders £100+.</span></li>' +
-          '<li><span class="check-dot" aria-hidden="true">&#10003;</span><span><strong>Instant London vs UK check:</strong> free collection on orders £200+ in selected London zones, or a free tracked and insured UK mail-in pack elsewhere.</span></li>' +
-          '<li><span class="check-dot" aria-hidden="true">&#10003;</span><span><strong>Direct technician support:</strong> if your device is better suited to a diagnostic or trade-in, our Fitzrovia workshop can advise straight away.</span></li>' +
-        '</ul>' +
-      '</aside>' +
-    '</div>';
-  }
-
-  function renderDesktopStep4Quote() {
-    ensureValidServiceForZone();
-    var model = getModelObj();
-    var fault = getFaultObj();
-    var zone = classifyPostcode(state.lead.postcode);
-    var base = getBasePrice();
-    var svcFee = getServiceFee();
-    var speedAdd = getFutureSpeedAdd();
-    var total = getTotalPrice();
-    var firstName = (state.lead.name || "there").trim().split(/\s+/)[0];
-
-    var serviceCardsHtml = "";
-    if (zone.isLondon && (base >= 200 || fault.isDiag)) {
-      serviceCardsHtml =
-        '<button type="button" class="service-card' + (state.service === "courier" ? " is-selected" : "") + '" data-svc="courier">' +
-          '<span class="service-radio" aria-hidden="true"></span>' +
-          '<span>' +
-            '<span class="service-name-row"><span class="service-name">Same-Day London Courier Collection</span><span class="service-pill">Recommended</span></span>' +
-            '<span class="service-desc">Door-to-door collection and return across selected London zones (' + esc(zone.outward) + ' included). Free on orders of £200 or more.</span>' +
-          '</span>' +
-          '<span class="service-price is-free">Free</span>' +
-        '</button>' +
-        '<button type="button" class="service-card' + (state.service === "workshop" ? " is-selected" : "") + '" data-svc="workshop">' +
-          '<span class="service-radio" aria-hidden="true"></span>' +
-          '<span>' +
-            '<span class="service-name-row"><span class="service-name">Drop off in Fitzrovia</span><span class="service-pill is-neutral">W1W 8JQ</span></span>' +
-            '<span class="service-desc">Bring your device to 12 Margaret Street, Audley House, London W1W 8JQ. Mon to Thu 9am to 6pm, Friday 10am to 6pm.</span>' +
-          '</span>' +
-          '<span class="service-price is-free">Free</span>' +
-        '</button>';
-    } else if (zone.isLondon && base < 200) {
-      serviceCardsHtml =
-        '<button type="button" class="service-card' + (state.service === "mailin" ? " is-selected" : "") + '" data-svc="mailin">' +
-          '<span class="service-radio" aria-hidden="true"></span>' +
-          '<span>' +
-            '<span class="service-name-row"><span class="service-name">Free Tracked &amp; Insured UK Mail-In Pack</span><span class="service-pill">Free under £200</span></span>' +
-            '<span class="service-desc">We post a protective box with a prepaid tracked and insured label to your door. No courier surcharge on repairs under £200.</span>' +
-          '</span>' +
-          '<span class="service-price is-free">Free</span>' +
-        '</button>' +
-        '<button type="button" class="service-card' + (state.service === "workshop" ? " is-selected" : "") + '" data-svc="workshop">' +
-          '<span class="service-radio" aria-hidden="true"></span>' +
-          '<span>' +
-            '<span class="service-name-row"><span class="service-name">Drop off in Fitzrovia</span><span class="service-pill is-neutral">W1W 8JQ</span></span>' +
-            '<span class="service-desc">Bring it directly to 12 Margaret Street, Audley House, London W1W 8JQ. Mon to Thu 9am to 6pm, Friday 10am to 6pm.</span>' +
-          '</span>' +
-          '<span class="service-price is-free">Free</span>' +
-        '</button>' +
-        '<button type="button" class="service-card' + (state.service === "courier" ? " is-selected" : "") + '" data-svc="courier">' +
-          '<span class="service-radio" aria-hidden="true"></span>' +
-          '<span>' +
-            '<span class="service-name-row"><span class="service-name">Same-Day London Courier Collection</span><span class="service-pill is-neutral">Door-to-door</span></span>' +
-            '<span class="service-desc">Optional London courier collection and return for orders under £200 (free on orders £200+).</span>' +
-          '</span>' +
-          '<span class="service-price">+£25</span>' +
-        '</button>';
-    } else {
-      serviceCardsHtml =
-        '<button type="button" class="service-card' + (state.service === "mailin" ? " is-selected" : "") + '" data-svc="mailin">' +
-          '<span class="service-radio" aria-hidden="true"></span>' +
-          '<span>' +
-            '<span class="service-name-row"><span class="service-name">Free Tracked &amp; Insured UK Mail-In Pack</span><span class="service-pill">Included UK-wide</span></span>' +
-            '<span class="service-desc">For postcodes outside our London courier zones (' + esc(zone.outward) + '), we post a free padded box and prepaid tracked, insured return label to your door.</span>' +
-          '</span>' +
-          '<span class="service-price is-free">Free</span>' +
-        '</button>' +
-        '<button type="button" class="service-card' + (state.service === "workshop" ? " is-selected" : "") + '" data-svc="workshop">' +
-          '<span class="service-radio" aria-hidden="true"></span>' +
-          '<span>' +
-            '<span class="service-name-row"><span class="service-name">Drop off in Fitzrovia</span><span class="service-pill is-neutral">W1W 8JQ</span></span>' +
-            '<span class="service-desc">Bring your device to 12 Margaret Street, Audley House, London W1W 8JQ. Mon to Thu 9am to 6pm, Friday 10am to 6pm.</span>' +
-          '</span>' +
-          '<span class="service-price is-free">Free</span>' +
-        '</button>';
-    }
-
-    var slotBlockHtml = "";
-    if (state.service === "courier" || state.service === "workshop") {
-      var dateBtns = COLLECTION_DATES.map(function (d) {
-        var sel = state.dateId === d.id ? " is-selected" : "";
-        return '<button type="button" class="date-btn' + sel + '" data-date="' + d.id + '">' +
-          '<span class="date-dow">' + esc(d.dow) + '</span>' +
-          '<span class="date-day">' + esc(d.day) + '</span>' +
-          '</button>';
-      }).join("");
-
-      var winBtns = COLLECTION_WINDOWS.map(function (w) {
-        var sel = state.windowId === w.id ? " is-selected" : "";
-        return '<button type="button" class="window-btn' + sel + '" data-window="' + w.id + '">' +
-          '<span class="window-title">' + esc(w.title) + '</span>' +
-          '<span class="window-time">' + esc(w.time) + '</span>' +
-          '</button>';
-      }).join("");
-
-      slotBlockHtml = '<div class="slot-block">' +
-        '<span class="slot-label">' + (state.service === "courier" ? "Choose your London collection day and window" : "Choose your Fitzrovia drop-off day and window") + '</span>' +
-        '<div class="date-strip">' + dateBtns + '</div>' +
-        '<div class="window-row">' + winBtns + '</div>' +
-      '</div>';
-    }
-
-    var futureSpeedHtml = "";
-    if (state.showFutureSpeed && !fault.isDiag) {
-      var sdFee = state.device === "iphone" ? 49 : 149;
-      futureSpeedHtml = '<div class="future-speed-card" id="futureSpeedSlot">' +
-        '<span class="future-badge">PREVIEW ONLY: FUTURE SPEED TIERS (NOT LIVE)</span>' +
-        '<h3 class="quote-card-title">How future turnaround upgrades slot cleanly into Step 4</h3>' +
-        '<p class="quote-card-sub">Hidden in default live-compliant mode. Shows where Standard, Priority, Same-Day, and ~1h London courier options fit cleanly.</p>' +
-        '<div class="speed-grid">' +
-          '<button type="button" class="speed-opt' + (state.futureSpeed === "standard" ? " is-selected" : "") + '" data-speed="standard">' +
-            '<span class="speed-opt-title">Standard</span>' +
-            '<span class="speed-opt-meta">2 working days at workshop</span>' +
-            '<span class="speed-opt-price" style="color:#047857;">Included</span>' +
-          '</button>' +
-          '<button type="button" class="speed-opt' + (state.futureSpeed === "fast" ? " is-selected" : "") + '" data-speed="fast">' +
-            '<span class="speed-opt-title">Priority (Future)</span>' +
-            '<span class="speed-opt-meta">Next working day bench slot</span>' +
-            '<span class="speed-opt-price">+£79</span>' +
-          '</button>' +
-          (zone.isLondon
-            ? '<button type="button" class="speed-opt' + (state.futureSpeed === "sameday" ? " is-selected" : "") + '" data-speed="sameday">' +
-                '<span class="speed-opt-title">Same-Day (Future)</span>' +
-                '<span class="speed-opt-meta">B1/B2 stocked slot · ~1h bike</span>' +
-                '<span class="speed-opt-price">+£' + sdFee + '</span>' +
-              '</button>'
-            : '<div class="speed-opt" style="opacity:0.65;cursor:default;">' +
-                '<span class="speed-opt-title">Same-Day</span>' +
-                '<span class="speed-opt-meta">Selected London zones only</span>' +
-                '<span class="speed-opt-price">Unavailable</span>' +
-              '</div>') +
-        '</div>' +
-      '</div>';
-    }
-
-    var timelineHtml = getTimelineSteps().map(function (st, idx) {
-      return '<li class="timeline-step">' +
-        '<span class="timeline-num">0' + (idx + 1) + '</span>' +
-        '<div><div class="timeline-title">' + st.title + '</div><div class="timeline-desc">' + st.desc + '</div></div>' +
-        '</li>';
-    }).join("");
-
-    var triageSummaryHtml = "";
-    if (fault.isDiag) {
-      var usableTxt = state.triage.usable === "yes" ? "Turns on / usable" : "Will not turn on / not usable";
-      var dataTxt = state.triage.dataPriority === "essential" ? "Prioritise data" : "Backed up";
-      triageSummaryHtml = '<div class="triage-notice" style="margin-top:0;">' +
-        '<strong>Bench triage attached:</strong> ' + esc(usableTxt) + ' · ' + esc(dataTxt) + '. Sent directly to our Fitzrovia technicians with your order.' +
-      '</div>';
-    }
-
-    var svcLabel = state.service === "courier"
-      ? "Same-day London courier"
-      : (state.service === "workshop" ? "Fitzrovia workshop drop-off" : "Tracked & insured UK mail-in pack");
-
-    var klarnaHtml = total >= 100
-      ? '<div class="klarna-box"><span class="klarna-pill">Klarna.</span><span>Or 3 interest-free payments of <strong>£' + (total / 3).toFixed(2) + '</strong> at checkout.</span></div>'
-      : '';
-
-    var serviceRowValue = svcFee === 0 ? '<strong class="is-free">Free</strong>' : '<strong>+£' + svcFee + '</strong>';
-    var speedRowHtml = speedAdd > 0
-      ? '<div class="bd-row"><span>Future speed preview add-on</span><strong>+£' + speedAdd + '</strong></div>'
-      : '';
-
-    var turnaroundLine = fault.isDiag
-      ? "Diagnostic turnaround: 2 working days once your device reaches our workshop."
-      : "Standard turnaround: 2 working days once your device reaches our workshop.";
-
-    return '<div class="quote-layout">' +
-      '<div class="quote-left">' +
-        '<div class="lead-banner">' +
-          '<div class="lead-banner-main">' +
-            '<span class="mono-label">Fixed Quote Unlocked · ' + esc(zone.areaLabel) + '</span>' +
-            '<span class="lead-banner-title">Quote ready for ' + esc(firstName) + ' · ' + esc(zone.formatted) + '</span>' +
-            '<span class="lead-banner-meta">' + esc(model.name) + ' · ' + esc(fault.title) + ' · ' + esc(state.lead.email) + ' · ' + esc(state.lead.phone) + '</span>' +
-          '</div>' +
-          '<button type="button" class="text-action-btn" id="editLeadBtn">Edit details</button>' +
-        '</div>' +
-
-        triageSummaryHtml +
-
-        '<div class="quote-card" id="servicePickerCard">' +
-          '<div class="quote-card-head">' +
-            '<div>' +
-              '<span class="mono-label">1. How Your Device Reaches Us</span>' +
-              '<h3 class="quote-card-title" style="margin-top:4px;">' + (zone.isLondon ? "London collection &amp; drop-off options" : "UK mail-in &amp; Fitzrovia drop-off options") + '</h3>' +
-            '</div>' +
-          '</div>' +
-          '<div class="service-list">' + serviceCardsHtml + '</div>' +
-          slotBlockHtml +
-        '</div>' +
-
-        futureSpeedHtml +
-
-        '<div class="quote-card" id="timelineCard">' +
-          '<span class="mono-label">2. How It Works</span>' +
-          '<h3 class="quote-card-title" style="margin-top:4px;">Simple 3-step Fitzrovia repair process</h3>' +
-          '<ol class="timeline-list">' + timelineHtml + '</ol>' +
-          '<div class="trust-grid">' +
-            '<div class="trust-tile"><div class="trust-tile-title">Genuine Apple displays</div><div class="trust-tile-sub">Display panel only, keeping your original lid and factory calibration.</div></div>' +
-            '<div class="trust-tile"><div class="trust-tile-title">2-year warranty</div><div class="trust-tile-sub">Every screen and component repair is backed by our 2-year guarantee.</div></div>' +
-            '<div class="trust-tile"><div class="trust-tile-title">4.8 from 750+ Google reviews</div><div class="trust-tile-sub">Verified independent clients across London and the UK.</div></div>' +
-            '<div class="trust-tile"><div class="trust-tile-title">2 working days</div><div class="trust-tile-sub">Completed in-house once your device reaches our Fitzrovia workshop.</div></div>' +
-          '</div>' +
-        '</div>' +
-      '</div>' +
-
-      '<div class="quote-right">' +
-        '<div class="price-summary-card" id="priceSummaryCard">' +
-          '<div class="price-top-row">' +
-            '<span class="mono-label">' + (fault.isDiag ? "Diagnostic Fee" : "All-In Fixed Price") + '</span>' +
-            '<span class="warranty-pill">2-year warranty</span>' +
-          '</div>' +
-          '<div class="price-hero-row">' +
-            '<span class="price-hero">£' + total + '</span>' +
-            '<span class="price-vat">inc. VAT</span>' +
-          '</div>' +
-          '<p class="price-turnaround">' + esc(turnaroundLine) + '</p>' +
-
-          '<div class="price-breakdown">' +
-            '<div class="bd-row"><span>' + esc(model.name) + ' · ' + esc(fault.title) + '</span><strong>£' + base + '</strong></div>' +
-            '<div class="bd-row"><span>' + esc(svcLabel) + '</span>' + serviceRowValue + '</div>' +
-            speedRowHtml +
-          '</div>' +
-
-          klarnaHtml +
-
-          '<p class="payment-assurance">Upfront fixed pricing with no deposits required. Your name, email, UK phone number, and postcode pre-fill Shopify checkout automatically.</p>' +
-
-          '<div class="cta-stack">' +
-            '<button type="button" class="btn-primary" id="proceedCheckoutBtn">Proceed to checkout · £' + total + '</button>' +
-            '<div class="secondary-actions">' +
-              '<button type="button" class="btn-secondary" id="emailQuoteBtn">Email this quote</button>' +
-              '<button type="button" class="btn-secondary" id="askQuestionBtn">Ask a question</button>' +
-            '</div>' +
-          '</div>' +
-
-          (state.feedbackMsg ? '<div class="inline-feedback" role="status">' + esc(state.feedbackMsg) + '</div>' : '') +
-        '</div>' +
-      '</div>' +
-    '</div>';
-  }
-
-  /* =========================================================
-     MOBILE APP CLICK-THROUGH RENDERERS (< 768px, 390x844)
-     ========================================================= */
-  function renderMobileStep1() {
-    var devObj = getDeviceObj();
-    var deviceBtns = Object.keys(CATALOG).map(function (key) {
-      var d = CATALOG[key];
-      var sel = state.device === key ? " is-selected" : "";
-      return '<button type="button" class="m-device-btn' + sel + '" data-device="' + key + '">' +
-        renderDeviceIcon(key) +
-        '<div><div class="device-name" style="font-size:14px;">' + esc(d.label) + '</div><div class="device-meta">' + esc(d.meta) + '</div></div>' +
-        '</button>';
-    }).join("");
-
-    var familyChips = devObj.families.map(function (fam) {
-      var active = state.familyFilter === fam ? " is-active" : "";
-      return '<button type="button" class="filter-chip' + active + '" data-family="' + esc(fam) + '">' + esc(fam) + '</button>';
-    }).join("");
-
-    var filteredModels = devObj.models.filter(function (m) {
-      return state.familyFilter === "All" || m.family === state.familyFilter;
-    });
-
-    var modelBtns = filteredModels.map(function (m) {
-      var sel = state.modelId === m.id ? " is-selected" : "";
-      return '<button type="button" class="model-btn' + sel + '" data-model="' + esc(m.id) + '">' +
-        '<span><span class="model-title">' + esc(m.name) + '</span><span class="model-sub">' + esc(m.sub) + '</span></span>' +
-        '<span class="model-code">' + esc(m.code) + '</span>' +
-        '</button>';
-    }).join("");
-
-    var helperQuery = state.helperQuery.trim().toUpperCase();
-    var helperHits = helperQuery
-      ? CATALOG.macbook.models.filter(function (m) {
-          return m.code.toUpperCase().indexOf(helperQuery) !== -1 || m.name.toUpperCase().indexOf(helperQuery) !== -1;
-        })
-      : CATALOG.macbook.models.slice(0, 3);
-
-    var helperResultsHtml = helperHits.map(function (m) {
-      return '<button type="button" class="helper-hit" data-helper-model="' + esc(m.id) + '">' +
-        '<span><strong>' + esc(m.code) + '</strong> · ' + esc(m.name) + '</span>' +
-        '<span style="color:#0070f3;font-weight:600;">Select</span>' +
-        '</button>';
-    }).join("");
-
-    return '<div class="m-screen" data-m-step="1">' +
-      '<div class="m-screen-head">' +
-        '<h2 class="m-screen-title">Choose your Apple device</h2>' +
-        '<p class="m-screen-sub">Tap your model to continue straight to repair options.</p>' +
-      '</div>' +
-      '<div class="m-device-tabs">' + deviceBtns + '</div>' +
-      '<div class="filter-row" style="margin-bottom:10px;">' + familyChips + '</div>' +
-      '<div class="m-model-list">' + modelBtns + '</div>' +
-      '<div class="helper-box" style="margin-top:12px;">' +
-        '<button type="button" class="helper-toggle" id="toggleModelHelper" aria-expanded="' + (state.helperOpen ? "true" : "false") + '">' +
-          (state.helperOpen ? "Hide A-number finder" : "Not sure of your model? Search by A-number") +
-        '</button>' +
-        '<div class="helper-panel" id="modelHelperPanel"' + (state.helperOpen ? "" : " hidden") + '>' +
-          '<p>Find the A-number printed near the bottom hinge (e.g. A2918).</p>' +
-          '<input type="text" class="m-input is-mono" id="modelHelperInput" value="' + esc(state.helperQuery) + '" placeholder="Type A-number, e.g. A2918">' +
-          '<div class="helper-results">' + (helperResultsHtml || '<p style="margin:6px 0 0;font-size:12px;color:#5c5c5c;">No matching A-number found.</p>') + '</div>' +
-        '</div>' +
-      '</div>' +
-    '</div>';
-  }
-
-  function renderMobileStep2() {
-    var model = getModelObj();
-    var faultCards = FAULTS.map(function (f) {
-      var sel = state.faultId === f.id ? " is-selected" : "";
-      var tagClass = f.isDiag ? "fault-tag is-diag" : "fault-tag";
-      return '<button type="button" class="fault-card' + sel + '" data-fault="' + esc(f.id) + '" style="min-height:auto;padding:12px 14px;">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;">' +
-          '<span class="fault-title" style="font-size:15px;">' + esc(f.title) + '</span>' +
-          '<span class="' + tagClass + '" style="margin-top:0;">' + esc(f.tag) + '</span>' +
-        '</div>' +
-        '<span class="fault-desc" style="font-size:13px;">' + esc(f.desc) + '</span>' +
-        '</button>';
-    }).join("");
-
-    return '<div class="m-screen" data-m-step="2">' +
-      '<div class="m-context-pill">' +
-        '<div class="m-context-left">' +
-          '<span class="m-context-title">' + esc(model.name) + ' (' + esc(model.code) + ')</span>' +
-          '<span class="m-context-sub">Genuine Apple displays (panel only) · 2-year warranty</span>' +
-        '</div>' +
-        '<button type="button" class="m-change-btn" id="mStep2ChangeDevice">Change</button>' +
-      '</div>' +
-      '<div class="m-screen-head">' +
-        '<h2 class="m-screen-title">What needs repairing?</h2>' +
-        '<p class="m-screen-sub">Tap an issue to see your fixed price in seconds.</p>' +
-      '</div>' +
-      '<div class="m-fault-list">' + faultCards + '</div>' +
-      renderTriageBlock() +
-    '</div>';
-  }
-
-  function renderMobileStep3Details() {
-    var model = getModelObj();
-    var fault = getFaultObj();
-    var zoneValid = isValidUkPostcode(state.lead.postcode);
-    var zone = zoneValid ? classifyPostcode(state.lead.postcode) : null;
-
-    var inlineZoneHtml = "";
-    if (zone) {
-      inlineZoneHtml = '<span class="m-inline-zone' + (zone.isLondon ? "" : " is-mailin") + '">' +
-        (zone.isLondon ? "London courier · " + esc(zone.outward) : "Free UK mail-in · " + esc(zone.outward)) +
-        '</span>';
-    }
-
-    return '<div class="m-screen" data-m-step="3" id="mDetailsScreen">' +
-      '<div class="m-context-pill">' +
-        '<div class="m-context-left">' +
-          '<span class="m-context-title">' + esc(model.name) + ' · ' + esc(fault.shortTitle) + '</span>' +
-          '<span class="m-context-sub">' + (fault.isDiag ? "Board-level diagnostic · deducted from repair" : "Genuine Apple displays (panel only) · 2-year warranty") + '</span>' +
-        '</div>' +
-        '<button type="button" class="m-change-btn" id="dwEditDevice">Change</button>' +
-      '</div>' +
-
-      '<div class="m-screen-head">' +
-        '<h2 class="m-screen-title">Unlock your fixed price</h2>' +
-        '<p class="m-screen-sub">Instant upfront quote + same-day London collection check.</p>' +
-      '</div>' +
-
-      '<form class="m-form-card" id="dataWallForm" novalidate>' +
-        '<div class="m-form-stack">' +
-          '<div class="m-field">' +
-            '<label class="m-field-label" for="dwName">Full name</label>' +
-            '<input type="text" class="m-input' + (state.leadErrors.name ? " is-error" : "") + '" id="dwName" autocomplete="name" value="' + esc(state.lead.name) + '" placeholder="e.g. Alex Morgan">' +
-            (state.leadErrors.name ? '<span class="m-field-error">' + esc(state.leadErrors.name) + '</span>' : '') +
-          '</div>' +
-
-          '<div class="m-field">' +
-            '<label class="m-field-label" for="dwEmail">Email address</label>' +
-            '<input type="email" inputmode="email" class="m-input' + (state.leadErrors.email ? " is-error" : "") + '" id="dwEmail" autocomplete="email" value="' + esc(state.lead.email) + '" placeholder="e.g. alex.morgan@example.co.uk">' +
-            (state.leadErrors.email ? '<span class="m-field-error">' + esc(state.leadErrors.email) + '</span>' : '') +
-          '</div>' +
-
-          '<div class="m-field">' +
-            '<label class="m-field-label" for="dwPhone">UK phone number</label>' +
-            '<input type="tel" inputmode="tel" class="m-input' + (state.leadErrors.phone ? " is-error" : "") + '" id="dwPhone" autocomplete="tel" value="' + esc(state.lead.phone) + '" placeholder="e.g. 07700 900123">' +
-            (state.leadErrors.phone ? '<span class="m-field-error">' + esc(state.leadErrors.phone) + '</span>' : '') +
-          '</div>' +
-
-          '<div class="m-field">' +
-            '<div class="m-field-row">' +
-              '<label class="m-field-label" for="dwPostcode">UK postcode</label>' +
-              '<span id="dwZonePreview">' + inlineZoneHtml + '</span>' +
-            '</div>' +
-            '<input type="text" class="m-input is-mono' + (state.leadErrors.postcode ? " is-error" : "") + '" id="dwPostcode" autocomplete="postal-code" autocapitalize="characters" spellcheck="false" value="' + esc(state.lead.postcode) + '" placeholder="e.g. W1W 8JQ">' +
-            (state.leadErrors.postcode ? '<span class="m-field-error">' + esc(state.leadErrors.postcode) + '</span>' : '') +
-          '</div>' +
-        '</div>' +
-      '</form>' +
-
-      '<div class="m-trust-box">' +
-        '<div class="m-trust-pills">' +
-          '<span class="m-mini-pill is-green">4.8 from 750+ Google reviews</span>' +
-          '<span class="m-mini-pill">Genuine Apple displays</span>' +
-          '<span class="m-mini-pill">2-year warranty</span>' +
-        '</div>' +
-        '<p class="m-privacy-line">No spam, ever. Pre-fills Shopify checkout and lets our Fitzrovia team help if you prefer a trade-in or question first.</p>' +
-      '</div>' +
-
-      '<div class="m-sample-bar">' +
-        '<span>Upfront fixed pricing · No deposits</span>' +
-        '<button type="button" class="m-link-inline" id="dwFillSample">Fill sample</button>' +
-      '</div>' +
-    '</div>';
-  }
-
-  function renderMobileStep4PriceService() {
-    ensureValidServiceForZone();
-    var model = getModelObj();
-    var fault = getFaultObj();
-    var zone = classifyPostcode(state.lead.postcode);
-    var base = getBasePrice();
-    var total = getTotalPrice();
-
-    var klarnaChip = total >= 100
-      ? '<span class="m-klarna-chip">Klarna · 3 x £' + (total / 3).toFixed(2) + '</span>'
-      : '';
-
-    var turnaroundLine = fault.isDiag
-      ? "Turnaround: 2 working days diagnostic once at Fitzrovia."
-      : "Turnaround: 2 working days once it reaches Fitzrovia.";
-
-    var futureHtml = "";
-    if (state.showFutureSpeed && !fault.isDiag) {
-      var sdFee = state.device === "iphone" ? 49 : 149;
-      futureHtml = '<div class="m-future-box" id="futureSpeedSlot">' +
-        '<span class="future-badge" style="margin-bottom:0;">PREVIEW ONLY: FUTURE SPEED TIERS (NOT LIVE)</span>' +
-        '<div class="m-speed-row">' +
-          '<button type="button" class="m-speed-btn' + (state.futureSpeed === "standard" ? " is-selected" : "") + '" data-speed="standard">' +
-            '<span class="m-speed-name">Standard<br>2 working days</span>' +
-            '<span class="m-speed-price" style="color:#047857;">Included</span>' +
-          '</button>' +
-          '<button type="button" class="m-speed-btn' + (state.futureSpeed === "fast" ? " is-selected" : "") + '" data-speed="fast">' +
-            '<span class="m-speed-name">Priority<br>Next day</span>' +
-            '<span class="m-speed-price">+£79</span>' +
-          '</button>' +
-          (zone.isLondon
-            ? '<button type="button" class="m-speed-btn' + (state.futureSpeed === "sameday" ? " is-selected" : "") + '" data-speed="sameday">' +
-                '<span class="m-speed-name">Same-Day<br>~1h London</span>' +
-                '<span class="m-speed-price">+£' + sdFee + '</span>' +
-              '</button>'
-            : '<div class="m-speed-btn" style="opacity:0.6;cursor:default;">' +
-                '<span class="m-speed-name">Same-Day<br>London only</span>' +
-                '<span class="m-speed-price">N/A</span>' +
-              '</div>') +
-        '</div>' +
-      '</div>';
-    }
-
-    var svcCards = "";
-    if (zone.isLondon && (base >= 200 || fault.isDiag)) {
-      svcCards =
-        '<button type="button" class="m-svc-card' + (state.service === "courier" ? " is-selected" : "") + '" data-svc="courier">' +
-          '<span class="service-radio" aria-hidden="true"></span>' +
-          '<span class="m-svc-main">' +
-            '<span class="m-svc-title-row"><span class="m-svc-title">Same-Day London Courier</span><span class="service-pill">Recommended</span></span>' +
-            '<span class="m-svc-desc">Door-to-door in ' + esc(zone.outward) + '. Free on orders £200+.</span>' +
-          '</span>' +
-          '<span class="m-svc-price is-free">Free</span>' +
-        '</button>' +
-        '<button type="button" class="m-svc-card' + (state.service === "workshop" ? " is-selected" : "") + '" data-svc="workshop">' +
-          '<span class="service-radio" aria-hidden="true"></span>' +
-          '<span class="m-svc-main">' +
-            '<span class="m-svc-title-row"><span class="m-svc-title">Drop off in Fitzrovia</span><span class="service-pill is-neutral">W1W 8JQ</span></span>' +
-            '<span class="m-svc-desc">12 Margaret Street, London. Mon to Fri walk-in.</span>' +
-          '</span>' +
-          '<span class="m-svc-price is-free">Free</span>' +
-        '</button>';
-    } else if (zone.isLondon && base < 200) {
-      svcCards =
-        '<button type="button" class="m-svc-card' + (state.service === "mailin" ? " is-selected" : "") + '" data-svc="mailin">' +
-          '<span class="service-radio" aria-hidden="true"></span>' +
-          '<span class="m-svc-main">' +
-            '<span class="m-svc-title-row"><span class="m-svc-title">Free Tracked UK Mail-In Pack</span><span class="service-pill">Free under £200</span></span>' +
-            '<span class="m-svc-desc">Protective box &amp; prepaid insured label to ' + esc(zone.outward) + '.</span>' +
-          '</span>' +
-          '<span class="m-svc-price is-free">Free</span>' +
-        '</button>' +
-        '<button type="button" class="m-svc-card' + (state.service === "workshop" ? " is-selected" : "") + '" data-svc="workshop">' +
-          '<span class="service-radio" aria-hidden="true"></span>' +
-          '<span class="m-svc-main">' +
-            '<span class="m-svc-title-row"><span class="m-svc-title">Drop off in Fitzrovia</span><span class="service-pill is-neutral">W1W 8JQ</span></span>' +
-            '<span class="m-svc-desc">12 Margaret Street, London. Mon to Fri walk-in.</span>' +
-          '</span>' +
-          '<span class="m-svc-price is-free">Free</span>' +
-        '</button>' +
-        '<button type="button" class="m-svc-card' + (state.service === "courier" ? " is-selected" : "") + '" data-svc="courier">' +
-          '<span class="service-radio" aria-hidden="true"></span>' +
-          '<span class="m-svc-main">' +
-            '<span class="m-svc-title-row"><span class="m-svc-title">Same-Day London Courier</span></span>' +
-            '<span class="m-svc-desc">Door-to-door in ' + esc(zone.outward) + ' (free on orders £200+).</span>' +
-          '</span>' +
-          '<span class="m-svc-price">+£25</span>' +
-        '</button>';
-    } else {
-      svcCards =
-        '<button type="button" class="m-svc-card' + (state.service === "mailin" ? " is-selected" : "") + '" data-svc="mailin">' +
-          '<span class="service-radio" aria-hidden="true"></span>' +
-          '<span class="m-svc-main">' +
-            '<span class="m-svc-title-row"><span class="m-svc-title">Free Tracked UK Mail-In Pack</span><span class="service-pill">Recommended</span></span>' +
-            '<span class="m-svc-desc">Padded box &amp; prepaid insured return label to ' + esc(zone.outward) + '.</span>' +
-          '</span>' +
-          '<span class="m-svc-price is-free">Free</span>' +
-        '</button>' +
-        '<button type="button" class="m-svc-card' + (state.service === "workshop" ? " is-selected" : "") + '" data-svc="workshop">' +
-          '<span class="service-radio" aria-hidden="true"></span>' +
-          '<span class="m-svc-main">' +
-            '<span class="m-svc-title-row"><span class="m-svc-title">Drop off in Fitzrovia</span><span class="service-pill is-neutral">W1W 8JQ</span></span>' +
-            '<span class="m-svc-desc">12 Margaret Street, London. Mon to Fri walk-in.</span>' +
-          '</span>' +
-          '<span class="m-svc-price is-free">Free</span>' +
-        '</button>';
-    }
-
-    return '<div class="m-screen" data-m-step="4" id="mPriceScreen">' +
-      '<div class="m-price-card" id="priceSummaryCard">' +
-        '<div class="m-price-top">' +
-          '<span class="mono-label">' + (fault.isDiag ? "Diagnostic Fee" : "Fixed Price") + ' · ' + esc(zone.formatted) + '</span>' +
-          '<span class="warranty-pill">2-year warranty</span>' +
-        '</div>' +
-        '<div class="m-price-row">' +
-          '<span class="m-price-figure"><span class="m-price-num price-hero">£' + total + '</span><span class="m-price-vat">inc. VAT</span></span>' +
-          klarnaChip +
-        '</div>' +
-        '<p class="m-turnaround-line">' + esc(turnaroundLine) + '</p>' +
-        '<div class="m-proof-chips">' +
-          '<span class="m-mini-pill">' + esc(model.name) + ' · ' + esc(fault.shortTitle) + '</span>' +
-          '<span class="m-mini-pill">Genuine Apple displays</span>' +
-          (fault.isDiag ? '<span class="m-mini-pill is-green">Bench triage attached</span>' : '<span class="m-mini-pill">No deposits</span>') +
-        '</div>' +
-      '</div>' +
-
-      futureHtml +
-
-      '<div id="servicePickerCard">' +
-        '<div class="m-svc-head">' +
-          '<h3 class="m-svc-heading">Choose how your device reaches us</h3>' +
-          '<button type="button" class="m-link-inline" id="editLeadBtn">Edit details</button>' +
-        '</div>' +
-        '<div class="m-svc-list">' + svcCards + '</div>' +
-      '</div>' +
-
-      '<div class="m-sheet-triggers">' +
-        '<button type="button" class="m-sheet-trigger-btn" id="openHowSheetBtn">How it works (3 steps)</button>' +
-        '<button type="button" class="m-sheet-trigger-btn" id="openReviewsSheetBtn">4.8 ★ 750+ Google reviews</button>' +
-      '</div>' +
-    '</div>';
-  }
-
-  function renderMobileStep5Checkout() {
-    ensureValidServiceForZone();
-    var model = getModelObj();
-    var fault = getFaultObj();
-    var zone = classifyPostcode(state.lead.postcode);
-    var base = getBasePrice();
-    var svcFee = getServiceFee();
-    var speedAdd = getFutureSpeedAdd();
-    var total = getTotalPrice();
-
-    var dateBtns = COLLECTION_DATES.map(function (d) {
-      var sel = state.dateId === d.id ? " is-selected" : "";
-      return '<button type="button" class="date-btn' + sel + '" data-date="' + d.id + '">' +
-        '<span class="date-dow">' + esc(d.dow) + '</span>' +
-        '<span class="date-day">' + esc(d.day) + '</span>' +
-        '</button>';
-    }).join("");
-
-    var winBtns = COLLECTION_WINDOWS.map(function (w) {
-      var sel = state.windowId === w.id ? " is-selected" : "";
-      return '<button type="button" class="window-btn' + sel + '" data-window="' + w.id + '">' +
-        '<span class="window-title">' + esc(w.title) + '</span>' +
-        '<span class="window-time">' + esc(w.time) + '</span>' +
-        '</button>';
-    }).join("");
-
-    var serviceDetailCard = "";
-    if (state.service === "courier") {
-      serviceDetailCard = '<div class="m-card">' +
-        '<span class="mono-label">London Courier Collection · ' + esc(zone.formatted) + '</span>' +
-        '<h3 class="m-card-title">Pick your collection slot</h3>' +
-        '<div class="date-strip" style="margin-top:10px;">' + dateBtns + '</div>' +
-        '<div class="window-row" style="margin-top:8px;">' + winBtns + '</div>' +
-      '</div>';
-    } else if (state.service === "workshop") {
-      serviceDetailCard = '<div class="m-card">' +
-        '<span class="mono-label">Fitzrovia Workshop Drop-Off</span>' +
-        '<h3 class="m-card-title">12 Margaret Street, Audley House, London W1W 8JQ</h3>' +
-        '<p class="m-card-copy"><strong>Opening hours:</strong> Mon to Thu 9am to 6pm, Friday 10am to 6pm, Sat &amp; Sun closed.</p>' +
-        '<div class="date-strip" style="margin-top:10px;">' + dateBtns + '</div>' +
-      '</div>';
-    } else {
-      serviceDetailCard = '<div class="m-card">' +
-        '<span class="mono-label">Free Tracked &amp; Insured UK Mail-In Pack</span>' +
-        '<h3 class="m-card-title">Prepaid pack dispatched to ' + esc(zone.formatted) + '</h3>' +
-        '<p class="m-card-copy">We post a padded protective box and prepaid tracked, insured return label to your door. Once it reaches Fitzrovia, turnaround is 2 working days.</p>' +
-      '</div>';
-    }
-
-    var svcLabel = state.service === "courier"
-      ? (svcFee > 0 ? "Same-day London courier (+£" + svcFee + ")" : "Same-day London courier (Free)")
-      : (state.service === "workshop" ? "Fitzrovia drop-off (Free)" : "Tracked UK mail-in pack (Free)");
-
-    var triageRow = fault.isDiag
-      ? '<div class="m-summary-row"><span>Bench triage</span><strong>' + (state.triage.dataPriority === "essential" ? "Prioritise data · £" + base + " deducted" : "Backed up · £" + base + " deducted") + '</strong></div>'
-      : '';
-
-    var speedRow = speedAdd > 0
-      ? '<div class="m-summary-row"><span>Future speed preview</span><strong>+£' + speedAdd + '</strong></div>'
-      : '';
-
-    return '<div class="m-screen" data-m-step="5" id="mCheckoutScreen">' +
-      serviceDetailCard +
-
-      '<div class="m-card">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
-          '<span class="mono-label">Order &amp; Contact Summary</span>' +
-          '<button type="button" class="m-link-inline" id="mChangeServiceBtn">Change service</button>' +
-        '</div>' +
-        '<div class="m-summary-list">' +
-          '<div class="m-summary-row"><span>Repair</span><strong>' + esc(model.name) + ' · ' + esc(fault.shortTitle) + '</strong></div>' +
-          '<div class="m-summary-row"><span>Service</span><strong>' + esc(svcLabel) + '</strong></div>' +
-          triageRow +
-          '<div class="m-summary-row"><span>Customer</span><strong>' + esc(state.lead.name) + '</strong></div>' +
-          '<div class="m-summary-row"><span>Email</span><strong>' + esc(state.lead.email) + '</strong></div>' +
-          '<div class="m-summary-row"><span>Phone &amp; Postcode</span><strong>' + esc(state.lead.phone) + ' · ' + esc(zone.formatted) + '</strong></div>' +
-          '<div class="m-summary-row"><span>Turnaround</span><strong>2 working days at workshop</strong></div>' +
-          speedRow +
-          '<div class="m-summary-row is-total"><span>Upfront fixed total (inc. VAT)</span><strong>£' + total + '</strong></div>' +
-        '</div>' +
-        '<p class="m-privacy-line" style="margin-top:8px;">Upfront fixed pricing with no deposits. Genuine Apple displays (panel only) with a 2-year warranty.</p>' +
-        '<div class="m-secondary-row">' +
-          '<button type="button" class="btn-secondary" id="emailQuoteBtn" style="min-height:44px;font-size:13px;">Email this quote</button>' +
-          '<button type="button" class="btn-secondary" id="askQuestionBtn" style="min-height:44px;font-size:13px;">Ask a question</button>' +
-        '</div>' +
-        (state.feedbackMsg ? '<div class="inline-feedback" role="status">' + esc(state.feedbackMsg) + '</div>' : '') +
-      '</div>' +
-    '</div>';
-  }
-
-  var TRUSTINDEX_WIDGET_ID = "47cc7ef8590e8871fa062160cf7";
-  var TRUSTINDEX_LOADER_URL = "https://cdn.trustindex.io/loader.js?" + TRUSTINDEX_WIDGET_ID;
-
-  function mountTrustindexWidget(slotEl) {
-    if (!slotEl) return;
-    if (slotEl.getAttribute("data-ti-mounted") === "1") return;
-    if (slotEl.offsetWidth <= 0) return;
-
-    slotEl.setAttribute("data-ti-mounted", "1");
-
-    var removeLoading = function () {
-      var loading = slotEl.querySelector(".trustindex-loading");
-      if (loading && slotEl.querySelector(".ti-widget")) {
-        loading.remove();
+    if (state.service === 'courier' || state.service === 'dropoff') {
+      const dates = getEligibleDates(state.service);
+      const current = dates.find((d) => d.iso === state.selectedDateIso);
+      const isValidCurrent = current && (state.speed === 'express' ? current.expressAvailable : current.availableForService);
+      if (!isValidCurrent) {
+        const pick = dates.find((d) => (state.speed === 'express' ? d.expressAvailable : d.availableForService)) || dates[dates.length - 1];
+        if (pick) state.selectedDateIso = pick.iso;
       }
+      const chosen = dates.find((d) => d.iso === state.selectedDateIso);
+      const band = state.postcodeInfo ? state.postcodeInfo.band : 'B1';
+      const clk = getClockStatus(band);
+      if (chosen && chosen.isToday && clk.morningExpiredToday) {
+        state.selectedWindow = 'pm';
+      }
+    }
+  }
+
+  function getReturnSummary() {
+    if (isFaceIdRepair()) {
+      return {
+        label: 'Quote & return: 5 to 7 working days (Apple Face ID module)',
+        dateText: 'Thu 5 Dec',
+        iso: '2026-12-05',
+        propKey: 'Return by'
+      };
+    }
+    if (state.service === 'mailin') {
+      if (state.route === 'diagnostic') {
+        return {
+          label: 'Diagnostic quote by: Tue 1 Dec (within 1 working day of arrival)',
+          dateText: 'Tue 1 Dec',
+          iso: '2026-12-01',
+          propKey: 'Quote by'
+        };
+      }
+      if (state.speed === 'express') {
+        return {
+          label: 'Back with you by: Wed 2 Dec (Express bench reserved in transit)',
+          dateText: 'Wed 2 Dec',
+          iso: '2026-12-02',
+          propKey: 'Return by'
+        };
+      }
+      return {
+        label: 'Back with you by: Thu 3 Dec (2 working days on the bench)',
+        dateText: 'Thu 3 Dec',
+        iso: '2026-12-03',
+        propKey: 'Return by'
+      };
+    }
+
+    const d = WORKING_DATES.find((x) => x.iso === state.selectedDateIso) || WORKING_DATES[0];
+    if (state.route === 'diagnostic') {
+      return {
+        label: 'Diagnostic quote by: ' + d.expReturn + ' (1 working day on bench)',
+        dateText: d.expReturn,
+        iso: d.expReturnIso,
+        propKey: 'Quote by'
+      };
+    }
+    if (state.speed === 'express') {
+      return {
+        label: 'Back with you by: ' + d.expReturn + ' (Express bench reserved on arrival)',
+        dateText: d.expReturn,
+        iso: d.expReturnIso,
+        propKey: 'Return by'
+      };
+    }
+    return {
+      label: 'Back with you by: ' + d.stdReturn + ' (2 working days on the bench)',
+      dateText: d.stdReturn,
+      iso: d.stdReturnIso,
+      propKey: 'Return by'
     };
-
-    if (typeof MutationObserver === "function") {
-      var obs = new MutationObserver(function () {
-        if (slotEl.querySelector(".ti-widget")) {
-          removeLoading();
-          obs.disconnect();
-        }
-      });
-      obs.observe(slotEl, { childList: true, subtree: true });
-    }
-
-    var s = document.createElement("script");
-    s.src = TRUSTINDEX_LOADER_URL;
-    s.async = true;
-    s.defer = true;
-    slotEl.appendChild(s);
   }
 
-  /* =========================================================
-     BOTTOM SHEET RENDERER (HOW IT WORKS + REVIEWS & WORKSHOP)
-     ========================================================= */
-  function renderAppSheetContent() {
-    var howPanel = document.getElementById("appSheetHowPanel");
-    var revPanel = document.getElementById("appSheetReviewsPanel");
-    var tabHow = document.getElementById("sheetTabHow");
-    var tabRev = document.getElementById("sheetTabReviews");
-    var isHow = state.activeSheetTab === "how";
-
-    tabHow.classList.toggle("is-active", isHow);
-    tabHow.setAttribute("aria-selected", isHow ? "true" : "false");
-    tabRev.classList.toggle("is-active", !isHow);
-    tabRev.setAttribute("aria-selected", !isHow ? "true" : "false");
-
-    howPanel.hidden = !isHow;
-    revPanel.hidden = isHow;
-
-    if (isHow) {
-      var timelineHtml = getTimelineSteps().map(function (st, idx) {
-        return '<li class="timeline-step">' +
-          '<span class="timeline-num">0' + (idx + 1) + '</span>' +
-          '<div><div class="timeline-title">' + st.title + '</div><div class="timeline-desc">' + st.desc + '</div></div>' +
-          '</li>';
-      }).join("");
-
-      howPanel.innerHTML =
-        '<span class="mono-label">3-Step Repair Process</span>' +
-        '<h3 class="sheet-section-title" id="appSheetTitle">How your iCorrect repair works</h3>' +
-        '<ol class="timeline-list">' + timelineHtml + '</ol>' +
-        '<div class="trust-grid" style="margin-top:14px;">' +
-          '<div class="trust-tile"><div class="trust-tile-title">Genuine Apple displays</div><div class="trust-tile-sub">Display panel only, keeping your original lid and factory calibration.</div></div>' +
-          '<div class="trust-tile"><div class="trust-tile-title">2-year warranty</div><div class="trust-tile-sub">Backed by our 2-year guarantee on every screen and component repair.</div></div>' +
-        '</div>' +
-        '<div class="sheet-workshop-box">' +
-          '<div class="workshop-meta" style="margin-top:0;">' +
-            '<div class="workshop-row"><strong>Fitzrovia Workshop</strong>12 Margaret Street, Audley House, London W1W 8JQ</div>' +
-            '<div class="workshop-row"><strong>Opening Hours</strong>Mon to Thu 9am to 6pm, Friday 10am to 6pm, Sat &amp; Sun closed</div>' +
-          '</div>' +
-        '</div>';
-    } else {
-      window.requestAnimationFrame(function () {
-        mountTrustindexWidget(document.getElementById("mobileTrustindexSlot"));
-      });
-    }
+  function getRepairDisplayName() {
+    const skuLabels = {
+      screen: 'Genuine Apple Screen Repair',
+      'screen-glass': 'Front Glass Repair',
+      dustgate: 'Dustgate Display Flex Repair',
+      flexgate: 'Flexgate Backlight Flex Repair',
+      battery: 'Battery Replacement',
+      'charging-port': 'Charging Port Repair',
+      keyboard: 'Keyboard Replacement',
+      trackpad: 'Trackpad Replacement',
+      'touch-bar': 'Touch Bar Replacement',
+      'rear-glass': 'Rear Glass Repair',
+      'rear-camera': 'Rear Camera Replacement',
+      'front-camera': 'Front Camera / Face ID Repair',
+      crown: 'Digital Crown Repair',
+      diagnostic: state.fault === 'recovery' ? 'Board-Level Data Recovery Diagnostic' : (state.fault === 'liquid' ? 'Liquid Damage Diagnostic' : 'No Power Diagnostic')
+    };
+    return skuLabels[state.resolvedSku] || 'Repair Quote';
   }
 
-  function openAppSheet(tab) {
-    state.activeSheetTab = tab === "reviews" ? "reviews" : "how";
-    document.getElementById("appSheet").hidden = false;
-    renderAppSheetContent();
-  }
-
-  function closeAppSheet() {
-    document.getElementById("appSheet").hidden = true;
-  }
-
-  /* =========================================================
-     CHROMIUM / NAVIGATION / FOOTER / COOKIE BANNER SYNC
-     ========================================================= */
-  function updateStepperAndChrome() {
-    var model = getModelObj();
-    var fault = getFaultObj();
-    var dev = getDeviceObj();
-    var desktopStep = state.step >= 4 ? 4 : state.step;
-
-    document.querySelectorAll(".step-tab").forEach(function (tab) {
-      var s = parseInt(tab.getAttribute("data-step"), 10);
-      tab.classList.toggle("is-active", s === desktopStep);
-      tab.classList.toggle("is-done", s < desktopStep);
-      tab.setAttribute("aria-selected", s === desktopStep ? "true" : "false");
-    });
-
-    var chips = [
-      '<span class="sel-chip">' + esc(dev.label) + '</span>',
-      '<span class="sel-chip">' + esc(model.name) + '</span>',
-      '<span class="sel-chip">' + esc(fault.title) + '</span>'
-    ];
-    if (desktopStep === 4 && state.lead.postcode) {
-      chips.push('<span class="sel-chip">' + esc(normalizePostcode(state.lead.postcode)) + '</span>');
-    } else {
-      chips.push('<span class="sel-chip sel-chip-muted">Step ' + desktopStep + ' of 4</span>');
+  function step2IsReady() {
+    if (!state.fault) return false;
+    if (state.route === 'dismiss') return false;
+    if (state.fault === 'liquid') {
+      if (!state.liquidUsable || !state.liquidAck || !state.dataAnswer || !state.appleBeen) return false;
+      if (state.appleBeen === 'Yes' && !state.appleVerdict) return false;
+      return true;
     }
-    document.getElementById("selectionChips").innerHTML = chips.join("");
-    document.getElementById("stepBackBtn").hidden = desktopStep <= 1;
-
-    // Mobile App Bar + Progress
-    var mBack = document.getElementById("mBackBtn");
-    mBack.disabled = state.step <= 1;
-    document.getElementById("mStepLabel").textContent = MOBILE_STEP_LABELS[state.step] || "Step 3 of 5 · Your Details";
-    document.querySelectorAll(".m-seg").forEach(function (seg) {
-      var n = parseInt(seg.getAttribute("data-seg"), 10);
-      seg.classList.toggle("is-done", n < state.step);
-      seg.classList.toggle("is-active", n === state.step);
-    });
-
-    // Mobile Preview Sheet step jump highlight
-    document.querySelectorAll("[data-jump-step]").forEach(function (btn) {
-      btn.classList.toggle("is-active", parseInt(btn.getAttribute("data-jump-step"), 10) === state.step);
-    });
-
-    // Mobile Pinned Bottom CTA Label
-    var mCta = document.getElementById("mFooterCta");
-    ensureValidServiceForZone();
-    var total = getTotalPrice();
-    if (state.step === 1) {
-      mCta.innerHTML = "Continue to repair &rarr;";
-    } else if (state.step === 2) {
-      mCta.innerHTML = "Continue to your details &rarr;";
-    } else if (state.step === 3) {
-      mCta.innerHTML = "See my fixed price &rarr;";
-    } else if (state.step === 4) {
-      mCta.innerHTML = "Continue · £" + total + " &rarr;";
-    } else {
-      mCta.innerHTML = "Proceed to checkout · £" + total;
+    if (state.fault === 'nopower') {
+      if (!state.dataAnswer || !state.appleBeen) return false;
+      if (state.appleBeen === 'Yes' && !state.appleVerdict) return false;
+      return true;
     }
-  }
-
-  function updateCookieAndToggles() {
-    var banner = document.getElementById("simCookieBanner");
-    var root = document.documentElement;
-
-    banner.hidden = !state.showCookieBanner;
-    root.classList.toggle("sim-cookie-on", state.showCookieBanner);
-
-    ["toggleCookieWrap", "mToggleCookieWrap"].forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) el.classList.toggle("is-on", state.showCookieBanner);
-    });
-    ["toggleSpeedWrap", "mToggleSpeedWrap"].forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) el.classList.toggle("is-on", state.showFutureSpeed);
-    });
-    ["toggleCookieBanner", "mToggleCookieBanner"].forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) el.checked = state.showCookieBanner;
-    });
-    ["toggleFutureSpeed", "mToggleFutureSpeed"].forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) el.checked = state.showFutureSpeed;
-    });
-
-    if (state.showCookieBanner) {
-      var rect = banner.getBoundingClientRect();
-      var h = Math.max(Math.ceil(rect.height), window.innerWidth < 750 ? 227 : 86);
-      root.style.setProperty("--cookie-h", h + "px");
-      var badge = banner.querySelector(".sim-cookie-badge");
-      if (badge) badge.textContent = "Simulated " + Math.ceil(rect.height || 227) + "px UK Banner";
-    } else {
-      root.style.setProperty("--cookie-h", "0px");
+    if (state.fault === 'recovery') {
+      if (state.device === 'iphone' && state.iphoneRecoveryPath === 'passcode') return false;
+      if (!state.recWhat || !state.recState || !state.recTried || !state.recPassword) return false;
+      if (state.recTried !== 'No, nobody has opened it' && !state.recTriedSaid) return false;
+      return true;
     }
-  }
-
-  function validateAndSubmitDetails() {
-    var errs = {};
-    if (!state.lead.name || state.lead.name.trim().length < 2) {
-      errs.name = "Please enter your full name.";
+    if (state.fault === 'screen' || state.fault === 'power' || state.fault === 'rear-glass' || state.fault === 'camera') {
+      return Boolean(state.subOption);
     }
-    if (!isValidEmail(state.lead.email)) {
-      errs.email = "Please enter a valid email address.";
-    }
-    if (!isValidUkPhone(state.lead.phone)) {
-      errs.phone = "Please enter a valid UK phone number (e.g. 07700 900123).";
-    }
-    if (!isValidUkPostcode(state.lead.postcode)) {
-      errs.postcode = "Please enter a full UK postcode (e.g. W1W 8JQ).";
-    }
-    state.leadErrors = errs;
-    if (Object.keys(errs).length > 0) {
-      render();
-      return false;
-    }
-    state.lead.postcode = normalizePostcode(state.lead.postcode);
-    ensureValidServiceForZone();
-    state.feedbackMsg = "";
-    state.step = 4;
-    render();
-    window.scrollTo({ top: 0, behavior: "instant" });
     return true;
   }
 
-  function openCheckoutModal() {
-    ensureValidServiceForZone();
-    var model = getModelObj();
-    var fault = getFaultObj();
-    var zone = classifyPostcode(state.lead.postcode);
-    var total = getTotalPrice();
-    var svcFee = getServiceFee();
-    var dateObj = COLLECTION_DATES.filter(function (d) { return d.id === state.dateId; })[0] || COLLECTION_DATES[0];
-    var winObj = COLLECTION_WINDOWS.filter(function (w) { return w.id === state.windowId; })[0] || COLLECTION_WINDOWS[0];
-
-    var rows = [
-      ["Device & Model", model.name + " (" + model.code + ")"],
-      ["Repair / Fault", fault.title],
-      ["Customer Name", state.lead.name],
-      ["Email Address", state.lead.email],
-      ["UK Phone", state.lead.phone],
-      ["Postcode", zone.formatted + " (" + zone.areaLabel + ")"],
-      ["Service", state.service === "courier" ? "Same-day London courier" : (state.service === "workshop" ? "Fitzrovia drop-off (W1W 8JQ)" : "Free tracked & insured UK mail-in")],
-      ["Collection / Drop-off", state.service === "mailin" ? "Box posted within 24h" : (dateObj.full + ", " + winObj.time)],
-      ["Turnaround", "2 working days once at workshop"],
-      ["Upfront Fixed Total", "£" + total + " inc. VAT" + (svcFee > 0 ? " (includes +£" + svcFee + " courier)" : "")]
-    ];
-
-    document.getElementById("checkoutPayload").innerHTML = rows.map(function (r) {
-      return '<div class="payload-row"><span>' + esc(r[0]) + '</span><strong>' + esc(r[1]) + '</strong></div>';
-    }).join("");
-
-    document.getElementById("checkoutModal").hidden = false;
+  function validateStep3(showAllErrors) {
+    const errors = {};
+    if (state.name.trim().length < 2) errors.name = 'Please enter your full name.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.email.trim())) errors.email = 'Please enter a valid email address.';
+    const digits = state.phone.replace(/\D/g, '');
+    if (digits.length < 10) errors.phone = 'Please enter a valid UK phone number.';
+    const parsed = parseFullPostcode(state.postcode);
+    if (!parsed) {
+      errors.postcode = 'Enter your full postcode, for example W1W 8JQ.';
+    }
+    state.postcodeInfo = parsed;
+    if (showAllErrors) state.errors = errors;
+    return Object.keys(errors).length === 0;
   }
 
-  function wireStageEvents() {
-    var stage = document.getElementById("wizardStage");
-    var mobile = isMobileMode();
+  /* =========================================================================
+     DOM References
+     ========================================================================= */
+  const els = {
+    stage: document.getElementById('wizardStage'),
+    chips: document.getElementById('wizChips'),
+    backBtn: document.getElementById('wizBackBtn'),
+    cta: document.getElementById('wizPrimaryCta'),
+    footMeta: document.getElementById('wizFootMeta'),
+    collectionNotice: document.getElementById('qwCollectionNotice'),
+    collectionNoticeText: document.getElementById('qwCollectionNoticeText'),
+    mBackBtn: document.getElementById('mBackBtn'),
+    mStepLabel: document.getElementById('mStepLabel'),
+    mTestBtn: document.getElementById('mTestBtn'),
+    mTestSheet: document.getElementById('mTestSheet'),
+    closeMTestSheet: document.getElementById('closeMTestSheet'),
+    doneMTestSheet: document.getElementById('doneMTestSheet'),
+    pvExpressFull: document.getElementById('pvExpressFull'),
+    mExpressFull: document.getElementById('mExpressFull'),
+    mCookieSim: document.getElementById('mCookieSim'),
+    simCookieBanner: document.getElementById('simCookieBanner'),
+    simCookieAccept: document.getElementById('simCookieAccept'),
+    simCookieDecline: document.getElementById('simCookieDecline'),
+    reviewsOverlay: document.getElementById('reviewsOverlay'),
+    openReviewsDesktopBtn: document.getElementById('openReviewsDesktopBtn'),
+    closeReviewsOverlay: document.getElementById('closeReviewsOverlay'),
+    trustindexSlot: document.getElementById('trustindexSlot'),
+    checkoutOverlay: document.getElementById('checkoutOverlay'),
+    checkoutOverlayBody: document.getElementById('checkoutOverlayBody'),
+    closeCheckoutOverlay: document.getElementById('closeCheckoutOverlay')
+  };
+
+  function esc(str) {
+    return String(str == null ? '' : str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  /* =========================================================================
+     Render Orchestrator
+     ========================================================================= */
+  function render() {
+    if (state.step === 4) ensureValidStep4Defaults();
+    renderHeaderAndProgress();
+    renderFooter();
+
+    if (state.step === 1) els.stage.innerHTML = renderStep1();
+    else if (state.step === 2) els.stage.innerHTML = renderStep2();
+    else if (state.step === 3) els.stage.innerHTML = renderStep3();
+    else els.stage.innerHTML = renderStep4();
+
+    els.stage.scrollTop = 0;
+    syncTestControlHighlights();
+  }
+
+  function renderHeaderAndProgress() {
+    const stepNames = {
+      1: 'Device & model',
+      2: 'Fault',
+      3: 'Your details',
+      4: 'Fixed price'
+    };
+
+    document.querySelectorAll('.wiz-step').forEach((btn) => {
+      const s = Number(btn.dataset.step);
+      btn.classList.toggle('is-active', s === state.step);
+      btn.classList.toggle('is-done', s < state.step);
+      btn.disabled = s > state.maxStep;
+      btn.setAttribute('aria-selected', s === state.step ? 'true' : 'false');
+    });
+
+    document.querySelectorAll('.m-seg').forEach((seg) => {
+      const s = Number(seg.dataset.seg);
+      seg.classList.toggle('is-done', s < state.step);
+      seg.classList.toggle('is-active', s === state.step);
+    });
+
+    if (els.mStepLabel) {
+      els.mStepLabel.textContent = 'Step ' + state.step + ' of 4 · ' + stepNames[state.step];
+    }
+    if (els.mBackBtn) {
+      els.mBackBtn.disabled = state.step === 1;
+    }
+    if (els.backBtn) {
+      els.backBtn.hidden = state.step === 1;
+    }
+
+    const model = getModel();
+    const chipParts = [];
+    if (model) chipParts.push('<span class="wiz-ctx-chip">' + esc(model.name) + '</span>');
+    if (state.fault && state.step >= 2) {
+      chipParts.push('<span class="wiz-ctx-chip">' + esc(getRepairDisplayName()) + '</span>');
+    }
+    if (state.postcodeInfo && state.step >= 3) {
+      chipParts.push('<span class="wiz-ctx-chip">' + esc(state.postcodeInfo.formatted) + ' (' + esc(state.postcodeInfo.band) + ')</span>');
+    }
+    if (chipParts.length === 1 && state.step === 1) {
+      chipParts.push('<span class="wiz-ctx-chip wiz-ctx-chip--muted">Select a model to continue</span>');
+    }
+    els.chips.innerHTML = chipParts.join('');
+  }
+
+  function renderFooter() {
+    const showCourierNotice = state.step === 4 && state.service === 'courier' && state.postcodeInfo;
+    if (showCourierNotice) {
+      els.collectionNotice.hidden = false;
+      els.collectionNoticeText.innerHTML = '<strong>Collecting from ' + esc(state.postcodeInfo.formatted) + '.</strong> Please use this address as your shipping address at checkout.';
+    } else {
+      els.collectionNotice.hidden = true;
+    }
 
     if (state.step === 1) {
-      stage.querySelectorAll("[data-device]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          state.device = btn.getAttribute("data-device");
-          state.familyFilter = "All";
-          state.modelId = getDeviceObj().models[0].id;
-          render();
-        });
-      });
-
-      stage.querySelectorAll("[data-family]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          state.familyFilter = btn.getAttribute("data-family");
-          render();
-        });
-      });
-
-      stage.querySelectorAll("[data-model]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          state.modelId = btn.getAttribute("data-model");
-          state.step = 2;
-          render();
-          window.scrollTo({ top: 0, behavior: "instant" });
-        });
-      });
-
-      var helperToggle = document.getElementById("toggleModelHelper");
-      if (helperToggle) {
-        helperToggle.addEventListener("click", function () {
-          state.helperOpen = !state.helperOpen;
-          render();
-        });
-      }
-
-      var helperInput = document.getElementById("modelHelperInput");
-      if (helperInput) {
-        helperInput.addEventListener("input", function () {
-          state.helperQuery = helperInput.value;
-          var pos = helperInput.selectionStart;
-          render();
-          var nextInp = document.getElementById("modelHelperInput");
-          if (nextInp) {
-            nextInp.focus();
-            nextInp.setSelectionRange(pos, pos);
-          }
-        });
-      }
-
-      stage.querySelectorAll("[data-helper-model]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          state.device = "macbook";
-          state.modelId = btn.getAttribute("data-helper-model");
-          state.helperOpen = false;
-          state.step = 2;
-          render();
-          window.scrollTo({ top: 0, behavior: "instant" });
-        });
-      });
-
-      var s1Cont = document.getElementById("step1Continue");
-      if (s1Cont) s1Cont.addEventListener("click", function () { state.step = 2; render(); });
-    }
-
-    if (state.step === 2) {
-      var chDev = document.getElementById("mStep2ChangeDevice");
-      if (chDev) chDev.addEventListener("click", function () { state.step = 1; render(); });
-
-      stage.querySelectorAll("[data-fault]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          state.faultId = btn.getAttribute("data-fault");
-          var f = getFaultObj();
-          if (!f.isDiag) {
-            state.step = 3;
-            window.scrollTo({ top: 0, behavior: "instant" });
-          }
-          render();
-        });
-      });
-
-      stage.querySelectorAll("[data-triage]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          state.triage[btn.getAttribute("data-triage")] = btn.getAttribute("data-val");
-          render();
-        });
-      });
-
-      var s2Cont = document.getElementById("step2Continue");
-      if (s2Cont) s2Cont.addEventListener("click", function () { state.step = 3; render(); });
-    }
-
-    if (state.step === 3) {
-      var editBtn = document.getElementById("dwEditDevice");
-      if (editBtn) editBtn.addEventListener("click", function () { state.step = 1; render(); window.scrollTo({ top: 0, behavior: "instant" }); });
-
-      var nameInp = document.getElementById("dwName");
-      var emailInp = document.getElementById("dwEmail");
-      var phoneInp = document.getElementById("dwPhone");
-      var pcInp = document.getElementById("dwPostcode");
-
-      if (nameInp) nameInp.addEventListener("input", function () { state.lead.name = nameInp.value; });
-      if (emailInp) emailInp.addEventListener("input", function () { state.lead.email = emailInp.value; });
-      if (phoneInp) phoneInp.addEventListener("input", function () { state.lead.phone = phoneInp.value; });
-      if (pcInp) {
-        pcInp.addEventListener("input", function () {
-          state.lead.postcode = pcInp.value.toUpperCase();
-          var preview = document.getElementById("dwZonePreview");
-          if (preview) {
-            if (isValidUkPostcode(state.lead.postcode)) {
-              var z = classifyPostcode(state.lead.postcode);
-              if (mobile) {
-                preview.innerHTML = '<span class="m-inline-zone' + (z.isLondon ? "" : " is-mailin") + '">' +
-                  (z.isLondon ? "London courier · " + esc(z.outward) : "Free UK mail-in · " + esc(z.outward)) +
-                  '</span>';
-              } else {
-                preview.innerHTML = '<div class="zone-preview-pill' + (z.isLondon ? "" : " is-mailin") + '">' +
-                  (z.isLondon
-                    ? "London zone matched (" + esc(z.outward) + "): same-day London courier &amp; Fitzrovia drop-off available"
-                    : "UK zone matched (" + esc(z.outward) + "): free tracked and insured UK mail-in pack available") +
-                  '</div>';
-              }
-            } else {
-              preview.innerHTML = "";
-            }
-          }
-        });
-      }
-
-      var fillBtn = document.getElementById("dwFillSample");
-      if (fillBtn) {
-        fillBtn.addEventListener("click", function () {
-          var sc = SCENARIOS[state.scenario] || SCENARIOS.A;
-          state.lead = { name: sc.name, email: sc.email, phone: sc.phone, postcode: sc.postcode };
-          state.leadErrors = {};
-          render();
-        });
-      }
-
-      var form = document.getElementById("dataWallForm");
-      if (form) {
-        form.addEventListener("submit", function (e) {
-          e.preventDefault();
-          validateAndSubmitDetails();
-        });
-      }
-    }
-
-    if (state.step === 4 || state.step === 5) {
-      var editLead = document.getElementById("editLeadBtn");
-      if (editLead) editLead.addEventListener("click", function () { state.step = 3; render(); window.scrollTo({ top: 0, behavior: "instant" }); });
-
-      var changeSvc = document.getElementById("mChangeServiceBtn");
-      if (changeSvc) changeSvc.addEventListener("click", function () { state.step = 4; render(); window.scrollTo({ top: 0, behavior: "instant" }); });
-
-      stage.querySelectorAll("[data-svc]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          state.service = btn.getAttribute("data-svc");
-          state.feedbackMsg = "";
-          render();
-        });
-      });
-
-      stage.querySelectorAll("[data-date]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          state.dateId = btn.getAttribute("data-date");
-          render();
-        });
-      });
-
-      stage.querySelectorAll("[data-window]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          state.windowId = btn.getAttribute("data-window");
-          render();
-        });
-      });
-
-      stage.querySelectorAll("[data-speed]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          state.futureSpeed = btn.getAttribute("data-speed");
-          render();
-        });
-      });
-
-      var openHow = document.getElementById("openHowSheetBtn");
-      if (openHow) openHow.addEventListener("click", function () { openAppSheet("how"); });
-
-      var openRev = document.getElementById("openReviewsSheetBtn");
-      if (openRev) openRev.addEventListener("click", function () { openAppSheet("reviews"); });
-
-      var proceedBtn = document.getElementById("proceedCheckoutBtn");
-      if (proceedBtn) proceedBtn.addEventListener("click", openCheckoutModal);
-
-      var emailBtn = document.getElementById("emailQuoteBtn");
-      if (emailBtn) {
-        emailBtn.addEventListener("click", function () {
-          state.feedbackMsg = "Quote summary queued for " + state.lead.email + " (" + state.lead.phone + ").";
-          render();
-        });
-      }
-
-      var askBtn = document.getElementById("askQuestionBtn");
-      if (askBtn) {
-        askBtn.addEventListener("click", function () {
-          state.feedbackMsg = "Technician callback logged for " + state.lead.name + " on " + state.lead.phone + ".";
-          render();
-        });
-      }
+      els.cta.textContent = 'Continue to fault';
+      els.cta.disabled = !state.modelId;
+      els.footMeta.innerHTML = '<span class="wiz-foot-note">Upfront fixed pricing · 2-year warranty</span>';
+    } else if (state.step === 2) {
+      els.cta.textContent = 'Continue to your details';
+      els.cta.disabled = !step2IsReady();
+      els.footMeta.innerHTML = isTriageFault(state.fault)
+        ? '<span class="wiz-foot-note">Diagnostic fee deducted if you proceed</span>'
+        : '<span class="wiz-foot-note">Straight repairs skip extra questionnaires</span>';
+    } else if (state.step === 3) {
+      els.cta.textContent = 'See my fixed price';
+      els.cta.disabled = false;
+      els.footMeta.innerHTML = '<span class="wiz-foot-note">No spam · Used for quote &amp; collection</span>';
+    } else {
+      const total = getTotalPrice();
+      els.cta.textContent = 'Continue to checkout · £' + total;
+      els.cta.disabled = false;
+      els.footMeta.innerHTML = '<button type="button" class="wiz-foot-link" data-action="open-reviews">4.8 from 750+ Google reviews</button><span class="wiz-foot-note">Mon to Thu 9am to 6pm</span>';
     }
   }
 
-  function applyScenario(key, forcedStep) {
-    var sc = SCENARIOS[key] || SCENARIOS.A;
-    state.scenario = sc.id;
-    state.device = sc.device;
-    state.familyFilter = "All";
-    state.modelId = sc.modelId;
-    state.faultId = sc.faultId;
-    state.lead = { name: sc.name, email: sc.email, phone: sc.phone, postcode: sc.postcode };
-    state.leadErrors = {};
-    state.service = sc.service;
-    state.futureSpeed = "standard";
-    state.feedbackMsg = "";
-    state.step = typeof forcedStep === "number" ? forcedStep : sc.defaultStep;
+  /* =========================================================================
+     Step 1: Device & Model + Working MacBook A-Number / iPhone Visual Finder
+     ========================================================================= */
+  function getDeviceIconSvg(id) {
+    if (id === 'macbook') return '<svg class="device-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M1.5 19h21" stroke-linecap="round"/></svg>';
+    if (id === 'iphone') return '<svg class="device-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10 5.5h4" stroke-linecap="round"/></svg>';
+    if (id === 'ipad') return '<svg class="device-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="2.5" width="16" height="19" rx="2"/><circle cx="12" cy="18.5" r="0.8" fill="currentColor"/></svg>';
+    return '<svg class="device-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="7" y="5" width="10" height="14" rx="3"/><path d="M9.5 2.5h5M9.5 21.5h5" stroke-linecap="round"/></svg>';
+  }
 
-    document.querySelectorAll("[data-scenario]").forEach(function (btn) {
-      btn.classList.toggle("is-active", btn.getAttribute("data-scenario") === sc.id);
-    });
+  function renderModelFinder() {
+    if (!state.finderOpen) return '';
+    if (state.device === 'macbook') {
+      const q = state.finderQuery.trim().toUpperCase();
+      const matches = MODELS.macbook.filter((m) => !q || m.code.includes(q) || m.name.toUpperCase().includes(q));
+      return `
+        <div class="finder-drawer">
+          <div class="finder-head">
+            <div>
+              <span class="ic-label">MacBook A-number lookup</span>
+              <h3 class="finder-title">Flip your MacBook over and read the 4-digit "A" code near the hinge</h3>
+            </div>
+            <button type="button" class="inline-link-btn" data-action="toggle-finder">Close</button>
+          </div>
+          <div class="finder-row">
+            <input type="text" class="ic-input" id="finderInput" placeholder="e.g. A2918, A3113, A2159, A1706" value="${esc(state.finderQuery)}" aria-label="MacBook A-number">
+          </div>
+          <div class="finder-results">
+            ${matches.map((m) => `<button type="button" class="finder-match-btn" data-select-model="${esc(m.id)}"><strong>${esc(m.code)}</strong> · ${esc(m.name)}</button>`).join('')}
+          </div>
+        </div>
+      `;
+    }
+    if (state.device === 'iphone') {
+      const cam = state.vgAnswers.cameras || '';
+      const notch = state.vgAnswers.top || '';
+      let suggested = MODELS.iphone[0];
+      if (cam === '2') suggested = MODELS.iphone[3];
+      else if (notch === 'island') suggested = MODELS.iphone[0];
+      else if (notch === 'notch') suggested = MODELS.iphone[3];
+      return `
+        <div class="finder-drawer">
+          <div class="finder-head">
+            <div>
+              <span class="ic-label">iPhone visual guide</span>
+              <h3 class="finder-title">Answer two quick visual checks to match your iPhone</h3>
+            </div>
+            <button type="button" class="inline-link-btn" data-action="toggle-finder">Close</button>
+          </div>
+          <div class="vg-step">
+            <span class="ic-label">1. Rear cameras</span>
+            <div class="vg-opts">
+              <button type="button" class="chip-btn" data-vg="cameras" data-val="3" aria-pressed="${cam === '3'}">3 rear lenses (Pro)</button>
+              <button type="button" class="chip-btn" data-vg="cameras" data-val="2" aria-pressed="${cam === '2'}">2 rear lenses</button>
+            </div>
+          </div>
+          <div class="vg-step">
+            <span class="ic-label">2. Top of screen</span>
+            <div class="vg-opts">
+              <button type="button" class="chip-btn" data-vg="top" data-val="island" aria-pressed="${notch === 'island'}">Dynamic Island pill</button>
+              <button type="button" class="chip-btn" data-vg="top" data-val="notch" aria-pressed="${notch === 'notch'}">Classic top notch</button>
+            </div>
+          </div>
+          <div class="finder-results">
+            <button type="button" class="finder-match-btn" data-select-model="${esc(suggested.id)}">Match: <strong>${esc(suggested.name)}</strong> (${esc(suggested.code)}) &rarr;</button>
+          </div>
+        </div>
+      `;
+    }
+    return `
+      <div class="finder-drawer">
+        <div class="finder-head">
+          <div>
+            <span class="ic-label">Model lookup</span>
+            <h3 class="finder-title">Open Settings &gt; General &gt; About to read your Model Name</h3>
+          </div>
+          <button type="button" class="inline-link-btn" data-action="toggle-finder">Close</button>
+        </div>
+        <p class="step-sub">Tap the Model Number once in Settings to reveal the "A" code, or select your model below.</p>
+      </div>
+    `;
+  }
+
+  function renderStep1() {
+    const models = MODELS[state.device] || [];
+    const seriesList = ['All', ...Array.from(new Set(models.map((m) => m.series)))];
+    const filtered = state.series === 'All' ? models : models.filter((m) => m.series === state.series);
+
+    return `
+      <div class="step-head">
+        <div>
+          <span class="ic-label">Step 1 of 4</span>
+          <h2 class="step-title">Which Apple device needs repair?</h2>
+          <p class="step-sub">Pick your device and exact model to match genuine parts and fixed pricing.</p>
+        </div>
+        <button type="button" class="inline-link-btn" data-action="toggle-finder">Not sure which model?</button>
+      </div>
+
+      <div class="device-grid" role="group" aria-label="Device category">
+        ${DEVICES.map((d) => `
+          <button type="button" class="device-card" data-select-device="${esc(d.id)}" aria-pressed="${state.device === d.id}">
+            ${getDeviceIconSvg(d.id)}
+            <span class="device-card-name">${esc(d.name)}</span>
+            <span class="device-card-sub">${esc(d.sub)}</span>
+          </button>
+        `).join('')}
+      </div>
+
+      ${renderModelFinder()}
+
+      <div class="series-bar">
+        <span class="ic-label">Select your ${esc(DEVICES.find((d) => d.id === state.device).name)} model</span>
+        ${seriesList.length > 2 ? `
+          <div class="series-pills" role="group" aria-label="Model series filter">
+            ${seriesList.map((s) => `<button type="button" class="chip-btn" data-select-series="${esc(s)}" aria-pressed="${state.series === s}">${esc(s)}</button>`).join('')}
+          </div>
+        ` : ''}
+      </div>
+
+      <div class="model-grid">
+        ${filtered.map((m) => `
+          <button type="button" class="model-card" data-select-model="${esc(m.id)}" aria-pressed="${state.modelId === m.id}">
+            <div>
+              <div class="model-card-name">${esc(m.name)}</div>
+              <div class="model-card-meta">${esc(m.code)}${m.intelDustFlex ? ' · Dustgate / Flexgate eligible' : ''}</div>
+            </div>
+            <span class="model-card-tag">Select &rarr;</span>
+          </button>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  /* =========================================================================
+     Step 2: Fault Selection + Straight Check + Conditional Inline Triage
+     ========================================================================= */
+  function renderStep2SubPanel() {
+    if (!state.fault) return '';
+    const model = getModel();
+
+    if (state.fault === 'screen') {
+      if (state.device === 'macbook') {
+        const opts = [
+          { id: 'cracked', title: 'Cracked, lines, dead pixels, or backlight still on', sub: 'Straight to fixed screen price (genuine Apple display panel only)' },
+          { id: 'black', title: 'Completely black (no backlight or external image)', sub: 'Routes to No Power board-level diagnostic' }
+        ];
+        if (model.intelDustFlex) {
+          opts.push({ id: 'dustflex', title: 'Thick bands, distortion, or dim at an angle (2016 to 2020 Intel)', sub: 'Check Dustgate / Flexgate flex cable repair (saves vs full panel)' });
+        }
+        return `
+          <div class="inline-panel">
+            <div class="inline-q">
+              <h3 class="inline-q-title">Quick display check</h3>
+              <p class="inline-q-help">One concise check so we match the exact repair SKU.</p>
+              <div class="opt-stack">
+                ${opts.map((o) => `
+                  <button type="button" class="opt-card" data-sub-opt="${esc(o.id)}" aria-pressed="${state.subOption === o.id}">
+                    <span class="opt-radio" aria-hidden="true"></span>
+                    <div>
+                      <div class="opt-card-title">${esc(o.title)}</div>
+                      <div class="opt-card-sub">${esc(o.sub)}</div>
+                    </div>
+                  </button>
+                `).join('')}
+              </div>
+              ${state.subOption === 'dustflex' ? `
+                <div class="liquid-ack-box">
+                  <span class="ic-label">Dustgate / Flexgate visual check (${esc(model.code)})</span>
+                  <div class="photo-check-grid">
+                    <div class="photo-ref-card">
+                      <svg class="photo-ref-svg" viewBox="0 0 220 76" aria-hidden="true">
+                        <rect width="220" height="76" fill="#171717"/>
+                        <rect x="0" y="26" width="220" height="8" fill="#525252"/>
+                        <rect x="0" y="38" width="220" height="4" fill="#A3A3A3"/>
+                        <rect x="0" y="45" width="220" height="12" fill="#404040"/>
+                      </svg>
+                      <div class="photo-ref-cap"><strong>Dustgate:</strong> horizontal purple/pink bands or distortion across the panel.</div>
+                    </div>
+                    <div class="photo-ref-card">
+                      <svg class="photo-ref-svg" viewBox="0 0 220 76" aria-hidden="true">
+                        <rect width="220" height="76" fill="#171717"/>
+                        <rect x="20" y="54" width="24" height="22" fill="#525252"/>
+                        <rect x="64" y="54" width="24" height="22" fill="#525252"/>
+                        <rect x="108" y="54" width="24" height="22" fill="#525252"/>
+                        <rect x="152" y="54" width="24" height="22" fill="#525252"/>
+                      </svg>
+                      <div class="photo-ref-cap"><strong>Flexgate:</strong> stage-light glow at bottom edge or backlight drops past 45 degrees.</div>
+                    </div>
+                  </div>
+                  <div class="opt-row-2">
+                    <button type="button" class="opt-card" data-dustflex="yes" aria-pressed="${state.dustFlexConfirmed}">
+                      <span class="opt-radio" aria-hidden="true"></span>
+                      <div class="opt-card-title">Yes, that is what I see (£${model.prices.dustgate || model.prices.flexgate})</div>
+                    </button>
+                    <button type="button" class="opt-card" data-dustflex="no" aria-pressed="${!state.dustFlexConfirmed}">
+                      <span class="opt-radio" aria-hidden="true"></span>
+                      <div class="opt-card-title">No, standard screen replacement (£${model.prices.screen})</div>
+                    </button>
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }
+      if (state.device === 'iphone') {
+        return `
+          <div class="inline-panel">
+            <div class="inline-q">
+              <h3 class="inline-q-title">Does the iPhone still ring, vibrate, or show any image?</h3>
+              <div class="opt-row-2">
+                <button type="button" class="opt-card" data-sub-opt="cracked" aria-pressed="${state.subOption === 'cracked'}">
+                  <span class="opt-radio" aria-hidden="true"></span>
+                  <div><div class="opt-card-title">Yes, display damaged</div><div class="opt-card-sub">Fixed screen replacement</div></div>
+                </button>
+                <button type="button" class="opt-card" data-sub-opt="black" aria-pressed="${state.subOption === 'black'}">
+                  <span class="opt-radio" aria-hidden="true"></span>
+                  <div><div class="opt-card-title">Completely dead</div><div class="opt-card-sub">Board-level diagnostic</div></div>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      return `
+        <div class="inline-panel">
+          <div class="inline-q">
+            <h3 class="inline-q-title">Is the display image still clear behind the cracked glass?</h3>
+            <div class="opt-row-2">
+              <button type="button" class="opt-card" data-sub-opt="cracked" aria-pressed="${state.subOption === 'cracked'}">
+                <span class="opt-radio" aria-hidden="true"></span>
+                <div><div class="opt-card-title">Display damaged or lines</div><div class="opt-card-sub">Full display assembly</div></div>
+              </button>
+              <button type="button" class="opt-card" data-sub-opt="glass" aria-pressed="${state.subOption === 'glass'}">
+                <span class="opt-radio" aria-hidden="true"></span>
+                <div><div class="opt-card-title">Image clear, glass only</div><div class="opt-card-sub">Front glass replacement</div></div>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    if (state.fault === 'power') {
+      return `
+        <div class="inline-panel">
+          <div class="inline-q">
+            <h3 class="inline-q-title">What best describes the power issue?</h3>
+            <div class="opt-stack">
+              <button type="button" class="opt-card" data-sub-opt="battery" aria-pressed="${state.subOption === 'battery'}">
+                <span class="opt-radio" aria-hidden="true"></span>
+                <div><div class="opt-card-title">Battery draining fast, Service Recommended, or swollen</div><div class="opt-card-sub">Fixed battery replacement</div></div>
+              </button>
+              <button type="button" class="opt-card" data-sub-opt="charging-port" aria-pressed="${state.subOption === 'charging-port'}">
+                <span class="opt-radio" aria-hidden="true"></span>
+                <div><div class="opt-card-title">Powers on, but will not charge</div><div class="opt-card-sub">Charging port replacement</div></div>
+              </button>
+              <button type="button" class="opt-card" data-sub-opt="nopower" aria-pressed="${state.subOption === 'nopower'}">
+                <span class="opt-radio" aria-hidden="true"></span>
+                <div><div class="opt-card-title">Will not turn on or random shutdowns</div><div class="opt-card-sub">Opens board-level No Power triage</div></div>
+              </button>
+            </div>
+            ${state.subOption === 'battery' ? `
+              <div class="ic-notice ic-notice--danger" role="alert" style="margin-top:10px;margin-bottom:0;">
+                <span class="ic-notice-dot" aria-hidden="true"></span>
+                <span>If the battery is swollen or lifting the casing: <strong>Safety concern: stop using the device and don't charge it.</strong></span>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    if (state.fault === 'camera') {
+      return `
+        <div class="inline-panel">
+          <div class="inline-q">
+            <h3 class="inline-q-title">Which camera needs attention?</h3>
+            <div class="opt-row-2">
+              <button type="button" class="opt-card" data-sub-opt="rear-camera" aria-pressed="${state.subOption === 'rear-camera'}">
+                <span class="opt-radio" aria-hidden="true"></span>
+                <div><div class="opt-card-title">Rear camera module</div><div class="opt-card-sub">2 working days</div></div>
+              </button>
+              <button type="button" class="opt-card" data-sub-opt="front-camera" aria-pressed="${state.subOption === 'front-camera'}">
+                <span class="opt-radio" aria-hidden="true"></span>
+                <div><div class="opt-card-title">Front camera / Face ID</div><div class="opt-card-sub">5 to 7 working days (ordered from Apple)</div></div>
+              </button>
+            </div>
+            ${state.subOption === 'front-camera' ? `
+              <div class="ic-notice ic-notice--action" style="margin-top:10px;margin-bottom:0;">
+                <span class="ic-notice-dot" aria-hidden="true"></span>
+                <span>The Face ID module needs to be ordered directly from Apple. Standard turnaround is 5 to 7 working days.</span>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    if (state.fault === 'rear-glass') {
+      return `
+        <div class="inline-panel">
+          <div class="inline-q">
+            <h3 class="inline-q-title">Which part of the back is cracked?</h3>
+            <div class="opt-row-2">
+              <button type="button" class="opt-card" data-sub-opt="rear-glass" aria-pressed="${state.subOption === 'rear-glass'}">
+                <span class="opt-radio" aria-hidden="true"></span>
+                <div><div class="opt-card-title">Main rear glass back</div><div class="opt-card-sub">Full rear glass replacement</div></div>
+              </button>
+              <button type="button" class="opt-card" data-sub-opt="rear-camera" aria-pressed="${state.subOption === 'rear-camera'}">
+                <span class="opt-radio" aria-hidden="true"></span>
+                <div><div class="opt-card-title">Camera lens cover only</div><div class="opt-card-sub">Camera lens replacement</div></div>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /* Section 3.2: Liquid Damage & No Power Inline Triage */
+    if (state.fault === 'liquid' || state.fault === 'nopower') {
+      const isLiquid = state.fault === 'liquid';
+      const safetyCopy = isLiquid
+        ? 'Stop using it and do not charge it. Power through a wet board is what turns a repairable job into a replacement. Leave it off until it reaches us.'
+        : 'Do not keep trying to charge it. If a power line is shorted, repeated charging can take more of the board with it. Leave it off until we have it.';
+
+      const appleVerdicts = [
+        'They quoted a logic board or a whole replacement',
+        'They said it cannot be repaired',
+        'They told me to buy a new one',
+        'They would not look at it',
+        'They diagnosed it and I have not decided'
+      ];
+
+      return `
+        <div class="inline-panel">
+          <div class="ic-notice ic-notice--attention" role="alert">
+            <span class="ic-notice-dot" aria-hidden="true"></span>
+            <span>${esc(safetyCopy)}</span>
+          </div>
+
+          ${isLiquid ? `
+            <div class="inline-q">
+              <span class="ic-label">Triage 1 of 3</span>
+              <h3 class="inline-q-title">Is the device turning on and usable right now?</h3>
+              <div class="opt-row-2">
+                <button type="button" class="opt-card" data-liquid-usable="yes" aria-pressed="${state.liquidUsable === 'yes'}">
+                  <span class="opt-radio" aria-hidden="true"></span>
+                  <div class="opt-card-title">Yes, usable</div>
+                </button>
+                <button type="button" class="opt-card" data-liquid-usable="no" aria-pressed="${state.liquidUsable === 'no'}">
+                  <span class="opt-radio" aria-hidden="true"></span>
+                  <div class="opt-card-title">No, won't turn on or isn't usable</div>
+                </button>
+              </div>
+              ${state.liquidUsable ? `
+                <div class="liquid-ack-box">
+                  <p class="liquid-ack-copy">${esc(state.liquidUsable === 'yes' ? LOCKED_LIQUID_COPY.usable : LOCKED_LIQUID_COPY.notUsable)}</p>
+                  <label class="ack-check ${state.liquidAck ? 'is-checked' : ''}">
+                    <input type="checkbox" id="liquidAckCheck" ${state.liquidAck ? 'checked' : ''}>
+                    <span>I understand</span>
+                  </label>
+                </div>
+              ` : ''}
+            </div>
+          ` : ''}
+
+          <div class="inline-q">
+            <span class="ic-label">${isLiquid ? 'Triage 2 of 3' : 'Triage 1 of 2'}</span>
+            <h3 class="inline-q-title">Is the data on this device important to you?</h3>
+            <p class="inline-q-help">It changes the order we work in. Data recovery comes before anything irreversible.</p>
+            <div class="opt-stack">
+              ${[
+                'Yes, repair it to keep the data if you can',
+                'No, I have a backup',
+                'Not sure'
+              ].map((opt) => `
+                <button type="button" class="opt-card" data-data-answer="${esc(opt)}" aria-pressed="${state.dataAnswer === opt}">
+                  <span class="opt-radio" aria-hidden="true"></span>
+                  <div class="opt-card-title">${esc(opt)}</div>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="inline-q">
+            <span class="ic-label">${isLiquid ? 'Triage 3 of 3' : 'Triage 2 of 2'}</span>
+            <h3 class="inline-q-title">Have you already taken it to Apple or another repair shop?</h3>
+            <div class="opt-row-3">
+              ${['Yes', 'No', 'Not sure'].map((opt) => `
+                <button type="button" class="opt-card" data-apple-been="${esc(opt)}" aria-pressed="${state.appleBeen === opt}">
+                  <span class="opt-radio" aria-hidden="true"></span>
+                  <div class="opt-card-title">${esc(opt)}</div>
+                </button>
+              `).join('')}
+            </div>
+
+            ${state.appleBeen === 'Yes' ? `
+              <div class="liquid-ack-box">
+                <span class="ic-label">What did they say?</span>
+                <div class="opt-stack" style="margin-top:8px;">
+                  ${appleVerdicts.map((v) => `
+                    <button type="button" class="opt-card" data-apple-verdict="${esc(v)}" aria-pressed="${state.appleVerdict === v}">
+                      <span class="opt-radio" aria-hidden="true"></span>
+                      <div class="opt-card-title">${esc(v)}</div>
+                    </button>
+                  `).join('')}
+                </div>
+                <div class="ic-field" style="margin-top:10px;">
+                  <label class="ic-label" for="appleQuoteInput">Optional: What price did they quote you (£)?</label>
+                  <input type="text" inputmode="numeric" class="ic-input" id="appleQuoteInput" placeholder="e.g. 1049" value="${esc(state.appleQuote)}">
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    /* Section 3.3: Data Recovery Inline Triage */
+    if (state.fault === 'recovery') {
+      if (state.device === 'iphone' && state.iphoneRecoveryPath === 'passcode') {
+        return `
+          <div class="inline-panel">
+            <div class="ic-notice ic-notice--danger">
+              <span class="ic-notice-dot" aria-hidden="true"></span>
+              <div>
+                <strong>We cannot bypass an Apple passcode or iCloud lock.</strong><br>
+                If you have forgotten your passcode, Apple Support is the only route to reset the device: <a href="https://support.apple.com" target="_blank" rel="noopener">Contact Apple Support</a>.
+              </div>
+            </div>
+            <button type="button" class="ic-btn--secondary" data-iphone-rec="dead">My iPhone is dead, not passcode-locked</button>
+          </div>
+        `;
+      }
+
+      const whatOpts = [
+        'Liquid got on it',
+        'It was dropped or knocked',
+        'It stopped working on its own',
+        'It failed during or after an update',
+        'Something else'
+      ];
+      const stateOpts = [
+        'Nothing at all: no lights, no sound, no fan',
+        'Some sign of life, but no picture',
+        'It turns on, but gets stuck on the logo or a folder with a question mark',
+        'It starts up, but the files or the drive are missing'
+      ];
+      const triedOpts = [
+        'No, nobody has opened it',
+        'Yes, Apple',
+        'Yes, another repair shop',
+        'Yes, I tried myself'
+      ];
+      const triedSaidOpts = [
+        'The data cannot be recovered',
+        'They replaced the logic board or parts',
+        'They opened it and gave up',
+        'They quoted, and I did not go ahead'
+      ];
+      const pwOpts = [
+        'Yes',
+        'No',
+        'It is not my Mac, but the owner knows it'
+      ];
+
+      // Live Dynamic Assessment Callout (Audit Section 3.3 #7)
+      let assessmentHtml = '';
+      if (state.recTriedSaid === 'They replaced the logic board or parts') {
+        assessmentHtml = `<div class="ic-notice ic-notice--attention"><span class="ic-notice-dot" aria-hidden="true"></span><span>Do you still have the original logic board? The data lives on the board it was written to. If you still have it, send it with the Mac and we work on that.</span></div>`;
+      } else if (state.recPassword === 'No') {
+        assessmentHtml = `<div class="ic-notice ic-notice--attention"><span class="ic-notice-dot" aria-hidden="true"></span><span>We will need that password. Getting the board running is only half of it; the files stay locked without the login. Check a password manager or iCloud Keychain before you book.</span></div>`;
+      } else if (state.recTriedSaid === 'The data cannot be recovered' || state.recTriedSaid === 'They opened it and gave up') {
+        assessmentHtml = `<div class="ic-notice ic-notice--ok"><span class="ic-notice-dot" aria-hidden="true"></span><span>This is the job we are set up for. Most Macs written off for data have a board fault, not a dead drive.</span></div>`;
+      } else if (state.recWhat && state.recState) {
+        assessmentHtml = `<div class="ic-notice ic-notice--action"><span class="ic-notice-dot" aria-hidden="true"></span><span>Completely dead is often still recoverable. This sounds recoverable: nothing you have told us rules it out.</span></div>`;
+      }
+
+      return `
+        <div class="inline-panel">
+          <div class="ic-notice ic-notice--attention" role="alert">
+            <span class="ic-notice-dot" aria-hidden="true"></span>
+            <span>Leave it switched off. Every attempt to power a failing board risks the data on it. Do not keep trying to start it, and do not let anyone else open it before we see it.</span>
+          </div>
+
+          ${state.device === 'iphone' ? `
+            <div class="inline-q">
+              <h3 class="inline-q-title">Why can you not access the iPhone?</h3>
+              <div class="opt-row-2">
+                <button type="button" class="opt-card" data-iphone-rec="dead" aria-pressed="${state.iphoneRecoveryPath !== 'passcode'}">
+                  <span class="opt-radio" aria-hidden="true"></span>
+                  <div class="opt-card-title">Dead or will not turn on</div>
+                </button>
+                <button type="button" class="opt-card" data-iphone-rec="passcode" aria-pressed="${state.iphoneRecoveryPath === 'passcode'}">
+                  <span class="opt-radio" aria-hidden="true"></span>
+                  <div class="opt-card-title">Forgotten passcode</div>
+                </button>
+              </div>
+            </div>
+          ` : ''}
+
+          <div class="inline-q">
+            <span class="ic-label">Question 1 of 4</span>
+            <h3 class="inline-q-title">What happened to it?</h3>
+            <div class="opt-stack">
+              ${whatOpts.map((opt) => `
+                <button type="button" class="opt-card" data-rec-what="${esc(opt)}" aria-pressed="${state.recWhat === opt}">
+                  <span class="opt-radio" aria-hidden="true"></span>
+                  <div class="opt-card-title">${esc(opt)}</div>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="inline-q">
+            <span class="ic-label">Question 2 of 4</span>
+            <h3 class="inline-q-title">How dead is it right now?</h3>
+            <p class="inline-q-help">Tell us what it does when you press the power button. This is the question that tells us most.</p>
+            <div class="opt-stack">
+              ${stateOpts.map((opt) => `
+                <button type="button" class="opt-card" data-rec-state="${esc(opt)}" aria-pressed="${state.recState === opt}">
+                  <span class="opt-radio" aria-hidden="true"></span>
+                  <div class="opt-card-title">${esc(opt)}</div>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="inline-q">
+            <span class="ic-label">Question 3 of 4</span>
+            <h3 class="inline-q-title">Has anyone tried to repair it or recover the data?</h3>
+            <p class="inline-q-help">Including you. Previous work changes what we look for when we open it.</p>
+            <div class="opt-row-2">
+              ${triedOpts.map((opt) => `
+                <button type="button" class="opt-card" data-rec-tried="${esc(opt)}" aria-pressed="${state.recTried === opt}">
+                  <span class="opt-radio" aria-hidden="true"></span>
+                  <div class="opt-card-title">${esc(opt)}</div>
+                </button>
+              `).join('')}
+            </div>
+            ${state.recTried && state.recTried !== 'No, nobody has opened it' ? `
+              <div class="liquid-ack-box">
+                <span class="ic-label">What did they tell you?</span>
+                <div class="opt-stack" style="margin-top:8px;">
+                  ${triedSaidOpts.map((opt) => `
+                    <button type="button" class="opt-card" data-rec-tried-said="${esc(opt)}" aria-pressed="${state.recTriedSaid === opt}">
+                      <span class="opt-radio" aria-hidden="true"></span>
+                      <div class="opt-card-title">${esc(opt)}</div>
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+
+          <div class="inline-q">
+            <span class="ic-label">Question 4 of 4</span>
+            <h3 class="inline-q-title">Do you know the login password for this Mac?</h3>
+            <p class="inline-q-help">The data is locked to it. Even once the board runs again, we can only read your files with the password.</p>
+            <div class="opt-stack">
+              ${pwOpts.map((opt) => `
+                <button type="button" class="opt-card" data-rec-password="${esc(opt)}" aria-pressed="${state.recPassword === opt}">
+                  <span class="opt-radio" aria-hidden="true"></span>
+                  <div class="opt-card-title">${esc(opt)}</div>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          ${assessmentHtml}
+
+          <div class="inline-q">
+            <div class="ic-field">
+              <label class="ic-label" for="recPriorityInput">Optional: Which files or folders matter most?</label>
+              <input type="text" class="ic-input" id="recPriorityInput" placeholder="e.g. 2019 onwards, the Clients folder on the desktop" value="${esc(state.recPriority)}">
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    return '';
+  }
+
+  function renderStep2() {
+    const model = getModel();
+    const faults = getFaultDefinitions(model);
+    return `
+      <div class="step-head">
+        <div>
+          <span class="ic-label">Step 2 of 4 · ${esc(model.name)}</span>
+          <h2 class="step-title">What needs fixing?</h2>
+          <p class="step-sub">Straight repairs skip unnecessary questionnaires. Only complex diagnostics expand inline triage.</p>
+        </div>
+      </div>
+
+      <div class="fault-grid">
+        ${faults.map((f) => `
+          <button type="button" class="fault-card" data-select-fault="${esc(f.id)}" aria-pressed="${state.fault === f.id}">
+            <div>
+              <div class="fault-card-title">${esc(f.title)}</div>
+              <div class="fault-card-sub">${esc(f.sub)}</div>
+            </div>
+            <span class="fault-card-badge">${esc(f.badge)}</span>
+          </button>
+        `).join('')}
+      </div>
+
+      ${renderStep2SubPanel()}
+    `;
+  }
+
+  /* =========================================================================
+     Step 3: Your Details (Name, Email, Phone, Full UK Postcode)
+     ========================================================================= */
+  function renderPostcodeLiveBanner() {
+    if (!state.postcodeInfo) {
+      return `
+        <div class="postcode-live">
+          <div>
+            <div class="postcode-live-copy">Enter your full UK postcode to check London courier zones</div>
+            <div class="postcode-live-sub">Partial codes such as W1W 8J do not resolve. Example: W1W 8JQ or M1 4BT.</div>
+          </div>
+          <span class="ic-chip ic-chip--action"><span class="ic-chip-dot"></span>Live zone check</span>
+        </div>
+      `;
+    }
+    const band = state.postcodeInfo.band;
+    const isLondon = band === 'B1' || band === 'B2' || band === 'B3' || band === 'B4';
+    const clk = getClockStatus(band);
+    if (isLondon) {
+      const sameDayNote = (band === 'B1' || band === 'B2') && clk.todayAllowedCourier
+        ? 'Same-day courier collection available today (' + clk.clockText + ').'
+        : 'London courier collection & booked Fitzrovia drop-off available.';
+      return `
+        <div class="postcode-live">
+          <div>
+            <div class="postcode-live-copy"><strong>${esc(state.postcodeInfo.formatted)}</strong> · London Band ${esc(band)}</div>
+            <div class="postcode-live-sub">${esc(sameDayNote)}</div>
+          </div>
+          <span class="ic-chip ic-chip--ok"><span class="ic-chip-dot"></span>London ${esc(band)}</span>
+        </div>
+      `;
+    }
+    return `
+      <div class="postcode-live">
+        <div>
+          <div class="postcode-live-copy"><strong>${esc(state.postcodeInfo.formatted)}</strong> · Nationwide UK Mail-in</div>
+          <div class="postcode-live-sub">Free tracked &amp; insured Royal Mail pack sent to your door, with Express bench available.</div>
+        </div>
+        <span class="ic-chip ic-chip--ok"><span class="ic-chip-dot"></span>Free UK mail-in</span>
+      </div>
+    `;
+  }
+
+  function renderStep3() {
+    const e = state.errors || {};
+    return `
+      <div class="step-head">
+        <div>
+          <span class="ic-label">Step 3 of 4</span>
+          <h2 class="step-title">Your details &amp; postcode</h2>
+          <p class="step-sub">Enter your postcode to see your fixed price and London collection options.</p>
+        </div>
+      </div>
+
+      <form id="detailsForm" novalidate>
+        <div class="form-grid">
+          <div class="ic-field">
+            <label class="ic-label" for="qwName">Full name</label>
+            <input class="ic-input" id="qwName" name="name" type="text" autocomplete="name" placeholder="Alex Taylor" value="${esc(state.name)}" aria-invalid="${e.name ? 'true' : 'false'}">
+            <span class="field-error" id="errName">${esc(e.name || '')}</span>
+          </div>
+
+          <div class="ic-field">
+            <label class="ic-label" for="qwEmail">Email address</label>
+            <input class="ic-input" id="qwEmail" name="email" type="email" autocomplete="email" placeholder="alex@example.co.uk" value="${esc(state.email)}" aria-invalid="${e.email ? 'true' : 'false'}">
+            <span class="field-error" id="errEmail">${esc(e.email || '')}</span>
+          </div>
+
+          <div class="ic-field">
+            <label class="ic-label" for="qwPhone">UK phone number</label>
+            <input class="ic-input" id="qwPhone" name="phone" type="tel" autocomplete="tel" placeholder="07700 900123" value="${esc(state.phone)}" aria-invalid="${e.phone ? 'true' : 'false'}">
+            <span class="field-error" id="errPhone">${esc(e.phone || '')}</span>
+          </div>
+
+          <div class="ic-field">
+            <label class="ic-label" for="qwPostcode">Full UK postcode</label>
+            <input class="ic-input" id="qwPostcode" name="postcode" type="text" autocomplete="postal-code" placeholder="W1W 8JQ" value="${esc(state.postcode)}" aria-invalid="${e.postcode ? 'true' : 'false'}">
+            <span class="field-error" id="errPostcode">${esc(e.postcode || '')}</span>
+          </div>
+        </div>
+      </form>
+
+      <div id="postcodeLiveSlot">${renderPostcodeLiveBanner()}</div>
+      <p class="privacy-note">Your quote is saved against your email so you can return later. We never share your details.</p>
+    `;
+  }
+
+  /* =========================================================================
+     Step 4: Fixed Price Hero + Model Extras + Expandable .ic-choice Radio Cards
+     ========================================================================= */
+  function renderSpeedToggle(serviceKind) {
+    if (!canUseExpress()) return '';
+    const fee = getExpressFee();
+    const isMailin = serviceKind === 'mailin';
+    const stdSub = isMailin
+      ? '2 working days on the bench once it arrives'
+      : '2 working days on the bench';
+    const expLabel = isMailin ? 'Express bench' : 'Express';
+    const expSub = isMailin
+      ? 'Priority bench on arrival. Parts pre-reserved while in transit.'
+      : '1 working day priority bench (advance-bookable)';
+
+    let statusLine = '';
+    if (state.speed === 'express' && !isMailin && state.expressFullThisWeek) {
+      statusLine = `
+        <div class="express-status-line" role="status">
+          <span>Express is full this week. Next guaranteed slot: Tue 1 Dec (back Wed 2 Dec).</span>
+        </div>
+      `;
+    } else if (state.speed === 'express' && isMailin) {
+      statusLine = `
+        <div class="express-status-line" role="status" style="background:var(--ok-tint);color:var(--ok-text);">
+          <span>Express bench held for when your parcel arrives. Parts pre-reserved while in transit.</span>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="drawer-section">
+        <div class="drawer-label-row">
+          <span class="ic-label">Bench speed</span>
+        </div>
+        <div class="speed-row" role="group" aria-label="Bench turnaround speed">
+          <button type="button" class="speed-chip" data-set-speed="standard" aria-pressed="${state.speed === 'standard'}">
+            <span class="speed-chip-top"><span>Standard</span><span>Included</span></span>
+            <span class="speed-chip-sub">${esc(stdSub)}</span>
+          </button>
+          <button type="button" class="speed-chip" data-set-speed="express" aria-pressed="${state.speed === 'express'}">
+            <span class="speed-chip-top"><span>${esc(expLabel)}</span><span>+£${fee}</span></span>
+            <span class="speed-chip-sub">${esc(expSub)}</span>
+          </button>
+        </div>
+        ${statusLine}
+      </div>
+    `;
+  }
+
+  function renderDateAndWindow(serviceKind) {
+    const dates = getEligibleDates(serviceKind);
+    const band = state.postcodeInfo ? state.postcodeInfo.band : 'B1';
+    const clk = getClockStatus(band);
+    const chosen = dates.find((d) => d.iso === state.selectedDateIso) || dates[0];
+    const isDropoff = serviceKind === 'dropoff';
+    const amLabel = isDropoff
+      ? (chosen.isFriday ? '10am to 12pm' : '9am to 12pm')
+      : '9am to 12pm';
+    const pmLabel = isDropoff ? '12pm to 6pm' : '12pm to 5pm';
+    const amDisabled = chosen.isToday && clk.morningExpiredToday;
+
+    return `
+      <div class="drawer-section">
+        <div class="drawer-label-row">
+          <span class="ic-label">${isDropoff ? 'Appointment date' : 'Collection date'}${state.speed === 'express' ? ' (Express availability)' : ''}</span>
+          <span class="ic-label">${esc(clk.clockText)}</span>
+        </div>
+        <div class="date-strip" role="group" aria-label="Select date">
+          ${dates.map((d) => {
+            const isSelected = d.iso === state.selectedDateIso;
+            const disabledForMode = state.speed === 'express' ? !d.expressAvailable : !d.availableForService;
+            let micro = d.isToday ? 'Today' : (d.isFriday ? 'Fri' : 'Open');
+            let microCls = 'date-chip-sub';
+            if (!d.availableForService) {
+              micro = 'Closed';
+              microCls += ' date-chip-sub--full';
+            } else if (state.speed === 'express') {
+              if (d.expLeft === 0) {
+                micro = 'Full';
+                microCls += ' date-chip-sub--full';
+              } else if (d.expLeft === 1) {
+                micro = '1 left';
+                microCls += ' date-chip-sub--low';
+              } else {
+                micro = d.expLeft + ' left';
+                microCls += ' date-chip-sub--ok';
+              }
+            }
+            return `
+              <button type="button" class="date-chip" data-select-date="${esc(d.iso)}" aria-pressed="${isSelected}" aria-disabled="${disabledForMode ? 'true' : 'false'}">
+                <span class="date-chip-day">${esc(d.short)}</span>
+                <span class="${microCls}">${esc(micro)}</span>
+              </button>
+            `;
+          }).join('')}
+        </div>
+        ${state.fullDateNotice ? `
+          <div class="full-date-helper">
+            <span>${esc(state.fullDateNotice)}</span>
+            <button type="button" class="inline-link-btn" data-action="switch-std-for-date">Switch to Standard</button>
+          </div>
+        ` : ''}
+        ${!isDropoff && !clk.todayAllowedCourier && (band === 'B1' || band === 'B2') ? `
+          <div class="drawer-mono-hint">Same-day cut-off passed; earliest collection Fri 27 Nov.</div>
+        ` : ''}
+      </div>
+
+      <div class="drawer-section">
+        <div class="drawer-label-row">
+          <span class="ic-label">${isDropoff ? 'Drop-off window' : 'Collection window'}</span>
+          ${amDisabled ? '<span class="ic-label">Morning cut-off passed (10:30)</span>' : ''}
+        </div>
+        <div class="window-row" role="group" aria-label="Time window">
+          <button type="button" class="window-chip" data-select-window="am" aria-pressed="${state.selectedWindow === 'am'}" ${amDisabled ? 'disabled' : ''}>
+            <span>Morning</span>
+            <span class="window-chip-sub">${esc(amLabel)}</span>
+          </button>
+          <button type="button" class="window-chip" data-select-window="pm" aria-pressed="${state.selectedWindow === 'pm'}">
+            <span>Afternoon</span>
+            <span class="window-chip-sub">${esc(pmLabel)}</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderStep4() {
+    const model = getModel();
+    const total = getTotalPrice();
+    const base = getBasePrice();
+    const ret = getReturnSummary();
+    const band = state.postcodeInfo ? state.postcodeInfo.band : 'UK';
+    const postcodeDisplay = state.postcodeInfo ? state.postcodeInfo.formatted : 'W1W 8JQ';
+    const isLondon = isLondonPostcode();
+    const courierOk = courierAvailableForOrder();
+    const courierPriceLabel = (state.route === 'diagnostic' || base >= 200) ? 'Free' : '+£25';
+    const klarnaInstallment = (total / 3).toFixed(2);
+    const clk = getClockStatus(band);
+    const nextApptLabel = clk.dropoffTodayAllowed
+      ? ('Today, ' + (clk.morningExpiredToday ? '12pm to 6pm' : '9am to 12pm'))
+      : 'Fri 27 Nov, 10am to 12pm';
+
+    const appleContrast = state.appleBeen === 'Yes' && state.appleQuote.trim()
+      ? `<div class="ic-notice ic-notice--ok" style="margin-bottom:10px;"><span class="ic-notice-dot" aria-hidden="true"></span><span>You were quoted £${esc(state.appleQuote.replace(/[^0-9.,]/g, ''))}. Our board-level repairs on this model start at £${model.prices.logicFloor}.</span></div>`
+      : '';
+
+    const diagGuide = state.route === 'diagnostic' ? `
+      <div class="diag-guide-rows">
+        <p class="diag-guide-copy">We'll complete the diagnostic within 1 working day of receiving your device and email you a quote. The device stays with us while you decide whether to proceed. Collection and return are included. If you go ahead with the repair, we take the £${model.prices.diagnostic} off the repair price.</p>
+        <div class="diag-guide-list">
+          <div class="diag-guide-item"><span>Board-level diagnostic</span><strong>£${model.prices.diagnostic}</strong></div>
+          <div class="diag-guide-item"><span>Logic board repairs from</span><strong>£${model.prices.logicFloor}</strong></div>
+        </div>
+      </div>
+    ` : '';
+
+    const extrasHtml = (model.colors && model.colors.length) || state.device === 'ipad' ? `
+      <div class="extras-block">
+        ${model.colors && model.colors.length ? `
+          <div class="extras-row">
+            <span class="ic-label">Device colour (matches stock at Fitzrovia)</span>
+          </div>
+          <div class="swatch-group" id="qwColorGrid" role="group" aria-label="Device colour">
+            ${model.colors.map((c) => `
+              <button type="button" class="swatch-btn" data-select-color="${esc(c)}" aria-pressed="${state.deviceColor === c}">
+                <span class="swatch-dot" style="background:${SWATCH_HEX[c] || '#757575'}"></span>
+                <span>${esc(c)}</span>
+              </button>
+            `).join('')}
+          </div>
+        ` : ''}
+        ${state.device === 'ipad' ? `
+          <div class="opt-row-2" style="margin-top:10px;">
+            <div>
+              <span class="ic-label">Connectivity</span>
+              <div class="swatch-group">
+                ${['Wi-Fi', 'Wi-Fi + Cellular'].map((opt) => `<button type="button" class="swatch-btn" data-ipad-connect="${esc(opt)}" aria-pressed="${state.ipadConnect === opt}">${esc(opt)}</button>`).join('')}
+              </div>
+            </div>
+            ${model.nanoOption ? `
+              <div>
+                <span class="ic-label">Display glass</span>
+                <div class="swatch-group">
+                  ${['Standard', 'Nano-texture'].map((opt) => `<button type="button" class="swatch-btn" data-ipad-glass="${esc(opt)}" aria-pressed="${state.ipadGlass === opt}">${esc(opt)}</button>`).join('')}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        ` : ''}
+      </div>
+    ` : '';
+
+    const b3Under200Banner = isLondon && !courierOk ? `
+      <div class="ic-notice ic-notice--action" style="margin-bottom:10px;">
+        <span class="ic-notice-dot" aria-hidden="true"></span>
+        <span>Courier collection in this area applies to repairs £200 and over. Free tracked mail-in is selected for this repair.</span>
+      </div>
+    ` : '';
+
+    return `
+      <div class="price-hero">
+        <div class="price-hero-left">
+          <span class="ic-label">${esc(model.name)} · ${esc(getRepairDisplayName())}</span>
+          <div class="price-figure-row">
+            <span class="price-hero-amount">£${total}</span>
+            <span class="price-vat">inc. VAT</span>
+          </div>
+          <p class="price-eta-line">${esc(ret.label)}</p>
+          ${total >= 100 ? `
+            <div class="klarna-row">
+              <span class="klarna-badge">Klarna.</span>
+              <span>3 interest-free payments of £${klarnaInstallment}. First payment at checkout, then one every 30 days. Subject to status.</span>
+            </div>
+          ` : ''}
+        </div>
+        <div class="price-hero-right">
+          <span class="ic-chip ic-chip--ok"><span class="ic-chip-dot"></span>2-year warranty</span>
+          ${state.route === 'repair' ? '<span class="ic-chip ic-chip--action"><span class="ic-chip-dot"></span>Genuine Apple displays</span>' : '<span class="ic-chip ic-chip--action"><span class="ic-chip-dot"></span>Fee deducted if repaired</span>'}
+        </div>
+      </div>
+
+      ${appleContrast}
+      ${diagGuide}
+      ${extrasHtml}
+      ${b3Under200Banner}
+
+      <div class="choice-section-head">
+        <span class="ic-label">Choose how it reaches us (${esc(postcodeDisplay)})</span>
+      </div>
+
+      <div class="choice-group" role="radiogroup" aria-label="How your device reaches iCorrect">
+        ${courierOk ? `
+          <div class="ic-choice" role="radio" tabindex="0" aria-checked="${state.service === 'courier'}" data-select-service="courier">
+            <div class="ic-choice-head">
+              <span class="ic-choice-mark" aria-hidden="true"></span>
+              <div class="ic-choice-copy">
+                <div class="ic-choice-title">Same-day London courier</div>
+                <div class="ic-choice-sub">Door-to-door from ${esc(postcodeDisplay)} · Insured collection &amp; return</div>
+              </div>
+              <span class="ic-choice-price ${courierPriceLabel === 'Free' ? 'ic-choice-price--free' : ''}">${esc(courierPriceLabel)}</span>
+            </div>
+            ${state.service === 'courier' ? `
+              <div class="ic-choice-drawer">
+                ${renderSpeedToggle('courier')}
+                ${renderDateAndWindow('courier')}
+                <p class="drawer-meta-line"><strong>${esc(ret.label)}</strong></p>
+              </div>
+            ` : ''}
+          </div>
+        ` : ''}
+
+        ${isLondon ? `
+          <div class="ic-choice" role="radio" tabindex="0" aria-checked="${state.service === 'dropoff'}" data-select-service="dropoff">
+            <div class="ic-choice-head">
+              <span class="ic-choice-mark" aria-hidden="true"></span>
+              <div class="ic-choice-copy">
+                <div class="ic-choice-title">Booked Fitzrovia drop-off</div>
+                <div class="ic-choice-sub">Next available: ${esc(nextApptLabel)} · 12 Margaret Street, W1W 8JQ</div>
+              </div>
+              <span class="ic-choice-price ic-choice-price--free">Free</span>
+            </div>
+            ${state.service === 'dropoff' ? `
+              <div class="ic-choice-drawer">
+                ${renderSpeedToggle('dropoff')}
+                ${renderDateAndWindow('dropoff')}
+                <p class="drawer-meta-line"><strong>12 Margaret Street, Audley House, London W1W 8JQ</strong> · Mon to Thu 9am to 6pm, Friday 10am to 6pm, Sat &amp; Sun closed.</p>
+              </div>
+            ` : ''}
+          </div>
+        ` : ''}
+
+        <div class="ic-choice" role="radio" tabindex="0" aria-checked="${state.service === 'mailin'}" data-select-service="mailin">
+          <div class="ic-choice-head">
+            <span class="ic-choice-mark" aria-hidden="true"></span>
+            <div class="ic-choice-copy">
+              <div class="ic-choice-title">Free tracked UK mail-in</div>
+              <div class="ic-choice-sub">Prepaid insured box sent to ${esc(postcodeDisplay)} · Free tracked return</div>
+            </div>
+            <span class="ic-choice-price ic-choice-price--free">Free</span>
+          </div>
+          ${state.service === 'mailin' ? `
+            <div class="ic-choice-drawer">
+              <div class="drawer-section">
+                <ul class="drawer-list">
+                  <li><span class="drawer-bullet" aria-hidden="true"></span><span>Prepaid insured box dispatched today before 3pm</span></li>
+                  <li><span class="drawer-bullet" aria-hidden="true"></span><span>Drop at any UK Post Office using the prepaid Royal Mail label</span></li>
+                  <li><span class="drawer-bullet" aria-hidden="true"></span><span>Tracked insured return included once calibrated and tested</span></li>
+                </ul>
+              </div>
+              ${renderSpeedToggle('mailin')}
+              <p class="drawer-meta-line"><strong>${esc(ret.label)}</strong></p>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  /* =========================================================================
+     Checkout Verification Confirmation Overlay (Zero Step 5!)
+     ========================================================================= */
+  function openCheckoutVerification() {
+    const model = getModel();
+    const base = getBasePrice();
+    const exp = state.speed === 'express' && canUseExpress() ? getExpressFee() : 0;
+    const adj = getServiceAdjustment();
+    const total = getTotalPrice();
+    const ret = getReturnSummary();
+    const pc = state.postcodeInfo ? state.postcodeInfo.formatted : 'W1W 8JQ';
+    const band = state.postcodeInfo ? state.postcodeInfo.band : 'B1';
+    const internalServiceType = state.service === 'courier'
+      ? 'Courier collection'
+      : (state.service === 'dropoff' ? 'Walk-in' : 'Mail-in');
+
+    const lines = [
+      { title: model.name + ' · ' + getRepairDisplayName(), sku: state.resolvedSku, price: '£' + base }
+    ];
+    if (exp > 0) {
+      lines.push({
+        title: state.service === 'mailin' ? 'Express Bench (Mail-in priority on arrival)' : 'Express Turnaround (Booked for ' + state.selectedDateIso + ')',
+        sku: 'express-turnaround',
+        price: '+£' + exp
+      });
+    }
+    if (adj > 0) {
+      lines.push({ title: 'London Courier Service Adjustment (Under £200)', sku: '71280436445437', price: '+£' + adj });
+    }
+    if (state.service !== 'dropoff') {
+      lines.push({
+        title: HOME_ADDRESS_SKU.title + ' (Variant ' + HOME_ADDRESS_SKU.variantId + ')',
+        sku: HOME_ADDRESS_SKU.variantId,
+        price: '£0'
+      });
+    }
+
+    const slotLabel = state.selectedWindow === 'am' ? 'Morning (9am to 12pm)' : (state.service === 'dropoff' ? 'Afternoon (12pm to 6pm)' : 'Afternoon (12pm to 5pm)');
+    const props = [
+      ['Repair Type', state.route === 'diagnostic' ? 'Diagnostic' : 'Repair'],
+      ['Service Type (Monday key)', internalServiceType],
+      ['Postcode', pc],
+      ['Band', band],
+      [ret.propKey, ret.iso + ' (' + ret.dateText + ')'],
+      ['Turnaround', state.speed === 'express' && canUseExpress() ? ('Express (' + (state.service === 'mailin' ? 'Mail-in priority' : 'Booked for ' + state.selectedDateIso) + ')') : 'Standard (2 working days)']
+    ];
+    if (state.service === 'courier') {
+      props.push(['Collection Date', state.selectedDateIso]);
+      props.push(['Collection Window', slotLabel]);
+    } else if (state.service === 'dropoff') {
+      props.push(['Drop-off Date', state.selectedDateIso]);
+      props.push(['Drop-off Window', slotLabel]);
+    }
+    if (state.deviceColor) props.push(['Device Color', state.deviceColor]);
+    if (state.device === 'ipad') {
+      props.push(['Connectivity', state.ipadConnect]);
+      if (model.nanoOption) props.push(['Display glass', state.ipadGlass]);
+    }
+    if (state.fault === 'liquid') {
+      props.push(['Device usable', state.liquidUsable === 'yes' ? 'Yes' : 'No']);
+      props.push(['Liquid risk acknowledged', state.liquidAck ? 'Yes (verbatim copy confirmed)' : 'No']);
+    }
+    if (state.dataAnswer) props.push(['Data priority', state.dataAnswer]);
+    if (state.appleBeen) {
+      props.push(['Previous Apple / shop verdict', state.appleBeen === 'Yes' ? (state.appleVerdict + (state.appleQuote ? ' (£' + state.appleQuote + ')' : '')) : state.appleBeen]);
+    }
+    if (state.fault === 'recovery') {
+      props.push(['Data recovery notes', [state.recWhat, state.recState, 'Prior work: ' + state.recTried, state.recTriedSaid ? 'Verdict: ' + state.recTriedSaid : '', 'Login password: ' + state.recPassword, state.recPriority ? 'Priority: ' + state.recPriority : ''].filter(Boolean).join(' | ')]);
+    }
+
+    const checkoutUrl = '/checkout?ph_distinct_id=preview_session&checkout[shipping_address][country]=United%20Kingdom&checkout[shipping_address][zip]=' + encodeURIComponent(pc);
+
+    els.checkoutOverlayBody.innerHTML = `
+      <div class="ic-notice ic-notice--ok">
+        <span class="ic-notice-dot" aria-hidden="true"></span>
+        <span>Zero Step 5: clicking <strong>Continue to checkout · £${total}</strong> posts these exact line items to <code>/cart/add.js</code> and redirects directly to Shopify Checkout.</span>
+      </div>
+
+      <div class="payload-section">
+        <span class="ic-label">Shopify cart line items (${lines.length})</span>
+        <div class="payload-line-list">
+          ${lines.map((l) => `<div class="payload-line-item"><span>${esc(l.title)}</span><strong>${esc(l.price)}</strong></div>`).join('')}
+        </div>
+        ${state.service === 'dropoff' ? '<p class="drawer-meta-line">£0 homeAddress SKU intentionally omitted for Booked Fitzrovia drop-off.</p>' : '<p class="drawer-meta-line">£0 physical homeAddress SKU (46150010929405) included so Shopify collects the shipping/collection address.</p>'}
+      </div>
+
+      <div class="payload-section">
+        <span class="ic-label">Checkout redirect URL (postcode prefill)</span>
+        <div class="payload-url">${esc(checkoutUrl)}</div>
+      </div>
+
+      <div class="payload-section">
+        <span class="ic-label">Line item &amp; Monday intake properties</span>
+        <div class="payload-kv">
+          ${props.map(([k, v]) => `<div class="payload-k">${esc(k)}</div><div class="payload-v">${esc(v)}</div>`).join('')}
+        </div>
+      </div>
+    `;
+    els.checkoutOverlay.hidden = false;
+  }
+
+  /* =========================================================================
+     Live Trustindex Reviews Overlay
+     ========================================================================= */
+  function openReviewsOverlay() {
+    els.reviewsOverlay.hidden = false;
+    if (!state.trustindexLoaded && els.trustindexSlot) {
+      state.trustindexLoaded = true;
+      els.trustindexSlot.innerHTML = '';
+      const script = document.createElement('script');
+      script.src = 'https://cdn.trustindex.io/loader.js?47cc7ef8590e8871fa062160cf7';
+      script.defer = true;
+      script.async = true;
+      els.trustindexSlot.appendChild(script);
+    }
+  }
+
+  /* =========================================================================
+     Quick Preview Scenarios (Slim Test Bar + Mobile Sheet + URL Params)
+     ========================================================================= */
+  function applyScenario(id, opts) {
+    const o = opts || {};
+    state.activeScenario = id;
+    state.errors = {};
+    state.fullDateNotice = '';
+    state.finderOpen = false;
+    els.checkoutOverlay.hidden = true;
+    els.reviewsOverlay.hidden = true;
+
+    // Reset triage state cleanly
+    state.liquidUsable = null;
+    state.liquidAck = false;
+    state.dataAnswer = null;
+    state.appleBeen = null;
+    state.appleVerdict = null;
+    state.appleQuote = '';
+    state.recWhat = null;
+    state.recState = null;
+    state.recTried = null;
+    state.recTriedSaid = null;
+    state.recPassword = null;
+    state.recPriority = '';
+    state.iphoneRecoveryPath = 'dead';
+    state.dustFlexConfirmed = false;
+
+    if (id === 'screen') {
+      state.device = 'macbook';
+      state.series = 'All';
+      state.modelId = 'mbp-14-m3';
+      state.fault = 'screen';
+      state.subOption = 'cracked';
+      state.resolvedSku = 'screen';
+      state.route = 'repair';
+      state.name = 'Alex Taylor';
+      state.email = 'alex@example.co.uk';
+      state.phone = '07700 900123';
+      state.postcode = 'W1W 8JQ';
+      state.postcodeInfo = parseFullPostcode('W1W 8JQ');
+      state.service = 'courier';
+      state.speed = 'standard';
+      state.step = o.step || 1;
+      state.maxStep = Math.max(state.step, 1);
+    } else if (id === 'liquid') {
+      state.device = 'macbook';
+      state.series = 'All';
+      state.modelId = 'mbp-14-m3';
+      state.fault = 'liquid';
+      state.subOption = null;
+      state.resolvedSku = 'diagnostic';
+      state.route = 'diagnostic';
+      state.liquidUsable = 'no';
+      state.liquidAck = true;
+      state.dataAnswer = 'Yes, repair it to keep the data if you can';
+      state.appleBeen = 'Yes';
+      state.appleVerdict = 'They quoted a logic board or a whole replacement';
+      state.appleQuote = '1049';
+      state.name = 'Alex Taylor';
+      state.email = 'alex@example.co.uk';
+      state.phone = '07700 900123';
+      state.postcode = 'W1W 8JQ';
+      state.postcodeInfo = parseFullPostcode('W1W 8JQ');
+      state.service = 'courier';
+      state.speed = 'standard';
+      state.step = o.step || 2;
+      state.maxStep = Math.max(state.step, 2);
+    } else if (id === 'recovery') {
+      state.device = 'macbook';
+      state.series = 'All';
+      state.modelId = 'mbp-14-m3';
+      state.fault = 'recovery';
+      state.subOption = null;
+      state.resolvedSku = 'diagnostic';
+      state.route = 'diagnostic';
+      state.recWhat = 'It stopped working on its own';
+      state.recState = 'Nothing at all: no lights, no sound, no fan';
+      state.recTried = 'Yes, Apple';
+      state.recTriedSaid = 'The data cannot be recovered';
+      state.recPassword = 'Yes';
+      state.recPriority = '2024 client projects on Desktop';
+      state.name = 'Alex Taylor';
+      state.email = 'alex@example.co.uk';
+      state.phone = '07700 900123';
+      state.postcode = 'W1W 8JQ';
+      state.postcodeInfo = parseFullPostcode('W1W 8JQ');
+      state.service = 'courier';
+      state.speed = 'standard';
+      state.step = o.step || 2;
+      state.maxStep = Math.max(state.step, 2);
+    } else if (id === 'london') {
+      state.device = 'macbook';
+      state.series = 'All';
+      state.modelId = 'mbp-14-m3';
+      state.fault = 'screen';
+      state.subOption = 'cracked';
+      state.resolvedSku = 'screen';
+      state.route = 'repair';
+      state.name = 'Alex Taylor';
+      state.email = 'alex@example.co.uk';
+      state.phone = '07700 900123';
+      state.postcode = 'W1W 8JQ';
+      state.postcodeInfo = parseFullPostcode('W1W 8JQ');
+      state.service = 'courier';
+      state.speed = o.express ? 'express' : 'standard';
+      state.selectedDateIso = '2026-11-26';
+      state.selectedWindow = 'pm';
+      state.deviceColor = 'Space Black';
+      state.step = o.step || 4;
+      state.maxStep = 4;
+    } else if (id === 'mailin') {
+      state.device = 'macbook';
+      state.series = 'All';
+      state.modelId = 'mba-13-m3';
+      state.fault = 'screen';
+      state.subOption = 'cracked';
+      state.resolvedSku = 'screen';
+      state.route = 'repair';
+      state.name = 'Sam Patel';
+      state.email = 'sam@example.co.uk';
+      state.phone = '07700 900456';
+      state.postcode = 'M1 4BT';
+      state.postcodeInfo = parseFullPostcode('M1 4BT');
+      state.service = 'mailin';
+      state.speed = o.express === false ? 'standard' : 'express';
+      state.deviceColor = 'Midnight';
+      state.step = o.step || 4;
+      state.maxStep = 4;
+    }
 
     render();
   }
 
-  function render() {
-    var mobile = isMobileMode();
-    lastModeMobile = mobile;
-    updateStepperAndChrome();
+  function syncTestControlHighlights() {
+    document.querySelectorAll('[data-scenario]').forEach((btn) => {
+      btn.classList.toggle('is-active', btn.dataset.scenario === state.activeScenario);
+    });
+    if (els.pvExpressFull) els.pvExpressFull.checked = state.expressFullThisWeek;
+    if (els.mExpressFull) els.mExpressFull.checked = state.expressFullThisWeek;
+    if (els.mCookieSim) els.mCookieSim.checked = state.cookieSim;
+    document.documentElement.style.setProperty('--cookie-h', state.cookieSim ? '227px' : '0px');
+    if (els.simCookieBanner) els.simCookieBanner.hidden = !state.cookieSim;
+  }
 
-    var stage = document.getElementById("wizardStage");
-    if (mobile) {
-      if (state.step === 1) stage.innerHTML = renderMobileStep1();
-      else if (state.step === 2) stage.innerHTML = renderMobileStep2();
-      else if (state.step === 3) stage.innerHTML = renderMobileStep3Details();
-      else if (state.step === 4) stage.innerHTML = renderMobileStep4PriceService();
-      else stage.innerHTML = renderMobileStep5Checkout();
-    } else {
-      var dStep = state.step >= 4 ? 4 : state.step;
-      if (dStep === 1) stage.innerHTML = renderDesktopStep1();
-      else if (dStep === 2) stage.innerHTML = renderDesktopStep2();
-      else if (dStep === 3) stage.innerHTML = renderDesktopStep3DataWall();
-      else stage.innerHTML = renderDesktopStep4Quote();
-    }
-
-    wireStageEvents();
-    updateCookieAndToggles();
-    if (!mobile) {
-      mountTrustindexWidget(document.getElementById("trustindexSlot"));
+  /* =========================================================================
+     Event Delegation
+     ========================================================================= */
+  function goNext() {
+    if (state.step === 1) {
+      if (!state.modelId) return;
+      state.step = 2;
+      state.maxStep = Math.max(state.maxStep, 2);
+      render();
+    } else if (state.step === 2) {
+      if (!step2IsReady()) return;
+      state.step = 3;
+      state.maxStep = Math.max(state.maxStep, 3);
+      render();
+    } else if (state.step === 3) {
+      if (!validateStep3(true)) {
+        render();
+        return;
+      }
+      state.errors = {};
+      state.service = courierAvailableForOrder() ? 'courier' : 'mailin';
+      state.step = 4;
+      state.maxStep = 4;
+      render();
+    } else if (state.step === 4) {
+      openCheckoutVerification();
     }
   }
 
-  function wireGlobalControls() {
-    document.querySelectorAll("[data-scenario]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        applyScenario(btn.getAttribute("data-scenario"));
-        document.getElementById("previewSheet").hidden = true;
-      });
-    });
+  function goBack() {
+    if (state.step > 1) {
+      state.step -= 1;
+      render();
+    }
+  }
 
-    document.querySelectorAll("[data-jump-step]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var target = parseInt(btn.getAttribute("data-jump-step"), 10);
-        if (target >= 4 && (!isValidUkPostcode(state.lead.postcode) || !isValidUkPhone(state.lead.phone) || !isValidEmail(state.lead.email) || !state.lead.name.trim())) {
-          var sc = SCENARIOS[state.scenario] || SCENARIOS.A;
-          state.lead = { name: sc.name, email: sc.email, phone: sc.phone, postcode: sc.postcode };
-        }
+  els.cta.addEventListener('click', goNext);
+  els.backBtn.addEventListener('click', goBack);
+  els.mBackBtn.addEventListener('click', goBack);
+
+  document.querySelectorAll('.wiz-step').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = Number(btn.dataset.step);
+      if (target <= state.maxStep) {
         state.step = target;
-        state.feedbackMsg = "";
-        document.getElementById("previewSheet").hidden = true;
-        render();
-        window.scrollTo({ top: 0, behavior: "instant" });
-      });
-    });
-
-    document.querySelectorAll(".step-tab").forEach(function (tab) {
-      tab.addEventListener("click", function () {
-        var target = parseInt(tab.getAttribute("data-step"), 10);
-        if (target >= 4 && (!isValidUkPostcode(state.lead.postcode) || !isValidUkPhone(state.lead.phone) || !isValidEmail(state.lead.email) || !state.lead.name.trim())) {
-          var sc = SCENARIOS[state.scenario] || SCENARIOS.A;
-          state.lead = { name: sc.name, email: sc.email, phone: sc.phone, postcode: sc.postcode };
-        }
-        state.step = target;
-        state.feedbackMsg = "";
-        render();
-      });
-    });
-
-    document.getElementById("stepBackBtn").addEventListener("click", function () {
-      if (state.step > 1) {
-        state.step = state.step >= 4 ? 3 : state.step - 1;
-        state.feedbackMsg = "";
         render();
       }
     });
+  });
 
-    document.getElementById("mBackBtn").addEventListener("click", function () {
-      if (state.step > 1) {
-        state.step -= 1;
-        state.feedbackMsg = "";
-        render();
-        window.scrollTo({ top: 0, behavior: "instant" });
-      }
+  document.querySelectorAll('[data-scenario]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      applyScenario(btn.dataset.scenario);
+      if (els.mTestSheet) els.mTestSheet.hidden = true;
     });
+  });
 
-    document.getElementById("mFooterCta").addEventListener("click", function () {
-      if (state.step === 1) {
-        state.step = 2;
-        render();
-        window.scrollTo({ top: 0, behavior: "instant" });
-      } else if (state.step === 2) {
+  function setExpressFullWeek(checked) {
+    state.expressFullThisWeek = checked;
+    state.fullDateNotice = '';
+    if (checked && state.step === 4 && state.service !== 'mailin' && canUseExpress()) {
+      state.speed = 'express';
+      ensureValidStep4Defaults();
+    }
+    render();
+  }
+
+  if (els.pvExpressFull) {
+    els.pvExpressFull.addEventListener('change', (ev) => setExpressFullWeek(ev.target.checked));
+  }
+  if (els.mExpressFull) {
+    els.mExpressFull.addEventListener('change', (ev) => setExpressFullWeek(ev.target.checked));
+  }
+  if (els.mCookieSim) {
+    els.mCookieSim.addEventListener('change', (ev) => {
+      state.cookieSim = ev.target.checked;
+      syncTestControlHighlights();
+    });
+  }
+  if (els.simCookieAccept) {
+    els.simCookieAccept.addEventListener('click', () => { state.cookieSim = false; syncTestControlHighlights(); });
+  }
+  if (els.simCookieDecline) {
+    els.simCookieDecline.addEventListener('click', () => { state.cookieSim = false; syncTestControlHighlights(); });
+  }
+
+  if (els.mTestBtn) {
+    els.mTestBtn.addEventListener('click', () => { els.mTestSheet.hidden = false; });
+  }
+  if (els.closeMTestSheet) {
+    els.closeMTestSheet.addEventListener('click', () => { els.mTestSheet.hidden = true; });
+  }
+  if (els.doneMTestSheet) {
+    els.doneMTestSheet.addEventListener('click', () => { els.mTestSheet.hidden = true; });
+  }
+  if (els.mTestSheet) {
+    els.mTestSheet.addEventListener('click', (ev) => {
+      if (ev.target === els.mTestSheet) els.mTestSheet.hidden = true;
+    });
+  }
+
+  if (els.openReviewsDesktopBtn) {
+    els.openReviewsDesktopBtn.addEventListener('click', openReviewsOverlay);
+  }
+  if (els.closeReviewsOverlay) {
+    els.closeReviewsOverlay.addEventListener('click', () => { els.reviewsOverlay.hidden = true; });
+  }
+  if (els.closeCheckoutOverlay) {
+    els.closeCheckoutOverlay.addEventListener('click', () => { els.checkoutOverlay.hidden = true; });
+  }
+
+  els.footMeta.addEventListener('click', (ev) => {
+    const trigger = ev.target.closest('[data-action="open-reviews"]');
+    if (trigger) openReviewsOverlay();
+  });
+
+  // Stage click delegation
+  els.stage.addEventListener('click', (ev) => {
+    const target = ev.target.closest('button, [data-select-service]');
+    if (!target) return;
+
+    if (target.dataset.action === 'toggle-finder') {
+      state.finderOpen = !state.finderOpen;
+      render();
+      return;
+    }
+
+    if (target.dataset.selectDevice) {
+      state.device = target.dataset.selectDevice;
+      state.series = 'All';
+      state.modelId = MODELS[state.device][0].id;
+      state.deviceColor = '';
+      state.fault = null;
+      state.subOption = null;
+      state.finderQuery = '';
+      render();
+      return;
+    }
+
+    if (target.dataset.selectSeries) {
+      state.series = target.dataset.selectSeries;
+      render();
+      return;
+    }
+
+    if (target.dataset.selectModel) {
+      state.modelId = target.dataset.selectModel;
+      state.deviceColor = '';
+      state.finderOpen = false;
+      state.step = 2;
+      state.maxStep = Math.max(state.maxStep, 2);
+      render();
+      return;
+    }
+
+    if (target.dataset.vg) {
+      state.vgAnswers[target.dataset.vg] = target.dataset.val;
+      render();
+      return;
+    }
+
+    if (target.dataset.selectFault) {
+      const f = target.dataset.selectFault;
+      state.fault = f;
+      state.subOption = null;
+      state.dustFlexConfirmed = false;
+      state.fullDateNotice = '';
+
+      if (f === 'keyboard' || f === 'trackpad' || f === 'touch-bar' || f === 'crown') {
+        state.resolvedSku = f;
+        state.route = 'repair';
         state.step = 3;
+        state.maxStep = Math.max(state.maxStep, 3);
         render();
-        window.scrollTo({ top: 0, behavior: "instant" });
-      } else if (state.step === 3) {
-        validateAndSubmitDetails();
-      } else if (state.step === 4) {
-        state.step = 5;
+        return;
+      }
+      if (f === 'liquid' || f === 'nopower' || f === 'recovery') {
+        state.resolvedSku = 'diagnostic';
+        state.route = 'diagnostic';
         render();
-        window.scrollTo({ top: 0, behavior: "instant" });
-      } else {
-        openCheckoutModal();
+        return;
       }
-    });
-
-    ["toggleCookieBanner", "mToggleCookieBanner"].forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) {
-        el.addEventListener("change", function (e) {
-          state.showCookieBanner = !!e.target.checked;
-          updateCookieAndToggles();
-        });
-      }
-    });
-
-    ["toggleFutureSpeed", "mToggleFutureSpeed"].forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) {
-        el.addEventListener("change", function (e) {
-          state.showFutureSpeed = !!e.target.checked;
-          if (!state.showFutureSpeed) state.futureSpeed = "standard";
-          render();
-        });
-      }
-    });
-
-    var specBtn = document.getElementById("pvSpecBtn");
-    var specDrawer = document.getElementById("pvSpecDrawer");
-    specBtn.addEventListener("click", function () {
-      var open = specDrawer.hidden;
-      specDrawer.hidden = !open;
-      specBtn.setAttribute("aria-expanded", open ? "true" : "false");
-    });
-
-    // Mobile Preview Controls Drawer
-    document.getElementById("mPreviewBtn").addEventListener("click", function () {
-      document.getElementById("previewSheet").hidden = false;
-    });
-    document.getElementById("closePreviewSheet").addEventListener("click", function () {
-      document.getElementById("previewSheet").hidden = true;
-    });
-    document.getElementById("donePreviewSheet").addEventListener("click", function () {
-      document.getElementById("previewSheet").hidden = true;
-    });
-    document.getElementById("previewSheet").addEventListener("click", function (e) {
-      if (e.target === e.currentTarget) document.getElementById("previewSheet").hidden = true;
-    });
-
-    // Mobile Info Bottom Sheet (How it works / Reviews & Workshop)
-    document.getElementById("closeAppSheet").addEventListener("click", closeAppSheet);
-    document.getElementById("appSheet").addEventListener("click", function (e) {
-      if (e.target === e.currentTarget) closeAppSheet();
-    });
-    document.querySelectorAll("[data-sheet-tab]").forEach(function (tab) {
-      tab.addEventListener("click", function () {
-        state.activeSheetTab = tab.getAttribute("data-sheet-tab");
-        renderAppSheetContent();
-      });
-    });
-
-    // Checkout Handoff Modal
-    document.getElementById("closeCheckoutModal").addEventListener("click", function () {
-      document.getElementById("checkoutModal").hidden = true;
-    });
-    document.getElementById("checkoutModal").addEventListener("click", function (e) {
-      if (e.target === e.currentTarget) document.getElementById("checkoutModal").hidden = true;
-    });
-
-    ["simCookieAccept", "simCookieDecline", "simCookieManage"].forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) {
-        el.addEventListener("click", function () {
-          state.showCookieBanner = false;
-          updateCookieAndToggles();
-        });
-      }
-    });
-
-    window.addEventListener("resize", function () {
-      if (isMobileMode() !== lastModeMobile) {
-        render();
-      } else {
-        updateCookieAndToggles();
-      }
-    });
-  }
-
-  function initFromQuery() {
-    var params = new URLSearchParams(window.location.search);
-    var sc = (params.get("scenario") || "A").toUpperCase();
-    var stepParam = params.get("step");
-    var cookieParam = params.get("cookie");
-    var speedParam = params.get("speed");
-    var sheetParam = params.get("sheet");
-
-    state.showCookieBanner = cookieParam === "1" || cookieParam === "true";
-    state.showFutureSpeed = speedParam === "1" || speedParam === "true";
-
-    var parsedStep = stepParam ? parseInt(stepParam, 10) : 3;
-    if (!(parsedStep >= 1 && parsedStep <= 5)) parsedStep = 3;
-
-    applyScenario(SCENARIOS[sc] ? sc : "A", parsedStep);
-
-    if (sheetParam === "how" || sheetParam === "reviews") {
-      openAppSheet(sheetParam);
+      render();
+      return;
     }
+
+    if (target.dataset.subOpt) {
+      const opt = target.dataset.subOpt;
+      state.subOption = opt;
+      if (opt === 'black' || opt === 'nopower') {
+        state.fault = 'nopower';
+        state.resolvedSku = 'diagnostic';
+        state.route = 'diagnostic';
+        render();
+        return;
+      }
+      if (opt === 'dustflex') {
+        const m = getModel();
+        state.dustFlexConfirmed = true;
+        state.resolvedSku = m.hasDustgate ? 'dustgate' : 'flexgate';
+        state.route = 'repair';
+        render();
+        return;
+      }
+      if (opt === 'cracked') {
+        state.resolvedSku = 'screen';
+        state.route = 'repair';
+        state.step = 3;
+        state.maxStep = Math.max(state.maxStep, 3);
+        render();
+        return;
+      }
+      if (opt === 'glass') {
+        state.resolvedSku = 'screen-glass';
+        state.route = 'repair';
+        state.step = 3;
+        state.maxStep = Math.max(state.maxStep, 3);
+        render();
+        return;
+      }
+      if (opt === 'battery' || opt === 'charging-port' || opt === 'rear-glass' || opt === 'rear-camera' || opt === 'front-camera') {
+        state.resolvedSku = opt;
+        state.route = 'repair';
+        if (opt !== 'battery' && opt !== 'front-camera') {
+          state.step = 3;
+          state.maxStep = Math.max(state.maxStep, 3);
+        }
+        render();
+        return;
+      }
+      render();
+      return;
+    }
+
+    if (target.dataset.dustflex) {
+      const m = getModel();
+      state.dustFlexConfirmed = target.dataset.dustflex === 'yes';
+      state.resolvedSku = state.dustFlexConfirmed ? (m.hasDustgate ? 'dustgate' : 'flexgate') : 'screen';
+      render();
+      return;
+    }
+
+    if (target.dataset.liquidUsable) {
+      state.liquidUsable = target.dataset.liquidUsable;
+      state.liquidAck = false;
+      render();
+      return;
+    }
+
+    if (target.dataset.dataAnswer) {
+      state.dataAnswer = target.dataset.dataAnswer;
+      render();
+      return;
+    }
+
+    if (target.dataset.appleBeen) {
+      state.appleBeen = target.dataset.appleBeen;
+      if (state.appleBeen !== 'Yes') {
+        state.appleVerdict = null;
+        state.appleQuote = '';
+      }
+      render();
+      return;
+    }
+
+    if (target.dataset.appleVerdict) {
+      state.appleVerdict = target.dataset.appleVerdict;
+      render();
+      return;
+    }
+
+    if (target.dataset.iphoneRec) {
+      state.iphoneRecoveryPath = target.dataset.iphoneRec;
+      state.route = target.dataset.iphoneRec === 'passcode' ? 'dismiss' : 'diagnostic';
+      render();
+      return;
+    }
+
+    if (target.dataset.recWhat) {
+      state.recWhat = target.dataset.recWhat;
+      render();
+      return;
+    }
+
+    if (target.dataset.recState) {
+      state.recState = target.dataset.recState;
+      render();
+      return;
+    }
+
+    if (target.dataset.recTried) {
+      state.recTried = target.dataset.recTried;
+      if (state.recTried === 'No, nobody has opened it') state.recTriedSaid = null;
+      render();
+      return;
+    }
+
+    if (target.dataset.recTriedSaid) {
+      state.recTriedSaid = target.dataset.recTriedSaid;
+      render();
+      return;
+    }
+
+    if (target.dataset.recPassword) {
+      state.recPassword = target.dataset.recPassword;
+      render();
+      return;
+    }
+
+    if (target.dataset.selectColor) {
+      state.deviceColor = target.dataset.selectColor;
+      render();
+      return;
+    }
+
+    if (target.dataset.ipadConnect) {
+      state.ipadConnect = target.dataset.ipadConnect;
+      render();
+      return;
+    }
+
+    if (target.dataset.ipadGlass) {
+      state.ipadGlass = target.dataset.ipadGlass;
+      render();
+      return;
+    }
+
+    if (target.dataset.setSpeed) {
+      state.speed = target.dataset.setSpeed;
+      state.fullDateNotice = '';
+      ensureValidStep4Defaults();
+      render();
+      return;
+    }
+
+    if (target.dataset.selectDate) {
+      const iso = target.dataset.selectDate;
+      const dates = getEligibleDates(state.service);
+      const found = dates.find((d) => d.iso === iso);
+      if (!found || !found.availableForService) return;
+      if (state.speed === 'express' && !found.expressAvailable) {
+        state.fullDateNotice = 'Express is full on ' + found.short + '. Switch to Standard for ' + found.short + '?';
+        state.pendingStdDateIso = iso;
+        render();
+        return;
+      }
+      state.fullDateNotice = '';
+      state.selectedDateIso = iso;
+      ensureValidStep4Defaults();
+      render();
+      return;
+    }
+
+    if (target.dataset.action === 'switch-std-for-date') {
+      state.speed = 'standard';
+      if (state.pendingStdDateIso) state.selectedDateIso = state.pendingStdDateIso;
+      state.fullDateNotice = '';
+      ensureValidStep4Defaults();
+      render();
+      return;
+    }
+
+    if (target.dataset.selectWindow) {
+      if (target.disabled) return;
+      state.selectedWindow = target.dataset.selectWindow;
+      render();
+      return;
+    }
+
+    if (target.dataset.selectService) {
+      // Only switch when clicking header or inactive card
+      if (ev.target.closest('.ic-choice-drawer')) return;
+      state.service = target.dataset.selectService;
+      state.fullDateNotice = '';
+      ensureValidStep4Defaults();
+      render();
+    }
+  });
+
+  // Keyboard support for radio cards
+  els.stage.addEventListener('keydown', (ev) => {
+    const choice = ev.target.closest('[data-select-service]');
+    if (choice && (ev.key === 'Enter' || ev.key === ' ')) {
+      if (ev.target.closest('.ic-choice-drawer')) return;
+      ev.preventDefault();
+      state.service = choice.dataset.selectService;
+      ensureValidStep4Defaults();
+      render();
+    }
+  });
+
+  // Live input handlers inside stage (zero full re-render on typing so cursor stays put)
+  els.stage.addEventListener('input', (ev) => {
+    const el = ev.target;
+    if (el.id === 'finderInput') {
+      state.finderQuery = el.value;
+      const res = els.stage.querySelector('.finder-results');
+      if (res) {
+        const q = state.finderQuery.trim().toUpperCase();
+        const matches = MODELS.macbook.filter((m) => !q || m.code.includes(q) || m.name.toUpperCase().includes(q));
+        res.innerHTML = matches.map((m) => `<button type="button" class="finder-match-btn" data-select-model="${esc(m.id)}"><strong>${esc(m.code)}</strong> · ${esc(m.name)}</button>`).join('');
+      }
+      return;
+    }
+    if (el.id === 'appleQuoteInput') {
+      state.appleQuote = el.value;
+      return;
+    }
+    if (el.id === 'recPriorityInput') {
+      state.recPriority = el.value;
+      return;
+    }
+    if (el.id === 'qwName') {
+      state.name = el.value;
+      if (state.errors.name && state.name.trim().length >= 2) {
+        delete state.errors.name;
+        el.setAttribute('aria-invalid', 'false');
+        const errEl = document.getElementById('errName');
+        if (errEl) errEl.textContent = '';
+      }
+      return;
+    }
+    if (el.id === 'qwEmail') {
+      state.email = el.value;
+      if (state.errors.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.email.trim())) {
+        delete state.errors.email;
+        el.setAttribute('aria-invalid', 'false');
+        const errEl = document.getElementById('errEmail');
+        if (errEl) errEl.textContent = '';
+      }
+      return;
+    }
+    if (el.id === 'qwPhone') {
+      state.phone = el.value;
+      if (state.errors.phone && state.phone.replace(/\D/g, '').length >= 10) {
+        delete state.errors.phone;
+        el.setAttribute('aria-invalid', 'false');
+        const errEl = document.getElementById('errPhone');
+        if (errEl) errEl.textContent = '';
+      }
+      return;
+    }
+    if (el.id === 'qwPostcode') {
+      state.postcode = el.value;
+      state.postcodeInfo = parseFullPostcode(state.postcode);
+      if (state.postcodeInfo && state.errors.postcode) {
+        delete state.errors.postcode;
+        el.setAttribute('aria-invalid', 'false');
+        const errEl = document.getElementById('errPostcode');
+        if (errEl) errEl.textContent = '';
+      }
+      const liveSlot = document.getElementById('postcodeLiveSlot');
+      if (liveSlot) liveSlot.innerHTML = renderPostcodeLiveBanner();
+      renderHeaderAndProgress();
+    }
+  });
+
+  els.stage.addEventListener('change', (ev) => {
+    if (ev.target.id === 'liquidAckCheck') {
+      state.liquidAck = ev.target.checked;
+      render();
+    }
+  });
+
+  els.stage.addEventListener('blur', (ev) => {
+    if (ev.target.id === 'qwPostcode') {
+      const parsed = parseFullPostcode(ev.target.value);
+      state.postcodeInfo = parsed;
+      const errEl = document.getElementById('errPostcode');
+      if (!parsed && ev.target.value.trim().length > 0) {
+        state.errors.postcode = 'Enter your full postcode, for example W1W 8JQ.';
+        ev.target.setAttribute('aria-invalid', 'true');
+        if (errEl) errEl.textContent = state.errors.postcode;
+      } else if (parsed) {
+        state.postcode = parsed.formatted;
+        ev.target.value = parsed.formatted;
+        delete state.errors.postcode;
+        ev.target.setAttribute('aria-invalid', 'false');
+        if (errEl) errEl.textContent = '';
+      }
+    }
+  }, true);
+
+  /* =========================================================================
+     Initialise from URL Params (for deep-links & automated visual checks)
+     ========================================================================= */
+  function initFromParams() {
+    const params = new URLSearchParams(window.location.search);
+    const scen = params.get('scenario') || 'screen';
+    const stepParam = Number(params.get('step')) || 0;
+    const expressParam = params.get('express');
+    const expressFullParam = params.get('expressFull') === '1';
+    const cookieParam = params.get('cookie') === '1';
+    const londonTimeParam = params.get('londonTime');
+
+    if (londonTimeParam && /^\d{1,2}:\d{2}$/.test(londonTimeParam)) {
+      const [h, m] = londonTimeParam.split(':').map(Number);
+      state.londonTimeOverride = { hour: h, minute: m };
+    }
+    state.expressFullThisWeek = expressFullParam;
+    state.cookieSim = cookieParam;
+
+    applyScenario(scen, {
+      step: stepParam || undefined,
+      express: expressParam === '1' ? true : (expressParam === '0' ? false : undefined)
+    });
   }
 
-  wireGlobalControls();
-  initFromQuery();
+  initFromParams();
 })();
