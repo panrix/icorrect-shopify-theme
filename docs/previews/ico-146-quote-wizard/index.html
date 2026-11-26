@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Quote Wizard Redesign Preview (ICO-146) | iCorrect</title>
+  <meta name="description" content="Interactive ICO-146 quote wizard redesign preview with mobile legibility floor, trust-first data wall, natural quote hierarchy, and cookie banner clearance.">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <!-- Preview Toolbar for Ricky & Michael -->
+  <div class="pv-toolbar" role="region" aria-label="Preview controls">
+    <div class="ic-container pv-toolbar-inner">
+      <div class="pv-toolbar-top">
+        <div class="pv-brand-tag">
+          <span class="pv-brand-dot" aria-hidden="true"></span>
+          <span>ICO-146 QUOTE WIZARD PREVIEW</span>
+        </div>
+        <div class="pv-toolbar-actions">
+          <button type="button" class="pv-spec-btn" id="pvSpecBtn" aria-expanded="false" aria-controls="pvSpecDrawer">Sizing &amp; Hierarchy Spec</button>
+          <a class="pv-link-btn" href="/">All Previews</a>
+        </div>
+      </div>
+
+      <div class="pv-controls-grid">
+        <div class="pv-scenario-row" role="group" aria-label="Test scenarios">
+          <button type="button" class="pv-pill is-active" data-scenario="A">A: MBP 14" + W1W (Free Courier)</button>
+          <button type="button" class="pv-pill" data-scenario="B">B: iPhone 15 + E1 (&lt;£200 3-Way)</button>
+          <button type="button" class="pv-pill" data-scenario="C">C: MBA M3 + M1 (UK Mail-In)</button>
+          <button type="button" class="pv-pill" data-scenario="D">D: Liquid Damage Triage</button>
+        </div>
+
+        <div class="pv-toggles-row">
+          <label class="pv-toggle" id="toggleCookieWrap">
+            <input type="checkbox" id="toggleCookieBanner">
+            <span>Simulate 227px UK Cookie Banner</span>
+          </label>
+          <label class="pv-toggle" id="toggleSpeedWrap">
+            <input type="checkbox" id="toggleFutureSpeed">
+            <span>Preview: Future Speed Tiers</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="pv-spec-drawer" id="pvSpecDrawer" hidden>
+        <div class="pv-spec-grid">
+          <div class="pv-spec-item">
+            <strong>Typography &amp; Legibility Floor</strong>
+            Body 14px to 15px, labels and metadata strictly 12px minimum, hero fixed price 40px mobile / 44px desktop. Zero 10px or 11px squeezed notes.
+          </div>
+          <div class="pv-spec-item">
+            <strong>Touch Targets &amp; Spacing</strong>
+            All inputs and buttons 48px+ height (52px primary CTA), 16px to 20px card padding, 16px to 20px vertical block spacing. Zero horizontal overflow.
+          </div>
+          <div class="pv-spec-item">
+            <strong>Natural Mobile Hierarchy</strong>
+            Step 3 Data Wall (Name, UK Phone, Postcode) unlocks Step 4 in natural order: Service &amp; Slot first, Price + Uncollapsed 3-Step Timeline second, Proceed CTA third, with sticky bar clearing the 227px cookie banner.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="ic-container header-inner">
+      <a class="brand" href="#top" id="top">iCorrect</a>
+      <div class="header-meta">
+        <span class="header-rating">4.8 from 750+ Google reviews</span>
+        <span class="status-pill">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span>Fitzrovia W1W 8JQ</span>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <div class="ic-container">
+      <div class="page-intro">
+        <span class="mono-label">Instant Repair Quote</span>
+        <h1>Get your fixed Apple repair quote in under 60 seconds.</h1>
+        <p>Genuine Apple displays (panel only), 2-year warranty, and free collection on orders of £200 or more. Standard workshop turnaround is 2 working days once your device reaches Fitzrovia.</p>
+      </div>
+
+      <!-- Main Quote Wizard Shell -->
+      <section class="wizard-shell" aria-label="Interactive quote wizard prototype">
+        <div class="wizard-head">
+          <div class="stepper" role="tablist" aria-label="Quote steps">
+            <button type="button" class="step-tab" data-step="1" role="tab">
+              <span class="step-tab-num">01</span>
+              <span class="step-tab-label">Device</span>
+            </button>
+            <button type="button" class="step-tab" data-step="2" role="tab">
+              <span class="step-tab-num">02</span>
+              <span class="step-tab-label">Fault</span>
+            </button>
+            <button type="button" class="step-tab" data-step="3" role="tab">
+              <span class="step-tab-num">03</span>
+              <span class="step-tab-label">Your Details</span>
+            </button>
+            <button type="button" class="step-tab" data-step="4" role="tab">
+              <span class="step-tab-num">04</span>
+              <span class="step-tab-label">Instant Quote</span>
+            </button>
+          </div>
+
+          <div class="selection-bar" id="selectionBar">
+            <div class="selection-chips" id="selectionChips"></div>
+            <button type="button" class="back-btn" id="stepBackBtn" hidden>&larr; Back</button>
+          </div>
+        </div>
+
+        <div class="wizard-body" id="wizardStage">
+          <!-- Rendered dynamically by app.js -->
+        </div>
+      </section>
+
+      <!-- Verified Google Reviews (Trustindex Slot) & Fitzrovia Workshop Details -->
+      <section class="proof-section" aria-label="Reviews and workshop details">
+        <div class="proof-card">
+          <span class="mono-label">Verified Client Reviews</span>
+          <h2>4.8 from 750+ Google reviews</h2>
+          <p class="quote-card-sub">Independent London microelectronics workshop with genuine Apple displays and a 2-year warranty on every screen repair.</p>
+          <div class="trustindex-slot" id="trustindexSlot" data-widget-id="47cc7ef8590e8871fa062160cf7">
+            <strong>Live Trustindex Google Reviews widget mounts here</strong>
+            <p>Uses the approved Trustindex loader (<code>cdn.trustindex.io/loader.js?47cc7ef8590e8871fa062160cf7</code>) with reserved height, zero hand-drawn review cards, and zero star-rating JSON-LD.</p>
+          </div>
+        </div>
+
+        <div class="proof-card">
+          <span class="mono-label">Fitzrovia Workshop &amp; Collection</span>
+          <h2>12 Margaret Street, London</h2>
+          <div class="workshop-meta">
+            <div class="workshop-row">
+              <strong>Workshop Address</strong>
+              12 Margaret Street, Audley House, London W1W 8JQ
+            </div>
+            <div class="workshop-row">
+              <strong>Opening Hours</strong>
+              Mon to Thu 9am to 6pm, Friday 10am to 6pm, Sat &amp; Sun closed
+            </div>
+            <div class="workshop-row">
+              <strong>Collection &amp; UK Mail-In</strong>
+              Free collection on orders of £200 or more. Same-day London courier in selected London zones; free tracked and insured UK mail-in pack elsewhere.
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Mobile Sticky Bottom CTA Bar (Step 4 only, docks above simulated cookie banner) -->
+  <div class="mobile-sticky-cta" id="mobileStickyCta" hidden>
+    <div class="sticky-left">
+      <span class="sticky-price" id="stickyPrice">£399</span>
+      <span class="sticky-sub" id="stickySub">Free London courier · 2 working days</span>
+    </div>
+    <button type="button" class="sticky-btn" id="stickyProceedBtn">Proceed to checkout</button>
+  </div>
+
+  <!-- Simulated 227px UK-GDPR Cookie Banner (OFF by default) -->
+  <div class="sim-cookie-banner" id="simCookieBanner" role="dialog" aria-label="Cookie preferences preview" hidden>
+    <div class="sim-cookie-inner">
+      <div>
+        <div class="sim-cookie-head">
+          <h2 class="sim-cookie-title">We value your privacy</h2>
+          <span class="sim-cookie-badge">Simulated 227px UK Banner</span>
+        </div>
+        <p class="sim-cookie-copy">We use cookies to keep your repair quote working and measure site performance. Read our <a href="#privacy" onclick="return false;">Privacy Policy</a> for details.</p>
+      </div>
+      <div class="sim-cookie-btns">
+        <button type="button" class="sim-cookie-btn" id="simCookieAccept">Accept</button>
+        <button type="button" class="sim-cookie-btn" id="simCookieDecline">Decline</button>
+        <button type="button" class="sim-cookie-manage" id="simCookieManage">Manage preferences</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout Handoff Preview Modal -->
+  <div class="modal-overlay" id="checkoutModal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="checkoutModalTitle">
+      <span class="mono-label">Preview Checkout Handoff</span>
+      <h3 id="checkoutModalTitle">Ready for Shopify checkout</h3>
+      <p>Nothing is charged in this preview. Below is the exact lead, device, service, and upfront fixed price payload sent to Shopify checkout.</p>
+      <div class="payload-list" id="checkoutPayload"></div>
+      <button type="button" class="btn-primary" id="closeCheckoutModal">Back to preview</button>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
