@@ -181,14 +181,224 @@ write('checkout/index.html', checkout);
 write('cart/index.html', checkout);
 
 /* Index */
+/* ---- PR #140 Previews: Blog CTA, llms.txt, and Redesigned 3-Video Panel Concept ---- */
+const articleSrc = read('sections/main-article.liquid').replace(/\{%-?\s*schema\s*-?%\}[\s\S]*?\{%-?\s*endschema\s*-?%\}/, '');
+const ctaOnlyMatch = articleSrc.match(/\{%-?\s*when 'repair_cta'\s*-?%\}([\s\S]*?)\{%-?\s*endcase\s*-?%\}/);
+const ctaLiquid = ctaOnlyMatch ? ctaOnlyMatch[1].replace(/\{\{\s*block\.shopify_attributes\s*\}\}/g, '') : '';
+
+const sampleArticles = [
+  {
+    label: 'Scenario 1 · MacBook Liquid Damage Article',
+    handle: 'navigating-macbook-liquid-damage-and-why-immediate-action-is-crucial',
+    title: 'Navigating MacBook Liquid Damage and Why Immediate Action Is Crucial',
+    tags: ['MacBook', 'Liquid Damage'],
+    excerpt: 'Liquid trapped beneath tightly sealed logic board chips keeps corroding silently even after the keyboard feels dry. Switching off immediately and avoiding rice prevents permanent power-rail damage.',
+  },
+  {
+    label: 'Scenario 2 · Dead / No Power MacBook Article',
+    handle: 'macbook-wont-turn-on-logic-board-power-rail-guide',
+    title: 'MacBook Won\'t Turn On or Charge? How Component-Level Tracing Saves Your Board',
+    tags: ['MacBook', 'No Power', 'Logic Board'],
+    excerpt: 'When a MacBook stops taking power at 5V or pulls 0.000A at 20V, the root cause is often a single shorted SMD capacitor or CD3217 USB-C controller rather than a dead Apple Silicon chip.',
+  },
+  {
+    label: 'Scenario 3 · MacBook Screen Repair Article',
+    handle: 'the-importance-of-professional-macbook-screen-repairs',
+    title: 'The Importance of Professional MacBook Screen Repairs',
+    tags: ['MacBook', 'Screen'],
+    excerpt: 'Replacing the genuine Apple display panel only inside your original aluminium lid preserves your factory hinges, webcam, and alignment at 30% to 50% less than a full-lid assembly swap.',
+  },
+  {
+    label: 'Scenario 4 · iPhone Not Turning On Article (Edge-Case Guard)',
+    handle: 'iphone-not-turning-on-try-these-tips-from-our-repair-experts',
+    title: 'iPhone Not Turning On? Try These Tips From Our Repair Experts',
+    tags: ['iPhone', 'Not Turning On'],
+    excerpt: 'Before assuming your iPhone logic board has failed, test a known-good USB-C or Lightning cable and force-restart sequence. Note how the CTA detects iPhone and routes to iPhone repairs (with same-day screen service) rather than MacBook No Power.',
+  },
+  {
+    label: 'Scenario 5 · General Turnaround Article (Default Fallback)',
+    handle: 'how-long-does-a-macbook-repair-take',
+    title: 'How Long Does a MacBook Repair Take?',
+    tags: ['MacBook', 'Turnaround'],
+    excerpt: 'Standard MacBook workshop repairs complete in 2 working days once your device reaches Fitzrovia, with express same-day and next-day service options available subject to capacity, while iPhone screen repairs offer same-day turnaround.',
+  },
+];
+
+const renderedCtas = [];
+for (const a of sampleArticles) {
+  const rendered = await engine.parseAndRender(ctaLiquid, {
+    article: { handle: a.handle, title: a.title, tags: a.tags },
+    pages: {
+      'macbook-liquid-damage-repair': { url: '/pages/macbook-liquid-damage-repair' },
+      'macbook-no-power-repair': { url: '/pages/macbook-no-power-repair' },
+    },
+  });
+  renderedCtas.push(`<section class="pv-demo-block">
+    <div class="pv-demo-tag">${a.label}</div>
+    <div class="pv-article-stub">
+      <div class="pv-article-slug">/blogs/news/${a.handle}</div>
+      <h1>${a.title}</h1>
+      <p>${a.excerpt}</p>
+    </div>
+    ${rendered}
+  </section>`);
+}
+
+write('blog-cta-preview/index.html', `<!doctype html><html lang="en-GB"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Blog CTA Preview · PR #140</title>${pageCss}
+<style>
+.pv-blog-wrap{max-width:820px;margin:0 auto;padding:28px 20px 80px}
+.pv-blog-intro{margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #e5e7eb}
+.pv-blog-intro h1{margin:0 0 8px;font-size:28px;letter-spacing:-.03em}
+.pv-blog-intro p{margin:0;font-size:14.5px;color:#4b5563;line-height:1.55}
+.pv-demo-block{margin:0 0 42px;padding:22px;border-radius:16px;background:#f8fafc;border:1px solid #e5e7eb}
+.pv-demo-tag{display:inline-block;margin-bottom:12px;padding:4px 10px;border-radius:999px;background:#111827;color:#fff;font:500 10.5px var(--font-mono);letter-spacing:.05em;text-transform:uppercase}
+.pv-article-stub{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:18px 20px;margin-bottom:16px}
+.pv-article-slug{font:500 11px var(--font-mono);color:#6b7280;margin-bottom:6px;word-break:break-all}
+.pv-article-stub h1{margin:0 0 8px;font-size:20px;line-height:1.25;letter-spacing:-.02em;color:#111827}
+.pv-article-stub p{margin:0;font-size:14px;line-height:1.55;color:#4b5563}
+.pv-demo-block .ic-article-cta{margin:0 !important;padding:0 !important;max-width:none !important}
+</style></head>
+<body>${banner('PR #140 · Blog CTA Preview')}<div class="pv-blog-wrap">
+  <div class="pv-blog-intro">
+    <h1>Dynamic Blog Repair CTA Preview (PR #140)</h1>
+    <p>Rendered directly from <code>sections/main-article.liquid</code> across 5 real iCorrect blog article scenarios. Each card adapts automatically to the article topic, reflects same-day iPhone screen repairs + MacBook 2-working-day standard with express options, and falls back safely to <code>/pages/advanced-diagnostic</code> until the new Liquid Damage and Dead/No Power pages are published in Shopify Admin.</p>
+  </div>
+  ${renderedCtas.join('\n')}
+</div></body></html>`);
+
+/* Render templates/page.llms-txt.liquid preview */
+const llmsSrc = read('templates/page.llms-txt.liquid').replace(/\{%-?\s*layout\s+none\s*-?%\}/, '');
+const llmsRenderedLive = await engine.parseAndRender(llmsSrc, { pages: {} });
+const llmsRenderedWithPillar = await engine.parseAndRender(llmsSrc, {
+  pages: {
+    'macbook-liquid-damage-repair': { url: '/pages/macbook-liquid-damage-repair' },
+    'macbook-no-power-repair': { url: '/pages/macbook-no-power-repair' },
+  },
+});
+const escHtml = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+write('llms-txt/index.html', `<!doctype html><html lang="en-GB"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>llms.txt Preview · PR #140</title>${pageCss}
+<style>
+.pv-llms{max-width:900px;margin:0 auto;padding:28px 20px 64px}
+.pv-llms h1{margin:0 0 8px;font-size:26px;letter-spacing:-.03em}
+.pv-llms p{color:#4b5563;font-size:14.5px;line-height:1.55;margin:0 0 18px}
+.pv-llms pre{background:#0f172a;color:#e2e8f0;padding:20px 22px;border-radius:12px;overflow-x:auto;font:400 12.5px/1.6 var(--font-mono);white-space:pre-wrap}
+.pv-llms h2{margin:24px 0 8px;font-size:16px;color:#111827}
+</style></head>
+<body>${banner('PR #140 · /pages/llms-txt Preview')}<div class="pv-llms">
+  <h1>/pages/llms-txt Preview (PR #140)</h1>
+  <p>Rendered directly from <code>templates/page.llms-txt.liquid</code>. Today (before PR #141 pages exist in Shopify Admin), the two upcoming URLs are hidden so zero 404s are served; once published, they appear automatically.</p>
+  <h2>Output once PR #141 pages are live in Shopify Admin</h2>
+  <pre>${escHtml(llmsRenderedWithPillar.trim())}</pre>
+  <h2>Output today (defensive zero-404 mode before PR #141 pages are created)</h2>
+  <pre>${escHtml(llmsRenderedLive.trim())}</pre>
+</div></body></html>`);
+
+/* Concept Preview: Redesigned 3-Video Panel (Click-to-Play Facade) */
+write('video-panel-concept/index.html', `<!doctype html><html lang="en-GB"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Redesigned 3-Video Panel Concept · Preview</title>${pageCss}
+<style>
+.vp-wrap{max-width:1120px;margin:0 auto;padding:36px 24px 80px}
+.vp-kicker{font:500 11px var(--font-mono);letter-spacing:.07em;text-transform:uppercase;color:#6b7280;display:block;margin-bottom:6px}
+.vp-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.vp-head h1{margin:0 0 6px;font-size:32px;letter-spacing:-.035em;line-height:1.12;color:#111827}
+.vp-head p{margin:0;font-size:15px;color:#4b5563;max-width:58ch;line-height:1.5}
+.vp-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:#eff6ff;border:1px solid #bfdbfe;color:#0b63ce;font:500 11px var(--font-mono);text-transform:uppercase;letter-spacing:.04em}
+.vp-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.vp-card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04);display:flex;flex-direction:column}
+.vp-media{position:relative;aspect-ratio:4/5;background:#0f172a;overflow:hidden;cursor:pointer}
+.vp-media img{width:100%;height:100%;object-fit:cover;filter:brightness(.86);transition:transform .24s ease,filter .24s ease;display:block}
+.vp-card:hover .vp-media img{transform:scale(1.03);filter:brightness(.94)}
+.vp-media iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vp-tag{position:absolute;top:12px;left:12px;padding:4px 9px;border-radius:999px;background:rgba(17,24,39,.82);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.16);color:#fff;font:500 10px var(--font-mono);letter-spacing:.04em;text-transform:uppercase}
+.vp-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:999px;background:rgba(17,24,39,.88);border:1.5px solid rgba(255,255,255,.32);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.35);transition:transform .16s ease,background .16s ease}
+.vp-card:hover .vp-play{transform:translate(-50%,-50%) scale(1.07);background:#0b63ce;border-color:#93c5fd}
+.vp-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:5px}
+.vp-body h2{margin:0;font-size:16.5px;font-weight:600;letter-spacing:-.02em;color:#111827;line-height:1.28}
+.vp-body p{margin:0;font-size:13.5px;color:#4b5563;line-height:1.48}
+.vp-note{margin-top:26px;padding:18px 20px;border-radius:12px;background:#f8fafc;border:1px solid #e5e7eb;font-size:13.5px;color:#374151;line-height:1.55}
+.vp-note strong{color:#111827}
+@media(max-width:860px){.vp-grid{grid-template-columns:1fr}}
+</style></head>
+<body>${banner('Concept · Redesigned 3-Video Panel (Click-to-Play Facade)')}
+<div class="vp-wrap">
+  <div class="vp-head">
+    <div>
+      <span class="vp-kicker">Inside Our Fitzrovia Workshop · Never Outsourced</span>
+      <h1>See how we repair your MacBook</h1>
+      <p>Click-to-play facade design replacing the current 3 raw 9:16 YouTube iframes used across 81 templates. Zero YouTube JS loads until a visitor clicks play.</p>
+    </div>
+    <span class="vp-badge">0 KB YouTube JS on load</span>
+  </div>
+  <div class="vp-grid">
+    <article class="vp-card">
+      <div class="vp-media" data-yt="VP2e-2K6fR0" data-title="Why repairing your MacBook beats full replacement" role="button" tabindex="0" aria-label="Play video: Why repairing your MacBook beats full replacement">
+        <img src="https://i.ytimg.com/vi/VP2e-2K6fR0/oar2.jpg" alt="iCorrect Fitzrovia MacBook repair walkthrough" loading="lazy">
+        <span class="vp-tag">Fitzrovia Bench · 01</span>
+        <span class="vp-play" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path d="M6 4l11 6-11 6z"/></svg></span>
+      </div>
+      <div class="vp-body">
+        <h2>Repair is better than replace</h2>
+        <p>Why component-level logic board and panel-only repairs keep original Apple hardware alive instead of triggering £700+ swaps.</p>
+      </div>
+    </article>
+    <article class="vp-card">
+      <div class="vp-media" data-yt="SVbeyRWUeh0" data-title="Our sustainable microelectronics repair approach" role="button" tabindex="0" aria-label="Play video: Our sustainable microelectronics repair approach">
+        <img src="https://i.ytimg.com/vi/SVbeyRWUeh0/oar2.jpg" alt="Sustainable Apple microelectronics repair at iCorrect London" loading="lazy">
+        <span class="vp-tag">Fitzrovia Bench · 02</span>
+        <span class="vp-play" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path d="M6 4l11 6-11 6z"/></svg></span>
+      </div>
+      <div class="vp-body">
+        <h2>Our repair approach is sustainable</h2>
+        <p>Fixing the single shorted capacitor or cracked LCD panel instead of scrapping an entire working chassis and logic board.</p>
+      </div>
+    </article>
+    <article class="vp-card">
+      <div class="vp-media" data-yt="6j_C-4PejV4" data-title="How to avoid overpaying for Apple MacBook repairs" role="button" tabindex="0" aria-label="Play video: How to avoid overpaying for Apple MacBook repairs">
+        <img src="https://i.ytimg.com/vi/6j_C-4PejV4/oar2.jpg" alt="Component-level MacBook repair pricing vs Apple full assembly swap" loading="lazy">
+        <span class="vp-tag">Fitzrovia Bench · 03</span>
+        <span class="vp-play" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path d="M6 4l11 6-11 6z"/></svg></span>
+      </div>
+      <div class="vp-body">
+        <h2>Do not overpay for your repairs</h2>
+        <p>How upfront fixed component-level quotes in Fitzrovia save 30% to 50% compared to full-assembly store replacements.</p>
+      </div>
+    </article>
+  </div>
+  <div class="vp-note">
+    <strong>SEO &amp; Core Web Vitals impact:</strong> Replacing the 3 immediate YouTube iframes with click-to-play facades removes ~1.5 MB of third-party YouTube JS and cookies on page load across 81 templates, keeps the exact same YouTube video IDs, replaces generic <code>title="MacBook Video 1"</code> labels with real descriptive titles, and optionally lets us add clean <code>VideoObject</code> JSON-LD. Zero ranking downside; net positive for Core Web Vitals (INP / LCP) and user engagement.
+  </div>
+</div>
+<script>
+document.querySelectorAll('[data-yt]').forEach(function(el){
+  function load(){
+    var id = el.getAttribute('data-yt');
+    var title = el.getAttribute('data-title') || 'iCorrect repair video';
+    el.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0" title="' + title.replace(/"/g,'') + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+  }
+  el.addEventListener('click', load);
+  el.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); load(); } });
+});
+</script></body></html>`);
+
+/* Index */
 write('index.html', `<!doctype html><html lang="en-GB"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
 <title>Quote wizard preview</title>${pageCss}
 <style>.pv-wrap{max-width:640px;margin:0 auto;padding:24px 20px}.pv-wrap h1{font-size:28px;letter-spacing:-.04em;margin:0 0 8px}
 .pv-wrap p,.pv-wrap li{color:#4d4d4d;font-size:15px;line-height:1.5}.pv-links a{display:flex;align-items:center;min-height:56px;padding:0 16px;margin:8px 0;border-radius:12px;box-shadow:0 0 0 1px rgba(0,0,0,.12);color:#171717;text-decoration:none;font-weight:500}</style></head>
-<body>${banner('Start')}<div class="pv-wrap"><h1>Quote wizard preview</h1>
-<p>Branch <b>${branch}</b>${sha ? ' at ' + sha : ''}. Prices come from the repo catalogue, not the live store. Checkout is a stand-in that shows what would go into the Shopify cart.</p>
-<div class="pv-links"><a href="/macbook-screen/">MacBook screen repair page</a><a href="/quote/">All devices</a></div>
-<p>Postcodes to try:</p><ul><li><b>W1T 3AB</b>: central London (courier collection or bring it to the workshop)</li><li><b>SE15 4QF</b>: further out in London</li><li><b>M1 4BT</b>: outside London (mail-in)</li></ul></div></body></html>`);
+<body>${banner('Start')}<div class="pv-wrap"><h1>PR #140 SEO &amp; CTA Preview</h1>
+<p>Branch <b>${branch}</b>${sha ? ' at ' + sha : ''}.</p>
+<div class="pv-links">
+  <a href="/blog-cta-preview/">Blog CTA Preview (5 Real Article Scenarios)</a>
+  <a href="/llms-txt/">Updated /pages/llms-txt Output Preview</a>
+  <a href="/video-panel-concept/">Redesigned 3-Video Panel Concept (Click-to-Play)</a>
+  <a href="/macbook-screen/">MacBook screen repair quote wizard</a>
+  <a href="/quote/">All devices quote wizard</a>
+</div></div></body></html>`);
 
 console.log(`preview-dist: ${products.size} products, branch ${branch}`);
