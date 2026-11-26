@@ -50,7 +50,7 @@
           assign seo_page_description = 'Specialist Apple Watch repairs with original parts and a 2-year warranty. Courier collection in London, or a free tracked mail-in pack across the UK.'
         elsif page.handle == 'macbook-repairs'
           assign seo_page_title = 'MacBook Repair London | Logic Board & Screen | iCorrect'
-          assign seo_page_description = 'In-house MacBook logic board, liquid, and panel-only screen repairs. Standard 2 working days, express same-day/next-day options, 2-year warranty.'
+          assign seo_page_description = 'In-house MacBook logic board, liquid, and panel-only screen repairs in Fitzrovia. 2 to 3 working days, express options available, 2-year warranty.'
         elsif page.handle == 'advanced-diagnostic'
           assign seo_page_description = 'In-house logic board & liquid diagnostics for MacBook, iPhone, and iPad in Fitzrovia. Written report & fixed quote within 1 working day. Zero deposits.'
         elsif page.handle == 'contact'
@@ -58,7 +58,7 @@
         endif
       elsif request.page_type == 'collection'
         if collection.handle == 'macbook-screen-repair-prices'
-          assign seo_page_description = 'Genuine Apple MacBook panel-only screen repair at 30% to 50% less. Standard 2 working days, express same-day/next-day options, 2-year warranty.'
+          assign seo_page_description = 'Genuine Apple MacBook panel-only screen repair at 30% to 50% less. 2 to 3 working days, express options available, backed by a 2-year warranty.'
         endif
       endif
 
@@ -91,6 +91,9 @@
 
     {%- if settings.animations_reveal_on_scroll -%}
       <script src="{{ 'animations.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
+    {%- if request.design_mode -%}
+      <script src="{{ 'icorrect-video-panel.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
     {{ content_for_header }}
 
