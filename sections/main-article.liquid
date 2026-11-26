@@ -84,7 +84,8 @@
         {%- liquid
           assign title_handle = article.handle | append: ' ' | append: article.title | downcase
           assign tag_str = article.tags | join: ' ' | downcase
-          assign hay = title_handle | append: ' ' | append: tag_str
+          assign title_clean = title_handle | replace: 'liquid retina', '' | replace: 'liquid-retina', ''
+          assign tag_clean = tag_str | replace: 'liquid retina', '' | replace: 'liquid-retina', ''
 
           assign liquid_url = '/pages/advanced-diagnostic'
           assign has_liquid_page = false
@@ -119,19 +120,30 @@
             assign cta_device = 'watch'
           endif
 
+          # Step 2: Detect fault from title/handle first so broad tags never override explicit general topics
+          assign is_general_topic = false
+          if title_clean contains 'how-long' or title_clean contains 'how long' or title_clean contains 'turnaround' or title_clean contains 'repair-take' or title_clean contains 'repair time' or title_clean contains 'warranty' or title_clean contains 'worth-repairing' or title_clean contains 'worth repairing'
+            assign is_general_topic = true
+          endif
+
           assign is_liquid = false
-          if hay contains 'liquid' or hay contains 'water' or hay contains 'spill' or hay contains 'spilt' or hay contains 'coffee' or hay contains 'corros'
-            assign is_liquid = true
-          endif
-
           assign is_power = false
-          if hay contains 'no-power' or hay contains 'no power' or hay contains 'not-turning-on' or hay contains 'turn on' or hay contains 'dead' or hay contains 'logic-board' or hay contains 'logic board' or hay contains 'charging' or hay contains 'cd3217'
-            assign is_power = true
-          endif
-
           assign is_screen = false
-          if hay contains 'screen' or hay contains 'display' or hay contains 'lcd' or hay contains 'backlight' or hay contains 'crack' or hay contains 'flicker' or hay contains 'retina' or hay contains 'flexgate' or hay contains 'dustgate' or hay contains 'panel'
+
+          if title_clean contains 'liquid' or title_clean contains 'water' or title_clean contains 'spill' or title_clean contains 'spilt' or title_clean contains 'coffee' or title_clean contains 'corros'
+            assign is_liquid = true
+          elsif title_clean contains 'no-power' or title_clean contains 'no power' or title_clean contains 'not-turning-on' or title_clean contains 'turn on' or title_clean contains 'dead' or title_clean contains 'logic-board' or title_clean contains 'logic board' or title_clean contains 'charging' or title_clean contains 'cd3217'
+            assign is_power = true
+          elsif title_handle contains 'screen' or title_handle contains 'display' or title_handle contains 'lcd' or title_handle contains 'backlight' or title_handle contains 'crack' or title_handle contains 'flicker' or title_handle contains 'retina' or title_handle contains 'flexgate' or title_handle contains 'dustgate' or title_handle contains 'panel'
             assign is_screen = true
+          elsif is_general_topic == false
+            if tag_clean contains 'liquid' or tag_clean contains 'water' or tag_clean contains 'spill' or tag_clean contains 'spilt' or tag_clean contains 'coffee' or tag_clean contains 'corros'
+              assign is_liquid = true
+            elsif tag_clean contains 'no-power' or tag_clean contains 'no power' or tag_clean contains 'not-turning-on' or tag_clean contains 'turn on' or tag_clean contains 'dead' or tag_clean contains 'logic-board' or tag_clean contains 'logic board' or tag_clean contains 'charging' or tag_clean contains 'cd3217'
+              assign is_power = true
+            elsif tag_str contains 'screen' or tag_str contains 'display' or tag_str contains 'lcd' or tag_str contains 'backlight' or tag_str contains 'crack' or tag_str contains 'flicker' or tag_str contains 'retina' or tag_str contains 'flexgate' or tag_str contains 'dustgate' or tag_str contains 'panel'
+              assign is_screen = true
+            endif
           endif
 
           # Default: general Apple repair CTA
@@ -275,6 +287,12 @@
                 <a href="{{ nopower_url }}">Dead / No Power</a>
                 <span aria-hidden="true">&middot;</span>
                 <a href="/collections/macbook-screen-repair-prices">Screen Repair</a>
+              {%- elsif cta_primary_url == '/pages/advanced-diagnostic' and cta_secondary_url == '/pages/macbook-repairs' -%}
+                <a href="/collections/macbook-screen-repair-prices">Screen Repair</a>
+                <span aria-hidden="true">&middot;</span>
+                <a href="/collections/macbook-battery-repair-prices">Battery Replacement</a>
+                <span aria-hidden="true">&middot;</span>
+                <a href="/collections/macbook-keyboard-repair-prices">Keyboard Repair</a>
               {%- else -%}
                 <a href="/pages/advanced-diagnostic">Advanced Diagnostics</a>
                 <span aria-hidden="true">&middot;</span>
