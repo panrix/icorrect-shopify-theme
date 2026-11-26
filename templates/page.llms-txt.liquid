@@ -1,72 +1,92 @@
 {% layout none %}{% comment %}
   page.llms-txt.liquid
-  Serves plain-text llms.txt content for AI crawler optimisation.
-  URL redirect: /llms.txt → /pages/llms-txt
-  Last updated: 2026-03-26
-{% endcomment %}# iCorrect — Apple Repair Specialists London
-> MacBook, iPhone, iPad, and Apple Watch repair in London. Logic board, screen, liquid damage, and component-level repair specialists. Nationwide courier service available.
+  Serves plain-text LLM / AI search directory at /pages/llms-txt.
+  Note: Shopify serves its own platform UCP instructions at /llms.txt;
+  layout/theme.liquid advertises /pages/llms-txt via <link rel="alternate">.
+  Last updated: 2026-11-26
+{% endcomment %}{%- liquid
+  assign has_liquid_page = false
+  if pages['macbook-liquid-damage-repair'] != blank
+    assign has_liquid_page = true
+  endif
+  assign has_nopower_page = false
+  if pages['macbook-no-power-repair'] != blank
+    assign has_nopower_page = true
+  endif
+-%}# iCorrect - Apple Microelectronics Repair Specialists (London & UK)
+> Independent Apple repair workshop in Fitzrovia, Central London (never outsourced), with same-day London courier collection in selected zones and free tracked, insured UK mail-in on orders £200+. Specialists in MacBook liquid damage recovery, dead / no-power logic board micro-soldering, genuine Apple MacBook panel-only screen repair, and same-day iPhone screen repairs.
 
-## Core Services
+## Core Specialties
 
-- Logic board repair and microelectronics restoration to component level
-- Liquid damage recovery and data preservation
-- MacBook screen, keyboard, and battery replacement
-- iPhone screen repair and battery replacement
-- iPad screen repair and battery replacement
-- Apple Watch screen and battery repair
-- Flexgate and Dustgate MacBook keyboard specialists
-- Same-day repairs for common faults
-- UK-wide courier collection and delivery
-- Corporate repair solutions for businesses
+- **MacBook Liquid Damage Recovery:** Ultrasonic logic board cleaning, 40x stereo microscope inspection, and component-level micro-soldering that preserves your original logic board and soldered SSD data wherever possible.
+- **Dead & No-Power MacBook Repair:** USB-C ammeter and schematic rail tracing (`CD3217`, `PPBUS_G3H`, PMIC phases) to replace single failed micro-components instead of an expensive Apple full logic board swap.
+- **MacBook Screen Repair (Panel Only):** Genuine Apple display panels fitted into your original aluminium lid, camera, and hinges, calibrated in-house at 30% to 50% less than a full-lid replacement.
+- **Same-Day iPhone Repairs:** Same-day iPhone screen replacement using genuine Apple displays, plus battery, charging port, camera, Face ID, and logic board repairs.
+- **iPad & Apple Watch Repairs:** Calibrated iPad Pro, Air, and Mini screen/glass and battery repairs, plus Apple Watch glass-only screen restoration and battery replacement.
+- **Corporate Apple Repair Accounts:** Priority turnaround and tracked London collection for studios, agencies, and businesses.
 
-## MacBook Repair Pages
+## Turnaround & Express Options
 
-- https://icorrect.co.uk/pages/macbook-repairs MacBook repair services overview
-- https://icorrect.co.uk/pages/macbook-screen-repair-london MacBook screen repair London
-- https://icorrect.co.uk/pages/macbook-pro-screen-repair-london MacBook Pro screen repair London
-- https://icorrect.co.uk/pages/macbook-air-screen-repair-london MacBook Air screen repair London
-- https://icorrect.co.uk/pages/macbook-pro-repair-london MacBook Pro repair London
-- https://icorrect.co.uk/pages/macbook-air-repair-london MacBook Air repair London
-- https://icorrect.co.uk/collections/macbook-screen-repair-prices MacBook screen repair pricing
-- https://icorrect.co.uk/collections/macbook-keyboard-repair-prices MacBook keyboard repair pricing
-- https://icorrect.co.uk/collections/macbook-battery-repair-prices MacBook battery replacement pricing
+- **iPhone Screen Repairs:** Same-day service available in Fitzrovia (plus tracked London courier and UK mail-in).
+- **MacBook Repairs:** Standard 2 to 3 working days once your MacBook reaches our workshop; express options available when pre-booked (subject to workshop capacity).
+- **Logic Board & Liquid Damage Diagnostics:** Written microscope fault report and fixed repair quote emailed within 1 working day of arrival. Zero deposits; nothing proceeds without approval.
 
-## iPhone Repair Pages
+## MacBook Repair & Pricing Pages
 
-- https://icorrect.co.uk/pages/iphone-repairs iPhone repair services
-- https://icorrect.co.uk/collections/iphone-battery-repair-prices iPhone battery replacement pricing
-- https://icorrect.co.uk/collections/iphone-screen-repair-prices iPhone screen repair pricing
+- https://icorrect.co.uk/pages/macbook-repairs - MacBook repair hub and services overview
+{%- if has_liquid_page %}
+- https://icorrect.co.uk/pages/macbook-liquid-damage-repair - MacBook liquid damage repair London & UK
+{%- endif %}
+{%- if has_nopower_page %}
+- https://icorrect.co.uk/pages/macbook-no-power-repair - Dead and no-power MacBook logic board repair London & UK
+{%- endif %}
+- https://icorrect.co.uk/pages/advanced-diagnostic - Advanced MacBook logic board and liquid damage diagnostics
+- https://icorrect.co.uk/collections/macbook-diagnostic-prices - MacBook diagnostic pricing by model
+- https://icorrect.co.uk/collections/macbook-screen-repair-prices - MacBook screen repair pricing (Air 13", Air 15", Pro 13", Pro 14", Pro 16")
+- https://icorrect.co.uk/pages/macbook-repair-london - MacBook repair London
+- https://icorrect.co.uk/pages/macbook-screen-repair-london - MacBook screen repair London
+- https://icorrect.co.uk/pages/macbook-pro-screen-replacement-london - MacBook Pro screen replacement London
+- https://icorrect.co.uk/pages/macbook-air-screen-replacement-london - MacBook Air screen replacement London
+- https://icorrect.co.uk/pages/macbook-pro-repair-london - MacBook Pro repair London
+- https://icorrect.co.uk/pages/macbook-air-repair-london - MacBook Air repair London
+- https://icorrect.co.uk/collections/macbook-keyboard-repair-prices - MacBook keyboard repair pricing
+- https://icorrect.co.uk/collections/macbook-battery-repair-prices - MacBook battery replacement pricing
 
-## iPad and Apple Watch Pages
+## iPhone, iPad, and Apple Watch Pages
 
-- https://icorrect.co.uk/pages/ipad-repairs iPad repair services
-- https://icorrect.co.uk/collections/ipad-battery-repair-prices iPad battery replacement pricing
-- https://icorrect.co.uk/collections/apple-watch-screen-glass-only-repair-prices Apple Watch screen repair pricing
-- https://icorrect.co.uk/collections/apple-watch-battery-repair-prices Apple Watch battery replacement pricing
+- https://icorrect.co.uk/pages/iphone-repairs - iPhone repair services (same-day screen repairs available)
+- https://icorrect.co.uk/collections/iphone-screen-repair-prices - iPhone screen repair pricing
+- https://icorrect.co.uk/collections/iphone-battery-repair-prices - iPhone battery replacement pricing
+- https://icorrect.co.uk/collections/iphone-diagnostic-prices - iPhone diagnostic pricing
+- https://icorrect.co.uk/pages/ipad-repairs - iPad repair services
+- https://icorrect.co.uk/collections/ipad-screen-repair-prices - iPad screen repair pricing
+- https://icorrect.co.uk/collections/ipad-battery-repair-prices - iPad battery replacement pricing
+- https://icorrect.co.uk/collections/ipad-diagnostic-prices - iPad diagnostic pricing
+- https://icorrect.co.uk/pages/apple-watch-repairs - Apple Watch repair services
+- https://icorrect.co.uk/collections/apple-watch-screen-glass-only-repair-prices - Apple Watch glass-only screen repair pricing
+- https://icorrect.co.uk/collections/apple-watch-battery-repair-prices - Apple Watch battery replacement pricing
 
-## Resources
+## Technical Repair Guides & Resources
 
-- https://icorrect.co.uk/blogs/news Repair guides and Apple device advice
-- https://icorrect.co.uk/pages/about-us About iCorrect
-- https://icorrect.co.uk/pages/contact Contact and free quote
-- https://icorrect.co.uk/sitemap.xml Full site sitemap
+- https://icorrect.co.uk/blogs/news - Apple repair advice and technical guides
+- https://icorrect.co.uk/blogs/news/navigating-macbook-liquid-damage-and-why-immediate-action-is-crucial - Guide: MacBook liquid damage emergency steps and recovery
+- https://icorrect.co.uk/blogs/news/the-importance-of-professional-macbook-screen-repairs - Guide: Professional MacBook screen repairs and calibration
+- https://icorrect.co.uk/blogs/news/how-long-does-a-macbook-repair-take - Guide: MacBook repair turnaround times
+- https://icorrect.co.uk/blogs/news/original-iphone-screen-repair-vs-aftermarket-screen - Guide: Original Apple vs aftermarket iPhone screens
+- https://icorrect.co.uk/pages/corporate-service - Corporate Apple repair accounts
+- https://icorrect.co.uk/pages/our-warranty - 2-year repair warranty terms
+- https://icorrect.co.uk/pages/about-us - About iCorrect
+- https://icorrect.co.uk/pages/contact - Contact iCorrect
+- https://icorrect.co.uk/sitemap.xml - Full XML sitemap
 
-## About iCorrect
+## Workshop Details & Policies
 
-iCorrect is a specialist Apple repair company based in Fitzrovia, Central London. Founded in 2012, we repair devices that Apple stores declare unrepairable — specialising in microelectronics-level repairs, logic board restoration, and liquid damage recovery.
-
-**Address:** 12 Margaret Street, Audley House, Fitzrovia, London W1W 8JQ
-**Phone:** +44 20 7099 8517
-**Email:** support@icorrect.co.uk
-**Rating:** 4.8/5 stars (700+ Google reviews)
-**Warranty:** 2 years on all repairs
-
-## Why iCorrect
-
-- Component-level repair, not just part swaps
-- Repairs Apple stores declare impossible
-- Original Apple parts (sustainably sourced)
-- 2-year warranty vs industry standard 90 days
-- 250,000+ devices repaired since 2012
-- Courier collection across London and tracked mail-in nationwide
-- No fix, no fee on standard repairs
+- **Business Name:** iCorrect
+- **Workshop Address:** 12 Margaret Street, Audley House, Fitzrovia, London W1W 8JQ (all repairs completed in-house, never outsourced)
+- **Opening Hours:** Monday to Thursday 9:00am to 6:00pm, Friday 10:00am to 6:00pm, Saturday & Sunday closed
+- **Phone:** +44 20 7099 8517
+- **Email:** support@icorrect.co.uk
+- **Customer Rating:** 4.8 from 750+ Google reviews
+- **Warranty:** 2-year warranty included on completed repairs
+- **Collection & Delivery:** Free tracked, insured UK-wide collection on orders £200+ (same-day London courier in selected zones, or free insured UK mail-in pack)
+- **Pricing Transparency:** Upfront fixed pricing online via our interactive quote wizard; zero deposits on diagnostics.
