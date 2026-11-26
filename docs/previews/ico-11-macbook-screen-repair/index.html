@@ -109,11 +109,10 @@
       --bg-3: #f4f4f5;
       --line: rgba(0, 0, 0, 0.08);
       --line-strong: rgba(0, 0, 0, 0.16);
-      --accent: #0071e3;
-      --accent-hover: #0062c4;
+      --accent: #0b63ce;
+      --accent-hover: #0952ab;
       --accent-soft: #f0f7ff;
       --green: #047857;
-      --emerald: #059669;
       --green-dot: #10b981;
       --green-soft: #e6f6ec;
       --star: #f59e0b;
@@ -233,9 +232,9 @@
       min-height: 40px;
       padding: 8px 16px;
       border-radius: var(--r-sm);
-      background: var(--fg-1);
+      background: #111827;
       color: #ffffff;
-      border: 1px solid var(--fg-1);
+      border: 1px solid #111827;
       font-size: 14px;
       font-weight: 500;
       text-decoration: none;
@@ -243,7 +242,7 @@
       transition: background 140ms ease;
       white-space: nowrap;
     }
-    .btn-dark:hover { background: #333333; }
+    .btn-dark:hover { background: #1f2937; }
     .header-cta {
       transition: opacity 200ms ease, transform 200ms ease, visibility 200ms ease, background 140ms ease;
     }
@@ -265,22 +264,22 @@
       height: 50px;
       padding: 0 22px;
       border-radius: 999px;
-      background: var(--accent);
+      background: #111827;
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.24);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       font-size: 14.5px;
-      font-weight: 600;
+      font-weight: 500;
       letter-spacing: -0.01em;
       text-decoration: none;
       white-space: nowrap;
-      box-shadow: 0 10px 28px rgba(0, 113, 227, 0.34), 0 2px 8px rgba(0, 0, 0, 0.18);
+      box-shadow: 0 12px 28px rgba(17, 24, 39, 0.28), 0 2px 8px rgba(0, 0, 0, 0.16);
       opacity: 0;
       transform: translateY(14px);
       pointer-events: none;
       visibility: hidden;
       transition: opacity 220ms ease, transform 220ms ease, visibility 220ms ease, background 140ms ease;
     }
-    .floating-cta:hover { background: var(--accent-hover); }
+    .floating-cta:hover { background: #1f2937; }
     .floating-cta.is-visible {
       opacity: 1;
       transform: translateY(0);
@@ -310,39 +309,21 @@
       border-color: var(--fg-1);
       background: var(--bg-2);
     }
-    .btn-pill-blue {
-      background: #eff6ff;
-      border-color: #bfdbfe;
-      color: #1d4ed8;
+    .btn-pill-neutral {
+      background: #f5f6f8;
+      border-color: #e2e5ea;
+      color: #1f2937;
     }
-    .btn-pill-blue:hover {
-      background: #dbeafe;
-      border-color: #93c5fd;
-      color: #1e40af;
+    .btn-pill-neutral:hover {
+      background: #eceef2;
+      border-color: #cbd5e1;
+      color: #111827;
     }
-    .btn-pill-emerald {
-      background: #ecfdf5;
-      border-color: #a7f3d0;
-      color: #047857;
-    }
-    .btn-pill-emerald:hover {
-      background: #d1fae5;
-      border-color: #6ee7b7;
-      color: #065f46;
-    }
-    .pill-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .pill-dot-blue { background: var(--accent); }
-    .pill-dot-emerald { background: var(--emerald); }
 
     /* 1. CALM VALUE-FIRST HERO + EXPLODED DISPLAY VISUAL */
     .hero-band {
       padding: 24px 0 40px;
-      background: radial-gradient(ellipse 90% 60% at 50% 0%, rgba(0, 113, 227, 0.06) 0%, rgba(0, 113, 227, 0.025) 45%, #ffffff 78%);
+      background: #ffffff;
       border-bottom: 1px solid var(--line);
     }
     .breadcrumb {
@@ -354,13 +335,13 @@
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--fg-4);
+      color: #6b7280;
     }
-    .breadcrumb a { text-decoration: none; color: var(--fg-3); }
-    .breadcrumb a:hover { color: var(--fg-1); }
+    .breadcrumb a { text-decoration: none; color: #6b7280; }
+    .breadcrumb a:hover { color: #111827; }
     .breadcrumb-current {
-      color: var(--accent);
-      font-weight: 600;
+      color: #111827;
+      font-weight: 500;
     }
 
     .hero-grid {
@@ -405,8 +386,8 @@
       text-align: left;
       padding: 9px 12px;
       border-radius: var(--r-sm);
-      border: 1px solid #dce7f5;
-      background: #f8fbff;
+      border: 1px solid #e5e7eb;
+      background: #f8fafc;
       text-decoration: none;
       display: flex;
       flex-direction: column;
@@ -415,13 +396,13 @@
     }
     .price-chip:hover {
       border-color: var(--accent);
-      background: #eff6ff;
-      box-shadow: 0 2px 8px rgba(0, 113, 227, 0.08);
+      background: #f8fafc;
+      box-shadow: 0 2px 8px rgba(11, 99, 206, 0.08);
     }
     .price-chip-model {
       font-size: 12px;
       font-weight: 500;
-      color: var(--fg-2);
+      color: #111827;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -437,20 +418,6 @@
       font-size: 12px;
       color: var(--fg-3);
     }
-    .hero-note-emerald {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      color: var(--green);
-      font-weight: 500;
-    }
-    .hero-note-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--emerald);
-      flex-shrink: 0;
-    }
     .hero-jump-row {
       margin-top: 14px;
       display: flex;
@@ -460,8 +427,8 @@
 
     /* Exploded Display Stage right in First Fold */
     .diagram-stage {
-      background: linear-gradient(180deg, #f7faff 0%, #ffffff 100%);
-      border: 1px solid #dcebff;
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
       border-radius: var(--r-lg);
       padding: 14px 18px;
       width: 100%;
@@ -485,7 +452,7 @@
       font-family: var(--font-mono);
       font-size: 10.5px;
       font-weight: 500;
-      color: #0369a1;
+      color: var(--accent);
       letter-spacing: 0.03em;
       text-transform: uppercase;
     }
@@ -1780,11 +1747,11 @@
                 </a>
               </li>
             </ul>
-            <p class="hero-price-note">Includes genuine panel, calibration &amp; <span class="hero-note-emerald"><span class="hero-note-dot" aria-hidden="true"></span>free UK collection (£200+)</span>. 2 working days in workshop.</p>
+            <p class="hero-price-note">Includes genuine panel, calibration &amp; free UK collection (£200+). 2 working days in workshop.</p>
 
             <div class="hero-jump-row">
-              <a class="btn-ghost btn-pill-blue" href="#compare"><span class="pill-dot pill-dot-blue" aria-hidden="true"></span>How do ours compare?</a>
-              <a class="btn-ghost btn-pill-emerald" href="#warranty" data-open-warranty><span class="pill-dot pill-dot-emerald" aria-hidden="true"></span>See how our 2-year warranty works</a>
+              <a class="btn-ghost btn-pill-neutral" href="#compare">How do ours compare?</a>
+              <a class="btn-ghost btn-pill-neutral" href="#warranty" data-open-warranty>See how our 2-year warranty works</a>
             </div>
           </div>
 
