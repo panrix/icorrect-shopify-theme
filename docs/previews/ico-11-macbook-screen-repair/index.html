@@ -678,6 +678,7 @@
     /* Collection & Calibration Lead-In Card (Directly ABOVE "How our display repair compares") */
     .process-bar {
       margin: 0 0 40px;
+      scroll-margin-top: 84px;
       background: #f8fafc;
       border: 1px solid #e5e7eb;
       border-radius: var(--r-lg);
@@ -691,25 +692,26 @@
       padding: 20px 22px;
       text-align: left;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 14px;
       cursor: pointer;
       transition: background 140ms ease;
     }
     .process-bar-trigger:hover { background: #f3f6fa; }
-    .process-bar-left {
+    .process-bar-head {
       display: flex;
-      flex-direction: column;
-      gap: 12px;
-      min-width: 0;
-      flex: 1;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      width: 100%;
     }
     .process-bar-top {
       display: flex;
       align-items: baseline;
       gap: 12px;
       flex-wrap: wrap;
+      min-width: 0;
     }
     .process-bar-badge {
       display: inline-flex;
@@ -1747,7 +1749,7 @@
       .model-dir-grid { grid-template-columns: minmax(0, 1fr); }
       .process-detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .process-highlights { grid-template-columns: minmax(0, 1fr); }
-      .process-bar-trigger { flex-direction: column; align-items: flex-start; gap: 14px; }
+      .process-bar-head { flex-direction: column; align-items: flex-start; gap: 12px; }
       .related-links-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .warranty-card.is-open .warranty-body { grid-template-columns: minmax(0, 1fr); }
       .pillars-strip { grid-template-columns: minmax(0, 1fr); }
@@ -2162,30 +2164,30 @@
         <!-- Collection & Calibration Lead-In Card (Directly ABOVE "How our display repair compares") -->
         <div class="process-bar" id="process-strip">
           <button type="button" class="process-bar-trigger" id="process-bar-toggle" aria-expanded="false" aria-controls="process-bar-panel">
-            <div class="process-bar-left">
+            <div class="process-bar-head">
               <div class="process-bar-top">
                 <span class="process-bar-badge">Collection &amp; calibration</span>
                 <h2 class="process-bar-title">Collected from your door, calibrated in Fitzrovia, back in 2 working days.</h2>
               </div>
-              <ul class="process-highlights" aria-label="Turnaround and collection highlights">
-                <li class="process-highlight">
-                  <strong>2 working days</strong>
-                  <span>Workshop turnaround once received</span>
-                </li>
-                <li class="process-highlight">
-                  <strong>Free UK collection (£200+)</strong>
-                  <span>London same-day courier or tracked UK mail-in</span>
-                </li>
-                <li class="process-highlight">
-                  <strong>Fitzrovia board-level bench</strong>
-                  <span>Calibrated in-house, never outsourced</span>
-                </li>
-              </ul>
+              <span class="process-bar-pill">
+                <span id="process-bar-label">See how it works</span>
+                <span id="process-bar-icon" aria-hidden="true">+</span>
+              </span>
             </div>
-            <span class="process-bar-pill">
-              <span id="process-bar-label">See how it works</span>
-              <span id="process-bar-icon" aria-hidden="true">+</span>
-            </span>
+            <ul class="process-highlights" aria-label="Turnaround and collection highlights">
+              <li class="process-highlight">
+                <strong>2 working days</strong>
+                <span>Workshop turnaround once received</span>
+              </li>
+              <li class="process-highlight">
+                <strong>Free UK collection (£200+)</strong>
+                <span>London same-day courier or tracked UK mail-in</span>
+              </li>
+              <li class="process-highlight">
+                <strong>Fitzrovia board-level bench</strong>
+                <span>Calibrated in-house, never outsourced</span>
+              </li>
+            </ul>
           </button>
           <div class="process-bar-panel" id="process-bar-panel">
             <div class="process-detail-head">
