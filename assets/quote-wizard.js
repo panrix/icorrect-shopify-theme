@@ -4295,11 +4295,19 @@
       if (userMsg) fullBody += (fullBody ? '\n\n' : '') + 'Message:\n' + userMsg;
 
       try {
+        var phDistinctId = '';
+        try {
+          if (window.icorrectPostHog && typeof window.icorrectPostHog.getDistinctId === 'function') {
+            phDistinctId = window.icorrectPostHog.getDistinctId();
+          } else if (window.posthog && typeof window.posthog.get_distinct_id === 'function') {
+            phDistinctId = String(window.posthog.get_distinct_id() || '');
+          }
+        } catch (phErr) {}
         /* Wrap in contact-form-interceptor shape so the intake service routes
            this as a consumer contact-form submission (sourceType: consumer).
            Without `source` + `contact: {...}`, the intake rejects with
            "Unsupported source." See POST-DEPLOY-INCIDENT-2026-04-17.md. */
-        await postQuoteWizardWebhook({
+        var questionPayload = {
           contact: {
             name: userName,
             email: userEmail,
@@ -4313,7 +4321,9 @@
           timestamp: new Date().toISOString(),
           page_url: window.location.href,
           referrer: document.referrer || null
-        });
+        };
+        if (phDistinctId) questionPayload.posthog_distinct_id = phDistinctId;
+        await postQuoteWizardWebhook(questionPayload);
         form.style.display = 'none';
         var ok = document.getElementById(prefix + 'Ok');
         if (ok) { ok.hidden = false; ok.classList.add('show'); }
@@ -4329,6 +4339,14 @@
           value: getWizardTotalValue(),
           currency: 'GBP'
         });
+        try {
+          if (window.icorrectPostHog && typeof window.icorrectPostHog.identifyEnquiry === 'function') {
+            window.icorrectPostHog.identifyEnquiry(userEmail, userName);
+          } else if (window.posthog && typeof window.posthog.identify === 'function' && userEmail) {
+            var normEmail = String(userEmail).trim().toLowerCase();
+            window.posthog.identify(normEmail, userName ? { email: normEmail, name: userName } : { email: normEmail });
+          }
+        } catch (phIdErr) {}
         if (window.posthog) posthog.capture('wizard_conversion', buildWizardTrackPayload({ action: source + '_submit' }));
       } catch (error) {
         sub.disabled = false;
@@ -4693,6 +4711,12 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
             url: window.location.href,
             timestamp: new Date().toISOString()
         };
+        try {
+          var eqPhId = window.icorrectPostHog && typeof window.icorrectPostHog.getDistinctId === 'function'
+            ? window.icorrectPostHog.getDistinctId()
+            : (window.posthog && typeof window.posthog.get_distinct_id === 'function' ? String(window.posthog.get_distinct_id() || '') : '');
+          if (eqPhId) payload.posthog_distinct_id = eqPhId;
+        } catch (phErr) {}
  
         function showEmailSuccess() {
           var panel = document.getElementById('qwEmailPanel');
@@ -4730,6 +4754,17 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
               });
             }
           } catch (e) {}
+          /* Identify AFTER fireQuoteEmailRequested so quote_events.session_id
+             keeps the original anonymous distinct_id that matches quote_shown;
+             PostHog then merges the anonymous session history onto this email. */
+          try {
+            if (window.icorrectPostHog && typeof window.icorrectPostHog.identifyEnquiry === 'function') {
+              window.icorrectPostHog.identifyEnquiry(email, name);
+            } else if (window.posthog && typeof window.posthog.identify === 'function' && email) {
+              var normEqEmail = String(email).trim().toLowerCase();
+              window.posthog.identify(normEqEmail, name ? { email: normEqEmail, name: name } : { email: normEqEmail });
+            }
+          } catch (phIdErr) {}
         }).catch(function() {
           sendBtn.disabled = false; sendBtn.textContent = 'Send quote';
           document.getElementById('qwEqErr').textContent = 'Something went wrong. Please try again.';

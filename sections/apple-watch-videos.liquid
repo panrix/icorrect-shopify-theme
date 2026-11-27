@@ -1,134 +1,34 @@
 {% comment %}
   Section: Apple Watch Videos
-  Fixed 3 YouTube Shorts embeds, with editable heading + subtitle, and Shopify color scheme support.
+  Redesigned click-to-play 3-video panel using snippets/icorrect-video-panel.liquid.
+  Preserves all existing Theme Customizer settings across Apple Watch templates.
 {% endcomment %}
 
-{%- style -%}
-  .apple-watch-videos-{{ section.id }}{
-    padding-top: {{ section.settings.padding_top | plus: 40 }}px;
-    padding-bottom: {{ section.settings.padding_bottom | plus: 40 }}px;
-  }
+{%- assign watch_pad_top = section.settings.padding_top | plus: 40 -%}
+{%- assign watch_pad_bottom = section.settings.padding_bottom | plus: 40 -%}
 
-  .apple-watch-videos-{{ section.id }} .apple-watch-videos{
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 20px;
-  }
-
-  /* LEFT aligned header */
-  .apple-watch-videos-{{ section.id }} .apple-watch-videos__header{
-    text-align: left;
-    margin: 0 0 56px 0;
-    max-width: 760px;
-  }
-
-  .apple-watch-videos-{{ section.id }} .apple-watch-videos__heading{
-    font-size: 34px;
-    margin: 0 0 10px 0;
-  }
-
-  .apple-watch-videos-{{ section.id }} .apple-watch-videos__subtitle{
-    margin: 0;
-    font-size: 16px;
-    line-height: 1.5;
-    opacity: 0.85;
-  }
-
-  .apple-watch-videos-{{ section.id }} .apple-watch-videos__grid{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 40px;
-  }
-
-  .apple-watch-videos-{{ section.id }} .apple-watch-videos__card{
-    width: 100%;
-  }
-
-  .apple-watch-videos-{{ section.id }} .apple-watch-videos__item{
-    position: relative;
-    padding-bottom: 177.78%;
-    border-radius: 12px;
-    overflow: hidden;
-    background: #000;
-  }
-
-  .apple-watch-videos-{{ section.id }} .apple-watch-videos__item iframe{
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-  }
-
-  .apple-watch-videos-{{ section.id }} .apple-watch-videos__title{
-    margin: 12px 0 0 0;
-    font-size: 16px;
-    line-height: 1.3;
-  }
-{%- endstyle -%}
-
-<section class="apple-watch-videos-{{ section.id }} color-{{ section.settings.color_scheme }} gradient">
-  <div class="page-width">
-    <div class="apple-watch-videos">
-
-      <div class="apple-watch-videos__header">
-        <h2 class="apple-watch-videos__heading">
-          {{ section.settings.heading | escape }}
-        </h2>
-
-        <p class="apple-watch-videos__subtitle">
-          {{ section.settings.subtitle | escape }}
-        </p>
-      </div>
-
-      <div class="apple-watch-videos__grid">
-
-        <div class="apple-watch-videos__card">
-          <div class="apple-watch-videos__item">
-            <iframe loading="lazy"
-              src="https://www.youtube.com/embed/7yrJjsdlegw"
-              title="Apple Watch Video 1"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen
-            ></iframe>
-          </div>
-          <p class="apple-watch-videos__title">
-            {{ section.settings.video_1_title | escape }}
-          </p>
-        </div>
-
-        <div class="apple-watch-videos__card">
-          <div class="apple-watch-videos__item">
-            <iframe loading="lazy"
-              src="https://www.youtube.com/embed/vqOHcqvPDX8"
-              title="Apple Watch Video 2"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen
-            ></iframe>
-          </div>
-          <p class="apple-watch-videos__title">
-            {{ section.settings.video_2_title | escape }}
-          </p>
-        </div>
-
-        <div class="apple-watch-videos__card">
-          <div class="apple-watch-videos__item">
-            <iframe loading="lazy"
-              src="https://www.youtube.com/embed/oTaCDfLWTfQ"
-              title="Apple Watch Video 3"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen
-            ></iframe>
-          </div>
-          <p class="apple-watch-videos__title">
-            {{ section.settings.video_3_title | escape }}
-          </p>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</section>
+{%- render 'icorrect-video-panel',
+  section: section,
+  pad_top: watch_pad_top,
+  pad_bottom: watch_pad_bottom,
+  kicker: 'Inside Our Fitzrovia Workshop · Glass-Only Restoration',
+  badge: 'Apple Watch Specialist Lab',
+  tag_prefix: 'Watch Bench',
+  default_heading: 'Behind the scenes',
+  default_subtitle: 'Watch our videos to understand common repair issues, what to expect, and how we fix your device with care.',
+  video_1_id: '7yrJjsdlegw',
+  video_1_fallback_title: 'Repair your Watch, do not replace it.',
+  video_1_aria: 'Apple Watch Series 9 glass-only screen repair walkthrough',
+  video_1_default_desc: 'Replacing only the cracked front glass while keeping your original Apple OLED display intact and calibrated.',
+  video_2_id: 'vqOHcqvPDX8',
+  video_2_fallback_title: 'Treat your rear glass with care.',
+  video_2_aria: 'Apple Watch rear glass and heart rate sensor repair in London',
+  video_2_default_desc: 'Why cracked rear sensor glass needs prompt specialist sealing to protect the heart-rate module and water resistance.',
+  video_3_id: 'oTaCDfLWTfQ',
+  video_3_fallback_title: 'We care about sustainability.',
+  video_3_aria: 'Sustainable Apple Watch glass-only screen restoration at iCorrect',
+  video_3_default_desc: 'Precision refurbishment that saves working OLED displays and reduces unnecessary e-waste across every Watch Series.'
+-%}
 
 {% schema %}
 {
@@ -156,15 +56,30 @@
     },
     {
       "type": "text",
+      "id": "video_1_desc",
+      "label": "Video 1 caption (optional)"
+    },
+    {
+      "type": "text",
       "id": "video_2_title",
       "label": "Video 2 title",
       "default": "Treat your rear glass with care."
     },
     {
       "type": "text",
+      "id": "video_2_desc",
+      "label": "Video 2 caption (optional)"
+    },
+    {
+      "type": "text",
       "id": "video_3_title",
       "label": "Video 3 title",
       "default": "We care about sustainability."
+    },
+    {
+      "type": "text",
+      "id": "video_3_desc",
+      "label": "Video 3 caption (optional)"
     },
     {
       "type": "color_scheme",
