@@ -3,8 +3,12 @@
  * Copy Shopify variant prices into the live quote-wizard catalogue.
  *
  * The wizard reads assets/repair-catalogue-map.json on the published theme.
- * This updates only the price on each repair row, matched by variant id.
- * It does not add, remove, or rename repairs.
+ * This updates the price on each repair row, matched by variant id.
+ * It also marks a row `unavailable: true` while its Shopify product is not
+ * active and on the Online Store (drafted, archived, unpublished or deleted),
+ * and removes the mark when the product comes back. The wizard hides any
+ * repair carrying that mark, so a customer is never quoted a price for
+ * something they cannot add to the cart. Rows are never deleted or renamed.
  *
  *   node scripts/courier/sync-catalogue-prices.js           # write the theme asset when a price differs
  *   node scripts/courier/sync-catalogue-prices.js --dry-run
@@ -83,6 +87,35 @@ function applyVariantPrices(map, priceByVariantId) {
   return { changes, missing };
 }
 
+/**
+ * @param {object} map parsed catalogue
+ * @param {Record<string, boolean>} availableByVariantId true when the product is active and on the Online Store
+ * @returns {{ hidden: object[], restored: object[] }}
+ */
+function applyAvailability(map, availableByVariantId) {
+  const hidden = [];
+  const restored = [];
+  const models = map && map.models ? map.models : {};
+  for (const modelKey of Object.keys(models)) {
+    const repairs = models[modelKey].repairs || {};
+    for (const type of Object.keys(repairs)) {
+      const row = repairs[type];
+      if (!row || !row.variantId) continue;
+      const id = String(row.variantId);
+      if (!Object.prototype.hasOwnProperty.call(availableByVariantId, id)) continue;
+      const available = availableByVariantId[id] === true;
+      if (!available && row.unavailable !== true) {
+        row.unavailable = true;
+        hidden.push({ modelKey, type, variantId: row.variantId });
+      } else if (available && row.unavailable) {
+        delete row.unavailable;
+        restored.push({ modelKey, type, variantId: row.variantId });
+      }
+    }
+  }
+  return { hidden, restored };
+}
+
 async function shopify(path, options) {
   const token = process.env.SHOPIFY_ACCESS_TOKEN;
   if (!token) throw new Error('SHOPIFY_ACCESS_TOKEN is not set');
@@ -115,25 +148,34 @@ async function downloadCatalogue() {
 
 async function fetchVariantPrices(ids) {
   const prices = {};
+  const availability = {};
   for (let i = 0; i < ids.length; i += BATCH) {
     const chunk = ids.slice(i, i + BATCH);
     const gids = chunk.map((id) => `gid://shopify/ProductVariant/${id}`);
     const body = await shopify('/graphql.json', {
       method: 'POST',
       body: JSON.stringify({
-        query: 'query($ids:[ID!]!){ nodes(ids:$ids){ ... on ProductVariant { id price } } }',
+        query: 'query($ids:[ID!]!){ nodes(ids:$ids){ ... on ProductVariant { id price product { status onlineStoreUrl } } } }',
         variables: { ids: gids },
       }),
     });
     if (body.errors) throw new Error('GraphQL: ' + JSON.stringify(body.errors).slice(0, 300));
     const nodes = (body.data && body.data.nodes) || [];
-    for (const node of nodes) {
-      if (!node || !node.id || node.price == null) continue;
+    for (let n = 0; n < nodes.length; n++) {
+      const node = nodes[n];
+      if (!node) {
+        /* Variant no longer exists (product deleted). */
+        availability[chunk[n]] = false;
+        continue;
+      }
+      if (!node.id || node.price == null) continue;
       const id = String(node.id).split('/').pop();
       prices[id] = node.price;
+      const product = node.product || {};
+      availability[id] = product.status === 'ACTIVE' && !!product.onlineStoreUrl;
     }
   }
-  return prices;
+  return { prices, availability };
 }
 
 async function uploadCatalogue(map) {
@@ -152,8 +194,9 @@ async function main() {
   const dryRun = process.argv.includes('--dry-run');
   const map = await downloadCatalogue();
   const ids = collectVariantIds(map);
-  const prices = await fetchVariantPrices(ids);
+  const { prices, availability } = await fetchVariantPrices(ids);
   const { changes, missing } = applyVariantPrices(map, prices);
+  const { hidden, restored } = applyAvailability(map, availability);
   console.log(JSON.stringify({
     dryRun,
     themeId: THEME_ID,
@@ -163,9 +206,12 @@ async function main() {
     missing: missing.length,
     changes: changes.slice(0, 40),
     missingSample: missing.slice(0, 10),
+    newlyHidden: hidden.length,
+    restored: restored.length,
+    hiddenSample: hidden.slice(0, 10),
   }, null, 2));
-  if (!changes.length) {
-    console.log('No price changes. Catalogue left as it is.');
+  if (!changes.length && !hidden.length && !restored.length) {
+    console.log('No price or availability changes. Catalogue left as it is.');
     return;
   }
   if (dryRun) {
@@ -174,12 +220,13 @@ async function main() {
   }
   map.price_synced_at = new Date().toISOString();
   await uploadCatalogue(map);
-  console.log('Updated ' + changes.length + ' prices on ' + ASSET_KEY);
+  console.log('Updated ' + changes.length + ' prices, hid ' + hidden.length + ', restored ' + restored.length + ' on ' + ASSET_KEY);
 }
 
 module.exports = {
   toCents,
   applyVariantPrices,
+  applyAvailability,
   collectVariantIds,
 };
 

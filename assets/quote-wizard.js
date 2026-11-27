@@ -2634,7 +2634,41 @@
     renderModelGroups(dev);
   }
 
+  /* Hide models whose repairs are all drafted/unpublished in Shopify.
+     The sync job marks those rows `unavailable` in the catalogue map, so this
+     follows product status with no hardcoded list. Unknown models stay listed. */
+  function catalogueOffersModel(dev, name) {
+    var cat = window.ICorrectCatalogue;
+    if (!cat || !window.__QW_CATALOGUE || typeof cat.modelIsOffered !== 'function') return true;
+    return cat.modelIsOffered(window.__QW_CATALOGUE, dev, name);
+  }
+
+  function offeredGroup(dev, group) {
+    var models = (group.models || []).filter(function(m) { return catalogueOffersModel(dev, m.name); });
+    return Object.assign({}, group, { models: models });
+  }
+
+  function offeredGroups(dev) {
+    return (MODELS[dev] || []).map(function(g) { return offeredGroup(dev, g); }).filter(function(g) { return g.models.length > 0; });
+  }
+
+  var _catalogueRerenderDone = false;
+  function rerenderModelsWhenCatalogueLoads(dev) {
+    if (window.__QW_CATALOGUE || _catalogueRerenderDone) return;
+    _catalogueRerenderDone = true;
+    ensureCourierAssets().then(function() {
+      if (S.device === dev && !S.model && S.step === 2) {
+        if (S.modelGroup) {
+          var g = (MODELS[dev] || []).filter(function(x) { return x.group === S.modelGroup; })[0];
+          if (g) { renderModelList(dev, g); return; }
+        }
+        renderModelGroups(dev);
+      }
+    }).catch(function(){});
+  }
+
   function renderModelGroups(dev) {
+    rerenderModelsWhenCatalogueLoads(dev);
     var c = document.getElementById('qw-mC');
     if (!c) return;
     c.innerHTML = '';
@@ -2647,7 +2681,7 @@
     var hT = document.getElementById('qw-hT');
     if (hT) hT.style.display = '';
 
-    var groups = MODELS[dev];
+    var groups = offeredGroups(dev);
     if (!groups || groups.length === 0) {
       c.innerHTML = '<div class="qw-empty"><p>We don\'t have pricing for this model yet. Get in touch for a quote.</p><a href="/pages/contact" class="qw-btn-book">Get in touch</a></div>';
       return;
@@ -2677,6 +2711,7 @@
   }
 
   function pickModelGroup(dev, group) {
+    if (offeredGroup(dev, group).models.length === 0) { renderModelGroups(dev); return; }
     S.modelGroup = group.group;
     renderModelList(dev, group);
   }
@@ -2738,7 +2773,7 @@
     }
 
     var list = document.createElement('div'); list.className = 'qw-m-list qw-m-list--flat';
-    var sorted = sortModels(group.models || []);
+    var sorted = sortModels(offeredGroup(dev, group).models);
     sorted.forEach(function(m) {
       var it = document.createElement('button');
       it.type = 'button';
@@ -2781,6 +2816,19 @@
     if (cat && window.__QW_CATALOGUE) {
       _repairsMap = cat.repairsMapForModel(window.__QW_CATALOGUE, S.device, name) || {};
       _collectionProducts = Object.keys(_repairsMap).map(function(k){ return _repairsMap[k]; });
+      if (typeof cat.modelIsOffered === 'function' && !cat.modelIsOffered(window.__QW_CATALOGUE, S.device, name)) {
+        /* Every repair for this model is drafted: never quote it. Send the customer back to the model list. */
+        var gone = name;
+        changeModelSelection();
+        var listEl = document.getElementById('qw-mC');
+        if (listEl) {
+          var note = document.createElement('div');
+          note.className = 'qw-empty qw-model-gone';
+          note.innerHTML = '<p>We no longer offer online quotes for the ' + esc(gone) + '. Choose another model, or <a href="/pages/contact">get in touch</a>.</p>';
+          listEl.insertBefore(note, listEl.firstChild);
+        }
+        return;
+      }
     } else {
       _repairsMap = {};
       _collectionProducts = [];
