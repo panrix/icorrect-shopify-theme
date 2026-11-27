@@ -1167,13 +1167,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const dow = getWeekdayFromYMD(walkInDate.value);
 
-    // Hours
+    // Hours (Monday to Friday, same start/end window)
     let dayStartHHMM = '09:30';
     let dayEndHHMM = '17:30';
-    if (dow === 5) { // Friday
-      dayStartHHMM = '10:00';
-      dayEndHHMM = '17:30';
-    }
 
     let startMin = hhmmToMinutes(dayStartHHMM);
     const endMin = hhmmToMinutes(dayEndHHMM);
