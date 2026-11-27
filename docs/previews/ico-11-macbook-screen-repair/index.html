@@ -1183,7 +1183,10 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      filter: saturate(0.88) contrast(1.03);
+      filter: saturate(0.92) contrast(1.02);
+    }
+    .workshop-photo-figure[data-photo-slot="workshop-lead"] .workshop-photo-frame {
+      aspect-ratio: 16 / 9;
     }
     .workshop-photo-subgrid {
       display: grid;
@@ -1333,14 +1336,27 @@
       aspect-ratio: 4 / 3;
       background: var(--bg-3);
       border-bottom: 1px solid var(--line);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-3);
+      overflow: hidden;
+      padding: 0;
     }
-    .fault-visual svg {
+    .fault-visual img {
       width: 100%;
       height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      transition: transform 200ms ease;
+    }
+    .fault-tile:hover .fault-visual img {
+      transform: scale(1.02);
+    }
+    .fault-model-cap {
+      margin-top: auto;
+      padding-top: var(--space-1);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.35;
+      color: var(--fg-3);
     }
     .fault-body {
       padding: var(--space-4);
@@ -2663,24 +2679,24 @@
           <div class="workshop-photos">
             <figure class="workshop-photo-figure" data-photo-slot="workshop-lead">
               <div class="workshop-photo-frame">
-                <img src="./assets/fitzrovia-bench-macbook.webp" width="960" height="720" loading="lazy" alt="14-inch MacBook Pro open on an anti-static mat on the iCorrect Fitzrovia repair bench with precision drivers beside it">
+                <img src="./assets/workshop-hero-display.webp" width="1290" height="712" loading="lazy" alt="Silver Apple Silicon MacBook Pro 14-inch on the iCorrect Fitzrovia anti-static mat beside a QUICK 861DE station and stereo microscope while a gloved technician inspects the display bezel">
               </div>
-              <figcaption class="workshop-photo-cap">Fitzrovia bench, 12 Margaret Street · MacBook Pro 14" on anti-static mat</figcaption>
+              <figcaption class="workshop-photo-cap">Fitzrovia bench, 12 Margaret Street · MacBook Pro 14" display inspection on anti-static mat</figcaption>
             </figure>
 
             <div class="workshop-photo-subgrid">
               <figure class="workshop-photo-figure" data-photo-slot="workshop-microscope">
                 <div class="workshop-photo-frame">
-                  <img src="./assets/fitzrovia-microscope-bench.webp" width="960" height="720" loading="lazy" alt="Technician working under a stereo microscope with boardview schematics on the iCorrect Fitzrovia microelectronics bench">
+                  <img src="./assets/workshop-bench-2.webp" width="1100" height="700" loading="lazy" alt="iCorrect technician working at the Fitzrovia stereo microscope bench with a magnified display IC view on the monitor behind">
                 </div>
-                <figcaption class="workshop-photo-cap">Fitzrovia microscope bench · Display rail and backlight checks</figcaption>
+                <figcaption class="workshop-photo-cap">Fitzrovia microscope bench · Live magnified inspection of display and backlight ICs</figcaption>
               </figure>
 
               <figure class="workshop-photo-figure" data-photo-slot="workshop-rework">
                 <div class="workshop-photo-frame">
-                  <img src="./assets/fitzrovia-hands-rework.webp" width="960" height="720" loading="lazy" alt="Gloved iCorrect technician hands performing component-level micro-soldering rework on a MacBook board">
+                  <img src="./assets/workshop-rework-hands.webp" width="960" height="720" loading="lazy" alt="Gloved iCorrect technician hands performing hot-air micro-soldering rework with precision tweezers on a MacBook board">
                 </div>
-                <figcaption class="workshop-photo-cap">In-house microelectronics · Flexgate and Dustgate cable rework</figcaption>
+                <figcaption class="workshop-photo-cap">In-house microelectronics · Hot-air rework on MacBook display and backlight circuitry</figcaption>
               </figure>
             </div>
           </div>
@@ -2735,8 +2751,8 @@
       </div>
     </section>
 
-    <!-- 6. UPGRADE 5: VISUAL SYMPTOM TILES ABOVE #identify AND QUOTE WIZARD -->
-    <section class="section section-soft" id="common-faults">
+    <!-- 6. UPGRADE 5: REAL FAULT SYMPTOM PHOTOS ABOVE #identify AND QUOTE WIZARD -->
+    <section class="section" id="common-faults">
       <div class="ic-container">
         <div class="section-head" style="margin-bottom:var(--space-6);">
           <h2 class="section-title">Is your MacBook screen cracked, flickering, or dark?</h2>
@@ -2746,17 +2762,8 @@
         <div class="faults-grid">
           <!-- Tile 1: Cracked glass or bleeding LCD -->
           <a class="fault-tile" href="#quote-section" data-photo-slot="fault-cracked-lcd">
-            <div class="fault-visual" aria-hidden="true">
-              <svg viewBox="0 0 240 180" fill="none">
-                <rect x="24" y="18" width="192" height="124" rx="8" fill="#ffffff" stroke="#111827" stroke-width="1.5"/>
-                <rect x="32" y="26" width="176" height="108" rx="3" fill="#eff2f6" stroke="#c4c8cf" stroke-width="1"/>
-                <path d="M12 146h216l-8 10H20l-8-10z" fill="#e5e7eb" stroke="#111827" stroke-width="1.3"/>
-                <circle cx="88" cy="64" r="14" fill="#111827" fill-opacity="0.82"/>
-                <path d="M88 64L34 30M88 64L126 26M88 64L168 48M88 64L142 132M88 64L42 124M88 64L74 134" stroke="#111827" stroke-width="1.2"/>
-                <path d="M62 47L78 38M110 43L122 52M106 86L128 84M64 96L82 104" stroke="#38598C" stroke-width="1"/>
-                <rect x="148" y="26" width="14" height="108" fill="#38598C" fill-opacity="0.22"/>
-                <rect x="166" y="26" width="4" height="108" fill="#111827" fill-opacity="0.35"/>
-              </svg>
+            <div class="fault-visual">
+              <img src="./assets/fault-cracked-lcd.webp" width="1280" height="960" loading="lazy" alt="MacBook Pro 14-inch M2 A2779 on the iCorrect Fitzrovia bench showing impact cracks, black liquid-crystal bleed, and vertical colour lines">
             </div>
             <div class="fault-body">
               <div class="fault-title-row">
@@ -2764,25 +2771,15 @@
                 <span class="chev-right" aria-hidden="true"></span>
               </div>
               <span class="fault-tag">Panel replacement</span>
-              <p>Spiderweb cracks, spreading black ink patches, or dead bands after impact.</p>
+              <p>Spiderweb cracks, spreading black ink patches, or vertical lines after impact.</p>
+              <span class="fault-model-cap">MacBook Pro 14" (M2, A2779)</span>
             </div>
           </a>
 
           <!-- Tile 2: Flickering, lines and Flexgate -->
           <a class="fault-tile" href="#quote-section" data-photo-slot="fault-flexgate">
-            <div class="fault-visual" aria-hidden="true">
-              <svg viewBox="0 0 240 180" fill="none">
-                <rect x="24" y="18" width="192" height="124" rx="8" fill="#ffffff" stroke="#111827" stroke-width="1.5"/>
-                <rect x="32" y="26" width="176" height="108" rx="3" fill="#1f2937"/>
-                <path d="M12 146h216l-8 10H20l-8-10z" fill="#e5e7eb" stroke="#111827" stroke-width="1.3"/>
-                <polygon points="48,134 36,96 66,96" fill="#eff2f6" fill-opacity="0.35"/>
-                <polygon points="84,134 68,88 100,88" fill="#eff2f6" fill-opacity="0.35"/>
-                <polygon points="120,134 104,88 136,88" fill="#eff2f6" fill-opacity="0.35"/>
-                <polygon points="156,134 140,88 172,88" fill="#eff2f6" fill-opacity="0.35"/>
-                <polygon points="192,134 176,96 204,96" fill="#eff2f6" fill-opacity="0.35"/>
-                <line x1="32" y1="62" x2="208" y2="62" stroke="#8FB0E0" stroke-width="1.2" stroke-dasharray="4 3"/>
-                <line x1="32" y1="74" x2="208" y2="74" stroke="#8FB0E0" stroke-width="0.9" stroke-opacity="0.6"/>
-              </svg>
+            <div class="fault-visual">
+              <img src="./assets/fault-flexgate.webp" width="1280" height="960" loading="lazy" alt="MacBook Pro 13-inch Touch Bar A1989 on the iCorrect Fitzrovia bench showing classic Flexgate stage-light glow cones along the bottom display edge">
             </div>
             <div class="fault-body">
               <div class="fault-title-row">
@@ -2791,24 +2788,14 @@
               </div>
               <span class="fault-tag">Cable or panel</span>
               <p>Stage-light glow along the bottom edge or screen blanking past an angle.</p>
+              <span class="fault-model-cap">MacBook Pro 13" (Intel, A1989)</span>
             </div>
           </a>
 
           <!-- Tile 3: Dustgate bars and distortion -->
           <a class="fault-tile" href="#quote-section" data-photo-slot="fault-dustgate">
-            <div class="fault-visual" aria-hidden="true">
-              <svg viewBox="0 0 240 180" fill="none">
-                <rect x="24" y="18" width="192" height="124" rx="8" fill="#ffffff" stroke="#111827" stroke-width="1.5"/>
-                <rect x="32" y="26" width="176" height="108" rx="3" fill="#eff2f6" stroke="#c4c8cf" stroke-width="1"/>
-                <path d="M12 146h216l-8 10H20l-8-10z" fill="#e5e7eb" stroke="#111827" stroke-width="1.3"/>
-                <rect x="52" y="26" width="6" height="108" fill="#38598C" fill-opacity="0.65"/>
-                <rect x="64" y="26" width="3" height="108" fill="#111827" fill-opacity="0.5"/>
-                <rect x="108" y="26" width="12" height="108" fill="#38598C" fill-opacity="0.32"/>
-                <rect x="124" y="26" width="4" height="108" fill="#38598C" fill-opacity="0.78"/>
-                <rect x="132" y="26" width="2" height="108" fill="#111827" fill-opacity="0.55"/>
-                <rect x="164" y="26" width="10" height="108" fill="#9ca3af" fill-opacity="0.45"/>
-                <rect x="32" y="124" width="176" height="10" fill="#111827" fill-opacity="0.1"/>
-              </svg>
+            <div class="fault-visual">
+              <img src="./assets/fault-dustgate.webp" width="1280" height="960" loading="lazy" alt="MacBook Pro 16-inch A2141 on the iCorrect Fitzrovia bench showing repeating vertical grey and colour Dustgate columns on an uncracked screen">
             </div>
             <div class="fault-body">
               <div class="fault-title-row">
@@ -2816,22 +2803,15 @@
                 <span class="chev-right" aria-hidden="true"></span>
               </div>
               <span class="fault-tag">Micro-soldering</span>
-              <p>Vertical bars or colour distortion from hinge display cable pressure.</p>
+              <p>Vertical bars or colour distortion across an uncracked screen from hinge cable wear.</p>
+              <span class="fault-model-cap">MacBook Pro 16" (Intel, A2141)</span>
             </div>
           </a>
 
           <!-- Tile 4: Dark or black backlight -->
           <a class="fault-tile" href="#quote-section" data-photo-slot="fault-backlight">
-            <div class="fault-visual" aria-hidden="true">
-              <svg viewBox="0 0 240 180" fill="none">
-                <rect x="24" y="18" width="192" height="124" rx="8" fill="#ffffff" stroke="#111827" stroke-width="1.5"/>
-                <rect x="32" y="26" width="176" height="108" rx="3" fill="#111827"/>
-                <path d="M12 146h216l-8 10H20l-8-10z" fill="#e5e7eb" stroke="#111827" stroke-width="1.3"/>
-                <circle cx="120" cy="80" r="34" fill="#38598C" fill-opacity="0.28"/>
-                <rect x="94" y="64" width="52" height="32" rx="4" stroke="#8FB0E0" stroke-width="1.2" stroke-opacity="0.7"/>
-                <line x1="102" y1="76" x2="138" y2="76" stroke="#8FB0E0" stroke-width="1.2" stroke-opacity="0.6"/>
-                <line x1="102" y1="84" x2="128" y2="84" stroke="#8FB0E0" stroke-width="1.2" stroke-opacity="0.45"/>
-              </svg>
+            <div class="fault-visual">
+              <img src="./assets/fault-backlight.webp" width="720" height="540" loading="lazy" alt="MacBook Pro 16-inch M1 A2485 on the iCorrect Fitzrovia bench with a dead backlight, faint image revealed under a technician LED ring light">
             </div>
             <div class="fault-body">
               <div class="fault-title-row">
@@ -2839,7 +2819,8 @@
                 <span class="chev-right" aria-hidden="true"></span>
               </div>
               <span class="fault-tag">Intake check</span>
-              <p>MacBook chimes or runs on an external screen while the panel stays dark.</p>
+              <p>MacBook chimes or shows a faint image under torchlight while the panel stays dark.</p>
+              <span class="fault-model-cap">MacBook Pro 16" (M1, A2485)</span>
             </div>
           </a>
         </div>
