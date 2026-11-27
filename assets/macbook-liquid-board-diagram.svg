@@ -1,34 +1,34 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 390" width="760" height="390" role="img" aria-labelledby="t d">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="205 80 420 265" width="420" height="265" role="img" aria-labelledby="t d">
 <title id="t">MacBook logic board liquid damage recovery map</title>
-<desc id="d">Isometric line diagram of a MacBook logic board highlighting corroded USB-C controllers, shorted power rails, PMIC phases, and backlight circuits in blue while keeping original Apple Silicon and soldered SSD intact.</desc>
+<desc id="d">Isometric line diagram of a MacBook logic board with a hatched spill zone over the charging corner and blue highlights on corroded power and charging circuits while the original board, processor, and soldered SSD remain intact.</desc>
+<defs>
+  <pattern id="icp-spill-hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+    <line x1="0" y1="0" x2="0" y2="7" stroke="#38598C" stroke-width="1" stroke-opacity="0.38"/>
+  </pattern>
+</defs>
 <style><![CDATA[
-svg{--ink:#171717;--mid:#666666;--soft:#a3a3a3;
-  --bl:#38598C;--bl-dark:#2E4A72;--bl-tint:#EAF0F8;--bl-line:#B0C5E0}
+svg{--ink:#111827;--mid:#5c6470;--soft:#9ca3af;
+  --bl:#38598C;--bl-dark:#2E4A72}
 *{vector-effect:non-scaling-stroke}
 path,circle{fill:none;stroke-linejoin:round;stroke-linecap:round}
-.k{stroke:var(--ink);stroke-width:1.05}
-.m{stroke:var(--mid);stroke-width:.8}
+.k{stroke:var(--ink);stroke-width:1.15}
+.m{stroke:var(--mid);stroke-width:.85}
 .h{stroke:var(--soft);stroke-width:.55}
-.b{stroke:var(--bl);stroke-width:1.1}
-.b-bold{stroke:var(--bl-dark);stroke-width:1.65}
-.d{stroke:var(--soft);stroke-width:.7;stroke-dasharray:3 4;stroke-linecap:butt}
-.db{stroke:var(--bl);stroke-width:.85;stroke-dasharray:3 3;stroke-linecap:butt}
-.f-w{fill:#ffffff;fill-opacity:.88}
-.f-50{fill:#fafafa;fill-opacity:.88}
-.f-100{fill:#ebebeb;fill-opacity:.88}
-.f-200{fill:#d4d4d4;fill-opacity:.88}
-.f-b50{fill:#EAF0F8;fill-opacity:.96}
-.f-b100{fill:#D5E1F1;fill-opacity:.96}
-.f-b200{fill:#B0C5E0;fill-opacity:.96}
+.b{stroke:var(--bl);stroke-width:1.2}
+.b-bold{stroke:var(--bl-dark);stroke-width:1.85}
+.d{stroke:var(--soft);stroke-width:.75;stroke-dasharray:3 4;stroke-linecap:butt}
+.db{stroke:var(--bl);stroke-width:.95;stroke-dasharray:3 2.5;stroke-linecap:butt}
+.f-w{fill:#ffffff;fill-opacity:.92}
+.f-50{fill:#fafafa;fill-opacity:.92}
+.f-100{fill:#e5e7eb;fill-opacity:.92}
+.f-200{fill:#d1d5db;fill-opacity:.92}
+.f-b50{fill:#eff2f6;fill-opacity:.96}
+.f-b100{fill:#d5e1f1;fill-opacity:.96}
+.f-b200{fill:#b0c5e0;fill-opacity:.96}
 .f-b600{fill:#38598C;fill-opacity:.94}
-.shadow{fill:rgba(17,24,39,.038);stroke:none}
-.spill{fill:rgba(56,89,140,.13);stroke:#38598C;stroke-width:.85;stroke-dasharray:3 2.5}
-.ld{stroke:var(--mid);stroke-width:.75}
-.ld-b{stroke:var(--bl);stroke-width:.85}
-.dot{fill:var(--ink);stroke:none}
-.dot-b{fill:var(--bl);stroke:none}
-text{font-family:"Geist Mono","SFMono-Regular",ui-monospace,Menlo,Consolas,monospace;font-weight:500;font-size:11px;letter-spacing:.06em;fill:var(--mid)}
-.lb-b{fill:var(--bl-dark);font-weight:600}
+.shadow{fill:rgba(17,24,39,.045);stroke:none}
+.spill-bg{fill:rgba(56,89,140,.08);stroke:none}
+.spill-hatch{fill:url(#icp-spill-hatch);stroke:#38598C;stroke-width:1.1;stroke-dasharray:4 3}
 ]]></style>
 <g>
 <path class="shadow" d="M 381.66 115.02 L 601.42 241.9 L 445.05 332.18 L 225.29 205.3 Z"/>
@@ -56,6 +56,10 @@ text{font-family:"Geist Mono","SFMono-Regular",ui-monospace,Menlo,Consolas,monos
 <path class="h" d="M 366.87 118.07 L 531.69 213.23"/>
 <path class="h" d="M 330.95 138.81 L 495.77 233.97"/>
 <path class="h" d="M 309.82 151.01 L 474.64 246.17"/>
+<!-- Hatched liquid spill zone over the charging corner -->
+<path class="spill-bg" d="M 382 104 C 408 118, 412 146, 392 168 C 372 188, 330 192, 304 176 C 280 162, 278 134, 302 114 C 326 95, 360 92, 382 104 Z"/>
+<path class="spill-hatch" d="M 382 104 C 408 118, 412 146, 392 168 C 372 188, 330 192, 304 176 C 280 162, 278 134, 302 114 C 326 95, 360 92, 382 104 Z"/>
+<!-- Neutral Apple Silicon SoC and soldered SSD (stays yours) -->
 <path class="f-100 k" d="M 392.23 158.57 L 438.71 185.41 L 438.71 191.27 L 392.23 164.43 Z"/>
 <path class="f-200 k" d="M 483.09 159.79 L 438.71 185.41 L 438.71 191.27 L 483.09 165.65 Z"/>
 <path class="f-w k" d="M 436.6 132.95 L 483.09 159.79 L 438.71 185.41 L 392.23 158.57 Z"/>
@@ -78,11 +82,10 @@ text{font-family:"Geist Mono","SFMono-Regular",ui-monospace,Menlo,Consolas,monos
 <path class="f-100 k" d="M 459.85 238.36 L 476.75 248.12 L 476.75 252.27 L 459.85 242.51 Z"/>
 <path class="f-200 k" d="M 506.33 231.04 L 476.75 248.12 L 476.75 252.27 L 506.33 235.19 Z"/>
 <path class="f-w k" d="M 489.43 221.28 L 506.33 231.04 L 476.75 248.12 L 459.85 238.36 Z"/>
-<path class="m" d="M 465.55 212.38 L 465.18 212.54 L 464.76 212.66 L 464.31 212.72 L 463.84 212.72 L 463.38 212.66 L 462.96 212.54 L 462.59 212.38 L 462.3 212.16 L 462.1 211.92 L 461.99 211.66 L 461.99 211.39 L 462.1 211.12 L 462.3 210.88 L 462.59 210.67 L 462.96 210.5 L 463.38 210.38 L 463.84 210.32 L 464.31 210.32 L 464.76 210.38 L 465.18 210.5 L 465.55 210.67 L 465.84 210.88 L 466.05 211.12 L 466.15 211.39 L 466.15 211.66 L 466.05 211.92 L 465.84 212.16 Z"/>
-<path class="m" d="M 490.91 227.02 L 490.54 227.18 L 490.12 227.3 L 489.66 227.36 L 489.19 227.36 L 488.74 227.3 L 488.32 227.18 L 487.95 227.02 L 487.66 226.8 L 487.45 226.56 L 487.35 226.3 L 487.35 226.03 L 487.45 225.76 L 487.66 225.52 L 487.95 225.31 L 488.32 225.14 L 488.74 225.02 L 489.19 224.96 L 489.66 224.96 L 490.12 225.02 L 490.54 225.14 L 490.91 225.31 L 491.2 225.52 L 491.4 225.76 L 491.51 226.03 L 491.51 226.3 L 491.4 226.56 L 491.2 226.8 Z"/>
 <path class="f-100 m" d="M 375.32 196.64 L 402.79 212.5 L 402.79 216.89 L 375.32 201.03 Z"/>
 <path class="f-200 m" d="M 413.36 206.4 L 402.79 212.5 L 402.79 216.89 L 413.36 210.79 Z"/>
 <path class="f-w m" d="M 385.89 190.54 L 413.36 206.4 L 402.79 212.5 L 375.32 196.64 Z"/>
+<!-- Blue highlighted circuits cleaned and repaired -->
 <path class="f-b100 b" d="M 345.74 105.63 L 360.53 114.17 L 360.53 121.73 L 345.74 113.19 Z"/>
 <path class="f-b200 b" d="M 375.32 105.63 L 360.53 114.17 L 360.53 121.73 L 375.32 113.19 Z"/>
 <path class="f-b50 b" d="M 360.53 97.09 L 375.32 105.63 L 360.53 114.17 L 345.74 105.63 Z"/>
@@ -111,14 +114,9 @@ text{font-family:"Geist Mono","SFMono-Regular",ui-monospace,Menlo,Consolas,monos
 <path class="f-b100 b" d="M 350.49 170.1 L 355.78 173.15 L 355.78 176.94 L 350.49 173.88 Z"/>
 <path class="f-b200 b" d="M 365.81 167.36 L 355.78 173.15 L 355.78 176.94 L 365.81 171.14 Z"/>
 <path class="f-b50 b" d="M 360.53 164.31 L 365.81 167.36 L 355.78 173.15 L 350.49 170.1 Z"/>
-<path class="spill" d="M 362.64 174.92 L 358.3 176.76 L 353.01 177.83 L 347.03 178.08 L 340.67 177.5 L 334.25 176.12 L 328.09 174.0 L 322.49 171.26 L 317.75 168.03 L 314.08 164.47 L 311.69 160.77 L 310.69 157.1 L 311.12 153.65 L 312.98 150.59 L 316.15 148.08 L 320.5 146.25 L 325.79 145.18 L 331.77 144.92 L 338.12 145.5 L 344.54 146.89 L 350.71 149.0 L 356.3 151.74 L 361.05 154.97 L 364.71 158.53 L 367.11 162.24 L 368.11 165.91 L 367.68 169.36 L 365.82 172.41 Z"/>
-<path class="db" d="M 351.02 168.21 L 348.73 169.2 L 345.97 169.8 L 342.89 169.98 L 339.62 169.74 L 336.35 169.08 L 333.23 168.05 L 330.42 166.69 L 328.06 165.06 L 326.26 163.26 L 325.13 161.37 L 324.71 159.49 L 325.03 157.71 L 326.07 156.11 L 327.78 154.79 L 330.07 153.81 L 332.82 153.21 L 335.91 153.02 L 339.17 153.26 L 342.45 153.92 L 345.57 154.95 L 348.38 156.32 L 350.74 157.94 L 352.53 159.74 L 353.67 161.63 L 354.08 163.52 L 353.77 165.3 L 352.73 166.89 Z"/>
 <path class="f-b200 b" d="M 499.99 196.88 L 525.35 211.52 L 525.35 216.89 L 499.99 202.25 Z"/>
 <path class="f-b600 b" d="M 535.92 205.42 L 525.35 211.52 L 525.35 216.89 L 535.92 210.79 Z"/>
 <path class="f-b100 b" d="M 510.56 190.78 L 535.92 205.42 L 525.35 211.52 L 499.99 196.88 Z"/>
-<path class="f-b100 b" d="M 488.37 207.74 L 498.94 213.84 L 498.94 217.5 L 488.37 211.4 Z"/>
-<path class="f-b200 b" d="M 508.45 208.35 L 498.94 213.84 L 498.94 217.5 L 508.45 212.01 Z"/>
-<path class="f-b50 b" d="M 497.88 202.25 L 508.45 208.35 L 498.94 213.84 L 488.37 207.74 Z"/>
 <path class="f-b200 b" d="M 457.73 185.17 L 474.64 194.93 L 474.64 199.81 L 457.73 190.05 Z"/>
 <path class="f-b600 b" d="M 497.88 181.51 L 474.64 194.93 L 474.64 199.81 L 497.88 186.39 Z"/>
 <path class="f-b100 b" d="M 480.98 171.75 L 497.88 181.51 L 474.64 194.93 L 457.73 185.17 Z"/>
@@ -134,11 +132,5 @@ text{font-family:"Geist Mono","SFMono-Regular",ui-monospace,Menlo,Consolas,monos
 <path class="f-b100 b" d="M 445.05 202.98 L 452.45 207.25 L 452.45 212.62 L 445.05 208.35 Z"/>
 <path class="f-b200 b" d="M 459.85 202.98 L 452.45 207.25 L 452.45 212.62 L 459.85 208.35 Z"/>
 <path class="f-b50 b" d="M 452.45 198.71 L 459.85 202.98 L 452.45 207.25 L 445.05 202.98 Z"/>
-<path class="ld-b" d="M 374.26 116.73 L 218 122 L 190 122"/><circle class="dot-b" cx="374.26" cy="116.73" r="2.5"/><text class="lb-b" x="184" y="125.5" text-anchor="end">[USB-C CONTROLLERS]</text>
-<path class="ld-b" d="M 327.78 149.67 L 218 225 L 190 225"/><circle class="dot-b" cx="327.78" cy="149.67" r="2.5"/><text class="lb-b" x="184" y="228.5" text-anchor="end">[SHORTED POWER RAIL]</text>
-<path class="ld" d="M 286.57 169.31 L 218 326 L 190 326"/><circle class="dot" cx="286.57" cy="169.31" r="2.5"/><text class="" x="184" y="329.5" text-anchor="end">[ORIGINAL BOARD]</text>
-<path class="ld-b" d="M 517.96 201.15 L 558 118 L 586 118"/><circle class="dot-b" cx="517.96" cy="201.15" r="2.5"/><text class="lb-b" x="592" y="121.5" text-anchor="start">[BACKLIGHT CIRCUIT]</text>
-<path class="ld-b" d="M 457.73 199.32 L 558 232 L 586 232"/><circle class="dot-b" cx="457.73" cy="199.32" r="2.5"/><text class="lb-b" x="592" y="235.5" text-anchor="start">[PMIC &amp; PHASES]</text>
-<path class="ld" d="M 478.86 234.7 L 548 320 L 576 320"/><circle class="dot" cx="478.86" cy="234.7" r="2.5"/><text class="" x="582" y="323.5" text-anchor="start">[SOLDERED SSD (KEPT)]</text>
 </g>
 </svg>

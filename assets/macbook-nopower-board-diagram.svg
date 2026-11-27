@@ -1,34 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 390" width="760" height="390" role="img" aria-labelledby="t d">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="205 55 420 290" width="420" height="290" role="img" aria-labelledby="t d">
 <title id="t">MacBook logic board no-power trace diagram</title>
-<desc id="d">Isometric line diagram of a MacBook logic board with a USB-C bench ammeter tracing 20V power through CD3217 controllers, PPBUS_G3H rail, and PMIC stage in blue while keeping original Apple Silicon and soldered SSD intact.</desc>
+<desc id="d">Isometric line diagram of a MacBook logic board tracing a single power line from the USB-C port through the charging chip to the main power rail, with a blue break marker on the failed power component while the original board, processor, and soldered SSD remain intact.</desc>
 <style><![CDATA[
-svg{--ink:#171717;--mid:#666666;--soft:#a3a3a3;
-  --bl:#38598C;--bl-dark:#2E4A72;--bl-tint:#EAF0F8;--bl-line:#B0C5E0}
+svg{--ink:#111827;--mid:#5c6470;--soft:#9ca3af;
+  --bl:#38598C;--bl-dark:#2E4A72}
 *{vector-effect:non-scaling-stroke}
-path,circle{fill:none;stroke-linejoin:round;stroke-linecap:round}
-.k{stroke:var(--ink);stroke-width:1.05}
-.m{stroke:var(--mid);stroke-width:.8}
+path,circle,line{fill:none;stroke-linejoin:round;stroke-linecap:round}
+.k{stroke:var(--ink);stroke-width:1.15}
+.m{stroke:var(--mid);stroke-width:.85}
 .h{stroke:var(--soft);stroke-width:.55}
-.b{stroke:var(--bl);stroke-width:1.1}
-.b-bold{stroke:var(--bl-dark);stroke-width:1.65}
-.d{stroke:var(--soft);stroke-width:.7;stroke-dasharray:3 4;stroke-linecap:butt}
-.db{stroke:var(--bl);stroke-width:.85;stroke-dasharray:3 3;stroke-linecap:butt}
-.f-w{fill:#ffffff;fill-opacity:.88}
-.f-50{fill:#fafafa;fill-opacity:.88}
-.f-100{fill:#ebebeb;fill-opacity:.88}
-.f-200{fill:#d4d4d4;fill-opacity:.88}
-.f-b50{fill:#EAF0F8;fill-opacity:.96}
-.f-b100{fill:#D5E1F1;fill-opacity:.96}
-.f-b200{fill:#B0C5E0;fill-opacity:.96}
-.f-b600{fill:#38598C;fill-opacity:.94}
-.shadow{fill:rgba(17,24,39,.038);stroke:none}
-.spill{fill:rgba(56,89,140,.13);stroke:#38598C;stroke-width:.85;stroke-dasharray:3 2.5}
-.ld{stroke:var(--mid);stroke-width:.75}
-.ld-b{stroke:var(--bl);stroke-width:.85}
-.dot{fill:var(--ink);stroke:none}
-.dot-b{fill:var(--bl);stroke:none}
-text{font-family:"Geist Mono","SFMono-Regular",ui-monospace,Menlo,Consolas,monospace;font-weight:500;font-size:11px;letter-spacing:.06em;fill:var(--mid)}
-.lb-b{fill:var(--bl-dark);font-weight:600}
+.b{stroke:var(--bl);stroke-width:1.2}
+.b-path{stroke:var(--bl-dark);stroke-width:2.4}
+.b-path-after{stroke:var(--bl);stroke-width:1.6;stroke-dasharray:4 4;stroke-opacity:.55}
+.d{stroke:var(--soft);stroke-width:.75;stroke-dasharray:3 4;stroke-linecap:butt}
+.f-w{fill:#ffffff;fill-opacity:.92}
+.f-50{fill:#fafafa;fill-opacity:.92}
+.f-100{fill:#e5e7eb;fill-opacity:.92}
+.f-200{fill:#d1d5db;fill-opacity:.92}
+.f-b50{fill:#eff2f6;fill-opacity:.96}
+.f-b100{fill:#d5e1f1;fill-opacity:.96}
+.f-b200{fill:#b0c5e0;fill-opacity:.96}
+.f-b600{fill:#38598C;fill-opacity:.96}
+.shadow{fill:rgba(17,24,39,.045);stroke:none}
+.break-ring{fill:#ffffff;stroke:#38598C;stroke-width:2}
+.break-x{stroke:#38598C;stroke-width:2.2}
+.node-dot{fill:#38598C;stroke:#ffffff;stroke-width:1.5}
 ]]></style>
 <g>
 <path class="shadow" d="M 381.66 115.02 L 601.42 241.9 L 445.05 332.18 L 225.29 205.3 Z"/>
@@ -38,17 +34,13 @@ text{font-family:"Geist Mono","SFMono-Regular",ui-monospace,Menlo,Consolas,monos
 <path class="d" d="M 554.94 246.78 L 554.94 222.38"/>
 <path class="d" d="M 453.51 305.34 L 453.51 280.94"/>
 <path class="d" d="M 263.33 195.54 L 263.33 171.14"/>
+<!-- Logic board base -->
 <path class="f-100 k" d="M 263.33 163.21 L 314.04 192.49 L 314.04 197.98 L 263.33 168.7 Z"/>
 <path class="f-200 k" d="M 314.04 192.49 L 330.95 182.73 L 330.95 188.22 L 314.04 197.98 Z"/>
 <path class="f-100 k" d="M 330.95 182.73 L 409.13 227.87 L 409.13 233.36 L 330.95 188.22 Z"/>
 <path class="f-100 k" d="M 392.23 237.63 L 453.51 273.01 L 453.51 278.5 L 392.23 243.12 Z"/>
 <path class="f-200 k" d="M 554.94 214.45 L 453.51 273.01 L 453.51 278.5 L 554.94 219.94 Z"/>
 <path class="f-50 k" d="M 388.0 91.23 L 533.8 175.41 L 510.56 188.83 L 554.94 214.45 L 453.51 273.01 L 392.23 237.63 L 409.13 227.87 L 330.95 182.73 L 314.04 192.49 L 263.33 163.21 Z"/>
-<path class="f-w m" d="M 391.38 102.94 L 390.54 103.33 L 389.58 103.6 L 388.54 103.73 L 387.46 103.73 L 386.42 103.6 L 385.46 103.33 L 384.62 102.94 L 383.95 102.46 L 383.49 101.9 L 383.25 101.3 L 383.25 100.68 L 383.49 100.08 L 383.95 99.52 L 384.62 99.04 L 385.46 98.65 L 386.42 98.38 L 387.46 98.25 L 388.54 98.25 L 389.58 98.38 L 390.54 98.65 L 391.38 99.04 L 392.05 99.52 L 392.51 100.08 L 392.75 100.68 L 392.75 101.3 L 392.51 101.9 L 392.05 102.46 Z"/>
-<path class="f-w m" d="M 516.05 177.36 L 515.22 177.75 L 514.25 178.02 L 513.21 178.15 L 512.14 178.15 L 511.09 178.02 L 510.13 177.75 L 509.29 177.36 L 508.62 176.88 L 508.16 176.32 L 507.92 175.72 L 507.92 175.1 L 508.16 174.5 L 508.62 173.94 L 509.29 173.46 L 510.13 173.07 L 511.09 172.8 L 512.14 172.67 L 513.21 172.67 L 514.25 172.8 L 515.22 173.07 L 516.05 173.46 L 516.72 173.94 L 517.19 174.5 L 517.42 175.1 L 517.42 175.72 L 517.19 176.32 L 516.72 176.88 Z"/>
-<path class="f-w m" d="M 537.19 216.4 L 536.35 216.79 L 535.38 217.06 L 534.34 217.19 L 533.27 217.19 L 532.22 217.06 L 531.26 216.79 L 530.42 216.4 L 529.76 215.92 L 529.29 215.36 L 529.05 214.76 L 529.05 214.14 L 529.29 213.54 L 529.76 212.98 L 530.42 212.5 L 531.26 212.11 L 532.22 211.84 L 533.27 211.71 L 534.34 211.71 L 535.38 211.84 L 536.35 212.11 L 537.19 212.5 L 537.85 212.98 L 538.32 213.54 L 538.56 214.14 L 538.56 214.76 L 538.32 215.36 L 537.85 215.92 Z"/>
-<path class="f-w m" d="M 456.89 262.76 L 456.05 263.15 L 455.09 263.42 L 454.04 263.55 L 452.97 263.55 L 451.93 263.42 L 450.96 263.15 L 450.13 262.76 L 449.46 262.28 L 448.99 261.72 L 448.75 261.12 L 448.75 260.5 L 448.99 259.9 L 449.46 259.34 L 450.13 258.86 L 450.96 258.47 L 451.93 258.2 L 452.97 258.07 L 454.04 258.07 L 455.09 258.2 L 456.05 258.47 L 456.89 258.86 L 457.55 259.34 L 458.02 259.9 L 458.26 260.5 L 458.26 261.12 L 458.02 261.72 L 457.55 262.28 Z"/>
-<path class="f-w m" d="M 287.84 165.16 L 287.0 165.55 L 286.04 165.82 L 284.99 165.95 L 283.92 165.95 L 282.88 165.82 L 281.91 165.55 L 281.08 165.16 L 280.41 164.68 L 279.94 164.12 L 279.71 163.52 L 279.71 162.9 L 279.94 162.3 L 280.41 161.74 L 281.08 161.26 L 281.91 160.87 L 282.88 160.6 L 283.92 160.47 L 284.99 160.47 L 286.04 160.6 L 287.0 160.87 L 287.84 161.26 L 288.51 161.74 L 288.97 162.3 L 289.21 162.9 L 289.21 163.52 L 288.97 164.12 L 288.51 164.68 Z"/>
 <path class="h" d="M 402.79 111.97 L 314.04 163.21"/>
 <path class="h" d="M 436.6 131.49 L 347.85 182.73"/>
 <path class="h" d="M 480.98 157.11 L 392.23 208.35"/>
@@ -56,93 +48,54 @@ text{font-family:"Geist Mono","SFMono-Regular",ui-monospace,Menlo,Consolas,monos
 <path class="h" d="M 366.87 118.07 L 531.69 213.23"/>
 <path class="h" d="M 330.95 138.81 L 495.77 233.97"/>
 <path class="h" d="M 309.82 151.01 L 474.64 246.17"/>
+<!-- Neutral Apple Silicon SoC and soldered SSD (stays yours) -->
 <path class="f-100 k" d="M 392.23 158.57 L 438.71 185.41 L 438.71 191.27 L 392.23 164.43 Z"/>
 <path class="f-200 k" d="M 483.09 159.79 L 438.71 185.41 L 438.71 191.27 L 483.09 165.65 Z"/>
 <path class="f-w k" d="M 436.6 132.95 L 483.09 159.79 L 438.71 185.41 L 392.23 158.57 Z"/>
 <path class="f-100 m" d="M 437.66 142.1 L 467.24 159.18 L 438.71 175.65 L 409.13 158.57 Z"/>
-<path class="f-100 m" d="M 444.53 136.92 L 449.28 139.66 L 449.28 141.86 L 444.53 139.12 Z"/>
-<path class="f-200 m" d="M 451.92 138.14 L 449.28 139.66 L 449.28 141.86 L 451.92 140.33 Z"/>
-<path class="f-w m" d="M 447.17 135.39 L 451.92 138.14 L 449.28 139.66 L 444.53 136.92 Z"/>
-<path class="f-100 m" d="M 454.03 142.41 L 458.79 145.15 L 458.79 147.35 L 454.03 144.61 Z"/>
-<path class="f-200 m" d="M 461.43 143.63 L 458.79 145.15 L 458.79 147.35 L 461.43 145.82 Z"/>
-<path class="f-w m" d="M 456.68 140.88 L 461.43 143.63 L 458.79 145.15 L 454.03 142.41 Z"/>
-<path class="f-100 m" d="M 463.54 147.9 L 468.3 150.64 L 468.3 152.84 L 463.54 150.1 Z"/>
-<path class="f-200 m" d="M 470.94 149.12 L 468.3 150.64 L 468.3 152.84 L 470.94 151.31 Z"/>
-<path class="f-w m" d="M 466.18 146.37 L 470.94 149.12 L 468.3 150.64 L 463.54 147.9 Z"/>
-<path class="f-100 m" d="M 473.05 153.39 L 477.81 156.13 L 477.81 158.33 L 473.05 155.59 Z"/>
-<path class="f-200 m" d="M 480.45 154.61 L 477.81 156.13 L 477.81 158.33 L 480.45 156.81 Z"/>
-<path class="f-w m" d="M 475.69 151.86 L 480.45 154.61 L 477.81 156.13 L 473.05 153.39 Z"/>
 <path class="f-100 k" d="M 434.49 223.72 L 455.62 235.92 L 455.62 240.07 L 434.49 227.87 Z"/>
 <path class="f-200 k" d="M 485.2 218.84 L 455.62 235.92 L 455.62 240.07 L 485.2 222.99 Z"/>
 <path class="f-w k" d="M 464.07 206.64 L 485.2 218.84 L 455.62 235.92 L 434.49 223.72 Z"/>
 <path class="f-100 k" d="M 459.85 238.36 L 476.75 248.12 L 476.75 252.27 L 459.85 242.51 Z"/>
 <path class="f-200 k" d="M 506.33 231.04 L 476.75 248.12 L 476.75 252.27 L 506.33 235.19 Z"/>
 <path class="f-w k" d="M 489.43 221.28 L 506.33 231.04 L 476.75 248.12 L 459.85 238.36 Z"/>
-<path class="m" d="M 465.55 212.38 L 465.18 212.54 L 464.76 212.66 L 464.31 212.72 L 463.84 212.72 L 463.38 212.66 L 462.96 212.54 L 462.59 212.38 L 462.3 212.16 L 462.1 211.92 L 461.99 211.66 L 461.99 211.39 L 462.1 211.12 L 462.3 210.88 L 462.59 210.67 L 462.96 210.5 L 463.38 210.38 L 463.84 210.32 L 464.31 210.32 L 464.76 210.38 L 465.18 210.5 L 465.55 210.67 L 465.84 210.88 L 466.05 211.12 L 466.15 211.39 L 466.15 211.66 L 466.05 211.92 L 465.84 212.16 Z"/>
-<path class="m" d="M 490.91 227.02 L 490.54 227.18 L 490.12 227.3 L 489.66 227.36 L 489.19 227.36 L 488.74 227.3 L 488.32 227.18 L 487.95 227.02 L 487.66 226.8 L 487.45 226.56 L 487.35 226.3 L 487.35 226.03 L 487.45 225.76 L 487.66 225.52 L 487.95 225.31 L 488.32 225.14 L 488.74 225.02 L 489.19 224.96 L 489.66 224.96 L 490.12 225.02 L 490.54 225.14 L 490.91 225.31 L 491.2 225.52 L 491.4 225.76 L 491.51 226.03 L 491.51 226.3 L 491.4 226.56 L 491.2 226.8 Z"/>
 <path class="f-100 m" d="M 375.32 196.64 L 402.79 212.5 L 402.79 216.89 L 375.32 201.03 Z"/>
 <path class="f-200 m" d="M 413.36 206.4 L 402.79 212.5 L 402.79 216.89 L 413.36 210.79 Z"/>
 <path class="f-w m" d="M 385.89 190.54 L 413.36 206.4 L 402.79 212.5 L 375.32 196.64 Z"/>
-<path class="f-b100 b" d="M 345.74 105.63 L 360.53 114.17 L 360.53 121.73 L 345.74 113.19 Z"/>
-<path class="f-b200 b" d="M 375.32 105.63 L 360.53 114.17 L 360.53 121.73 L 375.32 113.19 Z"/>
-<path class="f-b50 b" d="M 360.53 97.09 L 375.32 105.63 L 360.53 114.17 L 345.74 105.63 Z"/>
-<path class="f-b100 b" d="M 322.49 119.05 L 337.29 127.59 L 337.29 135.15 L 322.49 126.61 Z"/>
-<path class="f-b200 b" d="M 352.08 119.05 L 337.29 127.59 L 337.29 135.15 L 352.08 126.61 Z"/>
-<path class="f-b50 b" d="M 337.29 110.51 L 352.08 119.05 L 337.29 127.59 L 322.49 119.05 Z"/>
-<path class="f-b200 b" d="M 366.87 121.0 L 380.6 128.93 L 380.6 133.32 L 366.87 125.39 Z"/>
-<path class="f-b600 b" d="M 394.34 121.0 L 380.6 128.93 L 380.6 133.32 L 394.34 125.39 Z"/>
-<path class="f-b100 b" d="M 380.6 113.07 L 394.34 121.0 L 380.6 128.93 L 366.87 121.0 Z"/>
-<path class="f-b200 b" d="M 344.68 133.81 L 358.42 141.74 L 358.42 146.13 L 344.68 138.2 Z"/>
-<path class="f-b600 b" d="M 372.15 133.81 L 358.42 141.74 L 358.42 146.13 L 372.15 138.2 Z"/>
-<path class="f-b100 b" d="M 358.42 125.88 L 372.15 133.81 L 358.42 141.74 L 344.68 133.81 Z"/>
-<path class="b-bold" d="M 365.81 141.86 L 373.21 146.13 L 347.85 160.77 L 368.98 172.97 L 379.55 166.87 L 440.83 202.25 L 464.07 188.83"/>
-<path class="f-b100 b" d="M 316.68 150.58 L 321.97 153.63 L 321.97 157.42 L 316.68 154.37 Z"/>
-<path class="f-b200 b" d="M 332.0 147.84 L 321.97 153.63 L 321.97 157.42 L 332.0 151.62 Z"/>
-<path class="f-b50 b" d="M 326.72 144.79 L 332.0 147.84 L 321.97 153.63 L 316.68 150.58 Z"/>
-<path class="f-b100 b" d="M 325.14 155.46 L 330.42 158.51 L 330.42 162.3 L 325.14 159.25 Z"/>
-<path class="f-b200 b" d="M 340.46 152.72 L 330.42 158.51 L 330.42 162.3 L 340.46 156.5 Z"/>
-<path class="f-b50 b" d="M 335.17 149.67 L 340.46 152.72 L 330.42 158.51 L 325.14 155.46 Z"/>
-<path class="f-b600 b" d="M 332.53 159.12 L 338.03 162.3 L 338.03 167.91 L 332.53 164.74 Z"/>
-<path class="f-b600 b" d="M 349.12 155.89 L 338.03 162.3 L 338.03 167.91 L 349.12 161.5 Z"/>
-<path class="f-b200 b-bold" d="M 343.62 152.72 L 349.12 155.89 L 338.03 162.3 L 332.53 159.12 Z"/>
-<path class="f-b100 b" d="M 342.04 165.22 L 347.32 168.27 L 347.32 172.06 L 342.04 169.0 Z"/>
-<path class="f-b200 b" d="M 357.36 162.48 L 347.32 168.27 L 347.32 172.06 L 357.36 166.26 Z"/>
-<path class="f-b50 b" d="M 352.08 159.43 L 357.36 162.48 L 347.32 168.27 L 342.04 165.22 Z"/>
-<path class="f-b100 b" d="M 350.49 170.1 L 355.78 173.15 L 355.78 176.94 L 350.49 173.88 Z"/>
-<path class="f-b200 b" d="M 365.81 167.36 L 355.78 173.15 L 355.78 176.94 L 365.81 171.14 Z"/>
-<path class="f-b50 b" d="M 360.53 164.31 L 365.81 167.36 L 355.78 173.15 L 350.49 170.1 Z"/>
 <path class="f-100 m" d="M 499.99 197.61 L 525.35 212.25 L 525.35 216.89 L 499.99 202.25 Z"/>
 <path class="f-200 m" d="M 535.92 206.15 L 525.35 212.25 L 525.35 216.89 L 535.92 210.79 Z"/>
 <path class="f-w m" d="M 510.56 191.51 L 535.92 206.15 L 525.35 212.25 L 499.99 197.61 Z"/>
+<path class="f-100 m" d="M 457.73 185.17 L 474.64 194.93 L 474.64 199.81 L 457.73 190.05 Z"/>
+<path class="f-200 m" d="M 497.88 181.51 L 474.64 194.93 L 474.64 199.81 L 497.88 186.39 Z"/>
+<path class="f-w m" d="M 480.98 171.75 L 497.88 181.51 L 474.64 194.93 L 457.73 185.17 Z"/>
+<!-- USB-C port & inline bench meter -->
+<path class="f-b100 b" d="M 345.74 105.63 L 360.53 114.17 L 360.53 121.73 L 345.74 113.19 Z"/>
+<path class="f-b200 b" d="M 375.32 105.63 L 360.53 114.17 L 360.53 121.73 L 375.32 113.19 Z"/>
+<path class="f-b50 b" d="M 360.53 97.09 L 375.32 105.63 L 360.53 114.17 L 345.74 105.63 Z"/>
 <path class="f-b100 b" d="M 338.34 99.16 L 348.91 105.26 L 348.91 109.9 L 338.34 103.8 Z"/>
 <path class="f-b200 b" d="M 357.36 100.38 L 348.91 105.26 L 348.91 109.9 L 357.36 105.02 Z"/>
 <path class="f-b50 b" d="M 346.79 94.28 L 357.36 100.38 L 348.91 105.26 L 338.34 99.16 Z"/>
 <path class="f-b100 b" d="M 295.02 77.93 L 333.06 99.89 L 333.06 107.7 L 295.02 85.74 Z"/>
 <path class="f-b200 b" d="M 352.08 88.91 L 333.06 99.89 L 333.06 107.7 L 352.08 96.72 Z"/>
-<path class="f-b50 b-bold" d="M 314.04 66.95 L 352.08 88.91 L 333.06 99.89 L 295.02 77.93 Z"/>
+<path class="f-b50 b" d="M 314.04 66.95 L 352.08 88.91 L 333.06 99.89 L 295.02 77.93 Z"/>
 <path class="f-w b" d="M 315.1 71.22 L 344.68 88.3 L 332.0 95.62 L 302.42 78.54 Z"/>
-<path class="b-bold" d="M 304.53 76.59 L 285.51 65.61"/>
-<path class="db" d="M 354.82 170.29 L 352.13 171.44 L 348.88 172.15 L 345.24 172.36 L 341.39 172.07 L 337.53 171.29 L 333.84 170.07 L 330.52 168.46 L 327.73 166.54 L 325.61 164.41 L 324.26 162.18 L 323.76 159.96 L 324.13 157.86 L 325.35 155.98 L 327.35 154.43 L 330.05 153.27 L 333.3 152.56 L 336.94 152.35 L 340.79 152.64 L 344.65 153.42 L 348.33 154.64 L 351.65 156.26 L 354.45 158.17 L 356.57 160.3 L 357.91 162.53 L 358.42 164.75 L 358.05 166.85 L 356.83 168.73 Z"/>
-<path class="f-b200 b" d="M 457.73 185.17 L 474.64 194.93 L 474.64 199.81 L 457.73 190.05 Z"/>
-<path class="f-b600 b" d="M 497.88 181.51 L 474.64 194.93 L 474.64 199.81 L 497.88 186.39 Z"/>
-<path class="f-b100 b" d="M 480.98 171.75 L 497.88 181.51 L 474.64 194.93 L 457.73 185.17 Z"/>
-<path class="f-b100 b" d="M 445.05 192.0 L 452.45 196.27 L 452.45 201.64 L 445.05 197.37 Z"/>
-<path class="f-b200 b" d="M 459.85 192.0 L 452.45 196.27 L 452.45 201.64 L 459.85 197.37 Z"/>
-<path class="f-b50 b" d="M 452.45 187.73 L 459.85 192.0 L 452.45 196.27 L 445.05 192.0 Z"/>
-<path class="f-b100 b" d="M 454.56 197.49 L 461.96 201.76 L 461.96 207.13 L 454.56 202.86 Z"/>
-<path class="f-b200 b" d="M 469.35 197.49 L 461.96 201.76 L 461.96 207.13 L 469.35 202.86 Z"/>
-<path class="f-b50 b" d="M 461.96 193.22 L 469.35 197.49 L 461.96 201.76 L 454.56 197.49 Z"/>
-<path class="f-b100 b" d="M 435.54 197.49 L 442.94 201.76 L 442.94 207.13 L 435.54 202.86 Z"/>
-<path class="f-b200 b" d="M 450.34 197.49 L 442.94 201.76 L 442.94 207.13 L 450.34 202.86 Z"/>
-<path class="f-b50 b" d="M 442.94 193.22 L 450.34 197.49 L 442.94 201.76 L 435.54 197.49 Z"/>
-<path class="f-b100 b" d="M 445.05 202.98 L 452.45 207.25 L 452.45 212.62 L 445.05 208.35 Z"/>
-<path class="f-b200 b" d="M 459.85 202.98 L 452.45 207.25 L 452.45 212.62 L 459.85 208.35 Z"/>
-<path class="f-b50 b" d="M 452.45 198.71 L 459.85 202.98 L 452.45 207.25 L 445.05 202.98 Z"/>
-<path class="ld-b" d="M 323.55 83.42 L 205 112 L 177 112"/><circle class="dot-b" cx="323.55" cy="83.42" r="2.5"/><text class="lb-b" x="171" y="115.5" text-anchor="end">[USB-C METER · 20V]</text>
-<path class="ld-b" d="M 358.42 133.2 L 205 196 L 177 196"/><circle class="dot-b" cx="358.42" cy="133.2" r="2.5"/><text class="lb-b" x="171" y="199.5" text-anchor="end">[CD3217 CONTROLLERS]</text>
-<path class="ld-b" d="M 341.09 157.35 L 205 316 L 177 316"/><circle class="dot-b" cx="341.09" cy="157.35" r="2.5"/><text class="lb-b" x="171" y="319.5" text-anchor="end">[PPBUS_G3H SHORT]</text>
-<path class="ld" d="M 447.17 158.57 L 548 120 L 576 120"/><circle class="dot" cx="447.17" cy="158.57" r="2.5"/><text class="" x="582" y="123.5" text-anchor="start">[APPLE SILICON (KEPT)]</text>
-<path class="ld-b" d="M 457.73 199.32 L 558 234 L 586 234"/><circle class="dot-b" cx="457.73" cy="199.32" r="2.5"/><text class="lb-b" x="592" y="237.5" text-anchor="start">[PMIC POWER STAGE]</text>
-<path class="ld" d="M 478.86 234.7 L 548 322 L 576 322"/><circle class="dot" cx="478.86" cy="234.7" r="2.5"/><text class="" x="582" y="325.5" text-anchor="start">[SOLDERED SSD (KEPT)]</text>
+<!-- Charging controller IC -->
+<path class="f-b200 b" d="M 366.87 121.0 L 380.6 128.93 L 380.6 133.32 L 366.87 125.39 Z"/>
+<path class="f-b600 b" d="M 394.34 121.0 L 380.6 128.93 L 380.6 133.32 L 394.34 125.39 Z"/>
+<path class="f-b100 b" d="M 380.6 113.07 L 394.34 121.0 L 380.6 128.93 L 366.87 121.0 Z"/>
+<!-- Single traced power path from USB-C input through charging chip to main power rail -->
+<path class="b-path" d="M 278 65 L 302 79"/>
+<path class="b-path" d="M 354 106 L 374 118"/>
+<path class="b-path" d="M 380 132 L 354 147"/>
+<!-- Interrupted downstream rail after the failed component -->
+<path class="b-path-after" d="M 358 171 L 372 179 L 386 171 L 444 204 L 466 192"/>
+<!-- Failed power component highlighted with blue break marker -->
+<path class="f-b600 b" d="M 332.53 159.12 L 338.03 162.3 L 338.03 167.91 L 332.53 164.74 Z"/>
+<path class="f-b600 b" d="M 349.12 155.89 L 338.03 162.3 L 338.03 167.91 L 349.12 161.5 Z"/>
+<path class="f-b200 b" d="M 343.62 152.72 L 349.12 155.89 L 338.03 162.3 L 332.53 159.12 Z"/>
+<circle class="node-dot" cx="380.6" cy="121" r="4"/>
+<circle class="break-ring" cx="341" cy="160" r="14"/>
+<line class="break-x" x1="335.5" y1="154.5" x2="346.5" y2="165.5"/>
+<line class="break-x" x1="346.5" y1="154.5" x2="335.5" y2="165.5"/>
 </g>
 </svg>
