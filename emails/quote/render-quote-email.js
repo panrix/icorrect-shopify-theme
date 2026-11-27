@@ -149,7 +149,7 @@ function trustOf(data) {
   if (!parts && !warranty) return [];
   var diagnostic = isDiagnostic(data);
   return [
-    { title: "4.9", sub: "719 Google reviews", kind: "reviews" },
+    { title: "4.8", sub: "750+ Google reviews", kind: "reviews" },
     { title: parts || "Original parts", sub: "Calibrated in-house" },
     {
       title: diagnostic ? "Quote in 1 working day" : daysLabel(benchOf(data)),

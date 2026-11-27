@@ -96,7 +96,8 @@
         "secondary_btn_color": "#1d1d1f",
         "secondary_btn_border": "#1d1d1f",
         "secondary_btn_hover_bg": "#ffffff",
-        "secondary_btn_hover_color": "#000000"
+        "secondary_btn_hover_color": "#000000",
+        "review_badge_text": "4.8 from 750+ Google reviews"
       }
     },
     "image_banner": {
@@ -158,7 +159,10 @@
     },
     "google_reviews_4dYetV": {
       "type": "google-reviews",
-      "settings": {}
+      "settings": {
+        "heading": "Google reviews",
+        "trustindex_widget_id": "47cc7ef8590e8871fa062160cf7"
+      }
     },
     "why_icorrect_qePBLH": {
       "type": "why-icorrect",
