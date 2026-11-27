@@ -688,6 +688,7 @@
     /* Sections */
     .section {
       padding: var(--space-16) 0;
+      background: var(--bg-1);
       border-bottom: 1px solid var(--line);
     }
     .section-compact { padding: var(--space-10) 0; }
@@ -1713,18 +1714,18 @@
     }
     .related-links-row .chev-right { color: var(--fg-3); }
 
-    /* 10. DARK FAQ ACCORDION + CLOSING CTA BAND */
+    /* 9. FAQ ACCORDION (CLEAN LIGHT SURFACE DIRECTLY BELOW QUOTE WIZARD) */
     .faq-list {
       display: flex;
       flex-direction: column;
-      border-top: 1px solid rgba(255, 255, 255, 0.14);
+      border-top: 1px solid var(--line);
     }
-    .faq-item { border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
+    .faq-item { border-bottom: 1px solid var(--line); }
     .faq-btn {
       width: 100%;
       background: transparent;
       border: 0;
-      color: #ffffff;
+      color: var(--fg-1);
       min-height: 60px;
       padding: var(--space-4) 0;
       text-align: left;
@@ -1736,23 +1737,23 @@
       font-weight: 500;
       line-height: 1.4;
       cursor: pointer;
+      transition: color 140ms ease;
     }
-    .faq-icon { color: rgba(255, 255, 255, 0.72); }
+    .faq-btn:hover { color: var(--accent); }
+    .faq-icon { color: var(--fg-3); }
+    .faq-item.is-open .faq-icon { color: var(--accent); }
     .faq-answer {
       display: none;
       padding: 0 0 var(--space-6);
       font-size: var(--text-md);
       line-height: 1.6;
-      color: rgba(255, 255, 255, 0.8);
+      color: var(--fg-2);
       max-width: 72ch;
     }
     .faq-item.is-open .faq-answer { display: block; }
 
-    /* Closing CTA band directly under the FAQs inside the dark band */
+    /* 11. DARK CLOSING CTA BAND ABOVE FOOTER */
     .closing-cta-band {
-      margin-top: var(--space-12);
-      padding-top: var(--space-10);
-      border-top: 1px solid rgba(255, 255, 255, 0.16);
       display: flex;
       flex-direction: column;
       gap: var(--space-6);
@@ -2175,8 +2176,8 @@
         <li><a href="#process-strip">How it works</a></li>
         <li><a href="#compare">How we compare</a></li>
         <li><a href="#workshop">Fitzrovia workshop</a></li>
-        <li><a href="#prices-by-model">Prices by model</a></li>
         <li><a href="#faqs">FAQs</a></li>
+        <li><a href="#prices-by-model">Prices by model</a></li>
       </ul>
       <div class="header-right">
         <span class="status-pill">Fitzrovia, London</span>
@@ -2721,7 +2722,99 @@
       </div>
     </section>
 
-    <!-- 9. UPGRADE 7: ACTIONABLE MODEL PRICE LOOKUP + RELATED REPAIRS -->
+    <!-- 9. FAQ ACCORDION (CLEAN WHITE SURFACE DIRECTLY BELOW QUOTE WIZARD) -->
+    <section class="section" id="faqs">
+      <div class="ic-container">
+        <div class="section-head">
+          <h2 class="section-title">Questions before you book</h2>
+          <p class="section-lead">Ordered by the questions MacBook owners check most often before booking a screen repair.</p>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-item is-open">
+            <button type="button" class="faq-btn" aria-expanded="true">
+              <span>How much does a MacBook screen repair cost compared to the Apple Store?</span>
+              <span class="faq-icon chev" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer">
+              Apple replaces the entire display lid assembly, including the aluminium casing, hinges, webcam, and wireless antennas, even when none of those parts are damaged. We replace only the broken display panel using a genuine Apple screen reclaimed and recalibrated in-house. Our repairs typically cost 30% to 50% less than a full-lid swap while delivering the same visual quality.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-btn" aria-expanded="false">
+              <span>Do you use genuine Apple displays in your MacBook repairs?</span>
+              <span class="faq-icon chev" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer">
+              Yes. We fit genuine Apple displays reclaimed from genuine MacBooks and never use aftermarket copy panels. Every display is tested and recalibrated in-house so colour, brightness, and firmware compatibility match Apple factory standards.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-btn" aria-expanded="false">
+              <span>Will my screen repair with iCorrect void my Apple warranty?</span>
+              <span class="faq-icon chev" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer">
+              Accidental screen damage is already outside standard Apple warranty cover. Our genuine Apple display repairs do not cause software conflicts, though Apple may decline future warranty claims once a third party has opened a device. Every iCorrect repair includes our own 2-year warranty.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-btn" aria-expanded="false">
+              <span>Will I keep True Tone, brightness, and native resolution?</span>
+              <span class="faq-icon chev" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer">
+              Yes. Because we only install genuine Apple display panels and calibrate them in-house, your MacBook retains True Tone, full peak brightness, native resolution, and ambient light sensing.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-btn" aria-expanded="false">
+              <span>How long does a MacBook screen repair take?</span>
+              <span class="faq-icon chev" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer">
+              Standard MacBook screen repairs take 2 working days once your MacBook reaches our Fitzrovia workshop (open Monday to Friday, 9am to 6pm, closed Saturday and Sunday). That covers intake inspection, disassembly, genuine panel fitting, calibration, and final QC testing.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-btn" aria-expanded="false">
+              <span>How does collection work in London and across the UK?</span>
+              <span class="faq-icon chev" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer">
+              Collection is free on orders of £200 or more, which covers every MacBook screen repair. Same-day courier collection is available in selected London zones. Anywhere else in the UK, we send a free tracked, insured mail-in pack straight to your address.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-btn" aria-expanded="false">
+              <span>What if the screen is not the only fault, or another shop already tried to fix it?</span>
+              <span class="faq-icon chev" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer">
+              We check power rails, backlight circuits, and flex cables before starting any screen fit. If we find logic-board or liquid damage, or a poor aftermarket display from a previous repair, we pause and send you a clear written quote before carrying out extra work.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-btn" aria-expanded="false">
+              <span>Can you repair Liquid Retina XDR screens on 14-inch and 16-inch MacBook Pros?</span>
+              <span class="faq-icon chev" aria-hidden="true"></span>
+            </button>
+            <div class="faq-answer">
+              Yes. We repair Liquid Retina XDR mini-LED displays on 14-inch and 16-inch MacBook Pro models (including M1, M2, M3, and M4 generations) using genuine Apple display panels and in-house calibration.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. UPGRADE 7: ACTIONABLE MODEL PRICE LOOKUP + RELATED REPAIRS -->
     <section class="section section-soft" id="prices-by-model">
       <div class="ic-container">
         <div class="section-head" style="margin-bottom:var(--space-6);">
@@ -3113,98 +3206,10 @@
       </div>
     </section>
 
-    <!-- 10. DARK FAQ ACCORDION + CLOSING CTA BAND -->
-    <section class="section section-dark" id="faqs">
+    <!-- 11. DARK CLOSING CTA BAND -->
+    <section class="section section-compact section-dark" id="closing-cta" aria-label="Book your MacBook screen repair">
       <div class="ic-container">
-        <div class="section-head">
-          <h2 class="section-title">Questions before you book</h2>
-          <p class="section-lead">Ordered by the questions MacBook owners check most often before booking a screen repair.</p>
-        </div>
-
-        <div class="faq-list">
-          <div class="faq-item is-open">
-            <button type="button" class="faq-btn" aria-expanded="true">
-              <span>How much does a MacBook screen repair cost compared to the Apple Store?</span>
-              <span class="faq-icon chev" aria-hidden="true"></span>
-            </button>
-            <div class="faq-answer">
-              Apple replaces the entire display lid assembly, including the aluminium casing, hinges, webcam, and wireless antennas, even when none of those parts are damaged. We replace only the broken display panel using a genuine Apple screen reclaimed and recalibrated in-house. Our repairs typically cost 30% to 50% less than a full-lid swap while delivering the same visual quality.
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button type="button" class="faq-btn" aria-expanded="false">
-              <span>Do you use genuine Apple displays in your MacBook repairs?</span>
-              <span class="faq-icon chev" aria-hidden="true"></span>
-            </button>
-            <div class="faq-answer">
-              Yes. We fit genuine Apple displays reclaimed from genuine MacBooks and never use aftermarket copy panels. Every display is tested and recalibrated in-house so colour, brightness, and firmware compatibility match Apple factory standards.
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button type="button" class="faq-btn" aria-expanded="false">
-              <span>Will my screen repair with iCorrect void my Apple warranty?</span>
-              <span class="faq-icon chev" aria-hidden="true"></span>
-            </button>
-            <div class="faq-answer">
-              Accidental screen damage is already outside standard Apple warranty cover. Our genuine Apple display repairs do not cause software conflicts, though Apple may decline future warranty claims once a third party has opened a device. Every iCorrect repair includes our own 2-year warranty.
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button type="button" class="faq-btn" aria-expanded="false">
-              <span>Will I keep True Tone, brightness, and native resolution?</span>
-              <span class="faq-icon chev" aria-hidden="true"></span>
-            </button>
-            <div class="faq-answer">
-              Yes. Because we only install genuine Apple display panels and calibrate them in-house, your MacBook retains True Tone, full peak brightness, native resolution, and ambient light sensing.
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button type="button" class="faq-btn" aria-expanded="false">
-              <span>How long does a MacBook screen repair take?</span>
-              <span class="faq-icon chev" aria-hidden="true"></span>
-            </button>
-            <div class="faq-answer">
-              Standard MacBook screen repairs take 2 working days once your MacBook reaches our Fitzrovia workshop (open Monday to Friday, 9am to 6pm, closed Saturday and Sunday). That covers intake inspection, disassembly, genuine panel fitting, calibration, and final QC testing.
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button type="button" class="faq-btn" aria-expanded="false">
-              <span>How does collection work in London and across the UK?</span>
-              <span class="faq-icon chev" aria-hidden="true"></span>
-            </button>
-            <div class="faq-answer">
-              Collection is free on orders of £200 or more, which covers every MacBook screen repair. Same-day courier collection is available in selected London zones. Anywhere else in the UK, we send a free tracked, insured mail-in pack straight to your address.
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button type="button" class="faq-btn" aria-expanded="false">
-              <span>What if the screen is not the only fault, or another shop already tried to fix it?</span>
-              <span class="faq-icon chev" aria-hidden="true"></span>
-            </button>
-            <div class="faq-answer">
-              We check power rails, backlight circuits, and flex cables before starting any screen fit. If we find logic-board or liquid damage, or a poor aftermarket display from a previous repair, we pause and send you a clear written quote before carrying out extra work.
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button type="button" class="faq-btn" aria-expanded="false">
-              <span>Can you repair Liquid Retina XDR screens on 14-inch and 16-inch MacBook Pros?</span>
-              <span class="faq-icon chev" aria-hidden="true"></span>
-            </button>
-            <div class="faq-answer">
-              Yes. We repair Liquid Retina XDR mini-LED displays on 14-inch and 16-inch MacBook Pro models (including M1, M2, M3, and M4 generations) using genuine Apple display panels and in-house calibration.
-            </div>
-          </div>
-        </div>
-
-        <!-- Upgrade 7: Dark closing CTA band directly under the FAQs -->
-        <div class="closing-cta-band" id="closing-cta" aria-label="Book your MacBook screen repair">
+        <div class="closing-cta-band">
           <div class="closing-cta-top">
             <h2>Get your fixed MacBook screen price</h2>
             <a class="btn-white" href="#quote-section">Get your price</a>
@@ -3249,14 +3254,16 @@
       var heroActions = document.getElementById("hero-actions");
       var quoteSection = document.getElementById("quote-section");
       var closingCta = document.getElementById("closing-cta");
+      var siteFooter = document.querySelector(".site-footer");
       var heroInView = true;
       var quoteInView = false;
       var closingInView = false;
+      var footerInView = false;
 
       function syncMobileBar() {
         if (!mobileBar || !mobileCta) return;
         var isMobile = window.innerWidth <= 768;
-        var show = isMobile && !heroInView && !quoteInView && !closingInView;
+        var show = isMobile && !heroInView && !quoteInView && !closingInView && !footerInView;
         mobileBar.classList.toggle("is-visible", show);
         mobileBar.setAttribute("aria-hidden", String(!show));
         if (show) mobileCta.removeAttribute("tabindex");
@@ -3281,6 +3288,12 @@
             closingInView = entries[entries.length - 1].isIntersecting;
             syncMobileBar();
           }, { rootMargin: "0px 0px 40px 0px", threshold: 0.01 }).observe(closingCta);
+        }
+        if (siteFooter) {
+          new IntersectionObserver(function (entries) {
+            footerInView = entries[entries.length - 1].isIntersecting;
+            syncMobileBar();
+          }, { rootMargin: "0px 0px 40px 0px", threshold: 0.01 }).observe(siteFooter);
         }
       } else {
         window.addEventListener("scroll", function () {
