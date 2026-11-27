@@ -5,16 +5,15 @@
   'use strict';
 
   var LAST_HOUR = 15; /* same-day drop-off offered Mon to Fri until 3pm London time */
-  var PARTS = { morning: '9am – 12pm', fridayMorning: '10am – 12pm', afternoon: '12pm – 6pm' };
+  var PARTS = { morning: '9am – 12pm', afternoon: '12pm – 6pm' };
 
   function isAfternoon(partId) {
     return /after|pm/i.test(String(partId || ''));
   }
 
   /* Drop-off window shown on the button and stored on the order. */
-  function windowLabel(partId, date) {
-    if (isAfternoon(partId)) return PARTS.afternoon;
-    return date && date.getDay && date.getDay() === 5 ? PARTS.fridayMorning : PARTS.morning;
+  function windowLabel(partId) {
+    return isAfternoon(partId) ? PARTS.afternoon : PARTS.morning;
   }
 
   /* Courier dates start tomorrow; a walk-in can be today while enabled and before 3pm London time. */

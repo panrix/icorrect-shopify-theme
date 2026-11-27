@@ -130,6 +130,20 @@ describe('outward → band lookup', () => {
     assert.equal(result.rt_cost, bandsAsset.outward.SW1.rt_cost);
   });
 
+  it("W1A 1AA resolves to B1 courier", () => {
+    const result = lookupCourierBand('W1A 1AA', bandsAsset);
+    assert.equal(result.service, 'courier');
+    assert.equal(result.outward, 'W1A');
+    assert.equal(result.band, 'B1');
+    assert.equal(result.rt_cost, 17.08);
+    const compact = lookupCourierBand('W1A1AA', bandsAsset);
+    assert.equal(compact.service, 'courier');
+    assert.equal(compact.outward, 'W1A');
+    assert.equal(compact.band, 'B1');
+    const b1Count = Object.values(bandsAsset.outward).filter((entry) => entry.band === 'B1').length;
+    assert.equal(bandsAsset.bands.B1.count, b1Count);
+  });
+
   it("W1T 2LY still matches the existing W1T key as B1", () => {
     const result = lookupCourierBand('W1T 2LY', bandsAsset);
     assert.equal(result.service, 'courier');

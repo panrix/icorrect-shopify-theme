@@ -21,10 +21,13 @@ class DetailsDisclosure extends HTMLElement {
   constructor() {
     super();
     this.mainDetailsToggle = this.querySelector('details');
-    this.content = this.mainDetailsToggle.querySelector('summary').nextElementSibling;
+    const summary = this.mainDetailsToggle ? this.mainDetailsToggle.querySelector('summary') : null;
+    this.content = summary ? summary.nextElementSibling : null;
 
-    this.mainDetailsToggle.addEventListener('focusout', this.onFocusOut.bind(this));
-    this.mainDetailsToggle.addEventListener('toggle', this.onToggle.bind(this));
+    if (this.mainDetailsToggle) {
+      this.mainDetailsToggle.addEventListener('focusout', this.onFocusOut.bind(this));
+      this.mainDetailsToggle.addEventListener('toggle', this.onToggle.bind(this));
+    }
   }
 
   onFocusOut() {
@@ -34,7 +37,11 @@ class DetailsDisclosure extends HTMLElement {
   }
 
   onToggle() {
-    if (!this.animations) this.animations = this.content.getAnimations();
+    if (!this.mainDetailsToggle || !this.content) return;
+    if (!this.animations && typeof this.content.getAnimations === 'function') {
+      this.animations = this.content.getAnimations();
+    }
+    if (!this.animations) return;
 
     if (this.mainDetailsToggle.hasAttribute('open')) {
       this.animations.forEach((animation) => animation.play());
@@ -44,8 +51,10 @@ class DetailsDisclosure extends HTMLElement {
   }
 
   close() {
+    if (!this.mainDetailsToggle) return;
     this.mainDetailsToggle.removeAttribute('open');
-    this.mainDetailsToggle.querySelector('summary').setAttribute('aria-expanded', false);
+    const summary = this.mainDetailsToggle.querySelector('summary');
+    if (summary) summary.setAttribute('aria-expanded', false);
   }
 }
 
@@ -58,6 +67,7 @@ class HeaderMenu extends DetailsDisclosure {
   }
 
   onToggle() {
+    if (!this.mainDetailsToggle) return;
     if (this.mainDetailsToggle.open) {
       loadMegaMenuDeferredImages(this.mainDetailsToggle);
     }

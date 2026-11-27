@@ -2402,14 +2402,6 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
   gap: 3px;
   min-width: 0;
 }
-.qw-trust-stars {
-  display: flex;
-  gap: 2px;
-  color: #ffd400;
-}
-.qw-trust-stars svg {
-  filter: drop-shadow(0 0 0.4px #e6b800);
-}
 .qw-trust-ico {
   flex: 0 0 32px;
   width: 32px;
@@ -2689,6 +2681,8 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 .qw-pc-summary-main{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;font-size:15px;color:var(--qw-text-2)}
 .qw-pc-summary-main strong{font-weight:600;color:var(--qw-text);letter-spacing:0.02em}
 .qw-pc-summary-sub{grid-column:1 / -1;font-size:13px;color:var(--qw-text-muted)}
+.qw-pc-threshold-note{grid-column:1 / -1;margin:6px 0 0 !important;padding:8px 10px;border-radius:8px;background:#fff8ea;border:1px solid #f5c46b;color:#4d4d4d;font:400 13px/1.4 var(--font-sans) !important}
+.qw-pc-threshold-note[hidden]{display:none !important}
 .qw-pc-change{min-height:44px;padding:0 4px;border:0;background:none;font:500 14px var(--font-sans);color:var(--qw-primary);cursor:pointer}
 .qw-pc-change:hover{color:var(--qw-primary-hover);text-decoration:underline}
 .qw-delivery-card{padding:16px !important;gap:12px}
@@ -2719,7 +2713,8 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 .qw-klarna-note{text-align:left}
 .qw-mailin-info{display:none}
 /* ===== Round 3: 11 Oct result components (design/quote-wizard-upgrade), finished against Untitled UI ===== */
-#qw-sticky-cta.qw-sticky-cta{padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--qw-line);box-shadow:0 -4px 16px rgba(0,0,0,0.08)}
+#qw-sticky-cta.qw-sticky-cta{bottom:var(--qw-cookie-h,0px);z-index:10050;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--qw-line);box-shadow:0 -4px 16px rgba(0,0,0,0.08)}
+html.qw-consent-bar-on #qw-sticky-cta.qw-sticky-cta{padding-bottom:10px}
 .qw-sticky-price{font:700 20px var(--font-sans);color:var(--qw-text);font-variant-numeric:tabular-nums}
 .qw-sticky-book{min-height:44px;padding:0 20px;border:0;border-radius:10px;background:var(--qw-text);color:var(--qw-bg);font:600 14px var(--font-sans);cursor:pointer}
 .qw-sticky-book:hover{opacity:0.9}
@@ -2779,15 +2774,18 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 #qwSummary .qw-price-trust-price{order:1;margin:0}
 #qwSummary #qwCollectionNotice{order:2;margin:0}
 #qwSummary #qwBookBtn{order:3;margin:0;width:100%}
-#qwSummary #qwHow{order:4;margin:-4px 0 0}
-#qwSummary #qwJourney{order:5;margin:-8px 0 0}
-#qwSummary #qwTrustToggle{order:6;margin:-4px 0 0}
-#qwSummary .qw-trust-cross{order:7;margin:0}
-#qwSummary #qwEmailQuote{order:8;margin:0}
-#qwSummary #qwEmailPanel{order:9;margin:0}
-#qwSummary #qwToggleCF{order:10;margin:0}
-#qwSummary #qwCAcc{order:11;margin:0}
-#qwSummary #qwIntercomBtn{order:12;margin:0}
+#qwSummary #qwDeliveryReveal{order:4;margin:0}
+#qwSummary #qwDeliveryReveal>.qw-delivery-choice{margin-top:4px}
+#qwDeliveryReveal[hidden]{display:none !important}
+#qwSummary #qwHow{order:5;margin:-4px 0 0}
+#qwSummary #qwJourney{order:6;margin:-8px 0 0}
+#qwSummary #qwTrustToggle{order:7;margin:-4px 0 0}
+#qwSummary .qw-trust-cross{order:8;margin:0}
+#qwSummary #qwEmailQuote{order:9;margin:0}
+#qwSummary #qwEmailPanel{order:10;margin:0}
+#qwSummary #qwToggleCF{order:11;margin:0}
+#qwSummary #qwCAcc{order:12;margin:0}
+#qwSummary #qwIntercomBtn{order:13;margin:0}
 #qwSummary #qwCAcc .qw-c-inner{padding:16px 0 4px}
 #qwSummary #qwPriceTotalWrap{display:none}
 #qwSummary .qw-price-trust-price:has(#qwPriceBigWrap[hidden]){display:none !important}
@@ -2814,7 +2812,26 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 .qw-how[hidden]{display:none}
 .qw-how svg{transition:transform 150ms}
 .qw-how[aria-expanded="true"] svg{transform:rotate(180deg)}
+#qwSummary .qw-price-trust-price{padding:16px}
+#qwSummary .qw-klarna{margin-top:12px}
 @media (max-width:1023px){
+  .qw-res-top{padding:16px 16px 0}
+  .qw-res-p{margin-bottom:12px}
+  .qw-res--split .qw-res-service{padding:0 16px 0 !important}
+  #qwPostcodeCard.qw-postcode-card-resolved{padding:8px 12px;margin-bottom:6px}
+  #qwPostcodeCard.qw-postcode-card-resolved .qw-pc-change{min-height:44px;margin:-6px 0}
+  #qwSummary{gap:10px;padding:8px 16px 20px}
+  #qwSummary.qw-priced{gap:8px;padding-top:8px;padding-bottom:calc(96px + var(--qw-cookie-h,0px))}
+  #qwSummary.qw-priced .qw-price-trust-price{padding:10px 12px;gap:4px}
+  #qwSummary.qw-priced .qw-price-big{font-size:32px;line-height:1.08}
+  #qwSummary.qw-priced .qw-sum-eta{margin-top:2px;font-size:13px;line-height:1.35}
+  #qwSummary.qw-priced .qw-klarna{margin-top:6px;padding-top:6px;gap:4px 8px;font-size:12px}
+  #qwSummary.qw-priced .qw-klarna-note{font-size:11px;line-height:1.3}
+  #qwSummary.qw-priced #qwCollectionNotice{padding:8px 10px;font-size:13px !important;line-height:17px !important}
+  #qwSummary.qw-priced #qwCollectionNotice .qw-collect-copy,
+  #qwSummary.qw-priced #qwCollectionNotice .qw-collect-strong,
+  #qwSummary.qw-priced #qwCollectionNotice .qw-collect-rest{font-size:13px !important;line-height:17px !important}
+  #qwSummary .qw-slot-panel{margin-top:10px}
   #qwJourney:not(.qw-jr-open){display:none}
   #qwJourney.qw-jr-open .qw-journey{margin-top:4px}
   #qwSummary.qw-priced .qw-trust-cross:not(.qw-trust-open){display:none}
@@ -2831,8 +2848,6 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
   #qwSummary .qw-trust-cross{grid-template-columns:1fr 1fr}
   #qw-sticky-cta,.qw-sticky-cta{display:none !important}
 }
-#qwSummary .qw-price-trust-price{padding:16px}
-#qwSummary .qw-klarna{margin-top:12px}
 /* Courier first; unselected drop-off is a quiet link below courier */
 .qw-delivery-grid .qw-opt-card[data-svc="workshop"]{flex:1 1 100%;min-height:0}
 .qw-delivery-grid:has(.qw-opt-card[data-svc="mailin"][hidden]) .qw-opt-card[data-svc="courier"]{flex:1 1 100%}
@@ -2850,3 +2865,101 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 .qw-crumb-btn{display:inline-flex;align-items:center;min-height:44px;padding:0 8px;font-size:13px;text-align:left}
 .qw-slot-change:focus-visible,.qw-pc-change:focus-visible,.qw-how:focus-visible,.qw-back:focus-visible,.qw-crumb-btn:focus-visible,.qw-opt-card[data-svc="workshop"]:focus-visible{outline:2px solid var(--qw-primary);outline-offset:2px;border-radius:6px}
 #qwSummary .qw-price-from,#qwSummary .qw-price-big,#qwSummary .qw-sum-eta{text-align:center !important}
+
+/* In-page basket replacement confirmation dialog (replaces native window.confirm) */
+.qw-confirm-modal,
+.qw-confirm-modal *,
+.qw-confirm-modal *::before,
+.qw-confirm-modal *::after {
+  box-sizing: border-box;
+}
+.qw-confirm-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10060;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  font-family: var(--font-sans, "Geist", Arial, Helvetica, sans-serif);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--qw-text, #171717);
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+}
+.qw-confirm-modal[hidden] {
+  display: none !important;
+}
+.qw-confirm-backdrop {
+  display: block !important;
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+.qw-confirm-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 420px);
+  background: var(--qw-bg, #fff);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 16px 40px rgba(0, 0, 0, 0.18);
+  animation: qwFadeIn 160ms ease-out;
+}
+.qw-confirm-title {
+  margin: 0 0 8px !important;
+  font: 600 20px/1.25 var(--font-sans, "Geist", Arial, Helvetica, sans-serif) !important;
+  letter-spacing: -0.4px;
+  color: var(--qw-text, #171717) !important;
+  text-transform: none !important;
+  text-align: left !important;
+}
+.qw-confirm-desc {
+  margin: 0 0 20px !important;
+  font: 400 14px/1.55 var(--font-sans, "Geist", Arial, Helvetica, sans-serif) !important;
+  color: var(--qw-text-2, #4d4d4d) !important;
+  text-align: left !important;
+}
+.qw-confirm-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.qw-confirm-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 10px;
+  font-family: var(--font-sans, "Geist", Arial, Helvetica, sans-serif);
+  font-weight: 500;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background 150ms, box-shadow 150ms;
+}
+.qw-confirm-btn:focus-visible {
+  outline: 2px solid var(--qw-accent, #0070f3);
+  outline-offset: 2px;
+}
+.qw-confirm-btn-primary {
+  background: #171717;
+  color: #fff;
+  font-size: 15px;
+}
+.qw-confirm-btn-primary:hover {
+  background: #333;
+}
+.qw-confirm-btn-secondary {
+  background: #fff;
+  color: #171717;
+  font-size: 14px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.14);
+}
+.qw-confirm-btn-secondary:hover {
+  background: #fafafa;
+  box-shadow: 0 0 0 1px #171717;
+}

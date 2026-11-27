@@ -3756,76 +3756,163 @@ cart-remove-button .icon-remove path {
 }
 
 /* =============================================================
-   Cookie / privacy banner overrides
-   See docs/marketing-cookie-banner-css-2026-04-22.md
-        docs/marketing-cookie-consent-2026-04-22.md
-        docs/marketing-cookie-banner-mini-2026-04-22.md
-   Shrinks Shopify's native privacy banner (and generic 3rd-party
-   cookie banners) from a full-page modal to a thin bottom bar so
-   PostHog recordings and heatmaps see the real page. Mini brief
-   further compressed the bar to ~50px desktop / 80px mobile with
-   smaller typography and hides the Privacy Policy inline link.
+   Shopify Privacy Banner: compliant, non-clipping layout
+   Scoped strictly to #shopify-pc__banner.shopify-pc__banner__dialog.
+   Preserves Privacy Policy link, overlay, preferences modal,
+   44px minimum touch targets, and equal Accept/Decline prominence.
    ============================================================= */
 
-.shopify-pc__banner__dialog,
-.shopify-pc__banner__dialog-2,
-[class*="cookie-banner"],
-[id*="cookie-banner"] {
-  position: fixed !important;
-  bottom: 0 !important;
-  top: auto !important;
-  left: 0 !important;
-  right: 0 !important;
-  max-height: 50px !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  border-radius: 0 !important;
-  padding: 6px 16px !important;
-  font-size: 12px !important;
-  line-height: 1.3 !important;
-  background: #ffffff !important;
-  border-top: 1px solid #e5e5e5 !important;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1) !important;
-  transform: none !important;
+#shopify-pc__banner.shopify-pc__banner__dialog {
+  background: #ffffff;
+  border-top: 1px solid #e5e5e5;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
-.shopify-pc__overlay,
-[class*="cookie-banner"] ~ [class*="overlay"],
-[id*="cookie-banner"] ~ [class*="overlay"] {
-  display: none !important;
+#shopify-pc__banner.shopify-pc__banner__dialog h2 {
+  font-size: 14px !important;
+  font-weight: 600;
+  line-height: 1.35 !important;
+  margin: 0 0 4px;
+  color: #171717;
 }
 
-.shopify-pc__banner__dialog button,
-.shopify-pc__banner__dialog-2 button,
-[class*="cookie-banner"] button,
-[id*="cookie-banner"] button {
-  padding: 4px 10px !important;
-  font-size: 11px !important;
+#shopify-pc__banner.shopify-pc__banner__dialog p {
+  font-size: 13px !important;
+  line-height: 1.38 !important;
+  margin: 0;
+  color: #1f1f1f;
+}
+
+#shopify-pc__banner.shopify-pc__banner__dialog #shopify-pc__banner__body-policy-link {
+  display: inline;
+  color: #171717;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+#shopify-pc__banner.shopify-pc__banner__dialog button {
+  min-height: 44px;
+  font-size: 14px !important;
   line-height: 1.2 !important;
-  min-height: 28px !important;
+  padding: 10px 14px;
+  margin: 0;
+  box-sizing: border-box;
+  border-radius: 6px;
 }
 
-.shopify-pc__banner__dialog a[href*="privacy"],
-.shopify-pc__banner__dialog-2 a[href*="privacy"] {
-  display: none !important;
+#shopify-pc__banner.shopify-pc__banner__dialog #shopify-pc__banner__btn-accept,
+#shopify-pc__banner.shopify-pc__banner__dialog #shopify-pc__banner__btn-decline {
+  background: #ffffff;
+  color: #171717;
+  border: 1.5px solid #171717;
+  font-weight: 600;
+}
+
+#shopify-pc__banner.shopify-pc__banner__dialog #shopify-pc__banner__btn-manage-prefs {
+  min-height: 44px;
+  background: transparent;
+  color: #171717;
+  border: none;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-size: 13px !important;
+  font-weight: 500;
+}
+
+@media screen and (min-width: 750px) {
+  #shopify-pc__banner.shopify-pc__banner__dialog {
+    padding: 14px 24px;
+  }
+
+  #shopify-pc__banner.shopify-pc__banner__dialog .shopify-pc__banner__wrapper {
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+  }
+
+  #shopify-pc__banner.shopify-pc__banner__dialog .shopify-pc__banner__body {
+    margin: 0;
+    flex: 1 1 auto;
+  }
+
+  #shopify-pc__banner.shopify-pc__banner__dialog .shopify-pc__banner__btns {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 10px;
+    min-width: auto;
+    width: auto;
+    flex: 0 0 auto;
+  }
+
+  #shopify-pc__banner.shopify-pc__banner__dialog #shopify-pc__banner__btn-accept,
+  #shopify-pc__banner.shopify-pc__banner__dialog #shopify-pc__banner__btn-decline {
+    min-width: 112px;
+    flex: 0 0 auto;
+  }
+
+  #shopify-pc__banner.shopify-pc__banner__dialog #shopify-pc__banner__btn-manage-prefs {
+    white-space: nowrap;
+    flex: 0 0 auto;
+    padding: 10px 8px;
+  }
 }
 
 @media screen and (max-width: 749px) {
-  .shopify-pc__banner__dialog,
-  .shopify-pc__banner__dialog-2,
-  [class*="cookie-banner"],
-  [id*="cookie-banner"] {
-    max-height: 80px !important;
-    font-size: 11px !important;
-    padding: 6px 10px !important;
+  #shopify-pc__banner.shopify-pc__banner__dialog {
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
   }
 
-  .shopify-pc__banner__dialog button,
-  .shopify-pc__banner__dialog-2 button,
-  [class*="cookie-banner"] button,
-  [id*="cookie-banner"] button {
-    padding: 4px 8px !important;
-    font-size: 10px !important;
-    min-height: 26px !important;
+  #shopify-pc__banner.shopify-pc__banner__dialog .shopify-pc__banner__wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  #shopify-pc__banner.shopify-pc__banner__dialog .shopify-pc__banner__body {
+    margin: 0;
+    width: 100%;
+  }
+
+  #shopify-pc__banner.shopify-pc__banner__dialog .shopify-pc__banner__body p {
+    font-size: 12px !important;
+    line-height: 1.35 !important;
+  }
+
+  #shopify-pc__banner.shopify-pc__banner__dialog .shopify-pc__banner__btns {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 6px 8px;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+  }
+
+  #shopify-pc__banner.shopify-pc__banner__dialog #shopify-pc__banner__btn-accept {
+    grid-column: 1;
+    grid-row: 1;
+    order: 1;
+    width: 100%;
+  }
+
+  #shopify-pc__banner.shopify-pc__banner__dialog #shopify-pc__banner__btn-decline {
+    grid-column: 2;
+    grid-row: 1;
+    order: 2;
+    width: 100%;
+  }
+
+  #shopify-pc__banner.shopify-pc__banner__dialog #shopify-pc__banner__btn-manage-prefs {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    order: 3;
+    width: 100%;
+    min-height: 44px;
+    padding: 6px 8px;
+    text-align: center;
   }
 }

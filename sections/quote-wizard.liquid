@@ -308,11 +308,11 @@ window.__icorrectQuote = window.__icorrectQuote || {};
               <span class="qw-hrs-d">Tue</span><span class="qw-hrs-t">{{ section.settings.hours_tue | default: '9am - 6pm' }}</span>
               <span class="qw-hrs-d">Wed</span><span class="qw-hrs-t">{{ section.settings.hours_wed | default: '9am - 6pm' }}</span>
               <span class="qw-hrs-d">Thu</span><span class="qw-hrs-t">{{ section.settings.hours_thu | default: '9am - 6pm' }}</span>
-              <span class="qw-hrs-d">Fri</span><span class="qw-hrs-t">{{ section.settings.hours_fri | default: '10am - 6pm' }}</span>
+              <span class="qw-hrs-d">Fri</span><span class="qw-hrs-t">{{ section.settings.hours_fri | default: '9am - 6pm' }}</span>
               <span class="qw-hrs-d">Sat</span><span class="qw-hrs-t">{{ section.settings.hours_sat | default: 'Closed' }}</span>
               <span class="qw-hrs-d">Sun</span><span class="qw-hrs-t">{{ section.settings.hours_sun | default: 'Closed' }}</span>
             </div>
-            <p class="qw-no-walkin">Courier collection or tracked mail-in only.</p>
+            <p class="qw-no-walkin">{% if section.settings.enable_drop_off == false %}Courier collection or tracked mail-in only.{% else %}Courier collection, tracked mail-in, or workshop drop-off.{% endif %}</p>
           </div>
         </div>
       </div>
@@ -631,7 +631,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
       "type": "text",
       "id": "hours_fri",
       "label": "Friday hours",
-      "default": "10am - 6pm"
+      "default": "9am - 6pm"
     },
     {
       "type": "text",
