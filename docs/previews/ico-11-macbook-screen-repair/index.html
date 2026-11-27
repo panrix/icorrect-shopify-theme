@@ -2116,14 +2116,23 @@
       .hero-actions .btn-dark,
       .hero-actions .btn-ghost { flex: 1 1 auto; }
 
-      /* 2x2 equal-height stamps on 390px mobile */
+      /* 2x2 equal-height stamps on mobile */
+      .stamp-strip { grid-auto-rows: 1fr; }
       .stamp-cell {
         padding: var(--space-3);
         min-height: 76px;
+        justify-content: flex-start;
       }
-      .stamp-figure { font-size: var(--text-xl); }
+      .stamp-link { justify-content: flex-start; }
+      .stamp-figure {
+        font-size: clamp(17px, 4.8vw, 22px);
+        white-space: nowrap;
+      }
       .stamp-g-mark { width: 18px; height: 18px; }
-      .stamp-label { font-size: var(--text-xs); }
+      .stamp-label {
+        font-size: var(--text-xs);
+        text-wrap: balance;
+      }
 
       .starting-prices-band { padding: var(--space-6) 0 var(--space-8); }
       .price-strip {
