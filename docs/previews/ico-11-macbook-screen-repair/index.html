@@ -1152,59 +1152,12 @@
     /* Mobile stacked metric blocks for comparison (hidden on desktop) */
     .compare-mobile { display: none; }
 
-    /* 5. UPGRADE 6: REAL FITZROVIA WORKSHOP PHOTOS + ENGRAVED WARRANTY PLATE + HOURS CARD */
+    /* 5. FITZROVIA WORKSHOP HOURS CARD + ENGRAVED 2-YEAR WARRANTY PLATE */
     .workshop-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.52fr) minmax(0, 1fr);
-      gap: var(--space-6);
-      align-items: start;
-    }
-    .workshop-photos {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-      min-width: 0;
-    }
-    .workshop-photo-figure {
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-      min-width: 0;
-    }
-    .workshop-photo-frame {
-      overflow: hidden;
-      border-radius: var(--r-lg);
-      border: 1px solid var(--line);
-      background: var(--bg-3);
-      aspect-ratio: 3 / 2;
-    }
-    .workshop-photo-frame img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: saturate(0.92) contrast(1.02);
-    }
-    .workshop-photo-figure[data-photo-slot="workshop-lead"] .workshop-photo-frame {
-      aspect-ratio: 16 / 9;
-    }
-    .workshop-photo-subgrid {
-      display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--space-4);
-    }
-    .workshop-photo-cap {
-      font-family: var(--font-mono);
-      font-size: var(--text-xs);
-      color: var(--fg-3);
-      line-height: 1.4;
-    }
-
-    .workshop-side {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-      min-width: 0;
+      gap: var(--space-6);
+      align-items: stretch;
     }
     /* Always-open engraved-style 2-year warranty plate */
     .warranty-plate {
@@ -1216,6 +1169,7 @@
       display: flex;
       flex-direction: column;
       gap: var(--space-4);
+      min-width: 0;
     }
     .warranty-plate-head {
       display: flex;
@@ -1269,25 +1223,28 @@
       background: var(--bg-1);
       border: 1px solid var(--line);
       border-radius: var(--r-lg);
+      box-shadow: var(--shadow-card);
       padding: var(--space-6);
       display: flex;
       flex-direction: column;
       gap: var(--space-4);
+      min-width: 0;
     }
     .workshop-card h3 {
       margin: var(--space-1) 0 0;
-      font-size: var(--text-md);
+      font-size: var(--text-xl);
       font-weight: 600;
-      line-height: 1.35;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
       color: var(--fg-1);
     }
     .hours-grid {
       display: grid;
       grid-template-columns: 104px 1fr;
-      gap: var(--space-1) var(--space-3);
+      gap: var(--space-2) var(--space-3);
       font-size: var(--text-sm);
       color: var(--fg-2);
-      padding: var(--space-3) 0;
+      padding: var(--space-4) 0;
       border-top: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
     }
@@ -1296,10 +1253,11 @@
       margin: 0;
       font-size: var(--text-sm);
       color: var(--fg-2);
-      line-height: 1.45;
+      line-height: 1.5;
     }
     .workshop-contact {
-      margin: 0;
+      margin: auto 0 0;
+      padding-top: var(--space-2);
       font-size: var(--text-sm);
       color: var(--fg-3);
       display: flex;
@@ -2165,9 +2123,10 @@
       .reviews-g-badge { width: 32px; height: 32px; }
       #google-reviews .ti-widget .ti-review-item > .ti-inner { padding: var(--space-4) !important; }
 
-      .workshop-photo-subgrid { gap: var(--space-3); }
+      .workshop-grid { gap: var(--space-4); }
       .warranty-plate,
       .workshop-card { padding: var(--space-4); }
+      .workshop-card h3 { font-size: var(--text-lg); }
       .warranty-stamp { font-size: var(--text-xl); }
 
       /* 2x2 symptom tiles on 390px mobile */
@@ -2676,8 +2635,8 @@
       </div>
     </section>
 
-    <!-- 5. UPGRADE 6: REAL FITZROVIA WORKSHOP PHOTOS + ALWAYS-OPEN WARRANTY PLATE + HOURS CARD -->
-    <section class="section section-soft" id="workshop">
+    <!-- 5. FITZROVIA WORKSHOP HOURS CARD + ALWAYS-OPEN 2-YEAR WARRANTY PLATE -->
+    <section class="section section-compact section-soft" id="workshop">
       <div class="ic-container">
         <div class="section-head" style="margin-bottom:var(--space-6);">
           <h2 class="section-title">Our Fitzrovia workshop and 2-year warranty</h2>
@@ -2685,75 +2644,48 @@
         </div>
 
         <div class="workshop-grid">
-          <div class="workshop-photos">
-            <figure class="workshop-photo-figure" data-photo-slot="workshop-lead">
-              <div class="workshop-photo-frame">
-                <img src="./assets/workshop-hero-display.webp" width="1290" height="712" loading="lazy" alt="Silver Apple Silicon MacBook Pro 14-inch on the iCorrect Fitzrovia anti-static mat beside a QUICK 861DE station and stereo microscope while a gloved technician inspects the display bezel">
-              </div>
-              <figcaption class="workshop-photo-cap">Fitzrovia bench, 12 Margaret Street · MacBook Pro 14" display inspection on anti-static mat</figcaption>
-            </figure>
-
-            <div class="workshop-photo-subgrid">
-              <figure class="workshop-photo-figure" data-photo-slot="workshop-microscope">
-                <div class="workshop-photo-frame">
-                  <img src="./assets/workshop-bench-2.webp" width="1100" height="700" loading="lazy" alt="iCorrect technician working at the Fitzrovia stereo microscope bench with a magnified display IC view on the monitor behind">
-                </div>
-                <figcaption class="workshop-photo-cap">Fitzrovia microscope bench · Live magnified inspection of display and backlight ICs</figcaption>
-              </figure>
-
-              <figure class="workshop-photo-figure" data-photo-slot="workshop-rework">
-                <div class="workshop-photo-frame">
-                  <img src="./assets/workshop-rework-hands.webp" width="960" height="720" loading="lazy" alt="Gloved iCorrect technician hands performing hot-air micro-soldering rework with precision tweezers on a MacBook board">
-                </div>
-                <figcaption class="workshop-photo-cap">In-house microelectronics · Hot-air rework on MacBook display and backlight circuitry</figcaption>
-              </figure>
+          <!-- Fitzrovia workshop hours and address card -->
+          <div class="workshop-card">
+            <div>
+              <span class="mono-label">Fitzrovia workshop</span>
+              <h3>12 Margaret Street, Audley House, London W1W 8JQ</h3>
             </div>
+
+            <div class="hours-grid" aria-label="Workshop opening hours">
+              <strong>Mon to Fri</strong><span>9am to 6pm</span>
+              <strong>Sat &amp; Sun</strong><span>Closed</span>
+            </div>
+
+            <p class="workshop-card-note">Pre-booked drop-off in Fitzrovia or free collection on orders £200+.</p>
+            <p class="workshop-contact">
+              <span>Phone <a class="text-link" href="tel:+442070998517">020 7099 8517</a></span>
+              <span>Email <a class="text-link" href="mailto:support@icorrect.co.uk">support@icorrect.co.uk</a></span>
+            </p>
           </div>
 
-          <div class="workshop-side">
-            <!-- Always-open engraved-style 2-year warranty plate -->
-            <div class="warranty-plate" id="warranty">
-              <div class="warranty-plate-head">
-                <span class="mono-label">Included as standard</span>
-                <h3 class="warranty-stamp">2-year warranty</h3>
-              </div>
-
-              <div class="warranty-groups">
-                <div>
-                  <p class="warranty-group-label">Covered</p>
-                  <ul class="warranty-list">
-                    <li><span class="check-mark" aria-hidden="true"></span><span>Display panel and backlight faults</span></li>
-                    <li><span class="check-mark" aria-hidden="true"></span><span>Fitting, alignment, and hinge calibration</span></li>
-                    <li><span class="check-mark" aria-hidden="true"></span><span>Your data stays untouched on your MacBook</span></li>
-                  </ul>
-                </div>
-
-                <div>
-                  <p class="warranty-group-label">Not covered</p>
-                  <ul class="warranty-list is-excluded">
-                    <li><span class="cross-mark" aria-hidden="true"></span><span>New impact or liquid damage</span></li>
-                  </ul>
-                </div>
-              </div>
+          <!-- Always-open engraved-style 2-year warranty plate -->
+          <div class="warranty-plate" id="warranty">
+            <div class="warranty-plate-head">
+              <span class="mono-label">Included as standard</span>
+              <h3 class="warranty-stamp">2-year warranty</h3>
             </div>
 
-            <!-- Fitzrovia workshop hours and address card -->
-            <div class="workshop-card">
+            <div class="warranty-groups">
               <div>
-                <span class="mono-label">Fitzrovia workshop</span>
-                <h3>12 Margaret Street, Audley House, London W1W 8JQ</h3>
+                <p class="warranty-group-label">Covered</p>
+                <ul class="warranty-list">
+                  <li><span class="check-mark" aria-hidden="true"></span><span>Display panel and backlight faults</span></li>
+                  <li><span class="check-mark" aria-hidden="true"></span><span>Fitting, alignment, and hinge calibration</span></li>
+                  <li><span class="check-mark" aria-hidden="true"></span><span>Your data stays untouched on your MacBook</span></li>
+                </ul>
               </div>
 
-              <div class="hours-grid" aria-label="Workshop opening hours">
-                <strong>Mon to Fri</strong><span>9am to 6pm</span>
-                <strong>Sat &amp; Sun</strong><span>Closed</span>
+              <div>
+                <p class="warranty-group-label">Not covered</p>
+                <ul class="warranty-list is-excluded">
+                  <li><span class="cross-mark" aria-hidden="true"></span><span>New impact or liquid damage</span></li>
+                </ul>
               </div>
-
-              <p class="workshop-card-note">Pre-booked drop-off in Fitzrovia or free collection on orders £200+.</p>
-              <p class="workshop-contact">
-                <span>Phone <a class="text-link" href="tel:+442070998517">020 7099 8517</a></span>
-                <span>Email <a class="text-link" href="mailto:support@icorrect.co.uk">support@icorrect.co.uk</a></span>
-              </p>
             </div>
           </div>
         </div>
