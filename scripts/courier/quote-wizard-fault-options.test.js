@@ -230,15 +230,21 @@ describe('sample catalogue routes', () => {
       'iPad Pro 11-inch (2019)',
       'iPad Pro 11 (2019)',
     ];
+    const full = catalogue.models['ipad::ipad-pro-11-inch-1st-gen-2019'].repairs;
+    const short = catalogue.models['ipad::ipad-pro-11-inch-2019'].repairs;
     for (const name of names) {
       const map = repairsMapForModel(catalogue, 'ipad', name);
       assert.equal(map['charging-port'].handle, 'ipad-pro-11-2019-charging-port-repair', name);
       assert.equal(map.diagnostic.handle, 'ipad-pro-11-2019-diagnostic', name);
       assert.equal(map.battery.handle, 'ipad-pro-11-2019-battery-repair', name);
-      assert.equal(map.screen.handle, 'ipad-pro-11-1st-gen-2019-lcd-display-repair', name);
+      if (full.screen.unavailable === true) {
+        assert.equal(map.screen, undefined, name);
+      } else {
+        assert.equal(map.screen.handle, 'ipad-pro-11-1st-gen-2019-lcd-display-repair', name);
+      }
     }
-    const full = catalogue.models['ipad::ipad-pro-11-inch-1st-gen-2019'].repairs;
-    const short = catalogue.models['ipad::ipad-pro-11-inch-2019'].repairs;
+    assert.equal(full.screen.handle, 'ipad-pro-11-1st-gen-2019-lcd-display-repair');
+    assert.equal(short.screen.unavailable, full.screen.unavailable);
     assert.deepEqual(
       Object.keys(short).sort().map((key) => short[key].handle),
       Object.keys(full).sort().map((key) => full[key].handle)

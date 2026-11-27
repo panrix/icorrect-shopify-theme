@@ -45,7 +45,7 @@
       var rKeys = Object.keys(repairs);
       for (var j = 0; j < rKeys.length; j++) {
         var repair = repairs[rKeys[j]];
-        if (!repair) continue;
+        if (!repair || repair.unavailable === true) continue;
         var vid = repair.variantId != null ? String(repair.variantId) : '';
         var handle = repair.handle ? String(repair.handle).toLowerCase() : '';
         if ((wantVid && vid === wantVid) || (wantHandle && handle === wantHandle)) {
