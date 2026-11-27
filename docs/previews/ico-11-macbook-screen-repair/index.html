@@ -203,8 +203,7 @@
     .tabular,
     .stamp-figure,
     .price-chip-val,
-    .cmp-metric-val,
-    .cmp-mobile-val,
+    .cmp-val,
     .timeline-bracket-val,
     .warranty-stamp,
     .model-row-price,
@@ -1041,91 +1040,108 @@
     }
     .timeline-mobile-badge { display: none; }
 
-    /* 4. UPGRADE 3: CLEAN PANEL-ONLY COMPARISON (ALWAYS OPEN, NO ABSTRACT LAYER SVGS) */
+    /* 4. PARALLEL 3-COLUMN COMPARISON TABLE (DESKTOP 4-COL + MOBILE PARALLEL 3-COL) */
     .compare-card {
       border: 1px solid var(--line);
       border-radius: var(--r-lg);
       background: #ffffff;
       overflow: hidden;
+      box-shadow: var(--shadow-card);
     }
-    .compare-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr) minmax(0, 1fr);
-      grid-template-rows: auto repeat(4, auto);
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
     }
-    .compare-col {
-      display: grid;
-      grid-template-rows: subgrid;
-      grid-row: span 5;
+    .compare-table th,
+    .compare-table td {
+      vertical-align: top;
+      text-align: left;
       border-right: 1px solid var(--line);
-      min-width: 0;
-    }
-    .compare-col:last-child { border-right: 0; }
-    .compare-col.is-win {
-      background: var(--accent-soft);
-      border-top: 2px solid var(--accent);
-    }
-    .compare-col-head {
-      padding: var(--space-5) var(--space-6);
       border-bottom: 1px solid var(--line);
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1);
     }
-    .compare-col.is-win .compare-col-head {
-      border-bottom-color: var(--accent-line);
-    }
-    .compare-col-tag {
+    .compare-table th:last-child,
+    .compare-table td:last-child { border-right: 0; }
+    .compare-table tbody tr:last-child th,
+    .compare-table tbody tr:last-child td { border-bottom: 0; }
+
+    .cmp-corner {
+      width: 21%;
+      padding: var(--space-5) var(--space-5);
+      background: var(--bg-2);
       font-family: var(--font-mono);
       font-size: var(--text-xs);
       font-weight: 500;
       color: var(--fg-3);
+      vertical-align: bottom;
     }
-    .compare-col.is-win .compare-col-tag {
-      color: var(--accent);
+    .cmp-th {
+      width: 25.5%;
+      padding: var(--space-5) var(--space-5);
+      background: #ffffff;
     }
-    .compare-col-name {
+    .cmp-th.is-win {
+      width: 28%;
+      background: var(--accent-soft);
+      border-top: 2px solid var(--accent);
+      border-bottom-color: var(--accent-line);
+      border-right-color: var(--accent-line);
+    }
+    .cmp-th-tag {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--fg-3);
+      margin-bottom: var(--space-1);
+    }
+    .cmp-th.is-win .cmp-th-tag { color: var(--accent); }
+    .cmp-th-name {
+      display: block;
       font-size: var(--text-md);
       font-weight: 600;
       color: var(--fg-1);
       line-height: 1.3;
     }
-    .compare-col.is-win .compare-col-name {
-      color: var(--accent);
+    .cmp-th.is-win .cmp-th-name { color: var(--accent); }
+    .cmp-name-short { display: none; }
+
+    .cmp-row-label {
+      padding: var(--space-4) var(--space-5);
+      background: var(--bg-2);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--fg-1);
+      line-height: 1.35;
     }
-    .compare-metric {
-      padding: var(--space-4) var(--space-6);
-      border-bottom: 1px solid var(--line);
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1);
-      flex: 1;
+    .cmp-td {
+      padding: var(--space-4) var(--space-5);
+      background: #ffffff;
     }
-    .compare-col.is-win .compare-metric {
+    .cmp-td.is-win {
+      background: var(--accent-soft);
       border-bottom-color: var(--accent-line);
+      border-right-color: var(--accent-line);
     }
-    .compare-metric:last-child { border-bottom: 0; }
-    .cmp-metric-label {
-      font-family: var(--font-mono);
-      font-size: var(--text-xs);
-      color: var(--fg-3);
-    }
-    .cmp-metric-val-row {
+    .cmp-val-row {
       display: flex;
       align-items: center;
       gap: var(--space-2);
+      margin-bottom: var(--space-1);
     }
-    .cmp-metric-val {
+    .cmp-val {
+      display: block;
       font-size: var(--text-md);
       font-weight: 600;
       letter-spacing: -0.015em;
       color: var(--fg-1);
       line-height: 1.3;
     }
-    .compare-col.is-win .cmp-metric-val {
-      color: var(--accent);
-    }
-    .cmp-metric-sub {
+    .cmp-val-row .cmp-val { margin-bottom: 0; }
+    .cmp-td > .cmp-val { margin-bottom: var(--space-1); }
+    .cmp-td.is-win .cmp-val { color: var(--accent); }
+    .cmp-sub {
+      display: block;
       font-size: var(--text-xs);
       color: var(--fg-2);
       line-height: 1.45;
@@ -1148,9 +1164,6 @@
       font-size: var(--text-sm);
       color: var(--fg-2);
     }
-
-    /* Mobile stacked metric blocks for comparison (hidden on desktop) */
-    .compare-mobile { display: none; }
 
     /* 5. FITZROVIA WORKSHOP HOURS CARD + ENGRAVED 2-YEAR WARRANTY PLATE */
     .workshop-grid {
@@ -1958,65 +1971,13 @@
         font-weight: 500;
       }
 
-      /* Mobile comparison: stacked metric blocks instead of squeezed 3-col table */
-      .compare-card { display: none; }
-      .compare-mobile {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-4);
-      }
-      .cmp-mobile-block {
-        background: #ffffff;
-        border: 1px solid var(--line);
-        border-radius: var(--r-lg);
-        overflow: hidden;
-      }
-      .cmp-mobile-block-head {
-        padding: var(--space-3) var(--space-4);
-        background: var(--bg-2);
-        border-bottom: 1px solid var(--line);
-        font-size: var(--text-sm);
-        font-weight: 600;
-        color: var(--fg-1);
-      }
-      .cmp-mobile-rows {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-      .cmp-mobile-who {
-        font-size: var(--text-xs);
-        font-weight: 600;
-        color: var(--fg-2);
-        line-height: 1.35;
-      }
-      .cmp-mobile-desc {
-        font-size: var(--text-xs);
-        color: var(--fg-2);
-        line-height: 1.4;
-      }
-      .cmp-mobile-row-text {
-        display: grid;
-        grid-template-columns: 98px minmax(0, 1fr);
-        align-items: baseline;
-        gap: var(--space-3);
-        padding: var(--space-3) var(--space-4);
-        border-bottom: 1px solid var(--line);
-      }
-      .cmp-mobile-row-text:last-child { border-bottom: 0; }
-      .cmp-mobile-row-text.is-win { background: var(--accent-soft); }
-      .cmp-mobile-row-text.is-win .cmp-mobile-who { color: var(--accent); }
-      .cmp-mobile-row-text-val {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-      }
-      .cmp-mobile-row-text-val strong {
-        font-size: var(--text-sm);
-        font-weight: 600;
-        color: var(--fg-1);
-      }
-      .cmp-mobile-row-text.is-win .cmp-mobile-row-text-val strong { color: var(--accent); }
+      /* Compact padding on 768px 4-col table */
+      .cmp-corner,
+      .cmp-th,
+      .cmp-row-label,
+      .cmp-td { padding: var(--space-3) var(--space-3); }
+      .cmp-th-name,
+      .cmp-val { font-size: var(--text-sm); }
 
       /* Mobile collapsible model lookup by family */
       .model-group-head-btn {
@@ -2122,6 +2083,57 @@
       .reviews-head { margin-bottom: var(--space-4); align-items: flex-start; }
       .reviews-g-badge { width: 32px; height: 32px; }
       #google-reviews .ti-widget .ti-review-item > .ti-inner { padding: var(--space-4) !important; }
+
+      /* Mobile parallel 3-column comparison table with full-width row labels */
+      .compare-table,
+      .compare-table thead,
+      .compare-table tbody {
+        display: block;
+        width: 100%;
+      }
+      .compare-table thead tr,
+      .compare-table tbody tr {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: 100%;
+      }
+      .cmp-corner { display: none; }
+      .cmp-th,
+      .cmp-th.is-win {
+        width: auto;
+        min-width: 0;
+        padding: 10px 7px;
+      }
+      .cmp-th-tag { font-size: 10px; margin-bottom: 2px; }
+      .cmp-th-name { font-size: 12px; line-height: 1.25; }
+      .cmp-name-full { display: none; }
+      .cmp-name-short { display: inline; }
+      .cmp-row-label {
+        grid-column: 1 / -1;
+        width: 100%;
+        padding: 7px 10px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--fg-2);
+        background: var(--bg-2);
+      }
+      .compare-table tbody tr:last-child th.cmp-row-label {
+        border-bottom: 1px solid var(--line);
+      }
+      .cmp-td {
+        width: auto;
+        min-width: 0;
+        padding: 10px 7px;
+        overflow-wrap: break-word;
+      }
+      .cmp-parts-mark { display: none; }
+      .cmp-val-row { display: block; margin-bottom: 3px; }
+      .cmp-val { font-size: 12px; line-height: 1.25; }
+      .cmp-td > .cmp-val { margin-bottom: 3px; }
+      .cmp-sub { font-size: 11px; line-height: 1.38; }
 
       .workshop-grid { gap: var(--space-4); }
       .warranty-plate,
@@ -2398,7 +2410,7 @@
       </div>
     </section>
 
-    <!-- 4. UPGRADE 3: CLEAN PANEL-ONLY COMPARISON (LEADS WITH WHAT GETS REPLACED & LEAST WASTE) -->
+    <!-- 4. PARALLEL 3-COLUMN COMPARISON TABLE (LEADS WITH WHAT GETS REPLACED & LEAST WASTE) -->
     <section class="section" id="compare">
       <div class="ic-container">
         <div class="section-head" style="margin-bottom:var(--space-6);">
@@ -2406,229 +2418,122 @@
           <p class="section-lead">See how genuine panel-only repair compares with full-lid replacements and aftermarket copy screens on waste, display quality, cost, and warranty.</p>
         </div>
 
-        <!-- Desktop 3-column comparison card (all rows open) -->
         <div class="compare-card">
-          <div class="compare-grid">
-            <!-- Column 1: iCorrect -->
-            <div class="compare-col is-win">
-              <div class="compare-col-head">
-                <span class="compare-col-tag">Panel only</span>
-                <div class="compare-col-name">iCorrect</div>
-              </div>
-              <div class="compare-metric">
-                <span class="cmp-metric-label">What gets replaced &amp; waste</span>
-                <div class="cmp-metric-val-row">
-                  <span class="cmp-parts-mark is-win" aria-hidden="true">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+          <table class="compare-table" aria-label="Comparison of MacBook screen repair options">
+            <thead>
+              <tr>
+                <th scope="col" class="cmp-corner">Comparison</th>
+                <th scope="col" class="cmp-th is-win">
+                  <span class="cmp-th-tag">Panel only</span>
+                  <span class="cmp-th-name">iCorrect</span>
+                </th>
+                <th scope="col" class="cmp-th">
+                  <span class="cmp-th-tag">Full lid</span>
+                  <span class="cmp-th-name">
+                    <span class="cmp-name-full">Apple Store &amp; full-lid shops</span>
+                    <span class="cmp-name-short" aria-hidden="true">Apple &amp; full-lid</span>
                   </span>
-                  <span class="cmp-metric-val">Broken panel only</span>
-                </div>
-                <span class="cmp-metric-sub">Least waste: keeps your working aluminium lid, camera, sensors, and hinges out of landfill.</span>
-              </div>
-              <div class="compare-metric">
-                <span class="cmp-metric-label">Display quality &amp; calibration</span>
-                <div class="cmp-metric-val-row">
-                  <span class="cmp-parts-mark is-win" aria-hidden="true">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                </th>
+                <th scope="col" class="cmp-th">
+                  <span class="cmp-th-tag">Copy parts</span>
+                  <span class="cmp-th-name">
+                    <span class="cmp-name-full">Aftermarket shops</span>
+                    <span class="cmp-name-short" aria-hidden="true">Aftermarket</span>
                   </span>
-                  <span class="cmp-metric-val">Genuine Apple panel</span>
-                </div>
-                <span class="cmp-metric-sub">Recalibrated in-house for True Tone, peak brightness, and factory colour accuracy.</span>
-              </div>
-              <div class="compare-metric">
-                <span class="cmp-metric-label">Typical cost</span>
-                <span class="cmp-metric-val">30% to 50% less</span>
-                <span class="cmp-metric-sub">Pay for the damaged panel only, from £299 fixed upfront.</span>
-              </div>
-              <div class="compare-metric">
-                <span class="cmp-metric-label">Warranty</span>
-                <span class="cmp-metric-val">2-year warranty</span>
-                <span class="cmp-metric-sub">Covers the genuine Apple panel and our Fitzrovia workmanship.</span>
-              </div>
-            </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row" class="cmp-row-label">What gets replaced &amp; waste</th>
+                <td class="cmp-td is-win">
+                  <div class="cmp-val-row">
+                    <span class="cmp-parts-mark is-win" aria-hidden="true">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                    </span>
+                    <span class="cmp-val">Broken panel only</span>
+                  </div>
+                  <span class="cmp-sub">Least waste: keeps your working aluminium lid, camera, sensors, and hinges out of landfill.</span>
+                </td>
+                <td class="cmp-td">
+                  <span class="cmp-val">Entire display lid</span>
+                  <span class="cmp-sub">Swaps out your working aluminium lid, camera, sensors, and hinges with the cracked panel.</span>
+                </td>
+                <td class="cmp-td">
+                  <div class="cmp-val-row">
+                    <span class="cmp-parts-mark is-no" aria-hidden="true">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>
+                    </span>
+                    <span class="cmp-val">Entire lid, copy parts</span>
+                  </div>
+                  <span class="cmp-sub">Replaces the whole lid with a non-OEM housing and sends your original assembly to waste.</span>
+                </td>
+              </tr>
 
-            <!-- Column 2: Apple Store & full-lid shops -->
-            <div class="compare-col">
-              <div class="compare-col-head">
-                <span class="compare-col-tag">Full lid</span>
-                <div class="compare-col-name">Apple Store &amp; full-lid shops</div>
-              </div>
-              <div class="compare-metric">
-                <span class="cmp-metric-label">What gets replaced &amp; waste</span>
-                <span class="cmp-metric-val">Entire display lid</span>
-                <span class="cmp-metric-sub">Swaps out your working aluminium lid, camera, sensors, and hinges with the cracked panel.</span>
-              </div>
-              <div class="compare-metric">
-                <span class="cmp-metric-label">Display quality &amp; calibration</span>
-                <div class="cmp-metric-val-row">
-                  <span class="cmp-parts-mark is-fair" aria-hidden="true">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
-                  </span>
-                  <span class="cmp-metric-val">Genuine Apple assembly</span>
-                </div>
-                <span class="cmp-metric-sub">Factory display quality from Apple or independent full-lid replacement shops.</span>
-              </div>
-              <div class="compare-metric">
-                <span class="cmp-metric-label">Typical cost</span>
-                <span class="cmp-metric-val">Full-lid pricing</span>
-                <span class="cmp-metric-sub">Apple and full-lid repair shops charge for a complete lid assembly.</span>
-              </div>
-              <div class="compare-metric">
-                <span class="cmp-metric-label">Warranty</span>
-                <span class="cmp-metric-val">90 days (Apple)</span>
-                <span class="cmp-metric-sub">Apple out-of-warranty cover is 90 days; independent full-lid shops vary.</span>
-              </div>
-            </div>
+              <tr>
+                <th scope="row" class="cmp-row-label">Display quality &amp; calibration</th>
+                <td class="cmp-td is-win">
+                  <div class="cmp-val-row">
+                    <span class="cmp-parts-mark is-win" aria-hidden="true">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                    </span>
+                    <span class="cmp-val">Genuine Apple panel</span>
+                  </div>
+                  <span class="cmp-sub">Recalibrated in-house for True Tone, peak brightness, and factory colour accuracy.</span>
+                </td>
+                <td class="cmp-td">
+                  <div class="cmp-val-row">
+                    <span class="cmp-parts-mark is-fair" aria-hidden="true">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                    </span>
+                    <span class="cmp-val">Genuine Apple assembly</span>
+                  </div>
+                  <span class="cmp-sub">Factory display quality from Apple or independent full-lid replacement shops.</span>
+                </td>
+                <td class="cmp-td">
+                  <div class="cmp-val-row">
+                    <span class="cmp-parts-mark is-no" aria-hidden="true">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>
+                    </span>
+                    <span class="cmp-val">Copy LCD panel</span>
+                  </div>
+                  <span class="cmp-sub">Dimmer backlight, lower colour accuracy, and True Tone often missing.</span>
+                </td>
+              </tr>
 
-            <!-- Column 3: Aftermarket shops -->
-            <div class="compare-col">
-              <div class="compare-col-head">
-                <span class="compare-col-tag">Copy parts</span>
-                <div class="compare-col-name">Aftermarket shops</div>
-              </div>
-              <div class="compare-metric">
-                <span class="cmp-metric-label">What gets replaced &amp; waste</span>
-                <div class="cmp-metric-val-row">
-                  <span class="cmp-parts-mark is-no" aria-hidden="true">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>
-                  </span>
-                  <span class="cmp-metric-val">Entire lid, copy parts</span>
-                </div>
-                <span class="cmp-metric-sub">Replaces the whole lid with a non-OEM housing and sends your original assembly to waste.</span>
-              </div>
-              <div class="compare-metric">
-                <span class="cmp-metric-label">Display quality &amp; calibration</span>
-                <div class="cmp-metric-val-row">
-                  <span class="cmp-parts-mark is-no" aria-hidden="true">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>
-                  </span>
-                  <span class="cmp-metric-val">Copy LCD panel</span>
-                </div>
-                <span class="cmp-metric-sub">Dimmer backlight, lower colour accuracy, and True Tone often missing.</span>
-              </div>
-              <div class="compare-metric">
-                <span class="cmp-metric-label">Typical cost</span>
-                <span class="cmp-metric-val">Lower upfront</span>
-                <span class="cmp-metric-sub">Cheaper initially, using non-OEM glass and third-party housing.</span>
-              </div>
-              <div class="compare-metric">
-                <span class="cmp-metric-label">Warranty</span>
-                <span class="cmp-metric-val">Varies by shop</span>
-                <span class="cmp-metric-sub">Some aftermarket shops offer warranties, though cover applies to copy parts.</span>
-              </div>
-            </div>
-          </div>
-        </div>
+              <tr>
+                <th scope="row" class="cmp-row-label">Typical cost</th>
+                <td class="cmp-td is-win">
+                  <span class="cmp-val">30% to 50% less</span>
+                  <span class="cmp-sub">Pay for the damaged panel only, from £299 fixed upfront.</span>
+                </td>
+                <td class="cmp-td">
+                  <span class="cmp-val">Full-lid pricing</span>
+                  <span class="cmp-sub">Apple and full-lid repair shops charge for a complete lid assembly.</span>
+                </td>
+                <td class="cmp-td">
+                  <span class="cmp-val">Lower upfront</span>
+                  <span class="cmp-sub">Cheaper initially, using non-OEM glass and third-party housing.</span>
+                </td>
+              </tr>
 
-        <!-- Mobile stacked metric blocks (replaces squeezed 3-col table on <=768px) -->
-        <div class="compare-mobile" aria-label="Comparison by metric">
-          <div class="cmp-mobile-block">
-            <div class="cmp-mobile-block-head">What gets replaced &amp; waste</div>
-            <ul class="cmp-mobile-rows">
-              <li class="cmp-mobile-row-text is-win">
-                <span class="cmp-mobile-who">iCorrect</span>
-                <div class="cmp-mobile-row-text-val">
-                  <strong>Broken panel only</strong>
-                  <span class="cmp-mobile-desc">Least waste: keeps your working lid, camera, sensors, and hinges out of landfill.</span>
-                </div>
-              </li>
-              <li class="cmp-mobile-row-text">
-                <span class="cmp-mobile-who">Apple &amp; full-lid</span>
-                <div class="cmp-mobile-row-text-val">
-                  <strong>Entire display lid</strong>
-                  <span class="cmp-mobile-desc">Swaps out your working lid, camera, sensors, and hinges with the cracked panel.</span>
-                </div>
-              </li>
-              <li class="cmp-mobile-row-text">
-                <span class="cmp-mobile-who">Aftermarket</span>
-                <div class="cmp-mobile-row-text-val">
-                  <strong>Entire lid, copy parts</strong>
-                  <span class="cmp-mobile-desc">Replaces the whole lid with non-OEM housing, sending your original assembly to waste.</span>
-                </div>
-              </li>
-            </ul>
-          </div>
-
-          <div class="cmp-mobile-block">
-            <div class="cmp-mobile-block-head">Display quality &amp; calibration</div>
-            <ul class="cmp-mobile-rows">
-              <li class="cmp-mobile-row-text is-win">
-                <span class="cmp-mobile-who">iCorrect</span>
-                <div class="cmp-mobile-row-text-val">
-                  <strong>Genuine Apple panel</strong>
-                  <span class="cmp-mobile-desc">Recalibrated in-house for True Tone, peak brightness, and colour accuracy.</span>
-                </div>
-              </li>
-              <li class="cmp-mobile-row-text">
-                <span class="cmp-mobile-who">Apple &amp; full-lid</span>
-                <div class="cmp-mobile-row-text-val">
-                  <strong>Genuine Apple assembly</strong>
-                  <span class="cmp-mobile-desc">Factory display quality from Apple or independent full-lid replacement shops.</span>
-                </div>
-              </li>
-              <li class="cmp-mobile-row-text">
-                <span class="cmp-mobile-who">Aftermarket</span>
-                <div class="cmp-mobile-row-text-val">
-                  <strong>Copy LCD panel</strong>
-                  <span class="cmp-mobile-desc">Dimmer backlight, lower colour accuracy, and True Tone often missing.</span>
-                </div>
-              </li>
-            </ul>
-          </div>
-
-          <div class="cmp-mobile-block">
-            <div class="cmp-mobile-block-head">Typical cost</div>
-            <ul class="cmp-mobile-rows">
-              <li class="cmp-mobile-row-text is-win">
-                <span class="cmp-mobile-who">iCorrect</span>
-                <div class="cmp-mobile-row-text-val">
-                  <strong>30% to 50% less</strong>
-                  <span class="cmp-mobile-desc">Pay for the damaged panel only, from £299 fixed upfront.</span>
-                </div>
-              </li>
-              <li class="cmp-mobile-row-text">
-                <span class="cmp-mobile-who">Apple &amp; full-lid</span>
-                <div class="cmp-mobile-row-text-val">
-                  <strong>Full-lid pricing</strong>
-                  <span class="cmp-mobile-desc">Apple and full-lid repair shops charge for a complete lid assembly.</span>
-                </div>
-              </li>
-              <li class="cmp-mobile-row-text">
-                <span class="cmp-mobile-who">Aftermarket</span>
-                <div class="cmp-mobile-row-text-val">
-                  <strong>Lower upfront</strong>
-                  <span class="cmp-mobile-desc">Cheaper initially, using non-OEM glass and third-party housing.</span>
-                </div>
-              </li>
-            </ul>
-          </div>
-
-          <div class="cmp-mobile-block">
-            <div class="cmp-mobile-block-head">Warranty</div>
-            <ul class="cmp-mobile-rows">
-              <li class="cmp-mobile-row-text is-win">
-                <span class="cmp-mobile-who">iCorrect</span>
-                <div class="cmp-mobile-row-text-val">
-                  <strong>2-year warranty</strong>
-                  <span class="cmp-mobile-desc">Covers the genuine Apple panel and our Fitzrovia workmanship.</span>
-                </div>
-              </li>
-              <li class="cmp-mobile-row-text">
-                <span class="cmp-mobile-who">Apple &amp; full-lid</span>
-                <div class="cmp-mobile-row-text-val">
-                  <strong>90 days (Apple)</strong>
-                  <span class="cmp-mobile-desc">Apple out-of-warranty cover is 90 days; independent full-lid shops vary.</span>
-                </div>
-              </li>
-              <li class="cmp-mobile-row-text">
-                <span class="cmp-mobile-who">Aftermarket</span>
-                <div class="cmp-mobile-row-text-val">
-                  <strong>Varies by shop</strong>
-                  <span class="cmp-mobile-desc">Some aftermarket shops offer warranties, though cover applies to copy parts.</span>
-                </div>
-              </li>
-            </ul>
-          </div>
+              <tr>
+                <th scope="row" class="cmp-row-label">Warranty</th>
+                <td class="cmp-td is-win">
+                  <span class="cmp-val">2-year warranty</span>
+                  <span class="cmp-sub">Covers the genuine Apple panel and our Fitzrovia workmanship.</span>
+                </td>
+                <td class="cmp-td">
+                  <span class="cmp-val">90 days (Apple)</span>
+                  <span class="cmp-sub">Apple out-of-warranty cover is 90 days; independent full-lid shops vary.</span>
+                </td>
+                <td class="cmp-td">
+                  <span class="cmp-val">Varies by shop</span>
+                  <span class="cmp-sub">Some aftermarket shops offer warranties, though cover applies to copy parts.</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         <p class="compare-footnote">Replacing only the damaged panel cuts electronic waste while keeping True Tone, peak brightness, and in-house board-level backup for backlight and flex faults as standard.</p>
