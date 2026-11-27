@@ -1,0 +1,106 @@
+<section class="section starting-prices-band" id="starting-prices" aria-labelledby="price-strip-label">
+  <div class="ic-container">
+    <div class="starting-prices-head">
+      <h2 class="price-strip-label" id="price-strip-label">{{ section.settings.heading | escape }}</h2>
+    </div>
+
+    <ul class="price-strip" role="list" aria-labelledby="price-strip-label">
+      {%- for block in section.blocks -%}
+        <li {{ block.shopify_attributes }}>
+          <a class="price-chip" href="{{ block.settings.link | default: '#quote-section' }}">
+            <span class="price-chip-top">
+              <span class="price-chip-model">{{ block.settings.model_label | escape }}</span>
+              <span class="chev-right" aria-hidden="true"></span>
+            </span>
+            <span class="price-chip-val">{{ block.settings.price_label | escape }}</span>
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    <div class="starting-prices-footer">
+      <p class="hero-price-note">{{ section.settings.note | escape }}</p>
+      <div class="hero-jump-row">
+        <a class="btn-dark" href="{{ section.settings.primary_cta_url }}">{{ section.settings.primary_cta_label | escape }}</a>
+        <a class="btn-ghost" href="{{ section.settings.secondary_cta_url }}">{{ section.settings.secondary_cta_label | escape }}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "ICO-11 Starting Prices",
+  "tag": "div",
+  "class": "ico11-shopify",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Starting prices by model"
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "label": "Footer note",
+      "default": "Includes genuine Apple panel, in-house calibration, and free collection on orders £200+."
+    },
+    {
+      "type": "text",
+      "id": "primary_cta_label",
+      "label": "Primary CTA label",
+      "default": "Get your price"
+    },
+    {
+      "type": "text",
+      "id": "primary_cta_url",
+      "label": "Primary CTA link",
+      "default": "#quote-section"
+    },
+    {
+      "type": "text",
+      "id": "secondary_cta_label",
+      "label": "Secondary CTA label",
+      "default": "Compare repair options"
+    },
+    {
+      "type": "text",
+      "id": "secondary_cta_url",
+      "label": "Secondary CTA link",
+      "default": "#compare"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "price_chip",
+      "name": "Model starting price",
+      "settings": [
+        {
+          "type": "text",
+          "id": "model_label",
+          "label": "Model label",
+          "default": "MacBook Air 13\""
+        },
+        {
+          "type": "text",
+          "id": "price_label",
+          "label": "Starting price",
+          "default": "from £299"
+        },
+        {
+          "type": "text",
+          "id": "link",
+          "label": "Link",
+          "default": "#quote-section"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ICO-11 Starting Prices"
+    }
+  ]
+}
+{% endschema %}

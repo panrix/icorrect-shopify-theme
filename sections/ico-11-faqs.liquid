@@ -1,0 +1,103 @@
+<section class="section section-faq-below-wizard" id="faqs">
+  <div class="ic-container">
+    <div class="section-head">
+      <h2 class="section-title">{{ section.settings.heading | escape }}</h2>
+      <p class="section-lead">{{ section.settings.lead | escape }}</p>
+    </div>
+
+    <div class="faq-list">
+      {%- for block in section.blocks -%}
+        {%- assign is_open = false -%}
+        {%- if forloop.first and section.settings.open_first -%}
+          {%- assign is_open = true -%}
+        {%- endif -%}
+        <div class="faq-item{% if is_open %} is-open{% endif %}" {{ block.shopify_attributes }}>
+          <button
+            type="button"
+            class="faq-btn accordion-ico11-faq"
+            data-ico11-faq-btn
+            aria-expanded="{% if is_open %}true{% else %}false{% endif %}"
+          >
+            <span>{{ block.settings.question | escape }}</span>
+            <span class="faq-icon chev" aria-hidden="true"></span>
+          </button>
+          <div class="faq-answer">
+            {{ block.settings.answer | escape }}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{%- if section.blocks.size > 0 -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {%- for block in section.blocks -%}
+    {
+      "@type": "Question",
+      "name": {{ block.settings.question | strip | json }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ block.settings.answer | strip_html | strip | json }}
+      }
+    }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ]
+}
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "ICO-11 FAQs",
+  "tag": "div",
+  "class": "ico11-shopify",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Questions before you book"
+    },
+    {
+      "type": "textarea",
+      "id": "lead",
+      "label": "Lead copy",
+      "default": "Ordered by the questions MacBook owners check most often before booking a screen repair."
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first",
+      "label": "Open first question by default",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "Question",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Answer"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ICO-11 FAQs"
+    }
+  ]
+}
+{% endschema %}

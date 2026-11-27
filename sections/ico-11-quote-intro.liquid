@@ -1,0 +1,26 @@
+<section class="wizard-intro-band" id="quote-section" aria-label="MacBook Screen Repair Quote Wizard">
+  <div class="ic-container">
+    <p class="wizard-intro-line">{{ section.settings.intro_line | escape }}</p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "ICO-11 Quote Intro",
+  "tag": "div",
+  "class": "ico11-shopify",
+  "settings": [
+    {
+      "type": "text",
+      "id": "intro_line",
+      "label": "Intro line above quote wizard",
+      "default": "Select your MacBook model below to see your fixed upfront price and live collection options for your postcode."
+    }
+  ],
+  "presets": [
+    {
+      "name": "ICO-11 Quote Intro"
+    }
+  ]
+}
+{% endschema %}
