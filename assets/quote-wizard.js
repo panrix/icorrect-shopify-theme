@@ -309,7 +309,9 @@
     "A2442":["Silver","Space Gray"],
     "A2991":["Silver","Space Black"],"A2996":["Silver","Space Black"],"A2998":["Silver","Space Black"],
     "A3401":["Silver","Space Black"],"A3185":["Silver","Space Black"],"A3403":["Silver","Space Black"],
-    "A3186":["Silver","Space Black"],"A3112":["Silver","Space Black"]
+    "A3186":["Silver","Space Black"],"A3112":["Silver","Space Black"],
+    "A3434":["Silver","Space Black"],"A3426":["Silver","Space Black"],"A3427":["Silver","Space Black"],
+    "A3428":["Silver","Space Black"],"A3429":["Silver","Space Black"]
   };
 
   function getDeviceColors(device, model, repairType) {
@@ -639,10 +641,12 @@
 
   /* MacBook model number lookup DB */
   var MB_NUMS = [
+    {n:"A3428",m:"MacBook Pro 16-inch 'M5 Pro/Max' A3428/A3429 (2026)"},{n:"A3429",m:"MacBook Pro 16-inch 'M5 Pro/Max' A3428/A3429 (2026)"},
     {n:"A3403",m:"MacBook Pro 16-inch 'M4 Pro/Max' A3186/A3403 (2024)"},{n:"A3186",m:"MacBook Pro 16-inch 'M4 Pro/Max' A3186/A3403 (2024)"},
     {n:"A2991",m:"MacBook Pro 16-inch 'M3 Pro/Max' A2991 (2023)"},{n:"A2780",m:"MacBook Pro 16-inch 'M2 Pro/Max' A2780 (2023)"},
     {n:"A2485",m:"MacBook Pro 16-inch 'M1 Pro/Max' A2485 (2021)"},{n:"A2141",m:"MacBook Pro 16-inch A2141 (2019)"},
     {n:"A1990",m:"MacBook Pro 15-inch A1990 (2018-2019)"},{n:"A1707",m:"MacBook Pro 15-inch A1707 (2016-2017)"},
+    {n:"A3434",m:"MacBook Pro 14-inch 'M5/Pro/Max' A3434/A3426/A3427 (2025-2026)"},{n:"A3426",m:"MacBook Pro 14-inch 'M5/Pro/Max' A3434/A3426/A3427 (2025-2026)"},{n:"A3427",m:"MacBook Pro 14-inch 'M5/Pro/Max' A3434/A3426/A3427 (2025-2026)"},
     {n:"A3401",m:"MacBook Pro 14-inch 'M4 Pro/Max' A3112/A3185/A3401 (2024)"},{n:"A3112",m:"MacBook Pro 14-inch 'M4 Pro/Max' A3112/A3185/A3401 (2024)"},{n:"A3185",m:"MacBook Pro 14-inch 'M4 Pro/Max' A3112/A3185/A3401 (2024)"},
     {n:"A2918",m:"MacBook Pro 14-inch 'M3 Pro/Max' A2918/A2992 (2023)"},{n:"A2992",m:"MacBook Pro 14-inch 'M3 Pro/Max' A2918/A2992 (2023)"},
     {n:"A2779",m:"MacBook Pro 14-inch 'M2 Pro/Max' A2779 (2023)"},{n:"A2442",m:"MacBook Pro 14-inch 'M1 Pro/Max' A2442 (2021)"},
@@ -3100,7 +3104,22 @@
       return exact || best;
     }
 
-    var groups = MODELS['macbook'] || [];
+    /* Menu titles use either the catalogue name or a chip label that contains the A-number. */
+    function findMenuModelForLookup(entry) {
+      var byName = findConfiguredModelByName(entry.m);
+      if (byName) return byName;
+      var groups = MODELS['macbook'] || [];
+      var hit = null;
+      for (var g = 0; g < groups.length; g++) {
+        var models = groups[g].models || [];
+        for (var m = 0; m < models.length; m++) {
+          if (models[m].name.indexOf(entry.n) === -1) continue;
+          if (hit && hit !== models[m]) return null;
+          hit = models[m];
+        }
+      }
+      return hit;
+    }
 
     function mbFilter() {
       var q = (document.getElementById('qwMbSearch').value || '').trim().toUpperCase();
@@ -3108,7 +3127,12 @@
       if (!r) return;
       r.innerHTML = '';
       if (!q) return;
-      var f = MB_NUMS.filter(function(n) { return n.n.toUpperCase().indexOf(q) !== -1 || n.m.toUpperCase().indexOf(q) !== -1; });
+      var f = MB_NUMS.filter(function(n) {
+        if (n.n.toUpperCase().indexOf(q) === -1 && n.m.toUpperCase().indexOf(q) === -1) return false;
+        /* No menu row yet, or every repair for this model is still drafted. */
+        if (!findMenuModelForLookup(n)) return false;
+        return catalogueOffersModel('macbook', n.m);
+      });
       if (!f.length) { r.innerHTML = '<div style="padding:10px;font-size:13px;color:var(--qw-text-3);">No match. Check the number and try again.</div>'; return; }
       /* Deduplicate by model name to avoid showing A2338 twice with same target */
       var seen = {};
@@ -3118,7 +3142,7 @@
         var d = document.createElement('div'); d.className = 'qw-help-hit';
         d.innerHTML = '<span class="qw-hn">' + n.n + '</span><span class="qw-hm">' + n.m + '</span><span class="qw-hs">Select</span>';
         d.onclick = function() {
-          var model = findConfiguredModelByName(n.m);
+          var model = findMenuModelForLookup(n);
           if (model) {
             panel.classList.remove('open');
             pickModel(model.name, model.collectionHandle, null);
