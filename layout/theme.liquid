@@ -65,7 +65,7 @@
       # Walk-in retired (#53): rewrite the location sentence that admin SEO
       # descriptions still carry. Title tags are untouched.
       if seo_page_description contains 'London'
-        assign seo_page_description = seo_page_description | replace: ' replacement in Central London.', ' replacement with London courier collection or UK mail-in.' | replace: 'Central London walk-in service.', 'Courier collection across London, tracked mail-in nationwide.' | replace: 'Central London walk-in.', 'Courier collection across London, tracked mail-in nationwide.' | replace: 'London walk-in.', 'Courier collection across London, tracked mail-in nationwide.' | replace: 'Central London, 2-year warranty.', 'London courier collection or UK mail-in, 2-year warranty.' | replace: 'Central London.', 'Courier collection across London, tracked mail-in nationwide.'
+        assign seo_page_description = seo_page_description | replace: ' replacement in Central London.', ' replacement with London courier collection or UK mail-in.' | replace: 'Central London walk-in service.', 'Courier collection across London, tracked mail-in nationwide.' | replace: 'Central London walk-in.', 'Courier collection across London, tracked mail-in nationwide.' | replace: 'London walk-in.', 'Courier collection across London, tracked mail-in nationwide.' | replace: 'Central London, 2-year warranty.', 'London courier collection or UK mail-in, 2-year warranty.' | replace: ' in Central London.', ' with London courier collection or tracked UK mail-in.' | replace: 'Central London.', 'Courier collection across London, tracked mail-in nationwide.'
       endif
     -%}
 
