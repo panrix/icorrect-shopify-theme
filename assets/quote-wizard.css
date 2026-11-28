@@ -2476,6 +2476,7 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 @media (min-width: 720px) {
   .qw-price-trust {
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: stretch;
   }
   .qw-trust-cross {
@@ -2756,8 +2757,8 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 }
 
 /* ===== GRO-8 additions on the restored wizard ===== */
-/* Klarna On-Site Messaging slot under the price. Hidden until the widget paints. */
-.qw-klarna-line{display:flex;align-items:center;justify-content:center;margin-top:8px;width:100%;min-width:0;overflow:hidden}
+/* Klarna On-Site Messaging: full-width row under the tiles and price, so the widget is not clipped. */
+.qw-klarna-line{display:flex;align-items:center;justify-content:center;width:100%;min-width:0;padding:10px 14px 12px;box-shadow:inset 0 1px 0 #e6e6e6;background:#fff}
 .qw-klarna-line[hidden]{display:none}
 .qw-klarna-line klarna-placement{display:block;width:100%;min-width:0;max-width:100%}
 
@@ -2779,5 +2780,5 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 .qw-dropoff-card{margin-top:4px;cursor:default}
 .qw-dropoff-card[hidden]{display:none}
 @media (min-width:700px){
-  .qw-price-trust-price .qw-klarna-line{margin-top:10px}
+  .qw-klarna-line{flex:1 1 100%;width:100%;padding:8px 16px 10px}
 }

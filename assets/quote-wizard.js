@@ -1297,11 +1297,9 @@
         '<div class="qw-price-big-wrap" id="qwPriceBigWrap" hidden>' +
           '<div class="qw-price-from">All-in total</div>' +
           '<div class="qw-price-big" id="qwPriceBig">' + (opts.priceHtml || '') + '</div>' +
-          '<div class="qw-klarna-line" id="qwKlarna" hidden></div>' +
         '</div>'
       : '<div class="qw-price-from">All-in total</div>' +
-        '<div class="qw-price-big" id="qwPriceBig">' + (opts.priceHtml || '') + '</div>' +
-        '<div class="qw-klarna-line" id="qwKlarna" hidden></div>';
+        '<div class="qw-price-big" id="qwPriceBig">' + (opts.priceHtml || '') + '</div>';
     return '<div class="qw-price-trust" id="qwPriceTrust">' +
       '<ul class="qw-trust-cross" role="list" aria-label="Trust signals">' +
         '<li class="qw-trust-cell qw-trust-reviews" aria-label="4.8 from 750+ Google reviews">' +
@@ -1334,6 +1332,7 @@
         '</li>' +
       '</ul>' +
       '<div class="qw-price-trust-price">' + priceInner + '</div>' +
+      '<div class="qw-klarna-line" id="qwKlarna" hidden></div>' +
     '</div>';
   }
 
