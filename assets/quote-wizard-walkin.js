@@ -1,5 +1,5 @@
 /* Walk-in ("Bring it to our workshop") helpers for quote-wizard.js.
-   Kept in their own file so quote-wizard.js stays under Shopify's 256 KB asset limit.
+   Kept in their own file so quote-wizard.js stays smaller.
    No state lives here: quote-wizard.js passes in what each helper needs. */
 (function () {
   'use strict';
