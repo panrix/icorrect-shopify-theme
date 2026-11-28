@@ -111,10 +111,13 @@ window.WIZARD_CONTEXT = {
 <script src="{{ 'repair-catalogue.js' | asset_url }}" defer></script>
 <script src="{{ 'quoted-repair-stamp.js' | asset_url }}" defer></script>
 <script src="{{ 'repair-journey.js' | asset_url }}" defer></script>
+<script src="{{ 'quote-wizard-walkin.js' | asset_url }}" defer></script>
 <script>
 window.WIZARD_CFG = {
   warrantyLabel: {{ section.settings.warranty_label | default: '2-year warranty' | json }},
   diagnosticTurnaround: {{ section.settings.diagnostic_turnaround | default: 'Quote in 1 working day' | json }},
+  dropOff: {% if section.settings.enable_drop_off == false %}false{% else %}true{% endif %},
+  sameDayDropOff: {% if section.settings.enable_same_day_drop_off == false %}false{% else %}true{% endif %},
   bandsUrl: {{ 'courier-london-bands.json' | asset_url | json }},
   catalogueUrl: {{ 'repair-catalogue-map.json' | asset_url | json }},
   collectionPrefillUrl: {{ 'wizard-collection-prefill.json' | asset_url | json }},
@@ -310,7 +313,7 @@ window.__icorrectQuote = window.__icorrectQuote || {};
               <span class="qw-hrs-d">Sat</span><span class="qw-hrs-t">{{ section.settings.hours_sat | default: 'Closed' }}</span>
               <span class="qw-hrs-d">Sun</span><span class="qw-hrs-t">{{ section.settings.hours_sun | default: 'Closed' }}</span>
             </div>
-            <p class="qw-no-walkin">Courier collection or tracked mail-in only.</p>
+            <p class="qw-no-walkin">{% if section.settings.enable_drop_off == false %}Courier collection or tracked mail-in only.{% else %}Courier collection, tracked mail-in, or workshop drop-off.{% endif %}</p>
           </div>
         </div>
       </div>
@@ -492,6 +495,9 @@ window.__icorrectQuote = window.__icorrectQuote || {};
 })();
 </script>
 
+<!-- Klarna badge: Shopify's own Klarna payment icon (unaltered), cloned by quote-wizard.js next to the Klarna line -->
+<template id="qwKlarnaBadge">{{ 'klarna' | payment_type_svg_tag: class: 'qw-klarna-icon' }}</template>
+
 <!-- [5.1] Sticky CTA (injected by JS when needed) -->
 <div class="qw-sticky-cta" id="qw-sticky-cta"></div>
 
@@ -539,6 +545,20 @@ window.__icorrectQuote = window.__icorrectQuote || {};
   "tag": "section",
   "class": "quote-wizard-section",
   "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_drop_off",
+      "label": "Offer drop-off at the workshop",
+      "default": true,
+      "info": "Shows a small \"Prefer to drop off?\" link under the courier and mail-in options. Orders come through as Service Type: Walk-in."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_same_day_drop_off",
+      "label": "Allow same-day drop-off",
+      "default": true,
+      "info": "Offers Today as a drop-off option Mon to Fri until 3pm London time. Turn off on busy days to start drop-offs from tomorrow."
+    },
     {
       "type": "checkbox",
       "id": "page_title",

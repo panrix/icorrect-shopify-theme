@@ -2656,8 +2656,6 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 }
 
 /* Restore candidate: one Klarna line under the price, no eligibility text. */
-.qw-klarna-line{margin-top:6px;font-size:13px;line-height:1.4;color:var(--qw-text-2);font-variant-numeric:tabular-nums}
-.qw-klarna-line[hidden]{display:none}
 
 /* In-page basket replacement confirmation dialog (replaces native window.confirm) */
 .qw-confirm-modal,
@@ -2755,4 +2753,34 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 .qw-confirm-btn-secondary:hover {
   background: #fafafa;
   box-shadow: 0 0 0 1px #171717;
+}
+
+/* ===== GRO-8 additions on the restored wizard ===== */
+/* Klarna line: official badge (Shopify Klarna payment icon, native 38x24, never stretched) then the 3 payment line. */
+.qw-klarna-line{display:flex;align-items:center;justify-content:center;flex-wrap:nowrap;gap:8px;margin-top:8px;text-align:left}
+.qw-klarna-line[hidden]{display:none}
+.qw-klarna-badge{display:inline-flex;flex:0 0 auto;margin:2px 4px 2px 0}
+.qw-klarna-badge svg,.qw-klarna-badge .qw-klarna-icon{display:block;width:auto;height:24px}
+.qw-klarna-text{min-width:0;font-size:13px;line-height:1.4;color:var(--qw-text-2);font-variant-numeric:tabular-nums}
+
+/* Mail-in explainer (out-of-courier-area postcodes): same green confirm block as the original, positive tone. */
+.qw-mailin-explainer{padding:12px 14px}
+.qw-mailin-explainer .qw-courier-confirm-title{font-size:15px}
+.qw-mailin-steps{list-style:none;margin:10px 0 0;padding:0}
+.qw-mailin-steps li{display:flex;gap:10px;padding:8px 0;font-size:13px;line-height:1.4;color:var(--qw-text-2)}
+.qw-mailin-steps li + li{box-shadow:inset 0 1px 0 rgba(26,107,52,0.18)}
+.qw-mailin-steps strong{display:block;font-weight:600;color:var(--qw-text)}
+.qw-mailin-steps .qw-mono{flex:0 0 18px;padding-top:2px;font-size:11px;color:var(--qw-green)}
+
+/* Prefer to drop off? small secondary link that expands the Fitzrovia option inline. */
+.qw-dropoff{margin:10px 0 4px}
+.qw-dropoff[hidden]{display:none}
+.qw-dropoff-link{display:inline-flex;align-items:center;min-height:44px;padding:0 2px;background:none;border:0;font:500 14px/1.3 var(--font-sans,"Geist",Arial,Helvetica,sans-serif);color:var(--qw-text-2);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.qw-dropoff-link:hover{color:var(--qw-text)}
+.qw-dropoff-link:focus-visible{outline:2px solid var(--qw-accent,#0070f3);outline-offset:2px;border-radius:4px}
+.qw-dropoff-card{margin-top:4px;cursor:default}
+.qw-dropoff-card[hidden]{display:none}
+@media (min-width:700px){
+  .qw-price-trust-price .qw-klarna-line{flex-direction:column;gap:4px;text-align:center}
+  .qw-price-trust-price .qw-klarna-badge{margin:0}
 }
