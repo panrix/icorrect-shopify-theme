@@ -154,8 +154,13 @@ describe('Item 2: remove star icons and set Fitzrovia hours to Mon to Fri 9am to
     assert.equal(wizardJs.includes('qw-trust-sub">from 750+ Google reviews'), false);
   });
 
-  it('GRO-8: Klarna line is the official no-disclosure wording with no amount', () => {
-    assert.match(wizardJs, /qw-klarna-text">Pay with Klarna</);
+  it('GRO-8: Klarna line is the On-Site Messaging credit-promotion-badge', () => {
+    assert.match(wizardJs, /data-key', 'credit-promotion-badge'/);
+    assert.match(wizardJs, /data-locale', 'en-GB'/);
+    assert.match(wizardJs, /data-purchase-amount/);
+    assert.match(wizardJs, /function klarnaAmountPence\(/);
+    assert.match(wizardJs, /total >= 100/);
+    assert.equal(wizardJs.includes('Pay with Klarna'), false);
     assert.equal(wizardJs.includes('interest-free payments of'), false);
     assert.equal(wizardJs.includes('Pay in 3 with Klarna at checkout'), false);
   });

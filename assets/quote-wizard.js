@@ -1963,20 +1963,74 @@
     }
   }
 
-  /* One line under the price: Klarna badge (Shopify's Klarna payment icon, unaltered, via payment_type_svg_tag in the section template) plus Klarna UK official no-disclosure wording "Pay with Klarna". Shown from GBP 100. No amount, no eligibility text (Ricky's ruling, 28 Nov 2026). */
+  /* Klarna On-Site Messaging credit-promotion-badge under the price (Ricky, 28 Nov 2026).
+     Uses the storefront OSM SDK already on the page. Amount is the live all-in total in pence.
+     Shown from GBP 100, same as before. If the widget does not paint, the slot stays hidden. */
+  var _klarnaOsmTimer = 0;
+
+  function klarnaAmountPence(total) {
+    return String(Math.round(Number(Number(total).toFixed(2)) * 100));
+  }
+
+  function klarnaPlacementPainted(pl) {
+    if (!pl) return false;
+    try {
+      if (pl.getBoundingClientRect().height >= 16) return true;
+    } catch (e1) {}
+    try {
+      if (pl.shadowRoot && pl.shadowRoot.childElementCount) return true;
+    } catch (e2) {}
+    return false;
+  }
+
+  function ensureKlarnaPlacement(k) {
+    var pl = k.querySelector('klarna-placement');
+    if (!pl) {
+      pl = document.createElement('klarna-placement');
+      pl.setAttribute('data-key', 'credit-promotion-badge');
+      pl.setAttribute('data-locale', 'en-GB');
+      pl.setAttribute('data-preloaded', 'true');
+      k.appendChild(pl);
+    }
+    return pl;
+  }
+
   function renderKlarnaLine(total) {
     var k = document.getElementById('qwKlarna');
     if (!k) return;
-    if (total >= 100) {
-      var tpl = document.getElementById('qwKlarnaBadge');
-      var badge = tpl ? String(tpl.innerHTML || '').trim() : '';
-      k.hidden = false;
-      k.innerHTML = (badge ? '<span class="qw-klarna-badge">' + badge + '</span>' : '') +
-        '<span class="qw-klarna-text">Pay with Klarna</span>';
-    } else {
-      k.hidden = true;
-      k.innerHTML = '';
+    if (_klarnaOsmTimer) {
+      clearTimeout(_klarnaOsmTimer);
+      _klarnaOsmTimer = 0;
     }
+    if (!(total >= 100)) {
+      k.hidden = true;
+      var idle = k.querySelector('klarna-placement');
+      if (idle) idle.setAttribute('data-purchase-amount', '0');
+      return;
+    }
+    var pence = klarnaAmountPence(total);
+    var pl = ensureKlarnaPlacement(k);
+    if (pl.getAttribute('data-purchase-amount') !== pence) {
+      pl.setAttribute('data-purchase-amount', pence);
+    }
+    if (klarnaPlacementPainted(pl)) {
+      k.hidden = false;
+      return;
+    }
+    k.hidden = true;
+    var tries = 0;
+    (function pollOsm() {
+      var slot = document.getElementById('qwKlarna');
+      if (!slot || slot !== k) return;
+      var node = slot.querySelector('klarna-placement');
+      if (!node || node.getAttribute('data-purchase-amount') !== pence) return;
+      if (klarnaPlacementPainted(node)) {
+        slot.hidden = false;
+        return;
+      }
+      tries += 1;
+      if (tries < 40) _klarnaOsmTimer = setTimeout(pollOsm, 250);
+    })();
   }
 
   function refreshAllInTotal() {

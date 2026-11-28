@@ -2756,12 +2756,10 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 }
 
 /* ===== GRO-8 additions on the restored wizard ===== */
-/* Klarna line: official badge (Shopify Klarna payment icon, native 38x24, never stretched) then the 3 payment line. */
-.qw-klarna-line{display:flex;align-items:center;justify-content:center;flex-wrap:nowrap;gap:8px;margin-top:8px;text-align:left}
+/* Klarna On-Site Messaging slot under the price. Hidden until the widget paints. */
+.qw-klarna-line{display:flex;align-items:center;justify-content:center;margin-top:8px;width:100%;min-width:0;overflow:hidden}
 .qw-klarna-line[hidden]{display:none}
-.qw-klarna-badge{display:inline-flex;flex:0 0 auto;margin:2px 4px 2px 0}
-.qw-klarna-badge svg,.qw-klarna-badge .qw-klarna-icon{display:block;width:auto;height:24px}
-.qw-klarna-text{min-width:0;font-size:13px;line-height:1.4;color:var(--qw-text-2);font-variant-numeric:tabular-nums}
+.qw-klarna-line klarna-placement{display:block;width:100%;min-width:0;max-width:100%}
 
 /* Mail-in explainer (out-of-courier-area postcodes): same confirm block as the original (light blue), positive tone. */
 .qw-mailin-explainer{padding:12px 14px}
@@ -2781,6 +2779,5 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 .qw-dropoff-card{margin-top:4px;cursor:default}
 .qw-dropoff-card[hidden]{display:none}
 @media (min-width:700px){
-  .qw-price-trust-price .qw-klarna-line{flex-direction:column;gap:4px;text-align:center}
-  .qw-price-trust-price .qw-klarna-badge{margin:0}
+  .qw-price-trust-price .qw-klarna-line{margin-top:10px}
 }
