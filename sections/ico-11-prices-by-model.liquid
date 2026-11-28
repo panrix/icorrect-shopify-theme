@@ -7,14 +7,14 @@
 
     <div class="model-dir-grid">
       <div class="model-group-card is-open" data-ico11-model-group>
-        <button type="button" class="model-group-head-btn" aria-expanded="true">
+        <button type="button" class="model-group-head-btn" aria-expanded="true" aria-controls="ico11-models-air">
           <h3>MacBook Air (13&quot; &amp; 15&quot;)</h3>
           <span class="model-group-meta">
             <span class="model-group-from">from £299</span>
             <span class="model-group-chev chev" aria-hidden="true"></span>
           </span>
         </button>
-        <ul class="model-list">
+        <ul class="model-list" id="ico11-models-air">
           <li class="model-row">
             <a href="#quote-section">
               <span class="model-row-info">
@@ -90,6 +90,18 @@
           <li class="model-row is-overflow">
             <a href="#quote-section">
               <span class="model-row-info">
+                <span class="model-row-name">MacBook Air 13&quot; (2012 to 2017)</span>
+                <span class="model-row-code">Model A1466</span>
+              </span>
+              <span class="model-row-right">
+                <span class="model-row-price">£299</span>
+                <span class="chev-right" aria-hidden="true"></span>
+              </span>
+            </a>
+          </li>
+          <li class="model-row is-overflow">
+            <a href="#quote-section">
+              <span class="model-row-info">
                 <span class="model-row-name">MacBook Air 15&quot; M4 (2025)</span>
                 <span class="model-row-code">Model A3241</span>
               </span>
@@ -124,18 +136,18 @@
             </a>
           </li>
         </ul>
-        <button type="button" class="model-show-more" data-ico11-show-all>Show all 9 models</button>
+        <button type="button" class="model-show-more" data-ico11-show-all>Show all 10 models</button>
       </div>
 
       <div class="model-group-card" data-ico11-model-group>
-        <button type="button" class="model-group-head-btn" aria-expanded="false">
+        <button type="button" class="model-group-head-btn" aria-expanded="false" aria-controls="ico11-models-pro-13-14">
           <h3>MacBook Pro (13&quot; &amp; 14&quot;)</h3>
           <span class="model-group-meta">
             <span class="model-group-from">from £299</span>
             <span class="model-group-chev chev" aria-hidden="true"></span>
           </span>
         </button>
-        <ul class="model-list">
+        <ul class="model-list" id="ico11-models-pro-13-14">
           <li class="model-row">
             <a href="#quote-section">
               <span class="model-row-info">
@@ -244,19 +256,43 @@
               </span>
             </a>
           </li>
+          <li class="model-row is-overflow">
+            <a href="#quote-section">
+              <span class="model-row-info">
+                <span class="model-row-name">MacBook Pro 13&quot; (2016 to 2018)</span>
+                <span class="model-row-code">Model A1706</span>
+              </span>
+              <span class="model-row-right">
+                <span class="model-row-price">£399</span>
+                <span class="chev-right" aria-hidden="true"></span>
+              </span>
+            </a>
+          </li>
+          <li class="model-row is-overflow">
+            <a href="#quote-section">
+              <span class="model-row-info">
+                <span class="model-row-name">MacBook Pro 13&quot; (2016 to 2017)</span>
+                <span class="model-row-code">Model A1708</span>
+              </span>
+              <span class="model-row-right">
+                <span class="model-row-price">£399</span>
+                <span class="chev-right" aria-hidden="true"></span>
+              </span>
+            </a>
+          </li>
         </ul>
-        <button type="button" class="model-show-more" data-ico11-show-all>Show all 9 models</button>
+        <button type="button" class="model-show-more" data-ico11-show-all>Show all 11 models</button>
       </div>
 
       <div class="model-group-card" data-ico11-model-group>
-        <button type="button" class="model-group-head-btn" aria-expanded="false">
+        <button type="button" class="model-group-head-btn" aria-expanded="false" aria-controls="ico11-models-pro-15-16">
           <h3>MacBook Pro (15&quot; &amp; 16&quot;)</h3>
           <span class="model-group-meta">
             <span class="model-group-from">£599 to £799</span>
             <span class="model-group-chev chev" aria-hidden="true"></span>
           </span>
         </button>
-        <ul class="model-list">
+        <ul class="model-list" id="ico11-models-pro-15-16">
           <li class="model-row">
             <a href="#quote-section">
               <span class="model-row-info">
@@ -358,19 +394,19 @@
       </div>
       <ul class="related-links-row" role="list">
         <li>
-          <a href="/collections/macbook-battery-repair-prices">
+          <a href="{{ routes.collections_url }}/macbook-battery-repair-prices">
             <span>MacBook Battery Replacement</span>
             <span class="chev-right" aria-hidden="true"></span>
           </a>
         </li>
         <li>
-          <a href="/collections/macbook-keyboard-repair-prices">
+          <a href="{{ routes.collections_url }}/macbook-keyboard-repair-prices">
             <span>MacBook Keyboard Repair</span>
             <span class="chev-right" aria-hidden="true"></span>
           </a>
         </li>
         <li>
-          <a href="/collections/macbook-charging-port-repair-prices">
+          <a href="{{ routes.collections_url }}/macbook-charging-port-repair-prices">
             <span>MacBook USB-C Port Repair</span>
             <span class="chev-right" aria-hidden="true"></span>
           </a>

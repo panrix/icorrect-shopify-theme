@@ -107,10 +107,20 @@ describe('ICO-11 Liquid sections schema, tags, and assets', () => {
     const rel = `sections/${name}.liquid`;
     const src = read(rel);
 
-    it(`${rel} has valid OS 2.0 schema scoped under .ico11-shopify with no invalid url defaults`, () => {
+    it(`${rel} has valid OS 2.0 schema scoped under .ico11-shopify with <= 25 char names and no invalid url defaults`, () => {
       const schema = parseSchema(src, rel);
       assert.equal(schema.tag, 'div', `${rel} schema.tag must be div`);
       assert.equal(schema.class, 'ico11-shopify', `${rel} schema.class must be ico11-shopify`);
+      assert.ok(
+        typeof schema.name === 'string' && schema.name.length > 0 && schema.name.length <= 25,
+        `${rel} schema.name "${schema.name}" exceeds Shopify 25-char limit (${(schema.name || '').length})`
+      );
+      for (const preset of schema.presets || []) {
+        assert.ok(
+          typeof preset.name === 'string' && preset.name.length > 0 && preset.name.length <= 25,
+          `${rel} preset.name "${preset.name}" exceeds Shopify 25-char limit (${(preset.name || '').length})`
+        );
+      }
 
       const allSettings = [
         ...(schema.settings || []),
@@ -125,6 +135,11 @@ describe('ICO-11 Liquid sections schema, tags, and assets', () => {
           );
         }
       }
+      assert.doesNotMatch(
+        src,
+        /href=["']\/collections\//,
+        `${rel} should use {{ routes.collections_url }} instead of hardcoded /collections/`
+      );
     });
 
     it(`${rel} has balanced Liquid block tags and no duplicated header/footer`, () => {
@@ -176,6 +191,11 @@ describe('ICO-11 visual, copy, and SEO parity with 5033f06', () => {
         `forbidden term found in ${rel}`
       );
     }
+    assert.doesNotMatch(
+      read('scripts/courier/ico-11-screen-repair.test.js'),
+      /[\u2013\u2014]/,
+      'em/en dash found in scripts/courier/ico-11-screen-repair.test.js'
+    );
   });
 
   it('uses H1 "MacBook Screen Repair Prices", upfront £299 hero lead, and accurate Band 4 £25 courier copy', () => {
@@ -223,11 +243,16 @@ describe('ICO-11 visual, copy, and SEO parity with 5033f06', () => {
     assert.match(css, /\.ico11-shopify \.stamp-figure\s*\{[\s\S]*?white-space:\s*nowrap/);
   });
 
-  it('preserves parallel 3-column comparison table (waste first, warranty last)', () => {
+  it('preserves parallel 3-column comparison table (waste first, warranty last) and exposes mobile provider names to AT', () => {
     const compare = read('sections/ico-11-compare.liquid');
     assert.ok(compare.includes('iCorrect'));
     assert.ok(compare.includes('Apple Store &amp; full-lid shops'));
     assert.ok(compare.includes('Aftermarket shops'));
+    assert.doesNotMatch(
+      compare,
+      /class="cmp-name-short"[^>]*aria-hidden="true"/,
+      'mobile comparison provider names must not be aria-hidden="true"'
+    );
     const wasteIdx = compare.indexOf('What gets replaced &amp; waste');
     const warrantyIdx = compare.indexOf('>Warranty<');
     assert.ok(wasteIdx > 0 && warrantyIdx > wasteIdx, 'Waste row must appear before Warranty row');
@@ -276,9 +301,173 @@ describe('ICO-11 visual, copy, and SEO parity with 5033f06', () => {
     assert.doesNotMatch(faqs, /aggregateRating/i);
   });
 
-  it('ico-11-screen-repair.js parses cleanly as valid JavaScript and includes all 29 MacBook model codes', () => {
+  it('ico-11-screen-repair.js parses cleanly and covers all 32 catalogue MacBook screen codes in finder and price directory', () => {
     assert.doesNotThrow(() => new vm.Script(js, { filename: 'assets/ico-11-screen-repair.js' }));
     const codeMatches = js.match(/code:\s*"A\d{4}"/g) || [];
-    assert.equal(codeMatches.length, 29, `expected 29 models in JS finder, got ${codeMatches.length}`);
+    assert.equal(codeMatches.length, 32, `expected 32 models in JS finder, got ${codeMatches.length}`);
+
+    const catalogue = JSON.parse(read('assets/repair-catalogue-map.json'));
+    const pricesDir = read('sections/ico-11-prices-by-model.liquid');
+    const catalogueCodes = new Map();
+    for (const model of Object.values(catalogue.models)) {
+      if (model.device !== 'macbook' || !model.repairs || !model.repairs.screen) continue;
+      for (const code of model.name.match(/A\d{4}/g) || []) {
+        if (!catalogueCodes.has(code)) catalogueCodes.set(code, []);
+        catalogueCodes.get(code).push(model.repairs.screen.price);
+      }
+    }
+    assert.equal(catalogueCodes.size, 32, 'catalogue should have 32 MacBook screen A-codes');
+    for (const [code, prices] of catalogueCodes.entries()) {
+      assert.ok(js.includes(`code: "${code}"`), `JS finder missing catalogue code ${code}`);
+      assert.ok(pricesDir.includes(code), `prices-by-model directory missing catalogue code ${code}`);
+      for (const p of prices) {
+        assert.ok(
+          pricesDir.includes(`£${p}`),
+          `prices-by-model directory missing price £${p} for ${code}`
+        );
+      }
+    }
+
+    assert.match(pricesDir, /Model A1466[\s\S]*?£299/);
+    assert.match(pricesDir, /Model A1706[\s\S]*?£399/);
+    assert.match(pricesDir, /Model A1708[\s\S]*?£399/);
+    assert.ok(pricesDir.includes('Show all 10 models'));
+    assert.ok(pricesDir.includes('Show all 11 models'));
+  });
+
+  it('finder resolves A1466/A1706/A1708 with exact prices, rejects malformed A24420, and aligns desktop/mobile group ARIA', () => {
+    function createEl(tag, init) {
+      const attrs = Object.assign({}, (init && init.attrs) || {});
+      const classes = new Set((init && init.classes) || []);
+      const listeners = {};
+      const children = [];
+      let text = (init && init.text) || '';
+      const el = {
+        tagName: tag.toUpperCase(),
+        dataset: {},
+        hidden: false,
+        value: '',
+        focused: false,
+        children,
+        classList: {
+          add: (c) => classes.add(c),
+          remove: (c) => classes.delete(c),
+          contains: (c) => classes.has(c),
+          toggle: (c, force) => {
+            if (force === undefined) {
+              if (classes.has(c)) classes.delete(c);
+              else classes.add(c);
+            } else if (force) classes.add(c);
+            else classes.delete(c);
+          },
+        },
+        setAttribute: (k, v) => { attrs[k] = String(v); },
+        getAttribute: (k) => (Object.prototype.hasOwnProperty.call(attrs, k) ? attrs[k] : null),
+        removeAttribute: (k) => { delete attrs[k]; },
+        addEventListener: (ev, fn) => {
+          listeners[ev] = listeners[ev] || [];
+          listeners[ev].push(fn);
+        },
+        dispatch: (ev, payload) => {
+          for (const fn of listeners[ev] || []) fn(payload || { preventDefault: () => {} });
+        },
+        focus: () => { el.focused = true; },
+        appendChild: (child) => { children.push(child); return child; },
+        querySelector: (sel) => (init && init.querySelector ? init.querySelector(sel) : null),
+        get textContent() {
+          if (children.length) return children.map((c) => c.textContent).join('');
+          return text;
+        },
+        set textContent(v) {
+          text = String(v);
+          children.length = 0;
+        },
+      };
+      return el;
+    }
+
+    const input = createEl('input');
+    const error = createEl('p');
+    const out = createEl('div');
+    const form = createEl('form');
+
+    const btn1 = createEl('button', { attrs: { 'aria-expanded': 'true' } });
+    const btn2 = createEl('button', { attrs: { 'aria-expanded': 'false' } });
+    const btn3 = createEl('button', { attrs: { 'aria-expanded': 'false' } });
+    const group1 = createEl('div', {
+      classes: ['is-open'],
+      querySelector: (s) => (s === '.model-group-head-btn' ? btn1 : null),
+    });
+    const group2 = createEl('div', {
+      querySelector: (s) => (s === '.model-group-head-btn' ? btn2 : null),
+    });
+    const group3 = createEl('div', {
+      querySelector: (s) => (s === '.model-group-head-btn' ? btn3 : null),
+    });
+
+    const winListeners = {};
+    const windowObj = {
+      innerWidth: 1440,
+      scrollY: 0,
+      addEventListener: (ev, fn) => {
+        winListeners[ev] = winListeners[ev] || [];
+        winListeners[ev].push(fn);
+      },
+      setTimeout: () => 1,
+    };
+    const documentObj = {
+      readyState: 'complete',
+      getElementById: (id) => {
+        if (id === 'identify-input') return input;
+        if (id === 'identify-error') return error;
+        if (id === 'identify-result') return out;
+        return null;
+      },
+      querySelector: (sel) => (sel === '#identify-form' ? form : null),
+      querySelectorAll: (sel) => (sel === '[data-ico11-model-group]' ? [group1, group2, group3] : []),
+      createElement: (tag) => createEl(tag),
+      createTextNode: (t) => ({ textContent: String(t) }),
+      addEventListener: () => {},
+    };
+
+    vm.runInNewContext(js, { window: windowObj, document: documentObj });
+
+    // Desktop (> 768px): all 3 visible model-group buttons report expanded and aria-disabled
+    assert.equal(btn1.getAttribute('aria-expanded'), 'true');
+    assert.equal(btn2.getAttribute('aria-expanded'), 'true');
+    assert.equal(btn3.getAttribute('aria-expanded'), 'true');
+    assert.equal(btn2.getAttribute('aria-disabled'), 'true');
+    assert.equal(btn3.getAttribute('aria-disabled'), 'true');
+
+    // Mobile (390px): resize restores interactive collapsed ARIA state on closed groups
+    windowObj.innerWidth = 390;
+    for (const fn of winListeners.resize || []) fn();
+    assert.equal(btn1.getAttribute('aria-expanded'), 'true');
+    assert.equal(btn2.getAttribute('aria-expanded'), 'false');
+    assert.equal(btn3.getAttribute('aria-expanded'), 'false');
+    assert.equal(btn2.getAttribute('aria-disabled'), null);
+    btn2.dispatch('click');
+    assert.equal(btn2.getAttribute('aria-expanded'), 'true');
+    assert.equal(group2.classList.contains('is-open'), true);
+
+    // Finder matches A1466, A1706, A1708, and normalized Model a2442 with exact prices
+    for (const [query, expectedCode, expectedPrice] of [
+      ['A1466', 'A1466', '£299'],
+      ['A1706', 'A1706', '£399'],
+      ['A1708', 'A1708', '£399'],
+      ['Model a2442', 'A2442', '£549'],
+    ]) {
+      input.value = query;
+      form.dispatch('submit');
+      assert.ok(out.textContent.includes(`(${expectedCode})`), `expected ${query} to match ${expectedCode}, got: ${out.textContent}`);
+      assert.ok(out.textContent.includes(expectedPrice), `expected ${query} to show ${expectedPrice}, got: ${out.textContent}`);
+    }
+
+    // Finder rejects malformed codes that only contain a valid code as a substring
+    for (const bad of ['A24420', 'XA2442', 'A2442B', '1A1706']) {
+      input.value = bad;
+      form.dispatch('submit');
+      assert.match(out.textContent, /We could not match/, `expected ${bad} not to match, got: ${out.textContent}`);
+    }
   });
 });

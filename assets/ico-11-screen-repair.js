@@ -13,6 +13,7 @@
     { code: "A2337", name: 'MacBook Air 13" M1 (2020)', price: "\u00a3339" },
     { code: "A2179", name: 'MacBook Air 13" (2020)', price: "\u00a3299" },
     { code: "A1932", name: 'MacBook Air 13" (2018 to 2019)', price: "\u00a3299" },
+    { code: "A1466", name: 'MacBook Air 13" (2012 to 2017)', price: "\u00a3299" },
     { code: "A3241", name: 'MacBook Air 15" M4 (2025)', price: "\u00a3519" },
     { code: "A3114", name: 'MacBook Air 15" M3 (2024)', price: "\u00a3469" },
     { code: "A2941", name: 'MacBook Air 15" M2 (2023)', price: "\u00a3449" },
@@ -21,6 +22,8 @@
     { code: "A2251", name: 'MacBook Pro 13" (2020)', price: "\u00a3329" },
     { code: "A2159", name: 'MacBook Pro 13" (2019)', price: "\u00a3329" },
     { code: "A1989", name: 'MacBook Pro 13" (2018 to 2019)', price: "\u00a3299" },
+    { code: "A1706", name: 'MacBook Pro 13" (2016 to 2018)', price: "\u00a3399" },
+    { code: "A1708", name: 'MacBook Pro 13" (2016 to 2017)', price: "\u00a3399" },
     { code: "A3112", name: 'MacBook Pro 14" M4 (2024)', price: "\u00a3649" },
     { code: "A3185", name: 'MacBook Pro 14" M4 Max (2024)', price: "\u00a3649" },
     { code: "A3401", name: 'MacBook Pro 14" M4 Pro (2024)', price: "\u00a3649" },
@@ -133,6 +136,17 @@
     }
   }
 
+  function syncModelGroupAria(group, headBtn) {
+    if (!headBtn) return;
+    if (window.innerWidth > 768) {
+      headBtn.setAttribute("aria-expanded", "true");
+      headBtn.setAttribute("aria-disabled", "true");
+    } else {
+      headBtn.setAttribute("aria-expanded", String(group.classList.contains("is-open")));
+      headBtn.removeAttribute("aria-disabled");
+    }
+  }
+
   function initModelGroups(root) {
     (root || document).querySelectorAll("[data-ico11-model-group]").forEach(function (group) {
       if (group.dataset.ico11Bound === "true") return;
@@ -142,12 +156,16 @@
       var showAllBtn = group.querySelector("[data-ico11-show-all]");
 
       if (headBtn) {
+        syncModelGroupAria(group, headBtn);
         headBtn.addEventListener("click", function () {
           if (window.innerWidth > 768) return;
           var open = !group.classList.contains("is-open");
           group.classList.toggle("is-open", open);
           headBtn.setAttribute("aria-expanded", String(open));
         });
+        window.addEventListener("resize", function () {
+          syncModelGroupAria(group, headBtn);
+        }, { passive: true });
       }
 
       if (showAllBtn) {
@@ -156,6 +174,16 @@
         });
       }
     });
+  }
+
+  function matchModelCode(rawInput) {
+    var raw = (rawInput || "").trim().toUpperCase();
+    var codeMatch = raw.match(/(?:^|[^A-Z0-9])(A\d{4})(?=$|[^A-Z0-9])/);
+    if (!codeMatch) return null;
+    var extractedCode = codeMatch[1];
+    return MODELS.find(function (m) {
+      return m.code === extractedCode;
+    }) || null;
   }
 
   function initModelFinder(root) {
@@ -183,9 +211,7 @@
       input.removeAttribute("aria-invalid");
       error.hidden = true;
 
-      var match = MODELS.find(function (m) {
-        return m.code === raw || raw.indexOf(m.code) !== -1;
-      });
+      var match = matchModelCode(raw);
 
       out.textContent = "";
       out.classList.add("is-visible");
