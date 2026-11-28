@@ -3842,6 +3842,31 @@
     return true;
   }
 
+  /* Cart funnel diagnostics (PostHog). No PII: ids, handles, status codes, device type only. */
+  function cartTrackContext(items, extra) {
+    var rk = (S.route === 'diagnostic') ? 'diagnostic' : S.repairType;
+    var prod = (rk && _repairsMap && _repairsMap[rk]) ? _repairsMap[rk] : null;
+    var w = window.innerWidth || 0;
+    var ctx = {
+      product_handle: prod && prod.handle ? prod.handle : null,
+      variant_id: items && items[0] ? items[0].id : null,
+      item_count: items ? items.length : null,
+      device_type: w && w < 768 ? 'mobile' : (w && w < 1024 ? 'tablet' : 'desktop'),
+      viewport_width: w || null,
+      wizard_path: [S.device, S.model, S.fault, S.issue, S.route || S.repairType].filter(Boolean).join(' > ').slice(0, 300),
+      page_path: window.location.pathname
+    };
+    if (extra) Object.keys(extra).forEach(function (k) { if (extra[k] !== undefined) ctx[k] = extra[k]; });
+    return buildWizardTrackPayload(ctx);
+  }
+  function trackCartEvent(name, items, extra) {
+    try {
+      if (window.posthog && typeof window.posthog.capture === 'function') {
+        window.posthog.capture(name, cartTrackContext(items, extra));
+      }
+    } catch (e) {}
+  }
+
   async function addToCartAndCheckout() {
     var items = buildCartItems();
     if (!items) {
@@ -3859,6 +3884,8 @@
     var btn = document.getElementById('qwBookBtn');
     if (btn) { btn.disabled = true; btn.textContent = 'Redirecting...'; }
 
+    var cartStage = 'cart_check';
+    var err_already_tracked = false;
     try {
       var shouldContinue = await ensureCleanWizardCart();
       if (!shouldContinue) {
@@ -3873,6 +3900,7 @@
         }
       } catch (e) { addItems = items; }
 
+      cartStage = 'cart_add';
       var addRes = await fetch(getShopifyRoot() + 'cart/add.js', {
         method: 'POST',
         headers: {
@@ -3885,10 +3913,19 @@
       if (!addRes.ok) {
         var errData = null;
         try { errData = await addRes.json(); } catch (e) {}
+        trackCartEvent('cart_add_failed', items, {
+          stage: 'cart_add',
+          status_code: addRes.status,
+          error_message: String((errData && (errData.description || errData.message)) || 'Cart error').slice(0, 200),
+          error_code: errData && errData.status ? errData.status : null
+        });
+        err_already_tracked = true;
         throw new Error((errData && (errData.description || errData.message)) || 'Cart error');
       }
 
       await addRes.json();
+      trackCartEvent('cart_add_succeeded', items, { status_code: addRes.status });
+      cartStage = 'post_add';
       try {
         var phId = window.icorrectQuoteEvents && typeof window.icorrectQuoteEvents.phDistinctId === 'function'
           ? window.icorrectQuoteEvents.phDistinctId()
@@ -3928,8 +3965,16 @@
       var homePostcode = (items[0] && items[0].properties && items[0].properties.Postcode) || '';
       var postEl = document.getElementById('qwPostcode');
       if (!homePostcode && postEl) homePostcode = String(postEl.value || '').trim();
+      trackCartEvent('checkout_redirected', items, { service_type: "courier-or-mail-in" });
       window.location.href = checkoutUrlWithHomeAddress(homePostcode);
     } catch (err) {
+      if (!err_already_tracked) {
+        trackCartEvent('cart_add_failed', items, {
+          stage: cartStage,
+          status_code: null,
+          error_message: String((err && err.message) || 'unknown').slice(0, 200)
+        });
+      }
       if (btn) { btn.disabled = false; btn.textContent = 'Proceed to checkout'; }
       alert(err.message || 'Something went wrong. Please try again.');
     }
@@ -4350,11 +4395,19 @@
       if (userMsg) fullBody += (fullBody ? '\n\n' : '') + 'Message:\n' + userMsg;
 
       try {
+        var phDistinctId = '';
+        try {
+          if (window.icorrectPostHog && typeof window.icorrectPostHog.getDistinctId === 'function') {
+            phDistinctId = window.icorrectPostHog.getDistinctId();
+          } else if (window.posthog && typeof window.posthog.get_distinct_id === 'function') {
+            phDistinctId = String(window.posthog.get_distinct_id() || '');
+          }
+        } catch (phErr) {}
         /* Wrap in contact-form-interceptor shape so the intake service routes
            this as a consumer contact-form submission (sourceType: consumer).
            Without `source` + `contact: {...}`, the intake rejects with
            "Unsupported source." See POST-DEPLOY-INCIDENT-2026-04-17.md. */
-        await postQuoteWizardWebhook({
+        var questionPayload = {
           contact: {
             name: userName,
             email: userEmail,
@@ -4368,7 +4421,9 @@
           timestamp: new Date().toISOString(),
           page_url: window.location.href,
           referrer: document.referrer || null
-        });
+        };
+        if (phDistinctId) questionPayload.posthog_distinct_id = phDistinctId;
+        await postQuoteWizardWebhook(questionPayload);
         form.style.display = 'none';
         var ok = document.getElementById(prefix + 'Ok');
         if (ok) { ok.hidden = false; ok.classList.add('show'); }
@@ -4384,6 +4439,14 @@
           value: getWizardTotalValue(),
           currency: 'GBP'
         });
+        try {
+          if (window.icorrectPostHog && typeof window.icorrectPostHog.identifyEnquiry === 'function') {
+            window.icorrectPostHog.identifyEnquiry(userEmail, userName);
+          } else if (window.posthog && typeof window.posthog.identify === 'function' && userEmail) {
+            var normEmail = String(userEmail).trim().toLowerCase();
+            window.posthog.identify(normEmail, userName ? { email: normEmail, name: userName } : { email: normEmail });
+          }
+        } catch (phIdErr) {}
         if (window.posthog) posthog.capture('wizard_conversion', buildWizardTrackPayload({ action: source + '_submit' }));
       } catch (error) {
         sub.disabled = false;
@@ -4748,6 +4811,12 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
             url: window.location.href,
             timestamp: new Date().toISOString()
         };
+        try {
+          var eqPhId = window.icorrectPostHog && typeof window.icorrectPostHog.getDistinctId === 'function'
+            ? window.icorrectPostHog.getDistinctId()
+            : (window.posthog && typeof window.posthog.get_distinct_id === 'function' ? String(window.posthog.get_distinct_id() || '') : '');
+          if (eqPhId) payload.posthog_distinct_id = eqPhId;
+        } catch (phErr) {}
  
         function showEmailSuccess() {
           var panel = document.getElementById('qwEmailPanel');
@@ -4785,6 +4854,17 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
               });
             }
           } catch (e) {}
+          /* Identify AFTER fireQuoteEmailRequested so quote_events.session_id
+             keeps the original anonymous distinct_id that matches quote_shown;
+             PostHog then merges the anonymous session history onto this email. */
+          try {
+            if (window.icorrectPostHog && typeof window.icorrectPostHog.identifyEnquiry === 'function') {
+              window.icorrectPostHog.identifyEnquiry(email, name);
+            } else if (window.posthog && typeof window.posthog.identify === 'function' && email) {
+              var normEqEmail = String(email).trim().toLowerCase();
+              window.posthog.identify(normEqEmail, name ? { email: normEqEmail, name: name } : { email: normEqEmail });
+            }
+          } catch (phIdErr) {}
         }).catch(function() {
           sendBtn.disabled = false; sendBtn.textContent = 'Send quote';
           document.getElementById('qwEqErr').textContent = 'Something went wrong. Please try again.';

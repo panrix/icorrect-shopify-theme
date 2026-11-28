@@ -21,8 +21,8 @@ const themeLiquid = fs.readFileSync(path.join(ROOT, 'layout/theme.liquid'), 'utf
 const detailsDisclosureJs = fs.readFileSync(path.join(ROOT, 'assets/details-disclosure.js'), 'utf8');
 const detailsModalJs = fs.readFileSync(path.join(ROOT, 'assets/details-modal.js'), 'utf8');
 const wizardJs = fs.readFileSync(path.join(ROOT, 'assets/quote-wizard.js'), 'utf8');
-const wizardWalkinJs = fs.readFileSync(path.join(ROOT, 'assets/quote-wizard-walkin.js'), 'utf8');
-const wizardLayoutJs = fs.readFileSync(path.join(ROOT, 'assets/quote-wizard-layout.js'), 'utf8');
+const wizardWalkinJs = (fs.existsSync(path.join(ROOT, 'assets/quote-wizard-walkin.js')) ? fs.readFileSync(path.join(ROOT, 'assets/quote-wizard-walkin.js'), 'utf8') : '');
+const wizardLayoutJs = (fs.existsSync(path.join(ROOT, 'assets/quote-wizard-layout.js')) ? fs.readFileSync(path.join(ROOT, 'assets/quote-wizard-layout.js'), 'utf8') : '');
 const wizardCss = fs.readFileSync(path.join(ROOT, 'assets/quote-wizard.css'), 'utf8');
 const baseCss = fs.readFileSync(path.join(ROOT, 'assets/base.css'), 'utf8');
 

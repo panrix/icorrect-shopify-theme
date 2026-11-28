@@ -21,8 +21,8 @@ const vm = require('node:vm');
 
 const ROOT = path.join(__dirname, '../..');
 const wizardJs = fs.readFileSync(path.join(ROOT, 'assets/quote-wizard.js'), 'utf8');
-const walkinJs = fs.readFileSync(path.join(ROOT, 'assets/quote-wizard-walkin.js'), 'utf8');
-const layoutJs = fs.readFileSync(path.join(ROOT, 'assets/quote-wizard-layout.js'), 'utf8');
+const walkinJs = (fs.existsSync(path.join(ROOT, 'assets/quote-wizard-walkin.js')) ? fs.readFileSync(path.join(ROOT, 'assets/quote-wizard-walkin.js'), 'utf8') : '');
+const layoutJs = (fs.existsSync(path.join(ROOT, 'assets/quote-wizard-layout.js')) ? fs.readFileSync(path.join(ROOT, 'assets/quote-wizard-layout.js'), 'utf8') : '');
 const wizardCss = fs.readFileSync(path.join(ROOT, 'assets/quote-wizard.css'), 'utf8');
 const wizardLiquid = fs.readFileSync(path.join(ROOT, 'sections/quote-wizard.liquid'), 'utf8');
 

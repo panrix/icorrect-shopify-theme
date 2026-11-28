@@ -13,7 +13,7 @@ const path = require('path');
 const root = path.join(__dirname, '../..');
 const liquid = fs.readFileSync(path.join(root, 'sections/quote-wizard.liquid'), 'utf8');
 const wizardJs = fs.readFileSync(path.join(root, 'assets/quote-wizard.js'), 'utf8') +
-  '\n' + fs.readFileSync(path.join(root, 'assets/quote-wizard-data.js'), 'utf8');
+  '\n' + (fs.existsSync(path.join(root, 'assets/quote-wizard-data.js')) ? fs.readFileSync(path.join(root, 'assets/quote-wizard-data.js'), 'utf8') : '');
 const source = wizardJs.replace(/\\'/g, "'");
 
 const QUESTION = 'Is the device turning on and usable right now?';

@@ -12,7 +12,7 @@ const path = require('path');
 
 const root = path.join(__dirname, '../..');
 const wizard = fs.readFileSync(path.join(root, 'assets/quote-wizard.js'), 'utf8') +
-  '\n' + fs.readFileSync(path.join(root, 'assets/quote-wizard-data.js'), 'utf8');
+  '\n' + (fs.existsSync(path.join(root, 'assets/quote-wizard-data.js')) ? fs.readFileSync(path.join(root, 'assets/quote-wizard-data.js'), 'utf8') : '');
 const catalogue = JSON.parse(fs.readFileSync(path.join(root, 'assets/repair-catalogue-map.json'), 'utf8'));
 const { repairsMapForModel } = require('../../assets/repair-catalogue.js');
 
