@@ -1983,15 +1983,25 @@
     return false;
   }
 
-  function ensureKlarnaPlacement(k) {
+  function refreshKlarnaOsm() {
+    try {
+      if (window.Klarna && window.Klarna.OnsiteMessaging && typeof window.Klarna.OnsiteMessaging.refresh === 'function') {
+        window.Klarna.OnsiteMessaging.refresh();
+      }
+    } catch (err) {}
+  }
+
+  function mountKlarnaPlacement(k, pence) {
     var pl = k.querySelector('klarna-placement');
-    if (!pl) {
-      pl = document.createElement('klarna-placement');
-      pl.setAttribute('data-key', 'credit-promotion-badge');
-      pl.setAttribute('data-locale', 'en-GB');
-      pl.setAttribute('data-preloaded', 'true');
-      k.appendChild(pl);
-    }
+    if (pl && pl.getAttribute('data-purchase-amount') === pence) return pl;
+    if (pl) pl.remove();
+    pl = document.createElement('klarna-placement');
+    pl.setAttribute('data-key', 'credit-promotion-badge');
+    pl.setAttribute('data-locale', 'en-GB');
+    pl.setAttribute('data-purchase-amount', pence);
+    pl.setAttribute('data-preloaded', 'true');
+    k.appendChild(pl);
+    refreshKlarnaOsm();
     return pl;
   }
 
@@ -2004,32 +2014,26 @@
     }
     if (!(total >= 100)) {
       k.hidden = true;
-      var idle = k.querySelector('klarna-placement');
-      if (idle) idle.setAttribute('data-purchase-amount', '0');
+      k.replaceChildren();
       return;
     }
     var pence = klarnaAmountPence(total);
-    var pl = ensureKlarnaPlacement(k);
-    if (pl.getAttribute('data-purchase-amount') !== pence) {
-      pl.setAttribute('data-purchase-amount', pence);
-    }
-    if (klarnaPlacementPainted(pl)) {
-      k.hidden = false;
-      return;
-    }
-    k.hidden = true;
+    k.hidden = false;
+    var pl = mountKlarnaPlacement(k, pence);
+    if (klarnaPlacementPainted(pl)) return;
     var tries = 0;
     (function pollOsm() {
       var slot = document.getElementById('qwKlarna');
       if (!slot || slot !== k) return;
       var node = slot.querySelector('klarna-placement');
       if (!node || node.getAttribute('data-purchase-amount') !== pence) return;
-      if (klarnaPlacementPainted(node)) {
-        slot.hidden = false;
-        return;
-      }
+      if (klarnaPlacementPainted(node)) return;
       tries += 1;
       if (tries < 40) _klarnaOsmTimer = setTimeout(pollOsm, 250);
+      else {
+        slot.hidden = true;
+        slot.replaceChildren();
+      }
     })();
   }
 
