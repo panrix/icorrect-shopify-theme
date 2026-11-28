@@ -92,9 +92,24 @@
     scrollToEl(target, 120, 'start');
   }
 
-  /* After postcode: assets/quote-wizard-layout.js */
+  /* After postcode → land on collection + journey + price as one screen. */
   function focusCollectionPanel() {
-    if (window.ICorrectQuoteLayout) window.ICorrectQuoteLayout.focus();
+    var slot = document.getElementById('qwSlotPanel');
+    var reveal = document.getElementById('qwDeliveryReveal');
+    var price = document.getElementById('qwResPrice');
+    var target = (slot && !slot.hidden) ? slot : reveal;
+    if (!target || target.hidden) return;
+    scrollToEl(target, 140, isMobileQuoteLayout() ? 'start' : 'nearest');
+    if (price && isMobileQuoteLayout()) {
+      setTimeout(function() {
+        try {
+          var rect = price.getBoundingClientRect();
+          if (rect.bottom > (window.innerHeight || 0) - 12) {
+            price.scrollIntoView({ behavior: scrollBehavior(), block: 'end' });
+          }
+        } catch (e) {}
+      }, 320);
+    }
   }
 
   /* [4.7] Shared a11y helper */
@@ -633,9 +648,238 @@
       return payload;
     })());
   }
-  /* Triage/issue copy and iPhone visual guide: assets/quote-wizard-data.js */
-  var TS = window.ICorrectWizardTS || {};
-  var VG_DB = window.ICorrectWizardVG || [];
+
+  /* =============================================
+     TRIAGE/ISSUE DATA (updated: Batch 2)
+     ============================================= */
+  var TS = {
+    macbook: {
+      'Screen / Display': [
+        { label: 'Cracked or shattered screen', route: 'repair', repairType: 'screen', noTrueTone: true, copy: 'We replace your damaged MacBook screen with a genuine Apple display.' },
+        { label: 'Cracked or shattered screen', route: 'repair', repairType: 'screen', trueToneOnly: true, copy: 'We replace your damaged MacBook screen with a genuine Apple display and keep True Tone working.' },
+        { label: 'Thick bands, artefacts, or distortion', route: 'repair', repairType: 'screen', copy: 'Lines or colour issues on your display typically mean the display panel needs replacing. We use genuine displays with full colour calibration.', dustgateCheck: true },
+        { label: 'Dead pixels or bright spots', route: 'repair', repairType: 'screen', copy: 'Dead or stuck pixels are a fault within the panel. We replace the display with a genuine Apple one.' },
+        { label: 'No image, backlight on, external monitor works', route: 'repair', repairType: 'screen', copy: 'If your MacBook screen is not completely black but shows a blue or purple tint when the brightness is turned all the way up, while the MacBook still works normally on an external monitor, the LCD panel has failed and needs to be replaced. We complete the repair by replacing the LCD panel with a genuine Apple one and configuring it so all of the screen\u2019s original functionality is retained.' },
+        { label: 'No image, no backlight or no external picture', route: 'diagnostic', repairType: 'diagnostic', copy: 'If your MacBook powers on but the screen stays completely black with no tint, no backlight, and nothing appears on an external monitor either, the fault could be with the display or the logic board.' },
+        { label: 'Backlight fading or dim at angle', route: 'repair', repairType: 'screen', flexgateModelsOnly: true, flexgateCheck: true, copy: 'The backlight fading, or going dim when you tilt the screen, means the display panel has failed. We\'ll quote a display panel replacement.' },
+        { label: 'Backlight fading or dim at angle', route: 'repair', repairType: 'screen', notFlexgateModels: true, copy: 'The backlight fading, or going dim when you tilt the screen, means the display panel has failed. We\'ll quote a display panel replacement. Flexgate only used to occur on the 13-inch A1706 (2016–2018), the 13-inch A1708 (2016–2017), and the 15-inch A1707 (2016–2017).' }
+      ],
+      'Power / Battery / Charging': [
+        { label: 'Battery draining quickly', route: 'repair', repairType: 'battery', copy: 'We fit an original-specification battery with working battery health reporting.' },
+        { label: '"Service Recommended" warning', route: 'repair', repairType: 'battery', copy: 'The "Service Recommended" warning means macOS has flagged the battery for replacement. We fit an original-specification battery with working battery health reporting.' },
+        { label: 'Battery swollen or expanding', route: 'repair', repairType: 'battery', copy: 'We safely remove the swollen battery and fit a replacement.', urgent: true },
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'A MacBook showing no signs of life can have a fault with the battery, charging ports or logic board. For this reason, we need to carry out a full diagnostic to confirm exactly what has failed before quoting the repair.' },
+        { label: 'Random shutdowns or reboots', route: 'diagnostic', repairType: 'diagnostic', copy: 'A MacBook that randomly shuts down or restarts can have several possible causes. Because the fault is intermittent, we need to run a full diagnostic and stress test the device to reproduce it and confirm the actual cause before quoting the repair.' },
+        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The MacBook turns on but will not charge. We\'ll replace the charging port and test it. If the logic board is the cause, we\'ll tell you before any extra work.' }
+      ],
+      'Trackpad / Keyboard': [
+        { label: 'Keys not responding', route: 'repair', repairType: 'keyboard', copy: 'We replace the keyboard using genuine Apple keys. If testing reveals liquid damage, we\'ll contact you before any additional work.' },
+        { label: 'Sticky, stuck, or crunchy keys', route: 'repair', repairType: 'keyboard', copy: 'We replace the keyboard using genuine Apple keys. If testing reveals liquid damage, we\'ll contact you before any additional work.' },
+        { label: 'Trackpad not clicking', route: 'repair', repairType: 'trackpad', copy: 'A trackpad that won\'t click can be faulty or under pressure from a swollen battery. This quote covers the trackpad repair. We\'ll check the battery when the MacBook arrives and let you know if it is the cause.' },
+        { label: 'Ghost typing or phantom input', route: 'repair', repairType: 'keyboard', copy: 'We replace the keyboard using genuine Apple keys. If testing reveals liquid damage, we\'ll contact you before any additional work.' },
+        { label: 'Missing or broken keycap', route: 'repair', repairType: 'keyboard', copy: 'A physically broken or missing keycap means the keyboard mechanism is likely damaged too. We replace the keyboard using genuine Apple keys.' },
+        { label: 'Physically damaged trackpad', route: 'repair', repairType: 'trackpad', copy: 'We replace the damaged trackpad with a genuine Apple one.' }
+      ],
+      'Touch Bar': [
+        { label: 'Touch Bar not responding or frozen', route: 'repair', repairType: 'touch-bar', copy: 'A frozen Touch Bar usually means that the module failed. We fix the issue by replacing it.' },
+        { label: 'Touch Bar flickering or displaying incorrectly', route: 'repair', repairType: 'touch-bar', copy: 'We replace the Touch Bar panel to fix flickering or display faults.' },
+        { label: 'Touch Bar cracked or physically damaged', route: 'repair', repairType: 'touch-bar', copy: 'We replace the cracked Touch Bar module.' }
+      ],
+      'Audio / Mic / Speaker': [
+        { label: 'No sound from speakers', route: 'contact', repairType: null, copy: 'Tell us what happens when you try to play sound. We\'ll confirm the repair options and cost for your MacBook.' },
+        { label: 'Crackling or distorted audio', route: 'contact', repairType: null, copy: 'Distorted audio can come from the speaker or its circuit. Get in touch so we can check which repair you need.' },
+        { label: 'Microphone not working', route: 'contact', repairType: null, copy: 'Get in touch about the microphone fault. We\'ll confirm whether a parts replacement is available for your model.' }
+      ],
+      'Water Damage': [
+        { label: 'Spilled liquid recently (within 24 hours)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Time is critical with liquid damage. We can\'t quote the full repair until we\'ve opened it, cleaned with ultrasonic, and seen what\'s affected.', urgent: true },
+        { label: 'Spilled liquid (more than 24 hours ago)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Liquid causes corrosion to spread. We inspect the MacBook internally to see what needs repairing or replacing.' },
+        { label: 'Partial failure after liquid exposure', route: 'diagnostic', repairType: 'diagnostic', copy: 'When some functions still work after a spill, specific circuits are damaged. We can\'t quote the full repair until we\'ve mapped what\'s affected.' },
+        { label: 'MacBook was submerged', route: 'diagnostic', repairType: 'diagnostic', copy: 'Full submersion needs a strip-down before we can quote. Bring it in without charging or turning it on. We\'ll assess and email the repair options.', urgent: true }
+      ],
+      'Data Recovery': [
+        { label: 'Drive not mounting or not detected', route: 'diagnostic', repairType: 'diagnostic', copy: 'We check the storage drive, its connection and the logic board to find out why the drive isn\'t being detected.' },
+        { label: 'Accidentally deleted files', route: 'contact', repairType: null, copy: 'Recovering deleted files depends on the type of storage in your MacBook. Get in touch so we can explain the options.' },
+        { label: 'MacBook dead, need data', route: 'diagnostic', repairType: 'diagnostic', copy: 'If your MacBook won\'t turn on but you need the data, we\'ll diagnose the board. In many cases we can repair it enough to extract the data.' }
+      ],
+      'Other': [
+        { label: 'Overheating or fans running loud', route: 'contact', repairType: null, copy: 'Heat and fan noise are often dust or dried thermal paste. Get in touch and we\'ll confirm the clean-and-service option for your model.' },
+        { label: 'Slow performance', route: 'contact', repairType: null, copy: 'Performance issues are often software-related. Get in touch and we\'ll help work out whether it\'s hardware or software.' },
+        { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe the issue and we\'ll get back to you with the best repair option.' }
+      ]
+    },
+    iphone: {
+      'Screen / Display': [
+        { label: 'Cracked glass (touch still works)', route: 'repair', repairType: 'screen', lcdOnly: true, copy: 'We replace the cracked screen with a genuine Apple LCD display and configure it so it is recognised in iOS Settings.' },
+        { label: 'Cracked glass (touch still works)', route: 'repair', repairType: 'screen', oledOnly: true, copy: 'We replace the cracked screen with a genuine Apple OLED display and configure it so it is recognised in iOS Settings.' },
+        { label: 'Touch not responding', route: 'repair', repairType: 'screen', copy: 'A dead touchscreen means the digitiser is damaged. A genuine screen replacement will restore full touch functionality.' },
+        { label: 'Lines, discolouration, or green line', route: 'repair', repairType: 'screen', copy: 'Display lines or colour shifting indicate panel damage. A genuine screen replacement will fix it.' },
+        { label: 'Black screen (phone still vibrates/rings)', route: 'repair', repairType: 'screen', copy: 'If your phone vibrates or makes sounds but the screen is black, the display has failed. A screen replacement will bring it back.' },
+        { label: 'No display, no response', route: 'diagnostic', repairType: 'diagnostic', copy: 'If your iPhone shows no signs of life, it could be the display, battery, or logic board. We can\'t quote the full repair until we\'ve tested it.' }
+      ],
+      'Power / Battery / Charging': [
+        { label: 'Battery drains fast', route: 'repair', repairType: 'battery', copy: 'Your battery has degraded below healthy capacity. We\'ll replace it with a genuine Apple battery and your battery health will read accurately again.' },
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'An iPhone that won\'t power on could be the battery, charging circuit, or logic board. Try a hard reset first: press Volume Up, press Volume Down, then hold the side button until the Apple logo appears. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Random shutdowns or reboots', route: 'diagnostic', repairType: 'diagnostic', copy: 'Unexpected shutdowns can be the battery or the logic board. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Swollen battery', route: 'repair', repairType: 'battery', copy: 'We\'ll replace the battery safely.', urgent: true },
+        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', faceIdOnly: true, copy: 'If the iPhone turns on and charges with a wireless charger, but the port does nothing, the charging port is the fault. We\'ll replace it and test charging.' },
+        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', noFaceIdOnly: true, copy: 'The iPhone turns on but will not charge from the port. We\'ll replace the charging port and test it. If the board is the cause, we\'ll tell you before any extra work.' },
+        { label: 'Charges, but won\'t connect to a computer', route: 'repair', repairType: 'charging-port', copy: 'We\'ll replace the charging port, which usually fixes this, and confirm the fault during the repair. If it turns out the issue is with the logic board instead, we\'ll let you know and send you a quote before doing anything further. Nothing extra is ever done without your go-ahead.' }
+      ],
+      'Camera': [
+        { label: 'Back camera blurry or shaking', route: 'repair', repairType: 'rear-camera', copy: 'A blurry or shaking back camera usually means the stabilisation system has failed. We\'ll replace the rear camera module.' },
+        { label: 'Back camera: no preview or it freezes', route: 'diagnostic', repairType: 'diagnostic', copy: 'A black preview, or a back camera that freezes or crashes, can be the module or the board. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Front camera: Face ID error or TrueDepth message', route: 'repair', repairType: 'front-camera', faceIdOnly: true, copy: 'A TrueDepth camera message in Settings, or a Face ID error, means the front camera module needs replacing. The Face ID module needs to be ordered directly from Apple, so this repair takes 5-7 working days.' },
+        { label: 'Front camera not working', route: 'repair', repairType: 'front-camera', noFaceIdOnly: true, copy: 'We replace the faulty front camera module.' },
+        { label: 'Front camera: no preview or it freezes', route: 'diagnostic', repairType: 'diagnostic', copy: 'A black preview, or a front camera that freezes or crashes, can be the module or the board. We can\'t quote the full repair until we\'ve inspected both.' },
+        { label: 'Condensation in camera', route: 'diagnostic', repairType: 'diagnostic', copy: 'Moisture inside the camera is a sign of liquid or a broken seal. We can\'t quote the full repair until we\'ve checked for internal corrosion.' },
+        { label: 'Camera lens cover cracked', route: 'repair', repairType: 'rear-camera-lens', alsoListed: true, copy: 'A cracked camera lens cover lets dust and moisture in. We\'ll replace the lens cover to protect your cameras.' }
+      ],
+      'Audio / Mic / Speaker': [
+        { label: 'No sound or low volume from speaker', route: 'repair', repairType: 'loudspeaker', copy: 'The loudspeaker module has likely failed. We\'ll replace it to restore full volume and clarity.' },
+        { label: 'Earpiece quiet or silent during calls', route: 'repair', repairType: 'earpiece', copy: 'The earpiece speaker needs replacing. A quick swap will fix this.' },
+        { label: 'Microphone not picking up voice', route: 'repair', repairType: 'microphone', copy: 'We\'ll quote a microphone replacement. If more than one mic or a flex is involved, we\'ll confirm that once the phone is here.' }
+      ],
+      'Buttons': [
+        { label: 'Power button stuck or not responding', icon: 'power-button', route: 'repair', repairType: 'power-button', copy: 'The power button is stuck, loose, or does nothing. We\'ll replace the power button.' },
+        { label: 'Volume buttons stuck or not responding', icon: 'volume-button', route: 'repair', repairType: 'volume-button', copy: 'The volume buttons are stuck, loose, or do nothing. We\'ll replace the volume buttons.' },
+        { label: 'Mute switch stuck or not clicking', icon: 'mute-button', route: 'repair', repairType: 'mute-button', copy: 'The mute switch is stuck or will not click over. We\'ll replace the mute switch.' }
+      ],
+      'Rear Glass': [
+        { label: 'Cracked back glass', route: 'repair', repairType: 'rear-glass', copy: 'We replace the rear glass with a genuine Apple housing in your original colour.' },
+        { label: 'Camera lens cover cracked', route: 'repair', repairType: 'rear-camera-lens', copy: 'A cracked camera lens cover lets dust and moisture in. We\'ll replace the lens cover to protect your cameras.' }
+      ],
+      'Water Damage': [
+        { label: 'Dropped in liquid (within 24 hours)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Don\'t try to charge or turn on your iPhone. We\'ll open it up, perform an ultrasonic clean, and assess the damage.', urgent: true },
+        { label: 'Liquid damage (more than 24 hours ago)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Liquid causes corrosion that spreads over time. We need to open the phone, clean the corrosion, and check each circuit.' }
+      ],
+      'Data Recovery': [
+        { label: 'Phone dead, need data', route: 'diagnostic', repairType: 'diagnostic', copy: 'We can attempt a data recovery repair to get the phone working long enough to back up. Success depends on the fault.' },
+        { label: 'Forgotten passcode', route: 'dismiss', repairType: null, copy: 'We can\'t bypass an iPhone passcode or iCloud lock. If you\'re the original owner, Apple Support can help with account recovery.' }
+      ],
+      'Connectivity': [
+        { label: 'No signal / "No Service" / "SOS only"', route: 'diagnostic', repairType: 'diagnostic', copy: 'Loss of cellular signal could be an antenna, baseband chip, or SIM reader. Book a diagnostic and we\'ll identify the fault before quoting a repair.' },
+        { label: 'eSIM not detected', route: 'diagnostic', repairType: 'diagnostic', esimOnly: true, copy: 'A missing eSIM or "No SIM" message can be the eSIM profile or the board. There is no SIM tray on this iPhone. Book a diagnostic and we\'ll identify it before quoting a repair.' },
+        { label: 'SIM not detected', route: 'diagnostic', repairType: 'diagnostic', simTrayOnly: true, copy: 'A missing SIM or "No SIM" message can be the tray, the reader, or the board. Book a diagnostic and we\'ll identify it before quoting a repair.' },
+        { label: 'WiFi not connecting or greyed out', route: 'diagnostic', repairType: 'diagnostic', copy: 'A greyed-out WiFi toggle usually means a hardware fault on the logic board. Book a diagnostic and we\'ll confirm it before quoting a repair.' },
+        { label: 'Bluetooth not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth and WiFi share the same chip on iPhones. Book a diagnostic and we\'ll confirm the fault before quoting a repair.' },
+        { label: 'Apple Pay / NFC not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'We\'ll run a diagnostic to find the cause and send you a quote before doing any work.' },
+        { label: 'Won\'t activate', route: 'diagnostic', repairType: 'diagnostic', copy: 'We\'ll run a diagnostic to find out what\'s causing it and send you a quote before doing any work.' }
+      ],
+      'Other': [
+        { label: 'Vibration not working', route: 'contact', repairType: null, copy: 'The Taptic Engine may have failed. Get in touch and we\'ll confirm whether we can repair it for your model.' },
+        { label: 'General diagnostic', route: 'diagnostic', repairType: 'diagnostic', copy: 'Not sure what\'s wrong, or want a second opinion? We\'ll run a full diagnostic and send you our findings with a quote before doing any work.' },
+        { label: 'Board fault confirmed elsewhere', route: 'diagnostic', repairType: 'diagnostic', copy: 'We\'ll run our own diagnostic to confirm the fault and whether it can be repaired. You\'ll get our findings and a quote before we do anything.' },
+        { label: 'Several parts damaged', route: 'contact', repairType: null, copy: 'If your device has a bent frame or more than one broken part, get in touch and we\'ll put together a quote for everything it needs.' },
+        { label: 'Software issue', route: 'diagnostic', repairType: 'diagnostic', copy: 'Stuck on the Apple logo, restarting, or showing a restore or update error? We\'ll diagnose the cause and confirm the fix and price before going ahead.' },
+        { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe the issue and we\'ll get back to you with the best repair option.' }
+      ]
+    },
+    ipad: {
+      'Screen / Display': [
+        { label: 'Cracked glass only (display still works)', route: 'repair', repairType: 'screen-glass', copy: 'We replace the cracked outer glass while keeping the working display.' },
+        { label: 'Cracked glass only (display still works)', route: 'repair', repairType: 'screen', onlyWhenMissing: 'screen-glass', copy: 'The glass and display are bonded together on this model, so we replace the complete screen.' },
+        { label: 'Touch not responding', route: 'repair', repairType: 'screen', copy: 'We replace the faulty touchscreen with a genuine display to restore touch response.' },
+        { label: 'Blotches, lines, or a damaged display', route: 'repair', repairType: 'screen', copy: 'Blotches and lines affect the display itself. We need to replace the actual display panel.' },
+        { label: 'Black screen (sound or buttons still work)', route: 'repair', repairType: 'screen', copy: 'If the iPad still responds, it means the display has failed. We fix the issue by installing a genuine Apple screen.' },
+        { label: 'No display, no response', route: 'diagnostic', repairType: 'diagnostic', copy: 'If the iPad shows no signs of life, it could be the display, battery, or logic board. We can\'t quote the full repair until we\'ve tested it.' }
+      ],
+      'Power / Battery / Charging': [
+        { label: 'Battery drains quickly', route: 'repair', repairType: 'battery', copy: 'Your iPad battery has degraded. We\'ll replace it with an original-spec battery.' },
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', ipadHomeButton: true, copy: 'An iPad that won\'t power on could be the battery, charging port, or logic board. Try a hard reset first: hold the top button and the Home button until the Apple logo appears. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', ipadNoHomeButton: true, copy: 'An iPad that won\'t power on could be the battery, charging port, or logic board. Try a hard reset first: press Volume Up, press Volume Down, then hold the top button until the Apple logo appears. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Battery swollen or screen lifting', route: 'repair', repairType: 'battery', copy: 'A swollen battery is pushing the screen away from the frame. We\'ll safely remove it and fit a replacement.', urgent: true },
+        { label: 'Device powers on, but will not charge', route: 'repair', repairType: 'charging-port', copy: 'The iPad turns on but will not charge from the port. We\'ll replace the charging port and test it. If the board is the cause, we\'ll tell you before any extra work.' },
+        { label: 'Charges, but won\'t connect to a computer', route: 'repair', repairType: 'charging-port', copy: 'We\'ll replace the charging port, which usually fixes this, and confirm the fault during the repair. If it turns out the issue is with the logic board instead, we\'ll let you know and send you a quote before doing anything further. Nothing extra is ever done without your go-ahead.' }
+      ],
+      'Camera': [],
+      'Water Damage': [
+        { label: 'Dropped in liquid (within 24 hours)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Time is critical. We\'ll open the iPad, clean affected components with ultrasonic cleaning, and assess which parts need replacing. Don\'t try to charge it.', urgent: true },
+        { label: 'Liquid damage (more than 24 hours ago)', route: 'diagnostic', repairType: 'diagnostic', copy: 'Corrosion spreads over time even after the device dries out. We need to open it, clean the corrosion, and check each circuit.' },
+        { label: 'Partial failure after liquid exposure', route: 'diagnostic', repairType: 'diagnostic', copy: 'When some functions still work after a spill, specific circuits are damaged. A diagnostic will map exactly what needs repair.' },
+        { label: 'iPad was submerged', route: 'diagnostic', repairType: 'diagnostic', copy: 'Full submersion causes widespread corrosion. Bring it in without charging or turning it on. We\'ll do a full strip-down and assessment.', urgent: true }
+      ],
+      'Data Recovery': [
+        { label: 'Need data from broken iPad', route: 'diagnostic', repairType: 'diagnostic', copy: 'We\'ll attempt to repair it enough to allow a backup. Success depends on the fault.' }
+      ],
+      'Other': [
+        { label: 'No sound from speakers', route: 'contact', repairType: null, copy: 'iPad speaker faults vary by model. Tell us what you\'re hearing and we\'ll confirm the repair and price.' },
+        { label: 'Microphone not working', route: 'contact', repairType: null, copy: 'iPad mic faults depend on the model. Get in touch and we\'ll confirm whether we can quote a parts repair.' },
+        { label: 'WiFi not connecting', route: 'diagnostic', repairType: 'diagnostic', copy: 'WiFi issues can be the antenna, wireless chip, or software. We need to diagnose the device to quote the repair.' },
+        { label: 'Bluetooth not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth and WiFi share components on iPads. We need to diagnose the device to quote the repair.' },
+        { label: 'NFC / Apple Pay not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'We\'ll run a diagnostic to find the cause and send you a quote before doing any work.' },
+        { label: 'General diagnostic', route: 'diagnostic', repairType: 'diagnostic', copy: 'Not sure what\'s wrong, or want a second opinion? We\'ll run a full diagnostic and send you our findings with a quote before doing any work.' },
+        { label: 'Board fault confirmed elsewhere', route: 'diagnostic', repairType: 'diagnostic', copy: 'We\'ll run our own diagnostic to confirm the fault and whether it can be repaired. You\'ll get our findings and a quote before we do anything.' },
+        { label: 'Several parts damaged', route: 'contact', repairType: null, copy: 'If your device has a bent frame or more than one broken part, get in touch and we\'ll put together a quote for everything it needs.' },
+        { label: 'Software issue', route: 'diagnostic', repairType: 'diagnostic', copy: 'Stuck on the Apple logo, restarting, or showing a restore or update error? We\'ll diagnose the cause and confirm the fix and price before going ahead.' },
+        { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe the issue and we\'ll get back to you with the best repair option.' }
+      ]
+    },
+    watch: {
+      'Screen / Display': [
+        { label: 'Cracked screen (display still works)', route: 'repair', repairType: 'screen-glass', copy: 'Your watch glass is cracked but the display works. We\'ll replace the glass and re-seal the watch.' },
+        { label: 'Cracked screen (display damaged or bleeding)', route: 'repair', repairType: 'screen', copy: 'The OLED display is damaged. We\'ll fit a genuine panel and re-seal the watch.' },
+        { label: 'Display dead or unresponsive', route: 'repair', repairType: 'screen', copy: 'If the Apple Watch is still powering on but the display has no image or is unresponsive, the screen has likely failed. We replace it with a genuine display and re-seal the Watch afterwards. If we find any additional battery or logic board faults once it arrives, we’ll contact you.' }
+      ],
+      'Power / Battery / Charging': [
+        { label: 'Won\'t charge', route: 'diagnostic', repairType: 'diagnostic', copy: 'Charging failure on Apple Watch can be the coil, battery, or main board. We can\'t quote the full repair until we\'ve tested it.' },
+        { label: 'Battery drains fast', route: 'repair', repairType: 'battery', copy: 'Your watch battery has degraded. We\'ll swap it and re-seal the watch.' },
+        { label: 'Won\'t turn on', route: 'diagnostic', repairType: 'diagnostic', copy: 'If the watch won\'t power on, it could be the battery or a board-level fault. Try a restart first: hold the side button and the Digital Crown together for at least 10 seconds, until the Apple logo appears. We can\'t quote the full repair until we\'ve looked.' },
+        { label: 'Battery swollen or back popping off', route: 'repair', repairType: 'battery', copy: 'A swollen battery is pushing the back off the watch. Stop wearing it immediately. We\'ll replace the battery and re-seal the case.', urgent: true }
+      ],
+      'Rear Glass': [
+        { label: 'Cracked back crystal / sensor glass', route: 'repair', repairType: 'heart-rate-monitor', noBloodOxygen: true, copy: 'The rear crystal houses the heart rate sensor. We\'ll replace it to restore sensor accuracy and the water seal.' },
+        { label: 'Cracked back crystal / sensor glass', route: 'repair', repairType: 'heart-rate-monitor', bloodOxygenOnly: true, copy: 'The rear crystal houses the heart rate and blood oxygen sensors. We\'ll replace it to restore sensor accuracy and the water seal.' }
+      ],
+      'Crown': [
+        { label: 'Digital Crown stuck or not rotating', route: 'repair', repairType: 'crown', copy: 'The Digital Crown can get jammed by dirt or debris. We\'ll clean or replace the crown mechanism.' }
+      ],
+      'Water Damage': [
+        { label: 'Water ingress despite water resistance', route: 'diagnostic', repairType: 'diagnostic', copy: 'Water-resistant seals can fail over time or after impact. We\'ll open the watch, clean any corrosion, and assess the damage.' },
+        { label: 'Submerged beyond depth rating', route: 'diagnostic', repairType: 'diagnostic', copy: 'Exceeding the rated depth can force water past the seals. Don\'t charge the watch. We\'ll open it, clean the internals, and check each component.' }
+      ],
+      'Other': [
+        { label: 'Bluetooth not connecting to phone', route: 'diagnostic', repairType: 'diagnostic', copy: 'Bluetooth pairing can be hardware or software. We need to diagnose the watch to quote the repair.' },
+        { label: 'WiFi not working', route: 'diagnostic', repairType: 'diagnostic', copy: 'Watch WiFi faults are typically the antenna or wireless chip. We need to diagnose it to quote.' },
+        { label: 'Something else', route: 'contact', repairType: null, copy: 'Describe the issue and we\'ll get back to you with the best repair option.' }
+      ]
+    }
+  };
+
+  /* =============================================
+     IPHONE VISUAL GUIDE DB
+     ============================================= */
+  var VG_DB = [
+    {n:"iPhone 17 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/17_pro_max_colours.png?v=1766237419",cams:"tri_plat",edges:"curved",screen:"island",size:"max"},
+    {n:"iPhone 17 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/17_pro_max_colours.png?v=1766237419",cams:"tri_plat",edges:"curved",screen:"island",size:"pro"},
+    {n:"iPhone 17",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/17_colours.png?v=1766237419",cams:"vert",edges:"flat",screen:"island",size:"std"},
+    {n:"iPhone Air",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/air_colours.png?v=1766237418",cams:"single_plat",edges:"flat",screen:"island",size:"max"},
+    {n:"iPhone 16 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"island",size:"max"},
+    {n:"iPhone 16 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"island",size:"pro"},
+    {n:"iPhone 16 Plus",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16_colours.png?v=1766237419",cams:"vert",edges:"flat",screen:"island",size:"max"},
+    {n:"iPhone 16",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16_colours.png?v=1766237419",cams:"vert",edges:"flat",screen:"island",size:"std"},
+    {n:"iPhone 16e",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/16e_colours.png?v=1766237418",cams:"single_std",edges:"flat",screen:"notch",size:"std"},
+    {n:"iPhone 15 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/15_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"island",size:"max"},
+    {n:"iPhone 15 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/15_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"island",size:"pro"},
+    {n:"iPhone 15 Plus",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/15_colours.png?v=1766237419",cams:"diag",edges:"flat",screen:"island",size:"max"},
+    {n:"iPhone 15",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/15_colours.png?v=1766237419",cams:"diag",edges:"flat",screen:"island",size:"std"},
+    {n:"iPhone 14 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/14_pro_max_colours.png?v=1766237418",cams:"tri_std",edges:"flat",screen:"island",size:"max"},
+    {n:"iPhone 14 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/14_pro_max_colours.png?v=1766237418",cams:"tri_std",edges:"flat",screen:"island",size:"pro"},
+    {n:"iPhone 14 Plus",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/14_colours.png?v=1766237419",cams:"diag",edges:"flat",screen:"notch",size:"max"},
+    {n:"iPhone 14",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/14_colours.png?v=1766237419",cams:"diag",edges:"flat",screen:"notch",size:"std"},
+    {n:"iPhone 13 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/13_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"notch",size:"max"},
+    {n:"iPhone 13 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/13_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"notch",size:"pro"},
+    {n:"iPhone 13 Mini",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/13_colours.png?v=1766237419",cams:"diag",edges:"flat",screen:"notch",size:"mini"},
+    {n:"iPhone 13",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/13_colours.png?v=1766237419",cams:"diag",edges:"flat",screen:"notch",size:"std"},
+    {n:"iPhone 12 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/12_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"notch",size:"max"},
+    {n:"iPhone 12 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/12_pro_max_colours.png?v=1766237419",cams:"tri_std",edges:"flat",screen:"notch",size:"pro"},
+    {n:"iPhone 12 Mini",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/12_colours.png?v=1766237419",cams:"vert",edges:"flat",screen:"notch",size:"mini"},
+    {n:"iPhone 12",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/12_colours.png?v=1766237419",cams:"vert",edges:"flat",screen:"notch",size:"std"},
+    {n:"iPhone 11 Pro Max",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/11_pro_max.png?v=1766237419",cams:"tri_std",edges:"curved",screen:"notch",size:"max"},
+    {n:"iPhone 11 Pro",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/11_pro_max.png?v=1766237419",cams:"tri_std",edges:"curved",screen:"notch",size:"pro"},
+    {n:"iPhone 11",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/11_colours.png?v=1766237419",cams:"vert",edges:"curved",screen:"notch",size:"std"},
+    {n:"iPhone SE (3rd Gen)",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/se3_colours.png?v=1766237418",cams:"single_std",edges:"curved",screen:"home",size:"std"},
+    {n:"iPhone SE (2nd Gen)",img:"https://cdn.shopify.com/s/files/1/0728/7111/7053/files/se2_colours.png?v=1766237418",cams:"single_std",edges:"curved",screen:"home",size:"std"}
+  ];
 
   /* MacBook model number lookup DB */
   var MB_NUMS = [
@@ -958,20 +1202,7 @@
     return 0;
   }
 
-  function partsClaimLabel(device, model, productTitle) {
-    var title = String(productTitle || '');
-    if (/\(Genuine\s+(?:Display|OLED|LCD|Liquid Retina Display|XDR Display|Ultra Retina XDR Display)\)/i.test(title)) {
-      return 'Genuine Apple displays';
-    }
-    if (/\(Genuine\s+Battery\)/i.test(title)) {
-      return 'Genuine Apple battery';
-    }
-    if (/\(Original\s+Specification\)/i.test(title)) {
-      return 'Original specification';
-    }
-    if (/\(Premium\s+Aftermarket|\bAftermarket\b/i.test(title)) {
-      return 'Premium aftermarket';
-    }
+  function partsClaimLabel(device, model) {
     if (device === 'macbook') {
       return isAppleSiliconModel(model) ? 'Original parts' : 'Original specification';
     }
@@ -987,7 +1218,6 @@
     var h = svcBadge('warranty', CFG.warrantyLabel || '2-year warranty');
     /* Same source as journey ETA + trust card (#53). */
     h += svcBadge('turnaround', turnaroundClaimLabel(device, { model: model }));
-    h += svcBadge('parts', partsClaimLabel(device, model));
     return h;
   }
 
@@ -1049,36 +1279,34 @@
      Turnaround uses the same repairBenchDays source as the journey ETA. */
   function buildPriceTrustBlock(device, model, opts) {
     opts = opts || {};
-    var parts = partsClaimLabel(device, model, opts.productTitle);
     var turnaround = turnaroundClaimLabel(device, { diagnostic: opts.diagnostic, model: model });
     var monitorSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>';
     var clockSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
     var shieldSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>';
     var gateCopy = opts.gateCopy || 'Enter your postcode above';
-    var warrBadge = opts.diagnostic ? '' : '<span class="qw-price-warr">2-yr warranty</span>';
     var priceInner = opts.gate
       ? '<div class="qw-price-gate qw-price-gate--inline" id="qwPriceGate">' + esc(gateCopy) + '</div>' +
         '<div class="qw-price-big-wrap" id="qwPriceBigWrap" hidden>' +
-          '<div class="qw-breakdown" id="qwBreakdown"></div>' +
           '<div class="qw-price-from">All-in total</div>' +
-          '<div class="qw-price-row"><div class="qw-price-big" id="qwPriceBig" aria-live="polite" aria-atomic="true">' + (opts.priceHtml || '') + '</div>' + warrBadge + '</div>' +
-          '<div class="qw-klarna" id="qwKlarna" hidden></div>' +
+          '<div class="qw-price-big" id="qwPriceBig">' + (opts.priceHtml || '') + '</div>' +
+          '<div class="qw-klarna-line" id="qwKlarna" hidden></div>' +
         '</div>'
       : '<div class="qw-price-from">All-in total</div>' +
-        '<div class="qw-price-row"><div class="qw-price-big" id="qwPriceBig">' + (opts.priceHtml || '') + '</div>' + warrBadge + '</div>';
+        '<div class="qw-price-big" id="qwPriceBig">' + (opts.priceHtml || '') + '</div>' +
+        '<div class="qw-klarna-line" id="qwKlarna" hidden></div>';
     return '<div class="qw-price-trust" id="qwPriceTrust">' +
       '<ul class="qw-trust-cross" role="list" aria-label="Trust signals">' +
-        '<li class="qw-trust-cell qw-trust-reviews" aria-label="4.8 out of 5 from 750+ Google reviews">' +
+        '<li class="qw-trust-cell qw-trust-reviews" aria-label="4.8 from 750+ Google reviews">' +
           '<span class="qw-trust-score">4.8</span>' +
           '<span class="qw-trust-reviews-meta">' +
-            '<span class="qw-trust-sub">750+ Google reviews</span>' +
+            '<span class="qw-trust-sub">from 750+ Google reviews</span>' +
           '</span>' +
         '</li>' +
         '<li class="qw-trust-cell qw-trust-parts">' +
           '<span class="qw-trust-ico" aria-hidden="true">' + monitorSvg + '</span>' +
           '<span class="qw-trust-copy">' +
-            '<span class="qw-trust-title">' + esc(parts) + '</span>' +
-            '<span class="qw-trust-sub">Calibrated in-house</span>' +
+            '<span class="qw-trust-title">Repaired in-house</span>' +
+            '<span class="qw-trust-sub">Calibrated and tested</span>' +
           '</span>' +
         '</li>' +
         '<li class="qw-trust-cell qw-trust-turnaround" aria-label="Turnaround: ' + esc(turnaround) + '">' +
@@ -1092,7 +1320,7 @@
           '<span class="qw-trust-ico" aria-hidden="true">' + shieldSvg + '</span>' +
           '<span class="qw-trust-copy">' +
             '<span class="qw-trust-title">2-yr warranty</span>' +
-            '<span class="qw-trust-sub">On every repair</span>' +
+            '<span class="qw-trust-sub">Double the standard</span>' +
           '</span>' +
         '</li>' +
       '</ul>' +
@@ -1163,7 +1391,7 @@
   }
 
   function formatJourneyDate(d) {
-    if (!d) return '—';
+    if (!d) return '-';
     var DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()];
@@ -1333,14 +1561,9 @@
   function renderServiceJourney(kind) {
     var host = document.getElementById('qwJourney');
     if (!host) return;
-    var model = kind === 'mailin' ? buildMailinJourneyModel() : (kind === 'workshop' ? buildWorkshopJourneyModel() : buildCourierJourneyModel());
-    var lastIdx = model.steps.length - 1;
-    var lastMeta = kind === 'workshop' ? '12 Margaret Street' : (kind === 'mailin' ? 'Tracked post' : 'To your door');
+    var model = kind === 'mailin' ? buildMailinJourneyModel() : buildCourierJourneyModel();
     var stepsHtml = model.steps.map(function(s, i) {
-      var meta = (i === lastIdx && model.returnDate) ? lastMeta : (s.meta || '');
-      return '<li class="qw-jr-step"><span class="qw-jr-num" aria-hidden="true">' + (i + 1) + '</span>' +
-        '<span class="qw-jr-copy"><span class="qw-jr-title">' + esc(s.title) + '</span>' +
-        (meta ? '<span class="qw-jr-meta">' + esc(meta) + '</span>' : '') + '</span></li>';
+      return journeyStepHtml(i + 1, s.title, s.meta);
     }).join('');
     var quoteDate = model.quoteDate;
     var diagnostic = model.kind === 'diagnostic' || S.route === 'diagnostic';
@@ -1355,7 +1578,7 @@
       eta = '<div class="qw-journey-eta qw-journey-eta--pending"><span class="qw-journey-eta-note">Select a collection window to see when we diagnose and email your quote</span></div>';
     } else if (model.returnDate) {
       eta = '<div class="qw-journey-eta">' +
-          '<span class="qw-journey-eta-label">' + esc(model.etaLabel || 'Back with you') + '</span>' +
+          '<span class="qw-journey-eta-label">Estimated return by</span>' +
           journeyEtaDateHtml(model.returnDate) +
           '<span class="qw-journey-eta-note">' + esc(model.note || 'Often sooner') + '</span>' +
         '</div>';
@@ -1364,7 +1587,7 @@
     }
     host.innerHTML =
       '<div class="qw-journey" data-kind="' + esc(kind) + '">' +
-        '<ol class="qw-jr">' + stepsHtml + '</ol>' +
+        '<div class="qw-journey-steps">' + stepsHtml + '</div>' +
         eta +
       '</div>';
     host.hidden = false;
@@ -1381,13 +1604,7 @@
     if (kind === 'courier' && _courierQuote && _courierQuote.courierAvailable === false) {
       kind = 'mailin';
     }
-    renderServiceJourney(kind === 'mailin' ? 'mailin' : (kind === 'workshop' ? 'workshop' : 'courier'));
-  }
-
-  function buildWorkshopJourneyModel() {
-    var drop = _collectionSlot.date && _collectionSlot.date.iso ? parseISODate(_collectionSlot.date.iso) : null;
-    return window.ICorrectWalkin.journey({ drop: drop, bench: repairBenchDays(S.device), turnaround: turnaroundClaimLabel(S.device),
-      note: turnaroundNote(S.device), diagnostic: S.route === 'diagnostic', fmt: formatJourneyDate, addWorkingDays: addWorkingDays });
+    renderServiceJourney(kind === 'mailin' ? 'mailin' : 'courier');
   }
 
   function collectionWindowCopy(band) {
@@ -1634,22 +1851,19 @@
 
   /* Status chips only — never a fee line. Before postcode: prompt to enter one. */
   function formatServiceCardHint(quote, kind) {
-    if (!_postcodeResolved || !quote) return '';
+    if (!_postcodeResolved || !quote) return '-';
     if (kind === 'mailin') {
       var mailQuote = quote.service === 'mail-in' ? quote : null;
       if (!mailQuote) {
         var pcInput = document.getElementById('qwPostcode');
         mailQuote = quoteForService('mailin', pcInput ? pcInput.value : '');
       }
-      return serviceCharge(mailQuote || quote) > 0 ? 'Tracked pack' : 'Free';
+      return serviceCharge(mailQuote || quote) > 0 ? 'Tracked pack' : 'Free pack';
     }
-    if (!quote.courierAvailable && quote.forcedMailIn) {
-      if (quote.band === 'B3' || quote.band === 'B4') return '\u00A3200+ repairs';
-      return 'Not in area';
-    }
-    if (quote.service === 'courier' && serviceCharge(quote) === 0) return 'Free';
+    if (!quote.courierAvailable && quote.forcedMailIn) return 'Not in area';
+    if (quote.service === 'courier' && serviceCharge(quote) === 0) return 'Included';
     if (quote.service === 'courier') return 'Available';
-    return '';
+    return '-';
   }
 
   /* Hide mail-in only when the basket charge for courier is £0 or lower
@@ -1671,23 +1885,6 @@
     return courierAdj < mailAdj;
   }
 
-  function paintCourierCard(quote) {
-    var card = document.querySelector('.qw-opt-card[data-svc="courier"]');
-    if (!card || !quote) return;
-    var free = quote.service === 'courier' && serviceCharge(quote) === 0;
-    var t = card.querySelector('.qw-delivery-title');
-    if (t) t.textContent = free ? 'Free courier collection' : 'Courier collection';
-  }
-
-  function paintMailinCard(quote) {
-    var card = document.querySelector('.qw-opt-card[data-svc="mailin"]');
-    if (!card || !quote) return;
-    var free = serviceCharge(quote) === 0;
-    var t = card.querySelector('.qw-delivery-title'); var sub = card.querySelector('.qw-delivery-sub');
-    if (t) t.textContent = free ? 'Free tracked mail-in' : 'Tracked mail-in';
-    if (sub) sub.textContent = 'We post you a box with a prepaid label. Drop it at a Post Office and we return it tracked.';
-  }
-
   function setMailInOptionVisible(show) {
     var mailCard = document.querySelector('.qw-opt-card[data-svc="mailin"]');
     var courierCard = document.querySelector('.qw-opt-card[data-svc="courier"]');
@@ -1702,18 +1899,6 @@
       }
     }
     if (grid) grid.classList.toggle('qw-delivery-grid-solo', !show);
-    var workshopCard = document.querySelector('.qw-opt-card[data-svc="workshop"]');
-    var courierLive = !!(courierCard && !courierCard.classList.contains('qw-opt-disabled') && _courierQuote && _courierQuote.courierAvailable !== false && !_courierQuote.forcedMailIn);
-    /* Drop-off needs quote-wizard-walkin.js (windows + cart labels) and the theme setting. */
-    var dropOff = courierLive && CFG.dropOff !== false && !!window.ICorrectWalkin;
-    if (workshopCard) workshopCard.hidden = !dropOff;
-    if (dropOff && workshopCard) {
-      if (grid) grid.classList.remove('qw-delivery-grid-solo');
-      if (choice) choice.hidden = false;
-      if (courierCard) courierCard.hidden = false;
-      if (choiceLabel) choiceLabel.textContent = 'How do you want to get it to us?';
-      return;
-    }
     /* Solo free-courier on mobile: drop choice chrome so slots + journey + price fit.
        Only reached when shouldHideMailInOption is true (courier free/cheaper). */
     if (!show && isMobileQuoteLayout()) {
@@ -1722,10 +1907,10 @@
       return;
     }
     if (choice) choice.hidden = false;
-    /* Outside the courier area: remove courier on every screen size; mail-in is the route. */
+    /* Mobile: keep unavailable courier fully removed (desktop stays greyed). */
     if (courierCard) {
       var courierUnavailable = courierCard.classList.contains('qw-opt-disabled');
-      if (courierUnavailable) {
+      if (courierUnavailable && isMobileQuoteLayout()) {
         courierCard.hidden = true;
         courierCard.setAttribute('aria-hidden', 'true');
         if (grid) grid.classList.add('qw-delivery-grid-solo');
@@ -1760,6 +1945,19 @@
     }
   }
 
+  /* One line under the price. Same maths as the later wizard: total / 3, rounded to the penny, from GBP 100. No eligibility text (Ricky's ruling). */
+  function renderKlarnaLine(total) {
+    var k = document.getElementById('qwKlarna');
+    if (!k) return;
+    if (total >= 100) {
+      k.hidden = false;
+      k.textContent = 'Or 3 interest-free payments of ' + gbp.format(Math.round(total / 3 * 100) / 100) + ' with Klarna';
+    } else {
+      k.hidden = true;
+      k.textContent = '';
+    }
+  }
+
   function refreshAllInTotal() {
     var resCard = document.getElementById('qwResCard');
     if (!resCard) return;
@@ -1774,35 +1972,14 @@
       if (c.getAttribute('data-opt') === 'svc') return;
       total += parseFloat(c.dataset.add || 0);
     });
-    var svcSel = selectedServiceKind();
-    var svcCharge = svcSel === 'workshop' ? 0 : serviceCharge(_courierQuote);
-    total += svcCharge;
-    renderBreakdown(base, svcSel, svcCharge, total);
+    total += serviceCharge(_courierQuote);
     var totalEl = document.getElementById('qwPriceTotal');
     if (totalEl) totalEl.textContent = gbp.format(total);
     var bigEl = document.getElementById('qwPriceBig');
     if (bigEl) bigEl.textContent = gbp.format(total);
+    renderKlarnaLine(total);
     setPriceVisibility(true);
     maybeFireQuoteShown();
-  }
-
-  function renderBreakdown(base, svc, charge, total) {
-    var k = document.getElementById('qwKlarna');
-    if (k) {
-      if (total >= 100) {
-        k.hidden = false;
-        var kTpl = document.getElementById('qwKlarnaBadge');
-        k.innerHTML = '<span class="qw-klarna-badge">' + (kTpl ? kTpl.innerHTML.trim() : 'Klarna') + '</span><span class="qw-klarna-copy">3 interest-free payments of <strong>' + gbp.format(Math.round(total / 3 * 100) / 100) + '</strong></span>' +
-          '<span class="qw-klarna-note">First payment at checkout, then one every 30 days. Subject to status.</span>';
-      } else { k.hidden = true; }
-    }
-  }
-
-  function paintWorkshopCard() {
-    var ws = document.querySelector('.qw-opt-card[data-svc="workshop"]');
-    if (!ws) return;
-    var title = ws.querySelector('.qw-delivery-title');
-    if (title) title.textContent = ws.classList.contains('sel') ? 'Drop off in Fitzrovia' : 'Prefer to drop it off?';
   }
 
   function selectServiceCard(svc) {
@@ -1813,7 +1990,6 @@
       c.classList.toggle('sel', on);
       c.classList.toggle('active', on);
     });
-    paintWorkshopCard();
   }
 
   /* Price slot after collection/journey so one mobile screen can show slots + ETA + price. */
@@ -1828,19 +2004,13 @@
 
   function buildServiceCards() {
     return '<div class="qw-opt-section qw-service-mapper">' +
-      '<div class="qw-section-label">Your postcode</div>' +
+      '<div class="qw-section-label">Where should we collect from?</div>' +
       '<div class="qw-postcode-card" id="qwPostcodeCard">' +
-        '<div class="qw-pc-summary" id="qwPcSummary" hidden>' +
-          '<span class="qw-pc-summary-main"><strong id="qwPcSummaryCode"></strong><span id="qwPcSummaryArea"></span></span>' +
-          '<button type="button" class="qw-pc-change" id="qwPcChange">Change</button>' +
-          '<span class="qw-pc-summary-sub" id="qwPcSummarySub"></span>' +
-          '<p class="qw-pc-threshold-note" id="qwPcThresholdNote" role="note" hidden></p>' +
-        '</div>' +
         '<label class="qw-postcode-label" for="qwPostcode">Enter your postcode to see your all-in price' +
-          '<span class="qw-postcode-hint">In London we collect from your door. Anywhere else in the UK, we post you a tracked mail-in box.</span>' +
+          '<span class="qw-postcode-hint">London postcodes unlock courier collection windows. Outside London we use tracked mail-in.</span>' +
         '</label>' +
         '<div class="qw-postcode-row">' +
-          '<input type="text" id="qwPostcode" class="qw-postcode-input qw-courier-inp" placeholder="e.g. SW11 8BJ" autocomplete="postal-code" autocapitalize="characters" spellcheck="false" inputmode="text" enterkeyhint="go">' +
+          '<input type="text" id="qwPostcode" class="qw-postcode-input qw-courier-inp" placeholder="e.g. SW11 8BJ" autocomplete="postal-code" inputmode="text" enterkeyhint="done">' +
         '</div>' +
         '<span class="qw-postcode-wait" id="qwPostcodeWait" style="display:none">Enter your full postcode, for example W1W 8JQ.</span>' +
         '<div class="qw-courier-result" id="qwCourierResult" hidden></div>' +
@@ -1853,25 +2023,17 @@
               '<span class="qw-delivery-radio" aria-hidden="true"><span></span></span>' +
               '<span class="qw-delivery-body">' +
                 '<span class="qw-delivery-title qw-opt-name">Courier collection</span>' +
-                '<span class="qw-delivery-sub qw-opt-meta">We collect from your home or office and bring it back. No trip needed.</span>' +
+                '<span class="qw-delivery-sub qw-opt-meta">We collect from your door across London</span>' +
               '</span>' +
-              '<span class="qw-delivery-price qw-opt-price" id="qwCourierPriceLbl"></span>' +
+              '<span class="qw-delivery-price qw-opt-price" id="qwCourierPriceLbl">-</span>' +
             '</button>' +
             '<button type="button" class="qw-delivery-card qw-opt-card" data-opt="svc" data-svc="mailin" data-add="0">' +
               '<span class="qw-delivery-radio" aria-hidden="true"><span></span></span>' +
               '<span class="qw-delivery-body">' +
-                '<span class="qw-delivery-title qw-opt-name">Tracked mail-in</span>' +
-                '<span class="qw-delivery-sub qw-opt-meta">Box and prepaid label, posted within 24h</span>' +
+                '<span class="qw-delivery-title qw-opt-name">Post it (mail-in pack)</span>' +
+                '<span class="qw-delivery-sub qw-opt-meta">Tracked, insured pack within 24h</span>' +
               '</span>' +
-              '<span class="qw-delivery-price qw-opt-price" id="qwMailinPriceLbl"></span>' +
-            '</button>' +
-            '<button type="button" class="qw-delivery-card qw-opt-card" data-opt="svc" data-svc="workshop" data-add="0" hidden>' +
-              '<span class="qw-delivery-radio" aria-hidden="true"><span></span></span>' +
-              '<span class="qw-delivery-body">' +
-                '<span class="qw-delivery-title qw-opt-name">Prefer to drop it off?</span>' +
-                '<span class="qw-delivery-sub qw-opt-meta">Bring it to 12 Margaret Street, Fitzrovia W1W 8JQ. Mon to Fri 9am to 6pm.</span>' +
-              '</span>' +
-              '<span class="qw-delivery-price qw-opt-price">Free</span>' +
+              '<span class="qw-delivery-price qw-opt-price" id="qwMailinPriceLbl">-</span>' +
             '</button>' +
           '</div>' +
         '</div>' +
@@ -1931,7 +2093,6 @@
   function closeCollectionCalendar() {
     var modal = document.getElementById('qwCalModal');
     if (modal) modal.hidden = true;
-    if (typeof updateStickyCTA === 'function') updateStickyCTA();
   }
 
   function openCollectionCalendar() {
@@ -1953,7 +2114,6 @@
       });
     });
     modal.hidden = false;
-    if (typeof updateStickyCTA === 'function') updateStickyCTA();
   }
 
   function paintDateStrip() {
@@ -1976,33 +2136,9 @@
     if (!found) return;
     _collectionSlot.date = found;
     paintDateStrip();
-    applySlotMode();
     syncIcorrectQuote();
     refreshServiceJourney();
     trackSlotSelected();
-  }
-
-  /* Walk-in helpers: assets/quote-wizard-walkin.js */
-  function workshopDates(list) {
-    return window.ICorrectWalkin ? window.ICorrectWalkin.dates(list, londonWall(), isoJourneyDate, { allowSameDay: CFG.sameDayDropOff !== false }) : list;
-  }
-
-  function applySlotMode() {
-    var panel = document.getElementById('qwSlotPanel');
-    if (!panel || !window.ICorrectWalkin) return;
-    var wall = londonWall();
-    window.ICorrectWalkin.applyMode(panel, {
-      workshop: selectedServiceKind() === 'workshop',
-      selected: _collectionSlot.date,
-      todayIso: isoJourneyDate(wall.date),
-      hour: wall.hour,
-      onAutoPM: function () {
-        var parts = window.ICorrectCourierSlots ? window.ICorrectCourierSlots.dayParts() : [];
-        _collectionSlot.part = parts.filter(function (p) { return p.id === 'PM'; })[0] || parts[1] || _collectionSlot.part;
-        syncIcorrectQuote();
-        refreshServiceJourney();
-      }
-    });
   }
 
   function renderCollectionSlots(band) {
@@ -2020,7 +2156,6 @@
       includeWeekends: false
     });
     _collectionSlotDates = listed.dates || [];
-    if (selectedServiceKind() === 'workshop') _collectionSlotDates = workshopDates(_collectionSlotDates);
     if (!_collectionSlotDates.length) {
       panel.hidden = true;
       return;
@@ -2053,11 +2188,9 @@
         syncIcorrectQuote();
         refreshServiceJourney();
         trackSlotSelected();
-        if (!_suppressScroll) focusPriceAndProceed();
       });
     });
 
-    applySlotMode();
     if (moreBtn && !moreBtn._qwWired) {
       moreBtn._qwWired = true;
       moreBtn.addEventListener('click', openCollectionCalendar);
@@ -2117,48 +2250,7 @@
 
   var COLLECT_PIN_SVG = '<svg class="qw-collect-pin" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2.4a7 7 0 0 0-7 7c0 5.2 7 12.2 7 12.2s7-7 7-12.2a7 7 0 0 0-7-7z"/><circle cx="12" cy="9.4" r="2.35" fill="#FFF7E6"/></svg>';
 
-  function b3b4MailInThresholdCopy(postcodeResolved, quote) {
-    if (!postcodeResolved || !quote) return '';
-    if (quote.band !== 'B3' && quote.band !== 'B4') return '';
-    if (!quote.forcedMailIn && quote.courierAvailable !== false) return '';
-    var mailLine = serviceCharge(quote) > 0
-      ? 'Tracked mail-in is selected for this repair.'
-      : 'Free tracked mail-in is selected for this repair.';
-    return 'Courier collection in this area applies to repairs \u00A3200 and over. ' + mailLine;
-  }
-
-  function paintPostcodeSummary() {
-    var box = document.getElementById('qwPcSummary');
-    if (!box) return;
-    var note = document.getElementById('qwPcThresholdNote');
-    if (!_postcodeResolved || !_courierQuote) {
-      box.hidden = true;
-      if (note) { note.textContent = ''; note.hidden = true; }
-      return;
-    }
-    var code = document.getElementById('qwPcSummaryCode');
-    var area = document.getElementById('qwPcSummaryArea');
-    var sub = document.getElementById('qwPcSummarySub');
-    var kind = selectedServiceKind();
-    var mail = _courierQuote.forcedMailIn || _courierQuote.service !== 'courier';
-    var thresholdCopy = b3b4MailInThresholdCopy(_postcodeResolved, _courierQuote);
-    if (code) code.textContent = formatDisplayPostcode(currentPostcodeValue()) || currentPostcodeValue().toUpperCase();
-    if (area) area.textContent = mail ? 'Tracked mail-in' : collectionWindowCopy(_courierQuote.band).headline;
-    if (sub) sub.textContent = (kind === 'workshop' || thresholdCopy) ? '' : (mail || kind === 'mailin')
-      ? 'We post your box to this address.'
-      : 'We collect from this address.';
-    if (sub) sub.hidden = !sub.textContent;
-    if (note) {
-      note.textContent = thresholdCopy;
-      note.hidden = !thresholdCopy;
-    }
-    box.hidden = false;
-    var s4 = document.getElementById('qw-s4s');
-    if (s4 && /Enter your postcode/.test(s4.textContent)) s4.hidden = true;
-  }
-
   function updateCollectionNotice() {
-    paintPostcodeSummary();
     var el = document.getElementById('qwCollectionNotice');
     var res = document.getElementById('qwResCard');
     var pc = collectionNoticePostcode();
@@ -2212,9 +2304,8 @@
       if (mailPanel) mailPanel.hidden = true;
       if (result) { result.hidden = true; result.innerHTML = ''; }
       if (pcCard) pcCard.classList.remove('qw-postcode-card-resolved');
-      paintPostcodeSummary();
-      if (priceLbl) priceLbl.textContent = '';
-      if (mailLbl) mailLbl.textContent = '';
+      if (priceLbl) priceLbl.textContent = '-';
+      if (mailLbl) mailLbl.textContent = '-';
       if (courierCard) {
         courierCard.classList.remove('qw-opt-disabled');
         courierCard.removeAttribute('aria-disabled');
@@ -2232,11 +2323,8 @@
     _postcodeResolved = true;
     if (reveal) reveal.hidden = false;
     if (pcCard) pcCard.classList.add('qw-postcode-card-resolved');
-    paintPostcodeSummary();
     if (priceLbl) priceLbl.textContent = formatServiceCardHint(quote, 'courier');
     if (mailLbl) mailLbl.textContent = formatServiceCardHint(quote, 'mailin');
-    paintCourierCard(quote.service === 'courier' ? quote : quoteForService('courier', postcode));
-    paintMailinCard(quote.service === 'mail-in' ? quote : quoteForService('mailin', postcode));
 
     if (courierCard) {
       courierCard.dataset.add = '0';
@@ -2259,7 +2347,6 @@
         if (courierOnly && courierOnly.service === 'courier') quote = courierOnly;
         _courierQuote = quote;
         if (priceLbl) priceLbl.textContent = formatServiceCardHint(quote, 'courier');
-        paintCourierCard(quote);
       }
     }
 
@@ -2275,14 +2362,28 @@
       setMailInOptionVisible(true);
       if (slotPanel) { slotPanel.hidden = true; _collectionSlot = { date: null, part: null }; _collectionSlotDates = []; }
       if (mailPanel) mailPanel.hidden = false;
-      if (result) { result.hidden = true; result.innerHTML = ''; }
-      paintMailinCard(quote);
+      if (result) {
+        result.hidden = false;
+        if (quote.forcedMailIn) {
+          result.innerHTML = '<div class="qw-courier-confirm qw-courier-confirm--compact">' +
+            '<div class="qw-courier-confirm-title">Same Day Courier isn\'t available for your postcode.</div>' +
+            '<div class="qw-courier-confirm-detail">We\'ve switched you to tracked mail-in.</div></div>';
+        } else {
+          result.innerHTML = '<div class="qw-courier-confirm qw-courier-confirm--compact">' +
+            '<div class="qw-courier-confirm-title">Mail-in pack</div>' +
+            '<div class="qw-courier-confirm-detail">Total below is the all-in price.</div></div>';
+        }
+      }
       refreshServiceJourney();
-      if (!_suppressScroll) focusCollectionPanel();
+      if (!_suppressScroll) {
+        var mailTarget = document.getElementById('qwMailinPanel') || document.getElementById('qwDeliveryReveal');
+        scrollToEl(mailTarget, 140, isMobileQuoteLayout() ? 'start' : 'nearest');
+      }
     }
 
     refreshAllInTotal();
     updateCollectionNotice();
+    if (!_suppressScroll) focusPriceAndProceed();
     trackCourierQuoteEvents(_courierQuote);
   }
 
@@ -2316,24 +2417,6 @@
       runLookup();
     }
 
-    var pcChange = document.getElementById('qwPcChange');
-    if (pcChange) pcChange.addEventListener('click', function() {
-      var card = document.getElementById('qwPostcodeCard');
-      if (card) card.classList.remove('qw-postcode-card-resolved');
-      var box = document.getElementById('qwPcSummary'); if (box) box.hidden = true;
-      var inp = document.getElementById('qwPostcode');
-      if (inp) { inp.focus(); inp.select(); }
-    });
-    input.addEventListener('blur', function() {
-      setTimeout(function() {
-        if (_postcodeResolved && isFullPostcodeValue(input.value)) {
-          var card = document.getElementById('qwPostcodeCard');
-          if (card) card.classList.add('qw-postcode-card-resolved');
-          paintPostcodeSummary();
-        }
-      }, 150);
-    });
-
     container.querySelectorAll('.qw-opt-card[data-opt="svc"]').forEach(function(card) {
       card.addEventListener('click', function(){
         if (card.classList.contains('qw-opt-disabled')) return;
@@ -2341,18 +2424,6 @@
           c.classList.remove('sel', 'active');
         });
         card.classList.add('sel', 'active');
-        paintWorkshopCard();
-        if (card.getAttribute('data-svc') === 'workshop') {
-          var mp = document.getElementById('qwMailinPanel'); if (mp) mp.hidden = true;
-          _collectionSlot = { date: null, part: null };
-          renderCollectionSlots(_courierQuote && _courierQuote.band);
-          var sp = document.getElementById('qwSlotPanel'); if (sp) sp.hidden = false;
-          updateCollectionNotice();
-          refreshServiceJourney();
-          refreshAllInTotal();
-          syncIcorrectQuote();
-          return;
-        }
         updateCollectionNotice();
         setTimeout(syncFromSelection, 0);
       });
@@ -3378,7 +3449,7 @@
         '</div>' +
       '</div></div>';
     document.getElementById('qwDgYes').onclick = function() {
-      showResolution({ label: 'Dustgate repair', route: 'repair', repairType: 'dustgate', copy: 'Dustgate is a known design flaw on 2016–2020 MacBook Pro models. Dust works into the hinge and damages the display flex cable. We repair the flex at component level so you don\'t need a full screen replacement.' });
+      showResolution({ label: 'Dustgate repair', route: 'repair', repairType: 'dustgate', copy: 'Dustgate is a known design flaw on 2016 to 2020 MacBook Pro models. Dust works into the hinge and damages the display flex cable. We repair the flex at component level so you don\'t need a full screen replacement.' });
     };
     document.getElementById('qwDgNo').onclick = function() {
       showResolution(originalIss);
@@ -3518,7 +3589,7 @@
         return null;
       }
       if (!_courierQuote || _courierQuote.service !== 'courier') {
-        if (errBox) errBox.textContent = 'We can\'t collect from that postcode. Choose tracked mail-in instead.';
+        if (errBox) errBox.textContent = 'Courier isn\'t available for that postcode. Choose mail-in instead.';
         return null;
       }
       if (!_collectionSlot.date || !_collectionSlot.part) {
@@ -3538,20 +3609,6 @@
         var win = collectionWindowCopy(_courierQuote.band);
         items[0].properties['Collection Window'] = win.headline;
       }
-    } else if (svcKind === 'workshop') {
-      if (!_collectionSlot.date || !_collectionSlot.part) {
-        if (errBox) errBox.textContent = 'Pick a drop-off day and time.';
-        return null;
-      }
-      var wsProps = window.ICorrectCourierSlots
-        ? window.ICorrectCourierSlots.slotCartProperties(_collectionSlot.date, _collectionSlot.part)
-        : null;
-      items[0].properties['Service Type'] = 'Walk-in';
-      if (wsProps) items[0].properties['Drop-off Date'] = wsProps['Collection Date'];
-      items[0].properties['Drop-off Window'] = window.ICorrectWalkin
-        ? window.ICorrectWalkin.windowLabel(_collectionSlot.part.id, _collectionSlot.date.date) : _collectionSlot.part.label;
-      var postcodeWs = currentPostcodeValue();
-      if (postcodeWs) items[0].properties['Postcode'] = postcodeWs.toUpperCase();
     } else {
       items[0].properties['Service Type'] = 'Mail-in';
       var postcodeInputMi = document.getElementById('qwPostcode');
@@ -3563,7 +3620,7 @@
     }
 
     /* Service adjustment variant — null-safe: missing ID already forced free mail-in in quote */
-    if (svcKind !== 'workshop' && _courierQuote && _courierQuote.adjustment > 0 && !(svcKind === 'mailin' && currentRepairPrice() >= 200)) {
+    if (_courierQuote && _courierQuote.adjustment > 0 && !(svcKind === 'mailin' && currentRepairPrice() >= 200)) {
       if (_courierQuote.variantMode === 'fallback-free-mail-in') {
         items[0].properties['Service Type'] = 'Mail-in';
         delete items[0].properties['Collection Window'];
@@ -3583,7 +3640,7 @@
     }
 
     var homeVid = CFG.homeAddress && parseInt(CFG.homeAddress.variantId, 10);
-    if (homeVid && svcKind !== 'workshop') {
+    if (homeVid) {
       items.push({
         id: homeVid,
         quantity: 1,
@@ -3620,8 +3677,6 @@
     add('Service', 'Service Type');
     add('Collection date', 'Collection Date');
     add('Collection window', 'Collection Window');
-    add('Drop-off date', 'Drop-off Date');
-    add('Drop-off window', 'Drop-off Window');
     add('Return by', 'Return by');
     add('Quote by', 'Quote by');
     add('Postcode', 'Postcode');
@@ -3633,130 +3688,6 @@
     return (window.Shopify && window.Shopify.routes ? window.Shopify.routes.root : '/');
   }
 
-  var _cartReplaceConfirmPromise = null;
-
-  function confirmWizardCartReplace(itemCount) {
-    if (typeof document === 'undefined' || !document.body || typeof document.createElement !== 'function') {
-      return Promise.resolve(false);
-    }
-    if (_cartReplaceConfirmPromise) return _cartReplaceConfirmPromise;
-
-    var existing = typeof document.getElementById === 'function' ? document.getElementById('qwCartConfirmModal') : null;
-    if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
-
-    var previouslyFocused = document.activeElement;
-    var count = Number(itemCount);
-    if (!Number.isFinite(count) || count < 0) count = 0;
-
-    _cartReplaceConfirmPromise = new Promise(function (resolve) {
-      var settled = false;
-      var modal = document.createElement('div');
-      modal.className = 'qw-confirm-modal';
-      modal.id = 'qwCartConfirmModal';
-      modal.setAttribute('data-cart-items', String(count));
-
-      var backdrop = document.createElement('div');
-      backdrop.className = 'qw-confirm-backdrop';
-
-      var dialog = document.createElement('div');
-      dialog.className = 'qw-confirm-dialog';
-      dialog.setAttribute('role', 'dialog');
-      dialog.setAttribute('aria-modal', 'true');
-      dialog.setAttribute('aria-labelledby', 'qwCartConfirmTitle');
-      dialog.setAttribute('aria-describedby', 'qwCartConfirmDesc');
-      dialog.setAttribute('tabindex', '-1');
-
-      var title = document.createElement('h2');
-      title.className = 'qw-confirm-title';
-      title.id = 'qwCartConfirmTitle';
-      title.textContent = 'Replace items in your basket?';
-
-      var desc = document.createElement('p');
-      desc.className = 'qw-confirm-desc';
-      desc.id = 'qwCartConfirmDesc';
-      desc.textContent = 'Your basket already has items in it. Continuing with this repair booking will replace them.';
-
-      var actions = document.createElement('div');
-      actions.className = 'qw-confirm-actions';
-
-      var confirmBtn = document.createElement('button');
-      confirmBtn.type = 'button';
-      confirmBtn.className = 'qw-confirm-btn qw-confirm-btn-primary';
-      confirmBtn.id = 'qwCartConfirmYes';
-      confirmBtn.textContent = 'Replace and continue';
-
-      var cancelBtn = document.createElement('button');
-      cancelBtn.type = 'button';
-      cancelBtn.className = 'qw-confirm-btn qw-confirm-btn-secondary';
-      cancelBtn.id = 'qwCartConfirmNo';
-      cancelBtn.textContent = 'Keep current basket';
-
-      actions.appendChild(confirmBtn);
-      actions.appendChild(cancelBtn);
-      dialog.appendChild(title);
-      dialog.appendChild(desc);
-      dialog.appendChild(actions);
-      modal.appendChild(backdrop);
-      modal.appendChild(dialog);
-
-      function finish(result) {
-        if (settled) return;
-        settled = true;
-        if (typeof document.removeEventListener === 'function') {
-          document.removeEventListener('keydown', onKeyDown, true);
-        }
-        modal.removeEventListener('click', onModalClick);
-        backdrop.removeEventListener('click', onCancel);
-        cancelBtn.removeEventListener('click', onCancel);
-        confirmBtn.removeEventListener('click', onConfirm);
-        if (modal.parentNode) modal.parentNode.removeChild(modal);
-        _cartReplaceConfirmPromise = null;
-        if (typeof updateStickyCTA === 'function') updateStickyCTA();
-        if (previouslyFocused && typeof previouslyFocused.focus === 'function') {
-          try { previouslyFocused.focus(); } catch (e) {}
-        }
-        resolve(Boolean(result));
-      }
-
-      function onConfirm() { finish(true); }
-      function onCancel() { finish(false); }
-      function onModalClick(e) {
-        if (e && e.target === modal) finish(false);
-      }
-      function onKeyDown(e) {
-        if (!e) return;
-        if (e.key === 'Escape' || e.key === 'Esc' || e.keyCode === 27) {
-          if (typeof e.preventDefault === 'function') e.preventDefault();
-          finish(false);
-          return;
-        }
-        if (e.key === 'Tab' || e.keyCode === 9) {
-          if (e.shiftKey && document.activeElement === confirmBtn) {
-            if (typeof e.preventDefault === 'function') e.preventDefault();
-            try { cancelBtn.focus(); } catch (err) {}
-          } else if (!e.shiftKey && document.activeElement === cancelBtn) {
-            if (typeof e.preventDefault === 'function') e.preventDefault();
-            try { confirmBtn.focus(); } catch (err) {}
-          }
-        }
-      }
-
-      modal.addEventListener('click', onModalClick);
-      backdrop.addEventListener('click', onCancel);
-      cancelBtn.addEventListener('click', onCancel);
-      confirmBtn.addEventListener('click', onConfirm);
-      if (typeof document.addEventListener === 'function') {
-        document.addEventListener('keydown', onKeyDown, true);
-      }
-
-      document.body.appendChild(modal);
-      if (typeof updateStickyCTA === 'function') updateStickyCTA();
-      try { confirmBtn.focus(); } catch (e) {}
-    });
-
-    return _cartReplaceConfirmPromise;
-  }
-
   async function ensureCleanWizardCart() {
     var root = getShopifyRoot();
     var cartRes = await fetch(root + 'cart.js', { headers: { 'Accept': 'application/json' } });
@@ -3766,7 +3697,7 @@
     var items = cart && cart.items ? cart.items : [];
     if (!items.length) return true;
 
-    var confirmed = await confirmWizardCartReplace(items.length);
+    var confirmed = window.confirm('Your cart already has items in it. Continuing with this repair booking will replace them. Do you want to continue?');
     if (!confirmed) {
       trackWizardEvent('wizard_cart_replace_cancelled', {
         cartItemCount: items.length
@@ -3789,31 +3720,6 @@
     return true;
   }
 
-  /* Cart funnel diagnostics (PostHog). No PII: ids, handles, status codes, device type only. */
-  function cartTrackContext(items, extra) {
-    var rk = (S.route === 'diagnostic') ? 'diagnostic' : S.repairType;
-    var prod = (rk && _repairsMap && _repairsMap[rk]) ? _repairsMap[rk] : null;
-    var w = window.innerWidth || 0;
-    var ctx = {
-      product_handle: prod && prod.handle ? prod.handle : null,
-      variant_id: items && items[0] ? items[0].id : null,
-      item_count: items ? items.length : null,
-      device_type: w && w < 768 ? 'mobile' : (w && w < 1024 ? 'tablet' : 'desktop'),
-      viewport_width: w || null,
-      wizard_path: [S.device, S.model, S.fault, S.issue, S.route || S.repairType].filter(Boolean).join(' > ').slice(0, 300),
-      page_path: window.location.pathname
-    };
-    if (extra) Object.keys(extra).forEach(function (k) { if (extra[k] !== undefined) ctx[k] = extra[k]; });
-    return buildWizardTrackPayload(ctx);
-  }
-  function trackCartEvent(name, items, extra) {
-    try {
-      if (window.posthog && typeof window.posthog.capture === 'function') {
-        window.posthog.capture(name, cartTrackContext(items, extra));
-      }
-    } catch (e) {}
-  }
-
   async function addToCartAndCheckout() {
     var items = buildCartItems();
     if (!items) {
@@ -3831,8 +3737,6 @@
     var btn = document.getElementById('qwBookBtn');
     if (btn) { btn.disabled = true; btn.textContent = 'Redirecting...'; }
 
-    var cartStage = 'cart_check';
-    var err_already_tracked = false;
     try {
       var shouldContinue = await ensureCleanWizardCart();
       if (!shouldContinue) {
@@ -3847,7 +3751,6 @@
         }
       } catch (e) { addItems = items; }
 
-      cartStage = 'cart_add';
       var addRes = await fetch(getShopifyRoot() + 'cart/add.js', {
         method: 'POST',
         headers: {
@@ -3860,19 +3763,10 @@
       if (!addRes.ok) {
         var errData = null;
         try { errData = await addRes.json(); } catch (e) {}
-        trackCartEvent('cart_add_failed', items, {
-          stage: 'cart_add',
-          status_code: addRes.status,
-          error_message: String((errData && (errData.description || errData.message)) || 'Cart error').slice(0, 200),
-          error_code: errData && errData.status ? errData.status : null
-        });
-        err_already_tracked = true;
         throw new Error((errData && (errData.description || errData.message)) || 'Cart error');
       }
 
       await addRes.json();
-      trackCartEvent('cart_add_succeeded', items, { status_code: addRes.status });
-      cartStage = 'post_add';
       try {
         var phId = window.icorrectQuoteEvents && typeof window.icorrectQuoteEvents.phDistinctId === 'function'
           ? window.icorrectQuoteEvents.phDistinctId()
@@ -3909,20 +3803,11 @@
         currency: 'GBP',
         item_count: items.length
       });
-      var isWalkin = items[0] && items[0].properties && items[0].properties['Service Type'] === 'Walk-in';
-      var homePostcode = isWalkin ? '' : ((items[0] && items[0].properties && items[0].properties.Postcode) || '');
+      var homePostcode = (items[0] && items[0].properties && items[0].properties.Postcode) || '';
       var postEl = document.getElementById('qwPostcode');
-      if (!isWalkin && !homePostcode && postEl) homePostcode = String(postEl.value || '').trim();
-      trackCartEvent('checkout_redirected', items, { service_type: isWalkin ? 'walk-in' : 'courier-or-mail-in' });
+      if (!homePostcode && postEl) homePostcode = String(postEl.value || '').trim();
       window.location.href = checkoutUrlWithHomeAddress(homePostcode);
     } catch (err) {
-      if (!err_already_tracked) {
-        trackCartEvent('cart_add_failed', items, {
-          stage: cartStage,
-          status_code: null,
-          error_message: String((err && err.message) || 'unknown').slice(0, 200)
-        });
-      }
       if (btn) { btn.disabled = false; btn.textContent = 'Proceed to checkout'; }
       alert(err.message || 'Something went wrong. Please try again.');
     }
@@ -3992,7 +3877,7 @@
     ]) : '';
 
     var priceTrustHtml = basePrice
-      ? buildPriceTrustBlock(S.device, S.model, { gate: true, priceHtml: gbp.format(basePrice), productTitle: product.title })
+      ? buildPriceTrustBlock(S.device, S.model, { gate: true, priceHtml: gbp.format(basePrice) })
       : '';
     var totalHtml = basePrice
       ? ('<div class="qw-price-total-wrap" id="qwPriceTotalWrap" hidden>' +
@@ -4343,19 +4228,11 @@
       if (userMsg) fullBody += (fullBody ? '\n\n' : '') + 'Message:\n' + userMsg;
 
       try {
-        var phDistinctId = '';
-        try {
-          if (window.icorrectPostHog && typeof window.icorrectPostHog.getDistinctId === 'function') {
-            phDistinctId = window.icorrectPostHog.getDistinctId();
-          } else if (window.posthog && typeof window.posthog.get_distinct_id === 'function') {
-            phDistinctId = String(window.posthog.get_distinct_id() || '');
-          }
-        } catch (phErr) {}
         /* Wrap in contact-form-interceptor shape so the intake service routes
            this as a consumer contact-form submission (sourceType: consumer).
            Without `source` + `contact: {...}`, the intake rejects with
            "Unsupported source." See POST-DEPLOY-INCIDENT-2026-04-17.md. */
-        var questionPayload = {
+        await postQuoteWizardWebhook({
           contact: {
             name: userName,
             email: userEmail,
@@ -4369,9 +4246,7 @@
           timestamp: new Date().toISOString(),
           page_url: window.location.href,
           referrer: document.referrer || null
-        };
-        if (phDistinctId) questionPayload.posthog_distinct_id = phDistinctId;
-        await postQuoteWizardWebhook(questionPayload);
+        });
         form.style.display = 'none';
         var ok = document.getElementById(prefix + 'Ok');
         if (ok) { ok.hidden = false; ok.classList.add('show'); }
@@ -4387,14 +4262,6 @@
           value: getWizardTotalValue(),
           currency: 'GBP'
         });
-        try {
-          if (window.icorrectPostHog && typeof window.icorrectPostHog.identifyEnquiry === 'function') {
-            window.icorrectPostHog.identifyEnquiry(userEmail, userName);
-          } else if (window.posthog && typeof window.posthog.identify === 'function' && userEmail) {
-            var normEmail = String(userEmail).trim().toLowerCase();
-            window.posthog.identify(normEmail, userName ? { email: normEmail, name: userName } : { email: normEmail });
-          }
-        } catch (phIdErr) {}
         if (window.posthog) posthog.capture('wizard_conversion', buildWizardTrackPayload({ action: source + '_submit' }));
       } catch (error) {
         sub.disabled = false;
@@ -4478,7 +4345,7 @@
       serviceName = qwText(svc.querySelector('.qw-opt-name'));
       serviceMeta = qwText(svc.querySelector('.qw-opt-meta'));
       servicePriceLabel = qwText(svc.querySelector('.qw-opt-price'));
-      if (servicePriceLabel === '—' || servicePriceLabel === '-') servicePriceLabel = '';
+      if (servicePriceLabel === '-' || servicePriceLabel === '-') servicePriceLabel = '';
     }
     var result = document.getElementById('qwCourierResult');
     var noticeTitle = '';
@@ -4515,9 +4382,9 @@
     var etaDate = '';
     var etaNote = '';
     if (journeyHost && !journeyHost.hidden) {
-      journeyHost.querySelectorAll('.qw-jr-step, .qw-journey-step').forEach(function(step) {
-        var title = qwText(step.querySelector('.qw-jr-title, .qw-journey-title'));
-        if (title) journey.push({ title: title, meta: qwText(step.querySelector('.qw-jr-meta, .qw-journey-meta')) });
+      journeyHost.querySelectorAll('.qw-journey-step').forEach(function(step) {
+        var title = qwText(step.querySelector('.qw-journey-title'));
+        if (title) journey.push({ title: title, meta: qwText(step.querySelector('.qw-journey-meta')) });
       });
       etaLabel = qwText(journeyHost.querySelector('.qw-journey-eta-label'));
       etaDate = qwText(journeyHost.querySelector('.qw-journey-eta-date'));
@@ -4731,7 +4598,7 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
             totalPrice: totalPrice,
             estimates: estimates.length > 0 ? JSON.stringify(estimates) : null,
             warranty: CFG.warrantyLabel || '2-year warranty',
-            parts: partsClaimLabel(S.device, S.model, productTitle),
+            parts: null,
             productUrl: productHandle ? 'https://www.icorrect.co.uk/products/' + productHandle : null,
             deviceColor: snap.deviceColor || null,
             colorLabel: snap.colorLabel || null,
@@ -4759,12 +4626,6 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
             url: window.location.href,
             timestamp: new Date().toISOString()
         };
-        try {
-          var eqPhId = window.icorrectPostHog && typeof window.icorrectPostHog.getDistinctId === 'function'
-            ? window.icorrectPostHog.getDistinctId()
-            : (window.posthog && typeof window.posthog.get_distinct_id === 'function' ? String(window.posthog.get_distinct_id() || '') : '');
-          if (eqPhId) payload.posthog_distinct_id = eqPhId;
-        } catch (phErr) {}
  
         function showEmailSuccess() {
           var panel = document.getElementById('qwEmailPanel');
@@ -4802,17 +4663,6 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
               });
             }
           } catch (e) {}
-          /* Identify AFTER fireQuoteEmailRequested so quote_events.session_id
-             keeps the original anonymous distinct_id that matches quote_shown;
-             PostHog then merges the anonymous session history onto this email. */
-          try {
-            if (window.icorrectPostHog && typeof window.icorrectPostHog.identifyEnquiry === 'function') {
-              window.icorrectPostHog.identifyEnquiry(email, name);
-            } else if (window.posthog && typeof window.posthog.identify === 'function' && email) {
-              var normEqEmail = String(email).trim().toLowerCase();
-              window.posthog.identify(normEqEmail, name ? { email: normEqEmail, name: name } : { email: normEqEmail });
-            }
-          } catch (phIdErr) {}
         }).catch(function() {
           sendBtn.disabled = false; sendBtn.textContent = 'Send quote';
           document.getElementById('qwEqErr').textContent = 'Something went wrong. Please try again.';
@@ -4823,201 +4673,27 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
   }
 
   /* =============================================
-     [5.1] COOKIE BANNER OFFSET + STICKY CTA ON MOBILE
+     [5.1] STICKY CTA ON MOBILE
      ============================================= */
-  var _lastCookieH = -1;
-  var _cookieSyncRaf = 0;
-  var _cookieBodyObserver = null;
-  var _cookieBannerObserver = null;
-  var _cookieResizeObserver = null;
-  var _cookieWatchedEl = null;
-  var _cookieListenersWired = false;
-
-  function measureCookieBannerHeight() {
-    if (typeof document === 'undefined' || typeof window === 'undefined') return 0;
-    var vh = window.innerHeight || (document.documentElement && document.documentElement.clientHeight) || 0;
-    if (!vh) return 0;
-    var maxH = Math.floor(vh * 0.65);
-    var nodes = document.querySelectorAll('#shopify-pc__banner, .shopify-pc__banner__dialog');
-    var best = 0;
-    for (var i = 0; i < nodes.length; i++) {
-      var el = nodes[i];
-      if (!el || el.hidden) continue;
-      var st = window.getComputedStyle ? window.getComputedStyle(el) : null;
-      if (st) {
-        if (st.position !== 'fixed') continue;
-        if (st.display === 'none' || st.visibility === 'hidden') continue;
-        var op = parseFloat(st.opacity);
-        if (isFinite(op) && op <= 0) continue;
-      }
-      var rect = el.getBoundingClientRect ? el.getBoundingClientRect() : null;
-      if (!rect || rect.height <= 0 || rect.height >= vh * 0.65) continue;
-      if (rect.bottom < vh - 12) continue;
-      var h = Math.ceil(rect.height);
-      if (h > maxH) h = maxH;
-      if (h > best) best = h;
-    }
-    return best;
-  }
-
-  function applyCookieBannerHeight(h) {
-    if (typeof document === 'undefined' || !document.documentElement) return false;
-    var next = h > 0 ? Math.ceil(h) : 0;
-    if (next === _lastCookieH) return false;
-    _lastCookieH = next;
-    document.documentElement.style.setProperty('--qw-cookie-h', next + 'px');
-    document.documentElement.classList.toggle('qw-consent-bar-on', next > 0);
-    return true;
-  }
-
-  function watchCookieBannerElement() {
-    if (typeof document === 'undefined') return;
-    var el = document.querySelector('#shopify-pc__banner, .shopify-pc__banner__dialog');
-    if (el === _cookieWatchedEl) return;
-    if (_cookieBannerObserver) { _cookieBannerObserver.disconnect(); _cookieBannerObserver = null; }
-    if (_cookieResizeObserver) { _cookieResizeObserver.disconnect(); _cookieResizeObserver = null; }
-    _cookieWatchedEl = el;
-    if (!el) return;
-    if (typeof MutationObserver === 'function') {
-      _cookieBannerObserver = new MutationObserver(scheduleCookieBannerSync);
-      _cookieBannerObserver.observe(el, { attributes: true, attributeFilter: ['style', 'class', 'hidden', 'aria-hidden'] });
-    }
-    if (typeof ResizeObserver === 'function') {
-      _cookieResizeObserver = new ResizeObserver(scheduleCookieBannerSync);
-      _cookieResizeObserver.observe(el);
-    }
-  }
-
-  function syncCookieBannerOffset() {
-    watchCookieBannerElement();
-    var h = measureCookieBannerHeight();
-    var changed = applyCookieBannerHeight(h);
-    if (changed) updateStickyCTA();
-    return h;
-  }
-
-  function scheduleCookieBannerSync() {
-    if (_cookieSyncRaf) return;
-    var raf = typeof requestAnimationFrame === 'function' ? requestAnimationFrame : function(fn) { return setTimeout(fn, 16); };
-    _cookieSyncRaf = raf(function() {
-      _cookieSyncRaf = 0;
-      syncCookieBannerOffset();
-    });
-  }
-
-  function initCookieBannerObserver() {
-    if (_cookieListenersWired || typeof document === 'undefined') return;
-    _cookieListenersWired = true;
-    syncCookieBannerOffset();
-    if (document.body && typeof MutationObserver === 'function') {
-      _cookieBodyObserver = new MutationObserver(scheduleCookieBannerSync);
-      _cookieBodyObserver.observe(document.body, { childList: true, attributes: true, attributeFilter: ['style', 'class', 'hidden'] });
-    }
-    if (typeof window !== 'undefined') {
-      window.addEventListener('resize', scheduleCookieBannerSync, { passive: true });
-      window.addEventListener('scroll', scheduleCookieBannerSync, { passive: true });
-    }
-  }
-
   var _stickyObserver = null;
-  var _stickyScrollHandler = null;
-  var _stickyRaf = 0;
-
-  function updateStickyCTA() {
-    var sticky = document.getElementById('qw-sticky-cta');
-    if (!sticky) return;
-    if (!_postcodeResolved) {
-      sticky.classList.remove('show');
-      return;
-    }
-    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(min-width: 1024px)').matches) {
-      sticky.classList.remove('show');
-      return;
-    }
-    var confirmModal = document.getElementById('qwCartConfirmModal') || document.querySelector('.qw-confirm-modal');
-    if (confirmModal && !confirmModal.hidden) {
-      sticky.classList.remove('show');
-      return;
-    }
-    var calModal = document.getElementById('qwCalModal');
-    if (calModal && !calModal.hidden) {
-      sticky.classList.remove('show');
-      return;
-    }
-    var cookieH = measureCookieBannerHeight();
-    applyCookieBannerHeight(cookieH);
-    var vh = (typeof window !== 'undefined' && window.innerHeight) || (document.documentElement && document.documentElement.clientHeight) || 0;
-    var head = document.querySelector('.section-header');
-    var hb = head && head.getBoundingClientRect ? head.getBoundingClientRect() : null;
-    var topBound = hb && hb.top <= 1 && hb.bottom > 0 && hb.height < 140 ? hb.bottom : 0;
-    var bottomBound = vh - cookieH;
-
-    var resCard = document.getElementById('qwResCard');
-    var cardRect = resCard && resCard.getBoundingClientRect ? resCard.getBoundingClientRect() : null;
-    var cardOnScreen = !!(cardRect && cardRect.height > 0 && cardRect.bottom > topBound && cardRect.top < bottomBound);
-
-    var bookBtn = document.getElementById('qwBookBtn');
-    var bookRect = bookBtn && bookBtn.getBoundingClientRect ? bookBtn.getBoundingClientRect() : null;
-    var bookVisible = !!(bookRect && bookRect.height > 0 && bookRect.top >= topBound - 4 && bookRect.bottom <= bottomBound + 4);
-
-    sticky.classList.toggle('show', cardOnScreen && !bookVisible);
-  }
-
   function setupStickyCTA(price) {
     var sticky = document.getElementById('qw-sticky-cta');
     if (!sticky) return;
-    initCookieBannerObserver();
-    sticky.innerHTML = '<span class="qw-sticky-price">' + esc(price) + '</span>' +
-      '<button type="button" class="qw-sticky-book">Book now</button>';
-    var stickyBtn = sticky.querySelector('.qw-sticky-book');
-    if (stickyBtn) {
-      stickyBtn.addEventListener('click', function() {
-        var btn = document.getElementById('qwBookBtn');
-        if (btn && !btn.disabled) btn.click();
+    sticky.innerHTML = '<span class="qw-sticky-price">' + price + '</span><button class="qw-sticky-book" onclick="document.getElementById(\'qwBookBtn\').click()">Book now</button>';
+
+    var cta = document.querySelector('.qw-res-cta');
+    if (!cta || !('IntersectionObserver' in window)) return;
+    if (_stickyObserver) _stickyObserver.disconnect();
+    _stickyObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        sticky.classList.toggle('show', !entry.isIntersecting);
       });
-    }
-
-    if (_stickyObserver) { _stickyObserver.disconnect(); _stickyObserver = null; }
-    var bookBtn = document.getElementById('qwBookBtn');
-    var resCard = document.getElementById('qwResCard');
-    if (typeof IntersectionObserver === 'function' && (bookBtn || resCard)) {
-      _stickyObserver = new IntersectionObserver(function() {
-        updateStickyCTA();
-      }, { threshold: [0, 0.1, 1] });
-      if (bookBtn) _stickyObserver.observe(bookBtn);
-      if (resCard) _stickyObserver.observe(resCard);
-    }
-
-    if (!_stickyScrollHandler && typeof window !== 'undefined') {
-      _stickyScrollHandler = function() {
-        if (_stickyRaf) return;
-        var raf = typeof requestAnimationFrame === 'function' ? requestAnimationFrame : function(fn) { return setTimeout(fn, 16); };
-        _stickyRaf = raf(function() {
-          _stickyRaf = 0;
-          updateStickyCTA();
-        });
-      };
-      window.addEventListener('scroll', _stickyScrollHandler, { passive: true });
-      window.addEventListener('resize', _stickyScrollHandler, { passive: true });
-    }
-
-    updateStickyCTA();
-    if (typeof requestAnimationFrame === 'function') {
-      requestAnimationFrame(updateStickyCTA);
-    }
+    }, { threshold: 0 });
+    _stickyObserver.observe(cta);
   }
 
   function destroyStickyCTA() {
     if (_stickyObserver) { _stickyObserver.disconnect(); _stickyObserver = null; }
-    if (_stickyScrollHandler && typeof window !== 'undefined') {
-      window.removeEventListener('scroll', _stickyScrollHandler);
-      window.removeEventListener('resize', _stickyScrollHandler);
-      _stickyScrollHandler = null;
-    }
-    if (_stickyRaf && typeof cancelAnimationFrame === 'function') {
-      cancelAnimationFrame(_stickyRaf);
-    }
-    _stickyRaf = 0;
     var sticky = document.getElementById('qw-sticky-cta');
     if (sticky) { sticky.classList.remove('show'); sticky.innerHTML = ''; }
   }
@@ -5414,7 +5090,6 @@ var errHide = document.getElementById('qwEqErr'); if (errHide) { errHide.hidden 
      ============================================= */
   wireProgDots();
   function bootPrefill() {
-    initCookieBannerObserver();
     var ctx = CONTEXT || {};
     var needsCatalogue = !!(ctx.productHandle || ctx.collectionHandle || ctx.device);
     if (needsCatalogue) {
