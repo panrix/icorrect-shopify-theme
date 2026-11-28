@@ -8,8 +8,9 @@
      the Privacy Policy link is kept, and the full label stays on the button
      for screen readers.
   2. Makes sure the optional boxes in the preferences dialog start unticked
-     for a visitor who has not made a choice yet. A visitor who already chose
-     sees their saved choice, which this file never touches.
+     while the banner is still showing (the visitor has not chosen yet). It
+     never touches a box the visitor ticked themselves, and never runs once
+     the banner has gone, so a saved choice is never overwritten.
 
   It does not read, set or change any consent value, and it does not decide
   which tags load. Analytics gating is a separate decision (see the PR notes).
@@ -48,15 +49,13 @@
     banner.setAttribute('data-ic-compact', '1');
   }
 
+  // The banner is only on screen while the visitor has not chosen. Once they choose,
+  // Shopify removes it, so a visible banner means "no choice yet".
   function consentNotAnswered() {
-    try {
-      var cp = window.Shopify && window.Shopify.customerPrivacy;
-      if (!cp || typeof cp.currentVisitorConsent !== 'function') return false;
-      var c = cp.currentVisitorConsent() || {};
-      return !c.analytics && !c.marketing && !c.preferences;
-    } catch (e) {
-      return false;
-    }
+    var banner = document.getElementById(BANNER_ID);
+    if (!banner) return false;
+    var cs = window.getComputedStyle ? window.getComputedStyle(banner) : null;
+    return !!cs && cs.display !== 'none' && cs.visibility !== 'hidden';
   }
 
   function untickOptionalBoxes() {
