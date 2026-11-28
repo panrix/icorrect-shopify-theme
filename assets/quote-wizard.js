@@ -3688,6 +3688,128 @@
     return (window.Shopify && window.Shopify.routes ? window.Shopify.routes.root : '/');
   }
 
+  var _cartReplaceConfirmPromise = null;
+
+  function confirmWizardCartReplace(itemCount) {
+    if (typeof document === 'undefined' || !document.body || typeof document.createElement !== 'function') {
+      return Promise.resolve(false);
+    }
+    if (_cartReplaceConfirmPromise) return _cartReplaceConfirmPromise;
+
+    var existing = typeof document.getElementById === 'function' ? document.getElementById('qwCartConfirmModal') : null;
+    if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+
+    var previouslyFocused = document.activeElement;
+    var count = Number(itemCount);
+    if (!Number.isFinite(count) || count < 0) count = 0;
+
+    _cartReplaceConfirmPromise = new Promise(function (resolve) {
+      var settled = false;
+      var modal = document.createElement('div');
+      modal.className = 'qw-confirm-modal';
+      modal.id = 'qwCartConfirmModal';
+      modal.setAttribute('data-cart-items', String(count));
+
+      var backdrop = document.createElement('div');
+      backdrop.className = 'qw-confirm-backdrop';
+
+      var dialog = document.createElement('div');
+      dialog.className = 'qw-confirm-dialog';
+      dialog.setAttribute('role', 'dialog');
+      dialog.setAttribute('aria-modal', 'true');
+      dialog.setAttribute('aria-labelledby', 'qwCartConfirmTitle');
+      dialog.setAttribute('aria-describedby', 'qwCartConfirmDesc');
+      dialog.setAttribute('tabindex', '-1');
+
+      var title = document.createElement('h2');
+      title.className = 'qw-confirm-title';
+      title.id = 'qwCartConfirmTitle';
+      title.textContent = 'Replace items in your basket?';
+
+      var desc = document.createElement('p');
+      desc.className = 'qw-confirm-desc';
+      desc.id = 'qwCartConfirmDesc';
+      desc.textContent = 'Your basket already has items in it. Continuing with this repair booking will replace them.';
+
+      var actions = document.createElement('div');
+      actions.className = 'qw-confirm-actions';
+
+      var confirmBtn = document.createElement('button');
+      confirmBtn.type = 'button';
+      confirmBtn.className = 'qw-confirm-btn qw-confirm-btn-primary';
+      confirmBtn.id = 'qwCartConfirmYes';
+      confirmBtn.textContent = 'Replace and continue';
+
+      var cancelBtn = document.createElement('button');
+      cancelBtn.type = 'button';
+      cancelBtn.className = 'qw-confirm-btn qw-confirm-btn-secondary';
+      cancelBtn.id = 'qwCartConfirmNo';
+      cancelBtn.textContent = 'Keep current basket';
+
+      actions.appendChild(confirmBtn);
+      actions.appendChild(cancelBtn);
+      dialog.appendChild(title);
+      dialog.appendChild(desc);
+      dialog.appendChild(actions);
+      modal.appendChild(backdrop);
+      modal.appendChild(dialog);
+
+      function finish(result) {
+        if (settled) return;
+        settled = true;
+        if (typeof document.removeEventListener === 'function') {
+          document.removeEventListener('keydown', onKeyDown, true);
+        }
+        modal.removeEventListener('click', onModalClick);
+        backdrop.removeEventListener('click', onCancel);
+        cancelBtn.removeEventListener('click', onCancel);
+        confirmBtn.removeEventListener('click', onConfirm);
+        if (modal.parentNode) modal.parentNode.removeChild(modal);
+        _cartReplaceConfirmPromise = null;
+        if (previouslyFocused && typeof previouslyFocused.focus === 'function') {
+          try { previouslyFocused.focus(); } catch (e) {}
+        }
+        resolve(Boolean(result));
+      }
+
+      function onConfirm() { finish(true); }
+      function onCancel() { finish(false); }
+      function onModalClick(e) {
+        if (e && e.target === modal) finish(false);
+      }
+      function onKeyDown(e) {
+        if (!e) return;
+        if (e.key === 'Escape' || e.key === 'Esc' || e.keyCode === 27) {
+          if (typeof e.preventDefault === 'function') e.preventDefault();
+          finish(false);
+          return;
+        }
+        if (e.key === 'Tab' || e.keyCode === 9) {
+          if (e.shiftKey && document.activeElement === confirmBtn) {
+            if (typeof e.preventDefault === 'function') e.preventDefault();
+            try { cancelBtn.focus(); } catch (err) {}
+          } else if (!e.shiftKey && document.activeElement === cancelBtn) {
+            if (typeof e.preventDefault === 'function') e.preventDefault();
+            try { confirmBtn.focus(); } catch (err) {}
+          }
+        }
+      }
+
+      modal.addEventListener('click', onModalClick);
+      backdrop.addEventListener('click', onCancel);
+      cancelBtn.addEventListener('click', onCancel);
+      confirmBtn.addEventListener('click', onConfirm);
+      if (typeof document.addEventListener === 'function') {
+        document.addEventListener('keydown', onKeyDown, true);
+      }
+
+      document.body.appendChild(modal);
+      try { confirmBtn.focus(); } catch (e) {}
+    });
+
+    return _cartReplaceConfirmPromise;
+  }
+
   async function ensureCleanWizardCart() {
     var root = getShopifyRoot();
     var cartRes = await fetch(root + 'cart.js', { headers: { 'Accept': 'application/json' } });
@@ -3697,7 +3819,7 @@
     var items = cart && cart.items ? cart.items : [];
     if (!items.length) return true;
 
-    var confirmed = window.confirm('Your cart already has items in it. Continuing with this repair booking will replace them. Do you want to continue?');
+    var confirmed = await confirmWizardCartReplace(items.length);
     if (!confirmed) {
       trackWizardEvent('wizard_cart_replace_cancelled', {
         cartItemCount: items.length

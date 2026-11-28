@@ -2658,3 +2658,101 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 /* Restore candidate: one Klarna line under the price, no eligibility text. */
 .qw-klarna-line{margin-top:6px;font-size:13px;line-height:1.4;color:var(--qw-text-2);font-variant-numeric:tabular-nums}
 .qw-klarna-line[hidden]{display:none}
+
+/* In-page basket replacement confirmation dialog (replaces native window.confirm) */
+.qw-confirm-modal,
+.qw-confirm-modal *,
+.qw-confirm-modal *::before,
+.qw-confirm-modal *::after {
+  box-sizing: border-box;
+}
+.qw-confirm-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10060;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  font-family: var(--font-sans, "Geist", Arial, Helvetica, sans-serif);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--qw-text, #171717);
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+}
+.qw-confirm-modal[hidden] {
+  display: none !important;
+}
+.qw-confirm-backdrop {
+  display: block !important;
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+.qw-confirm-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 420px);
+  background: var(--qw-bg, #fff);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 16px 40px rgba(0, 0, 0, 0.18);
+  animation: qwFadeIn 160ms ease-out;
+}
+.qw-confirm-title {
+  margin: 0 0 8px !important;
+  font: 600 20px/1.25 var(--font-sans, "Geist", Arial, Helvetica, sans-serif) !important;
+  letter-spacing: -0.4px;
+  color: var(--qw-text, #171717) !important;
+  text-transform: none !important;
+  text-align: left !important;
+}
+.qw-confirm-desc {
+  margin: 0 0 20px !important;
+  font: 400 14px/1.55 var(--font-sans, "Geist", Arial, Helvetica, sans-serif) !important;
+  color: var(--qw-text-2, #4d4d4d) !important;
+  text-align: left !important;
+}
+.qw-confirm-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.qw-confirm-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 10px;
+  font-family: var(--font-sans, "Geist", Arial, Helvetica, sans-serif);
+  font-weight: 500;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background 150ms, box-shadow 150ms;
+}
+.qw-confirm-btn:focus-visible {
+  outline: 2px solid var(--qw-accent, #0070f3);
+  outline-offset: 2px;
+}
+.qw-confirm-btn-primary {
+  background: #171717;
+  color: #fff;
+  font-size: 15px;
+}
+.qw-confirm-btn-primary:hover {
+  background: #333;
+}
+.qw-confirm-btn-secondary {
+  background: #fff;
+  color: #171717;
+  font-size: 14px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.14);
+}
+.qw-confirm-btn-secondary:hover {
+  background: #fafafa;
+  box-shadow: 0 0 0 1px #171717;
+}
