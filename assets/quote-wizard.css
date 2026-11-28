@@ -2346,6 +2346,7 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
   display: none !important;
 }
 .qw-price-trust {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -2761,6 +2762,7 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 /* Klarna On-Site Messaging: full-width row under the tiles and price, so the widget is not clipped. */
 .qw-klarna-line{display:flex;align-items:center;justify-content:center;width:100%;min-width:0;padding:10px 14px 12px;box-shadow:inset 0 1px 0 #e6e6e6;background:#fff}
 .qw-klarna-line[hidden]{display:none}
+.qw-klarna-line.is-waiting{position:absolute;left:0;right:0;visibility:hidden;pointer-events:none}
 .qw-klarna-line klarna-placement{display:block;width:100%;min-width:0;max-width:100%}
 
 /* Mail-in explainer (out-of-courier-area postcodes): same confirm block as the original (light blue), positive tone. */
@@ -2780,6 +2782,6 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 .qw-dropoff-link:focus-visible{outline:2px solid var(--qw-accent,#0070f3);outline-offset:2px;border-radius:4px}
 .qw-dropoff-card{margin-top:4px;cursor:default}
 .qw-dropoff-card[hidden]{display:none}
-@media (min-width:700px){
+@media (min-width:720px){
   .qw-klarna-line{flex:1 1 100%;width:100%;padding:8px 16px 10px}
 }

@@ -165,6 +165,11 @@ describe('Item 2: remove star icons and set Fitzrovia hours to Mon to Fri 9am to
     assert.equal(wizardJs.includes('Pay in 3 with Klarna at checkout'), false);
   });
 
+  it('GRO-8: hiding the price also hides and empties the Klarna slot', () => {
+    const chunk = sliceFn(wizardJs, 'function setPriceVisibility(show)', 'var _klarnaOsmTimer');
+    assert.match(chunk, /renderKlarnaLine\(0\)/);
+  });
+
   it('uses Mon to Fri 9am to 6pm on Fitzrovia drop-off card and walk-in morning window on Fridays', () => {
     assert.match(wizardJs, /12 Margaret Street, Fitzrovia W1W 8JQ\. Mon to Fri 9am to 6pm\./);
     assert.equal(/Fri 10am to 6pm/.test(wizardJs), false);

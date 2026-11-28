@@ -1959,6 +1959,7 @@
       if (totalEl) setupStickyCTA(totalEl.textContent);
     } else {
       destroyStickyCTA();
+      renderKlarnaLine(0);
     }
   }
 
@@ -2013,24 +2014,33 @@
     }
     if (!(total >= 100)) {
       k.hidden = true;
+      k.classList.remove('is-waiting');
       k.replaceChildren();
       return;
     }
     var pence = klarnaAmountPence(total);
-    k.hidden = false;
     var pl = mountKlarnaPlacement(k, pence);
-    if (klarnaPlacementPainted(pl)) return;
+    k.hidden = false;
+    if (klarnaPlacementPainted(pl)) {
+      k.classList.remove('is-waiting');
+      return;
+    }
+    k.classList.add('is-waiting');
     var tries = 0;
     (function pollOsm() {
       var slot = document.getElementById('qwKlarna');
       if (!slot || slot !== k) return;
       var node = slot.querySelector('klarna-placement');
       if (!node || node.getAttribute('data-purchase-amount') !== pence) return;
-      if (klarnaPlacementPainted(node)) return;
+      if (klarnaPlacementPainted(node)) {
+        slot.classList.remove('is-waiting');
+        return;
+      }
       tries += 1;
       if (tries < 40) _klarnaOsmTimer = setTimeout(pollOsm, 250);
       else {
         slot.hidden = true;
+        slot.classList.remove('is-waiting');
         slot.replaceChildren();
       }
     })();
