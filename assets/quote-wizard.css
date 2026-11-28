@@ -2763,7 +2763,7 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
 .qw-klarna-badge svg,.qw-klarna-badge .qw-klarna-icon{display:block;width:auto;height:24px}
 .qw-klarna-text{min-width:0;font-size:13px;line-height:1.4;color:var(--qw-text-2);font-variant-numeric:tabular-nums}
 
-/* Mail-in explainer (out-of-courier-area postcodes): same green confirm block as the original, positive tone. */
+/* Mail-in explainer (out-of-courier-area postcodes): same confirm block as the original (light blue), positive tone. */
 .qw-mailin-explainer{padding:12px 14px}
 .qw-mailin-explainer .qw-courier-confirm-title{font-size:15px}
 .qw-mailin-steps{list-style:none;margin:10px 0 0;padding:0}

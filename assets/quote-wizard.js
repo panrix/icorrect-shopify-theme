@@ -568,11 +568,15 @@
   }
 
   function courierTrackExtra(quote, extra) {
+    var payload;
     if (window.ICorrectCourier && typeof window.ICorrectCourier.courierFunnelExtra === 'function') {
-      return window.ICorrectCourier.courierFunnelExtra(quote, extra);
+      payload = window.ICorrectCourier.courierFunnelExtra(quote, extra);
+    } else {
+      payload = extra ? Object.assign({}, extra) : {};
+      delete payload.postcode;
     }
-    var payload = extra ? Object.assign({}, extra) : {};
-    delete payload.postcode;
+    /* Workshop drop-off is its own service in the funnel. */
+    if (payload && selectedServiceKind() === 'workshop') payload.service = 'walk-in';
     return payload;
   }
 
@@ -2578,7 +2582,7 @@
         ensureCourierAssets().then(function () { runLookup(settled); }); return;
       }
       if (selectedServiceKind() === 'workshop') {
-        if (pc === _dropPc) return;
+        if (pc.toUpperCase().replace(/\s+/g, '') === _dropPc.toUpperCase().replace(/\s+/g, '')) return;
         dropoffReset();
       }
       var kind = selectedServiceKind();
@@ -4602,7 +4606,7 @@
 
   /* ---- WIRING HELPERS ---- */
   function wireOptCards(container) {
-    container.querySelectorAll('.qw-opt-card').forEach(function(card) {
+    container.querySelectorAll('.qw-opt-card:not([data-svc="workshop"])').forEach(function(card) {
       wireA11y(card, card.querySelector('.qw-opt-name') ? card.querySelector('.qw-opt-name').textContent : '');
       card.onclick = function() {
         var resCard = document.getElementById('qwResCard');
@@ -4674,7 +4678,7 @@
       serviceName = qwText(svc.querySelector('.qw-opt-name'));
       serviceMeta = qwText(svc.querySelector('.qw-opt-meta'));
       servicePriceLabel = qwText(svc.querySelector('.qw-opt-price'));
-      if (servicePriceLabel === '-' || servicePriceLabel === '-') servicePriceLabel = '';
+      if (servicePriceLabel === '-') servicePriceLabel = '';
     }
     var result = document.getElementById('qwCourierResult');
     var noticeTitle = '';

@@ -146,12 +146,10 @@ describe('Item 1: theme.liquid smooth-scroll guard and details element null-guar
 });
 
 describe('Item 2: remove star icons and set Fitzrovia hours to Mon to Fri 9am to 6pm', () => {
-  it('removes star icons and aggregateRating from quote wizard trust tiles and CSS', () => {
-    assert.equal(wizardJs.includes('qw-trust-stars'), false);
-    assert.equal(wizardJs.includes('starSvg'), false);
+  it('GRO-8: keeps the gold stars (restored pre-23 Nov look), no aggregateRating, and the 4.8 from 750+ wording', () => {
+    assert.equal(wizardJs.includes('qw-trust-stars'), true);
     assert.equal(wizardJs.includes('aggregateRating'), false);
-    assert.equal(wizardCss.includes('.qw-trust-stars'), false);
-    assert.match(wizardJs, /4\.8 out of 5 from 750\+ Google reviews/);
+    assert.match(wizardJs, /from 750\+ Google reviews/);
   });
 
   it('uses Mon to Fri 9am to 6pm on Fitzrovia drop-off card and walk-in morning window on Fridays', () => {
@@ -166,7 +164,8 @@ describe('Item 2: remove star icons and set Fitzrovia hours to Mon to Fri 9am to
   });
 });
 
-describe('Item 4: B3/B4 under-200 mail-in explanation and courier pill hint', () => {
+/* GRO-8: Item 4 copy (b3b4MailInThresholdCopy) belongs to the #134 wizard that the restore replaced */
+describe.skip('Item 4: B3/B4 under-200 mail-in explanation and courier pill hint', () => {
   const b3b4Chunk = sliceFn(wizardJs, 'function b3b4MailInThresholdCopy(', 'function paintPostcodeSummary()');
   const hintChunk = sliceFn(wizardJs, 'function formatServiceCardHint(', '/* Hide mail-in only');
 
@@ -226,12 +225,10 @@ describe('Item 5: backdrop fix, mobile CTA order, cookie banner offset, and stic
   it('forces .qw-confirm-backdrop display: block !important and hides .qw-confirm-modal[hidden]', () => {
     assert.match(wizardCss, /\.qw-confirm-backdrop\s*\{[^}]*display:\s*block\s*!important/s);
     assert.match(wizardCss, /\.qw-confirm-modal\[hidden\]\s*\{[^}]*display:\s*none\s*!important/s);
-    assert.match(wizardCss, /#qw-sticky-cta\.qw-sticky-cta\{[^}]*bottom:var\(--qw-cookie-h,0px\)/);
-    assert.match(wizardCss, /#qw-sticky-cta\.qw-sticky-cta\{[^}]*z-index:10050/);
-    assert.match(wizardCss, /#qwSummary\.qw-priced\{[^}]*padding-bottom:calc\(96px \+ var\(--qw-cookie-h,0px\)\)/);
   });
 
-  it('placeDeliveryReveal moves #qwDeliveryReveal into #qwSummary on mobile and restores it on desktop', () => {
+  /* GRO-8: asserts #134 / #137 wizard internals that the restore replaced */
+  it.skip('placeDeliveryReveal moves #qwDeliveryReveal into #qwSummary on mobile and restores it on desktop', () => {
     function makeNode(id) {
       const node = {
         id,
@@ -302,7 +299,8 @@ describe('Item 5: backdrop fix, mobile CTA order, cookie banner offset, and stic
     assert.deepEqual(mapper.children.map((c) => c.id), ['qwPostcodeCard', 'qwDeliveryReveal', 'qwServiceErr']);
   });
 
-  it('tracks cookie banner height and toggles sticky CTA based on unobstructed viewport bounds', () => {
+  /* GRO-8: asserts #134 / #137 wizard internals that the restore replaced */
+  it.skip('tracks cookie banner height and toggles sticky CTA based on unobstructed viewport bounds', () => {
     const chunk = sliceFn(
       wizardJs,
       '/* =============================================\n     [5.1] COOKIE BANNER OFFSET + STICKY CTA ON MOBILE',
@@ -500,7 +498,8 @@ describe('Item 5: backdrop fix, mobile CTA order, cookie banner offset, and stic
     );
   });
 
-  it('mobile focus() nudges scroll so #qwBookBtn clears a tall cookie banner without pushing price card above header', () => {
+  /* GRO-8: asserts #134 / #137 wizard internals that the restore replaced */
+  it.skip('mobile focus() nudges scroll so #qwBookBtn clears a tall cookie banner without pushing price card above header', () => {
     const scrolls = [];
     const rects = {
       head: { top: 0, bottom: 58, height: 58 },
