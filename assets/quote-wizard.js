@@ -1308,7 +1308,7 @@
           '<span class="qw-trust-score">4.8</span>' +
           '<span class="qw-trust-reviews-meta">' +
             '<span class="qw-trust-stars" aria-hidden="true">' + stars + '</span>' +
-            '<span class="qw-trust-sub">from 750+ Google reviews</span>' +
+            '<span class="qw-trust-sub">750+ Google reviews</span>' +
           '</span>' +
         '</li>' +
         '<li class="qw-trust-cell qw-trust-parts">' +
@@ -1963,7 +1963,7 @@
     }
   }
 
-  /* One line under the price: Klarna badge (Shopify's Klarna payment icon, unaltered, via payment_type_svg_tag in the section template) plus the 3 payment line, total / 3 rounded to the penny, from GBP 100. No eligibility text (Ricky's ruling). */
+  /* One line under the price: Klarna badge (Shopify's Klarna payment icon, unaltered, via payment_type_svg_tag in the section template) plus Klarna UK official no-disclosure wording "Pay with Klarna". Shown from GBP 100. No amount, no eligibility text (Ricky's ruling, 28 Nov 2026). */
   function renderKlarnaLine(total) {
     var k = document.getElementById('qwKlarna');
     if (!k) return;
@@ -1972,7 +1972,7 @@
       var badge = tpl ? String(tpl.innerHTML || '').trim() : '';
       k.hidden = false;
       k.innerHTML = (badge ? '<span class="qw-klarna-badge">' + badge + '</span>' : '') +
-        '<span class="qw-klarna-text">Or 3 interest-free payments of ' + gbp.format(Math.round(total / 3 * 100) / 100) + ' with Klarna</span>';
+        '<span class="qw-klarna-text">Pay with Klarna</span>';
     } else {
       k.hidden = true;
       k.innerHTML = '';

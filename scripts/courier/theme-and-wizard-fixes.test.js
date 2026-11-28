@@ -149,7 +149,15 @@ describe('Item 2: remove star icons and set Fitzrovia hours to Mon to Fri 9am to
   it('GRO-8: keeps the gold stars (restored pre-23 Nov look), no aggregateRating, and the 4.8 from 750+ wording', () => {
     assert.equal(wizardJs.includes('qw-trust-stars'), true);
     assert.equal(wizardJs.includes('aggregateRating'), false);
-    assert.match(wizardJs, /from 750\+ Google reviews/);
+    assert.match(wizardJs, /aria-label="4\.8 from 750\+ Google reviews"/);
+    assert.match(wizardJs, /qw-trust-sub">750\+ Google reviews</);
+    assert.equal(wizardJs.includes('qw-trust-sub">from 750+ Google reviews'), false);
+  });
+
+  it('GRO-8: Klarna line is the official no-disclosure wording with no amount', () => {
+    assert.match(wizardJs, /qw-klarna-text">Pay with Klarna</);
+    assert.equal(wizardJs.includes('interest-free payments of'), false);
+    assert.equal(wizardJs.includes('Pay in 3 with Klarna at checkout'), false);
   });
 
   it('uses Mon to Fri 9am to 6pm on Fitzrovia drop-off card and walk-in morning window on Fridays', () => {
