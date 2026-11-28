@@ -204,8 +204,13 @@ describe('ICO-11 visual, copy, and SEO parity with 5033f06', () => {
     const heroHeadingSetting = heroSchema.settings.find((s) => s.id === 'heading');
     assert.equal(tpl.sections.ico_11_hero.settings.heading, 'MacBook Screen Repair Prices');
     assert.equal(heroHeadingSetting.default, 'MacBook Screen Repair Prices');
-    assert.match(tpl.sections.ico_11_hero.settings.lead, /from £299/);
-    assert.match(tpl.sections.ico_11_hero.settings.lead, /30% to 50% less/);
+    const heroLead =
+      'Get your MacBook back like new in 2 working days for 30% to 50% less than Apple. Genuine Apple displays from £299, fixed upfront and backed by a 2-year warranty.';
+    const heroLeadSetting = heroSchema.settings.find((s) => s.id === 'lead');
+    assert.equal(tpl.sections.ico_11_hero.settings.lead, heroLead);
+    assert.equal(heroLeadSetting.default, heroLead);
+    assert.doesNotMatch(tpl.sections.ico_11_hero.settings.lead, /[\u2013\u2014]/);
+    assert.doesNotMatch(heroLeadSetting.default, /[\u2013\u2014]/);
     assert.match(tpl.sections.ico_11_faqs.blocks.faq_collection.settings.answer, /Band 4/i);
     assert.match(tpl.sections.ico_11_faqs.blocks.faq_collection.settings.answer, /£25/);
   });
