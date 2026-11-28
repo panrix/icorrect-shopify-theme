@@ -1,0 +1,295 @@
+{{ 'ico-11-screen-repair.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ico-11-screen-repair.js' | asset_url }}" defer="defer"></script>
+
+<section class="hero-band">
+  <div class="ic-container">
+    <div class="hero-top-row">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="{{ routes.root_url }}">Home</a>
+        <span aria-hidden="true">/</span>
+        <a href="{{ section.settings.parent_url | default: '/pages/macbook-repairs' }}">{{ section.settings.parent_label | escape }}</a>
+        <span aria-hidden="true">/</span>
+        <span class="breadcrumb-current" aria-current="page">{{ section.settings.current_label | escape }}</span>
+      </nav>
+
+      {%- if section.settings.show_jump_nav -%}
+        <ul class="page-jump-nav" aria-label="On this page">
+          <li><a href="#process-strip">How it works</a></li>
+          <li><a href="#compare">How we compare</a></li>
+          <li><a href="#workshop">Fitzrovia workshop</a></li>
+          <li><a href="#faqs">FAQs</a></li>
+          <li><a href="#prices-by-model">Prices by model</a></li>
+        </ul>
+      {%- endif -%}
+    </div>
+
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <h1 class="hero-title">{{ section.settings.heading | escape }}</h1>
+        <p class="hero-lead">{{ section.settings.lead | escape }}</p>
+        <div class="hero-actions" id="hero-actions">
+          <a class="btn-dark hero-primary-cta" href="{{ section.settings.primary_cta_url }}">{{ section.settings.primary_cta_label | escape }}</a>
+          <a class="btn-ghost" href="{{ section.settings.secondary_cta_url }}">{{ section.settings.secondary_cta_label | escape }}</a>
+        </div>
+      </div>
+
+      <div class="diagram-stage">
+        <div class="diagram-header">
+          <p class="diagram-title">{{ section.settings.diagram_title | escape }}</p>
+          <span class="diagram-pill"><span class="diagram-pill-dot" aria-hidden="true"></span>{{ section.settings.diagram_pill | escape }}</span>
+        </div>
+        <div class="diagram-body">
+          <div class="diagram-frame">
+            <img
+              src="{{ 'ico-11-display-assembly-clean.svg' | asset_url }}"
+              width="392"
+              height="732"
+              fetchpriority="high"
+              alt="{{ section.settings.diagram_alt | escape }}"
+            >
+          </div>
+          <div class="diagram-groups" aria-label="Parts replaced versus parts kept original">
+            <div class="diagram-group is-replace">
+              <span class="diagram-group-kicker">{{ section.settings.replace_kicker | escape }}</span>
+              <strong class="diagram-group-title">{{ section.settings.replace_title | escape }}</strong>
+              <span class="diagram-group-sub">{{ section.settings.replace_sub | escape }}</span>
+            </div>
+            <div class="diagram-group">
+              <span class="diagram-group-kicker">{{ section.settings.keep_kicker | escape }}</span>
+              <strong class="diagram-group-title">{{ section.settings.keep_title | escape }}</strong>
+              <span class="diagram-group-sub">{{ section.settings.keep_sub | escape }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="diagram-caption">
+          <span class="caption-swatch" aria-hidden="true"></span>
+          <span>{{ section.settings.diagram_caption | escape }}</span>
+        </div>
+      </div>
+
+      <ul class="stamp-strip" id="trust-strip" role="list" aria-label="Key repair facts">
+        <li class="stamp-cell">
+          <a class="stamp-link" href="#google-reviews">
+            <span class="stamp-figure-row">
+              <svg class="stamp-g-mark" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              <strong class="stamp-figure">{{ section.settings.stamp_1_figure | escape }}</strong>
+            </span>
+            <span class="stamp-label">{{ section.settings.stamp_1_label | escape }}</span>
+          </a>
+        </li>
+        <li class="stamp-cell">
+          <a class="stamp-link" href="#starting-prices">
+            <strong class="stamp-figure">{{ section.settings.stamp_2_figure | escape }}</strong>
+            <span class="stamp-label">{{ section.settings.stamp_2_label | escape }}</span>
+          </a>
+        </li>
+        <li class="stamp-cell">
+          <strong class="stamp-figure">{{ section.settings.stamp_3_figure | escape }}</strong>
+          <span class="stamp-label">{{ section.settings.stamp_3_label | escape }}</span>
+        </li>
+        <li class="stamp-cell">
+          <a class="stamp-link" href="#warranty">
+            <strong class="stamp-figure">{{ section.settings.stamp_4_figure | escape }}</strong>
+            <span class="stamp-label">{{ section.settings.stamp_4_label | escape }}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "ICO-11 Hero & Proof",
+  "tag": "div",
+  "class": "ico11-shopify",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_jump_nav",
+      "label": "Show desktop in-page jump links",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "parent_label",
+      "label": "Breadcrumb parent label",
+      "default": "MacBook repairs"
+    },
+    {
+      "type": "url",
+      "id": "parent_url",
+      "label": "Breadcrumb parent URL",
+      "info": "Leave blank to default to /pages/macbook-repairs."
+    },
+    {
+      "type": "text",
+      "id": "current_label",
+      "label": "Breadcrumb current page label",
+      "default": "MacBook screen repair"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Hero heading (H1)",
+      "default": "MacBook Screen Repair Prices"
+    },
+    {
+      "type": "textarea",
+      "id": "lead",
+      "label": "Hero lead copy",
+      "default": "Fixed upfront pricing from £299, 30% to 50% less than a full-lid swap. We replace the genuine Apple display panel only, keeping your lid, camera, and hinges."
+    },
+    {
+      "type": "text",
+      "id": "primary_cta_label",
+      "label": "Primary CTA label",
+      "default": "Get your price"
+    },
+    {
+      "type": "text",
+      "id": "primary_cta_url",
+      "label": "Primary CTA link",
+      "default": "#quote-section"
+    },
+    {
+      "type": "text",
+      "id": "secondary_cta_label",
+      "label": "Secondary CTA label",
+      "default": "See starting prices"
+    },
+    {
+      "type": "text",
+      "id": "secondary_cta_url",
+      "label": "Secondary CTA link",
+      "default": "#starting-prices"
+    },
+    {
+      "type": "header",
+      "content": "Display assembly diagram"
+    },
+    {
+      "type": "text",
+      "id": "diagram_title",
+      "label": "Diagram header title",
+      "default": "What we replace"
+    },
+    {
+      "type": "text",
+      "id": "diagram_pill",
+      "label": "Diagram badge",
+      "default": "Genuine panel only"
+    },
+    {
+      "type": "text",
+      "id": "diagram_alt",
+      "label": "Diagram alt text",
+      "default": "Exploded isometric view of a MacBook display lid showing the genuine Apple polarizer and LCD panel highlighted in blue above your original backlight, display cable, aluminium lid shell, and hinges"
+    },
+    {
+      "type": "text",
+      "id": "replace_kicker",
+      "label": "Replaced group kicker",
+      "default": "We replace"
+    },
+    {
+      "type": "text",
+      "id": "replace_title",
+      "label": "Replaced group title",
+      "default": "Genuine Apple display panel"
+    },
+    {
+      "type": "text",
+      "id": "replace_sub",
+      "label": "Replaced group description",
+      "default": "Polarizer and LCD panel, calibrated in-house"
+    },
+    {
+      "type": "text",
+      "id": "keep_kicker",
+      "label": "Kept group kicker",
+      "default": "Stays yours"
+    },
+    {
+      "type": "text",
+      "id": "keep_title",
+      "label": "Kept group title",
+      "default": "Lid, camera, hinges"
+    },
+    {
+      "type": "text",
+      "id": "keep_sub",
+      "label": "Kept group description",
+      "default": "Original aluminium shell and hardware"
+    },
+    {
+      "type": "textarea",
+      "id": "diagram_caption",
+      "label": "Diagram caption",
+      "default": "Blue is what we replace. Your working lid, camera, and hinges stay in use instead of going to waste."
+    },
+    {
+      "type": "header",
+      "content": "Proof stamps"
+    },
+    {
+      "type": "text",
+      "id": "stamp_1_figure",
+      "label": "Stamp 1 figure",
+      "default": "4.8"
+    },
+    {
+      "type": "text",
+      "id": "stamp_1_label",
+      "label": "Stamp 1 label",
+      "default": "from 750+ Google reviews"
+    },
+    {
+      "type": "text",
+      "id": "stamp_2_figure",
+      "label": "Stamp 2 figure",
+      "default": "from £299"
+    },
+    {
+      "type": "text",
+      "id": "stamp_2_label",
+      "label": "Stamp 2 label",
+      "default": "fixed upfront, free UK mail-in"
+    },
+    {
+      "type": "text",
+      "id": "stamp_3_figure",
+      "label": "Stamp 3 figure",
+      "default": "2 working days"
+    },
+    {
+      "type": "text",
+      "id": "stamp_3_label",
+      "label": "Stamp 3 label",
+      "default": "once it reaches our workshop"
+    },
+    {
+      "type": "text",
+      "id": "stamp_4_figure",
+      "label": "Stamp 4 figure",
+      "default": "2-year warranty"
+    },
+    {
+      "type": "text",
+      "id": "stamp_4_label",
+      "label": "Stamp 4 label",
+      "default": "panel and workmanship"
+    }
+  ],
+  "presets": [
+    {
+      "name": "ICO-11 Hero & Proof"
+    }
+  ]
+}
+{% endschema %}

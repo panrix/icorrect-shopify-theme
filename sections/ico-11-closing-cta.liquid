@@ -1,0 +1,97 @@
+<section class="section section-compact section-dark" id="closing-cta" aria-label="Book your MacBook screen repair">
+  <div class="ic-container">
+    <div class="closing-cta-band">
+      <div class="closing-cta-top">
+        <h2>{{ section.settings.heading | escape }}</h2>
+        <a class="btn-white" href="{{ section.settings.cta_url }}">{{ section.settings.cta_label | escape }}</a>
+      </div>
+      <ul class="closing-stamps" role="list">
+        <li class="closing-stamp">
+          <strong class="closing-stamp-val">{{ section.settings.stamp_1_val | escape }}</strong>
+          <span class="closing-stamp-sub">{{ section.settings.stamp_1_sub | escape }}</span>
+        </li>
+        <li class="closing-stamp">
+          <strong class="closing-stamp-val">{{ section.settings.stamp_2_val | escape }}</strong>
+          <span class="closing-stamp-sub">{{ section.settings.stamp_2_sub | escape }}</span>
+        </li>
+        <li class="closing-stamp">
+          <strong class="closing-stamp-val">{{ section.settings.stamp_3_val | escape }}</strong>
+          <span class="closing-stamp-sub">{{ section.settings.stamp_3_sub | escape }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="mobile-sticky-bar" id="mobile-sticky-bar" aria-hidden="true">
+  <a class="btn-dark" id="mobile-sticky-cta" href="{{ section.settings.cta_url }}" tabindex="-1">{{ section.settings.cta_label | escape }}</a>
+</div>
+
+{% schema %}
+{
+  "name": "ICO-11 Closing CTA",
+  "tag": "div",
+  "class": "ico11-shopify",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Get your fixed MacBook screen price"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "CTA label",
+      "default": "Get your price"
+    },
+    {
+      "type": "text",
+      "id": "cta_url",
+      "label": "CTA link",
+      "default": "#quote-section"
+    },
+    {
+      "type": "text",
+      "id": "stamp_1_val",
+      "label": "Stamp 1 value",
+      "default": "from £299"
+    },
+    {
+      "type": "text",
+      "id": "stamp_1_sub",
+      "label": "Stamp 1 subtitle",
+      "default": "Fixed upfront, free UK mail-in"
+    },
+    {
+      "type": "text",
+      "id": "stamp_2_val",
+      "label": "Stamp 2 value",
+      "default": "2 working days"
+    },
+    {
+      "type": "text",
+      "id": "stamp_2_sub",
+      "label": "Stamp 2 subtitle",
+      "default": "Once it reaches our workshop"
+    },
+    {
+      "type": "text",
+      "id": "stamp_3_val",
+      "label": "Stamp 3 value",
+      "default": "2-year warranty"
+    },
+    {
+      "type": "text",
+      "id": "stamp_3_sub",
+      "label": "Stamp 3 subtitle",
+      "default": "Panel and workmanship"
+    }
+  ],
+  "presets": [
+    {
+      "name": "ICO-11 Closing CTA"
+    }
+  ]
+}
+{% endschema %}
