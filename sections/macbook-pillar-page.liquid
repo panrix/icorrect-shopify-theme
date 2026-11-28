@@ -1,0 +1,2801 @@
+{% comment %}
+  MacBook Board Repair Pillar Page (Liquid Damage / Dead & No Power)
+  Split section (render_part: 'top' | 'bottom' | 'all') aligned to the signed-off /ico-11/ 5033f06 system.
+  Band order: 1 Hero (#fff), 2 Reviews (#fafafa), 3 Bench proof (#fff), 4 Process rail (#fafafa),
+  5 Comparison (#fff), 6 Workshop & Warranty (#fafafa), 7 Symptoms (#fff), 8 Identify (#fafafa),
+  9 Quote wizard (#f4f4f5, full bleed), 10 FAQs (#fff), 11 Prices & Related (#fafafa),
+  12 Closing CTA (#111827), 13 Footer (#0b101b).
+{% endcomment %}
+
+{%- assign render_part = section.settings.render_part | default: 'all' -%}
+{%- assign cta_label = section.settings.cta_primary_label | default: 'Book your £49 diagnostic' -%}
+{%- assign cta_secondary_label = section.settings.cta_secondary_label | default: 'See how it works' -%}
+{%- assign ti_id = section.settings.trustindex_widget_id | default: '47cc7ef8590e8871fa062160cf7' -%}
+
+{%- if render_part == 'all' or render_part == 'top' -%}
+<style>
+  @font-face {
+    font-family: "Geist";
+    src: url("{{ 'Geist-Variable.woff2' | asset_url }}") format("woff2-variations"),
+         url("{{ 'Geist-Variable.woff2' | asset_url }}") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Geist Mono";
+    src: url("{{ 'GeistMono-Variable.woff2' | asset_url }}") format("woff2-variations"),
+         url("{{ 'GeistMono-Variable.woff2' | asset_url }}") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  :root {
+    --icp-font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    --icp-font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+    --icp-ink: #111827;
+    --icp-ink-hover: #1f2937;
+    --icp-fg-1: #111827;
+    --icp-fg-2: #4b5563;
+    --icp-fg-3: #5c6470;
+    --icp-bg-1: #ffffff;
+    --icp-bg-2: #fafafa;
+    --icp-bg-3: #f4f4f5;
+    --icp-line: #e5e7eb;
+    --icp-line-strong: #c4c8cf;
+    --icp-control-border: #8b919b;
+    --icp-accent: #38598C;
+    --icp-accent-hover: #2E4A72;
+    --icp-accent-soft: #eff2f6;
+    --icp-accent-line: #c7d4e5;
+    --icp-focus: #38598C;
+    --icp-footer-bg: #0b101b;
+
+    --icp-space-1: 4px;
+    --icp-space-2: 8px;
+    --icp-space-3: 12px;
+    --icp-space-4: 16px;
+    --icp-space-5: 20px;
+    --icp-space-6: 24px;
+    --icp-space-8: 32px;
+    --icp-space-10: 40px;
+    --icp-space-12: 48px;
+    --icp-space-16: 64px;
+
+    --icp-text-xs: 12px;
+    --icp-text-sm: 14px;
+    --icp-text-md: 16px;
+    --icp-text-lg: 20px;
+    --icp-text-xl: 24px;
+    --icp-text-2xl: 30px;
+    --icp-text-3xl: 36px;
+    --icp-text-hero: 44px;
+
+    --icp-shadow-card: 0 1px 2px rgba(17, 24, 39, 0.04);
+    --icp-shadow-bar: 0 -4px 16px rgba(17, 24, 39, 0.08);
+    --icp-r-sm: 6px;
+    --icp-r-md: 8px;
+    --icp-r-lg: 12px;
+    --icp-r-pill: 999px;
+    --icp-max-w: 1120px;
+    --icp-header-h: 56px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--icp-header-h) + var(--icp-space-4));
+    overflow-x: clip;
+  }
+
+  .icp-page,
+  .icp-page *,
+  .icp-page *::before,
+  .icp-page *::after {
+    box-sizing: border-box;
+  }
+
+  .icp-page {
+    font-family: var(--icp-font-sans);
+    color: var(--icp-fg-1);
+    background: var(--icp-bg-1);
+    font-size: var(--icp-text-md);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "liga";
+  }
+
+  .icp-page a { color: inherit; }
+  .icp-page a.icp-btn-dark,
+  .icp-btn-dark { color: #ffffff; }
+  .icp-page a.icp-btn-ghost,
+  .icp-btn-ghost { color: var(--icp-fg-1); }
+  .icp-page a.icp-btn-white,
+  .icp-btn-white { color: var(--icp-ink); }
+  .icp-page a.icp-text-link,
+  .icp-text-link { color: var(--icp-accent); }
+  .icp-page .icp-site-footer a { color: #ffffff; }
+  .icp-page button,
+  .icp-page input { font-family: inherit; }
+  .icp-page img,
+  .icp-page svg { display: block; max-width: 100%; }
+  .icp-page h1,
+  .icp-page h2,
+  .icp-page h3 { text-wrap: balance; }
+
+  .icp-page :focus-visible,
+  .icp-site-header :focus-visible,
+  .icp-mobile-sticky-bar :focus-visible {
+    outline: 2px solid var(--icp-focus);
+    outline-offset: 2px;
+  }
+  .icp-section-dark :focus-visible,
+  .icp-site-footer :focus-visible {
+    outline-color: #ffffff;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .icp-page *,
+    .icp-page *::before,
+    .icp-page *::after,
+    .icp-mobile-sticky-bar {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+
+  .icp-tabular,
+  .icp-stamp-figure,
+  .icp-price-chip-val,
+  .icp-cmp-val,
+  .icp-timeline-bracket-val,
+  .icp-warranty-stamp,
+  .icp-closing-stamp-val {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .icp-container {
+    width: 100%;
+    max-width: var(--icp-max-w);
+    margin: 0 auto;
+    padding: 0 var(--icp-space-6);
+  }
+
+  .icp-mono-label {
+    font-family: var(--icp-font-mono);
+    font-size: var(--icp-text-xs);
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--icp-fg-3);
+  }
+
+  /* Shared 2px stroke UI icons */
+  .icp-chev {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    font-size: 0;
+    background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") center / 16px no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") center / 16px no-repeat;
+    transition: transform 150ms ease-out;
+  }
+  [aria-expanded="true"] .icp-chev { transform: rotate(180deg); }
+
+  .icp-chev-right {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    font-size: 0;
+    background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6-6 6'/%3E%3C/svg%3E") center / 16px no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6-6 6'/%3E%3C/svg%3E") center / 16px no-repeat;
+    transition: transform 150ms ease-out;
+  }
+
+  .icp-check-mark {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-top: 3px;
+    flex-shrink: 0;
+    font-size: 0;
+    background: var(--icp-fg-1);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 16px no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 16px no-repeat;
+  }
+
+  .icp-cross-mark {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-top: 3px;
+    flex-shrink: 0;
+    font-size: 0;
+    background: var(--icp-fg-3);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 7l10 10M17 7L7 17'/%3E%3C/svg%3E") center / 16px no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 7l10 10M17 7L7 17'/%3E%3C/svg%3E") center / 16px no-repeat;
+  }
+
+  /* Buttons */
+  .icp-btn-dark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--icp-space-2);
+    min-height: 44px;
+    padding: 0 var(--icp-space-5);
+    border-radius: var(--icp-r-md);
+    background: var(--icp-ink);
+    color: #ffffff;
+    border: 1px solid var(--icp-ink);
+    font-size: var(--icp-text-sm);
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 140ms ease, transform 140ms ease-out;
+    white-space: nowrap;
+  }
+  .icp-btn-dark:hover { background: var(--icp-ink-hover); color: #ffffff; }
+  .icp-btn-dark:active { background: #000000; transform: translateY(1px); }
+
+  .icp-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--icp-space-2);
+    min-height: 44px;
+    padding: 0 var(--icp-space-4);
+    border-radius: var(--icp-r-md);
+    background: #ffffff;
+    color: var(--icp-fg-1);
+    border: 1px solid var(--icp-control-border);
+    font-size: var(--icp-text-sm);
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 140ms ease, background 140ms ease;
+    white-space: nowrap;
+  }
+  .icp-btn-ghost:hover {
+    border-color: var(--icp-fg-1);
+    background: var(--icp-bg-2);
+    color: var(--icp-fg-1);
+  }
+  .icp-btn-ghost:active { background: var(--icp-bg-3); }
+
+  .icp-btn-white {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--icp-space-2);
+    min-height: 48px;
+    padding: 0 var(--icp-space-6);
+    border-radius: var(--icp-r-md);
+    background: #ffffff;
+    color: var(--icp-ink);
+    border: 1px solid #ffffff;
+    font-size: var(--icp-text-md);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 140ms ease, transform 140ms ease-out;
+    white-space: nowrap;
+  }
+  .icp-btn-white:hover { background: #f3f4f6; color: var(--icp-ink); }
+  .icp-btn-white:active { transform: translateY(1px); }
+
+  .icp-text-link {
+    color: var(--icp-accent);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .icp-text-link:hover { color: var(--icp-accent-hover); }
+
+  /* 1. HERO BAND */
+  .icp-hero-band {
+    padding: var(--icp-space-6) 0 var(--icp-space-8);
+    background: var(--icp-bg-1);
+    border-bottom: 1px solid var(--icp-line);
+  }
+  .icp-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--icp-space-2);
+    margin-bottom: var(--icp-space-5);
+    font-size: var(--icp-text-sm);
+    color: var(--icp-fg-3);
+    flex-wrap: wrap;
+  }
+  .icp-breadcrumb a { color: var(--icp-fg-3); text-underline-offset: 3px; text-decoration: none; }
+  .icp-breadcrumb a:hover { color: var(--icp-ink); text-decoration: underline; }
+  .icp-breadcrumb-current {
+    color: var(--icp-ink);
+    font-weight: 500;
+  }
+
+  .icp-hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--icp-space-12);
+    row-gap: 0;
+    align-items: center;
+  }
+  .icp-hero-grid > * { min-width: 0; }
+  .icp-hero-grid > .icp-stamp-strip { grid-column: 1 / -1; }
+
+  .icp-hero-title {
+    margin: 0 0 var(--icp-space-4);
+    font-size: var(--icp-text-hero);
+    font-weight: 600;
+    line-height: 1.08;
+    letter-spacing: -0.04em;
+    color: var(--icp-fg-1);
+  }
+  .icp-hero-lead {
+    margin: 0 0 var(--icp-space-5);
+    font-size: var(--icp-text-md);
+    line-height: 1.5;
+    color: var(--icp-fg-2);
+    max-width: 48ch;
+    text-wrap: pretty;
+  }
+
+  /* Triage plate (ink and neutral only) */
+  .icp-triage {
+    margin: 0 0 var(--icp-space-5);
+    padding: var(--icp-space-3) var(--icp-space-4);
+    background: var(--icp-bg-3);
+    border: 1px solid var(--icp-line-strong);
+    border-radius: var(--icp-r-md);
+    box-shadow: inset 0 1px 0 #ffffff;
+  }
+  .icp-triage-title {
+    margin: 0 0 var(--icp-space-2);
+    font-size: var(--icp-text-sm);
+    font-weight: 600;
+    color: var(--icp-fg-1);
+    line-height: 1.35;
+  }
+  .icp-triage-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--icp-space-1) var(--icp-space-5);
+    font-size: var(--icp-text-sm);
+    color: var(--icp-fg-1);
+    line-height: 1.4;
+  }
+  .icp-triage-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--icp-space-2);
+  }
+
+  .icp-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--icp-space-3);
+  }
+  .icp-hero-primary-cta {
+    min-height: 48px;
+    padding: 0 var(--icp-space-6);
+    font-size: var(--icp-text-md);
+  }
+  .icp-hero-actions .icp-btn-ghost {
+    min-height: 48px;
+  }
+
+  /* Hero diagram stage */
+  .icp-diagram-stage {
+    background: var(--icp-bg-2);
+    border: 1px solid var(--icp-line);
+    border-radius: var(--icp-r-lg);
+    padding: var(--icp-space-4) var(--icp-space-5);
+    width: 100%;
+  }
+  .icp-diagram-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--icp-space-3);
+    margin-bottom: var(--icp-space-3);
+    flex-wrap: wrap;
+  }
+  .icp-diagram-title {
+    margin: 0;
+    font-size: var(--icp-text-sm);
+    font-weight: 600;
+    color: var(--icp-fg-1);
+  }
+  .icp-diagram-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--icp-space-2);
+    padding: var(--icp-space-1) var(--icp-space-3);
+    border-radius: var(--icp-r-pill);
+    background: var(--icp-accent-soft);
+    font-size: var(--icp-text-xs);
+    font-weight: 600;
+    color: var(--icp-accent);
+  }
+  .icp-diagram-pill-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--icp-accent);
+  }
+  .icp-diagram-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: var(--icp-space-4);
+    align-items: stretch;
+  }
+  .icp-diagram-frame {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+  }
+  .icp-diagram-frame img {
+    width: 100%;
+    max-width: 100%;
+    height: 276px;
+    object-fit: contain;
+    margin: 0 auto;
+  }
+  .icp-diagram-groups {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--icp-space-4);
+    padding: var(--icp-space-2) 0;
+    min-width: 0;
+  }
+  .icp-diagram-group {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--icp-space-1);
+    padding: var(--icp-space-3) 0 var(--icp-space-3) var(--icp-space-4);
+    flex: 1;
+    border-left: 2px solid var(--icp-line-strong);
+  }
+  .icp-diagram-group::before,
+  .icp-diagram-group::after {
+    content: "";
+    position: absolute;
+    left: -2px;
+    width: 10px;
+    height: 2px;
+    background: var(--icp-line-strong);
+  }
+  .icp-diagram-group::before { top: 0; }
+  .icp-diagram-group::after { bottom: 0; }
+  .icp-diagram-group.is-replace {
+    border-left-color: var(--icp-accent);
+  }
+  .icp-diagram-group.is-replace::before,
+  .icp-diagram-group.is-replace::after {
+    background: var(--icp-accent);
+  }
+  .icp-diagram-group-kicker {
+    font-family: var(--icp-font-mono);
+    font-size: var(--icp-text-xs);
+    font-weight: 500;
+    color: var(--icp-fg-3);
+    line-height: 16px;
+  }
+  .icp-diagram-group.is-replace .icp-diagram-group-kicker {
+    color: var(--icp-accent);
+  }
+  .icp-diagram-group-title {
+    font-size: var(--icp-text-sm);
+    font-weight: 600;
+    color: var(--icp-fg-1);
+    line-height: 1.3;
+  }
+  .icp-diagram-group.is-replace .icp-diagram-group-title {
+    font-size: var(--icp-text-md);
+    color: var(--icp-accent);
+  }
+  .icp-diagram-group-sub {
+    font-size: var(--icp-text-xs);
+    color: var(--icp-fg-2);
+    line-height: 1.4;
+  }
+  .icp-diagram-caption {
+    margin: var(--icp-space-3) 0 0;
+    padding-top: var(--icp-space-3);
+    border-top: 1px solid var(--icp-line);
+    font-size: var(--icp-text-sm);
+    color: var(--icp-fg-2);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--icp-space-2);
+    line-height: 1.4;
+  }
+  .icp-caption-swatch {
+    width: 10px;
+    height: 10px;
+    margin-top: 5px;
+    border-radius: 2px;
+    background: var(--icp-accent);
+    flex-shrink: 0;
+  }
+
+  /* Four bold proof stamps */
+  .icp-stamp-strip {
+    margin: var(--icp-space-6) 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    background: var(--icp-bg-1);
+    border: 1px solid var(--icp-line);
+    border-radius: var(--icp-r-lg);
+    overflow: hidden;
+    box-shadow: var(--icp-shadow-card);
+  }
+  .icp-stamp-cell {
+    padding: var(--icp-space-4) var(--icp-space-5);
+    border-right: 1px solid var(--icp-line);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--icp-space-1);
+    min-width: 0;
+  }
+  .icp-stamp-cell:last-child { border-right: 0; }
+  .icp-stamp-link {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--icp-space-1);
+    text-decoration: none;
+    height: 100%;
+  }
+  .icp-stamp-link:hover .icp-stamp-figure { color: var(--icp-accent); }
+  .icp-stamp-figure-row {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--icp-space-2);
+    min-width: 0;
+  }
+  .icp-stamp-g-mark {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+  .icp-stamp-figure {
+    font-size: var(--icp-text-2xl);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    color: var(--icp-fg-1);
+    transition: color 140ms ease;
+    white-space: nowrap;
+  }
+  .icp-stamp-label {
+    font-size: var(--icp-text-sm);
+    color: var(--icp-fg-2);
+    line-height: 1.35;
+  }
+
+  /* Shared section rhythm */
+  .icp-section {
+    padding: var(--icp-space-16) 0;
+    background: var(--icp-bg-1);
+    border-bottom: 1px solid var(--icp-line);
+  }
+  .icp-section-compact { padding: var(--icp-space-10) 0; }
+  .icp-section-soft { background: var(--icp-bg-2); }
+  .icp-section-dark {
+    background: var(--icp-ink);
+    color: #ffffff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .icp-section-head {
+    max-width: 680px;
+    margin-bottom: var(--icp-space-8);
+  }
+  .icp-section-title {
+    margin: 0 0 var(--icp-space-3);
+    font-size: var(--icp-text-2xl);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.035em;
+    color: var(--icp-fg-1);
+  }
+  .icp-section-dark .icp-section-title { color: #ffffff; }
+  .icp-section-lead {
+    margin: 0;
+    font-size: var(--icp-text-md);
+    color: var(--icp-fg-2);
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+
+  /* 2. GOOGLE REVIEWS */
+  .icp-reviews-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--icp-space-4);
+    flex-wrap: wrap;
+    margin-bottom: var(--icp-space-6);
+  }
+  .icp-reviews-head-main {
+    display: flex;
+    align-items: center;
+    gap: var(--icp-space-4);
+    min-width: 0;
+  }
+  .icp-reviews-head-main .icp-section-title {
+    margin: 0;
+  }
+  .icp-reviews-g-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--icp-r-md);
+    background: #ffffff;
+    border: 1px solid var(--icp-line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .icp-trustindex-slot {
+    width: 100%;
+    min-height: 240px;
+    overflow-x: clip;
+  }
+  .icp-trustindex-slot.is-empty {
+    min-height: 0;
+  }
+  .icp-trustindex-fallback {
+    margin: 0;
+    padding: var(--icp-space-3) 0;
+    font-size: var(--icp-text-md);
+    color: var(--icp-fg-2);
+  }
+  #google-reviews .ti-widget,
+  #google-reviews .ti-widget * {
+    font-family: var(--icp-font-sans) !important;
+  }
+  #google-reviews .ti-widget .ti-widget-header,
+  #google-reviews .ti-widget .ti-header {
+    display: none !important;
+  }
+  #google-reviews .ti-widget .ti-widget-container {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  #google-reviews .ti-widget .ti-reviews-container {
+    margin-top: 0 !important;
+  }
+  #google-reviews .ti-widget .ti-reviews-container-wrapper {
+    padding-top: 4px !important;
+    padding-bottom: 12px !important;
+  }
+  #google-reviews .ti-widget .ti-review-item > .ti-inner {
+    background: #ffffff !important;
+    border: 1px solid var(--icp-line) !important;
+    border-radius: var(--icp-r-lg) !important;
+    box-shadow: none !important;
+    padding: var(--icp-space-6) !important;
+  }
+  #google-reviews .ti-widget .ti-name {
+    font-size: var(--icp-text-sm) !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.015em !important;
+    color: var(--icp-fg-1) !important;
+  }
+  #google-reviews .ti-widget .ti-date {
+    font-size: var(--icp-text-xs) !important;
+    color: var(--icp-fg-3) !important;
+  }
+  #google-reviews .ti-widget .ti-review-content {
+    font-size: var(--icp-text-sm) !important;
+    line-height: 1.55 !important;
+    color: var(--icp-fg-2) !important;
+  }
+  #google-reviews .ti-widget .ti-read-more,
+  #google-reviews .ti-widget .ti-read-more span {
+    font-size: var(--icp-text-sm) !important;
+    font-weight: 500 !important;
+    color: var(--icp-accent) !important;
+    opacity: 1 !important;
+  }
+  #google-reviews .ti-widget .ti-controls .ti-prev,
+  #google-reviews .ti-widget .ti-controls .ti-next {
+    background: #ffffff !important;
+    border: 1px solid var(--icp-line) !important;
+    border-radius: var(--icp-r-pill) !important;
+    width: 44px !important;
+    height: 44px !important;
+  }
+  #google-reviews .ti-widget .ti-controls-line {
+    background: var(--icp-line) !important;
+    height: 3px !important;
+    border-radius: var(--icp-r-pill) !important;
+    margin-top: 8px !important;
+  }
+  #google-reviews .ti-widget .ti-controls-line .dot {
+    background: var(--icp-ink) !important;
+    height: 3px !important;
+    border-radius: var(--icp-r-pill) !important;
+  }
+
+  /* 3. BENCH PROOF PHOTO STRIP & 7. SYMPTOM TILES (shared .icp-faults-grid) */
+  .icp-faults-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--icp-space-6);
+  }
+  .icp-photo-card {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--icp-bg-1);
+    border: 1px solid var(--icp-line);
+    border-radius: var(--icp-r-lg);
+    overflow: hidden;
+    min-width: 0;
+    box-shadow: var(--icp-shadow-card);
+  }
+  .icp-fault-visual {
+    aspect-ratio: 4 / 3;
+    background: var(--icp-bg-3);
+    border-bottom: 1px solid var(--icp-line);
+    overflow: hidden;
+    padding: 0;
+  }
+  .icp-fault-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+  .icp-fault-model-cap {
+    margin: 0;
+    padding: var(--icp-space-3) var(--icp-space-4);
+    font-family: var(--icp-font-mono);
+    font-size: var(--icp-text-xs);
+    line-height: 1.4;
+    color: var(--icp-fg-3);
+  }
+
+  .icp-fault-tile {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    background: var(--icp-bg-1);
+    border: 1px solid var(--icp-line);
+    border-radius: var(--icp-r-lg);
+    overflow: hidden;
+    min-width: 0;
+    transition: border-color 140ms ease, background 140ms ease;
+    box-shadow: var(--icp-shadow-card);
+  }
+  .icp-fault-tile:hover {
+    border-color: var(--icp-accent);
+    background: var(--icp-bg-2);
+  }
+  .icp-fault-tile:hover .icp-chev-right {
+    transform: translateX(2px);
+    color: var(--icp-accent);
+  }
+  .icp-fault-body {
+    padding: var(--icp-space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--icp-space-2);
+    flex: 1;
+  }
+  .icp-fault-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--icp-space-2);
+  }
+  .icp-fault-body h3 {
+    margin: 0;
+    font-size: var(--icp-text-md);
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    color: var(--icp-fg-1);
+  }
+  .icp-fault-title-row .icp-chev-right {
+    color: var(--icp-fg-3);
+    margin-top: 2px;
+  }
+  .icp-fault-tag {
+    display: inline-block;
+    align-self: flex-start;
+    font-size: var(--icp-text-xs);
+    font-weight: 500;
+    padding: 2px var(--icp-space-2);
+    border-radius: var(--icp-r-pill);
+    background: var(--icp-accent-soft);
+    color: var(--icp-accent);
+    white-space: nowrap;
+  }
+  .icp-fault-body p {
+    margin: 0;
+    font-size: var(--icp-text-sm);
+    line-height: 1.45;
+    color: var(--icp-fg-2);
+  }
+
+  /* 4. SPATIAL TIMELINE RAIL */
+  .icp-timeline-head {
+    max-width: 760px;
+    margin-bottom: var(--icp-space-8);
+  }
+  .icp-timeline-head h2 {
+    margin: 0;
+    font-size: var(--icp-text-xl);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.03em;
+    color: var(--icp-fg-1);
+  }
+  .icp-timeline-rail-wrap {
+    position: relative;
+    background: var(--icp-bg-1);
+    border: 1px solid var(--icp-line);
+    border-radius: var(--icp-r-lg);
+    padding: var(--icp-space-6);
+  }
+  .icp-timeline-bracket-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--icp-space-6);
+    margin-bottom: var(--icp-space-3);
+    align-items: end;
+  }
+  .icp-timeline-bracket {
+    grid-column: 2 / 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--icp-space-1);
+  }
+  .icp-timeline-bracket.is-repair {
+    grid-column: 4 / 5;
+  }
+  .icp-timeline-bracket-label {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--icp-space-2);
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+  }
+  .icp-timeline-bracket-val {
+    font-size: var(--icp-text-lg);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    color: var(--icp-accent);
+    line-height: 1.2;
+  }
+  .icp-timeline-bracket-sub {
+    font-family: var(--icp-font-mono);
+    font-size: var(--icp-text-xs);
+    color: var(--icp-accent);
+  }
+  .icp-timeline-bracket-bar {
+    width: 100%;
+    height: 10px;
+    border-top: 2px solid var(--icp-accent);
+    border-left: 2px solid var(--icp-accent);
+    border-right: 2px solid var(--icp-accent);
+    border-radius: 3px 3px 0 0;
+  }
+  .icp-timeline-bracket.is-repair .icp-timeline-bracket-val,
+  .icp-timeline-bracket.is-repair .icp-timeline-bracket-sub {
+    color: var(--icp-ink);
+  }
+  .icp-timeline-bracket.is-repair .icp-timeline-bracket-bar {
+    border-color: var(--icp-line-strong);
+  }
+  .icp-timeline-steps {
+    position: relative;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--icp-space-6);
+  }
+  .icp-timeline-steps::before {
+    content: "";
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    top: 6px;
+    height: 1px;
+    background: var(--icp-line-strong);
+    z-index: 0;
+  }
+  .icp-timeline-step {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--icp-space-2);
+    min-width: 0;
+  }
+  .icp-timeline-node {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--icp-ink);
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 0 1px var(--icp-ink);
+    margin-bottom: var(--icp-space-2);
+  }
+  .icp-timeline-step.is-workshop .icp-timeline-node {
+    background: var(--icp-accent);
+    box-shadow: 0 0 0 1px var(--icp-accent);
+  }
+  .icp-timeline-step-title {
+    margin: 0;
+    font-size: var(--icp-text-md);
+    font-weight: 600;
+    color: var(--icp-fg-1);
+    line-height: 1.3;
+  }
+  .icp-timeline-step.is-workshop .icp-timeline-step-title {
+    color: var(--icp-accent);
+  }
+  .icp-timeline-step p {
+    margin: 0;
+    font-size: var(--icp-text-sm);
+    color: var(--icp-fg-2);
+    line-height: 1.45;
+  }
+  .icp-timeline-mobile-badge { display: none; }
+
+  /* 5. PARALLEL 3-COLUMN COMPARISON TABLE */
+  .icp-compare-card {
+    border: 1px solid var(--icp-line);
+    border-radius: var(--icp-r-lg);
+    background: #ffffff;
+    overflow: hidden;
+    box-shadow: var(--icp-shadow-card);
+  }
+  .icp-compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+  .icp-compare-table th,
+  .icp-compare-table td {
+    vertical-align: top;
+    text-align: left;
+    border-right: 1px solid var(--icp-line);
+    border-bottom: 1px solid var(--icp-line);
+  }
+  .icp-compare-table th:last-child,
+  .icp-compare-table td:last-child { border-right: 0; }
+  .icp-compare-table tbody tr:last-child th,
+  .icp-compare-table tbody tr:last-child td { border-bottom: 0; }
+
+  .icp-cmp-corner {
+    width: 21%;
+    padding: var(--icp-space-5);
+    background: var(--icp-bg-2);
+    font-family: var(--icp-font-mono);
+    font-size: var(--icp-text-xs);
+    font-weight: 500;
+    color: var(--icp-fg-3);
+    vertical-align: bottom;
+  }
+  .icp-cmp-th {
+    width: 25.5%;
+    padding: var(--icp-space-5);
+    background: #ffffff;
+  }
+  .icp-cmp-th.is-win {
+    width: 28%;
+    background: var(--icp-accent-soft);
+    border-top: 2px solid var(--icp-accent);
+    border-bottom-color: var(--icp-accent-line);
+    border-right-color: var(--icp-accent-line);
+  }
+  .icp-cmp-th-tag {
+    display: block;
+    font-family: var(--icp-font-mono);
+    font-size: var(--icp-text-xs);
+    font-weight: 500;
+    color: var(--icp-fg-3);
+    margin-bottom: var(--icp-space-1);
+  }
+  .icp-cmp-th.is-win .icp-cmp-th-tag { color: var(--icp-accent); }
+  .icp-cmp-th-name {
+    display: block;
+    font-size: var(--icp-text-md);
+    font-weight: 600;
+    color: var(--icp-fg-1);
+    line-height: 1.3;
+  }
+  .icp-cmp-th.is-win .icp-cmp-th-name { color: var(--icp-accent); }
+  .icp-cmp-name-short { display: none; }
+
+  .icp-cmp-row-label {
+    padding: var(--icp-space-4) var(--icp-space-5);
+    background: var(--icp-bg-2);
+    font-size: var(--icp-text-sm);
+    font-weight: 600;
+    color: var(--icp-fg-1);
+    line-height: 1.35;
+  }
+  .icp-cmp-td {
+    padding: var(--icp-space-4) var(--icp-space-5);
+    background: #ffffff;
+  }
+  .icp-cmp-td.is-win {
+    background: var(--icp-accent-soft);
+    border-bottom-color: var(--icp-accent-line);
+    border-right-color: var(--icp-accent-line);
+  }
+  .icp-cmp-val-row {
+    display: flex;
+    align-items: center;
+    gap: var(--icp-space-2);
+    margin-bottom: var(--icp-space-1);
+  }
+  .icp-cmp-val {
+    display: block;
+    font-size: var(--icp-text-md);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--icp-fg-1);
+    line-height: 1.3;
+  }
+  .icp-cmp-val-row .icp-cmp-val { margin-bottom: 0; }
+  .icp-cmp-td.is-win .icp-cmp-val { color: var(--icp-accent); }
+  .icp-cmp-sub {
+    display: block;
+    font-size: var(--icp-text-xs);
+    color: var(--icp-fg-2);
+    line-height: 1.45;
+  }
+  .icp-cmp-parts-mark {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .icp-cmp-parts-mark.is-win { background: var(--icp-accent); color: #ffffff; }
+  .icp-cmp-parts-mark.is-fair { background: var(--icp-line); color: var(--icp-fg-1); }
+  .icp-cmp-parts-mark.is-no { background: var(--icp-line); color: var(--icp-fg-2); }
+
+  /* 6. FITZROVIA WORKSHOP CARD + ALWAYS-OPEN 2-YEAR WARRANTY PLATE */
+  .icp-workshop-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--icp-space-6);
+    align-items: stretch;
+  }
+  .icp-warranty-plate {
+    background: var(--icp-bg-3);
+    border: 1px solid var(--icp-line-strong);
+    border-radius: var(--icp-r-lg);
+    box-shadow: inset 0 1px 0 #ffffff;
+    padding: var(--icp-space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--icp-space-4);
+    min-width: 0;
+  }
+  .icp-warranty-plate-head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--icp-space-1);
+  }
+  .icp-warranty-stamp {
+    margin: 0;
+    font-size: var(--icp-text-2xl);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    color: var(--icp-fg-1);
+  }
+  .icp-warranty-groups {
+    display: flex;
+    flex-direction: column;
+    gap: var(--icp-space-4);
+    padding-top: var(--icp-space-3);
+    border-top: 1px solid var(--icp-line-strong);
+  }
+  .icp-warranty-group-label {
+    margin: 0 0 var(--icp-space-2);
+    font-family: var(--icp-font-mono);
+    font-size: var(--icp-text-xs);
+    font-weight: 500;
+    color: var(--icp-fg-3);
+  }
+  .icp-warranty-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--icp-space-2);
+    font-size: var(--icp-text-sm);
+    color: var(--icp-fg-1);
+    line-height: 1.45;
+  }
+  .icp-warranty-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--icp-space-2);
+  }
+  .icp-warranty-list.is-excluded { color: var(--icp-fg-2); }
+
+  .icp-workshop-card {
+    background: var(--icp-bg-1);
+    border: 1px solid var(--icp-line);
+    border-radius: var(--icp-r-lg);
+    box-shadow: var(--icp-shadow-card);
+    padding: var(--icp-space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--icp-space-4);
+    min-width: 0;
+  }
+  .icp-workshop-card h3 {
+    margin: var(--icp-space-1) 0 0;
+    font-size: var(--icp-text-xl);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: var(--icp-fg-1);
+  }
+  .icp-hours-grid {
+    display: grid;
+    grid-template-columns: 108px 1fr;
+    gap: var(--icp-space-2) var(--icp-space-3);
+    font-size: var(--icp-text-sm);
+    color: var(--icp-fg-2);
+    padding: var(--icp-space-4) 0;
+    border-top: 1px solid var(--icp-line);
+    border-bottom: 1px solid var(--icp-line);
+  }
+  .icp-hours-grid strong { color: var(--icp-fg-1); font-weight: 600; }
+  .icp-workshop-card-note {
+    margin: 0;
+    font-size: var(--icp-text-sm);
+    color: var(--icp-fg-2);
+    line-height: 1.5;
+  }
+  .icp-workshop-contact {
+    margin: auto 0 0;
+    padding-top: var(--icp-space-2);
+    font-size: var(--icp-text-sm);
+    color: var(--icp-fg-3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--icp-space-2) var(--icp-space-4);
+  }
+
+  /* 8. COMPACT FIND YOUR MODEL */
+  .icp-identify {
+    padding: var(--icp-space-10) 0;
+    border-bottom: 1px solid var(--icp-line);
+    background: var(--icp-bg-2);
+  }
+  .icp-identify-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: var(--icp-space-10);
+    align-items: center;
+  }
+  .icp-identify-grid > * { min-width: 0; }
+  .icp-identify-visual {
+    background: var(--icp-bg-3);
+    border-radius: var(--icp-r-lg);
+    padding: var(--icp-space-6);
+    border: 1px solid var(--icp-line-strong);
+    box-shadow: inset 0 1px 0 #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .icp-identify-visual-inner {
+    width: 100%;
+    max-width: 320px;
+  }
+  .icp-identify-plate {
+    background: #e5e7eb;
+    padding: var(--icp-space-4) var(--icp-space-5);
+    border-radius: var(--icp-r-sm);
+    font-family: var(--icp-font-mono);
+    color: #3f3f46;
+    display: flex;
+    flex-direction: column;
+    gap: var(--icp-space-1);
+    box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.08);
+  }
+  .icp-identify-plate-line { font-size: var(--icp-text-xs); }
+  .icp-identify-plate-line.highlight {
+    font-size: var(--icp-text-sm);
+    color: var(--icp-ink);
+    margin-top: var(--icp-space-2);
+  }
+  .icp-identify-plate-line.highlight .hl {
+    background: #ffffff;
+    padding: 2px var(--icp-space-2);
+    border-radius: var(--icp-r-sm);
+    box-shadow: 0 0 0 2px var(--icp-ink);
+    color: var(--icp-ink);
+    font-weight: 600;
+  }
+  .icp-identify-plate-line.muted { color: #52525b; }
+  .icp-identify-text h2 {
+    font-size: var(--icp-text-2xl);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.035em;
+    margin: 0 0 var(--icp-space-3);
+    color: var(--icp-fg-1);
+  }
+  .icp-identify-text > p {
+    font-size: var(--icp-text-md);
+    line-height: 1.5;
+    color: var(--icp-fg-2);
+    margin: 0 0 var(--icp-space-5);
+    max-width: 52ch;
+  }
+  .icp-field-label {
+    display: block;
+    margin-bottom: var(--icp-space-2);
+    font-size: var(--icp-text-sm);
+    font-weight: 600;
+    color: var(--icp-fg-1);
+  }
+  .icp-field-hint {
+    font-weight: 400;
+    color: var(--icp-fg-3);
+  }
+  .icp-identify-form {
+    display: flex;
+    gap: var(--icp-space-2);
+    max-width: 440px;
+  }
+  .icp-identify-form input {
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    padding: 0 var(--icp-space-3);
+    border: 1px solid var(--icp-control-border);
+    border-radius: var(--icp-r-md);
+    background: #ffffff;
+    font-size: var(--icp-text-md);
+    color: var(--icp-fg-1);
+  }
+  .icp-identify-form input:focus-visible {
+    outline: 2px solid var(--icp-focus);
+    outline-offset: 1px;
+    border-color: var(--icp-focus);
+  }
+  .icp-identify-form input[aria-invalid="true"] { border-color: #b42318; }
+  .icp-identify-error {
+    margin: var(--icp-space-2) 0 0;
+    font-size: var(--icp-text-sm);
+    color: #b42318;
+  }
+  .icp-identify-error[hidden] { display: none; }
+  .icp-identify-result {
+    margin-top: var(--icp-space-3);
+    max-width: 520px;
+    padding: var(--icp-space-3) var(--icp-space-4);
+    border-radius: var(--icp-r-md);
+    border: 1px solid var(--icp-line-strong);
+    background: #ffffff;
+    font-size: var(--icp-text-sm);
+    color: var(--icp-fg-1);
+    display: none;
+  }
+  .icp-identify-result.is-visible {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--icp-space-3);
+    flex-wrap: wrap;
+  }
+
+  /* 9. FULL-BLEED #f4f4f5 WIZARD BAND (zero edits to quote-wizard.* files) */
+  .icp-wizard-band {
+    padding: var(--icp-space-12) 0;
+    background: var(--icp-bg-3);
+    border-bottom: 1px solid var(--icp-line);
+  }
+  .icp-wizard-intro-strip {
+    padding: var(--icp-space-12) 0 var(--icp-space-4);
+    background: var(--icp-bg-3);
+  }
+  .icp-wizard-intro-line {
+    margin: 0 0 var(--icp-space-5);
+    font-size: var(--icp-text-sm);
+    color: var(--icp-fg-2);
+    text-align: left;
+  }
+  .icp-wizard-intro-strip .icp-wizard-intro-line {
+    margin: 0;
+  }
+  .shopify-section:has(.qw-section) {
+    background: var(--icp-bg-3);
+    border-bottom: 1px solid var(--icp-line);
+    padding-bottom: var(--icp-space-12);
+  }
+
+  /* 10. WHITE FAQ ACCORDION */
+  .icp-faq-list {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--icp-line);
+  }
+  .icp-faq-item { border-bottom: 1px solid var(--icp-line); }
+  .icp-faq-btn {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    color: var(--icp-fg-1);
+    min-height: 60px;
+    padding: var(--icp-space-4) 0;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--icp-space-4);
+    font-size: var(--icp-text-md);
+    font-weight: 500;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: color 140ms ease;
+  }
+  .icp-faq-btn:hover { color: var(--icp-accent); }
+  .icp-faq-icon { color: var(--icp-fg-3); }
+  .icp-faq-item.is-open .icp-faq-icon { color: var(--icp-accent); }
+  .icp-faq-answer {
+    display: none;
+    padding: 0 0 var(--icp-space-6);
+    font-size: var(--icp-text-md);
+    line-height: 1.6;
+    color: var(--icp-fg-2);
+    max-width: 72ch;
+  }
+  .icp-faq-item.is-open .icp-faq-answer { display: block; }
+
+  /* 11. ENGRAVED PRICING CHIPS + RELATED STRIP */
+  .icp-price-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--icp-space-4);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+  .icp-price-strip li { min-width: 0; display: flex; }
+  .icp-price-chip {
+    width: 100%;
+    min-height: 92px;
+    text-align: left;
+    padding: var(--icp-space-4) var(--icp-space-5);
+    border-radius: var(--icp-r-md);
+    border: 1px solid var(--icp-line-strong);
+    background: #ffffff;
+    box-shadow: inset 0 1px 0 #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--icp-space-1);
+  }
+  .icp-price-chip-model {
+    font-size: var(--icp-text-xs);
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--icp-fg-3);
+  }
+  .icp-price-chip-val {
+    font-size: var(--icp-text-xl);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: var(--icp-fg-1);
+  }
+  .icp-price-chip-sub {
+    font-size: var(--icp-text-sm);
+    color: var(--icp-fg-2);
+    line-height: 1.4;
+  }
+
+  .icp-related-strip {
+    margin-top: var(--icp-space-10);
+    padding-top: var(--icp-space-8);
+    border-top: 1px solid var(--icp-line);
+  }
+  .icp-related-strip-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--icp-space-3);
+    flex-wrap: wrap;
+    margin-bottom: var(--icp-space-4);
+  }
+  .icp-related-strip-head h3 {
+    margin: 0;
+    font-size: var(--icp-text-md);
+    font-weight: 600;
+    color: var(--icp-fg-1);
+  }
+  .icp-related-links-row {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--icp-space-3);
+  }
+  .icp-related-links-row a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--icp-space-2);
+    min-height: 48px;
+    padding: 0 var(--icp-space-4);
+    border-radius: var(--icp-r-md);
+    border: 1px solid var(--icp-control-border);
+    background: #ffffff;
+    font-size: var(--icp-text-sm);
+    font-weight: 500;
+    color: var(--icp-fg-1);
+    text-decoration: none;
+    transition: border-color 140ms ease, background 140ms ease;
+  }
+  .icp-related-links-row a:hover {
+    border-color: var(--icp-accent);
+    background: var(--icp-bg-2);
+  }
+  .icp-related-links-row .icp-chev-right { color: var(--icp-fg-3); }
+
+  /* 12. DARK CLOSING CTA BAND */
+  .icp-closing-cta-band {
+    display: flex;
+    flex-direction: column;
+    gap: var(--icp-space-6);
+  }
+  .icp-closing-cta-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--icp-space-6);
+    flex-wrap: wrap;
+  }
+  .icp-closing-cta-top h2 {
+    margin: 0;
+    font-size: var(--icp-text-xl);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.03em;
+    color: #ffffff;
+  }
+  .icp-closing-stamps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--icp-space-4);
+  }
+  .icp-closing-stamp {
+    padding: var(--icp-space-4) var(--icp-space-5);
+    border-radius: var(--icp-r-md);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.04);
+    display: flex;
+    flex-direction: column;
+    gap: var(--icp-space-1);
+  }
+  .icp-closing-stamp-val {
+    font-size: var(--icp-text-xl);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    color: #ffffff;
+    line-height: 1.2;
+  }
+  .icp-closing-stamp-sub {
+    font-size: var(--icp-text-sm);
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  /* 13. COMPACT DARK FOOTER BAR */
+  .icp-site-footer {
+    background: var(--icp-footer-bg);
+    color: rgba(255, 255, 255, 0.78);
+    padding: var(--icp-space-6) 0;
+    font-size: var(--icp-text-sm);
+    font-family: var(--icp-font-sans);
+  }
+  .icp-site-footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--icp-space-3) var(--icp-space-6);
+    flex-wrap: wrap;
+  }
+  .icp-site-footer a {
+    color: #ffffff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* MOBILE DOCKED CTA BAR (<= 768px only) */
+  .icp-mobile-sticky-bar {
+    display: none;
+  }
+
+  /* RESPONSIVE: TABLET (<= 1024px / <= 960px) */
+  @media (max-width: 1024px) {
+    .icp-stamp-figure { font-size: var(--icp-text-xl); }
+    .icp-faults-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 960px) {
+    .icp-hero-grid,
+    .icp-workshop-grid,
+    .icp-identify-grid { grid-template-columns: minmax(0, 1fr); }
+    .icp-hero-grid > .icp-diagram-stage { margin-top: var(--icp-space-6); }
+    .icp-stamp-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .icp-stamp-cell:nth-child(1),
+    .icp-stamp-cell:nth-child(2) { border-bottom: 1px solid var(--icp-line); }
+    .icp-stamp-cell:nth-child(2),
+    .icp-stamp-cell:nth-child(4) { border-right: 0; }
+    .icp-related-links-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  /* RESPONSIVE: MOBILE (<= 768px) */
+  @media (max-width: 768px) {
+    html { scroll-padding-bottom: 96px; }
+    .icp-site-footer {
+      padding-bottom: calc(var(--icp-space-8) + env(safe-area-inset-bottom));
+    }
+
+    .icp-mobile-sticky-bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 60;
+      display: block;
+      background: rgba(255, 255, 255, 0.98);
+      border-top: 1px solid var(--icp-line);
+      box-shadow: var(--icp-shadow-bar);
+      padding: var(--icp-space-3) var(--icp-space-4) calc(var(--icp-space-3) + env(safe-area-inset-bottom));
+      opacity: 0;
+      transform: translateY(100%);
+      pointer-events: none;
+      visibility: hidden;
+      transition: opacity 200ms ease-out, transform 200ms ease-out, visibility 200ms ease-out;
+    }
+    .icp-mobile-sticky-bar.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      visibility: visible;
+    }
+    .icp-mobile-sticky-bar .icp-btn-dark {
+      width: 100%;
+      min-height: 48px;
+      font-size: var(--icp-text-md);
+    }
+
+    /* Priority swap: proof stamps directly under hero CTA, above diagram */
+    .icp-hero-copy { order: 1; }
+    .icp-hero-grid > .icp-stamp-strip { order: 2; margin-top: var(--icp-space-4); }
+    .icp-hero-grid > .icp-diagram-stage { order: 3; margin-top: var(--icp-space-4); }
+
+    .icp-diagram-body {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--icp-space-4);
+    }
+    .icp-diagram-frame img {
+      height: auto;
+      max-height: 260px;
+    }
+    .icp-diagram-groups {
+      padding: 0;
+      gap: var(--icp-space-2);
+    }
+    .icp-diagram-group {
+      flex-direction: row;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--icp-space-1) var(--icp-space-3);
+      padding: var(--icp-space-3);
+      border-left: 3px solid var(--icp-line-strong);
+      background: #ffffff;
+      border-radius: var(--icp-r-sm);
+    }
+    .icp-diagram-group::before,
+    .icp-diagram-group::after { display: none; }
+    .icp-diagram-group.is-replace {
+      border-left-color: var(--icp-accent);
+      background: var(--icp-accent-soft);
+    }
+    .icp-diagram-group-sub { width: 100%; }
+
+    /* Spatial timeline rail turns into clean vertical track on mobile */
+    .icp-timeline-bracket-grid { display: none; }
+    .icp-timeline-rail-wrap { padding: var(--icp-space-4); }
+    .icp-timeline-steps {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--icp-space-3);
+      padding-left: var(--icp-space-6);
+    }
+    .icp-timeline-steps::before {
+      left: 5px;
+      right: auto;
+      top: 12px;
+      bottom: 12px;
+      width: 1px;
+      height: auto;
+    }
+    .icp-timeline-step {
+      gap: var(--icp-space-1);
+      padding: var(--icp-space-2) 0;
+    }
+    .icp-timeline-step.is-workshop {
+      background: var(--icp-accent-soft);
+      margin-left: calc(var(--icp-space-3) * -1);
+      padding: var(--icp-space-3) var(--icp-space-3) var(--icp-space-3) var(--icp-space-5);
+      border-radius: var(--icp-r-md);
+    }
+    .icp-timeline-node {
+      position: absolute;
+      left: calc(var(--icp-space-6) * -1);
+      top: 10px;
+      margin-bottom: 0;
+    }
+    .icp-timeline-step.is-workshop .icp-timeline-node {
+      left: calc(var(--icp-space-3) * -1);
+      top: 16px;
+    }
+    .icp-timeline-mobile-badge {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      padding: 2px var(--icp-space-2);
+      margin-bottom: var(--icp-space-1);
+      border-radius: var(--icp-r-pill);
+      background: var(--icp-accent);
+      color: #ffffff;
+      font-family: var(--icp-font-mono);
+      font-size: var(--icp-text-xs);
+      font-weight: 500;
+    }
+    .icp-timeline-mobile-badge.is-repair {
+      background: var(--icp-ink);
+      color: #ffffff;
+    }
+
+    .icp-cmp-corner,
+    .icp-cmp-th,
+    .icp-cmp-row-label,
+    .icp-cmp-td { padding: var(--icp-space-3); }
+    .icp-cmp-th-name,
+    .icp-cmp-val { font-size: var(--icp-text-sm); }
+
+    .icp-closing-stamps {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--icp-space-2);
+    }
+    .icp-closing-stamp {
+      display: grid;
+      grid-template-columns: 148px minmax(0, 1fr);
+      align-items: baseline;
+      gap: var(--icp-space-3);
+      padding: var(--icp-space-3) var(--icp-space-4);
+    }
+    .icp-closing-stamp-val {
+      font-size: var(--icp-text-md);
+      white-space: nowrap;
+    }
+    .icp-closing-cta-top .icp-btn-white { width: 100%; }
+  }
+
+  /* RESPONSIVE: SMALL MOBILE (<= 600px) */
+  @media (max-width: 600px) {
+    :root { --icp-header-h: 52px; }
+    .icp-container { padding: 0 var(--icp-space-4); }
+    .icp-hero-band { padding: var(--icp-space-4) 0 var(--icp-space-6); }
+    .icp-breadcrumb { margin-bottom: var(--icp-space-2); font-size: var(--icp-text-xs); }
+    .icp-hero-title { font-size: var(--icp-text-2xl); margin-bottom: var(--icp-space-2); }
+    .icp-hero-lead { font-size: var(--icp-text-md); margin-bottom: var(--icp-space-3); line-height: 1.45; }
+    .icp-triage { margin: 0 0 var(--icp-space-3); padding: var(--icp-space-3); }
+    .icp-triage-title { margin-bottom: var(--icp-space-1); }
+    .icp-triage-list { flex-direction: column; gap: var(--icp-space-1); line-height: 1.35; }
+    .icp-hero-actions { width: 100%; gap: var(--icp-space-2); }
+    .icp-hero-actions .icp-btn-dark,
+    .icp-hero-actions .icp-btn-ghost {
+      flex: 1 1 auto;
+      padding: 0 var(--icp-space-3);
+    }
+
+    /* 2x2 equal-height stamps with single-line figures on 8-step scale */
+    .icp-stamp-strip { grid-auto-rows: 1fr; }
+    .icp-stamp-cell {
+      padding: var(--icp-space-3);
+      min-height: 76px;
+      justify-content: flex-start;
+    }
+    .icp-stamp-link { justify-content: flex-start; }
+    .icp-stamp-figure {
+      font-size: var(--icp-text-lg);
+      white-space: nowrap;
+      line-height: 1.2;
+    }
+    .icp-stamp-g-mark { width: 18px; height: 18px; }
+    .icp-stamp-label {
+      font-size: var(--icp-text-xs);
+      text-wrap: balance;
+    }
+
+    .icp-section { padding: var(--icp-space-8) 0; }
+    .icp-section-compact { padding: var(--icp-space-6) 0; }
+    .icp-section-head { margin-bottom: var(--icp-space-4); }
+    .icp-section-title { font-size: var(--icp-text-xl); }
+    .icp-faq-btn { min-height: 52px; padding: var(--icp-space-3) 0; }
+    .icp-faq-answer { padding: 0 0 var(--icp-space-4); }
+    .icp-price-chip { min-height: 76px; padding: var(--icp-space-3) var(--icp-space-4); }
+    .icp-related-strip { margin-top: var(--icp-space-6); padding-top: var(--icp-space-5); }
+    .icp-closing-cta-band { gap: var(--icp-space-4); }
+
+    .icp-reviews-head { margin-bottom: var(--icp-space-4); align-items: flex-start; }
+    .icp-reviews-g-badge { width: 32px; height: 32px; }
+    #google-reviews .ti-widget .ti-review-item > .ti-inner { padding: var(--icp-space-4) !important; }
+
+    /* Parallel 3-column comparison table with full-width row labels */
+    .icp-compare-table,
+    .icp-compare-table thead,
+    .icp-compare-table tbody {
+      display: block;
+      width: 100%;
+    }
+    .icp-compare-table thead tr,
+    .icp-compare-table tbody tr {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      width: 100%;
+    }
+    .icp-cmp-corner { display: none; }
+    .icp-cmp-th,
+    .icp-cmp-th.is-win {
+      width: auto;
+      min-width: 0;
+      padding: 10px 7px;
+    }
+    .icp-cmp-th-tag { font-size: 10px; margin-bottom: 2px; }
+    .icp-cmp-th-name { font-size: 12px; line-height: 1.25; }
+    .icp-cmp-name-full { display: none; }
+    .icp-cmp-name-short { display: inline; }
+    .icp-cmp-row-label {
+      grid-column: 1 / -1;
+      width: 100%;
+      padding: 7px 10px;
+      border-right: 0;
+      border-bottom: 1px solid var(--icp-line);
+      font-family: var(--icp-font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--icp-fg-2);
+      background: var(--icp-bg-2);
+    }
+    .icp-compare-table tbody tr:last-child th.icp-cmp-row-label {
+      border-bottom: 1px solid var(--icp-line);
+    }
+    .icp-cmp-td {
+      width: auto;
+      min-width: 0;
+      padding: 10px 7px;
+      overflow-wrap: break-word;
+    }
+    .icp-cmp-parts-mark { display: none; }
+    .icp-cmp-val-row { display: block; margin-bottom: 3px; }
+    .icp-cmp-val { font-size: 12px; line-height: 1.25; }
+    .icp-cmp-sub { font-size: 11px; line-height: 1.38; }
+
+    .icp-workshop-grid { gap: var(--icp-space-4); }
+    .icp-warranty-plate,
+    .icp-workshop-card { padding: var(--icp-space-4); }
+    .icp-workshop-card h3 { font-size: var(--icp-text-lg); }
+    .icp-warranty-stamp { font-size: var(--icp-text-xl); }
+
+    /* 2x2 photo strip and symptom tiles at 390px */
+    .icp-faults-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--icp-space-3);
+    }
+    .icp-fault-model-cap { padding: var(--icp-space-2) var(--icp-space-3); }
+    .icp-fault-body { padding: var(--icp-space-3); gap: var(--icp-space-1); }
+    .icp-fault-body h3 { font-size: var(--icp-text-sm); }
+    .icp-fault-body p { display: none; }
+
+    .icp-identify { padding: var(--icp-space-8) 0; }
+    .icp-identify-grid { gap: var(--icp-space-6); }
+    .icp-identify-visual { padding: var(--icp-space-4); }
+    .icp-identify-text h2 { font-size: var(--icp-text-xl); }
+    .icp-identify-form { flex-direction: column; }
+    .icp-identify-form .icp-btn-dark { width: 100%; min-height: 48px; }
+
+    .icp-wizard-band { padding: var(--icp-space-8) 0; }
+    .icp-wizard-intro-strip { padding: var(--icp-space-8) 0 var(--icp-space-3); }
+    .icp-price-strip { grid-template-columns: minmax(0, 1fr); gap: var(--icp-space-3); }
+    .icp-related-links-row { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  /* Keep 4 stamps strictly single-line at 360px on the 8-step type scale */
+  @media (max-width: 396px) {
+    .icp-stamp-cell { padding: var(--icp-space-3) 10px; }
+    .icp-stamp-figure { font-size: var(--icp-text-md); }
+    .icp-hero-primary-cta { font-size: var(--icp-text-sm); }
+  }
+</style>
+{%- endif -%}
+
+<div class="icp-page" id="icp-page-{{ section.id }}">
+
+  {%- if render_part == 'all' or render_part == 'top' -%}
+
+  <!-- BAND 1: HERO (#ffffff) -->
+  <section class="icp-hero-band">
+    <div class="icp-container">
+      <nav class="icp-breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span aria-hidden="true">/</span>
+        <a href="/pages/macbook-repairs">MacBook repairs</a>
+        <span aria-hidden="true">/</span>
+        <span class="icp-breadcrumb-current" aria-current="page">{{ section.settings.breadcrumb_label }}</span>
+      </nav>
+
+      <div class="icp-hero-grid">
+        <div class="icp-hero-copy">
+          <h1 class="icp-hero-title">{{ section.settings.hero_h1 }}</h1>
+          <p class="icp-hero-lead">{{ section.settings.hero_lead }}</p>
+
+          {%- if section.settings.triage_title != blank -%}
+          <aside class="icp-triage" aria-label="What to do right now">
+            <p class="icp-triage-title">{{ section.settings.triage_title }}</p>
+            <ul class="icp-triage-list">
+              {%- if section.settings.triage_item_1 != blank -%}
+              <li>
+                <span class="{% if section.settings.triage_item_1_kind == 'cross' %}icp-cross-mark{% else %}icp-check-mark{% endif %}" aria-hidden="true"></span>
+                <span>{{ section.settings.triage_item_1 }}</span>
+              </li>
+              {%- endif -%}
+              {%- if section.settings.triage_item_2 != blank -%}
+              <li>
+                <span class="{% if section.settings.triage_item_2_kind == 'cross' %}icp-cross-mark{% else %}icp-check-mark{% endif %}" aria-hidden="true"></span>
+                <span>
+                  {{ section.settings.triage_item_2 }}
+                  {%- if section.settings.triage_item_2_link_label != blank and section.settings.triage_item_2_link_url != blank %}
+                    <a class="icp-text-link" href="{{ section.settings.triage_item_2_link_url }}">{{ section.settings.triage_item_2_link_label }}</a>.
+                  {%- endif -%}
+                </span>
+              </li>
+              {%- endif -%}
+              {%- if section.settings.triage_item_3 != blank -%}
+              <li>
+                <span class="{% if section.settings.triage_item_3_kind == 'cross' %}icp-cross-mark{% else %}icp-check-mark{% endif %}" aria-hidden="true"></span>
+                <span>{{ section.settings.triage_item_3 }}</span>
+              </li>
+              {%- endif -%}
+            </ul>
+          </aside>
+          {%- endif -%}
+
+          <div class="icp-hero-actions" id="hero-actions">
+            <a class="icp-btn-dark icp-hero-primary-cta" href="#quote-section">{{ cta_label }}</a>
+            <a class="icp-btn-ghost" href="#process-strip">{{ cta_secondary_label }}</a>
+          </div>
+        </div>
+
+        <div class="icp-diagram-stage">
+          <div class="icp-diagram-header">
+            <p class="icp-diagram-title">{{ section.settings.diagram_title }}</p>
+            <span class="icp-diagram-pill">
+              <span class="icp-diagram-pill-dot" aria-hidden="true"></span>
+              {{ section.settings.diagram_pill }}
+            </span>
+          </div>
+
+          <div class="icp-diagram-body">
+            <div class="icp-diagram-frame">
+              <img
+                src="{{ section.settings.hero_diagram_asset | asset_url }}"
+                alt="{{ section.settings.hero_diagram_alt | escape }}"
+                width="420"
+                height="290"
+                fetchpriority="high"
+                decoding="async"
+              >
+            </div>
+            <div class="icp-diagram-groups">
+              <div class="icp-diagram-group is-replace">
+                <span class="icp-diagram-group-kicker">{{ section.settings.diagram_accent_kicker }}</span>
+                <span class="icp-diagram-group-title">{{ section.settings.diagram_accent_title }}</span>
+                <span class="icp-diagram-group-sub">{{ section.settings.diagram_accent_sub }}</span>
+              </div>
+              <div class="icp-diagram-group">
+                <span class="icp-diagram-group-kicker">{{ section.settings.diagram_neutral_kicker }}</span>
+                <span class="icp-diagram-group-title">{{ section.settings.diagram_neutral_title }}</span>
+                <span class="icp-diagram-group-sub">{{ section.settings.diagram_neutral_sub }}</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="icp-diagram-caption">
+            <span class="icp-caption-swatch" aria-hidden="true"></span>
+            <span>{{ section.settings.hero_diagram_caption }}</span>
+          </p>
+        </div>
+
+        <ul class="icp-stamp-strip" aria-label="Key service facts">
+          <li class="icp-stamp-cell">
+            <a class="icp-stamp-link" href="#google-reviews">
+              <span class="icp-stamp-figure-row">
+                <svg class="icp-stamp-g-mark" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.2-2.27H12v4.3h6.45a5.52 5.52 0 0 1-2.39 3.62v3h3.87c2.26-2.08 3.56-5.15 3.56-8.65z"/>
+                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.07 7.93-2.91l-3.87-3c-1.07.72-2.45 1.15-4.06 1.15-3.12 0-5.77-2.11-6.71-4.95H1.29v3.1A12 12 0 0 0 12 24z"/>
+                  <path fill="#FBBC05" d="M5.29 14.29a7.2 7.2 0 0 1 0-4.58v-3.1H1.29a12 12 0 0 0 0 10.78l4-3.1z"/>
+                  <path fill="#EA4335" d="M12 4.76c1.76 0 3.34.61 4.58 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0A12 12 0 0 0 1.29 6.61l4 3.1C6.23 6.87 8.88 4.76 12 4.76z"/>
+                </svg>
+                <span class="icp-stamp-figure">4.8</span>
+              </span>
+              <span class="icp-stamp-label">from 750+ Google reviews</span>
+            </a>
+          </li>
+          <li class="icp-stamp-cell">
+            <a class="icp-stamp-link" href="#process-strip">
+              <span class="icp-stamp-figure">{{ section.settings.stamp2_figure | default: '£49 diagnostic' }}</span>
+              <span class="icp-stamp-label">{{ section.settings.stamp2_label | default: 'credited, repairs from £249' }}</span>
+            </a>
+          </li>
+          <li class="icp-stamp-cell">
+            <span class="icp-stamp-figure">{{ section.settings.stamp3_figure | default: '1 working day' }}</span>
+            <span class="icp-stamp-label">{{ section.settings.stamp3_label | default: 'to your written fixed quote' }}</span>
+          </li>
+          <li class="icp-stamp-cell">
+            <a class="icp-stamp-link" href="#warranty">
+              <span class="icp-stamp-figure">{{ section.settings.stamp4_figure | default: '2-year warranty' }}</span>
+              <span class="icp-stamp-label">{{ section.settings.stamp4_label | default: 'on the circuits we repair' }}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- BAND 2: GOOGLE REVIEWS (#fafafa, compact) -->
+  <section class="icp-section icp-section-soft icp-section-compact" id="google-reviews">
+    <div class="icp-container">
+      <div class="icp-reviews-head">
+        <div class="icp-reviews-head-main">
+          <div class="icp-reviews-g-badge" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.2-2.27H12v4.3h6.45a5.52 5.52 0 0 1-2.39 3.62v3h3.87c2.26-2.08 3.56-5.15 3.56-8.65z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.07 7.93-2.91l-3.87-3c-1.07.72-2.45 1.15-4.06 1.15-3.12 0-5.77-2.11-6.71-4.95H1.29v3.1A12 12 0 0 0 12 24z"/>
+              <path fill="#FBBC05" d="M5.29 14.29a7.2 7.2 0 0 1 0-4.58v-3.1H1.29a12 12 0 0 0 0 10.78l4-3.1z"/>
+              <path fill="#EA4335" d="M12 4.76c1.76 0 3.34.61 4.58 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0A12 12 0 0 0 1.29 6.61l4 3.1C6.23 6.87 8.88 4.76 12 4.76z"/>
+            </svg>
+          </div>
+          <h2 class="icp-section-title">4.8 from 750+ Google reviews</h2>
+        </div>
+        <a class="icp-btn-ghost" href="https://www.google.com/maps/search/?api=1&query=iCorrect+12+Margaret+Street+Fitzrovia+London" target="_blank" rel="noopener noreferrer">Read all reviews on Google</a>
+      </div>
+      <div class="icp-trustindex-slot" id="trustindex-reviews-slot">
+        <script defer async src="https://cdn.trustindex.io/loader.js?{{ ti_id }}"></script>
+        <p class="icp-trustindex-fallback" id="trustindex-fallback" hidden>
+          Customer reviews load from Google via Trustindex.
+          <a class="icp-text-link" href="https://www.google.com/maps/search/?api=1&query=iCorrect+12+Margaret+Street+Fitzrovia+London" target="_blank" rel="noopener noreferrer">Read all 750+ Google reviews on Google Maps</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BAND 3: BENCH PROOF PHOTO STRIP (#ffffff) -->
+  {%- assign proof_blocks = section.blocks | where: 'type', 'proof_photo' -%}
+  {%- if proof_blocks.size > 0 -%}
+  <section class="icp-section" id="bench-cases">
+    <div class="icp-container">
+      <div class="icp-section-head">
+        <h2 class="icp-section-title">{{ section.settings.bench_heading | default: 'From our Fitzrovia bench' }}</h2>
+        {%- if section.settings.bench_lead != blank -%}
+          <p class="icp-section-lead">{{ section.settings.bench_lead }}</p>
+        {%- endif -%}
+      </div>
+      <div class="icp-faults-grid">
+        {%- for block in proof_blocks -%}
+        <figure class="icp-photo-card" {{ block.shopify_attributes }}>
+          <div class="icp-fault-visual">
+            <img
+              src="{{ block.settings.image_asset | asset_url }}"
+              alt="{{ block.settings.alt | escape }}"
+              width="800"
+              height="600"
+              loading="lazy"
+              decoding="async"
+            >
+          </div>
+          <figcaption class="icp-fault-model-cap">{{ block.settings.caption }}</figcaption>
+        </figure>
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+  {%- endif -%}
+
+  <!-- BAND 4: TIMELINE RAIL (#fafafa, compact) -->
+  {%- assign rail_blocks = section.blocks | where: 'type', 'rail_step' -%}
+  {%- if rail_blocks.size > 0 -%}
+  <section class="icp-section icp-section-soft icp-section-compact" id="process-strip">
+    <div class="icp-container">
+      <div class="icp-timeline-head">
+        <h2>{{ section.settings.rail_heading | default: 'Diagnosed in 1 working day. Repaired in 2 working days once you approve.' }}</h2>
+      </div>
+      <div class="icp-timeline-rail-wrap">
+        <div class="icp-timeline-bracket-grid" aria-hidden="true">
+          <div class="icp-timeline-bracket">
+            <div class="icp-timeline-bracket-label">
+              <span class="icp-timeline-bracket-val">£49 diagnostic</span>
+              <span class="icp-timeline-bracket-sub">1 working day</span>
+            </div>
+            <div class="icp-timeline-bracket-bar"></div>
+          </div>
+          <div class="icp-timeline-bracket is-repair">
+            <div class="icp-timeline-bracket-label">
+              <span class="icp-timeline-bracket-val">from £249</span>
+              <span class="icp-timeline-bracket-sub">2 working days once approved</span>
+            </div>
+            <div class="icp-timeline-bracket-bar"></div>
+          </div>
+        </div>
+        <ol class="icp-timeline-steps">
+          {%- for block in rail_blocks -%}
+            {%- assign step_index = forloop.index -%}
+            {%- assign is_diag_step = false -%}
+            {%- if step_index == 2 or step_index == 3 -%}
+              {%- assign is_diag_step = true -%}
+            {%- endif -%}
+            <li class="icp-timeline-step{% if is_diag_step %} is-workshop{% endif %}" {{ block.shopify_attributes }}>
+              <span class="icp-timeline-node" aria-hidden="true"></span>
+              {%- if step_index == 2 -%}
+                <span class="icp-timeline-mobile-badge">£49 diagnostic, 1 working day</span>
+              {%- elsif step_index == 4 -%}
+                <span class="icp-timeline-mobile-badge is-repair">from £249, 2 working days once approved</span>
+              {%- endif -%}
+              <p class="icp-timeline-step-title">{{ step_index }}. {{ block.settings.title }}</p>
+              <p>{{ block.settings.line }}</p>
+            </li>
+          {%- endfor -%}
+        </ol>
+      </div>
+    </div>
+  </section>
+  {%- endif -%}
+
+  <!-- BAND 5: PARALLEL 3-COLUMN COMPARISON TABLE (#ffffff) -->
+  {%- assign compare_blocks = section.blocks | where: 'type', 'compare_row' -%}
+  {%- if compare_blocks.size > 0 -%}
+  <section class="icp-section" id="compare">
+    <div class="icp-container">
+      <div class="icp-section-head">
+        <h2 class="icp-section-title">{{ section.settings.compare_heading }}</h2>
+        {%- if section.settings.compare_lead != blank -%}
+          <p class="icp-section-lead">{{ section.settings.compare_lead }}</p>
+        {%- endif -%}
+      </div>
+      <div class="icp-compare-card">
+        <table class="icp-compare-table">
+          <thead>
+            <tr>
+              <th class="icp-cmp-corner" scope="col">What to compare</th>
+              <th class="icp-cmp-th is-win" scope="col">
+                <span class="icp-cmp-th-tag">Component repair</span>
+                <span class="icp-cmp-th-name">iCorrect</span>
+              </th>
+              <th class="icp-cmp-th" scope="col">
+                <span class="icp-cmp-th-tag">Board replacement</span>
+                <span class="icp-cmp-th-name">Apple Store</span>
+              </th>
+              <th class="icp-cmp-th" scope="col">
+                <span class="icp-cmp-th-tag">Varies</span>
+                <span class="icp-cmp-th-name">
+                  <span class="icp-cmp-name-full">Standard repair shops</span>
+                  <span class="icp-cmp-name-short">Other shops</span>
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {%- for block in compare_blocks -%}
+            <tr {{ block.shopify_attributes }}>
+              <th class="icp-cmp-row-label" scope="row">{{ block.settings.criterion }}</th>
+              <td class="icp-cmp-td is-win">
+                <div class="icp-cmp-val-row">
+                  <span class="icp-cmp-parts-mark is-win" aria-hidden="true">
+                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5l2.5 2.5 4.5-5"/></svg>
+                  </span>
+                  <span class="icp-cmp-val">{{ block.settings.icorrect_val }}</span>
+                </div>
+                <span class="icp-cmp-sub">{{ block.settings.icorrect_sub }}</span>
+              </td>
+              <td class="icp-cmp-td">
+                {%- assign a_mark = block.settings.apple_mark | default: 'fair' -%}
+                <div class="icp-cmp-val-row">
+                  <span class="icp-cmp-parts-mark is-{{ a_mark }}" aria-hidden="true">
+                    {%- if a_mark == 'no' -%}
+                      <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3l6 6M9 3L3 9"/></svg>
+                    {%- else -%}
+                      <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2.5 6h7"/></svg>
+                    {%- endif -%}
+                  </span>
+                  <span class="icp-cmp-val">{{ block.settings.apple_val }}</span>
+                </div>
+                <span class="icp-cmp-sub">{{ block.settings.apple_sub }}</span>
+              </td>
+              <td class="icp-cmp-td">
+                {%- assign g_mark = block.settings.general_mark | default: 'fair' -%}
+                <div class="icp-cmp-val-row">
+                  <span class="icp-cmp-parts-mark is-{{ g_mark }}" aria-hidden="true">
+                    {%- if g_mark == 'no' -%}
+                      <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3l6 6M9 3L3 9"/></svg>
+                    {%- else -%}
+                      <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2.5 6h7"/></svg>
+                    {%- endif -%}
+                  </span>
+                  <span class="icp-cmp-val">{{ block.settings.general_val }}</span>
+                </div>
+                <span class="icp-cmp-sub">{{ block.settings.general_sub }}</span>
+              </td>
+            </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+  {%- endif -%}
+
+  <!-- BAND 6: FITZROVIA WORKSHOP + ALWAYS-OPEN 2-YEAR WARRANTY PLATE (#fafafa, compact) -->
+  <section class="icp-section icp-section-soft icp-section-compact" id="workshop">
+    <div class="icp-container">
+      <div class="icp-workshop-grid">
+        <div class="icp-workshop-card">
+          <div>
+            <span class="icp-mono-label">Fitzrovia workshop, central London</span>
+            <h3>12 Margaret Street, London W1W 8JQ</h3>
+          </div>
+          <p class="icp-workshop-card-note">
+            Every diagnostic and logic board repair is carried out in-house by our Fitzrovia technicians. Insured courier collection and return are included with your £49 diagnostic across the UK.
+          </p>
+          <div class="icp-hours-grid">
+            <strong>Mon to Fri</strong><span>9am to 6pm</span>
+            <strong>Sat &amp; Sun</strong><span>Closed</span>
+            <strong>Collection</strong><span>Same-day London courier in selected zones, or tracked UK mail-in</span>
+          </div>
+          <p class="icp-workshop-contact">
+            <span>Call <a class="icp-text-link" href="tel:+442070998517">020 7099 8517</a></span>
+            <span><a class="icp-text-link" href="/pages/contact">Contact the workshop</a></span>
+          </p>
+        </div>
+
+        <div class="icp-warranty-plate" id="warranty">
+          <div class="icp-warranty-plate-head">
+            <span class="icp-mono-label">Written warranty on every completed repair</span>
+            <h3 class="icp-warranty-stamp">2-year warranty</h3>
+          </div>
+          <div class="icp-warranty-groups">
+            <div>
+              <p class="icp-warranty-group-label">Covered</p>
+              <ul class="icp-warranty-list">
+                <li>
+                  <span class="icp-check-mark" aria-hidden="true"></span>
+                  <span>Repaired circuits and replaced components</span>
+                </li>
+                <li>
+                  <span class="icp-check-mark" aria-hidden="true"></span>
+                  <span>Our Fitzrovia micro-soldering workmanship</span>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <p class="icp-warranty-group-label">Not covered</p>
+              <ul class="icp-warranty-list is-excluded">
+                <li>
+                  <span class="icp-cross-mark" aria-hidden="true"></span>
+                  <span>New liquid, drop, or physical impact damage</span>
+                </li>
+                <li>
+                  <span class="icp-cross-mark" aria-hidden="true"></span>
+                  <span>{{ section.settings.warranty_exclusion_2 | default: 'A different circuit failing later from unrelated faults' }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BAND 7: SYMPTOM TILES (#ffffff) -->
+  {%- assign symptom_blocks = section.blocks | where: 'type', 'symptom_tile' -%}
+  {%- if symptom_blocks.size > 0 -%}
+  <section class="icp-section" id="common-faults">
+    <div class="icp-container">
+      <div class="icp-section-head">
+        <h2 class="icp-section-title">{{ section.settings.symptoms_heading }}</h2>
+        {%- if section.settings.symptoms_lead != blank -%}
+          <p class="icp-section-lead">{{ section.settings.symptoms_lead }}</p>
+        {%- endif -%}
+      </div>
+      <div class="icp-faults-grid">
+        {%- for block in symptom_blocks -%}
+        <a class="icp-fault-tile" href="#quote-section" {{ block.shopify_attributes }}>
+          <div class="icp-fault-body">
+            <div class="icp-fault-title-row">
+              <h3>{{ block.settings.title }}</h3>
+              <span class="icp-chev-right" aria-hidden="true"></span>
+            </div>
+            {%- if block.settings.tag != blank -%}
+              <span class="icp-fault-tag">{{ block.settings.tag }}</span>
+            {%- endif -%}
+            <p>{{ block.settings.line }}</p>
+          </div>
+        </a>
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+  {%- endif -%}
+
+  <!-- BAND 8: COMPACT FIND YOUR MODEL (#fafafa) -->
+  <section class="icp-identify" id="identify">
+    <div class="icp-container">
+      <div class="icp-identify-grid">
+        <div class="icp-identify-visual" aria-hidden="true">
+          <div class="icp-identify-visual-inner">
+            <div class="icp-identify-plate">
+              <span class="icp-identify-plate-line muted">Designed by Apple in California</span>
+              <span class="icp-identify-plate-line highlight">Model <span class="hl">A2442</span> EMC 3650</span>
+              <span class="icp-identify-plate-line muted">Rated 20.5V &middot; 3.4A max</span>
+            </div>
+          </div>
+        </div>
+        <div class="icp-identify-text">
+          <h2>Not sure which MacBook you have?</h2>
+          <p>Turn your MacBook over. The four digits after the letter A printed near the hinge identify the exact logic board.</p>
+          <label class="icp-field-label" for="icp-model-input-{{ section.id }}">
+            Model A-number <span class="icp-field-hint">(for example A2442 or A2918)</span>
+          </label>
+          <form class="icp-identify-form" data-icp-identify-form novalidate>
+            <input
+              id="icp-model-input-{{ section.id }}"
+              type="text"
+              inputmode="text"
+              autocomplete="off"
+              placeholder="e.g. A2442"
+              aria-describedby="icp-model-error-{{ section.id }}"
+            >
+            <button class="icp-btn-dark" type="submit">Check model</button>
+          </form>
+          <p class="icp-identify-error" id="icp-model-error-{{ section.id }}" role="alert" hidden></p>
+          <div class="icp-identify-result" data-icp-identify-result aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- if in_preview_wrapper != true and section.settings.wizard_intro != blank -%}
+  <!-- Shopify OS 2.0 seamless top strip for Band 9 (#f4f4f5) -->
+  <div class="icp-wizard-intro-strip" id="quote-section">
+    <div class="icp-container">
+      <p class="icp-wizard-intro-line">{{ section.settings.wizard_intro }}</p>
+    </div>
+  </div>
+  {%- endif -%}
+
+  {%- endif -%}
+
+  {%- if render_part == 'all' or render_part == 'bottom' -%}
+
+  <!-- BAND 10: WHITE FAQ ACCORDION (#ffffff) -->
+  {%- assign faq_blocks = section.blocks | where: 'type', 'faq' -%}
+  {%- if faq_blocks.size > 0 -%}
+  <section class="icp-section" id="faqs">
+    <div class="icp-container">
+      <div class="icp-section-head">
+        <h2 class="icp-section-title">{{ section.settings.faq_heading | default: 'Questions before you book' }}</h2>
+      </div>
+      <div class="icp-faq-list" data-icp-faq-list>
+        {%- for block in faq_blocks -%}
+          {%- assign is_open = false -%}
+          {%- if forloop.first -%}{%- assign is_open = true -%}{%- endif -%}
+          <div class="icp-faq-item{% if is_open %} is-open{% endif %}" {{ block.shopify_attributes }}>
+            <button
+              type="button"
+              class="icp-faq-btn"
+              aria-expanded="{% if is_open %}true{% else %}false{% endif %}"
+              aria-controls="icp-faq-panel-{{ section.id }}-{{ forloop.index }}"
+              id="icp-faq-btn-{{ section.id }}-{{ forloop.index }}"
+            >
+              <span>{{ block.settings.question }}</span>
+              <span class="icp-chev icp-faq-icon" aria-hidden="true"></span>
+            </button>
+            <div
+              class="icp-faq-answer"
+              id="icp-faq-panel-{{ section.id }}-{{ forloop.index }}"
+              role="region"
+              aria-labelledby="icp-faq-btn-{{ section.id }}-{{ forloop.index }}"
+            >
+              {{ block.settings.answer }}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+  {%- endif -%}
+
+  <!-- BAND 11: PRICING PLATES + RELATED STRIP (#fafafa) -->
+  <section class="icp-section icp-section-soft" id="prices">
+    <div class="icp-container">
+      <div class="icp-section-head">
+        <h2 class="icp-section-title">{{ section.settings.prices_heading | default: 'Clear diagnostic and repair pricing' }}</h2>
+        {%- if section.settings.prices_lead != blank -%}
+          <p class="icp-section-lead">{{ section.settings.prices_lead }}</p>
+        {%- endif -%}
+      </div>
+
+      <ul class="icp-price-strip" aria-label="Diagnostic and repair prices">
+        <li>
+          <div class="icp-price-chip">
+            <span class="icp-price-chip-model">Diagnostic</span>
+            <span class="icp-price-chip-val">£49</span>
+            <span class="icp-price-chip-sub">Credited in full if you go ahead</span>
+          </div>
+        </li>
+        <li>
+          <div class="icp-price-chip">
+            <span class="icp-price-chip-model">Board repair</span>
+            <span class="icp-price-chip-val">from £249</span>
+            <span class="icp-price-chip-sub">Fixed written quote before any repair</span>
+          </div>
+        </li>
+        <li>
+          <div class="icp-price-chip">
+            <span class="icp-price-chip-model">Collection and return</span>
+            <span class="icp-price-chip-val">Included</span>
+            <span class="icp-price-chip-sub">Insured UK courier, even if you decline</span>
+          </div>
+        </li>
+      </ul>
+
+      {%- assign related_blocks = section.blocks | where: 'type', 'related_link' -%}
+      {%- if related_blocks.size > 0 -%}
+      <div class="icp-related-strip">
+        <div class="icp-related-strip-head">
+          <h3>Related MacBook repairs</h3>
+        </div>
+        <ul class="icp-related-links-row">
+          {%- for block in related_blocks -%}
+          <li {{ block.shopify_attributes }}>
+            <a href="{{ block.settings.url }}">
+              <span>{{ block.settings.label }}</span>
+              <span class="icp-chev-right" aria-hidden="true"></span>
+            </a>
+          </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+      {%- endif -%}
+    </div>
+  </section>
+
+  <!-- BAND 12: DARK CLOSING CTA (#111827, compact) -->
+  <section class="icp-section icp-section-dark icp-section-compact" id="closing-cta">
+    <div class="icp-container">
+      <div class="icp-closing-cta-band">
+        <div class="icp-closing-cta-top">
+          <h2>{{ section.settings.closing_heading }}</h2>
+          <a class="icp-btn-white" href="#quote-section">{{ cta_label }}</a>
+        </div>
+        <ul class="icp-closing-stamps" aria-label="Booking summary">
+          <li class="icp-closing-stamp">
+            <span class="icp-closing-stamp-val">£49 diagnostic</span>
+            <span class="icp-closing-stamp-sub">Credited to repair, collection and return included</span>
+          </li>
+          <li class="icp-closing-stamp">
+            <span class="icp-closing-stamp-val">1 working day</span>
+            <span class="icp-closing-stamp-sub">Written fault report and fixed repair quote</span>
+          </li>
+          <li class="icp-closing-stamp">
+            <span class="icp-closing-stamp-val">2-year warranty</span>
+            <span class="icp-closing-stamp-sub">On the repaired circuits and replaced components</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  {%- if in_preview_wrapper == true or section.settings.show_footer_bar -%}
+  <!-- BAND 13: COMPACT DARK FOOTER (#0b101b) -->
+  <footer class="icp-site-footer">
+    <div class="icp-container icp-site-footer-inner">
+      <span>iCorrect &middot; 12 Margaret Street, Fitzrovia, London W1W 8JQ &middot; Mon to Fri 9am to 6pm. Sat &amp; Sun Closed.</span>
+      <span><a href="tel:+442070998517">020 7099 8517</a> &middot; <a href="/pages/macbook-repairs">MacBook repairs</a></span>
+    </div>
+  </footer>
+  {%- endif -%}
+
+  <!-- MOBILE-ONLY DOCKED BOTTOM CTA BAR (<= 768px) -->
+  <div class="icp-mobile-sticky-bar" id="icp-mobile-sticky-bar" aria-hidden="true">
+    <a class="icp-btn-dark" id="icp-mobile-sticky-cta" href="#quote-section" tabindex="-1">{{ cta_label }}</a>
+  </div>
+
+  <script>
+    (function () {
+      if (window.__icpPillarInit) return;
+      window.__icpPillarInit = true;
+
+      /* Mobile docked CTA bar: visible only <= 768px when scrolled past hero and outside wizard, closing CTA, and footer */
+      var mobileBar = document.getElementById("icp-mobile-sticky-bar");
+      var mobileCta = document.getElementById("icp-mobile-sticky-cta");
+      var heroActions = document.getElementById("hero-actions");
+      var quoteSection = document.getElementById("quote-section");
+      var closingCta = document.getElementById("closing-cta");
+      var siteFooter = document.querySelector(".icp-site-footer, footer");
+      var heroInView = true;
+      var quoteInView = false;
+      var closingInView = false;
+      var footerInView = false;
+
+      function syncMobileBar() {
+        if (!mobileBar || !mobileCta) return;
+        var isMobile = window.innerWidth <= 768;
+        var show = isMobile && !heroInView && !quoteInView && !closingInView && !footerInView;
+        mobileBar.classList.toggle("is-visible", show);
+        mobileBar.setAttribute("aria-hidden", String(!show));
+        if (show) mobileCta.removeAttribute("tabindex");
+        else mobileCta.setAttribute("tabindex", "-1");
+      }
+
+      if ("IntersectionObserver" in window) {
+        if (heroActions) {
+          new IntersectionObserver(function (entries) {
+            heroInView = entries[entries.length - 1].isIntersecting;
+            syncMobileBar();
+          }, { rootMargin: "-52px 0px 0px 0px" }).observe(heroActions);
+        }
+        if (quoteSection) {
+          new IntersectionObserver(function (entries) {
+            quoteInView = entries[entries.length - 1].isIntersecting;
+            syncMobileBar();
+          }, { rootMargin: "-52px 0px 0px 0px", threshold: 0.01 }).observe(quoteSection);
+        }
+        if (closingCta) {
+          new IntersectionObserver(function (entries) {
+            closingInView = entries[entries.length - 1].isIntersecting;
+            syncMobileBar();
+          }, { rootMargin: "0px 0px 40px 0px", threshold: 0.01 }).observe(closingCta);
+        }
+        if (siteFooter) {
+          new IntersectionObserver(function (entries) {
+            footerInView = entries[entries.length - 1].isIntersecting;
+            syncMobileBar();
+          }, { rootMargin: "0px 0px 40px 0px", threshold: 0.01 }).observe(siteFooter);
+        }
+      } else {
+        window.addEventListener("scroll", function () {
+          heroInView = window.scrollY <= 220;
+          syncMobileBar();
+        }, { passive: true });
+      }
+      window.addEventListener("resize", syncMobileBar, { passive: true });
+      syncMobileBar();
+
+      /* Trustindex widget: collapse empty slot and show fallback link if loader has not mounted after 4s */
+      var tiSlot = document.getElementById("trustindex-reviews-slot");
+      var tiFallback = document.getElementById("trustindex-fallback");
+      var tiTimedOut = false;
+      function syncReviewsSlot() {
+        if (!tiSlot || !tiFallback) return;
+        var mounted = !!tiSlot.querySelector(".ti-widget");
+        tiSlot.classList.toggle("is-empty", tiTimedOut && !mounted);
+        tiFallback.hidden = mounted || !tiTimedOut;
+      }
+      if (tiSlot && tiFallback) {
+        window.setTimeout(function () { tiTimedOut = true; syncReviewsSlot(); }, 4000);
+        if ("MutationObserver" in window) {
+          new MutationObserver(syncReviewsSlot).observe(tiSlot, { childList: true, subtree: true });
+        }
+      }
+
+      /* White FAQ accordion */
+      document.querySelectorAll("[data-icp-faq-list] .icp-faq-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var item = btn.closest(".icp-faq-item");
+          if (!item) return;
+          var open = !item.classList.contains("is-open");
+          item.classList.toggle("is-open", open);
+          btn.setAttribute("aria-expanded", String(open));
+        });
+      });
+
+      /* Model A-number finder */
+      var MODELS = {
+        A3240: 'MacBook Air 13" M4 (2025)',
+        A3241: 'MacBook Air 15" M4 (2025)',
+        A3113: 'MacBook Air 13" M3 (2024)',
+        A3114: 'MacBook Air 15" M3 (2024)',
+        A2941: 'MacBook Air 15" M2 (2023)',
+        A2681: 'MacBook Air 13" M2 (2022)',
+        A2337: 'MacBook Air 13" M1 (2020)',
+        A2179: 'MacBook Air 13" (2020)',
+        A1932: 'MacBook Air 13" (2018 to 2019)',
+        A3112: 'MacBook Pro 14" M4 (2024)',
+        A3401: 'MacBook Pro 14" M4 Pro (2024)',
+        A3185: 'MacBook Pro 14" M4 Max (2024)',
+        A3403: 'MacBook Pro 16" M4 Pro (2024)',
+        A3186: 'MacBook Pro 16" M4 Max (2024)',
+        A2918: 'MacBook Pro 14" M3 (2023)',
+        A2992: 'MacBook Pro 14" M3 Pro / Max (2023)',
+        A2991: 'MacBook Pro 16" M3 Pro / Max (2023)',
+        A2779: 'MacBook Pro 14" M2 Pro / Max (2023)',
+        A2780: 'MacBook Pro 16" M2 Pro / Max (2023)',
+        A2442: 'MacBook Pro 14" M1 Pro / Max (2021)',
+        A2485: 'MacBook Pro 16" M1 Pro / Max (2021)',
+        A2338: 'MacBook Pro 13" M1 / M2 (2020 to 2022)',
+        A2251: 'MacBook Pro 13" (2020)',
+        A2289: 'MacBook Pro 13" (2020)',
+        A2141: 'MacBook Pro 16" (2019)',
+        A2159: 'MacBook Pro 13" (2019)',
+        A1989: 'MacBook Pro 13" (2018 to 2019)',
+        A1990: 'MacBook Pro 15" (2018 to 2019)',
+        A1706: 'MacBook Pro 13" (2016 to 2017)',
+        A1707: 'MacBook Pro 15" (2016 to 2017)',
+        A1708: 'MacBook Pro 13" (2016 to 2017)'
+      };
+
+      document.querySelectorAll("[data-icp-identify-form]").forEach(function (form) {
+        var input = form.querySelector("input");
+        var err = form.parentNode.querySelector(".icp-identify-error");
+        var res = form.parentNode.querySelector("[data-icp-identify-result]");
+        if (!input || !err || !res) return;
+
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          var raw = (input.value || "").trim().toUpperCase().replace(/\s+/g, "");
+          if (/^\d{4}$/.test(raw)) raw = "A" + raw;
+          if (!/^A\d{4}$/.test(raw)) {
+            input.setAttribute("aria-invalid", "true");
+            err.textContent = "Enter a 4-digit A-number from the underside of your MacBook, for example A2442.";
+            err.hidden = false;
+            res.classList.remove("is-visible");
+            res.innerHTML = "";
+            input.focus();
+            return;
+          }
+          var name = MODELS[raw];
+          if (!name) {
+            input.setAttribute("aria-invalid", "true");
+            err.textContent = "We did not recognise " + raw + ". Choose your MacBook directly in the quote tool below or call 020 7099 8517.";
+            err.hidden = false;
+            res.classList.remove("is-visible");
+            res.innerHTML = "";
+            return;
+          }
+          input.removeAttribute("aria-invalid");
+          err.hidden = true;
+          err.textContent = "";
+          res.innerHTML =
+            "<span><strong>" + name + " (" + raw + ").</strong> Diagnostic £49, board repairs from £249.</span>" +
+            '<a class="icp-btn-ghost" href="#quote-section">Open in quote tool</a>';
+          res.classList.add("is-visible");
+        });
+      });
+    })();
+  </script>
+
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "MacBook Pillar Page",
+  "tag": "div",
+  "class": "icp-pillar-section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "render_part",
+      "label": "Section part",
+      "default": "all",
+      "options": [
+        { "value": "all", "label": "Full page" },
+        { "value": "top", "label": "Top bands (above quote wizard)" },
+        { "value": "bottom", "label": "Bottom bands (below quote wizard)" }
+      ]
+    },
+    { "type": "text", "id": "breadcrumb_label", "label": "Breadcrumb label" },
+    { "type": "text", "id": "hero_h1", "label": "Hero H1" },
+    { "type": "textarea", "id": "hero_lead", "label": "Hero lead" },
+    { "type": "text", "id": "triage_title", "label": "Triage plate title" },
+    { "type": "text", "id": "triage_item_1", "label": "Triage item 1" },
+    {
+      "type": "select",
+      "id": "triage_item_1_kind",
+      "label": "Triage item 1 icon",
+      "default": "check",
+      "options": [
+        { "value": "check", "label": "Check" },
+        { "value": "cross", "label": "Cross" }
+      ]
+    },
+    { "type": "text", "id": "triage_item_2", "label": "Triage item 2" },
+    {
+      "type": "select",
+      "id": "triage_item_2_kind",
+      "label": "Triage item 2 icon",
+      "default": "check",
+      "options": [
+        { "value": "check", "label": "Check" },
+        { "value": "cross", "label": "Cross" }
+      ]
+    },
+    { "type": "text", "id": "triage_item_2_link_label", "label": "Triage item 2 link label" },
+    { "type": "text", "id": "triage_item_2_link_url", "label": "Triage item 2 link URL" },
+    { "type": "text", "id": "triage_item_3", "label": "Triage item 3" },
+    {
+      "type": "select",
+      "id": "triage_item_3_kind",
+      "label": "Triage item 3 icon",
+      "default": "cross",
+      "options": [
+        { "value": "check", "label": "Check" },
+        { "value": "cross", "label": "Cross" }
+      ]
+    },
+    { "type": "text", "id": "cta_primary_label", "label": "Primary CTA label", "default": "Book your £49 diagnostic" },
+    { "type": "text", "id": "cta_secondary_label", "label": "Secondary CTA label", "default": "See how it works" },
+    { "type": "text", "id": "diagram_title", "label": "Diagram header title" },
+    { "type": "text", "id": "diagram_pill", "label": "Diagram header pill" },
+    { "type": "text", "id": "hero_diagram_asset", "label": "Hero diagram asset filename" },
+    { "type": "text", "id": "hero_diagram_alt", "label": "Hero diagram alt text" },
+    { "type": "text", "id": "diagram_accent_kicker", "label": "Diagram accent group kicker" },
+    { "type": "text", "id": "diagram_accent_title", "label": "Diagram accent group title" },
+    { "type": "text", "id": "diagram_accent_sub", "label": "Diagram accent group subline" },
+    { "type": "text", "id": "diagram_neutral_kicker", "label": "Diagram neutral group kicker" },
+    { "type": "text", "id": "diagram_neutral_title", "label": "Diagram neutral group title" },
+    { "type": "text", "id": "diagram_neutral_sub", "label": "Diagram neutral group subline" },
+    { "type": "text", "id": "hero_diagram_caption", "label": "Hero diagram caption" },
+    { "type": "text", "id": "stamp2_figure", "label": "Stamp 2 figure", "default": "£49 diagnostic" },
+    { "type": "text", "id": "stamp2_label", "label": "Stamp 2 label", "default": "credited, repairs from £249" },
+    { "type": "text", "id": "stamp3_figure", "label": "Stamp 3 figure", "default": "1 working day" },
+    { "type": "text", "id": "stamp3_label", "label": "Stamp 3 label", "default": "to your written fixed quote" },
+    { "type": "text", "id": "stamp4_figure", "label": "Stamp 4 figure", "default": "2-year warranty" },
+    { "type": "text", "id": "stamp4_label", "label": "Stamp 4 label", "default": "on the circuits we repair" },
+    { "type": "text", "id": "trustindex_widget_id", "label": "Trustindex widget ID", "default": "47cc7ef8590e8871fa062160cf7" },
+    { "type": "text", "id": "bench_heading", "label": "Bench photo strip heading", "default": "From our Fitzrovia bench" },
+    { "type": "textarea", "id": "bench_lead", "label": "Bench photo strip lead" },
+    { "type": "text", "id": "rail_heading", "label": "Process rail heading", "default": "Diagnosed in 1 working day. Repaired in 2 working days once you approve." },
+    { "type": "text", "id": "compare_heading", "label": "Comparison heading" },
+    { "type": "textarea", "id": "compare_lead", "label": "Comparison lead" },
+    { "type": "text", "id": "warranty_exclusion_2", "label": "Second warranty exclusion" },
+    { "type": "text", "id": "symptoms_heading", "label": "Symptom tiles heading" },
+    { "type": "textarea", "id": "symptoms_lead", "label": "Symptom tiles lead" },
+    { "type": "text", "id": "wizard_intro", "label": "Wizard intro line" },
+    { "type": "text", "id": "faq_heading", "label": "FAQ heading", "default": "Questions before you book" },
+    { "type": "text", "id": "prices_heading", "label": "Pricing band heading" },
+    { "type": "textarea", "id": "prices_lead", "label": "Pricing band lead" },
+    { "type": "text", "id": "closing_heading", "label": "Closing CTA heading" },
+    { "type": "checkbox", "id": "show_footer_bar", "label": "Show compact dark footer bar", "default": false }
+  ],
+  "blocks": [
+    {
+      "type": "proof_photo",
+      "name": "Bench proof photo",
+      "settings": [
+        { "type": "text", "id": "image_asset", "label": "Asset filename" },
+        { "type": "text", "id": "alt", "label": "Alt text" },
+        { "type": "text", "id": "caption", "label": "1-line mono caption" }
+      ]
+    },
+    {
+      "type": "rail_step",
+      "name": "Timeline step",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Step title" },
+        { "type": "textarea", "id": "line", "label": "Step description" }
+      ]
+    },
+    {
+      "type": "compare_row",
+      "name": "Comparison row",
+      "settings": [
+        { "type": "text", "id": "criterion", "label": "Row label" },
+        { "type": "text", "id": "icorrect_val", "label": "iCorrect headline" },
+        { "type": "textarea", "id": "icorrect_sub", "label": "iCorrect detail" },
+        { "type": "text", "id": "apple_val", "label": "Apple Store headline" },
+        { "type": "textarea", "id": "apple_sub", "label": "Apple Store detail" },
+        {
+          "type": "select",
+          "id": "apple_mark",
+          "label": "Apple Store mark",
+          "default": "fair",
+          "options": [
+            { "value": "fair", "label": "Neutral" },
+            { "value": "no", "label": "Cross" }
+          ]
+        },
+        { "type": "text", "id": "general_val", "label": "Standard shops headline" },
+        { "type": "textarea", "id": "general_sub", "label": "Standard shops detail" },
+        {
+          "type": "select",
+          "id": "general_mark",
+          "label": "Standard shops mark",
+          "default": "fair",
+          "options": [
+            { "value": "fair", "label": "Neutral" },
+            { "value": "no", "label": "Cross" }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "symptom_tile",
+      "name": "Symptom tile",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Symptom title" },
+        { "type": "text", "id": "tag", "label": "Tag label" },
+        { "type": "textarea", "id": "line", "label": "Short description" }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ item",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question" },
+        { "type": "textarea", "id": "answer", "label": "Answer" }
+      ]
+    },
+    {
+      "type": "related_link",
+      "name": "Related repair link",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label" },
+        { "type": "text", "id": "url", "label": "URL" }
+      ]
+    }
+  ]
+}
+{% endschema %}

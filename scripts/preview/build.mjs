@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 /*
- * Static preview of the quote wizard for Vercel (preview links per branch).
+ * Static preview of the quote wizard and MacBook pillar pages for Vercel (preview links per branch).
  *
- * Renders sections/quote-wizard.liquid with the repo catalogue, copies the theme
- * assets, and writes product JSON so the wizard runs without Shopify. The cart and
- * checkout are stand-ins: "Proceed to checkout" opens a page that shows exactly
- * what the wizard would add to the Shopify cart. Nothing here touches the live store.
+ * Renders sections/quote-wizard.liquid and sections/macbook-pillar-page.liquid with the repo catalogue,
+ * copies the theme assets, and writes product JSON so the wizard runs without Shopify.
  *
  * Vercel project settings:
  *   Install command:  npm i --no-save --no-package-lock liquidjs@10
@@ -85,7 +83,14 @@ for (const [handle, p] of products) {
   }));
 }
 
-/* ---- Liquid ---- */
+if (!products.has('service-adjustment')) {
+  write('products/service-adjustment.js', JSON.stringify({
+    id: 0,
+    title: 'Service Adjustment',
+    handle: 'service-adjustment',
+    variants: [],
+  }));
+}
 const engine = new Liquid({
   strictVariables: false,
   strictFilters: false,
@@ -113,7 +118,9 @@ engine.registerFilter('stylesheet_tag', (v) => `<link rel="stylesheet" href="${v
 engine.registerFilter('json', (v) => JSON.stringify(v === undefined ? null : v));
 engine.registerFilter('money_without_currency', (v) => v);
 engine.registerFilter('payment_type_svg_tag', () => read('scripts/preview/klarna.svg'));
-const source = read('sections/quote-wizard.liquid').replace(/\{%-?\s*schema\s*-?%\}[\s\S]*?\{%-?\s*endschema\s*-?%\}/, '');
+const stripSchema = (s) => s.replace(/\{%-?\s*schema\s*-?%\}[\s\S]*?\{%-?\s*endschema\s*-?%\}/, '');
+const source = stripSchema(read('sections/quote-wizard.liquid'));
+const pillarSource = stripSchema(read('sections/macbook-pillar-page.liquid'));
 
 const baseContext = {
   linklists: {
@@ -152,12 +159,104 @@ const cartShim = `<script>
 
 const banner = (title) => `<div class="pv-bar section-header"><a href="/">Quote wizard preview</a><span>${title}</span><span class="pv-ref">${branch}${sha ? ' · ' + sha : ''}</span></div>`;
 const pageCss = `<style>
+@font-face{font-family:"Geist";src:url("/assets/Geist-Variable.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
+@font-face{font-family:"Geist Mono";src:url("/assets/GeistMono-Variable.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
 :root{--font-sans:"Geist",Arial,sans-serif;--font-mono:"Geist Mono",ui-monospace,monospace}
 body{margin:0;background:#fff;font-family:var(--font-sans);color:#171717}
 .pv-bar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;padding:8px 16px;background:#171717;color:#d4d4d4;font:500 11px var(--font-mono);letter-spacing:.06em;text-transform:uppercase}
 .pv-bar a{color:#fff;text-decoration:none}.pv-ref{margin-left:auto;color:#a3a3a3}
 main{max-width:1200px;margin:0 auto;padding:16px 0 64px}
 </style>`;
+
+/* Pillar page shell matching the signed-off /ico-11/ 5033f06 header and landmark structure */
+const pillarShellCss = `<style>
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;overflow-x:clip;background:#ffffff;color:#111827;font-family:"Geist",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.icp-skip-link{position:absolute;left:16px;top:8px;z-index:100;padding:12px 16px;border-radius:6px;background:#111827;color:#ffffff;font-size:14px;font-weight:500;text-decoration:none;transform:translateY(-200%)}
+.icp-skip-link:focus{transform:translateY(0);outline:2px solid #38598C;outline-offset:2px}
+.icp-site-header{position:sticky;top:0;z-index:40;background:#ffffff;border-bottom:1px solid #e5e7eb}
+.icp-header-inner{height:56px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.icp-brand{font-size:20px;font-weight:600;letter-spacing:-0.04em;text-decoration:none;color:#111827}
+.icp-nav-links{display:flex;align-items:center;gap:8px;list-style:none;margin:0;padding:0}
+.icp-nav-links a{display:inline-flex;align-items:center;min-height:44px;padding:0 8px;font-size:14px;color:#4b5563;text-decoration:none;transition:color 140ms ease}
+.icp-nav-links a:hover{color:#111827}
+.icp-header-right{display:flex;align-items:center;gap:16px}
+.icp-status-pill{font-size:14px;color:#5c6470;white-space:nowrap}
+.icp-header-mobile-tel{display:none;font-family:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Monaco,monospace;font-size:12px;font-weight:500;color:#4b5563;text-decoration:none;padding:8px 0}
+.icp-header-mobile-tel:hover{color:#111827}
+@media (max-width:1024px){.icp-nav-links,.icp-status-pill{display:none}}
+@media (max-width:768px){.icp-header-right #header-cta{display:none}.icp-header-mobile-tel{display:inline-flex;align-items:center}}
+@media (max-width:600px){.icp-header-inner{height:52px}}
+</style>`;
+
+const pillarHeader = (ctaLabel) => `<a class="icp-skip-link" href="#main">Skip to content</a>
+<header class="icp-site-header">
+  <div class="icp-container icp-header-inner">
+    <a class="icp-brand" href="/">iCorrect</a>
+    <ul class="icp-nav-links" aria-label="On this page">
+      <li><a href="#process-strip">How it works</a></li>
+      <li><a href="#compare">How we compare</a></li>
+      <li><a href="#workshop">Workshop</a></li>
+      <li><a href="#faqs">FAQs</a></li>
+      <li><a href="#prices">Pricing</a></li>
+    </ul>
+    <div class="icp-header-right">
+      <span class="icp-status-pill">Fitzrovia, London</span>
+      <a class="icp-header-mobile-tel" href="tel:+442070998517">020 7099 8517</a>
+      <a class="icp-btn-dark" id="header-cta" href="#quote-section">${ctaLabel}</a>
+    </div>
+  </div>
+</header>`;
+
+async function renderPillarPage(outFile, title, pageHandle, templateFile) {
+  const tpl = JSON.parse(read(templateFile));
+  const parts = [];
+  const topSettings = (tpl.sections.pillar_top && tpl.sections.pillar_top.settings) || {};
+  const wizardIntro = topSettings.wizard_intro || '';
+  const ctaLabel = topSettings.cta_primary_label || 'Book your £49 diagnostic';
+
+  for (const key of tpl.order || []) {
+    const sec = tpl.sections[key];
+    if (!sec || sec.disabled) continue;
+    const blocks = (sec.block_order || []).map((id) => ({
+      id,
+      type: sec.blocks[id].type,
+      settings: sec.blocks[id].settings || {},
+      shopify_attributes: '',
+    }));
+    if (sec.type === 'macbook-pillar-page') {
+      parts.push(await engine.parseAndRender(pillarSource, {
+        in_preview_wrapper: true,
+        section: { id: key, settings: sec.settings || {}, blocks },
+      }));
+    } else if (sec.type === 'quote-wizard') {
+      const wizardHtml = await engine.parseAndRender(source, {
+        ...baseContext,
+        template: { name: 'page' },
+        request: { page_type: 'page' },
+        section: { id: key, settings: { ...baseContext.section.settings, ...(sec.settings || {}) } },
+      });
+      parts.push(
+        `<section class="icp-wizard-band" id="quote-section">` +
+        (wizardIntro ? `<div class="icp-container"><p class="icp-wizard-intro-line">${wizardIntro}</p></div>` : '') +
+        wizardHtml +
+        `</section>`
+      );
+    }
+  }
+
+  const faqSchema = await engine.parseAndRender(read('snippets/icorrect-faq-page-schema.liquid'), {
+    request: { page_type: 'page' },
+    template: { name: 'page' },
+    page: { handle: pageHandle },
+  });
+
+  write(outFile, `<!doctype html><html lang="en-GB"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>${title} | iCorrect</title>${faqSchema}${pillarShellCss}${cartShim}</head>
+<body>${pillarHeader(ctaLabel)}<main id="main" tabindex="-1">${parts.join('\n')}</main></body></html>`);
+}
 
 async function renderPage(file, title, ctx) {
   const html = await engine.parseAndRender(source, { ...baseContext, ...ctx });
@@ -177,6 +276,18 @@ await renderPage('macbook-screen/index.html', 'MacBook screen repair page', {
   },
 });
 await renderPage('quote/index.html', 'All devices', { template: { name: 'page' }, request: { page_type: 'page' } });
+await renderPillarPage(
+  'macbook-liquid-damage/index.html',
+  'MacBook Liquid Damage Repair',
+  'macbook-liquid-damage-repair',
+  'templates/page.macbook-liquid-damage-repair.json'
+);
+await renderPillarPage(
+  'macbook-no-power/index.html',
+  'Dead & No Power MacBook Repair',
+  'macbook-no-power-repair',
+  'templates/page.macbook-no-power-repair.json'
+);
 
 /* Checkout stand-in: shows the cart the wizard built. */
 const checkout = `<!doctype html><html lang="en-GB"><head><meta charset="utf-8">
@@ -202,7 +313,6 @@ write('checkout/index.html', checkout);
 write('cart/index.html', checkout);
 
 /* Preview: All 5 Redesigned 3-Video Panels rendered directly from Liquid sections */
-const stripSchema = (s) => s.replace(/\{%-?\s*schema\s*-?%\}[\s\S]*?\{%-?\s*endschema\s*-?%\}/, '');
 const videoDemos = [
   {
     label: '1. Homepage (`sections/homepage-videos.liquid`)',
@@ -320,12 +430,14 @@ ${renderedPanels.join('\n')}
 /* Index */
 write('index.html', `<!doctype html><html lang="en-GB"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
-<title>Quote wizard &amp; Video Panels preview</title>${pageCss}
+<title>iCorrect Preview</title>${pageCss}
 <style>.pv-wrap{max-width:640px;margin:0 auto;padding:24px 20px}.pv-wrap h1{font-size:28px;letter-spacing:-.04em;margin:0 0 8px}
 .pv-wrap p,.pv-wrap li{color:#4d4d4d;font-size:15px;line-height:1.5}.pv-links a{display:flex;align-items:center;min-height:56px;padding:0 16px;margin:8px 0;border-radius:12px;box-shadow:0 0 0 1px rgba(0,0,0,.12);color:#171717;text-decoration:none;font-weight:500}</style></head>
-<body>${banner('Start')}<div class="pv-wrap"><h1>3-Video Panel Redesign &amp; SEO Preview</h1>
+<body>${banner('Start')}<div class="pv-wrap"><h1>iCorrect Preview</h1>
 <p>Branch <b>${branch}</b>${sha ? ' at ' + sha : ''}.</p>
 <div class="pv-links">
+  <a href="/macbook-liquid-damage/">MacBook Liquid Damage Repair</a>
+  <a href="/macbook-no-power/">Dead &amp; No Power MacBook Repair</a>
   <a href="/video-panels/">All 5 Redesigned 3-Video Panels (Homepage, MacBook, iPhone, iPad, Watch)</a>
   <a href="/macbook-screen/">MacBook screen repair page</a>
   <a href="/quote/">All devices quote wizard</a>

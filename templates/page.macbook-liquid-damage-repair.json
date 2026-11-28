@@ -1,0 +1,360 @@
+{
+  "sections": {
+    "pillar_top": {
+      "type": "macbook-pillar-page",
+      "settings": {
+        "render_part": "top",
+        "breadcrumb_label": "MacBook liquid damage repair",
+        "hero_h1": "MacBook Liquid Damage Repair",
+        "hero_lead": "Spilled liquid on your MacBook? We repair your original logic board in Fitzrovia instead of replacing it, keeping your data wherever possible.",
+        "triage_title": "Just spilled? Do this now.",
+        "triage_item_1": "Switch it off",
+        "triage_item_1_kind": "check",
+        "triage_item_2": "Unplug the charger",
+        "triage_item_2_kind": "check",
+        "triage_item_3": "No rice, no hairdryer, no power",
+        "triage_item_3_kind": "cross",
+        "cta_primary_label": "Book your £49 diagnostic",
+        "cta_secondary_label": "See how it works",
+        "diagram_title": "Component-level liquid recovery",
+        "diagram_pill": "Board repaired, not swapped",
+        "hero_diagram_asset": "macbook-liquid-board-diagram.svg",
+        "hero_diagram_alt": "Isometric diagram of a MacBook logic board highlighting corroded power and charging circuits in blue while the original board, processor, and soldered SSD remain intact.",
+        "diagram_accent_kicker": "We clean and repair",
+        "diagram_accent_title": "Corroded power and charging circuits",
+        "diagram_accent_sub": "Only damaged components are replaced",
+        "diagram_neutral_kicker": "Stays yours",
+        "diagram_neutral_title": "Logic board, processor, SSD",
+        "diagram_neutral_sub": "Not swapped for a blank replacement board",
+        "hero_diagram_caption": "Blue is what we repair. Your original board goes back in your MacBook.",
+        "stamp2_figure": "£49 diagnostic",
+        "stamp2_label": "credited, repairs from £249",
+        "stamp3_figure": "1 working day",
+        "stamp3_label": "to your written fixed quote",
+        "stamp4_figure": "2-year warranty",
+        "stamp4_label": "on the circuits we repair",
+        "trustindex_widget_id": "47cc7ef8590e8871fa062160cf7",
+        "bench_heading": "From our Fitzrovia bench",
+        "bench_lead": "Real logic board inspection, micro-soldering, and post-clean assembly frames from our central London workshop.",
+        "rail_heading": "Diagnosed in 1 working day. Repaired in 2 working days once you approve.",
+        "compare_heading": "How board-level liquid repair compares",
+        "compare_lead": "Apple replaces the board. We clean and repair the one you have.",
+        "warranty_exclusion_2": "A different circuit failing later from the same spill",
+        "symptoms_heading": "What happened to your MacBook?",
+        "symptoms_lead": "Liquid damage behaves differently depending on how soon it reaches the bench. Choose the symptom closest to yours to book.",
+        "wizard_intro": "Choose your MacBook below. One question about whether it powers on, then your £49 diagnostic and collection options."
+      },
+      "blocks": {
+        "photo_1": {
+          "type": "proof_photo",
+          "settings": {
+            "image_asset": "macbook-liquid-14-corrosion.webp",
+            "alt": "Close-up of liquid corrosion on the corner of an Apple Silicon MacBook logic board",
+            "caption": "Apple Silicon MacBook, corner board liquid corrosion"
+          }
+        },
+        "photo_2": {
+          "type": "proof_photo",
+          "settings": {
+            "image_asset": "macbook-liquid-16-a2485-bench.webp",
+            "alt": "MacBook logic board being inspected under a stereo microscope on the Fitzrovia repair bench",
+            "caption": "Fitzrovia bench, board inspected under stereo microscope"
+          }
+        },
+        "photo_3": {
+          "type": "proof_photo",
+          "settings": {
+            "image_asset": "macbook-liquid-stage3-microsolder.webp",
+            "alt": "Technician performing hot-air micro-soldering rework at a MacBook logic board charging circuit",
+            "caption": "MacBook logic board, hot-air rework at charging IC"
+          }
+        },
+        "photo_4": {
+          "type": "proof_photo",
+          "settings": {
+            "image_asset": "macbook-liquid-14-a2442-clean.webp",
+            "alt": "Cleaned MacBook Pro logic board refitted into the chassis on the Fitzrovia bench mat",
+            "caption": "MacBook Pro, cleaned board refitted on bench mat"
+          }
+        },
+        "rail_1": {
+          "type": "rail_step",
+          "settings": {
+            "title": "We collect",
+            "line": "Same-day London courier in selected zones, or tracked UK mail-in included with your diagnostic."
+          }
+        },
+        "rail_2": {
+          "type": "rail_step",
+          "settings": {
+            "title": "On the bench",
+            "line": "Opened before any power is applied, battery disconnected, both sides inspected under the microscope and thermal camera."
+          }
+        },
+        "rail_3": {
+          "type": "rail_step",
+          "settings": {
+            "title": "Written quote",
+            "line": "Clear findings showing what the liquid reached, what can be saved, and a fixed price by email. You decide."
+          }
+        },
+        "rail_4": {
+          "type": "rail_step",
+          "settings": {
+            "title": "Repair and return",
+            "line": "Corrosion cleaned, failed components replaced, tested under load, and returned insured."
+          }
+        },
+        "cmp_1": {
+          "type": "compare_row",
+          "settings": {
+            "criterion": "What gets replaced and waste",
+            "icorrect_val": "Failed components only.",
+            "icorrect_sub": "Your original board is cleaned, repaired and refitted. Least waste.",
+            "apple_val": "Whole logic board.",
+            "apple_sub": "Working processor, memory and storage are replaced with the damaged circuit.",
+            "apple_mark": "fair",
+            "general_val": "Varies by shop.",
+            "general_sub": "Many replace the board or send it away. Ask who does the work.",
+            "general_mark": "fair"
+          }
+        },
+        "cmp_2": {
+          "type": "compare_row",
+          "settings": {
+            "criterion": "Your data",
+            "icorrect_val": "Original SSD kept.",
+            "icorrect_sub": "Data prioritised, no routine wipe. Liquid can still affect storage.",
+            "apple_val": "New board, empty storage.",
+            "apple_sub": "Storage is soldered to the board, so you restore from your own backup.",
+            "apple_mark": "no",
+            "general_val": "Depends on the method.",
+            "general_sub": "A board swap loses data. Component repair keeps the original board.",
+            "general_mark": "fair"
+          }
+        },
+        "cmp_3": {
+          "type": "compare_row",
+          "settings": {
+            "criterion": "Corrosion treatment",
+            "icorrect_val": "Cleaned under the microscope.",
+            "icorrect_sub": "Board removed, both sides treated. Ultrasonic cleaning is used only where it is safe for the board.",
+            "apple_val": "Not part of the repair.",
+            "apple_sub": "The board is replaced rather than cleaned.",
+            "apple_mark": "no",
+            "general_val": "Ask how they clean.",
+            "general_sub": "A surface wipe leaves mineral residue under chips.",
+            "general_mark": "fair"
+          }
+        },
+        "cmp_4": {
+          "type": "compare_row",
+          "settings": {
+            "criterion": "Typical cost",
+            "icorrect_val": "£49, then from £249.",
+            "icorrect_sub": "Diagnostic credited to the repair. Fixed written quote first.",
+            "apple_val": "Full board swap billed.",
+            "apple_sub": "Out-of-warranty pricing covers an entire replacement board, not individual circuits.",
+            "apple_mark": "fair",
+            "general_val": "Varies by shop.",
+            "general_sub": "Check whether the quote is for component repair or a replacement board.",
+            "general_mark": "fair"
+          }
+        },
+        "cmp_5": {
+          "type": "compare_row",
+          "settings": {
+            "criterion": "Warranty",
+            "icorrect_val": "2-year warranty.",
+            "icorrect_sub": "On the repaired circuits, replaced components and workmanship.",
+            "apple_val": "90 days.",
+            "apple_sub": "Apple out-of-warranty repair cover.",
+            "apple_mark": "fair",
+            "general_val": "Varies by shop.",
+            "general_sub": "Ask whether liquid board work includes written multi-year cover.",
+            "general_mark": "fair"
+          }
+        },
+        "sym_1": {
+          "type": "symptom_tile",
+          "settings": {
+            "title": "Just spilled, still on",
+            "tag": "Act today",
+            "line": "Works for now. Residue keeps corroding for days."
+          }
+        },
+        "sym_2": {
+          "type": "symptom_tile",
+          "settings": {
+            "title": "Spilled, now dead",
+            "tag": "Board diagnostic",
+            "line": "No power or charging after liquid reached the board."
+          }
+        },
+        "sym_3": {
+          "type": "symptom_tile",
+          "settings": {
+            "title": "Keyboard or trackpad faults",
+            "tag": "Board and top case check",
+            "line": "Sticky keys or erratic input after liquid worked under the top case."
+          }
+        },
+        "sym_4": {
+          "type": "symptom_tile",
+          "settings": {
+            "title": "Old spill, new problems",
+            "tag": "Corrosion check",
+            "line": "Charging or backlight faults showing up weeks later."
+          }
+        }
+      },
+      "block_order": [
+        "photo_1",
+        "photo_2",
+        "photo_3",
+        "photo_4",
+        "rail_1",
+        "rail_2",
+        "rail_3",
+        "rail_4",
+        "cmp_1",
+        "cmp_2",
+        "cmp_3",
+        "cmp_4",
+        "cmp_5",
+        "sym_1",
+        "sym_2",
+        "sym_3",
+        "sym_4"
+      ]
+    },
+    "quote_wizard": {
+      "type": "quote-wizard",
+      "settings": {
+        "heading": "Book your MacBook liquid damage diagnostic",
+        "subheading": "",
+        "prefill_mode": "manual",
+        "skip_to_service": true,
+        "prefill_device": "macbook",
+        "prefill_fault": "Water Damage"
+      }
+    },
+    "pillar_bottom": {
+      "type": "macbook-pillar-page",
+      "settings": {
+        "render_part": "bottom",
+        "cta_primary_label": "Book your £49 diagnostic",
+        "faq_heading": "Questions before you book",
+        "prices_heading": "Clear diagnostic and repair pricing",
+        "prices_lead": "Every liquid damage job starts with the £49 bench diagnostic. You get a written fixed quote before any soldering begins.",
+        "closing_heading": "Book your MacBook liquid damage diagnostic",
+        "show_footer_bar": false
+      },
+      "blocks": {
+        "faq_1": {
+          "type": "faq",
+          "settings": {
+            "question": "I just spilled liquid on my MacBook. What should I do right now?",
+            "answer": "Switch it off immediately by holding the power button, unplug the charger and all cables, wipe away surface liquid, and leave the lid slightly open. Do not put it in rice, do not use a hairdryer, and do not plug it back in to test it. Rice leaves starch dust inside the chassis and heat melts keyboard membranes while power accelerates corrosion on wet circuits."
+          }
+        },
+        "faq_2": {
+          "type": "faq",
+          "settings": {
+            "question": "It still works after the spill. Do I still need it checked?",
+            "answer": "Yes. Liquid leaves conductive mineral residue under chips and connectors that slowly corrodes fine copper traces over days or weeks. Catching a wet board early usually keeps the repair simpler and protects parts like the keyboard, trackpad, and display connector from failing later."
+          }
+        },
+        "faq_3": {
+          "type": "faq",
+          "settings": {
+            "question": "Will my data be safe?",
+            "answer": "Original SSD kept. Data is prioritised and there is no routine wipe, because we repair your original logic board rather than swapping it for a blank board. Liquid damage can still affect storage circuits directly, so while we take every care to preserve your data, no workshop can guarantee storage survival before opening the board."
+          }
+        },
+        "faq_4": {
+          "type": "faq",
+          "settings": {
+            "question": "How much does it cost, and what does the £49 cover?",
+            "answer": "The £49 diagnostic covers insured UK courier collection and return, opening the MacBook before any power is applied, disconnecting the battery, inspecting both sides of the logic board under the microscope and thermal camera, and sending you a written report with a fixed repair quote. Board repairs start from £249 and the £49 diagnostic is credited in full if you go ahead. Unlike an Apple Tier 4 full-device replacement quote, you only pay to repair the damaged circuits."
+          }
+        },
+        "faq_5": {
+          "type": "faq",
+          "settings": {
+            "question": "What if I do not go ahead, or it cannot be repaired?",
+            "answer": "If you decline the repair quote after the diagnostic, or if the board is beyond economical repair, the £49 diagnostic fee covers the bench inspection and we return your MacBook by insured courier at no extra cost."
+          }
+        },
+        "faq_6": {
+          "type": "faq",
+          "settings": {
+            "question": "How long does it take?",
+            "answer": "Our Fitzrovia workshop is open Mon to Fri 9am to 6pm, Sat & Sun Closed. Once your MacBook arrives, you receive your written diagnostic report and fixed quote within 1 working day. Once you approve the quote, most liquid damage board repairs are completed and tested within 2 working days."
+          }
+        },
+        "faq_7": {
+          "type": "faq",
+          "settings": {
+            "question": "What does the 2-year warranty cover, and what does it not?",
+            "answer": "Our 2-year warranty covers the circuits we repaired, the components we replaced, and our Fitzrovia micro-soldering workmanship. It does not cover new liquid, drop, or physical impact damage, and it does not cover a different circuit failing later from the same spill."
+          }
+        },
+        "faq_8": {
+          "type": "faq",
+          "settings": {
+            "question": "How does collection work?",
+            "answer": "Collection and return are included with your £49 diagnostic at any order value. In selected London zones we arrange same-day courier collection. Anywhere else in the UK we send a tracked, insured mail-in pack straight to your address."
+          }
+        },
+        "rel_1": {
+          "type": "related_link",
+          "settings": {
+            "label": "No spill, just dead? Dead MacBook repair",
+            "url": "/pages/macbook-no-power-repair"
+          }
+        },
+        "rel_2": {
+          "type": "related_link",
+          "settings": {
+            "label": "MacBook screen repair",
+            "url": "/pages/macbook-screen-replacement"
+          }
+        },
+        "rel_3": {
+          "type": "related_link",
+          "settings": {
+            "label": "MacBook battery replacement",
+            "url": "/pages/macbook-battery-replacement"
+          }
+        },
+        "rel_4": {
+          "type": "related_link",
+          "settings": {
+            "label": "All MacBook repairs",
+            "url": "/pages/macbook-repairs"
+          }
+        }
+      },
+      "block_order": [
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4",
+        "faq_5",
+        "faq_6",
+        "faq_7",
+        "faq_8",
+        "rel_1",
+        "rel_2",
+        "rel_3",
+        "rel_4"
+      ]
+    }
+  },
+  "order": [
+    "pillar_top",
+    "quote_wizard",
+    "pillar_bottom"
+  ]
+}

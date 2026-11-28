@@ -1,0 +1,361 @@
+{
+  "sections": {
+    "pillar_top": {
+      "type": "macbook-pillar-page",
+      "settings": {
+        "render_part": "top",
+        "breadcrumb_label": "Dead & no power MacBook repair",
+        "hero_h1": "Dead & No Power MacBook Repair",
+        "hero_lead": "MacBook dead or not charging? Often it is one failed part on the logic board. We trace it and repair your original board in Fitzrovia.",
+        "triage_title": "Dead MacBook? Before anything else.",
+        "triage_item_1": "Tried another charger and cable? Then stop there.",
+        "triage_item_2": "Any spill, even weeks ago? Use our",
+        "triage_item_2_kind": "check",
+        "triage_item_2_link_label": "liquid damage page",
+        "triage_item_2_link_url": "/pages/macbook-liquid-damage-repair",
+        "triage_item_3": "Do not approve a new logic board before a component-level diagnosis.",
+        "triage_item_3_kind": "cross",
+        "cta_primary_label": "Book your £49 diagnostic",
+        "cta_secondary_label": "See how it works",
+        "diagram_title": "Power-rail fault trace",
+        "diagram_pill": "Single part replaced",
+        "hero_diagram_asset": "macbook-nopower-board-diagram.svg",
+        "hero_diagram_alt": "Isometric diagram of a MacBook logic board tracing the power line from the USB-C port through the charging chip to a single failed power component in blue while the original board, processor, and soldered SSD remain intact.",
+        "diagram_accent_kicker": "We trace and replace",
+        "diagram_accent_title": "The failed power component",
+        "diagram_accent_sub": "Often one capacitor or charging chip",
+        "diagram_neutral_kicker": "Stays yours",
+        "diagram_neutral_title": "Logic board, processor, SSD",
+        "diagram_neutral_sub": "Not swapped for a blank replacement board",
+        "hero_diagram_caption": "Blue is the part we replace. Your original board goes back in your MacBook.",
+        "stamp2_figure": "£49 diagnostic",
+        "stamp2_label": "credited, repairs from £249",
+        "stamp3_figure": "1 working day",
+        "stamp3_label": "to your written fixed quote",
+        "stamp4_figure": "2-year warranty",
+        "stamp4_label": "on the circuits we repair",
+        "trustindex_widget_id": "47cc7ef8590e8871fa062160cf7",
+        "bench_heading": "From our Fitzrovia bench",
+        "bench_lead": "Real USB-C meter readings, shorted power-rail finds, and repaired MacBook logic boards from our central London workshop.",
+        "rail_heading": "Diagnosed in 1 working day. Repaired in 2 working days once you approve.",
+        "compare_heading": "How board-level no-power repair compares",
+        "compare_lead": "Apple replaces the board. We find the part that failed.",
+        "warranty_exclusion_2": "Unrelated faults on a different circuit later",
+        "symptoms_heading": "Which kind of dead is it?",
+        "symptoms_lead": "Different power symptoms point to different rails on the logic board. Choose the closest match below to book your diagnostic.",
+        "wizard_intro": "Choose your MacBook below to select your power symptom, then see your £49 diagnostic and collection options."
+      },
+      "blocks": {
+        "photo_1": {
+          "type": "proof_photo",
+          "settings": {
+            "image_asset": "macbook-bench-ammeter.webp",
+            "alt": "MacBook Pro 13-inch connected to a USB-C bench ammeter reading 20.08V and 0.000A",
+            "caption": "MacBook Pro 13\", USB-C meter at 20.08V and 0.000A"
+          }
+        },
+        "photo_2": {
+          "type": "proof_photo",
+          "settings": {
+            "image_asset": "macbook-bench-shorted-cap.webp",
+            "alt": "Microscope view of a shorted surface-mount capacitor on a MacBook Pro 13-inch main power rail",
+            "caption": "MacBook Pro 13\", shorted capacitor on main power rail"
+          }
+        },
+        "photo_3": {
+          "type": "proof_photo",
+          "settings": {
+            "image_asset": "macbook-bench-repaired-rail.webp",
+            "alt": "Microscope view of the same MacBook Pro 13-inch power rail after capacitor replacement and cleaning",
+            "caption": "MacBook Pro 13\", capacitor replaced and rail cleaned"
+          }
+        },
+        "photo_4": {
+          "type": "proof_photo",
+          "settings": {
+            "image_asset": "macbook-bench-a2681-usbc.webp",
+            "alt": "Close-up of the USB-C charging controller circuit on a MacBook Air M2 A2681 logic board",
+            "caption": "MacBook Air M2 (A2681), USB-C charging controller circuit"
+          }
+        },
+        "rail_1": {
+          "type": "rail_step",
+          "settings": {
+            "title": "We collect",
+            "line": "Same-day London courier in selected zones, or tracked UK mail-in included with your diagnostic."
+          }
+        },
+        "rail_2": {
+          "type": "rail_step",
+          "settings": {
+            "title": "On the bench",
+            "line": "USB-C meter reading, thermal camera check, and power rails traced against the schematic."
+          }
+        },
+        "rail_3": {
+          "type": "rail_step",
+          "settings": {
+            "title": "Written quote",
+            "line": "The failed part named, a fixed price by email, and a second opinion on any board-replacement quote. You decide."
+          }
+        },
+        "rail_4": {
+          "type": "rail_step",
+          "settings": {
+            "title": "Repair and return",
+            "line": "Component replaced under the microscope, charging and boot tested, and returned insured."
+          }
+        },
+        "cmp_1": {
+          "type": "compare_row",
+          "settings": {
+            "criterion": "What gets replaced and waste",
+            "icorrect_val": "The failed component.",
+            "icorrect_sub": "Often one capacitor or charging chip on your original board. Least waste.",
+            "apple_val": "Whole logic board.",
+            "apple_sub": "Working processor, memory and storage are replaced with the damaged circuit.",
+            "apple_mark": "fair",
+            "general_val": "Varies by shop.",
+            "general_sub": "Many replace the board or send it away. Ask who does the work.",
+            "general_mark": "fair"
+          }
+        },
+        "cmp_2": {
+          "type": "compare_row",
+          "settings": {
+            "criterion": "Your data",
+            "icorrect_val": "Original SSD kept.",
+            "icorrect_sub": "Data prioritised, no routine wipe. Lower risk unless storage itself failed.",
+            "apple_val": "New board, empty storage.",
+            "apple_sub": "Storage is soldered to the board, so you restore from your own backup.",
+            "apple_mark": "no",
+            "general_val": "Depends on the method.",
+            "general_sub": "A board swap loses data. Component repair keeps the original board.",
+            "general_mark": "fair"
+          }
+        },
+        "cmp_3": {
+          "type": "compare_row",
+          "settings": {
+            "criterion": "Fault finding",
+            "icorrect_val": "Traced to the component.",
+            "icorrect_sub": "USB-C meter, thermal camera and schematic testing pinpoint the exact failed part.",
+            "apple_val": "Not traced, board replaced.",
+            "apple_sub": "Standard policy swaps the board assembly rather than diagnosing components.",
+            "apple_mark": "no",
+            "general_val": "Ask what tools they use.",
+            "general_sub": "Without schematics and thermal imaging, faults can be misdiagnosed.",
+            "general_mark": "fair"
+          }
+        },
+        "cmp_4": {
+          "type": "compare_row",
+          "settings": {
+            "criterion": "Typical cost",
+            "icorrect_val": "£49, then from £249.",
+            "icorrect_sub": "Diagnostic credited to the repair. Fixed written quote first.",
+            "apple_val": "Full board swap billed.",
+            "apple_sub": "Out-of-warranty pricing covers an entire replacement board, not individual circuits.",
+            "apple_mark": "fair",
+            "general_val": "Varies by shop.",
+            "general_sub": "Check whether the quote is for component repair or a replacement board.",
+            "general_mark": "fair"
+          }
+        },
+        "cmp_5": {
+          "type": "compare_row",
+          "settings": {
+            "criterion": "Warranty",
+            "icorrect_val": "2-year warranty.",
+            "icorrect_sub": "On the repaired circuits, replaced components and workmanship.",
+            "apple_val": "90 days.",
+            "apple_sub": "Apple out-of-warranty repair cover.",
+            "apple_mark": "fair",
+            "general_val": "Varies by shop.",
+            "general_sub": "Ask whether board work includes written multi-year cover.",
+            "general_mark": "fair"
+          }
+        },
+        "sym_1": {
+          "type": "symptom_tile",
+          "settings": {
+            "title": "Completely dead",
+            "tag": "Power rail trace",
+            "line": "No light, no chime, no fan."
+          }
+        },
+        "sym_2": {
+          "type": "symptom_tile",
+          "settings": {
+            "title": "Not charging",
+            "tag": "Charging circuit",
+            "line": "Battery stuck, or charger not recognised."
+          }
+        },
+        "sym_3": {
+          "type": "symptom_tile",
+          "settings": {
+            "title": "Powers on, black screen",
+            "tag": "Checked at intake",
+            "line": "Fan or chime, nothing on screen."
+          }
+        },
+        "sym_4": {
+          "type": "symptom_tile",
+          "settings": {
+            "title": "Cuts out or restarts",
+            "tag": "Board diagnostic",
+            "line": "Dies under load or loops at the Apple logo."
+          }
+        }
+      },
+      "block_order": [
+        "photo_1",
+        "photo_2",
+        "photo_3",
+        "photo_4",
+        "rail_1",
+        "rail_2",
+        "rail_3",
+        "rail_4",
+        "cmp_1",
+        "cmp_2",
+        "cmp_3",
+        "cmp_4",
+        "cmp_5",
+        "sym_1",
+        "sym_2",
+        "sym_3",
+        "sym_4"
+      ]
+    },
+    "quote_wizard": {
+      "type": "quote-wizard",
+      "settings": {
+        "heading": "Book your dead MacBook diagnostic",
+        "subheading": "",
+        "prefill_mode": "manual",
+        "skip_to_service": false,
+        "prefill_device": "macbook",
+        "prefill_fault": "Power / Battery / Charging"
+      }
+    },
+    "pillar_bottom": {
+      "type": "macbook-pillar-page",
+      "settings": {
+        "render_part": "bottom",
+        "cta_primary_label": "Book your £49 diagnostic",
+        "faq_heading": "Questions before you book",
+        "prices_heading": "Clear diagnostic and repair pricing",
+        "prices_lead": "Every dead MacBook starts with the £49 bench diagnostic. You receive a written fault finding and fixed quote before any repair begins.",
+        "closing_heading": "Book your dead MacBook diagnostic",
+        "show_footer_bar": false
+      },
+      "blocks": {
+        "faq_1": {
+          "type": "faq",
+          "settings": {
+            "question": "Why did my MacBook suddenly die?",
+            "answer": "Often a MacBook stops switching on because one small component on the logic board failed, such as a shorted filter capacitor on a main power rail or a damaged USB-C charging controller chip. Power surges, worn third-party chargers, or age-related component fatigue can trigger a sudden shut-off without any drop or liquid spill."
+          }
+        },
+        "faq_2": {
+          "type": "faq",
+          "settings": {
+            "question": "Will I lose my data?",
+            "answer": "Original SSD kept. Data is prioritised and there is no routine wipe, because we repair your original logic board rather than swapping it for a blank board. While power-rail faults carry a lower risk to storage than liquid spills, no workshop can guarantee storage survival where the storage circuit itself has been damaged."
+          }
+        },
+        "faq_3": {
+          "type": "faq",
+          "settings": {
+            "question": "How much does it cost, and what does the £49 cover?",
+            "answer": "The £49 diagnostic covers insured UK courier collection and return, USB-C current and voltage testing, thermal camera imaging, schematic power-rail tracing, and a written report naming the failed part with a fixed repair quote. Board repairs start from £249 and the £49 diagnostic is credited in full if you go ahead."
+          }
+        },
+        "faq_4": {
+          "type": "faq",
+          "settings": {
+            "question": "Apple quoted me for a new logic board. Can you give a second opinion?",
+            "answer": "Yes. Apple Stores do not carry out component-level micro-soldering, so a single shorted capacitor or failed charging chip results in a full logic board replacement quote. Our £49 diagnostic tells you the exact component that failed and whether your original board can be repaired instead."
+          }
+        },
+        "faq_5": {
+          "type": "faq",
+          "settings": {
+            "question": "What if I do not go ahead, or it cannot be repaired?",
+            "answer": "If you decline the repair quote after the diagnostic, or if the board is beyond economical repair, the £49 diagnostic fee covers the bench inspection and we return your MacBook by insured courier at no extra cost."
+          }
+        },
+        "faq_6": {
+          "type": "faq",
+          "settings": {
+            "question": "How long does it take?",
+            "answer": "Our Fitzrovia workshop is open Mon to Fri 9am to 6pm, Sat & Sun Closed. Once your MacBook arrives, you receive your written diagnostic report and fixed quote within 1 working day. Once you approve the quote, most no-power board repairs are completed and tested within 2 working days."
+          }
+        },
+        "faq_7": {
+          "type": "faq",
+          "settings": {
+            "question": "Which MacBooks do you repair?",
+            "answer": "We repair MacBook Air and MacBook Pro models from 2016 onwards, including Intel and Apple Silicon M1, M2, M3, and M4 generations in 13-inch, 14-inch, 15-inch, and 16-inch sizes. Collection and return are included with your £49 diagnostic across the UK, with same-day London courier in selected zones."
+          }
+        },
+        "faq_8": {
+          "type": "faq",
+          "settings": {
+            "question": "What does the 2-year warranty cover, and what does it not?",
+            "answer": "Our 2-year warranty covers the circuits we repaired, the components we replaced, and our Fitzrovia micro-soldering workmanship. It does not cover new liquid, drop, or physical impact damage, and it does not cover unrelated faults on a different circuit later."
+          }
+        },
+        "rel_1": {
+          "type": "related_link",
+          "settings": {
+            "label": "Spilled liquid? Liquid damage repair",
+            "url": "/pages/macbook-liquid-damage-repair"
+          }
+        },
+        "rel_2": {
+          "type": "related_link",
+          "settings": {
+            "label": "MacBook screen repair",
+            "url": "/pages/macbook-screen-replacement"
+          }
+        },
+        "rel_3": {
+          "type": "related_link",
+          "settings": {
+            "label": "MacBook battery replacement",
+            "url": "/pages/macbook-battery-replacement"
+          }
+        },
+        "rel_4": {
+          "type": "related_link",
+          "settings": {
+            "label": "All MacBook repairs",
+            "url": "/pages/macbook-repairs"
+          }
+        }
+      },
+      "block_order": [
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4",
+        "faq_5",
+        "faq_6",
+        "faq_7",
+        "faq_8",
+        "rel_1",
+        "rel_2",
+        "rel_3",
+        "rel_4"
+      ]
+    }
+  },
+  "order": [
+    "pillar_top",
+    "quote_wizard",
+    "pillar_bottom"
+  ]
+}

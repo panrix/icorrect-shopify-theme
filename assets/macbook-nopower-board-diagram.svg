@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="205 55 420 290" width="420" height="290" role="img" aria-labelledby="t d">
+<title id="t">MacBook logic board no-power trace diagram</title>
+<desc id="d">Isometric line diagram of a MacBook logic board tracing a single power line from the USB-C port through the charging chip to the main power rail, with a blue break marker on the failed power component while the original board, processor, and soldered SSD remain intact.</desc>
+<style><![CDATA[
+svg{--ink:#111827;--mid:#5c6470;--soft:#9ca3af;
+  --bl:#38598C;--bl-dark:#2E4A72}
+*{vector-effect:non-scaling-stroke}
+path,circle,line{fill:none;stroke-linejoin:round;stroke-linecap:round}
+.k{stroke:var(--ink);stroke-width:1.15}
+.m{stroke:var(--mid);stroke-width:.85}
+.h{stroke:var(--soft);stroke-width:.55}
+.b{stroke:var(--bl);stroke-width:1.2}
+.b-path{stroke:var(--bl-dark);stroke-width:2.4}
+.b-path-after{stroke:var(--bl);stroke-width:1.6;stroke-dasharray:4 4;stroke-opacity:.55}
+.d{stroke:var(--soft);stroke-width:.75;stroke-dasharray:3 4;stroke-linecap:butt}
+.f-w{fill:#ffffff;fill-opacity:.92}
+.f-50{fill:#fafafa;fill-opacity:.92}
+.f-100{fill:#e5e7eb;fill-opacity:.92}
+.f-200{fill:#d1d5db;fill-opacity:.92}
+.f-b50{fill:#eff2f6;fill-opacity:.96}
+.f-b100{fill:#d5e1f1;fill-opacity:.96}
+.f-b200{fill:#b0c5e0;fill-opacity:.96}
+.f-b600{fill:#38598C;fill-opacity:.96}
+.shadow{fill:rgba(17,24,39,.045);stroke:none}
+.break-ring{fill:#ffffff;stroke:#38598C;stroke-width:2}
+.break-x{stroke:#38598C;stroke-width:2.2}
+.node-dot{fill:#38598C;stroke:#ffffff;stroke-width:1.5}
+]]></style>
+<g>
+<path class="shadow" d="M 381.66 115.02 L 601.42 241.9 L 445.05 332.18 L 225.29 205.3 Z"/>
+<path class="d" d="M 381.66 105.26 L 614.1 239.46 L 445.05 337.06 L 212.61 202.86 Z"/>
+<path class="d" d="M 307.7 208.96 L 429.21 279.11 L 395.4 298.63 L 273.89 228.48 Z"/>
+<path class="d" d="M 388.0 123.56 L 388.0 99.16"/>
+<path class="d" d="M 554.94 246.78 L 554.94 222.38"/>
+<path class="d" d="M 453.51 305.34 L 453.51 280.94"/>
+<path class="d" d="M 263.33 195.54 L 263.33 171.14"/>
+<!-- Logic board base -->
+<path class="f-100 k" d="M 263.33 163.21 L 314.04 192.49 L 314.04 197.98 L 263.33 168.7 Z"/>
+<path class="f-200 k" d="M 314.04 192.49 L 330.95 182.73 L 330.95 188.22 L 314.04 197.98 Z"/>
+<path class="f-100 k" d="M 330.95 182.73 L 409.13 227.87 L 409.13 233.36 L 330.95 188.22 Z"/>
+<path class="f-100 k" d="M 392.23 237.63 L 453.51 273.01 L 453.51 278.5 L 392.23 243.12 Z"/>
+<path class="f-200 k" d="M 554.94 214.45 L 453.51 273.01 L 453.51 278.5 L 554.94 219.94 Z"/>
+<path class="f-50 k" d="M 388.0 91.23 L 533.8 175.41 L 510.56 188.83 L 554.94 214.45 L 453.51 273.01 L 392.23 237.63 L 409.13 227.87 L 330.95 182.73 L 314.04 192.49 L 263.33 163.21 Z"/>
+<path class="h" d="M 402.79 111.97 L 314.04 163.21"/>
+<path class="h" d="M 436.6 131.49 L 347.85 182.73"/>
+<path class="h" d="M 480.98 157.11 L 392.23 208.35"/>
+<path class="h" d="M 531.69 186.39 L 442.94 237.63"/>
+<path class="h" d="M 366.87 118.07 L 531.69 213.23"/>
+<path class="h" d="M 330.95 138.81 L 495.77 233.97"/>
+<path class="h" d="M 309.82 151.01 L 474.64 246.17"/>
+<!-- Neutral Apple Silicon SoC and soldered SSD (stays yours) -->
+<path class="f-100 k" d="M 392.23 158.57 L 438.71 185.41 L 438.71 191.27 L 392.23 164.43 Z"/>
+<path class="f-200 k" d="M 483.09 159.79 L 438.71 185.41 L 438.71 191.27 L 483.09 165.65 Z"/>
+<path class="f-w k" d="M 436.6 132.95 L 483.09 159.79 L 438.71 185.41 L 392.23 158.57 Z"/>
+<path class="f-100 m" d="M 437.66 142.1 L 467.24 159.18 L 438.71 175.65 L 409.13 158.57 Z"/>
+<path class="f-100 k" d="M 434.49 223.72 L 455.62 235.92 L 455.62 240.07 L 434.49 227.87 Z"/>
+<path class="f-200 k" d="M 485.2 218.84 L 455.62 235.92 L 455.62 240.07 L 485.2 222.99 Z"/>
+<path class="f-w k" d="M 464.07 206.64 L 485.2 218.84 L 455.62 235.92 L 434.49 223.72 Z"/>
+<path class="f-100 k" d="M 459.85 238.36 L 476.75 248.12 L 476.75 252.27 L 459.85 242.51 Z"/>
+<path class="f-200 k" d="M 506.33 231.04 L 476.75 248.12 L 476.75 252.27 L 506.33 235.19 Z"/>
+<path class="f-w k" d="M 489.43 221.28 L 506.33 231.04 L 476.75 248.12 L 459.85 238.36 Z"/>
+<path class="f-100 m" d="M 375.32 196.64 L 402.79 212.5 L 402.79 216.89 L 375.32 201.03 Z"/>
+<path class="f-200 m" d="M 413.36 206.4 L 402.79 212.5 L 402.79 216.89 L 413.36 210.79 Z"/>
+<path class="f-w m" d="M 385.89 190.54 L 413.36 206.4 L 402.79 212.5 L 375.32 196.64 Z"/>
+<path class="f-100 m" d="M 499.99 197.61 L 525.35 212.25 L 525.35 216.89 L 499.99 202.25 Z"/>
+<path class="f-200 m" d="M 535.92 206.15 L 525.35 212.25 L 525.35 216.89 L 535.92 210.79 Z"/>
+<path class="f-w m" d="M 510.56 191.51 L 535.92 206.15 L 525.35 212.25 L 499.99 197.61 Z"/>
+<path class="f-100 m" d="M 457.73 185.17 L 474.64 194.93 L 474.64 199.81 L 457.73 190.05 Z"/>
+<path class="f-200 m" d="M 497.88 181.51 L 474.64 194.93 L 474.64 199.81 L 497.88 186.39 Z"/>
+<path class="f-w m" d="M 480.98 171.75 L 497.88 181.51 L 474.64 194.93 L 457.73 185.17 Z"/>
+<!-- USB-C port & inline bench meter -->
+<path class="f-b100 b" d="M 345.74 105.63 L 360.53 114.17 L 360.53 121.73 L 345.74 113.19 Z"/>
+<path class="f-b200 b" d="M 375.32 105.63 L 360.53 114.17 L 360.53 121.73 L 375.32 113.19 Z"/>
+<path class="f-b50 b" d="M 360.53 97.09 L 375.32 105.63 L 360.53 114.17 L 345.74 105.63 Z"/>
+<path class="f-b100 b" d="M 338.34 99.16 L 348.91 105.26 L 348.91 109.9 L 338.34 103.8 Z"/>
+<path class="f-b200 b" d="M 357.36 100.38 L 348.91 105.26 L 348.91 109.9 L 357.36 105.02 Z"/>
+<path class="f-b50 b" d="M 346.79 94.28 L 357.36 100.38 L 348.91 105.26 L 338.34 99.16 Z"/>
+<path class="f-b100 b" d="M 295.02 77.93 L 333.06 99.89 L 333.06 107.7 L 295.02 85.74 Z"/>
+<path class="f-b200 b" d="M 352.08 88.91 L 333.06 99.89 L 333.06 107.7 L 352.08 96.72 Z"/>
+<path class="f-b50 b" d="M 314.04 66.95 L 352.08 88.91 L 333.06 99.89 L 295.02 77.93 Z"/>
+<path class="f-w b" d="M 315.1 71.22 L 344.68 88.3 L 332.0 95.62 L 302.42 78.54 Z"/>
+<!-- Charging controller IC -->
+<path class="f-b200 b" d="M 366.87 121.0 L 380.6 128.93 L 380.6 133.32 L 366.87 125.39 Z"/>
+<path class="f-b600 b" d="M 394.34 121.0 L 380.6 128.93 L 380.6 133.32 L 394.34 125.39 Z"/>
+<path class="f-b100 b" d="M 380.6 113.07 L 394.34 121.0 L 380.6 128.93 L 366.87 121.0 Z"/>
+<!-- Single traced power path from USB-C input through charging chip to main power rail -->
+<path class="b-path" d="M 278 65 L 302 79"/>
+<path class="b-path" d="M 354 106 L 374 118"/>
+<path class="b-path" d="M 380 132 L 354 147"/>
+<!-- Interrupted downstream rail after the failed component -->
+<path class="b-path-after" d="M 358 171 L 372 179 L 386 171 L 444 204 L 466 192"/>
+<!-- Failed power component highlighted with blue break marker -->
+<path class="f-b600 b" d="M 332.53 159.12 L 338.03 162.3 L 338.03 167.91 L 332.53 164.74 Z"/>
+<path class="f-b600 b" d="M 349.12 155.89 L 338.03 162.3 L 338.03 167.91 L 349.12 161.5 Z"/>
+<path class="f-b200 b" d="M 343.62 152.72 L 349.12 155.89 L 338.03 162.3 L 332.53 159.12 Z"/>
+<circle class="node-dot" cx="380.6" cy="121" r="4"/>
+<circle class="break-ring" cx="341" cy="160" r="14"/>
+<line class="break-x" x1="335.5" y1="154.5" x2="346.5" y2="165.5"/>
+<line class="break-x" x1="346.5" y1="154.5" x2="335.5" y2="165.5"/>
+</g>
+</svg>
