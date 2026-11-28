@@ -172,10 +172,22 @@ describe('ICO-11 visual, copy, and SEO parity with 5033f06', () => {
       assert.doesNotMatch(src, /[\u2013\u2014]/, `em/en dash found in ${rel}`);
       assert.doesNotMatch(
         src,
-        /walk-in|drop-in|express|same-day|same day|apple certified|aggregateRating/i,
+        /walk-in|drop-in|express|same-day|same day|apple certified|aggregateRating|no deposits?|£200\+|£200 or more/i,
         `forbidden term found in ${rel}`
       );
     }
+  });
+
+  it('uses H1 "MacBook Screen Repair Prices", upfront £299 hero lead, and accurate Band 4 £25 courier copy', () => {
+    const tpl = JSON.parse(read('templates/collection.macbook-screen-repair.json'));
+    const heroSchema = parseSchema(read('sections/ico-11-hero.liquid'), 'sections/ico-11-hero.liquid');
+    const heroHeadingSetting = heroSchema.settings.find((s) => s.id === 'heading');
+    assert.equal(tpl.sections.ico_11_hero.settings.heading, 'MacBook Screen Repair Prices');
+    assert.equal(heroHeadingSetting.default, 'MacBook Screen Repair Prices');
+    assert.match(tpl.sections.ico_11_hero.settings.lead, /from £299/);
+    assert.match(tpl.sections.ico_11_hero.settings.lead, /30% to 50% less/);
+    assert.match(tpl.sections.ico_11_faqs.blocks.faq_collection.settings.answer, /Band 4/i);
+    assert.match(tpl.sections.ico_11_faqs.blocks.faq_collection.settings.answer, /£25/);
   });
 
   it('uses cool neutrals, #38598C accent, #111827 CTAs, zero green accents, zero gradients, and strict .ico11-shopify CSS scoping', () => {
