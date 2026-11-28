@@ -2480,7 +2480,8 @@ button.qw-dot.qw-prog-s .qw-prog-lbl {
     align-items: stretch;
   }
   .qw-trust-cross {
-    flex: 1 1 auto;
+    flex: 1 1 0;
+    min-width: 0;
   }
   .qw-trust-cell {
     padding: 16px 18px;
